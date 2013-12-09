@@ -69,6 +69,12 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(AdminPageModuleProvider.class)
     private List<ConnectPageCapabilityBean> adminPages;
 
+    /**
+     * @schemaTitle Profile Page
+     */
+    @CapabilityModuleProvider(value = ProfilePageModuleProvider.class, products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
+    private List<ConnectPageCapabilityBean> profilePages;
+
     @CapabilityModuleProvider(WebHookModuleProvider.class)
     private List<WebHookCapabilityBean> webhooks;
 
@@ -86,6 +92,7 @@ public class CapabilityList extends BaseCapabilityBean
         this.webPanels = newArrayList();
         this.generalPages = newArrayList();
         this.adminPages = newArrayList();
+        this.profilePages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
         this.jiraSearchRequestViews = newArrayList();
@@ -130,6 +137,10 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == adminPages)
         {
             this.adminPages = newArrayList();
+        }
+        if (null == profilePages)
+        {
+            this.profilePages = newArrayList();
         }
         if (null == jiraWorkflowPostFunctions)
         {
@@ -193,6 +204,11 @@ public class CapabilityList extends BaseCapabilityBean
     public List<ConnectPageCapabilityBean> getAdminPages()
     {
         return adminPages;
+    }
+
+    public List<ConnectPageCapabilityBean> getProfilePages()
+    {
+        return profilePages;
     }
 
     public List<WebHookCapabilityBean> getWebhooks()
