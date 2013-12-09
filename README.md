@@ -37,15 +37,15 @@ To build the plugin, run:
 
 To run the integration tests locally, *cd into the integration-tests directory*
   
-    mvn clean verify -DtestGroups=jira
+    mvn clean verify -P it -DtestGroups=jira
 
 or
 
-    mvn clean verify -DtestGroups=confluence
+    mvn clean verify -P it -DtestGroups=confluence
 
 To run a single test/method, do something like:
 
-    mvn clean verify -DtestGroups=jira -Dit.test=TestPageModules#testMyGeneralLoaded
+    mvn clean verify -P it -DtestGroups=jira -Dit.test=TestPageModules#testMyGeneralLoaded
 
 To run an integration test against a particular product in IDEA. (Note only applies to tests that can run against more than one product)
     Edit configurations -> VM Options = -DtestedProduct=<product>
