@@ -1,7 +1,10 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import org.springframework.stereotype.Component;
+
 import java.util.UUID;
 
+@Component
 public class SharedSecretServiceImpl implements SharedSecretService
 {
     @Override
