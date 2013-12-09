@@ -114,24 +114,14 @@ public class DefaultConnectApplinkManagerTest
     @Test
     public void creatingAnAddOnWithJwtAuthenticationSetsAuthenticationMethod()
     {
-        MutableApplicationLink appLink = mock(MutableApplicationLink.class);
-        Plugin plugin = mock(Plugin.class);
-        when(plugin.getKey()).thenReturn("my-connect-addon");
-        when(applicationLinkService.addApplicationLink(any(ApplicationId.class), any(ApplicationType.class), any(ApplicationLinkDetails.class))).thenReturn(appLink);
-        when(applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class)).thenReturn(Collections.<ApplicationLink>emptyList());
-        connectApplinkManager.createAppLink(plugin, "/baseUrl", AuthenticationType.JWT, "signing key");
+        MutableApplicationLink appLink = createAppLink();
         verify(appLink).putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
     }
 
     @Test
     public void creatingAnAddOnWithJwtAuthenticationSetsTheSharedSecret()
     {
-        MutableApplicationLink appLink = mock(MutableApplicationLink.class);
-        Plugin plugin = mock(Plugin.class);
-        when(plugin.getKey()).thenReturn("my-connect-addon");
-        when(applicationLinkService.addApplicationLink(any(ApplicationId.class), any(ApplicationType.class), any(ApplicationLinkDetails.class))).thenReturn(appLink);
-        when(applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class)).thenReturn(Collections.<ApplicationLink>emptyList());
-        connectApplinkManager.createAppLink(plugin, "/baseUrl", AuthenticationType.JWT, "signing key");
+        MutableApplicationLink appLink = createAppLink();
         verify(appLink).putProperty("atlassian.jwt.shared.secret", "signing key");
     }
 
@@ -151,5 +141,16 @@ public class DefaultConnectApplinkManagerTest
                 pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
 
         when(connectApplicationType.getId()).thenReturn(RemotePluginContainerApplicationTypeImpl.TYPE_ID);
+    }
+
+    private MutableApplicationLink createAppLink()
+    {
+        MutableApplicationLink appLink = mock(MutableApplicationLink.class);
+        Plugin plugin = mock(Plugin.class);
+        when(plugin.getKey()).thenReturn("my-connect-addon");
+        when(applicationLinkService.addApplicationLink(any(ApplicationId.class), any(ApplicationType.class), any(ApplicationLinkDetails.class))).thenReturn(appLink);
+        when(applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class)).thenReturn(Collections.<ApplicationLink>emptyList());
+        connectApplinkManager.createAppLink(plugin, "/baseUrl", AuthenticationType.JWT, "signing key");
+        return appLink;
     }
 }
