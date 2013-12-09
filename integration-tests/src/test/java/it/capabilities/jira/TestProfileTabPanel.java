@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteTabPanel;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage2;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
@@ -53,7 +53,7 @@ public class TestProfileTabPanel extends TestBase
     public void testProfileTabPanel() throws RemoteException
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        JiraViewProfilePage2 profilePage = jira().visit(JiraViewProfilePage2.class, Option.<String>none());
+        JiraViewProfilePage profilePage = jira().visit(JiraViewProfilePage.class, Option.<String>none());
         RemoteTabPanel tabPanel = profilePage.findTabPanel("up_profile-tab-profile-tab-panel_a", Optional.<String>absent(), "profile-tab-profile-tab-panel");
         RemotePluginEmbeddedTestPage remotePage = tabPanel.click();
         assertThat(remotePage.isLoaded(), equalTo(true));
