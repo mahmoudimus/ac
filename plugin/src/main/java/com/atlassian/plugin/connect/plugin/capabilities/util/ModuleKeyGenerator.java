@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utility class to help with module key generation and conversion.
- * None of our capability beans should expose a key and instead we should be using this utlity everywhere we need a module key.
+ * None of our module beans should expose a key and instead we should be using this utlity everywhere we need a module key.
  */
 public class ModuleKeyGenerator
 {

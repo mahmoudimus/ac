@@ -1,7 +1,7 @@
 package it.capabilities.confluence;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPa
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
@@ -48,15 +48,15 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 
     private static final String SPACE = "ds";
 
-    private static ConnectCapabilitiesRunner remotePlugin;
-    private static WebPanelCapabilityBean editorWebPanel;
-    private static WebPanelCapabilityBean viewWebPanel;
-    private static WebPanelCapabilityBean profileWebPanel;
+    private static ConnectRunner remotePlugin;
+    private static WebPanelModuleBean editorWebPanel;
+    private static WebPanelModuleBean viewWebPanel;
+    private static WebPanelModuleBean profileWebPanel;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        editorWebPanel = WebPanelCapabilityBean.newWebPanelBean()
+        editorWebPanel = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("Editor Panel", "editor-panel"))
                 .withLocation("atl.editor")
                 .withUrl(IFRAME_URL_EDIT + IFRAME_URL_PARAMETERS)
@@ -64,7 +64,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .withWeight(1)
                 .build();
 
-        viewWebPanel = WebPanelCapabilityBean.newWebPanelBean()
+        viewWebPanel = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("View Panel", "view-panel"))
                 .withLocation("atl.general")
                 .withUrl(IFRAME_URL_VIEW + IFRAME_URL_PARAMETERS)
@@ -72,7 +72,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .withWeight(1)
                 .build();
 
-        profileWebPanel = WebPanelCapabilityBean.newWebPanelBean()
+        profileWebPanel = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("Profile Panel", "profile-panel"))
                 .withLocation("atl.userprofile")
                 .withUrl(IFRAME_URL_PROFILE + IFRAME_URL_PARAMETERS)
@@ -80,10 +80,10 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .withWeight(1)
                 .build();
 
-        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "cwp-plugin")
-                .addCapability(WEB_PANELS, editorWebPanel)
-                .addCapability(WEB_PANELS, viewWebPanel)
-                .addCapability(WEB_PANELS, profileWebPanel)
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "cwp-plugin")
+                .addModule(WEB_PANELS, editorWebPanel)
+                .addModule(WEB_PANELS, viewWebPanel)
+                .addModule(WEB_PANELS, profileWebPanel)
                 .addRoute(IFRAME_URL_EDIT, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_EDIT))
                 .addRoute(IFRAME_URL_VIEW, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_VIEW))
                 .addRoute(IFRAME_URL_PROFILE, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_PROFILE))

@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import com.google.common.base.Optional;
 
@@ -17,7 +17,7 @@ import it.capabilities.CheckUsernameConditionServlet;
 import it.confluence.ConfluenceWebDriverTestBase;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 {
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
     private static final String ONLY_BETTY_WEBITEM = "only-betty";
     private static final String ONLY_BARNEY_WEBITEM = "only-barney";
     private static final String BETTY_AND_BARNEY_WEBITEM = "betty-and-barney";
@@ -36,7 +36,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
                 .addCapabilities("webItems",newWebItemBean()
                         .withName(new I18nProperty("Only Betty", ONLY_BETTY_WEBITEM))
                         .withLocation("system.browse")

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.*;
 import com.atlassian.plugin.connect.plugin.module.jira.componenttab.IFrameComponentTab;
@@ -20,10 +20,10 @@ import com.google.common.collect.ImmutableMap;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 
 @JiraComponent
-public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<ConnectTabPanelCapabilityBean>
+public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<ConnectTabPanelModuleBean>
 {
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;
     
@@ -46,11 +46,11 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<ConnectTabPanelCapabilityBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<ConnectTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
         
-        for(ConnectTabPanelCapabilityBean bean : beans)
+        for(ConnectTabPanelModuleBean bean : beans)
         {
             if(FIELD_TO_HINTS.containsKey(jsonFieldName))
             {

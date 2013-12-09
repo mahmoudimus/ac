@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import java.util.List;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
@@ -24,7 +23,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 
 @Component
-public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebItemCapabilityBean,WebItemModuleDescriptor>
+public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebItemModuleBean,WebItemModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(WebItemModuleDescriptorFactory.class);
     
@@ -42,7 +41,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
     }
 
     @Override
-    public WebItemModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebItemCapabilityBean bean)
+    public WebItemModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebItemModuleBean bean)
     {
         Element webItemElement = new DOMElement("web-item");
 

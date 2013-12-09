@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
@@ -17,7 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasAttributeValue;
 import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasSubElementAttributeValue;
 import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasSubElementTextValue;
@@ -74,7 +74,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
         });
         
         tabPanelModuleDescriptorFactory = createDescriptorFactory(connectAutowireUtil);
-        createCapabilityModuleDescriptor();
+        createModuleDescriptor();
     }
 
     protected ConnectTabPanelModuleDescriptorFactory createDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
@@ -82,7 +82,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
         return new ConnectTabPanelModuleDescriptorFactory(mock(ConditionModuleFragmentFactory.class),connectAutowireUtil);
     }
 
-    protected ConnectTabPanelCapabilityBean createCapabilityBean(String name, String i18NameKey, String url, int weight)
+    protected ConnectTabPanelModuleBean createModuleBean(String name, String i18NameKey, String url, int weight)
     {
         return newTabPanelBean()
                 .withName(new I18nProperty(name, i18NameKey))
@@ -91,9 +91,9 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
                 .build();
     }
 
-    private ConnectTabPanelCapabilityBean createCapabilityModuleDescriptor()
+    private ConnectTabPanelModuleBean createModuleDescriptor()
     {
-        ConnectTabPanelCapabilityBean bean = createCapabilityBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_URL, ADDON_WEIGHT);
+        ConnectTabPanelModuleBean bean = createModuleBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_URL, ADDON_WEIGHT);
         connectTabPanelModuleDescriptor = tabPanelModuleDescriptorFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean, descriptorHints);
         return bean;
     }

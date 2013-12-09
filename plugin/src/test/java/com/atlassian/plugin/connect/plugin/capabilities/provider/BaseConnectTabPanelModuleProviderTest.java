@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectTabPanelModuleDescriptorFactory;
@@ -22,7 +22,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -89,7 +89,7 @@ public abstract class BaseConnectTabPanelModuleProviderTest
         return moduleProvider.provideModules(plugin, bundleContext, jsonFieldName, ImmutableList.of(createBean()));
     }
     
-    private ConnectTabPanelCapabilityBean createBean()
+    private ConnectTabPanelModuleBean createBean()
     {
         return newTabPanelBean()
                 .withName(new I18nProperty(ADDON_NAME, ADDON_I18_NAME_KEY))

@@ -5,7 +5,7 @@ import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.hamcrest.Description;
@@ -15,7 +15,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean.newProjectAdminTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -26,13 +26,13 @@ import static org.junit.Assert.assertThat;
 public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 {
     private static final String REMOTE_PROJECT_CONFIG_TAB_NAME = "My Connect Project Config";
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+                .addModule(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
                         .withName(new I18nProperty(REMOTE_PROJECT_CONFIG_TAB_NAME, null))
                         .withUrl("/pct")
                         .withWeight(10)

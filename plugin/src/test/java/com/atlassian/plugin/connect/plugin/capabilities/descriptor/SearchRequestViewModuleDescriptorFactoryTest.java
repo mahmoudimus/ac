@@ -10,7 +10,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
@@ -25,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewCapabilityBean.newSearchRequestViewCapabilityBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -83,7 +82,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                 authenticationContext, conditionModuleFragmentFactory, applicationProperties,
                 searchRequestViewBodyWriterUtil, templateRenderer, remotablePluginAccessorFactoryForTests, componentAccessor);
 
-        SearchRequestViewCapabilityBean bean = newSearchRequestViewCapabilityBean()
+        SearchRequestViewModuleBean bean = SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
                 .withWeight(55)
                 .withUrl("http://search.example.com")
                 .withName(new I18nProperty("A Search Request View", null))

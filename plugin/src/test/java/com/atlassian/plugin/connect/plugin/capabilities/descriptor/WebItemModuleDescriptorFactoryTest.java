@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemCapabilityBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
@@ -26,7 +26,7 @@ import org.osgi.framework.BundleContext;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean.newWebItemTargetBean;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -83,7 +83,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void completeKeyIsCorrect()
     {
-        WebItemCapabilityBean bean = createWebItemBeanBuilder().build();
+        WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         descriptor.enabled();
 
@@ -93,7 +93,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void sectionIsCorrect()
     {
-        WebItemCapabilityBean bean = createWebItemBeanBuilder().build();
+        WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         descriptor.enabled();
 
@@ -103,7 +103,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void urlPrefixIsCorrect()
     {
-        WebItemCapabilityBean bean = createWebItemBeanBuilder().build();
+        WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         descriptor.enabled();
 
@@ -130,7 +130,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void weightIsCorrect()
     {
-        WebItemCapabilityBean bean = createWebItemBeanBuilder().build();
+        WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         descriptor.enabled();
 
@@ -140,7 +140,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void iconIsCorrect()
     {
-        WebItemCapabilityBean bean = createWebItemBeanBuilder().build();
+        WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         descriptor.enabled();
 
@@ -150,7 +150,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void styleClassIsCorrect()
     {
-        WebItemCapabilityBean bean = createWebItemBeanBuilder().build();
+        WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         descriptor.enabled();
 
@@ -160,7 +160,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void styleClassIsCorrectWithNoTarget()
     {
-        WebItemCapabilityBean bean = createWebItemBeanBuilder()
+        WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().build())
                 .build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
@@ -172,7 +172,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void styleClassIsCorrectWithDialogTarget()
     {
-        WebItemCapabilityBean bean = createWebItemBeanBuilder()
+        WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                 .build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
@@ -184,7 +184,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void styleClassIsCorrectWithInlineDialogTarget()
     {
-        WebItemCapabilityBean bean = createWebItemBeanBuilder()
+        WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
@@ -196,7 +196,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void styleClassIsCorrectWithStylesAndInlineDialogTarget()
     {
-        WebItemCapabilityBean bean = createWebItemBeanBuilder()
+        WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withStyleClasses("batman", "robin")
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
@@ -208,7 +208,7 @@ public class WebItemModuleDescriptorFactoryTest
         assertThat(descriptor.getStyleClass(), containsString("ap-inline-dialog"));
     }
 
-    private WebItemCapabilityBeanBuilder createWebItemBeanBuilder()
+    private WebItemModuleBeanBuilder createWebItemBeanBuilder()
     {
         return newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
