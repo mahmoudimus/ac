@@ -21,46 +21,48 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ConfluenceImport;
  * This class does nothing but is here to centralize the Confluence component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
+@SuppressWarnings ("ALL")
 @ConfluenceComponent
 public class ConfluenceImports
 {
     private final ConfluenceWebFragmentHelper confluenceWebFragmentHelper;
-    private final SettingsManager settingsManager;
     private final BandanaManager bandanaManager;
-    private final SpaceManager spaceManager;
-    private final PageManager pageManager;
-    private final SystemInformationService systemInformationService;
-    private final XhtmlContent xhtmlContent;
     private final I18NBeanFactory i18NBeanFactory;
-    private final WebSudoManager webSudoManager;
     private final MultiQueueTaskManager multiQueueTaskManager;
+    private final PageManager pageManager;
+    private final SettingsManager settingsManager;
+    private final SpaceManager spaceManager;
     private final StorageFormatCleaner storageFormatCleaner;
+    private final SystemInformationService systemInformationService;
+    private final WebSudoManager webSudoManager;
+    private final XhtmlContent xhtmlContent;
     
     @Inject
     public ConfluenceImports(
             // this one's a component from an external jar, not an OSGi service
             @ConfluenceComponent ConfluenceWebFragmentHelper confluenceWebFragmentHelper,
-            @ConfluenceImport SettingsManager settingsManager,
             @ConfluenceImport BandanaManager bandanaManager,
-            @ConfluenceImport SpaceManager spaceManager,
-            @ConfluenceImport PageManager pageManager,
-            @ConfluenceImport SystemInformationService systemInformationService,
-            @ConfluenceImport XhtmlContent xhtmlContent,
             @ConfluenceImport I18NBeanFactory i18NBeanFactory,
-            @ConfluenceImport WebSudoManager webSudoManager,
             @ConfluenceImport MultiQueueTaskManager multiQueueTaskManager,
-            @ConfluenceImport StorageFormatCleaner storageFormatCleaner)
+            @ConfluenceImport PageManager pageManager,
+            @ConfluenceImport SettingsManager settingsManager,
+            @ConfluenceImport SpaceManager spaceManager,
+            @ConfluenceImport StorageFormatCleaner storageFormatCleaner,
+            @ConfluenceImport SystemInformationService systemInformationService,
+            @ConfluenceImport WebSudoManager webSudoManager,
+            @ConfluenceImport XhtmlContent xhtmlContent
+    )
     {
         this.confluenceWebFragmentHelper = confluenceWebFragmentHelper;
-        this.settingsManager = settingsManager;
         this.bandanaManager = bandanaManager;
-        this.spaceManager = spaceManager;
-        this.pageManager = pageManager;
-        this.systemInformationService = systemInformationService;
-        this.xhtmlContent = xhtmlContent;
         this.i18NBeanFactory = i18NBeanFactory;
-        this.webSudoManager = webSudoManager;
         this.multiQueueTaskManager = multiQueueTaskManager;
+        this.pageManager = pageManager;
+        this.settingsManager = settingsManager;
+        this.spaceManager = spaceManager;
         this.storageFormatCleaner = storageFormatCleaner;
+        this.systemInformationService = systemInformationService;
+        this.webSudoManager = webSudoManager;
+        this.xhtmlContent = xhtmlContent;
     }
 }
