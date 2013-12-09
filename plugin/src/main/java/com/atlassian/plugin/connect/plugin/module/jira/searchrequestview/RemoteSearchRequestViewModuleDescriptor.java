@@ -10,6 +10,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -37,26 +38,32 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
     private final ConditionDescriptorFactory conditionDescriptorFactory;
+    private final JiraAuthenticationContext authenticationContext;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final SearchRequestURLHandler urlHandler;
     private Element descriptor;
     private URI url;
     private DynamicDescriptorRegistration.Registration registration;
 
     public RemoteSearchRequestViewModuleDescriptor(
+            JiraAuthenticationContext authenticationContext,
             ModuleFactory moduleFactory,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             ApplicationProperties applicationProperties,
             SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
-            TemplateRenderer templateRenderer, ConditionDescriptorFactory conditionDescriptorFactory,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory)
+            TemplateRenderer templateRenderer,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            DelegatingComponentAccessor componentAccessor)
     {
         super(moduleFactory);
+        this.authenticationContext = authenticationContext;
+        this.urlHandler = checkNotNull(componentAccessor.getComponent(SearchRequestURLHandler.class));
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.applicationProperties = checkNotNull(applicationProperties);
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
         this.templateRenderer = checkNotNull(templateRenderer);
-        this.conditionDescriptorFactory = checkNotNull(conditionDescriptorFactory);
+        this.conditionDescriptorFactory = checkNotNull(componentAccessor.getComponent(ConditionDescriptorFactory.class));
     }
 
     @Override
@@ -122,8 +129,8 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
             };
 
             SearchRequestViewModuleDescriptor descriptor = new SearchRequestViewModuleDescriptorImpl(
-                    getComponent(JiraAuthenticationContext.class),
-                    getComponent(SearchRequestURLHandler.class),
+                    authenticationContext,
+                    urlHandler,
                     moduleFactory,
                     conditionDescriptorFactory);
 

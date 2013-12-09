@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.imports;
 
-import javax.inject.Inject;
-
 import com.atlassian.jira.bc.issue.attachment.AttachmentService;
 import com.atlassian.jira.bc.issue.worklog.WorklogService;
 import com.atlassian.jira.bc.project.ProjectService;
@@ -33,101 +31,105 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.plugin.web.WebFragmentHelper;
 
+import javax.inject.Inject;
+
 
 /**
  * This class does nothing but is here to centralize the JIRA component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
+@SuppressWarnings ("ALL")
 @JiraComponent
 public class JiraImports
 {
-    private final ProjectService projectService;
-    private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final UserManager userManager;
-    private final TimeZoneService timeZoneService;
-    private final InternalWebSudoManager internalWebSudoManager;
-    private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
-    private final MailQueue mailQueue;
-    private final ProjectRoleManager projectRoleManager;
-    private final JiraBaseUrls jiraBaseUrls;
-    private final UserUtil userUtil;
-    private final SubTaskManager subTaskManager;
     private final ApplicationProperties jiraApplicationProperties;
-    private final WorklogService worklogService;
-    private final UserIssueHistoryManager userIssueHistoryManager;
-    private final PermissionManager jiraPermissionManager;
-    private final FieldVisibilityManager fieldVisibilityManager;
-    private final VelocityRequestContextFactory velocityRequestContextFactory;
-    private final SessionSearchObjectManagerFactory sessionSearchObjectManagerFactory;
-    private final IssueLinkTypeManager issueLinkTypeManager;
-    private final UserPreferencesManager userPreferencesManager;
-    private final SubTaskToIssueConversionService subTaskToIssueConversionService;
     private final AttachmentService attachmentService;
+    private final FieldManager fieldManager;
+    private final FieldVisibilityManager fieldVisibilityManager;
+    private final InternalWebSudoManager internalWebSudoManager;
+    private final IssueLinkTypeManager issueLinkTypeManager;
     private final IssueManager issueManager;
+    private final IssueToSubTaskConversionService issueToSubTaskConversionService;
+    private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final JiraBaseUrls jiraBaseUrls;
+    private final MailQueue mailQueue;
+    private final PermissionManager jiraPermissionManager;
+    private final ProjectRoleManager projectRoleManager;
+    private final ProjectService projectService;
+    private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
+    private final SessionSearchObjectManagerFactory sessionSearchObjectManagerFactory;
+    private final SubTaskManager subTaskManager;
+    private final SubTaskToIssueConversionService subTaskToIssueConversionService;
+    private final TimeZoneService timeZoneService;
+    private final UserIssueHistoryManager userIssueHistoryManager;
+    private final UserManager userManager;
+    private final UserPreferencesManager userPreferencesManager;
+    private final UserUtil userUtil;
+    private final VelocityRequestContextFactory velocityRequestContextFactory;
     private final VoteManager voteManager;
     private final WatcherManager watcherManager;
-    private final FieldManager fieldManager;
-    private final IssueToSubTaskConversionService issueToSubTaskConversionService;
     private final WebFragmentHelper webFragmentHelper;
+    private final WorklogService worklogService;
 
     @Inject
     public JiraImports(
-            @JiraImport ProjectService projectService,
-            @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
-            @JiraImport("jiraUserManager") UserManager userManager,
-            @JiraImport TimeZoneService timeZoneService,
-            @JiraImport InternalWebSudoManager internalWebSudoManager,
-            @JiraImport SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
-            @JiraImport MailQueue mailQueue,
-            @JiraImport ProjectRoleManager projectRoleManager,
-            @JiraImport JiraBaseUrls jiraBaseUrls,
-            @JiraImport UserUtil userUtil,
-            @JiraImport SubTaskManager subTaskManager,
-            @JiraImport("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
-            @JiraImport WorklogService worklogService,
-            @JiraImport UserIssueHistoryManager userIssueHistoryManager,
-            @JiraImport PermissionManager jiraPermissionManager,
-            @JiraImport FieldVisibilityManager fieldVisibilityManager,
-            @JiraImport VelocityRequestContextFactory velocityRequestContextFactory,
-            @JiraImport SessionSearchObjectManagerFactory sessionSearchObjectManagerFactory,
-            @JiraImport IssueLinkTypeManager issueLinkTypeManager,
-            @JiraImport UserPreferencesManager userPreferencesManager,
-            @JiraImport SubTaskToIssueConversionService subTaskToIssueConversionService,
+            @JiraImport ("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
             @JiraImport AttachmentService attachmentService,
+            @JiraImport FieldManager fieldManager,
+            @JiraImport FieldVisibilityManager fieldVisibilityManager,
+            @JiraImport InternalWebSudoManager internalWebSudoManager,
+            @JiraImport IssueLinkTypeManager issueLinkTypeManager,
             @JiraImport IssueManager issueManager,
+            @JiraImport IssueToSubTaskConversionService issueToSubTaskConversionService,
+            @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
+            @JiraImport JiraBaseUrls jiraBaseUrls,
+            @JiraImport MailQueue mailQueue,
+            @JiraImport PermissionManager jiraPermissionManager,
+            @JiraImport ProjectRoleManager projectRoleManager,
+            @JiraImport ProjectService projectService,
+            @JiraImport SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
+            @JiraImport SessionSearchObjectManagerFactory sessionSearchObjectManagerFactory,
+            @JiraImport SubTaskManager subTaskManager,
+            @JiraImport SubTaskToIssueConversionService subTaskToIssueConversionService,
+            @JiraImport TimeZoneService timeZoneService,
+            @JiraImport UserIssueHistoryManager userIssueHistoryManager,
+            @JiraImport UserPreferencesManager userPreferencesManager,
+            @JiraImport ("jiraUserManager") UserManager userManager,
+            @JiraImport UserUtil userUtil,
+            @JiraImport VelocityRequestContextFactory velocityRequestContextFactory,
             @JiraImport VoteManager voteManager,
             @JiraImport WatcherManager watcherManager,
-            @JiraImport FieldManager fieldManager,
-            @JiraImport IssueToSubTaskConversionService issueToSubTaskConversionService, 
-            @JiraImport WebFragmentHelper webFragmentHelper)
+            @JiraImport WebFragmentHelper webFragmentHelper,
+            @JiraImport WorklogService worklogService
+    )
     {
-        this.projectService = projectService;
-        this.jiraAuthenticationContext = jiraAuthenticationContext;
-        this.userManager = userManager;
-        this.timeZoneService = timeZoneService;
+        this.attachmentService = attachmentService;
+        this.fieldManager = fieldManager;
+        this.fieldVisibilityManager = fieldVisibilityManager;
         this.internalWebSudoManager = internalWebSudoManager;
-        this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
+        this.issueLinkTypeManager = issueLinkTypeManager;
+        this.issueManager = issueManager;
+        this.issueToSubTaskConversionService = issueToSubTaskConversionService;
+        this.jiraApplicationProperties = jiraApplicationProperties;
+        this.jiraAuthenticationContext = jiraAuthenticationContext;
+        this.jiraBaseUrls = jiraBaseUrls;
+        this.jiraPermissionManager = jiraPermissionManager;
         this.mailQueue = mailQueue;
         this.projectRoleManager = projectRoleManager;
-        this.jiraBaseUrls = jiraBaseUrls;
-        this.userUtil = userUtil;
-        this.subTaskManager = subTaskManager;
-        this.jiraApplicationProperties = jiraApplicationProperties;
-        this.worklogService = worklogService;
-        this.userIssueHistoryManager = userIssueHistoryManager;
-        this.jiraPermissionManager = jiraPermissionManager;
-        this.fieldVisibilityManager = fieldVisibilityManager;
-        this.velocityRequestContextFactory = velocityRequestContextFactory;
+        this.projectService = projectService;
+        this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
         this.sessionSearchObjectManagerFactory = sessionSearchObjectManagerFactory;
-        this.issueLinkTypeManager = issueLinkTypeManager;
-        this.userPreferencesManager = userPreferencesManager;
+        this.subTaskManager = subTaskManager;
         this.subTaskToIssueConversionService = subTaskToIssueConversionService;
-        this.attachmentService = attachmentService;
-        this.issueManager = issueManager;
+        this.timeZoneService = timeZoneService;
+        this.userIssueHistoryManager = userIssueHistoryManager;
+        this.userManager = userManager;
+        this.userPreferencesManager = userPreferencesManager;
+        this.userUtil = userUtil;
+        this.velocityRequestContextFactory = velocityRequestContextFactory;
         this.voteManager = voteManager;
         this.watcherManager = watcherManager;
-        this.fieldManager = fieldManager;
-        this.issueToSubTaskConversionService = issueToSubTaskConversionService;
         this.webFragmentHelper = webFragmentHelper;
+        this.worklogService = worklogService;
     }
 }
