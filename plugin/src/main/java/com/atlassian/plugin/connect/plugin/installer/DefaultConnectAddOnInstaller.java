@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
@@ -38,11 +37,12 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectDescriptorRegistry connectDescriptorRegistry;
     private final ConnectEventHandler connectEventHandler;
+    private final SharedSecretService sharedSecretService;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
-    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext, ConnectApplinkManager connectApplinkManager, ConnectDescriptorRegistry connectDescriptorRegistry, ConnectEventHandler connectEventHandler)
+    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext, ConnectApplinkManager connectApplinkManager, ConnectDescriptorRegistry connectDescriptorRegistry, ConnectEventHandler connectEventHandler, SharedSecretService sharedSecretService)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -54,6 +54,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectApplinkManager = connectApplinkManager;
         this.connectDescriptorRegistry = connectDescriptorRegistry;
         this.connectEventHandler = connectEventHandler;
+        this.sharedSecretService = sharedSecretService;
     }
 
     @Override
@@ -99,7 +100,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             {
                 AuthenticationType authType = addOn.getAuthentication().getType();
                 final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType); // TODO ACDEV-378: also check the algorithm
-                String sharedSecret = useSharedSecret ? UUID.randomUUID().toString() : null;
+                String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getSharedKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
                 //applink MUST be created before any modules
