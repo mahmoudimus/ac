@@ -374,6 +374,24 @@
                       "type": "string",
                       "description": "Specifies the URL targeted by the link. The URL can be absolute or relative to either the\n  product URL or the add-on's base URL, depending on the {@link AddOnUrlContext} parameter."
                     },
+                    "target": {
+                      "properties": {
+                        "type": {
+                          "enumList": [
+                            "page",
+                            "dialog",
+                            "inlinedialog"
+                          ],
+                          "type": "string"
+                        },
+                        "options": {
+                          "additionalProperties": true
+                        }
+                      },
+                      "id": "webItemTargetBean",
+                      "type": "object",
+                      "description": "Defines the way the link is opened in the browser, such as in a modal or inline dialog.\n  If omitted, the link behaves as a regular hyperlink."
+                    },
                     "context": {
                       "enumList": [
                         "addon",
@@ -381,10 +399,6 @@
                       ],
                       "type": "string",
                       "description": "The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.\n\n <p/>\n\n  This context can be either \"add-on\", which renders the URL relative to the add-on's base URL, or\n  \"product\", which renders the URL relative to the product's base URL."
-                    },
-                    "dialog": {
-                      "type": "boolean",
-                      "description": "If true, the link opens a modal dialog. Otherwise the link behaves as a regular hyperlink."
                     },
                     "tooltip": {
                       "properties": {
@@ -678,6 +692,24 @@
                       "type": "string",
                       "description": "Specifies the URL targeted by the link. The URL can be absolute or relative to either the\n  product URL or the add-on's base URL, depending on the {@link AddOnUrlContext} parameter."
                     },
+                    "target": {
+                      "properties": {
+                        "type": {
+                          "enumList": [
+                            "page",
+                            "dialog",
+                            "inlinedialog"
+                          ],
+                          "type": "string"
+                        },
+                        "options": {
+                          "additionalProperties": true
+                        }
+                      },
+                      "id": "webItemTargetBean",
+                      "type": "object",
+                      "description": "Defines the way the link is opened in the browser, such as in a modal or inline dialog.\n  If omitted, the link behaves as a regular hyperlink."
+                    },
                     "context": {
                       "enumList": [
                         "addon",
@@ -685,10 +717,6 @@
                       ],
                       "type": "string",
                       "description": "The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.\n\n <p/>\n\n  This context can be either \"add-on\", which renders the URL relative to the add-on's base URL, or\n  \"product\", which renders the URL relative to the product's base URL."
-                    },
-                    "dialog": {
-                      "type": "boolean",
-                      "description": "If true, the link opens a modal dialog. Otherwise the link behaves as a regular hyperlink."
                     },
                     "tooltip": {
                       "properties": {
