@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringUtils;
@@ -82,6 +83,15 @@ public class ConnectEventHandlerJwtTest
         verify(requestBuilder).execute(Request.Method.POST);
     }
 
+    @Test(expected = PluginInstallException.class)
+    public void installCallbackMustPreventSnooping()
+    {
+        // make a call over http (note the lack of "s") and it shall be rejected
+        ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
+                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever);
+        connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, "http://server:1234/baseUrl"), SHARED_SECRET);
+    }
+
     private static ArgumentMatcher<String> hasValidSharedSecret()
     {
         return new ArgumentMatcher<String>()
@@ -108,6 +118,6 @@ public class ConnectEventHandlerJwtTest
         when(response.getStatusCode()).thenReturn(200);
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
                 applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever);
-        connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, "/baseUrl"), SHARED_SECRET);
+        connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, "https://server:1234/baseUrl"), SHARED_SECRET);
     }
 }

@@ -10,6 +10,7 @@ import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonEventDataBuilder;
@@ -215,6 +216,13 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     {
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
+
+        // try make a call distributing shared secrets over http (note the lack of "s") and it shall be rejected
+        if (null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
+        {
+            throw new PluginInstallException(String.format("Cannot issue install except via HTTPS. Current base URL = '%s'", addon.getBaseUrl()));
+        }
+
         try
         {
             String pluginKey = addon.getKey();
