@@ -87,10 +87,18 @@ public final class AtlassianConnectRestClient
 
     public void uninstall(String appKey) throws Exception
     {
-        HttpDelete post = new HttpDelete(baseUrl + UPM_URL_PATH + appKey + "-key");
+        HttpDelete delete = new HttpDelete(getUpmPluginResource(appKey));
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        sendRequestAsUser(post, responseHandler, defaultUsername, defaultPassword);
+        sendRequestAsUser(delete, responseHandler, defaultUsername, defaultPassword);
+    }
+
+    public String getUpmPluginJson(String appKey) throws Exception
+    {
+        HttpGet get = new HttpGet(getUpmPluginResource(appKey));
+
+        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+        return sendRequestAsUser(get, responseHandler, defaultUsername, defaultPassword);
     }
 
     private String getUpmToken() throws IOException
@@ -154,5 +162,10 @@ public final class AtlassianConnectRestClient
         boolean removeExtraSlash = baseURL.endsWith("/");
         String url = baseURL.substring(0, baseURL.length() - (removeExtraSlash ? 1 : 0)) + path;
         return url + (cacheBuster ? "?_=" + RAND.nextLong() : "");
+    }
+
+    private String getUpmPluginResource(final String appKey)
+    {
+        return baseUrl + UPM_URL_PATH + appKey + "-key";
     }
 }

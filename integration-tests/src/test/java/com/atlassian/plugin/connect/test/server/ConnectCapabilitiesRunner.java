@@ -23,7 +23,6 @@ import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -32,8 +31,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import it.servlet.ContextServlet;
 import it.servlet.HttpContextServlet;
@@ -89,6 +86,14 @@ public class ConnectCapabilitiesRunner
     public void uninstall() throws Exception
     {
         installer.uninstall(addon.getKey());
+    }
+
+    /**
+     * @return the UPM's JSON representation of this add-on.
+     */
+    public String getUpmPluginJson() throws Exception
+    {
+        return installer.getUpmPluginJson(addon.getKey());
     }
 
     public void stopRunnerServer() throws Exception
