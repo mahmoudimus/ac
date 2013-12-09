@@ -1,5 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
+import java.net.URI;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
+
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
@@ -33,19 +39,16 @@ import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-import java.net.URI;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -78,18 +81,18 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
 
     @Inject
     public ConnectEventHandler(EventPublisher eventPublisher,
-                               PluginEventManager pluginEventManager,
-                               UserManager userManager,
-                               HttpClient httpClient,
-                               RequestSigner requestSigner,
-                               ConsumerService consumerService,
-                               ApplicationProperties applicationProperties,
-                               ProductAccessor productAccessor,
-                               BundleContext bundleContext,
-                               JsonConnectAddOnIdentifierService connectIdentifier,
-                               ConnectDescriptorRegistry descriptorRegistry,
-                               BeanToModuleRegistrar beanToModuleRegistrar,
-                               LicenseRetriever licenseRetriever)
+            PluginEventManager pluginEventManager,
+            UserManager userManager,
+            HttpClient httpClient,
+            RequestSigner requestSigner,
+            ConsumerService consumerService,
+            ApplicationProperties applicationProperties,
+            ProductAccessor productAccessor,
+            BundleContext bundleContext,
+            JsonConnectAddOnIdentifierService connectIdentifier,
+            ConnectDescriptorRegistry descriptorRegistry,
+            BeanToModuleRegistrar beanToModuleRegistrar,
+            LicenseRetriever licenseRetriever)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
@@ -174,7 +177,14 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             {
                 if (!Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
                 {
-                    callSyncHandler(addon, addon.getLifecycle().getUninstalled(), createEventData(pluginKey, UNINSTALLED));
+                    try
+                    {
+                        callSyncHandler(addon, addon.getLifecycle().getUninstalled(), createEventData(pluginKey, UNINSTALLED));
+                    }
+                    catch (PluginInstallException e)
+                    {
+                        log.warn("Failed to notify remote host that add-on was uninstalled.", e);
+                    }
                 }
             }
             else
@@ -204,7 +214,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation
-    private void callSyncHandler(ConnectAddonBean addon, String path, String jsonEventData)
+    private void callSyncHandler(ConnectAddonBean addon, String path, String jsonEventData) throws PluginInstallException
     {
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
