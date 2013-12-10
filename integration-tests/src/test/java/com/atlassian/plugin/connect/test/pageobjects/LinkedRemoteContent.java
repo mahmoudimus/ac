@@ -53,6 +53,6 @@ public class LinkedRemoteContent
     {
         webItem.click();
 
-        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, "servlet-" + pageKey);
+        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, pageKey);
     }
 }

@@ -41,7 +41,7 @@ public abstract class ConfluenceBasePage implements Page
 
     public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)
     {
-        return findRemoteLinkedContent(mode, linkText, dropDownMenuId, pageKey);
+        return findRemoteLinkedContent(mode, linkText, dropDownMenuId, "servlet-" + pageKey);
     }
 
     public LinkedRemoteContent findTabPanel(String webItemId, Option<String> dropDownMenuId, String pageKey)
@@ -51,7 +51,7 @@ public abstract class ConfluenceBasePage implements Page
 
     public LinkedRemoteContent findConnectPage(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
-        return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
+        return findRemoteLinkedContent(webItemId, dropDownMenuId, "servlet-" + pageKey);
     }
 
     private LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
