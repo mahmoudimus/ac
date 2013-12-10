@@ -6,7 +6,8 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
       events = (AJS.EventQueue = AJS.EventQueue || []),
-      defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); };
+      defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); },
+      log = (window.AJS && window.AJS.log) || (window.console && window.console.log) || (function() {});
 
   function contentDiv(ns) {
     return $("#embedded-" + ns);
@@ -160,6 +161,8 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
           var selector = $(".aui-message#" + id).first();
           if(selector.length === 1 && selector.hasClass("aui-message")){
             selector.remove();
+          } else {
+            log("Unable to clear message");
           }
         },
         setDialogButtonEnabled: function (name, enabled) {
@@ -229,6 +232,8 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
           // if the matching selector has an id that starts with the correct string
           if(selector && selector.id.match(/remoteWorkflowPostFunctionConfiguration\-/).length === 1){
             value = $(selector).val();
+          } else {
+            throw ("Workflow configuration not found");
           }
           callback(value);
         },
