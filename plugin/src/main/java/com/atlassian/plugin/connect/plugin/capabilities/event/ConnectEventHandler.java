@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAdd
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -76,21 +77,23 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final ConnectDescriptorRegistry descriptorRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final LicenseRetriever licenseRetriever;
+    private final IsDevModeService isDevModeService;
 
     @Inject
     public ConnectEventHandler(EventPublisher eventPublisher,
-            PluginEventManager pluginEventManager,
-            UserManager userManager,
-            HttpClient httpClient,
-            RequestSigner requestSigner,
-            ConsumerService consumerService,
-            ApplicationProperties applicationProperties,
-            ProductAccessor productAccessor,
-            BundleContext bundleContext,
-            JsonConnectAddOnIdentifierService connectIdentifier,
-            ConnectDescriptorRegistry descriptorRegistry,
-            BeanToModuleRegistrar beanToModuleRegistrar,
-            LicenseRetriever licenseRetriever)
+                               PluginEventManager pluginEventManager,
+                               UserManager userManager,
+                               HttpClient httpClient,
+                               RequestSigner requestSigner,
+                               ConsumerService consumerService,
+                               ApplicationProperties applicationProperties,
+                               ProductAccessor productAccessor,
+                               BundleContext bundleContext,
+                               JsonConnectAddOnIdentifierService connectIdentifier,
+                               ConnectDescriptorRegistry descriptorRegistry,
+                               BeanToModuleRegistrar beanToModuleRegistrar,
+                               LicenseRetriever licenseRetriever,
+                               IsDevModeService devModeService)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
@@ -105,6 +108,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         this.connectIdentifier = connectIdentifier;
         this.descriptorRegistry = descriptorRegistry;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
+        this.isDevModeService = devModeService;
     }
 
     public void pluginInstalled(ConnectAddonBean addon, String sharedSecret)
@@ -217,8 +221,8 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
 
-        // try make a call distributing shared secrets over http (note the lack of "s") and it shall be rejected
-        if (null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
+        // try distributing prod shared secrets over http (note the lack of "s") and it shall be rejected
+        if (!isDevModeService.isDevMode() && null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
         {
             throw new PluginInstallException(String.format("Cannot issue install except via HTTPS. Current base URL = '%s'", addon.getBaseUrl()));
         }

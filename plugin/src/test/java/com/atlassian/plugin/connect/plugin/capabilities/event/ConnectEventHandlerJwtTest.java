@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifi
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -42,6 +43,24 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectEventHandlerJwtTest
 {
+    private static final IsDevModeService DEV_MODE = new IsDevModeService()
+    {
+        @Override
+        public boolean isDevMode()
+        {
+            return true;
+        }
+    };
+    private static final IsDevModeService PROD_MODE = new IsDevModeService()
+    {
+        @Override
+        public boolean isDevMode()
+        {
+            return false;
+        }
+    };
+    private static final String UNSECURED_BASE_URL = "http://server:1234/baseUrl";
+
     private @Mock EventPublisher eventPublisher;
     private @Mock PluginEventManager pluginEventManager;
     private @Mock UserManager userManager;
@@ -84,12 +103,22 @@ public class ConnectEventHandlerJwtTest
     }
 
     @Test(expected = PluginInstallException.class)
-    public void installCallbackMustPreventSnooping()
+    public void installCallbackMustPreventSnoopingInProdMode()
     {
         // make a call over http (note the lack of "s") and it shall be rejected
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
-                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever);
-        connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, "http://server:1234/baseUrl"), SHARED_SECRET);
+                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE);
+        connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, UNSECURED_BASE_URL), SHARED_SECRET);
+    }
+
+
+    @Test
+    public void installCallbackMustPreventSnoopingInDevMode()
+    {
+        // make a call over http (note the lack of "s") and it shall be allowed in dev mode
+        ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
+                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, DEV_MODE);
+        connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, UNSECURED_BASE_URL), SHARED_SECRET); // no exception
     }
 
     private static ArgumentMatcher<String> hasValidSharedSecret()
@@ -117,7 +146,7 @@ public class ConnectEventHandlerJwtTest
         when(responsePromise.claim()).thenReturn(response);
         when(response.getStatusCode()).thenReturn(200);
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
-                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever);
+                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, "https://server:1234/baseUrl"), SHARED_SECRET);
     }
 }
