@@ -6,29 +6,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SchemaTypes
+public class SchemaTypesHelper
 {
-    public static final String OBJECT = "object";
-    public static final String INTEGER = "integer";
-    public static final String NUMBER = "number";
-    public static final String BOOLEAN = "boolean";
-    public static final String STRING = "string";
-    public static final String ARRAY = "array";
+    private static final Map<SchemaType, List<Class<?>>> jsonToJava = createJsonToJava();
 
-    private static final Map<String, List<Class<?>>> jsonToJava = createJsonToJava();
-
-    private static Map<String, List<Class<?>>> createJsonToJava()
+    private static Map<SchemaType, List<Class<?>>> createJsonToJava()
     {
-        Map<String, List<Class<?>>> jsonToJava = new HashMap<String, List<Class<?>>>();
+        Map<SchemaType, List<Class<?>>> jsonToJava = new HashMap<SchemaType, List<Class<?>>>();
         List<Class<?>> intList = Arrays.<Class<?>>asList(byte.class, Byte.class, short.class, Short.class, int.class, Integer.class, long.class, Long.class);
         List<Class<?>> numList = Arrays.<Class<?>>asList(float.class, Float.class, double.class, Double.class, BigDecimal.class);
         List<Class<?>> boolList = Arrays.<Class<?>>asList(boolean.class, Boolean.class);
         List<Class<?>> strList = Arrays.<Class<?>>asList(char.class, Character.class, CharSequence.class, String.class);
 
-        jsonToJava.put(INTEGER, intList);
-        jsonToJava.put(NUMBER, numList);
-        jsonToJava.put(BOOLEAN, boolList);
-        jsonToJava.put(STRING, strList);
+        jsonToJava.put(SchemaType.INTEGER, intList);
+        jsonToJava.put(SchemaType.NUMBER, numList);
+        jsonToJava.put(SchemaType.BOOLEAN, boolList);
+        jsonToJava.put(SchemaType.STRING, strList);
 
         return jsonToJava;
 
@@ -36,7 +29,7 @@ public class SchemaTypes
 
     public static boolean isMappedType(Class<?> clazz)
     {
-        for (Map.Entry<String, List<Class<?>>> entry : jsonToJava.entrySet())
+        for (Map.Entry<SchemaType, List<Class<?>>> entry : jsonToJava.entrySet())
         {
             if (entry.getValue().contains(clazz))
             {
@@ -47,9 +40,9 @@ public class SchemaTypes
         return false;
     }
 
-    public static String getMappedType(Class<?> clazz)
+    public static SchemaType getMappedType(Class<?> clazz)
     {
-        for (Map.Entry<String, List<Class<?>>> entry : jsonToJava.entrySet())
+        for (Map.Entry<SchemaType, List<Class<?>>> entry : jsonToJava.entrySet())
         {
             if (entry.getValue().contains(clazz))
             {
