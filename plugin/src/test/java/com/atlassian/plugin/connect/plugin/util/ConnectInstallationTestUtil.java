@@ -22,7 +22,7 @@ public class ConnectInstallationTestUtil
                 .withLifecycle(LifecycleBean.newLifecycleBean()
                         .withInstalled("/installed")
                         .build())
-                .withCapability("webItems", WebItemCapabilityBean.newWebItemBean()
+                .withModule("webItems", WebItemModuleBean.newWebItemBean()
                         .withLink("/webItem")
                         .withLocation("location")
                         .withName(new I18nProperty("text", "key")) // leaving this out results in a null vs empty-string mismatch between original and serialized-then-deserialized beans

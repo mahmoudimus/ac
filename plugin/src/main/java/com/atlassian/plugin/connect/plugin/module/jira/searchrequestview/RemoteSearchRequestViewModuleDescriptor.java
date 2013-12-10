@@ -23,7 +23,6 @@ import org.dom4j.Element;
 
 import java.net.URI;
 
-import static com.atlassian.jira.ComponentManager.getComponent;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;

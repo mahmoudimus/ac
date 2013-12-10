@@ -240,12 +240,12 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
             return true;
         }
 
-        if (!(otherObj instanceof WebItemCapabilityBean && super.equals(otherObj)))
+        if (!(otherObj instanceof WebItemModuleBean && super.equals(otherObj)))
         {
             return false;
         }
 
-        WebItemCapabilityBean other = (WebItemCapabilityBean) otherObj;
+        WebItemModuleBean other = (WebItemModuleBean) otherObj;
 
         return new EqualsBuilder()
                 .append(link, other.link)

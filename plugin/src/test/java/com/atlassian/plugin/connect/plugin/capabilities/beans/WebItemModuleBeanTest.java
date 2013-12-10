@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemMod
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
 

@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -206,7 +203,7 @@ public class ConnectAddonBean extends BaseModuleBean
                 .append(baseUrl, other.baseUrl)
                 .append(authentication, other.authentication)
                 .append(enableLicensing, other.enableLicensing)
-                .append(capabilities, other.capabilities)
+                .append(modules, other.modules)
                 .isEquals();
     }
 
@@ -225,7 +222,7 @@ public class ConnectAddonBean extends BaseModuleBean
                 .append(baseUrl)
                 .append(authentication)
                 .append(enableLicensing)
-                .append(capabilities)
+                .append(modules)
                 .build();
     }
 }

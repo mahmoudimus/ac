@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.Map;
-
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BeanWithParamsBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

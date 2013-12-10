@@ -1,10 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
-
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
 import com.atlassian.plugin.spring.scanner.ProductFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -26,7 +23,7 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 public class ModuleList extends BaseModuleBean
 {
-    @ConnectModule (WebItemModuleProvider.class)
+    @ConnectModule(WebItemModuleProvider.class)
     private List<WebItemModuleBean> webItems;
 
     /**
@@ -219,12 +216,12 @@ public class ModuleList extends BaseModuleBean
             return true;
         }
 
-        if (!(otherObj instanceof CapabilityList))
+        if (!(otherObj instanceof ModuleList))
         {
             return false;
         }
 
-        CapabilityList other = (CapabilityList) otherObj;
+        ModuleList other = (ModuleList) otherObj;
 
         return new EqualsBuilder()
                 .append(adminPages, other.adminPages)

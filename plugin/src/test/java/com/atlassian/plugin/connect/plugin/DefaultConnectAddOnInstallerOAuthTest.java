@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.installer.DefaultConnectAddOnInstaller;
@@ -71,6 +71,6 @@ public class DefaultConnectAddOnInstallerOAuthTest
         when(pluginAccessor.isPluginEnabled(ADD_ON_KEY)).thenReturn(true);
         new DefaultConnectAddOnInstaller(remotePluginArtifactFactory, pluginController, pluginAccessor, oAuthLinkManager,
                 remoteEventsHandler, beanToModuleRegistrar, bundleContext, connectApplinkManager, connectDescriptorRegistry, connectEventHandler, new SharedSecretServiceImpl())
-            .install("username", CapabilitiesGsonFactory.getGson(bundleContext).toJson(ADD_ON_BEAN));
+            .install("username", ConnectModulesGsonFactory.getGson(bundleContext).toJson(ADD_ON_BEAN));
     }
 }
