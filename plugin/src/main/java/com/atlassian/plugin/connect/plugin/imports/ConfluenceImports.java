@@ -8,6 +8,7 @@ import com.atlassian.confluence.security.websudo.WebSudoManager;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.status.service.SystemInformationService;
+import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.core.task.MultiQueueTaskManager;
@@ -34,6 +35,7 @@ public class ConfluenceImports
     private final StorageFormatCleaner storageFormatCleaner;
     private final SystemInformationService systemInformationService;
     private final WebSudoManager webSudoManager;
+    private final UserAccessor userAccessor;
     private final XhtmlContent xhtmlContent;
     
     @Inject
@@ -49,6 +51,7 @@ public class ConfluenceImports
             @ConfluenceImport StorageFormatCleaner storageFormatCleaner,
             @ConfluenceImport SystemInformationService systemInformationService,
             @ConfluenceImport WebSudoManager webSudoManager,
+            @ConfluenceImport UserAccessor userAccessor,
             @ConfluenceImport XhtmlContent xhtmlContent
     )
     {
@@ -62,6 +65,7 @@ public class ConfluenceImports
         this.storageFormatCleaner = storageFormatCleaner;
         this.systemInformationService = systemInformationService;
         this.webSudoManager = webSudoManager;
+        this.userAccessor = userAccessor;
         this.xhtmlContent = xhtmlContent;
     }
 }

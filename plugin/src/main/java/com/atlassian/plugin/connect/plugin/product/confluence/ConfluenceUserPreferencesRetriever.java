@@ -12,12 +12,14 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
 public class ConfluenceUserPreferencesRetriever implements UserPreferencesRetriever
 {
     private final UserAccessor userAccessor;
 
+    @Autowired
     public ConfluenceUserPreferencesRetriever(final UserAccessor userAccessor)
     {
         this.userAccessor = userAccessor;
