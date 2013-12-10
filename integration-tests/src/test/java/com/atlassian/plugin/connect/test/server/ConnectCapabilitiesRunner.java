@@ -178,7 +178,7 @@ public class ConnectCapabilitiesRunner
     {
         this.signedRequestHandler = some(signedRequestHandler);
 
-        addonBuilder.withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString()).build());
+        addonBuilder.withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString()).build());
 
         //return addPermission(Permissions.CREATE_OAUTH_LINK);
         return this;

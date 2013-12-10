@@ -1,16 +1,14 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
-
 import com.google.gson.Gson;
-
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readCapabilitiesTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
@@ -37,7 +35,7 @@ public class ConnectIssueTabPanelCapabilityBeanTest
                 .withVersion("1.0")
                 .withLinks(links)
                 .withBaseurl("http://www.example.com")
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey("S0m3Publ1cK3y").build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .withCapability(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("My Issue Tab Page", "my.issueTabPage"))

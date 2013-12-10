@@ -110,7 +110,7 @@ public class WebItemCapabilityBeanTest
                 .withAuthentication(
                         newAuthenticationBean()
                                 .withType(AuthenticationType.OAUTH)
-                                .withSharedKey("S0m3Publ1cK3y").build());
+                                .withPublicKey("S0m3Publ1cK3y").build());
     }
 
     private WebItemCapabilityBeanBuilder createWebItemBeanBuilder()

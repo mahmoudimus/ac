@@ -1,6 +1,6 @@
 {
     "authentication": {
-        "sharedKey": "S0m3Publ1cK3y",
+        "publicKey": "S0m3Publ1cK3y",
         "type": "oauth"
     },
     "baseUrl": "http://www.example.com",

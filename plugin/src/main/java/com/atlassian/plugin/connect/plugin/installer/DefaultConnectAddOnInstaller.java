@@ -1,6 +1,10 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import com.atlassian.plugin.*;
+import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.PluginArtifact;
+import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
@@ -101,11 +105,11 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 AuthenticationType authType = addOn.getAuthentication().getType();
                 final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType); // TODO ACDEV-378: also check the algorithm
                 String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
-                String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getSharedKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
+                String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
                 //applink MUST be created before any modules
                 connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey);
-                
+
                 //create the modules
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
 

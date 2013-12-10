@@ -15,7 +15,7 @@ public class ConnectInstallationTestUtil
     {
         return ConnectAddonBean.newConnectAddonBean()
                 .withAuthentication(AuthenticationBean.newAuthenticationBean()
-                        .withSharedKey(publicKey)
+                        .withPublicKey(publicKey)
                         .withType(authenticationType)
                         .build())
                 .withBaseurl(baseUrl)
