@@ -4,5 +4,8 @@
     },
     "getting-started.html": {
         "title": "Getting Started"
+    },
+    "authentication.html": {
+        "title": "Authentication"
     }
 }
