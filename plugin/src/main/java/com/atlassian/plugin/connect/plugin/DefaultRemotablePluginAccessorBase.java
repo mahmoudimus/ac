@@ -81,14 +81,22 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
 
     protected URI getTargetUrl(URI targetPath)
     {
-        UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetPath));
-        String path = uriBuilder.getPath();
+        String addonBaseUrl = getBaseUrl().toString();
+
+        if (targetPath.isAbsolute())
+        {
+            throw new IllegalArgumentException("Target url was absolute (" + targetPath.toString() + "). Expected relative path to base URL of add-on (" + addonBaseUrl + ").");
+        }
+
+        Uri uri = Uri.fromJavaUri(targetPath);
+        UriBuilder targetUriBuilder = new UriBuilder(uri);
+        String path = targetUriBuilder.getPath();
         if (!StringUtils.startsWith(path, "/"))
         {
             path = "/" + path;
         }
-        uriBuilder.setPath(getBaseUrl().toString() + path);
-        return uriBuilder.toUri().toJavaUri();
+
+        return URI.create(addonBaseUrl + path);
     }
 
     // Call this method to ensure that you don't have "some_param=<any value>" in targetPath and also "some_param" => [ <any values> ] in params.
