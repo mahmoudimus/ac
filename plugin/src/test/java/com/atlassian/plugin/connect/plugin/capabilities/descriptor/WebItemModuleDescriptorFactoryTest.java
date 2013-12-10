@@ -25,7 +25,6 @@ import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -38,8 +37,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.*;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
