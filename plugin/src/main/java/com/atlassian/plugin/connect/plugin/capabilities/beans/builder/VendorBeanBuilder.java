@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 /**
  * @since 1.0
  */
-public class VendorBeanBuilder<T extends VendorBeanBuilder, B extends VendorBean> extends BaseCapabilityBeanBuilder<T,B>
+public class VendorBeanBuilder<T extends VendorBeanBuilder, B extends VendorBean> extends BaseModuleBeanBuilder<T,B>
 {
     private String name;
     private String url;

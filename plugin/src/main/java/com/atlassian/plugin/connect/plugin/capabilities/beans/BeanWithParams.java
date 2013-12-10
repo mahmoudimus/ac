@@ -2,12 +2,11 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import java.util.Map;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BeanWithParamsBuilder;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-public class BeanWithParams extends BaseCapabilityBean
+public class BeanWithParams extends BaseModuleBean
 {
     private Map<String, String> params;
 

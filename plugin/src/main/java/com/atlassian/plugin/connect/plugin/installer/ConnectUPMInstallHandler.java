@@ -7,7 +7,8 @@ import javax.inject.Named;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -63,17 +64,14 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             try
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson(bundleContext).fromJson(json, ConnectAddonBean.class);
+                ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson(bundleContext).fromJson(json, ConnectAddonBean.class);
 
                 canInstall = (null != addOn && !Strings.isNullOrEmpty(addOn.getKey()));
             }
             catch (Exception e)
             {
-                if (log.isTraceEnabled())
-                {
-                    log.trace(ConnectUPMInstallHandler.class.getSimpleName() + " can not install descriptor " +
+                log.error(ConnectUPMInstallHandler.class.getSimpleName() + " can not install descriptor " +
                             descriptorFile.getName(), e);
-                }
                 canInstall = false;
             }
         }

@@ -4,8 +4,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import com.google.gson.Gson;
 
@@ -29,12 +28,12 @@ public class TestLicenseResource extends AbstractRemotablePluginTest
     @Test
     public void anonymousReturnsLicense() throws Exception
     {
-        ConnectCapabilitiesRunner runner = null;
+        ConnectRunner runner = null;
         try
         {
             addPluginLicenses();
 
-            runner = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+            runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                     .addOAuth()
                     .enableLicensing()
                     .start();
@@ -43,7 +42,7 @@ public class TestLicenseResource extends AbstractRemotablePluginTest
             HttpURLConnection yc = (HttpURLConnection) url.openConnection();
 
             yc.setRequestMethod("GET");
-            ConnectCapabilitiesRunner.createSignedRequestHandler(PLUGIN_KEY).sign(url.toURI(), "GET", null, yc);
+            ConnectRunner.createSignedRequestHandler(PLUGIN_KEY).sign(url.toURI(), "GET", null, yc);
 
             assertNotNull(yc.getResponseCode());
             assertEquals(200, yc.getResponseCode());

@@ -48,6 +48,7 @@ public class ConfluenceGeneralPage implements GeneralPage
     }
 
     @Init
+    @SuppressWarnings("unused")
     public void init()
     {
         By browseLocator = By.id("browse-menu-link");
@@ -64,7 +65,7 @@ public class ConfluenceGeneralPage implements GeneralPage
     @Override
     public boolean isRemotePluginLinkPresent()
     {
-        return findLinkElement() != null;
+        return findLinkElement().isPresent();
     }
 
     @Override

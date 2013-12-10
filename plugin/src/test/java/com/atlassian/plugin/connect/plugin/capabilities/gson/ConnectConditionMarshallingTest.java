@@ -13,7 +13,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readCapabilitiesTestFile;
+import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.google.common.collect.Lists.newArrayList;
@@ -30,9 +30,9 @@ public class ConnectConditionMarshallingTest
     @Test
     public void verifyDeserializationWorks() throws Exception
     {
-        String json = readCapabilitiesTestFile("conditionMarshalling.json");
+        String json = readAddonTestFile("conditionMarshalling.json");
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGson();
         Type listType = new TypeToken<List<ConditionalBean>>() {}.getType();
 
         List<ConditionalBean> conditionList = gson.fromJson(json, listType);
@@ -71,7 +71,7 @@ public class ConnectConditionMarshallingTest
                         .build()
         );
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(conditionList, conditionalType);
 
         assertEquals(expected, json);

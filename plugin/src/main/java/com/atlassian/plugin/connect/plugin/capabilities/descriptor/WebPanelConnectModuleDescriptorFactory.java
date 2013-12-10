@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelCapabilityBean,WebPanelModuleDescriptor>
+public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean,WebPanelModuleDescriptor>
 {
     public static final String REMOTE_WEB_PANEL_MODULE_PREFIX = "remote-web-panel-";
     private final ConnectAutowireUtil connectAutowireUtil;
@@ -27,7 +27,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     }
 
     @Override
-    public WebPanelModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebPanelCapabilityBean bean)
+    public WebPanelModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebPanelModuleBean bean)
     {
         Element domElement = createDomElement(bean, REMOTE_WEB_PANEL_MODULE_PREFIX + bean.getKey(), plugin);
         final WebPanelModuleDescriptor descriptor = connectAutowireUtil.createBean(WebPanelConnectModuleDescriptor.class);
@@ -35,7 +35,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         return descriptor;
     }
 
-    private Element createDomElement(WebPanelCapabilityBean bean, String webPanelKey, Plugin plugin)
+    private Element createDomElement(WebPanelModuleBean bean, String webPanelKey, Plugin plugin)
     {
         String i18nKey = bean.getName().getI18n();
         Element webPanelElement = new DOMElement("remote-web-panel");

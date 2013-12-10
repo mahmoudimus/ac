@@ -2,9 +2,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 
-public class AuthenticationBeanBuilder extends BaseCapabilityBeanBuilder<AuthenticationBeanBuilder,AuthenticationBean>
+public class AuthenticationBeanBuilder extends BaseModuleBeanBuilder<AuthenticationBeanBuilder, AuthenticationBean>
 {
     private AuthenticationType type;
     private String sharedKey;
