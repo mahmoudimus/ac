@@ -441,12 +441,6 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${apache.httpclient.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.atlassian.webhooks</groupId>
                 <artifactId>atlassian-webhooks-provider-spi</artifactId>
                 <version>${atlassian.webhooks.version}</version>
@@ -577,7 +571,6 @@
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.httpclient.version>0.17.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <apache.httpclient.version>4.2.5</apache.httpclient.version>
         <!--<atlassian.jira.version>6.2-OD-01</atlassian.jira.version>-->
         <atlassian.jira.version>6.1-OD-06-1</atlassian.jira.version>
         <atlassian.jira.modules.version>6.1.5</atlassian.jira.modules.version>
