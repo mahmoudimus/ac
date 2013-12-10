@@ -14,6 +14,7 @@ import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.plugin.web.model.WebIcon;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,9 +26,13 @@ import org.osgi.framework.BundleContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.Collections;
+import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -35,12 +40,15 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.*;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class WebItemModuleDescriptorFactoryTest
 {
+    private static final String ADDON_BASE_URL = "https://myapp.heroku.com/foo";
     @Mock
     private WebInterfaceManager webInterfaceManager;
     @Mock
@@ -57,7 +65,10 @@ public class WebItemModuleDescriptorFactoryTest
         plugin = new PluginForTests("my-key", "My Plugin");
 
         ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(mock(ProductAccessor.class), new ParamsModuleFragmentFactory());
-        webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager), new IconModuleFragmentFactory(new RemotablePluginAccessorFactoryForTests()), conditionModuleFragmentFactory);
+
+        RemotablePluginAccessorFactoryForTests pluginAccessorFactory = new RemotablePluginAccessorFactoryForTests();
+        pluginAccessorFactory.withBaseUrl(ADDON_BASE_URL);
+        webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager), new IconModuleFragmentFactory(pluginAccessorFactory), conditionModuleFragmentFactory);
 
         when(servletRequest.getContextPath()).thenReturn("http://ondemand.com/jira");
 
@@ -138,21 +149,45 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void iconIsCorrect()
     {
-        WebItemModuleBean bean = createWebItemBeanBuilder().build();
+        WebItemModuleBean bean = createWebItemBeanBuilder()
+                .withIcon(
+                        newIconBean()
+                                .withHeight(16)
+                                .withWidth(24)
+                                .withUrl("/static/images/icon.png")
+                                .build()
+                )
+                .build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         descriptor.enabled();
 
-        assertNull(descriptor.getIcon());
+        WebIcon icon = descriptor.getIcon();
+        assertNotNull(icon);
+        assertThat(icon.getHeight(), is(16));
+        assertThat(icon.getWidth(), is(24));
+        assertThat(icon.getUrl().getRenderedUrl(Collections.<String, Object>emptyMap()), is(ADDON_BASE_URL + "/static/images/icon.png"));
     }
 
     @Test
-    public void styleClassIsCorrect()
+    public void styleClassIsEmptyWhenNotDefined()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         descriptor.enabled();
 
         assertEquals("", descriptor.getStyleClass());
+    }
+
+    @Test
+    public void styleClassIsPresetWhenDefined()
+    {
+        WebItemModuleBean bean = createWebItemBeanBuilder()
+                .withStyleClasses("batman", "robin", "mr-freeze")
+                .build();
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        descriptor.enabled();
+
+        assertThat(descriptor.getStyleClass(), allOf(containsString("batman"), containsString("robin"), containsString("mr-freeze")));
     }
 
     @Test
@@ -201,9 +236,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         descriptor.enabled();
 
-        assertThat(descriptor.getStyleClass(), containsString("batman"));
-        assertThat(descriptor.getStyleClass(), containsString("robin"));
-        assertThat(descriptor.getStyleClass(), containsString("ap-inline-dialog"));
+        assertThat(descriptor.getStyleClass(), allOf(containsString("batman"), containsString("robin"), containsString("ap-inline-dialog")));
     }
 
     private WebItemModuleBeanBuilder createWebItemBeanBuilder()

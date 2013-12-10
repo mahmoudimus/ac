@@ -62,7 +62,7 @@ public class ConnectTabPanelModuleDescriptorFactory
         }
 
         ModuleDescriptor descriptor = connectAutowireUtil.createBean(hints.getDescriptorClass());
-        descriptor.init(plugin,element);
+        descriptor.init(plugin, element);
         
         return descriptor;
     }
