@@ -2,14 +2,14 @@ package it.capabilities;
 
 import cc.plural.jsonij.JSON;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.collect.Lists;
 import it.AbstractBrowserlessTest;
 import it.servlet.ConnectAppServlets;
 import org.junit.After;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
 import static it.matcher.ValueMatchers.hasProperty;
 import static it.matcher.ValueMatchers.isArrayMatching;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -19,8 +19,8 @@ public class TestUpgrade extends AbstractBrowserlessTest
 {
     private static final String PLUGIN_KEY = "my-upgraded-plugin";
 
-    private ConnectCapabilitiesRunner plugin0;
-    private ConnectCapabilitiesRunner plugin1;
+    private ConnectRunner plugin0;
+    private ConnectRunner plugin1;
 
     /**
      * Check that ACDEV-651 hasn't regressed.
@@ -29,8 +29,8 @@ public class TestUpgrade extends AbstractBrowserlessTest
     public void testPluginModulesDoNotRiseFromTheDead() throws Exception
     {
         // install then uninstall a plugin
-        plugin0 = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
-                .addCapability(
+        plugin0 = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+                .addModule(
                         "generalPages",
                         newPageBean()
                                 .withName(new I18nProperty("Page One", null))
@@ -42,8 +42,8 @@ public class TestUpgrade extends AbstractBrowserlessTest
         plugin0 = null;
 
         // install another plugin with the same key, but different modules
-        plugin1 = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
-                .addCapability(
+        plugin1 = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+                .addModule(
                         "generalPages",
                         newPageBean()
                                 .withName(new I18nProperty("Page Two", null))
@@ -67,7 +67,7 @@ public class TestUpgrade extends AbstractBrowserlessTest
     @After
     public void uninstallPlugin1() throws Exception
     {
-        for (ConnectCapabilitiesRunner plugin : Lists.newArrayList(plugin0, plugin1))
+        for (ConnectRunner plugin : Lists.newArrayList(plugin0, plugin1))
         {
             if (plugin != null)
             {

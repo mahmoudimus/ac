@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PageToWebItemAndServletConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Base class for ConnectModuleProviders of Connect Pages.
  * Note that there is actually no P2 module descriptor. Instead it is modelled as a web-item plus a servlet
  */
-public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageCapabilityBean>
+public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageModuleBean>
 {
     private final IFrameParams iFrameParams;
     private final String defaultSection;
@@ -72,11 +72,11 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
     @Override
     public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName,
-                                                 List<ConnectPageCapabilityBean> beans)
+                                                 List<ConnectPageModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
-        for (ConnectPageCapabilityBean bean : beans)
+        for (ConnectPageModuleBean bean : beans)
         {
             PageToWebItemAndServletConverter converter = new PageToWebItemAndServletConverter(bean, plugin.getKey(),
                     defaultWeight, defaultSection, decorator, templateSuffix, metaTagContents, condition, iFrameParams);

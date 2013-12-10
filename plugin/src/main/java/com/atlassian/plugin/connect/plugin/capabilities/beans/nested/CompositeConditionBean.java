@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.CompositeConditionBeanBuilder;
 
@@ -12,7 +12,7 @@ import com.google.common.base.Objects;
 /**
  * @since 1.0
  */
-public class CompositeConditionBean extends BaseCapabilityBean implements ConditionalBean
+public class CompositeConditionBean extends BaseModuleBean implements ConditionalBean
 {
     private List<ConditionalBean> conditions;
     transient private CompositeConditionType type;

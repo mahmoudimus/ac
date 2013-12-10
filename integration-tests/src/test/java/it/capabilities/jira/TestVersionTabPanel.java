@@ -9,11 +9,11 @@ import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestVersionTabPanel extends TestBase
 {
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
 
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
     private static final String JIRA_VERSION_TAB_PANEL = "jira-version-tab-panel";
@@ -34,8 +34,8 @@ public class TestVersionTabPanel extends TestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability(ConnectTabPanelModuleProvider.VERSION_TAB_PANELS, newTabPanelBean()
+        remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
+                .addModule(ConnectTabPanelModuleProvider.VERSION_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Version Tab Panel", null))
                         .withUrl("/ipp?version_id=${version.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)

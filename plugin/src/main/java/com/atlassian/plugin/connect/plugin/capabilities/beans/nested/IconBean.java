@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBu
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.util.CapabilityBeanUtils.copyFieldsByNameAndType;
+import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleBeanUtils.copyFieldsByNameAndType;
 
 /**
  * @since 1.0

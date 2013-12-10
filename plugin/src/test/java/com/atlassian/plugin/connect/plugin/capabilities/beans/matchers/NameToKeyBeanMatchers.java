@@ -18,9 +18,9 @@ public class NameToKeyBeanMatchers
         return new NameToKeyBeanParamMatcher<T>("key", expectedValue)
         {
             @Override
-            protected String getValue(NameToKeyBean capabilityBean)
+            protected String getValue(NameToKeyBean moduleBean)
             {
-                return capabilityBean.getKey();
+                return moduleBean.getKey();
             }
         };
     }
@@ -30,9 +30,9 @@ public class NameToKeyBeanMatchers
         return new NameToKeyBeanParamMatcher<T>("name", expectedValue)
         {
             @Override
-            protected String getValue(NameToKeyBean capabilityBean)
+            protected String getValue(NameToKeyBean moduleBean)
             {
-                I18nProperty name = capabilityBean.getName();
+                I18nProperty name = moduleBean.getName();
                 assertThat(name, is(notNullValue()));
                 return name.getValue();
             }
@@ -44,16 +44,16 @@ public class NameToKeyBeanMatchers
         return new NameToKeyBeanParamMatcher<T>("i18NameKey", expectedValue)
         {
             @Override
-            protected String getValue(NameToKeyBean capabilityBean)
+            protected String getValue(NameToKeyBean moduleBean)
             {
-                I18nProperty name = capabilityBean.getName();
+                I18nProperty name = moduleBean.getName();
                 assertThat(name, is(notNullValue()));
                 return name.getI18n();
             }
         };
     }
 
-    private abstract static class NameToKeyBeanParamMatcher<T extends NameToKeyBean> extends CapabilityBeanParamMatcher<NameToKeyBean, T>
+    private abstract static class NameToKeyBeanParamMatcher<T extends NameToKeyBean> extends ModuleBeanParamMatcher<NameToKeyBean, T>
     {
         NameToKeyBeanParamMatcher(String name, Object expectedValue)
         {

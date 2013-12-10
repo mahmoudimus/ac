@@ -15,7 +15,7 @@
         "type" : "oauth",
         "sharedKey": "S0m3Publ1cK3y"
     },
-    "capabilities": {
+    "modules": {
         "webItems": [{
             "link": "/my-general-page",
             "icon": {

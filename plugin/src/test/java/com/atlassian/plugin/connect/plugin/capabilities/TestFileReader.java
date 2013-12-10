@@ -8,7 +8,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 
 public class TestFileReader
 {
-    public static String readCapabilitiesTestFile(String fileName) throws IOException
+    public static String readAddonTestFile(String fileName) throws IOException
     {
         return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/testfiles/capabilities/" + fileName).getFile());
     }

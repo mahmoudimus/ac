@@ -7,7 +7,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
-public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<ConnectAddonEventDataBuilder,ConnectAddonEventData>
+public class ConnectAddonEventDataBuilder extends BaseModuleBeanBuilder<ConnectAddonEventDataBuilder,ConnectAddonEventData>
 {
     private Map<String,String> links;
     //this is the plugin key

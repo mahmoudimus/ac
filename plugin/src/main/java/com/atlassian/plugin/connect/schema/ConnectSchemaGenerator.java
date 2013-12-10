@@ -2,14 +2,13 @@ package com.atlassian.plugin.connect.schema;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import com.atlassian.json.schema.DefaultJsonSchemaGenerator;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.model.JsonSchema;
 import com.atlassian.json.schema.scanner.model.InterfaceList;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
 import com.atlassian.plugin.spring.scanner.ProductFilter;
 
 public class ConnectSchemaGenerator extends DefaultJsonSchemaGenerator
@@ -25,9 +24,9 @@ public class ConnectSchemaGenerator extends DefaultJsonSchemaGenerator
     @Override
     protected JsonSchema generateSchemaForField(Class<?> owner, Field field, Class<?>[] ifaces)
     {
-        if(field.isAnnotationPresent(CapabilityModuleProvider.class))
+        if(field.isAnnotationPresent(ConnectModule.class))
         {
-            CapabilityModuleProvider anno = field.getAnnotation(CapabilityModuleProvider.class);
+            ConnectModule anno = field.getAnnotation(ConnectModule.class);
             List<ProductFilter> filters = Arrays.asList(anno.products());
             if(!filters.contains(product) && !filters.contains(ProductFilter.ALL))
             {

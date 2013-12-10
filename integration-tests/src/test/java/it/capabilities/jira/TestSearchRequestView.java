@@ -1,9 +1,10 @@
 package it.capabilities.jira;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.utils.NameValuePairs;
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
@@ -13,7 +14,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewCapabilityBean.newSearchRequestViewCapabilityBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -26,7 +26,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     private static final String LABEL = "A Search Request View";
     private static final String SERVLET_URL = "/search";
 
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
     private static EchoQueryParametersServlet searchRequestViewServlet;
 
     @BeforeClass
@@ -34,8 +34,8 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     {
         searchRequestViewServlet = new EchoQueryParametersServlet();
 
-        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability("jiraSearchRequestViews", newSearchRequestViewCapabilityBean()
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+                .addModule("jiraSearchRequestViews", SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
                         .withWeight(100)
                         .withUrl(SERVLET_URL)
                         .withName(new I18nProperty(LABEL, null))

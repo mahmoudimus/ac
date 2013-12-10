@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 
 @Component
-public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapabilityBean>
+public class WebItemModuleProvider implements ConnectModuleProvider<WebItemModuleBean>
 {
     private final WebItemModuleDescriptorFactory webItemFactory;
     private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
@@ -31,11 +31,11 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapab
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebItemCapabilityBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebItemModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        for (WebItemCapabilityBean bean : beans)
+        for (WebItemModuleBean bean : beans)
         {
             descriptors.addAll(beanToDescriptors(plugin,addonBundleContext, bean));
         }
@@ -43,7 +43,7 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapab
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WebItemCapabilityBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WebItemModuleBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
@@ -55,7 +55,7 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapab
         {
             RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getLink());
             
-            WebItemCapabilityBean newBean = newWebItemBean(bean).withLink(localUrl.getRelativeUri()).build();
+            WebItemModuleBean newBean = newWebItemBean(bean).withLink(localUrl.getRelativeUri()).build();
             descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
 
             //todo: make sure we do something to actually look up condition and metaTags map

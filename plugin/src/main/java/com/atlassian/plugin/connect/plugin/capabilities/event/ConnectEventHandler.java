@@ -14,10 +14,12 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonEventDataBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -31,11 +33,13 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -129,7 +133,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         //if a descriptor is not stored, it means this event was fired during install before modules were created and we need to ignore
         if (connectIdentifier.isConnectAddOn(plugin) && descriptorRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon = CapabilitiesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
+            ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
 
             if (null != addon)
             {
@@ -173,7 +177,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         String pluginKey = plugin.getKey();
         if (descriptorRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon = CapabilitiesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
+            ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
 
             if (null != addon)
             {
@@ -297,7 +301,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
 
         ConnectAddonEventData data = dataBuilder.build();
 
-        return CapabilitiesGsonFactory.getGsonBuilder().setPrettyPrinting().create().toJson(data);
+        return ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create().toJson(data);
     }
 
     private URI getURI(String url)
