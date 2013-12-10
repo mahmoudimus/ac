@@ -4,5 +4,8 @@
     },
     "getting-started.html": {
         "title": "Getting Started"
+    },
+    "hello-world.html": {
+        "title": "Hello World"
     }
 }
