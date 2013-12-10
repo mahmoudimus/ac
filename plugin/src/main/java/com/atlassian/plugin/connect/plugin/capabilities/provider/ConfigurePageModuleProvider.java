@@ -2,16 +2,14 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.google.common.collect.ImmutableMap;
+import com.atlassian.sal.api.user.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConfigurePageModuleProvider extends AbstractConnectPageModuleProvider
+public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
 {
-    public static final String PAGE_DECORATOR = "atl.admin";
     private static final String THE_SECTION_U_HAVE_WHEN_UR_NOT_HAVING_A_SECTION = "no-section";
 
     // TODO: The old version used to pass in productAccessor.getLinkContextParams() to the webitem builder
@@ -21,11 +19,10 @@ public class ConfigurePageModuleProvider extends AbstractConnectPageModuleProvid
     @Autowired
     public ConfigurePageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                        IFramePageServletDescriptorFactory servletDescriptorFactory,
-                                       ProductAccessor productAccessor,
-                                       UserIsAdminCondition userIsAdminCondition)
+                                       ProductAccessor productAccessor, UserManager userManager)
     {
-        super(webItemModuleDescriptorFactory, servletDescriptorFactory, PAGE_DECORATOR,
-                THE_SECTION_U_HAVE_WHEN_UR_NOT_HAVING_A_SECTION, productAccessor.getPreferredAdminWeight(),
-                "", ImmutableMap.<String, String>of(), userIsAdminCondition, null);
+        super(webItemModuleDescriptorFactory, servletDescriptorFactory, productAccessor, userManager,
+                THE_SECTION_U_HAVE_WHEN_UR_NOT_HAVING_A_SECTION);
     }
+
 }
