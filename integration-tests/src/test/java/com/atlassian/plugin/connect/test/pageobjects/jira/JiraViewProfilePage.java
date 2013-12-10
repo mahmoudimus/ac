@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteTabPanel;
+import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.google.common.base.Optional;
@@ -41,9 +41,19 @@ public class JiraViewProfilePage extends ViewProfilePage
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownMenuId);
     }
 
-    public RemoteTabPanel findTabPanel(String webItemId, Optional<String> dropDownMenuId, String pageKey)
+    public LinkedRemoteContent findTabPanel(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
-        return pageBinder.bind(RemoteTabPanel.class, webItemId, dropDownMenuId, pageKey);
+        return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
+    }
+
+    public LinkedRemoteContent findConnectPage(String webItemId, Option<String> dropDownMenuId, String pageKey)
+    {
+        return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
+    }
+
+    private LinkedRemoteContent findRemoteLinkedContent(String webItemId, Option<String> dropDownMenuId, String pageKey)
+    {
+        return pageBinder.bind(LinkedRemoteContent.class, webItemId, dropDownMenuId, pageKey);
     }
 
 }

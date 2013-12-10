@@ -20,9 +20,7 @@ public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
                                      ProductAccessor productAccessor)
     {
         super(webItemModuleDescriptorFactory, servletDescriptorFactory, PROFILE_PAGE_DECORATOR,
-                // Note the old code never specified these so would have defaulted to the general page values. Seems odd but preserving
-//                productAccessor.getPreferredProfileSectionKey(), productAccessor.getPreferredProfileWeight(),
-                productAccessor.getPreferredGeneralSectionKey(), productAccessor.getPreferredGeneralWeight(),
+                productAccessor.getPreferredProfileSectionKey(), productAccessor.getPreferredProfileWeight(),
                 "", ImmutableMap.<String, String>of(), new AlwaysDisplayCondition(), null);
     }
 }

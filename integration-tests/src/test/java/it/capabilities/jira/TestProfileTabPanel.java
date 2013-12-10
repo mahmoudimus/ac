@@ -6,11 +6,10 @@ import com.atlassian.fugue.Option;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteTabPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -54,7 +53,7 @@ public class TestProfileTabPanel extends TestBase
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewProfilePage profilePage = jira().visit(JiraViewProfilePage.class, Option.<String>none());
-        RemoteTabPanel tabPanel = profilePage.findTabPanel("up_profile-tab-profile-tab-panel_a", Optional.<String>absent(), "profile-tab-profile-tab-panel");
+        LinkedRemoteContent tabPanel = profilePage.findTabPanel("up_profile-tab-profile-tab-panel_a", Option.<String>none(), "profile-tab-profile-tab-panel");
         RemotePluginEmbeddedTestPage remotePage = tabPanel.click();
         assertThat(remotePage.isLoaded(), equalTo(true));
         assertThat(remotePage.getMessage(), equalTo("Success"));

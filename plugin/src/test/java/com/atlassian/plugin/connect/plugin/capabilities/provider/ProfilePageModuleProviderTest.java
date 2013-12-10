@@ -18,13 +18,13 @@ public class ProfilePageModuleProviderTest extends AbstractPageModuleProviderTes
     @Test
     public void fetchesDefaultLocationFromProductAccessorWhenNotSpecified()
     {
-        verify(productAccessor).getPreferredGeneralSectionKey(); // strange but true
+        verify(productAccessor).getPreferredProfileSectionKey();
     }
 
     @Test
     public void fetchesDefaultWeightFromProductAccessorWhenNotSpecified()
     {
-        verify(productAccessor).getPreferredGeneralWeight(); // strange but true
+        verify(productAccessor).getPreferredProfileWeight();
     }
 
     @Test

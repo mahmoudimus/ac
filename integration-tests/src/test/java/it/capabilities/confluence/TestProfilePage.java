@@ -1,28 +1,23 @@
 package it.capabilities.confluence;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import it.TestConstants;
-import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
-import static com.google.common.base.Charsets.UTF_8;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.is;
+import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -44,9 +39,8 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
                                 .withName(new I18nProperty("My Awesome Page", null))
                                 .withUrl("/pg")
                                 .withWeight(1234)
-//                                .withLocation("system.user.profile.links")
                                 .build())
-                .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
+                .addRoute("/pg", ConnectAppServlets.apRequestServlet())
                 .start();
     }
 
@@ -59,30 +53,18 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
         }
     }
 
-//    @Test
-//    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
-//    {
-//        loginAsAdmin();
-//
-//        product.visit(ConfluenceUserProfilePage.class, TestConstants.BARNEY_USERNAME);
-//
-//        ConfluenceUserProfilePage viewProfilePage = product.getPageBinder().bind(ConfluenceUserProfilePage.class, "my-awesome-page");
-//
-////        assertThat(viewProfilePage.isRemotePluginLinkPresent(), is(true));
-//
-//        URI url = new URI(viewProfilePage.getRemotePluginLinkHref());
-//        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/pg"));
-//
-//        assertThat(URLEncodedUtils.parse(url, UTF_8.name()),
-//                containsInAnyOrder(
-//                        (NameValuePair) new BasicNameValuePair("project_key", project.getKey()),
-//                        new BasicNameValuePair("project_id", project.getId())
-//                )
-//        );
-//
-//        RemotePluginTestPage addonContentsPage = viewProfilePage.clickRemotePluginLink();
-//        assertThat(addonContentsPage.isFullSize(), is(true));
-//    }
+    @Test
+    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
+    {
+        loginAsAdmin();
+
+        ConfluenceUserProfilePage profilePage = product.visit(ConfluenceUserProfilePage.class);
+        LinkedRemoteContent addonPage = profilePage.findConnectPage(LINK_TEXT, "My Awesome Page",
+                Option.<String>none(), "my-awesome-page");
+        RemotePluginEmbeddedTestPage addonContentPage = addonPage.click();
+        assertThat(addonContentPage.isLoaded(), equalTo(true));
+        assertThat(addonContentPage.getMessage(), equalTo("Success"));
+    }
 
 
 }
