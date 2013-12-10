@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
@@ -46,14 +47,16 @@ public final class PermissionManagerImpl implements PermissionManager
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
 
     private final Set<ApiScope> DEFAULT_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
+    private final ConnectAddOnIdentifierService connectAddOnIdentifierService;
 
     @Autowired
     public PermissionManagerImpl(
             PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager,
-            PermissionsReader permissionsReader)
+            PermissionsReader permissionsReader,
+            ConnectAddOnIdentifierService connectAddOnIdentifierService)
     {
-        this(pluginAccessor, permissionsReader,
+        this(pluginAccessor, permissionsReader, connectAddOnIdentifierService,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
     }
@@ -61,8 +64,10 @@ public final class PermissionManagerImpl implements PermissionManager
     PermissionManagerImpl(
             PluginAccessor pluginAccessor,
             PermissionsReader permissionsReader,
+            ConnectAddOnIdentifierService connectAddOnIdentifierService,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker)
     {
+        this.connectAddOnIdentifierService = connectAddOnIdentifierService;
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.permissionsReader = checkNotNull(permissionsReader);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
@@ -95,7 +100,18 @@ public final class PermissionManagerImpl implements PermissionManager
 
     private Iterable<ApiScope> getApiScopesForPlugin(String pluginKey)
     {
-        return Iterables.concat(DEFAULT_API_SCOPES, getApiScopesForPermissions(getPermissionsForPlugin(pluginKey)));
+        Set<String> permissionKeys;
+        if (connectAddOnIdentifierService.isConnectAddOn(pluginKey))
+        {
+            // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
+            permissionKeys = getPermissionKeys();
+        }
+        else
+        {
+            permissionKeys = getPermissionsForPlugin(pluginKey);
+        }
+
+        return Iterables.concat(DEFAULT_API_SCOPES, getApiScopesForPermissions(permissionKeys));
     }
 
     private Iterable<ApiScope> getApiScopesForPermissions(final Set<String> permissions)
