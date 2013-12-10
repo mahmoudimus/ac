@@ -48,7 +48,7 @@ public class JiraViewProfilePage extends ViewProfilePage
 
     public LinkedRemoteContent findConnectPage(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
-        return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
+        return findRemoteLinkedContent(webItemId, dropDownMenuId, "servlet-" + pageKey);
     }
 
     private LinkedRemoteContent findRemoteLinkedContent(String webItemId, Option<String> dropDownMenuId, String pageKey)
