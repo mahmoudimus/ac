@@ -1,6 +1,6 @@
-- var capability = schemas[product].properties.capabilities.properties[current.source]
+- var module = schemas[product].properties.modules.properties[current.source]
 h1
-    = capability.title || capability.items.title
+    = module.title || module.items.title
 
 != yield
 
@@ -13,20 +13,20 @@ table.aui
           th Type
           th Description
       tbody
-        - for(var prop in capability.items.properties)
+        - for(var prop in module.items.properties)
             tr
                 td
                     = prop
                 td
                     span.aui-lozenge
-                        = capability.items.properties[prop].type
+                        = module.items.properties[prop].type
                 td
-                    = capability.items.properties[prop].description
+                    = module.items.properties[prop].description
 
 
 //- h2 JSON Schema
 //- textarea.code
-//-     != JSON.stringify(capability,null,2)
+//-     != JSON.stringify(module,null,2)
 
 script.
     var cmOpts = {

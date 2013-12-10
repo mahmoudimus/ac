@@ -201,7 +201,7 @@
                   "id": "connectProjectAdminTabPanelModuleBean",
                   "type": "object",
                   "title": "Project Admin Tab Panel",
-                  "description": "Modules bean for Jira ProjectAdmin Tab Pages. The module JSON looks like\n <p>\n <pre>\n \"jiraProjectAdminTabPanels\": [{\n   \"name\": {\n     \"value\": \"My ProjectAdmin Tab\",\n     \"i18n\": \"my.tab\"\n   },\n   \"url\": \"/my-general-page\",\n   \"weight\": 100\n   \"location\" : \"projectgroup4\"\n }]\n </pre>\n </p>\n"
+                  "description": "Module bean for Jira ProjectAdmin Tab Pages. The module JSON looks like\n <p>\n <pre>\n \"jiraProjectAdminTabPanels\": [{\n   \"name\": {\n     \"value\": \"My ProjectAdmin Tab\",\n     \"i18n\": \"my.tab\"\n   },\n   \"url\": \"/my-general-page\",\n   \"weight\": 100\n   \"location\" : \"projectgroup4\"\n }]\n </pre>\n </p>\n"
                 },
                 "type": "array"
               },
@@ -479,7 +479,7 @@
             },
             "id": "moduleList",
             "type": "object",
-            "description": "This class represents the list of modules in the json descriptor.\n Every new module type needs to be added here as a private field and annotated with @ModuleModuleProvider\n \n The field name will be what appears in the json.\n \n Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder\n that will handle adding beans to the proper fields in this class by name and type.\n You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.\n"
+            "description": "This class represents the list of modules in the json descriptor.\n Every new module type needs to be added here as a private field and annotated with @ConnectModule\n \n The field name will be what appears in the json.\n \n Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder\n that will handle adding beans to the proper fields in this class by name and type.\n You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.\n"
           },
           "key": {
             "type": "string",
@@ -493,7 +493,7 @@
         "id": "connectAddonBean",
         "type": "object",
         "title": "Connect Addon Root Descriptor",
-        "description": "The root descriptor for an Atlassian Connect add on\n \n Json Example:\n{\n  \"key\": \"my-addon-key\",\n  \"name\": \"My Connect Addon\",\n  \"version\": \"1.0\",\n  \"description\": \"A connect addon that does something\",\n  \"vendor\": {\n    \"name\": \"My Company\",\n    \"url\": \"http://www.example.com\"\n  },\n  \"links\": {\n    \"self\": \"http://www.example.com/connect/jira\"\n  },\n  \"baseUrl\": \"http://www.example.com/connect/jira\",\n  \"authentication\": {\n    \"type\": \"jwt\"\n  },\n  \"capabilities\": {}\n}"
+        "description": "The root descriptor for an Atlassian Connect add on\n \n Json Example:\n{\n  \"key\": \"my-addon-key\",\n  \"name\": \"My Connect Addon\",\n  \"version\": \"1.0\",\n  \"description\": \"A connect addon that does something\",\n  \"vendor\": {\n    \"name\": \"My Company\",\n    \"url\": \"http://www.example.com\"\n  },\n  \"links\": {\n    \"self\": \"http://www.example.com/connect/jira\"\n  },\n  \"baseUrl\": \"http://www.example.com/connect/jira\",\n  \"authentication\": {\n    \"type\": \"jwt\"\n  },\n  \"modules\": {}\n}"
       },
       "confluence": {
         "properties": {
@@ -797,7 +797,7 @@
             },
             "id": "moduleList",
             "type": "object",
-            "description": "This class represents the list of modules in the json descriptor.\n Every new module type needs to be added here as a private field and annotated with @ModuleModuleProvider\n \n The field name will be what appears in the json.\n \n Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder\n that will handle adding beans to the proper fields in this class by name and type.\n You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.\n"
+            "description": "This class represents the list of modules in the json descriptor.\n Every new module type needs to be added here as a private field and annotated with @ConnectModule\n \n The field name will be what appears in the json.\n \n Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder\n that will handle adding beans to the proper fields in this class by name and type.\n You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.\n"
           },
           "key": {
             "type": "string",
@@ -811,7 +811,7 @@
         "id": "connectAddonBean",
         "type": "object",
         "title": "Connect Addon Root Descriptor",
-        "description": "The root descriptor for an Atlassian Connect add on\n \n Json Example:\n{\n  \"key\": \"my-addon-key\",\n  \"name\": \"My Connect Addon\",\n  \"version\": \"1.0\",\n  \"description\": \"A connect addon that does something\",\n  \"vendor\": {\n    \"name\": \"My Company\",\n    \"url\": \"http://www.example.com\"\n  },\n  \"links\": {\n    \"self\": \"http://www.example.com/connect/jira\"\n  },\n  \"baseUrl\": \"http://www.example.com/connect/jira\",\n  \"authentication\": {\n    \"type\": \"jwt\"\n  },\n  \"capabilities\": {}\n}"
+        "description": "The root descriptor for an Atlassian Connect add on\n \n Json Example:\n{\n  \"key\": \"my-addon-key\",\n  \"name\": \"My Connect Addon\",\n  \"version\": \"1.0\",\n  \"description\": \"A connect addon that does something\",\n  \"vendor\": {\n    \"name\": \"My Company\",\n    \"url\": \"http://www.example.com\"\n  },\n  \"links\": {\n    \"self\": \"http://www.example.com/connect/jira\"\n  },\n  \"baseUrl\": \"http://www.example.com/connect/jira\",\n  \"authentication\": {\n    \"type\": \"jwt\"\n  },\n  \"modules\": {}\n}"
       }
     }
   }

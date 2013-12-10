@@ -1,4 +1,4 @@
-Capabilities bean for Jira ProjectAdmin Tab Pages. The capability JSON looks like
+Module bean for Jira ProjectAdmin Tab Pages. The module JSON looks like
 <p>
 <pre>
 "jiraProjectAdminTabPanels": [{
