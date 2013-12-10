@@ -13,6 +13,18 @@ public class ReflectionUtil
     {
         List<Field> fieldsForJson = new ArrayList<Field>();
 
+        populateFields(clazz,fieldsForJson);
+
+        return fieldsForJson;
+    }
+    
+    private static void populateFields(Class<?> clazz,List<Field> fieldsForJson)
+    {
+        if(Object.class.equals(clazz))
+        {
+            return;
+        }
+        
         for (Field field : clazz.getDeclaredFields())
         {
             int mods = field.getModifiers();
@@ -23,8 +35,8 @@ public class ReflectionUtil
                 fieldsForJson.add(field);
             }
         }
-
-        return fieldsForJson;
+        
+        populateFields(clazz.getSuperclass(),fieldsForJson);
     }
 
     public static boolean isParameterizedType(Type type)
