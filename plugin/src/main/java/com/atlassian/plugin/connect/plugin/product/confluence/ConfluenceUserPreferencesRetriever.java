@@ -27,11 +27,6 @@ public class ConfluenceUserPreferencesRetriever implements UserPreferencesRetrie
     public TimeZone getTimeZoneFor(@Nullable String userName)
     {
         ConfluenceUser user = userAccessor.getUserByName(userName);
-        if (user != null)
-        {
-            return userAccessor.getConfluenceUserPreferences(user).getTimeZone().getWrappedTimeZone();
-        }
-
-        return TimeZone.getDefault();
+        return userAccessor.getConfluenceUserPreferences(user).getTimeZone().getWrappedTimeZone();
     }
 }
