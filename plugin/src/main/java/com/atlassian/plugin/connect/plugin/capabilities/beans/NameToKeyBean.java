@@ -11,7 +11,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * @since 1.0
  */
-public class NameToKeyBean extends BaseCapabilityBean
+public class NameToKeyBean extends BaseModuleBean
 {
     private transient String key;
     private I18nProperty name;

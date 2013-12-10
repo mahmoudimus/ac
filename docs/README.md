@@ -4,7 +4,7 @@ This directory contains everything you need to generate documentation for Atlass
 
 * Getting started guide -- `public/guides/index.md`
 * Other potential guides -- `public/guides/*.md`
-* Module reference docs driven by JavaDoc in CapabilityBeans -- these are auto generated using the JSON schema and lives in `public/capabilities/*`
+* Module reference docs driven by JavaDoc in ModuleBeans -- these are auto generated using the JSON schema and lives in `public/capabilities/*`
 * Any other documentation that we can think of (e.g., FAQs, Help & Support, etc.)
 
 ## How does it all work?
@@ -71,7 +71,7 @@ You'll likely never need to do this locally since we'll probably be doing this d
 
 ## A word about the JSON schema
 
-As awesome as Doklovic is, his JSON schema doesn't get generated dynamically. Unfortunately, it still requires Maven to do the heavy lifting. So, today, to generate the JSON schema (if you make changes to the CapabilityBeans JavaDocs), you have to:
+As awesome as Doklovic is, his JSON schema doesn't get generated dynamically. Unfortunately, it still requires Maven to do the heavy lifting. So, today, to generate the JSON schema (if you make changes to the ModuleBeans JavaDocs), you have to:
 
     mvn install -DskipTests
 

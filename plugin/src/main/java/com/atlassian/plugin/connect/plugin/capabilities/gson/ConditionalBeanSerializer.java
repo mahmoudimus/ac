@@ -23,7 +23,7 @@ public class ConditionalBeanSerializer implements JsonSerializer<List<Conditiona
     @Override
     public List<ConditionalBean> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
     {
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGson();
         List<ConditionalBean> conditionalList = newArrayList();
 
         JsonArray ja = json.getAsJsonArray();

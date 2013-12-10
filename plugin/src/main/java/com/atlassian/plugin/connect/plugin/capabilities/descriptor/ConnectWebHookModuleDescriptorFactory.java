@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator;
 import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebHookCapabilityBean, WebHookModuleDescriptor>
+public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebHookModuleBean, WebHookModuleDescriptor>
 {
     private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
     private final ConnectAutowireUtil autowireUtil;
@@ -26,7 +26,7 @@ public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescr
     }
 
     @Override
-    public WebHookModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebHookCapabilityBean bean)
+    public WebHookModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebHookModuleBean bean)
     {
         Element webhookElement = new DOMElement("webhook");
 

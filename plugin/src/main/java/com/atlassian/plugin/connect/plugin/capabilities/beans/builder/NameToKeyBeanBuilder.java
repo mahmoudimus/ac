@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.NameToKeyBean;
 /**
  * @since 1.0
  */
-public class NameToKeyBeanBuilder<T extends NameToKeyBeanBuilder, B extends NameToKeyBean> extends BaseCapabilityBeanBuilder<T,B>
+public class NameToKeyBeanBuilder<T extends NameToKeyBeanBuilder, B extends NameToKeyBean> extends BaseModuleBeanBuilder<T,B>
 {
     private String key;
     private I18nProperty name;

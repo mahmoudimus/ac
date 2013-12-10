@@ -4,9 +4,9 @@ import cc.plural.jsonij.JPath;
 import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.server.module.WebhookModule;
 import org.apache.commons.io.IOUtils;
 
@@ -79,9 +79,9 @@ public final class WebHookTestServlet extends HttpServlet
     public static void runInstallInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
                 .addInstallLifecycle()
-                .addRoute(ConnectCapabilitiesRunner.INSTALLED_PATH, servlet)
+                .addRoute(ConnectRunner.INSTALLED_PATH, servlet)
                 .start();
 
         tester.test(new WebHookWaiter()
@@ -99,9 +99,9 @@ public final class WebHookTestServlet extends HttpServlet
     public static void runEnableInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
                 .addEnableLifecycle()
-                .addRoute(ConnectCapabilitiesRunner.ENABLED_PATH, servlet)
+                .addRoute(ConnectRunner.ENABLED_PATH, servlet)
                 .start();
 
         tester.test(new WebHookWaiter()
@@ -119,9 +119,9 @@ public final class WebHookTestServlet extends HttpServlet
     public static void runDisableInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
                 .addDisableLifecycle()
-                .addRoute(ConnectCapabilitiesRunner.DISABLED_PATH, servlet)
+                .addRoute(ConnectRunner.DISABLED_PATH, servlet)
                 .start();
 
         tester.test(new WebHookWaiter()
@@ -139,9 +139,9 @@ public final class WebHookTestServlet extends HttpServlet
     public static void runUninstalledInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
                 .addUninstallLifecycle()
-                .addRoute(ConnectCapabilitiesRunner.UNINSTALLED_PATH, servlet)
+                .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet)
                 .start();
 
         tester.test(new WebHookWaiter()
@@ -160,8 +160,8 @@ public final class WebHookTestServlet extends HttpServlet
     {
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, webHookId)
-                .addCapability("webhooks", WebHookCapabilityBean.newWebHookBean().withEvent(eventId).withUrl(path).build())
+        ConnectRunner runner = new ConnectRunner(baseUrl, webHookId)
+                .addModule("webhooks", WebHookModuleBean.newWebHookBean().withEvent(eventId).withUrl(path).build())
                 .addRoute(path, servlet)
                 .start();
 

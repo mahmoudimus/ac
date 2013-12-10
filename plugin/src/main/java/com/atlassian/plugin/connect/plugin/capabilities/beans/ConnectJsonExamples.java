@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
@@ -15,7 +16,7 @@ public class ConnectJsonExamples
 
     private static String getAddonExample()
     {
-        Gson gson = CapabilitiesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
         ConnectAddonBean addonBean = newConnectAddonBean()
                 .withKey("my-addon-key")
                 .withName("My Connect Addon")

@@ -15,7 +15,7 @@
         "type" : "oauth",
         "sharedKey": "S0m3Publ1cK3y"
     },
-    "capabilities": {
+    "modules": {
         "jiraProjectTabPanels": [{
             "url": "/my-general-page",
             "weight": 100,

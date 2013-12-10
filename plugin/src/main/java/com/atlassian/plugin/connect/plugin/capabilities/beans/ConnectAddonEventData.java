@@ -9,7 +9,7 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  * Represents the data that an addon will receive with lifecycle events.
  */
-public class ConnectAddonEventData extends BaseCapabilityBean
+public class ConnectAddonEventData extends BaseModuleBean
 {
     private Map<String,String> links;
     //this is the plugin key

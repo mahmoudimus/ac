@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceAdminHomePage;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.TestConstants;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import java.net.URI;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -31,13 +31,13 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     private static final String PAGE_NAME = "My Admin Page";
     private static final String GENERATED_PAGE_KEY = "my-admin-page";
 
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
-                .addCapability(
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+                .addModule(
                         "adminPages",
                         newPageBean()
                                 .withName(new I18nProperty(PAGE_NAME, null))

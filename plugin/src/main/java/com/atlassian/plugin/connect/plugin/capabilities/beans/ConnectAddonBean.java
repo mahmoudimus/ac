@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
 import java.util.Map;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
@@ -20,7 +19,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * @schemaTitle Connect Addon Root Descriptor
  * @since 1.0
  */
-public class ConnectAddonBean extends BaseCapabilityBean
+public class ConnectAddonBean extends BaseModuleBean
 {
     public static final int DEFAULT_WEIGHT = 100;
 
@@ -38,7 +37,7 @@ public class ConnectAddonBean extends BaseCapabilityBean
     private AuthenticationBean authentication;
     private Boolean enableLicensing;
     
-    private CapabilityList capabilities;
+    private ModuleList modules;
     
     public ConnectAddonBean()
     {
@@ -49,7 +48,7 @@ public class ConnectAddonBean extends BaseCapabilityBean
         this.vendor = VendorBean.newVendorBean().build();
         this.links = newHashMap();
         this.lifecycle = newLifecycleBean().build();
-        this.capabilities = new CapabilityList();
+        this.modules = new ModuleList();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
         this.enableLicensing = null;
@@ -79,9 +78,9 @@ public class ConnectAddonBean extends BaseCapabilityBean
             this.description = "";
         }
 
-        if(null == capabilities)
+        if(null == modules)
         {
-            this.capabilities = new CapabilityList();
+            this.modules = new ModuleList();
         }
 
         if(null == vendor)
@@ -137,9 +136,9 @@ public class ConnectAddonBean extends BaseCapabilityBean
         return vendor;
     }
 
-    public CapabilityList getCapabilities()
+    public ModuleList getModules()
     {
-        return capabilities;
+        return modules;
     }
 
     public Map<String, String> getLinks()
