@@ -7,20 +7,23 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.both;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @since 1.0

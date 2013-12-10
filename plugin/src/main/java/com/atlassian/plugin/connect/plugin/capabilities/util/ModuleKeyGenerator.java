@@ -2,9 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.util;
 
 import java.security.SecureRandom;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Joiner;
-
 import org.apache.commons.lang3.StringUtils;
 
 /**

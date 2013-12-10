@@ -54,11 +54,11 @@ public class ModuleList extends BaseModuleBean
     /**
      * @schemaTitle User Profile Tab Panel
      */
-    @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelCapabilityBean> jiraProfileTabPanels;
+    @ConnectModule(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectTabPanelModuleBean> jiraProfileTabPanels;
 
-    @CapabilityModuleProvider(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<WorkflowPostFunctionCapabilityBean> jiraWorkflowPostFunctions;
+    @ConnectModule(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
     
     @ConnectModule (WebPanelModuleProvider.class)
     private List<WebPanelModuleBean> webPanels;
@@ -78,11 +78,11 @@ public class ModuleList extends BaseModuleBean
     /**
      * @schemaTitle User Profile Page
      */
-    @CapabilityModuleProvider(value = ProfilePageModuleProvider.class, products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
-    private List<ConnectPageCapabilityBean> profilePages;
+    @ConnectModule(value = ProfilePageModuleProvider.class, products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
+    private List<ConnectPageModuleBean> profilePages;
 
-    @CapabilityModuleProvider(WebHookModuleProvider.class)
-    private List<WebHookCapabilityBean> webhooks;
+    @ConnectModule(WebHookModuleProvider.class)
+    private List<WebHookModuleBean> webhooks;
 
     @ConnectModule (value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
     private List<SearchRequestViewModuleBean> jiraSearchRequestViews;
@@ -197,12 +197,12 @@ public class ModuleList extends BaseModuleBean
         return jiraVersionTabPanels;
     }
 
-    public List<ConnectTabPanelCapabilityBean> getJiraProfileTabPanels()
+    public List<ConnectTabPanelModuleBean> getJiraProfileTabPanels()
     {
         return jiraProfileTabPanels;
     }
 
-    public List<WebPanelCapabilityBean> getWebPanels()
+    public List<WebPanelModuleBean> getWebPanels()
     {
         return webPanels;
     }
@@ -222,7 +222,7 @@ public class ModuleList extends BaseModuleBean
         return adminPages;
     }
 
-    public List<ConnectPageCapabilityBean> getProfilePages()
+    public List<ConnectPageModuleBean> getProfilePages()
     {
         return profilePages;
     }

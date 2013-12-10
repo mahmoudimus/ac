@@ -8,14 +8,14 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -27,13 +27,13 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
 {
     private static final String PLUGIN_KEY = "my-plugin";
 
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
-                .addCapability(
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+                .addModule(
                         "profilePages",
                         newPageBean()
                                 .withName(new I18nProperty("My Awesome Page", null))

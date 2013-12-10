@@ -9,13 +9,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanel
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -24,17 +24,18 @@ import static org.junit.Assert.assertThat;
  */
 public class TestProfileTabPanel extends TestBase
 {
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability(ConnectTabPanelModuleProvider.PROFILE_TAB_PANELS, newTabPanelBean()
-                        .withName(new I18nProperty("Profile Tab Panel", null))
-                        .withUrl("/myProfileAddon")
-                        .withWeight(1234)
-                        .build())
+        remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
+                .addModule(ConnectTabPanelModuleProvider.PROFILE_TAB_PANELS,
+                        newTabPanelBean()
+                                .withName(new I18nProperty("Profile Tab Panel", null))
+                                .withUrl("/myProfileAddon")
+                                .withWeight(1234)
+                                .build())
                 .addRoute("/myProfileAddon", ConnectAppServlets.apRequestServlet())
                 .start();
     }
