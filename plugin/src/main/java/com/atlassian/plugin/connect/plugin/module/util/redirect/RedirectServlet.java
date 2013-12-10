@@ -43,8 +43,11 @@ public final class RedirectServlet extends HttpServlet
     }
 
     /**
-     * Expected URL query parameters: <ul> <li><strong>app_key:</strong> The Remotable Plugin key</li>
-     * <li><strong>app_url:</strong> Relative URL within the Remotable Plugin to redirect to</li> </ul>
+     * Expected URL query parameters:
+     * <ul>
+     *     <li><strong>app_key:</strong> The Remotable Plugin key</li>
+     *     <li><strong>app_url:</strong> Relative URL within the Remotable Plugin to redirect to</li>
+     * </ul>
      */
     @SuppressWarnings ("unchecked")
     @Override
