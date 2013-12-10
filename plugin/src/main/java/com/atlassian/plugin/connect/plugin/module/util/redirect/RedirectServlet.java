@@ -6,6 +6,9 @@ import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.Validate;
+import org.apache.xalan.lib.Redirect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,11 +21,15 @@ import javax.ws.rs.core.HttpHeaders;
 
 /**
  * Given an addon key and a relative path, builds an absolute URL and redirects the client to it.
+ * @deprecated do not use redirects - use the direct add-on url instead
  */
+@Deprecated
 public final class RedirectServlet extends HttpServlet
 {
     private static final String APP_KEY_PARAM = "app_key";
     private static final String APP_URL_PARAM = "app_url";
+
+    private static final Logger log = LoggerFactory.getLogger(RedirectServlet.class);
 
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
@@ -33,7 +40,9 @@ public final class RedirectServlet extends HttpServlet
 
     /**
      * @return a relative url that doesn't include the context path
+     * @deprecated will be removed for 1.0
      */
+    @Deprecated
     public static String getPermanentRedirectUrl(String appKey, URI path)
     {
         return new UriBuilder(Uri.parse("/plugins/servlet/redirect/permanent"))
@@ -53,6 +62,7 @@ public final class RedirectServlet extends HttpServlet
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
+        log.warn("/plugins/servlet/redirect/permanent resource is deprecated and will be removed soon. Please use a direct url to the add-on.");
         final String appkey = req.getParameter(APP_KEY_PARAM);
         Validate.notEmpty(appkey, String.format("%s parameter is required", APP_KEY_PARAM));
 
