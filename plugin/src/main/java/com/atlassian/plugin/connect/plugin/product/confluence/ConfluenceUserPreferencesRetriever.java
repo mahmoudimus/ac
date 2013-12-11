@@ -4,23 +4,31 @@ import java.util.TimeZone;
 
 import javax.annotation.Nullable;
 
+import com.atlassian.confluence.user.ConfluenceUser;
+import com.atlassian.confluence.user.UserAccessor;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
 public class ConfluenceUserPreferencesRetriever implements UserPreferencesRetriever
 {
+    private final UserAccessor userAccessor;
 
-    private static final Logger log = LoggerFactory.getLogger(ConfluenceUserPreferencesRetriever.class);
+    @Autowired
+    public ConfluenceUserPreferencesRetriever(final UserAccessor userAccessor)
+    {
+        this.userAccessor = userAccessor;
+    }
 
     @Override
     public TimeZone getTimeZoneFor(@Nullable String userName)
     {
-        // TODO: implement, ARA-302
-        log.warn(getClass() + "#getTimeZoneFor is not yet implemented!");
-        return TimeZone.getDefault();
+        ConfluenceUser user = userAccessor.getUserByName(userName);
+        return userAccessor.getConfluenceUserPreferences(user).getTimeZone().getWrappedTimeZone();
     }
 }
