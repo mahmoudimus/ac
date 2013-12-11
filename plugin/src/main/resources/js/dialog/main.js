@@ -32,7 +32,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
         $nexus.html(data);
       })
       .fail(function(xhr, status, ex) {
-        var title = "Unable to load plugin content.  Please try again later.";
+        var title = "Unable to load plugin content. Please try again later.";
         $nexus.html("<div class='aui-message error' style='margin: 10px'></div>");
         $nexus.find(".error").append("<p class='title'>" + title + "</p>");
         var msg = status + (ex ? ": " + ex.toString() : "");

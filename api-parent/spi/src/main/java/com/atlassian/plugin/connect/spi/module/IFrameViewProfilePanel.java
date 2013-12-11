@@ -41,8 +41,8 @@ public class IFrameViewProfilePanel implements ViewProfilePanel
         StringWriter writer = new StringWriter();
         try
         {
-            String remoteUser = user != null ? user.getName() : null;
-            writer.write(iFrameRenderer.render(iFrameContext, remoteUser));
+            String remoteUsername = user != null ? user.getName() : null;
+            writer.write(iFrameRenderer.render(iFrameContext, remoteUsername));
         }
         catch (PermissionDeniedException ex)
         {
