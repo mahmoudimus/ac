@@ -7,10 +7,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyTy
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroCategory;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class DynamicContentMacroModuleBeanBuilder extends NameToKeyBeanBuilder<DynamicContentMacroModuleBeanBuilder, DynamicContentMacroModuleBean>
 {
@@ -18,10 +21,10 @@ public class DynamicContentMacroModuleBeanBuilder extends NameToKeyBeanBuilder<D
     private I18nProperty description;
     private IconBean icon;
     private String documentationUrl;
-    private MacroCategory category;
+    private Set<MacroCategory> categories;
     private MacroOutputType outputType;
     private MacroBodyType bodyType;
-    private String alias;
+    private Set<String> aliases;
     private Boolean featured;
     private Integer width;
     private Integer height;
@@ -37,10 +40,10 @@ public class DynamicContentMacroModuleBeanBuilder extends NameToKeyBeanBuilder<D
         this.description = defaultBean.getDescription();
         this.icon = defaultBean.getIcon();
         this.documentationUrl = defaultBean.getDocumentationUrl();
-        this.category = defaultBean.getCategory();
+        this.categories = defaultBean.getCategories();
         this.outputType = defaultBean.getOutputType();
         this.bodyType = defaultBean.getBodyType();
-        this.alias = defaultBean.getAlias();
+        this.aliases = defaultBean.getAliases();
         this.featured = defaultBean.getFeatured();
         this.width = defaultBean.getWidth();
         this.height = defaultBean.getHeight();
@@ -71,9 +74,9 @@ public class DynamicContentMacroModuleBeanBuilder extends NameToKeyBeanBuilder<D
         return this;
     }
 
-    public DynamicContentMacroModuleBeanBuilder withCategory(MacroCategory category)
+    public DynamicContentMacroModuleBeanBuilder withCategories(MacroCategory... categories)
     {
-        this.category = category;
+        this.categories = ImmutableSet.copyOf(categories);
         return this;
     }
 
@@ -89,9 +92,9 @@ public class DynamicContentMacroModuleBeanBuilder extends NameToKeyBeanBuilder<D
         return this;
     }
 
-    public DynamicContentMacroModuleBeanBuilder withAlias(String alias)
+    public DynamicContentMacroModuleBeanBuilder withAliases(String... aliases)
     {
-        this.alias = alias;
+        this.aliases = ImmutableSet.copyOf(aliases);
         return this;
     }
 
@@ -115,13 +118,13 @@ public class DynamicContentMacroModuleBeanBuilder extends NameToKeyBeanBuilder<D
 
     public DynamicContentMacroModuleBeanBuilder withParameters(MacroParameterBean... parameters)
     {
-        this.parameters = Lists.newArrayList(parameters);
+        this.parameters = ImmutableList.copyOf(parameters);
         return this;
     }
 
     public DynamicContentMacroModuleBeanBuilder withParameters(Collection<? extends MacroParameterBean> parameters)
     {
-        this.parameters = Lists.newArrayList(parameters);
+        this.parameters = ImmutableList.copyOf(parameters);
         return this;
     }
 

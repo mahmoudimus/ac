@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.MacroParameterBeanBuilder;
+import com.google.common.base.Strings;
 
 public class MacroParameterBean extends BaseModuleBean
 {
@@ -59,6 +60,11 @@ public class MacroParameterBean extends BaseModuleBean
     public String getDefaultValue()
     {
         return defaultValue;
+    }
+
+    public boolean hasDefaultValue()
+    {
+        return !Strings.isNullOrEmpty(defaultValue);
     }
 
     public static MacroParameterBeanBuilder newMacroParameterBean()

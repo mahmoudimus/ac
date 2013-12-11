@@ -8,9 +8,13 @@
   "modules": {
     "dynamicContentMacros": [
       {
-        "alias": "some-alias",
+        "aliases": [
+          "some-alias"
+        ],
         "bodyType": "plain-text",
-        "category": "hidden-macros",
+        "categories": [
+          "hidden-macros"
+        ],
         "description": {
           "i18n": "some.macro.desc",
           "value": "Some Description"

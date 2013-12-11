@@ -7,11 +7,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyTy
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroCategory;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Set;
 
 public class DynamicContentMacroModuleBean extends NameToKeyBean
 {
@@ -19,10 +21,10 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
     private I18nProperty description;
     private IconBean icon;
     private String documentationUrl;
-    private MacroCategory category;
+    private Set<MacroCategory> categories;
     private MacroOutputType outputType;
     private MacroBodyType bodyType;
-    private String alias;
+    private Set<String> aliases;
     private Boolean featured;
     private Integer width;
     private Integer height;
@@ -30,11 +32,17 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
 
     public DynamicContentMacroModuleBean()
     {
+        initialize();
     }
 
     public DynamicContentMacroModuleBean(DynamicContentMacroModuleBeanBuilder builder)
     {
         super(builder);
+        initialize();
+    }
+
+    private void initialize()
+    {
         if (null == url)
         {
             url = "";
@@ -51,9 +59,9 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
         {
             documentationUrl = "";
         }
-        if (null == category)
+        if (null == categories)
         {
-            category = MacroCategory.HIDDEN;
+            categories = ImmutableSet.of();
         }
         if (null == outputType)
         {
@@ -63,9 +71,9 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
         {
             bodyType = MacroBodyType.NONE;
         }
-        if (null == alias)
+        if (null == aliases)
         {
-            alias = "";
+            aliases = ImmutableSet.of();
         }
         if (null == featured)
         {
@@ -110,9 +118,9 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
         return documentationUrl;
     }
 
-    public MacroCategory getCategory()
+    public Set<MacroCategory> getCategories()
     {
-        return category;
+        return categories;
     }
 
     public MacroOutputType getOutputType()
@@ -125,9 +133,9 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
         return bodyType;
     }
 
-    public String getAlias()
+    public Set<String> getAliases()
     {
-        return alias;
+        return aliases;
     }
 
     public Boolean getFeatured()
@@ -159,4 +167,6 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
     {
         return new DynamicContentMacroModuleBeanBuilder(defaultBean);
     }
+
+
 }
