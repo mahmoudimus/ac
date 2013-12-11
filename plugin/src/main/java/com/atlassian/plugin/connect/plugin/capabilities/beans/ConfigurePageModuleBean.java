@@ -44,6 +44,7 @@ public class ConfigurePageModuleBean extends ConnectPageModuleBean
         // TODO: bit dodgy to call nameToKey here but not sure how else to check the key is not being defaulted.
         // We could set the key when setAsDefault on the builder
         // TODO: make sure covered by unit tests
+        // TODO: This may not be a good place to do this
         if (isDefault && key != null && !equal(key, nameToKey(getName().getValue())) && !equal(key, DEFAULT_MODULE_KEY))
         {
             throw new InvalidAddonConfigurationException("Must not specify a key name for default configuration module");

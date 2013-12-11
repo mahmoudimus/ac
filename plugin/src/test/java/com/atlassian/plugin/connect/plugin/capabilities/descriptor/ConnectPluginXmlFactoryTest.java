@@ -31,6 +31,7 @@ public class ConnectPluginXmlFactoryTest
     private ConnectAddonBean addonWithTwoConfigurePagesOneDefault;
     private ConnectAddonBean addonWithTwoConfigurePagesNoDefault;
     private ConnectAddonBean addonWithTwoConfigurePagesBothDefault;
+    private ConnectAddonBean addonWithTwoConfigurePagesNonDefaultUsesDefaultKey;
 
     @Before
     public void init()
@@ -68,6 +69,16 @@ public class ConnectPluginXmlFactoryTest
                         .setAsDefault()
                         .build())
                 .build();
+
+//        addonWithTwoConfigurePagesNonDefaultUsesDefaultKey = ConnectAddonBean.newConnectAddonBean()
+//                .withKey("addonKey")
+//                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
+//                        .setAsDefault()
+//                        .build())
+//                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
+//                        .withKey(DEFAULT_MODULE_KEY)
+//                        .build())
+//                .build();
     }
 
     @Test
@@ -112,7 +123,7 @@ public class ConnectPluginXmlFactoryTest
         getConfigUrls(addonWithTwoConfigurePagesBothDefault);
     }
 
-    // TODO: check for more than one using the default name
+    // TODO: check for more than one using the default name - maybe not - don't make default special
     // check for non default using default name whilst the default is not named
 
     private List<String> getConfigUrls(ConnectAddonBean bean) throws DocumentException
