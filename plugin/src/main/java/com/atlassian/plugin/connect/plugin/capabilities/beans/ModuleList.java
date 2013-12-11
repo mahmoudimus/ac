@@ -76,10 +76,10 @@ public class ModuleList extends BaseModuleBean
     private List<ConnectPageModuleBean> adminPages;
 
     /**
-     * @schemaTitle Admin Page
+     * @schemaTitle Configure Page
      */
     @ConnectModule (ConfigurePageModuleProvider.class)
-    private List<ConnectPageModuleBean> configurePages;
+    private List<ConfigurePageModuleBean> configurePages;
 
     /**
      * @schemaTitle User Profile Page
@@ -233,7 +233,7 @@ public class ModuleList extends BaseModuleBean
         return adminPages;
     }
 
-    public List<ConnectPageModuleBean> getConfigurePages()
+    public List<ConfigurePageModuleBean> getConfigurePages()
     {
         return configurePages;
     }
