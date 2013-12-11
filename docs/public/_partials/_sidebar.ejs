@@ -10,6 +10,41 @@
                 <% } %>
             </ul>
 
+             <div class="aui-nav-heading">
+                <strong>Core Concepts</strong>
+            </div>
+            <ul class="aui-nav">
+            <% var concepts = {
+                "descriptors.html": {
+                    "title": "Descriptors"
+                },
+                "modules.html": {
+                    "title": "Modules"
+                },
+                "pages.html": {
+                    "title": "Pages"
+                },
+                "jwt.html": {
+                    "title": "JWT"
+                },
+                "javascript-api.html": {
+                    "title": "Javascript API"
+                },
+                "styling.html": {
+                    "title": "Styling Add-ons with AUI"
+                },
+                "installing-an-addon.html": {
+                    "title": "Installing an Add-on"
+                },
+                "development-loop.html": {
+                    "title": "Development Loop"
+                }
+            };
+            for(var concept in concepts) { %>
+            <li>
+                <a href="/guides/<%= concept %>"><%= concepts[concept].title %></a>
+            </li>
+            <% } %>
 <!--
             <div class="aui-nav-heading">
                 <strong>Add-on Descriptor</strong>

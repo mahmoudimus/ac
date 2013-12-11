@@ -181,7 +181,7 @@ Add_on_server->Browser:Responds with contents of\n helloworld.html page
 Browser->User:Requested page\nrendered
 </div>
 
-## What's next
+## What's next?
 
 While not particularly useful in itself, the Hello World add-on illustrates how to go about building your own add-on.
 
