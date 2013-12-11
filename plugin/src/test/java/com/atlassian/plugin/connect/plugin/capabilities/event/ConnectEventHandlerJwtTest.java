@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
@@ -59,6 +60,7 @@ public class ConnectEventHandlerJwtTest
             return false;
         }
     };
+    private static final String PRODUCT_URL = "https://test.atlassian.com/confluence";
     private static final String UNSECURED_BASE_URL = "http://server:1234/baseUrl";
 
     private @Mock EventPublisher eventPublisher;
@@ -145,8 +147,9 @@ public class ConnectEventHandlerJwtTest
         when(requestBuilder.execute(Request.Method.POST)).thenReturn(responsePromise);
         when(responsePromise.claim()).thenReturn(response);
         when(response.getStatusCode()).thenReturn(200);
+        when(applicationProperties.getBaseUrl(UrlMode.CANONICAL)).thenReturn(PRODUCT_URL);
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
                 applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE);
-        connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, "https://server:1234/baseUrl"), SHARED_SECRET);
+        connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, UNSECURED_BASE_URL), SHARED_SECRET);
     }
 }
