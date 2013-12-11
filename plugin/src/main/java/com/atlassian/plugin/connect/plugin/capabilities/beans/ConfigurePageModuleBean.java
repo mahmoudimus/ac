@@ -31,4 +31,15 @@ public class ConfigurePageModuleBean extends ConnectPageModuleBean
     {
         return isDefault;
     }
+
+    public static ConfigurePageModuleBeanBuilder newPageBean()
+    {
+        return new ConfigurePageModuleBeanBuilder();
+    }
+
+    public static ConfigurePageModuleBeanBuilder newPageBean(ConfigurePageModuleBean defaultBean)
+    {
+        return new ConfigurePageModuleBeanBuilder(defaultBean);
+    }
+
 }

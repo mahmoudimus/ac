@@ -21,4 +21,11 @@ public class ConfigurePageModuleBeanBuilder<T extends ConfigurePageModuleBeanBui
     {
         isDefault = true;
     }
+
+    @Override
+    public B build()
+    {
+        return (B) new ConfigurePageModuleBean(this);
+    }
+
 }
