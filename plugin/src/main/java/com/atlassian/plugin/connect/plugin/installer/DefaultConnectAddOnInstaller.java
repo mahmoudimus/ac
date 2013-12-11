@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.util.Set;
-
-import com.atlassian.plugin.*;
+import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.PluginArtifact;
+import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
@@ -18,13 +19,14 @@ import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.upm.spi.PluginInstallException;
-
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
@@ -73,11 +75,11 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         }
         catch (PluginInstallException e)
         {
-            log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...",e);
+            log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...", e);
             pluginController.uninstall(installedPlugin);
             throw e;
         }
-        
+
         return installedPlugin;
     }
 
@@ -100,16 +102,16 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             {
                 AuthenticationType authType = addOn.getAuthentication().getType();
                 String sharedKey = addOn.getAuthentication().getSharedKey();
-                
+
                 //applink MUST be created before any modules
                 connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, sharedKey);
-                
+
                 //create the modules
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
 
                 //save the descriptor so we can use it again if we ever need to re-enable the addon
-                connectDescriptorRegistry.storeDescriptor(pluginKey,jsonDescriptor);
-                
+                connectDescriptorRegistry.storeDescriptor(pluginKey, jsonDescriptor);
+
                 //make the sync callback if needed
                 connectEventHandler.pluginInstalled(addOn);
                 
@@ -118,7 +120,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 This is so we can register webhooks during the module registration phase and they will get fired with this enabled event.
                  */
                 connectEventHandler.publishEnabledEvent(pluginKey);
-                
+
             }
             catch (IllegalStateException e)
             {
@@ -149,7 +151,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
     private void uninstallWithException(Plugin installedPlugin, Exception e) throws Exception
     {
-        log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...",e);
+        log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...", e);
         beanToModuleRegistrar.unregisterDescriptorsForPlugin(installedPlugin);
         pluginController.uninstall(installedPlugin);
         throw e;

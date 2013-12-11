@@ -167,6 +167,4 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
     {
         return new DynamicContentMacroModuleBeanBuilder(defaultBean);
     }
-
-
 }

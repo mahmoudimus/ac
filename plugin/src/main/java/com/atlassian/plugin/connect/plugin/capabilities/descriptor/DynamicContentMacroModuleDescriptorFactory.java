@@ -99,7 +99,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
     {
         for (String alias : bean.getAliases())
         {
-            element.addElement("alias").addText(alias);
+            element.addElement("alias").addAttribute("name", alias);
         }
     }
 
@@ -107,7 +107,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
     {
         for (MacroCategory category : bean.getCategories())
         {
-            element.addElement("category").addText(category.toString());
+            element.addElement("category").addAttribute("name", category.toString());
         }
     }
 
