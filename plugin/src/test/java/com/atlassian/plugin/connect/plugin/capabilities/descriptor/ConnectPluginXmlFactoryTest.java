@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConfigurePageModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.dom4j.Document;
@@ -25,7 +26,8 @@ import static org.junit.Assert.assertThat;
 public class ConnectPluginXmlFactoryTest
 {
 
-    private static final String EXPECTED_CONFIGURE_URL = "/plugins/servlet/ac/addonKey/config-page";
+    private static final String MY_CONFIG_MODULE = "my-config-module";
+    private static final String EXPECTED_CONFIGURE_URL = "/plugins/servlet/ac/addonKey/" + MY_CONFIG_MODULE;
     private ConnectAddonBean addonWithNoConfigurePages;
     private ConnectAddonBean addonWithOneConfigurePage;
     private ConnectAddonBean addonWithTwoConfigurePagesOneDefault;
@@ -40,6 +42,7 @@ public class ConnectPluginXmlFactoryTest
         addonWithOneConfigurePage = ConnectAddonBean.newConnectAddonBean()
                 .withKey("addonKey")
                 .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
+                        .withName(new I18nProperty("myConfigModule", null))
                         .build())
                 .build();
 
@@ -48,6 +51,7 @@ public class ConnectPluginXmlFactoryTest
                 .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
                         .build())
                 .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
+                        .withKey(MY_CONFIG_MODULE)
                         .setAsDefault()
                         .build())
                 .build();
@@ -122,9 +126,6 @@ public class ConnectPluginXmlFactoryTest
     {
         getConfigUrls(addonWithTwoConfigurePagesBothDefault);
     }
-
-    // TODO: check for more than one using the default name - maybe not - don't make default special
-    // check for non default using default name whilst the default is not named
 
     private List<String> getConfigUrls(ConnectAddonBean bean) throws DocumentException
     {

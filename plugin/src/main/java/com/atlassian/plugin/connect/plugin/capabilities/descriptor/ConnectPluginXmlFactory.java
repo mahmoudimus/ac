@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 public class ConnectPluginXmlFactory
 {
     private final static RelativeAddOnUrlConverter relativeAddOnUrlConverter = new RelativeAddOnUrlConverter();
-    private static final String CONFIG_PAGE_PATH = ConfigurePageModuleBean.DEFAULT_MODULE_KEY;
 
     public String createPluginXml(ConnectAddonBean bean)
     {
@@ -74,7 +73,7 @@ public class ConnectPluginXmlFactory
                     public String apply(@Nullable String moduleKey)
                     {
                         return relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(bean.getKey(),
-                                CONFIG_PAGE_PATH).getRelativeUri();
+                                moduleKey).getRelativeUri();
                     }
                 });
 

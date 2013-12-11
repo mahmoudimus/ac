@@ -1,10 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConfigurePageModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.InvalidAddonConfigurationException;
-
-import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator.nameToKey;
-import static com.google.common.base.Objects.equal;
 
 /**
  * A configure page module is a page module used to configure the addon itself.
@@ -19,7 +15,6 @@ import static com.google.common.base.Objects.equal;
  */
 public class ConfigurePageModuleBean extends ConnectPageModuleBean
 {
-    public static final String DEFAULT_MODULE_KEY = "config-page";
     private Boolean isDefault; // TODO: ask JD if I can use lil boolean
 
     public ConfigurePageModuleBean(ConfigurePageModuleBeanBuilder builder)
@@ -35,21 +30,6 @@ public class ConfigurePageModuleBean extends ConnectPageModuleBean
     public Boolean isDefault()
     {
         return isDefault;
-    }
-
-    @Override
-    public String getKey()
-    {
-        String key = super.getKey();
-        // TODO: bit dodgy to call nameToKey here but not sure how else to check the key is not being defaulted.
-        // We could set the key when setAsDefault on the builder
-        // TODO: make sure covered by unit tests
-        // TODO: This may not be a good place to do this
-        if (isDefault && key != null && !equal(key, nameToKey(getName().getValue())) && !equal(key, DEFAULT_MODULE_KEY))
-        {
-            throw new InvalidAddonConfigurationException("Must not specify a key name for default configuration module");
-        }
-        return isDefault ? DEFAULT_MODULE_KEY : key;
     }
 
     public static ConfigurePageModuleBeanBuilder newConfigurePageBean()
