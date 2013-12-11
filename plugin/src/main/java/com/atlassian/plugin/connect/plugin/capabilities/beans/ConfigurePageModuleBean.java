@@ -32,12 +32,12 @@ public class ConfigurePageModuleBean extends ConnectPageModuleBean
         return isDefault;
     }
 
-    public static ConfigurePageModuleBeanBuilder newPageBean()
+    public static ConfigurePageModuleBeanBuilder newConfigurePageBean()
     {
         return new ConfigurePageModuleBeanBuilder();
     }
 
-    public static ConfigurePageModuleBeanBuilder newPageBean(ConfigurePageModuleBean defaultBean)
+    public static ConfigurePageModuleBeanBuilder newConfigurePageBean(ConfigurePageModuleBean defaultBean)
     {
         return new ConfigurePageModuleBeanBuilder(defaultBean);
     }

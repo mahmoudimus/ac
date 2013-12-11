@@ -25,8 +25,10 @@ import static org.junit.Assert.assertThat;
 public class ConnectPluginXmlFactoryTest
 {
 
+    private static final String EXPECTED_CONFIGURE_URL = "/plugins/servlet/ac/addonKey/config-page";
     private ConnectAddonBean addonWithNoConfigurePages;
     private ConnectAddonBean addonWithOneConfigurePage;
+    private ConnectAddonBean addonWithTwoConfigurePagesOneDefault;
 
     @Before
     public void init()
@@ -34,8 +36,19 @@ public class ConnectPluginXmlFactoryTest
         addonWithNoConfigurePages = ConnectAddonBean.newConnectAddonBean().build();
         addonWithOneConfigurePage = ConnectAddonBean.newConnectAddonBean()
                 .withKey("addonKey")
-                .withModule("configurePages", ConfigurePageModuleBean.newPageBean()
+                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
                         .withKey("myModuleKey")
+                        .build())
+                .build();
+
+        addonWithTwoConfigurePagesOneDefault = ConnectAddonBean.newConnectAddonBean()
+                .withKey("addonKey")
+                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
+                        .withKey("myModuleKey")
+                        .build())
+                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
+                        .withKey("myModuleKey2")
+                        .setAsDefault()
                         .build())
                 .build();
     }
@@ -55,7 +68,19 @@ public class ConnectPluginXmlFactoryTest
     @Test
     public void theConfigureUrlIsCorrectForAddonKey() throws DocumentException
     {
-        assertThat(getConfigUrls(addonWithOneConfigurePage).get(0), equalTo("/plugins/servlet/ac/addonKey/config-page"));
+        assertThat(getConfigUrls(addonWithOneConfigurePage).get(0), equalTo(EXPECTED_CONFIGURE_URL));
+    }
+
+    @Test
+    public void oneConfigureUrlParamAddedWhenTwoConfigureModulesWithOneMarkedDefault() throws DocumentException
+    {
+        assertThat(getConfigUrls(addonWithTwoConfigurePagesOneDefault), hasSize(1));
+    }
+
+    @Test
+    public void theConfigureUrlIsCorrectForAddonKeyWhenTwoModules() throws DocumentException
+    {
+        assertThat(getConfigUrls(addonWithTwoConfigurePagesOneDefault).get(0), equalTo(EXPECTED_CONFIGURE_URL));
     }
 
     private List<String> getConfigUrls(ConnectAddonBean bean) throws DocumentException
