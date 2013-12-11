@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import org.openqa.selenium.By;
@@ -15,16 +15,16 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMa
  */
 public class ConnectPageHelper
 {
-    public static interface ConnectPageHelperContainerPage extends Page
-    {
-        ConnectPageHelper getConnectPageHelper();
-    }
-
-    @Inject
     private PageBinder pageBinder;
 
-    @javax.inject.Inject
     private com.atlassian.webdriver.AtlassianWebDriver driver;
+
+    @Inject
+    public ConnectPageHelper(PageBinder pageBinder, AtlassianWebDriver driver)
+    {
+        this.pageBinder = pageBinder;
+        this.driver = driver;
+    }
 
     public RemoteWebPanel findWebPanel(String id)
     {

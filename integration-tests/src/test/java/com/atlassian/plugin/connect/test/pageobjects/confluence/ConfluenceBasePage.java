@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.test.pageobjects.confluence;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectPageHelper;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
@@ -11,14 +10,13 @@ import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import org.openqa.selenium.By;
 
-import static com.atlassian.plugin.connect.test.pageobjects.ConnectPageHelper.ConnectPageHelperContainerPage;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.ID;
 
 /**
  * Base confluence page.
  */
-public abstract class ConfluenceBasePage extends ConnectPageHelper implements Page, ConnectPageHelperContainerPage
+public abstract class ConfluenceBasePage implements Page
 {
     @Inject
     private PageBinder pageBinder;
@@ -66,9 +64,4 @@ public abstract class ConfluenceBasePage extends ConnectPageHelper implements Pa
         return findRemoteLinkedContent(ID, webItemId, dropDownMenuId, pageKey);
     }
 
-    @Override
-    public ConnectPageHelper getConnectPageHelper()
-    {
-        return this;
-    }
 }

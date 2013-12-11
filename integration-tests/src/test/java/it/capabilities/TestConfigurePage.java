@@ -1,4 +1,4 @@
-package it.capabilities.confluence;
+package it.capabilities;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -7,10 +7,10 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAddonConfigurePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.upm.pageobjects.PluginManager;
 import com.atlassian.upm.pageobjects.PluginRow;
-import it.confluence.ConfluenceWebDriverTestBase;
+import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of addon configure page in Confluence
  */
-public class TestConfigurePage extends ConfluenceWebDriverTestBase
+public class TestConfigurePage extends ConnectWebDriverTestBase
 {
 
     private static final String MY_AWESOME_PAGE = "My Awesome Page";
@@ -76,10 +76,10 @@ public class TestConfigurePage extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
 
-        ConfluenceAddonConfigurePage containerPage = product.visit(ConfluenceAddonConfigurePage.class);
+        PluginManager containerPage = product.visit(PluginManager.class);
         PluginRow pluginRow = containerPage.expandPluginRow(PLUGIN_KEY);
 
-        LinkedRemoteContent addonPage = containerPage.getConnectPageHelper().findConnectPage(LINK_TEXT, "Configure",
+        LinkedRemoteContent addonPage = connectPageHelper.findConnectPage(LINK_TEXT, "Configure",
                 Option.<String>none(), MY_AWESOME_PAGE_KEY);
         RemotePluginEmbeddedTestPage addonContentPage = addonPage.click();
         assertThat(addonContentPage.isLoaded(), equalTo(true));
