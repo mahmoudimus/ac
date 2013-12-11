@@ -64,7 +64,7 @@ public class JunkTest
                         .withStyleClasses("ac-link", "aui-link")
                         .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
                         .build())
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey("S0m3Publ1cK3y").build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
                 .build();
 
         Gson gson = ConnectModulesGsonFactory.getGson();

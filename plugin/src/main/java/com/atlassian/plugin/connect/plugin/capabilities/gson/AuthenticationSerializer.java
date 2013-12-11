@@ -18,7 +18,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.Authenticat
 public class AuthenticationSerializer implements JsonSerializer<AuthenticationBean>, JsonDeserializer<AuthenticationBean>
 {
     public static final String TYPE_FIELD = "type";
-    public static final String KEY_FIELD = "sharedKey";
+    public static final String KEY_FIELD = "publicKey";
 
     @Override
     public AuthenticationBean deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
@@ -30,7 +30,7 @@ public class AuthenticationSerializer implements JsonSerializer<AuthenticationBe
         {
             builder.withType(AuthenticationType.valueOf(authObject.get(TYPE_FIELD).getAsString().toUpperCase()));
         }
-        builder.withSharedKey(authObject.get(KEY_FIELD).getAsString());
+        builder.withPublicKey(authObject.get(KEY_FIELD).getAsString());
 
         return builder.build();
     }
@@ -39,7 +39,7 @@ public class AuthenticationSerializer implements JsonSerializer<AuthenticationBe
     public JsonElement serialize(AuthenticationBean authBean, Type typeOfSrc, JsonSerializationContext context)
     {
         JsonObject job = new JsonObject();
-        job.addProperty(KEY_FIELD, authBean.getSharedKey());
+        job.addProperty(KEY_FIELD, authBean.getPublicKey());
         job.addProperty(TYPE_FIELD, authBean.getType().name().toLowerCase());
 
         return job;

@@ -59,7 +59,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     }
 
     @Override
-    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String signingKey)
+    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String publicKey)
     {
         transactionTemplate.execute(new TransactionCallback<Void>()
         {
@@ -98,11 +98,11 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                     {
                         case JWT:
                             link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
-                            link.putProperty(/*ApplinksJwtPeerService.ATLASSIAN_JWT_SHARED_SECRET*/"atlassian.jwt.shared.secret", signingKey); // TODO: extract in ACDEV-663
+                            link.putProperty(/*ApplinksJwtPeerService.ATLASSIAN_JWT_SHARED_SECRET*/"atlassian.jwt.shared.secret", publicKey); // TODO: extract in ACDEV-663
                             break;
                         case OAUTH:
                             oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
-                            registerOAuth(link, plugin, signingKey, baseUri);
+                            registerOAuth(link, plugin, publicKey);
                             break;
                         default:
                             log.warn("Unknown authType encountered: " + authType.name());
@@ -207,6 +207,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
     }
 
+    @SuppressWarnings ("unchecked")
     private void manuallyDeleteApplicationId(ApplicationId expectedApplicationId)
     {
         PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
@@ -234,7 +235,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         return new ServiceProvider(dummyUri, dummyUri, dummyUri);
     }
 
-    private void registerOAuth(ApplicationLink link, Plugin plugin, String oauthKey, URI baseUri)
+    private void registerOAuth(ApplicationLink link, Plugin plugin, String publicKey)
     {
         String pluginKey = plugin.getKey();
         permissionManager.requirePermission(pluginKey, Permissions.CREATE_OAUTH_LINK);
@@ -243,9 +244,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         final String name = plugin.getName();
         final String description = pluginInfo.getDescription();
 
-        final PublicKey publicKey = getPublicKey(oauthKey);
+        final PublicKey publicKeyObj = getPublicKey(publicKey);
 
-        Consumer consumer = Consumer.key(pluginKey).name(name != null ? name : pluginKey).publicKey(publicKey).description(description).build();
+        Consumer consumer = Consumer.key(pluginKey).name(name != null ? name : pluginKey).publicKey(publicKeyObj).description(description).build();
 
         oAuthLinkManager.associateConsumerWithLink(link, consumer);
     }
