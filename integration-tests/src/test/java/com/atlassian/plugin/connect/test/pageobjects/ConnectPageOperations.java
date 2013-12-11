@@ -7,11 +7,13 @@ import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import org.openqa.selenium.By;
 
+import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.ID;
 
 /**
- * TODO: thinking this may be a better approach than base pages as we can extend the actual product page objects and
- * add this in like (a poor mans) mixin. Also it allows us to share these helper methods between products
+ * The set of standard operations for testing connect addons. The intention is to have one place for all such ops
+ * that is separate from the page objects. This allows us to avoid copy pasting these and more importantly hopefully avoids
+ * us needing connect specific page objects. i.e. use the standard product ones unless there is a good reason not to.
  */
 public class ConnectPageOperations
 {
@@ -42,7 +44,7 @@ public class ConnectPageOperations
         return !driver.elementExists(By.id(webItemId));
     }
 
-    public LinkedRemoteContent findConnectPage(RemoteWebItem.ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)
+    public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(mode, linkText, dropDownMenuId, "servlet-" + pageKey);
     }
@@ -57,7 +59,7 @@ public class ConnectPageOperations
         return findRemoteLinkedContent(webItemId, dropDownMenuId, "servlet-" + pageKey);
     }
 
-    private LinkedRemoteContent findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
+    private LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
     }
