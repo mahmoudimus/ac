@@ -27,6 +27,9 @@ public class ConfigurePageModuleBean extends ConnectPageModuleBean
         }
     }
 
+    /**
+     * If there is more than one configure page in an addon then one and only one must be marked as default=true
+     */
     public Boolean isDefault()
     {
         return isDefault;

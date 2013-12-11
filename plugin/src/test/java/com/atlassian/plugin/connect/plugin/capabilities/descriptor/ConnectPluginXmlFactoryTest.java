@@ -73,16 +73,6 @@ public class ConnectPluginXmlFactoryTest
                         .setAsDefault()
                         .build())
                 .build();
-
-//        addonWithTwoConfigurePagesNonDefaultUsesDefaultKey = ConnectAddonBean.newConnectAddonBean()
-//                .withKey("addonKey")
-//                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-//                        .setAsDefault()
-//                        .build())
-//                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-//                        .withKey(DEFAULT_MODULE_KEY)
-//                        .build())
-//                .build();
     }
 
     @Test

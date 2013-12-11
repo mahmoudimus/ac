@@ -16,7 +16,7 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMa
  */
 public class LinkedRemoteContent
 {
-    private  RemoteWebItem webItem;
+    private RemoteWebItem webItem;
     private final String pageKey;
     private final ItemMatchingMode mode;
     private final String matchValue;
