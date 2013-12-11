@@ -1,10 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.PluginArtifact;
-import com.atlassian.plugin.PluginController;
+import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;

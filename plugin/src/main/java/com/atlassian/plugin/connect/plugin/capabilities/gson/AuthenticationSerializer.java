@@ -3,13 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.gson;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.AuthenticationBeanBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 
 import java.lang.reflect.Type;
 

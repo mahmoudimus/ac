@@ -1,18 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.google.gson.Gson;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
-
-import com.google.gson.Gson;
-
-import org.junit.Test;
-
-import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readCapabilitiesTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
