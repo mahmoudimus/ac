@@ -327,7 +327,14 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
         Set<ObjectSchema> schemas = new HashSet<ObjectSchema>(classes.length);
         for(Class clazz : classes)
         {
-            schemas.add((ObjectSchema) generateObjectSchema(clazz,null));
+            if(clazz.isInterface())
+            {
+                schemas.add((ObjectSchema) generateInterfaceSchema(clazz,null));
+            }
+            else
+            {
+                schemas.add((ObjectSchema) generateObjectSchema(clazz,null));
+            }
         }
         
         return schemas;

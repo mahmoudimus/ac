@@ -20,7 +20,7 @@ public class ReflectionUtil
     
     private static void populateFields(Class<?> clazz,List<Field> fieldsForJson)
     {
-        if(Object.class.equals(clazz))
+        if(null == clazz || Object.class.equals(clazz))
         {
             return;
         }
