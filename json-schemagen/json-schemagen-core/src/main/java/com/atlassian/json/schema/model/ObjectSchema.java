@@ -2,19 +2,25 @@ package com.atlassian.json.schema.model;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import com.atlassian.json.schema.SchemaTypes;
+import com.atlassian.json.schema.SchemaType;
 
 public class ObjectSchema extends BasicSchema
 {
-    private Map<String,Object> properties;
-    private List<String> required;
-    
+    private Map<String, Object> properties;
+    private Set<String> required;
+    private Integer maxProperties;
+    private Integer minProperties;
+    private Boolean additionalProperties;
+    private Set<String> patternProperties;
+    private Map<String,Set<String>> dependencies;
+
     public ObjectSchema()
     {
-        setType(SchemaTypes.OBJECT);
+        setType(SchemaType.OBJECT.name().toLowerCase());
     }
-    
+
     public Map<String, Object> getProperties()
     {
         return properties;
@@ -25,13 +31,63 @@ public class ObjectSchema extends BasicSchema
         this.properties = properties;
     }
 
-    public List<String> getRequired()
+    public Set<String> getRequired()
     {
         return required;
     }
 
-    public void setRequired(List<String> required)
+    public void setRequired(Set<String> required)
     {
         this.required = required;
+    }
+
+    public Integer getMaxProperties()
+    {
+        return maxProperties;
+    }
+
+    public void setMaxProperties(Integer maxProperties)
+    {
+        this.maxProperties = maxProperties;
+    }
+
+    public Integer getMinProperties()
+    {
+        return minProperties;
+    }
+
+    public void setMinProperties(Integer minProperties)
+    {
+        this.minProperties = minProperties;
+    }
+
+    public Boolean getAdditionalProperties()
+    {
+        return additionalProperties;
+    }
+
+    public void setAdditionalProperties(Boolean additionalProperties)
+    {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public Set<String> getPatternProperties()
+    {
+        return patternProperties;
+    }
+
+    public void setPatternProperties(Set<String> patternProperties)
+    {
+        this.patternProperties = patternProperties;
+    }
+
+    public Map<String, Set<String>> getDependencies()
+    {
+        return dependencies;
+    }
+
+    public void setDependencies(Map<String, Set<String>> dependencies)
+    {
+        this.dependencies = dependencies;
     }
 }

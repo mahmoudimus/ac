@@ -1,25 +1,11 @@
 package com.atlassian.json.schema.model;
 
-import java.util.List;
-
-import com.atlassian.json.schema.SchemaTypes;
+import com.atlassian.json.schema.SchemaType;
 
 public class InterfaceSchema extends BasicSchema
 {
-    List<ObjectSchema> anyOf;
-    
     public InterfaceSchema()
     {
-        setType(SchemaTypes.OBJECT);
-    }
-
-    public void setAnyOf(List<ObjectSchema> anyOf)
-    {
-        this.anyOf = anyOf;
-    }
-
-    public List<ObjectSchema> getAnyOf()
-    {
-        return anyOf;
+        setType(SchemaType.OBJECT.name().toLowerCase());
     }
 }
