@@ -5,11 +5,12 @@ import java.net.URISyntaxException;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.ConfluenceWebDriverTestBase;
+import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 
@@ -18,23 +19,29 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMa
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class AbstractPageTst extends ConfluenceWebDriverTestBase
+public class AbstractPageTst extends ConnectWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
+    protected static final String PLUGIN_KEY = "my-plugin";
+    private static final String MY_AWESOME_PAGE = "My Awesome Page";
+    private static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
+    private static final String URL = "/" + MY_AWESOME_PAGE_KEY;
 
     private static ConnectRunner remotePlugin;
 
     protected static void startConnectAddOn(String fieldName) throws Exception
     {
+        startConnectAddOn(fieldName, newPageBean());
+    }
+
+    protected static void startConnectAddOn(String fieldName, ConnectPageModuleBeanBuilder pageBeanBuilder) throws Exception
+    {
+        pageBeanBuilder.withName(new I18nProperty(MY_AWESOME_PAGE, null))
+                .withUrl(URL)
+                .withWeight(1234);
+
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
-                .addModule(
-                        fieldName,
-                        newPageBean()
-                                .withName(new I18nProperty("My Awesome Page", null))
-                                .withUrl("/pg")
-                                .withWeight(1234)
-                                .build())
-                .addRoute("/pg", ConnectAppServlets.apRequestServlet())
+                .addModule(fieldName, pageBeanBuilder.build())
+                .addRoute(URL, ConnectAppServlets.apRequestServlet())
                 .start();
     }
 
@@ -47,17 +54,25 @@ public class AbstractPageTst extends ConfluenceWebDriverTestBase
         }
     }
 
-    protected void runCanClickOnPageLinkAndSeeAddonContents(Class<? extends Page> pageClass)
+    protected <T extends Page> void runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)
             throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
 
-        product.visit(pageClass);
-        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(LINK_TEXT, "My Awesome Page",
-                Option.<String>none(), "my-awesome-page");
+        T page = product.visit(pageClass);
+        revealLinkIfNecessary(page);
+
+        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(LINK_TEXT, linkText.getOrElse(MY_AWESOME_PAGE),
+                Option.<String>none(), MY_AWESOME_PAGE_KEY);
+
         RemotePluginEmbeddedTestPage addonContentPage = addonPage.click();
+
         assertThat(addonContentPage.isLoaded(), equalTo(true));
         assertThat(addonContentPage.getMessage(), equalTo("Success"));
+    }
+
+    protected <T extends Page> void revealLinkIfNecessary(T page)
+    {
     }
 
 

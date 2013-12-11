@@ -3,6 +3,7 @@ package it.capabilities.confluence;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,6 +23,6 @@ public class TestProfilePage extends AbstractPageTst
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class);
+        runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none());
     }
 }
