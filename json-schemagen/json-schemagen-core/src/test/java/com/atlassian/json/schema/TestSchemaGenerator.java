@@ -44,6 +44,25 @@ public class TestSchemaGenerator
     }
 
     @Test
+    public void testCommonAttrs() throws Exception
+    {
+        JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
+                true
+                , new InterfaceListBuilder().build()
+                , new JsonSchemaDocs()
+        );
+
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .setFieldNamingStrategy(new SchemaFieldNamingStrategy())
+                .create();
+
+        String json = gson.toJson(generator.generateSchema(CommonAttrs.class));
+
+        System.out.println(json);
+    }
+
+    @Test
     public void testInheritance() throws Exception
     {
         JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
@@ -63,6 +82,83 @@ public class TestSchemaGenerator
         
         assertTrue(json.contains("parentField"));
     }
+    
+    @Test
+    public void testStringAttrs() throws Exception
+    {
+        JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
+                true
+                , new InterfaceListBuilder().build()
+                , new JsonSchemaDocs()
+        );
+
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .setFieldNamingStrategy(new SchemaFieldNamingStrategy())
+                .create();
+
+        String json = gson.toJson(generator.generateSchema(StringAttrs.class));
+
+        System.out.println(json);
+    }
+
+    @Test
+    public void testNumericAttrs() throws Exception
+    {
+        JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
+                true
+                , new InterfaceListBuilder().build()
+                , new JsonSchemaDocs()
+        );
+
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .setFieldNamingStrategy(new SchemaFieldNamingStrategy())
+                .create();
+
+        String json = gson.toJson(generator.generateSchema(NumericAttrs.class));
+
+        System.out.println(json);
+    }
+
+    @Test
+    public void testArrayAttrs() throws Exception
+    {
+        JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
+                true
+                , new InterfaceListBuilder().build()
+                , new JsonSchemaDocs()
+        );
+
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .setFieldNamingStrategy(new SchemaFieldNamingStrategy())
+                .create();
+
+        String json = gson.toJson(generator.generateSchema(ArrayAttrs.class));
+
+        System.out.println(json);
+    }
+
+    @Test
+    public void testObjectAttrs() throws Exception
+    {
+        JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
+                true
+                , new InterfaceListBuilder().build()
+                , new JsonSchemaDocs()
+        );
+
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .setFieldNamingStrategy(new SchemaFieldNamingStrategy())
+                .create();
+
+        String json = gson.toJson(generator.generateSchema(ObjectAttrs.class));
+
+        System.out.println(json);
+    }
+    
     
     public JsonSchemaDocs getDocs()
     {
