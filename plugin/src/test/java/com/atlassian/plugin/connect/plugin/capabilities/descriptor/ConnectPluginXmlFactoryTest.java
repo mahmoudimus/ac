@@ -29,6 +29,8 @@ public class ConnectPluginXmlFactoryTest
     private ConnectAddonBean addonWithNoConfigurePages;
     private ConnectAddonBean addonWithOneConfigurePage;
     private ConnectAddonBean addonWithTwoConfigurePagesOneDefault;
+    private ConnectAddonBean addonWithTwoConfigurePagesNoDefault;
+    private ConnectAddonBean addonWithTwoConfigurePagesBothDefault;
 
     @Before
     public void init()
@@ -37,17 +39,32 @@ public class ConnectPluginXmlFactoryTest
         addonWithOneConfigurePage = ConnectAddonBean.newConnectAddonBean()
                 .withKey("addonKey")
                 .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-                        .withKey("myModuleKey")
                         .build())
                 .build();
 
         addonWithTwoConfigurePagesOneDefault = ConnectAddonBean.newConnectAddonBean()
                 .withKey("addonKey")
                 .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-                        .withKey("myModuleKey")
                         .build())
                 .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-                        .withKey("myModuleKey2")
+                        .setAsDefault()
+                        .build())
+                .build();
+
+        addonWithTwoConfigurePagesNoDefault = ConnectAddonBean.newConnectAddonBean()
+                .withKey("addonKey")
+                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
+                        .build())
+                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
+                        .build())
+                .build();
+
+        addonWithTwoConfigurePagesBothDefault = ConnectAddonBean.newConnectAddonBean()
+                .withKey("addonKey")
+                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
+                        .setAsDefault()
+                        .build())
+                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
                         .setAsDefault()
                         .build())
                 .build();
@@ -82,6 +99,21 @@ public class ConnectPluginXmlFactoryTest
     {
         assertThat(getConfigUrls(addonWithTwoConfigurePagesOneDefault).get(0), equalTo(EXPECTED_CONFIGURE_URL));
     }
+
+    @Test(expected = InvalidAddonConfigurationException.class)
+    public void throwsExceptionWhenTwoModulesSpecifiedButNoDefault() throws DocumentException
+    {
+        getConfigUrls(addonWithTwoConfigurePagesNoDefault);
+    }
+
+    @Test(expected = InvalidAddonConfigurationException.class)
+    public void throwsExceptionWhenTwoModulesSpecifiedAndBothDefault() throws DocumentException
+    {
+        getConfigUrls(addonWithTwoConfigurePagesBothDefault);
+    }
+
+    // TODO: check for more than one using the default name
+    // check for non default using default name whilst the default is not named
 
     private List<String> getConfigUrls(ConnectAddonBean bean) throws DocumentException
     {

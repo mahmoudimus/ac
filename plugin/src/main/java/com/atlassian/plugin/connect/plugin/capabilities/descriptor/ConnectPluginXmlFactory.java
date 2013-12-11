@@ -21,9 +21,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConnectPluginXmlFactory
 {
-
     private final static RelativeAddOnUrlConverter relativeAddOnUrlConverter = new RelativeAddOnUrlConverter();
-    private static final String CONFIG_PAGE_PATH = "config-page";
+    private static final String CONFIG_PAGE_PATH = ConfigurePageModuleBean.DEFAULT_MODULE_KEY;
 
     public String createPluginXml(ConnectAddonBean bean)
     {
