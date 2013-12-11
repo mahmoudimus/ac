@@ -88,19 +88,27 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyPaginationParametersArePartOfUrl() throws Exception
     {
-        loginAsAdmin();
-        createIssue();
-        findSearchRequestViewEntry().click();
-        NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
-
-        assertNoTimeout(queryParameters);
+        NameValuePairs queryParameters = logInAndGetSearchRequestViewQueryParameters();
         assertThat(queryParameters.all("startIssue"), hasSize(greaterThan(0)));
         assertThat(queryParameters.all("endIssue"), hasSize(greaterThan(0)));
         assertThat(queryParameters.all("totalIssues"), hasSize(greaterThan(0)));
     }
 
     @Test
-    public void verifyOAuthParametersArePartOfUrl() throws Exception
+    public void verifyOAuthParametersAreNotPartOfUrl() throws Exception
+    {
+        NameValuePairs queryParameters = logInAndGetSearchRequestViewQueryParameters();
+        assertThat(queryParameters.allStartingWith("oauth_"), hasSize(0));
+    }
+
+    @Test
+    public void verifyJwtParameterIsPartOfUrl() throws Exception
+    {
+        NameValuePairs queryParameters = logInAndGetSearchRequestViewQueryParameters();
+        assertThat(queryParameters.allStartingWith("jwt"), hasSize(1));
+    }
+
+    private NameValuePairs logInAndGetSearchRequestViewQueryParameters() throws Exception
     {
         loginAsAdmin();
         createIssue();
@@ -108,7 +116,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
 
         assertNoTimeout(queryParameters);
-        assertThat(queryParameters.allStartingWith("oauth_"), hasSize(greaterThan(1)));
+        return queryParameters;
     }
 
     private IssueNavigatorViewsMenu.ViewEntry findSearchRequestViewEntry() throws Exception
