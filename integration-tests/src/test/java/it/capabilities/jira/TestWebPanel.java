@@ -28,7 +28,8 @@ public class TestWebPanel extends JiraWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
                 .addModule("webPanels", newWebPanelBean()
                         .withName(new I18nProperty("HipChat Discussions", "hipchat.discussions"))
-                        .withUrl("http://www.google.com")
+                        // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
+                        .withUrl("/myWebPanelPage?issueId${issue.id}")
                         .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                         .withLayout(new WebPanelLayout("100%", "200px"))
                         .withWeight(1234)
@@ -61,6 +62,6 @@ public class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void urlIsCorrect()
     {
-        assertThat(webPanel.getIFrameSourceUrl(), startsWith("http://www.google.com")); // will end with the plugin's displayUrl and auth parameters
+        assertThat(webPanel.getIFrameSourceUrl(), startsWith(remotePlugin.getAddon().getBaseUrl() + "/myWebPanelPage"));
     }
 }

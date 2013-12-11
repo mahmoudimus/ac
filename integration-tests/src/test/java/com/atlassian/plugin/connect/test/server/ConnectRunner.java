@@ -89,6 +89,11 @@ public class ConnectRunner
         installer.uninstall(addon.getKey());
     }
 
+    public ConnectAddonBean getAddon()
+    {
+        return addon;
+    }
+
     /**
      * @return the UPM's JSON representation of this add-on.
      */
