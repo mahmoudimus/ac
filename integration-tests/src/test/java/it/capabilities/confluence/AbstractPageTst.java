@@ -4,10 +4,10 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceBasePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -47,13 +47,13 @@ public class AbstractPageTst extends ConfluenceWebDriverTestBase
         }
     }
 
-    protected <T extends ConfluenceBasePage> void runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass)
+    protected void runCanClickOnPageLinkAndSeeAddonContents(Class<? extends Page> pageClass)
             throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
 
-        T containerPage = product.visit(pageClass);
-        LinkedRemoteContent addonPage = containerPage.findConnectPage(LINK_TEXT, "My Awesome Page",
+        product.visit(pageClass);
+        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(LINK_TEXT, "My Awesome Page",
                 Option.<String>none(), "my-awesome-page");
         RemotePluginEmbeddedTestPage addonContentPage = addonPage.click();
         assertThat(addonContentPage.isLoaded(), equalTo(true));
