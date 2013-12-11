@@ -13,14 +13,14 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMa
  * TODO: thinking this may be a better approach than base pages as we can extend the actual product page objects and
  * add this in like (a poor mans) mixin. Also it allows us to share these helper methods between products
  */
-public class ConnectPageHelper
+public class ConnectPageOperations
 {
     private PageBinder pageBinder;
 
-    private com.atlassian.webdriver.AtlassianWebDriver driver;
+    private AtlassianWebDriver driver;
 
     @Inject
-    public ConnectPageHelper(PageBinder pageBinder, AtlassianWebDriver driver)
+    public ConnectPageOperations(PageBinder pageBinder, AtlassianWebDriver driver)
     {
         this.pageBinder = pageBinder;
         this.driver = driver;

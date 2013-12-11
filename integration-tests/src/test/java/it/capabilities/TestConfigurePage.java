@@ -79,7 +79,7 @@ public class TestConfigurePage extends ConnectWebDriverTestBase
         PluginManager containerPage = product.visit(PluginManager.class);
         PluginRow pluginRow = containerPage.expandPluginRow(PLUGIN_KEY);
 
-        LinkedRemoteContent addonPage = connectPageHelper.findConnectPage(LINK_TEXT, "Configure",
+        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(LINK_TEXT, "Configure",
                 Option.<String>none(), MY_AWESOME_PAGE_KEY);
         RemotePluginEmbeddedTestPage addonContentPage = addonPage.click();
         assertThat(addonContentPage.isLoaded(), equalTo(true));

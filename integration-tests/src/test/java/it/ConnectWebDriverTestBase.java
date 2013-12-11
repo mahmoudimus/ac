@@ -3,7 +3,7 @@ package it;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectPageHelper;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
@@ -23,7 +23,7 @@ public abstract class ConnectWebDriverTestBase
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
 //    @Inject
-    protected ConnectPageHelper connectPageHelper = new ConnectPageHelper(product.getPageBinder(),
+    protected ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
 
 
