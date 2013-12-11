@@ -17,6 +17,8 @@ import com.google.gson.GsonBuilder;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
 public class TestSchemaGenerator
 {
     @Test
@@ -58,6 +60,27 @@ public class TestSchemaGenerator
         String json = gson.toJson(generator.generateSchema(CommonAttrs.class));
 
         System.out.println(json);
+    }
+
+    @Test
+    public void testInheritance() throws Exception
+    {
+        JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
+                true
+                , new InterfaceListBuilder().build()
+                , new JsonSchemaDocs()
+        );
+
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .setFieldNamingStrategy(new SchemaFieldNamingStrategy())
+                .create();
+
+        String json = gson.toJson(generator.generateSchema(ChildObject.class));
+
+        System.out.println(json);
+        
+        assertTrue(json.contains("parentField"));
     }
     
     @Test
