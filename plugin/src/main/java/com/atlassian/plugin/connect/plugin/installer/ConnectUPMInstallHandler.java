@@ -74,7 +74,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
 
                 canInstall = result.isSuccess();
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 log.error(ConnectUPMInstallHandler.class.getSimpleName() + " can not load descriptor " + descriptorFile.getName(), e);
                 canInstall = false;
