@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import java.util.List;
 
+import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.spring.scanner.ProductFilter;
@@ -19,6 +20,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * that will handle adding beans to the proper fields in this class by name and type.
  * You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.
  */
+@ObjectSchemaAttributes(additionalProperties = false)
 public class ModuleList extends BaseModuleBean
 {
     @ConnectModule (WebItemModuleProvider.class)

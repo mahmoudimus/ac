@@ -19,6 +19,7 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
@@ -37,7 +38,7 @@ import static com.google.common.collect.Sets.newHashSet;
 @Named
 public final class DescriptorPermissionsReader implements PermissionsReader
 {
-    private final Cache<Plugin,Set<String>> permissionsCache;
+    private final LoadingCache<Plugin,Set<String>> permissionsCache;
     private final String productKey;
 
     @Inject
