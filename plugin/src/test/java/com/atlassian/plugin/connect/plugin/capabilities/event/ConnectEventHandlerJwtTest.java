@@ -62,6 +62,7 @@ public class ConnectEventHandlerJwtTest
     };
     private static final String PRODUCT_URL = "https://test.atlassian.com/confluence";
     private static final String UNSECURED_BASE_URL = "http://server:1234/baseUrl";
+    private static final String SECURED_BASE_URL = "https://server:1234/baseUrl";
 
     private @Mock EventPublisher eventPublisher;
     private @Mock PluginEventManager pluginEventManager;
@@ -115,7 +116,7 @@ public class ConnectEventHandlerJwtTest
 
 
     @Test
-    public void installCallbackMustPreventSnoopingInDevMode()
+    public void installCallbackMustAllowSnoopingInDevMode()
     {
         // make a call over http (note the lack of "s") and it shall be allowed in dev mode
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
@@ -150,6 +151,6 @@ public class ConnectEventHandlerJwtTest
         when(applicationProperties.getBaseUrl(UrlMode.CANONICAL)).thenReturn(PRODUCT_URL);
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
                 applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE);
-        connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, UNSECURED_BASE_URL), SHARED_SECRET);
+        connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, SECURED_BASE_URL), SHARED_SECRET);
     }
 }
