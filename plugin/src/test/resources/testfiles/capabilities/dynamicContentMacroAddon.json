@@ -1,0 +1,51 @@
+{
+  "authentication": {
+    "sharedKey": "S0m3Publ1cK3y",
+    "type": "oauth"
+  },
+  "baseUrl": "http://www.example.com",
+  "key": "my-add-on",
+  "modules": {
+    "dynamicContentMacros": [
+      {
+        "alias": "some-alias",
+        "bodyType": "plain-text",
+        "category": "hidden-macros",
+        "description": {
+          "i18n": "some.macro.desc",
+          "value": "Some Description"
+        },
+        "documentationUrl": "http://docs.example.com/macro",
+        "featured": true,
+        "height": 50,
+        "icon": {
+          "height": 80,
+          "url": "/mymacro/icon.png",
+          "width": 80
+        },
+        "name": {
+          "i18n": "some.macro.name",
+          "value": "Some Macro"
+        },
+        "outputType": "block",
+        "parameters": [
+          {
+            "defaultValue": "default",
+            "multiple": false,
+            "name": "Parameter Name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "url": "/my-macro",
+        "width": 100
+      }
+    ]
+  },
+  "name": "My Add-On",
+  "vendor": {
+    "name": "Atlassian",
+    "url": "http://www.atlassian.com"
+  },
+  "version": "2.0"
+}

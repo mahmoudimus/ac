@@ -75,6 +75,9 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule (value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
     private List<SearchRequestViewModuleBean> jiraSearchRequestViews;
 
+    @ConnectModule (value = DynamicContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
+    private List<DynamicContentMacroModuleBean> dynamicContentMacros;
+
     public ModuleList()
     {
         this.jiraComponentTabPanels = newArrayList();
@@ -89,6 +92,7 @@ public class ModuleList extends BaseModuleBean
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
         this.jiraSearchRequestViews = newArrayList();
+        this.dynamicContentMacros = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -142,6 +146,10 @@ public class ModuleList extends BaseModuleBean
         if (null == jiraSearchRequestViews)
         {
             this.jiraSearchRequestViews = newArrayList();
+        }
+        if (null == dynamicContentMacros)
+        {
+            this.dynamicContentMacros = newArrayList();
         }
     }
 
@@ -203,5 +211,10 @@ public class ModuleList extends BaseModuleBean
     public List<SearchRequestViewModuleBean> getJiraSearchRequestViews()
     {
         return jiraSearchRequestViews;
+    }
+
+    public List<DynamicContentMacroModuleBean> getDynamicContentMacros()
+    {
+        return dynamicContentMacros;
     }
 }
