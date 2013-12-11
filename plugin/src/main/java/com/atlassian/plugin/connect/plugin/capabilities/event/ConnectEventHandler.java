@@ -224,7 +224,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         // try distributing prod shared secrets over http (note the lack of "s") and it shall be rejected
         if (!isDevModeService.isDevMode() && null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
         {
-            throw new PluginInstallException(String.format("Cannot issue install except via HTTPS. Current base URL = '%s'", addon.getBaseUrl()));
+            throw new PluginInstallException(String.format("Cannot issue install callback except via HTTPS. Current base URL = '%s'", addon.getBaseUrl()));
         }
 
         try
