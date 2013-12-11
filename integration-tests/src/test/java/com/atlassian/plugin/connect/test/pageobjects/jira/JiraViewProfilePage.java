@@ -12,23 +12,23 @@ import com.google.common.base.Optional;
  */
 public class JiraViewProfilePage extends ViewProfilePage
 {
-    final private Option<String> userName;
+    final private Option<String> profileUsername;
 
-    public JiraViewProfilePage(Option<String> userName)
+    public JiraViewProfilePage(Option<String> profileUsername)
     {
-        this.userName = userName;
+        this.profileUsername = profileUsername;
     }
 
     @Deprecated // use ctr w option
-    public JiraViewProfilePage(String userName)
+    public JiraViewProfilePage(String profileUsername)
     {
-        this(Option.some(userName));
+        this(Option.some(profileUsername));
     }
 
     @Override
     public String getUrl()
     {
-        return userName.isEmpty() ? super.getUrl() : super.getUrl() + "?name=" + userName.get();
+        return profileUsername.isEmpty() ? super.getUrl() : super.getUrl() + "?name=" + profileUsername.get();
     }
 
     public RemoteWebPanel findWebPanel(String panelId)
