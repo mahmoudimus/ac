@@ -32,7 +32,7 @@ public class TestDescriptorValidation
     @Test
     public void testGoodConfluenceDescriptor() throws Exception
     {
-        String json = readAddonTestFile("addonMultipleCapabilities.json");
+        String json = readAddonTestFile("validConfluenceDescriptor.json");
         DescriptorValidationResult result = validator.validate(json);
 
         assertTrue(result.isSuccess());
@@ -41,7 +41,7 @@ public class TestDescriptorValidation
     @Test
     public void testBadConfluenceDescriptor() throws Exception
     {
-        String json = readAddonTestFile("issueTabAddon.json");
+        String json = readAddonTestFile("validJiraDescriptor.json");
         DescriptorValidationResult result = validator.validate(json);
 
         assertFalse(result.isSuccess());

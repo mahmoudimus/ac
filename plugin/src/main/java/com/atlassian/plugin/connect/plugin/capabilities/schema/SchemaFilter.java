@@ -44,8 +44,9 @@ public class SchemaFilter implements Filter
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
         boolean pretty = false;
-
-        if (null != servletRequest.getParameter("pretty"))
+        
+        String prettyParam = servletRequest.getParameter("pretty");
+        if (null != prettyParam && (prettyParam.length() == 0 || Boolean.parseBoolean(prettyParam)))
         {
             pretty = true;
         }
