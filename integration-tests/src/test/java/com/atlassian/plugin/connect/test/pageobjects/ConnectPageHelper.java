@@ -1,25 +1,25 @@
-package com.atlassian.plugin.connect.test.pageobjects.confluence;
+package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectPageHelper;
-import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import org.openqa.selenium.By;
 
-import static com.atlassian.plugin.connect.test.pageobjects.ConnectPageHelper.ConnectPageHelperContainerPage;
-import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.ID;
 
 /**
- * Base confluence page.
+ * TODO: thinking this may be a better approach than base pages as we can extend the actual product page objects and
+ * add this in like (a poor mans) mixin. Also it allows us to share these helper methods between products
  */
-public abstract class ConfluenceBasePage extends ConnectPageHelper implements Page, ConnectPageHelperContainerPage
+public class ConnectPageHelper
 {
+    public static interface ConnectPageHelperContainerPage extends Page
+    {
+        ConnectPageHelper getConnectPageHelper();
+    }
+
     @Inject
     private PageBinder pageBinder;
 
@@ -38,10 +38,11 @@ public abstract class ConfluenceBasePage extends ConnectPageHelper implements Pa
 
     public Boolean webItemDoesNotExist(String webItemId)
     {
+//        Check.elementExists(By.id(webItemId));
         return !driver.elementExists(By.id(webItemId));
     }
 
-    public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)
+    public LinkedRemoteContent findConnectPage(RemoteWebItem.ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(mode, linkText, dropDownMenuId, "servlet-" + pageKey);
     }
@@ -56,7 +57,7 @@ public abstract class ConfluenceBasePage extends ConnectPageHelper implements Pa
         return findRemoteLinkedContent(webItemId, dropDownMenuId, "servlet-" + pageKey);
     }
 
-    private LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
+    private LinkedRemoteContent findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
     }
@@ -66,9 +67,4 @@ public abstract class ConfluenceBasePage extends ConnectPageHelper implements Pa
         return findRemoteLinkedContent(ID, webItemId, dropDownMenuId, pageKey);
     }
 
-    @Override
-    public ConnectPageHelper getConnectPageHelper()
-    {
-        return this;
-    }
 }
