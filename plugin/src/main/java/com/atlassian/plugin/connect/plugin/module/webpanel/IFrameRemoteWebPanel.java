@@ -16,6 +16,7 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.sal.api.user.UserManager;
 
+import com.atlassian.sal.api.user.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,11 +72,12 @@ public class IFrameRemoteWebPanel implements WebPanel
     {
         if (condition.shouldDisplay(context))
         {
-            final String remoteUser = StringUtils.defaultString(userManager.getRemoteUsername());
+            UserProfile remoteUser = userManager.getRemoteUser();
+            String remoteUsername = remoteUser == null ? "" : remoteUser.getUsername();
 
             final Map<String, Object> whiteListedContext = contextMapURLSerializer.getExtractedWebPanelParameters(context);
 
-            writer.write(iFrameRenderer.render(substituteContext(whiteListedContext), "", Collections.EMPTY_MAP, remoteUser, whiteListedContext));
+            writer.write(iFrameRenderer.render(substituteContext(whiteListedContext), "", Collections.EMPTY_MAP, remoteUsername, whiteListedContext));
         }
         else
         {

@@ -191,7 +191,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
                     iFrameContext,
                     "",
                     ImmutableMap.of(POST_FUNCTION_CONFIGURATION_UUID, new String[]{uuid.toString()}),
-                    user.getDisplayName(),
+                    user.getUsername(),
                     Collections.<String, Object>emptyMap());
         }
         catch (IOException e)

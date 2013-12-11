@@ -14,6 +14,18 @@ import com.atlassian.util.concurrent.Promise;
  */
 public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAccessorFactory
 {
+    public static final String ADDON_BASE_URL = "http://www.example.com";
+    private String baseUrl;
+
+    public RemotablePluginAccessorFactoryForTests()
+    {
+        baseUrl = ADDON_BASE_URL;
+    }
+
+    public void withBaseUrl(String baseUrl)
+    {
+        this.baseUrl = baseUrl;
+    }
 
     @Override
     public RemotablePluginAccessor get(final String pluginKey)
@@ -28,7 +40,7 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
             @Override
             public URI getBaseUrl()
             {
-                return URI.create("http://www.example.com");
+                return URI.create(baseUrl);
             }
 
             @Override
