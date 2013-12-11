@@ -6,15 +6,15 @@ public enum MacroBodyType
     PLAIN_TEXT("plain-text"),
     NONE("none");
 
-    private final String bodyType;
+    private final String value;
 
-    MacroBodyType(String bodyType)
+    MacroBodyType(String value)
     {
-        this.bodyType = bodyType;
+        this.value = value;
     }
 
     public String toString()
     {
-        return bodyType;
+        return value;
     }
 }

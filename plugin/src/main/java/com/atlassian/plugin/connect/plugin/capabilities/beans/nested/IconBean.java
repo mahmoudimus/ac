@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBuilder;
+import com.google.common.base.Strings;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleBeanUtils.copyFieldsByNameAndType;
 
@@ -55,6 +56,11 @@ public class IconBean
         return url;
     }
 
+    public boolean hasUrl()
+    {
+        return !Strings.isNullOrEmpty(url);
+    }
+
     public static IconBeanBuilder newIconBean()
     {
         return new IconBeanBuilder();
@@ -64,5 +70,4 @@ public class IconBean
     {
         return new IconBeanBuilder(defaultBean);
     }
-
 }

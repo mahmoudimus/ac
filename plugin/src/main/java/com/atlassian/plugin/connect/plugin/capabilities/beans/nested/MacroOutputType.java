@@ -5,15 +5,16 @@ public enum MacroOutputType
     BLOCK("block"),
     INLINE("inline");
 
-    private final String outputType;
+    private final String value;
 
-    private MacroOutputType(String outputType)
+    private MacroOutputType(String value)
     {
-        this.outputType = outputType;
+        this.value = value;
     }
 
     public String toString()
     {
-        return outputType;
+        return value;
     }
+
 }

@@ -9,6 +9,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutput
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.google.common.collect.Lists;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class DynamicContentMacroModuleBean extends NameToKeyBean
@@ -86,6 +88,11 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
     public String getUrl()
     {
         return url;
+    }
+
+    public URI createUri() throws URISyntaxException
+    {
+        return null == url ? null : new URI(url);
     }
 
     public I18nProperty getDescription()
