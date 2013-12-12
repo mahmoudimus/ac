@@ -1,38 +1,59 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
-import javax.inject.Inject;
-
-import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.fugue.Option;
+import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
+import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
-import com.atlassian.webdriver.AtlassianWebDriver;
+import com.google.common.base.Optional;
 
 /**
  * An user ViewProfile page that is expected to have a panel provided by a remote plugin.
  */
-public class JiraViewProfilePage implements Page
+public class JiraViewProfilePage extends ViewProfilePage
 {
-    final private String userName;
+    final private Option<String> profileUsername;
 
-    @Inject
-    private AtlassianWebDriver driver;
-
-    @Inject
-    private PageBinder pageBinder;
-
-    public JiraViewProfilePage(String userName)
+    public JiraViewProfilePage(Option<String> profileUsername)
     {
-        this.userName = userName;
+        this.profileUsername = profileUsername;
+    }
+
+    @Deprecated // use ctr w option
+    public JiraViewProfilePage(String profileUsername)
+    {
+        this(Option.some(profileUsername));
     }
 
     @Override
     public String getUrl()
     {
-        return "/secure/ViewProfile.jspa?name=" + userName;
+        return profileUsername.isEmpty() ? super.getUrl() : super.getUrl() + "?name=" + profileUsername.get();
     }
 
     public RemoteWebPanel findWebPanel(String panelId)
     {
         return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
+
+    public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownMenuId)
+    {
+        return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownMenuId);
+    }
+
+    public LinkedRemoteContent findTabPanel(String webItemId, Option<String> dropDownMenuId, String pageKey)
+    {
+        return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
+    }
+
+    public LinkedRemoteContent findConnectPage(String webItemId, Option<String> dropDownMenuId, String pageKey)
+    {
+        return findRemoteLinkedContent(webItemId, dropDownMenuId, "servlet-" + pageKey);
+    }
+
+    private LinkedRemoteContent findRemoteLinkedContent(String webItemId, Option<String> dropDownMenuId, String pageKey)
+    {
+        return pageBinder.bind(LinkedRemoteContent.class, webItemId, dropDownMenuId, pageKey);
+    }
+
 }

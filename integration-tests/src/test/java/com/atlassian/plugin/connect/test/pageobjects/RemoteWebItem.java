@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import javax.inject.Inject;
+
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.google.common.base.Optional;
 import org.openqa.selenium.By;
-
-import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static it.TestConstants.IFRAME_ID_SUFFIX;
@@ -16,37 +16,61 @@ import static it.TestConstants.IFRAME_ID_SUFFIX;
  */
 public class RemoteWebItem
 {
+    public static enum ItemMatchingMode { ID, LINK_TEXT }
+
     private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-servlet-";
 
     @Inject
     private PageElementFinder elementFinder;
 
-    private final String id;
+    private final ItemMatchingMode mode;
+    private final String matchValue;
     private final Optional<String> dropDownLinkId;
 
     private PageElement webItem;
     private String path;
 
+    public RemoteWebItem(ItemMatchingMode mode, String matchValue, Optional<String> dropDownLinkId)
+    {
+        this.mode = mode;
+        this.matchValue = matchValue;
+        this.dropDownLinkId = dropDownLinkId;
+    }
+
     public RemoteWebItem(String id, Optional<String> dropDownLinkId)
     {
-        this.id = id;
-        this.dropDownLinkId = dropDownLinkId;
+        this(ItemMatchingMode.ID, id, dropDownLinkId);
     }
 
     @Init
     public void init()
     {
-        webItem = elementFinder.find(By.id(id));
+        webItem = findWebItem();
         waitUntilTrue(webItem.timed().isPresent());
 
         if (!isPointingToOldXmlInternalUrl() && !isPointingToACInternalUrl())
         {
-            path = elementFinder.find(By.id(IFRAME_ID_PREFIX + id + IFRAME_ID_SUFFIX)).getAttribute("src");
+            path = elementFinder.find(By.id(IFRAME_ID_PREFIX + matchValue + IFRAME_ID_SUFFIX)).getAttribute("src");
         }
         else
         {
             path = webItem.getAttribute("href");
         }
+    }
+
+    private PageElement findWebItem()
+    {
+        By by = null;
+        switch (mode) {
+            case ID:
+            default:
+                by = By.id(matchValue);
+                break;
+            case LINK_TEXT:
+                by = By.linkText(matchValue);
+                break;
+        }
+        return elementFinder.find(by);
     }
 
     public boolean isPointingToOldXmlInternalUrl()

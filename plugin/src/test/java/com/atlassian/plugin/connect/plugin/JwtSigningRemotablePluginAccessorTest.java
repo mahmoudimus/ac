@@ -48,15 +48,17 @@ public class JwtSigningRemotablePluginAccessorTest
 {
     private static final String PLUGIN_KEY = "key";
     private static final String PLUGIN_NAME = "name";
-    private static final String BASE_PATH = "/basepath";
-    private static final String OUTGOING_FULL_GET_URL = "http://server:1234" + BASE_PATH + "/path?param=param+value";
+    private static final String BASE_URL = "http://server:1234/basepath";
+    private static final String FULL_PATH_URL = BASE_URL + "/path";
+    private static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
     private static final String INTERNAL_FULL_GET_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";
     private static final Map<String,String> GET_HEADERS = Collections.singletonMap("header", "header value");
     private static final Map<String,String> GET_PARAMS = Collections.singletonMap("param", "param value");
     private static final Map<String,String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
+    private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
+    private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
     private static final String EXPECTED_GET_RESPONSE = "expected";
-    private static final String BASE_URL = "http://server:1234" + BASE_PATH;
     private static final String MOCK_JWT = "just.an.example";
     private @Mock JwtService jwtService;
     private @Mock ApplicationLink applicationLink;
@@ -95,6 +97,18 @@ public class JwtSigningRemotablePluginAccessorTest
     public void createdRemotePluginAccessorCreatesCorrectGetUrl() throws ExecutionException, InterruptedException
     {
         assertThat(createRemotePluginAccessor().createGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsIncorrectlyAbsolute() throws ExecutionException, InterruptedException
+    {
+        assertThat(createRemotePluginAccessor().createGetUrl(UNEXPECTED_ABSOLUTE_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsAbsoluteToAddon() throws ExecutionException, InterruptedException
+    {
+        assertThat(createRemotePluginAccessor().createGetUrl(FULL_PATH_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
     }
 
     @Test
