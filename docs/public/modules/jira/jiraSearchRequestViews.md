@@ -1,7 +1,7 @@
 A Search Request View allows you to render a custom representation of a search result. Rendering a custom XML format
 is a common example.
 
-After an add-on declaring a Search Request View capability is installed, a new entry will show up in the
+After an add-on declaring a Search Request View module is installed, a new entry will show up in the
 *Export* menu on the Issue Navigator page. Clicking the entry will redirect to the URL that is provided
 by your add-on, passing in the issue keys, pagination information and the OAuth parameters that allow you
 to verify the validity of the request.
