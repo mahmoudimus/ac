@@ -10,12 +10,12 @@
           },
           "authentication": {
             "properties": {
-              "sharedKey": {
+              "publicKey": {
                 "type": "string",
-                "description": "Either the JWT shared secret ot the OAUTH publickKey depending on authentication type."
+                "description": "The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with\n a shared secret."
               },
               "type": {
-                "enumList": [
+                "enum": [
                   "oauth",
                   "jwt",
                   "none"
@@ -26,7 +26,7 @@
             },
             "id": "authenticationBean",
             "type": "object",
-            "description": "Defines the authentication type to use when signing requests between the host application and the connect add on.\n The authentication type can be eithe jwt or oauth. If the type is not supplied it will default to jwt.\n"
+            "description": "Defines the authentication type to use when signing requests between the host application and the connect add on.\n The authentication type can be either jwt or oauth. If the type is not supplied it will default to jwt.\n"
           },
           "lifecycle": {
             "properties": {
@@ -78,6 +78,41 @@
               "adminPages": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "icon": {
                       "properties": {
                         "height": {
@@ -104,6 +139,21 @@
                     "location": {
                       "type": "string",
                       "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "url": {
                       "type": "string",
@@ -117,9 +167,135 @@
                 "type": "array",
                 "title": "Admin Page"
               },
+              "configurePages": {
+                "items": {
+                  "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
+                    "icon": {
+                      "properties": {
+                        "height": {
+                          "type": "integer",
+                          "description": "The height in pixels of the icon image."
+                        },
+                        "width": {
+                          "type": "integer",
+                          "description": "The width in pixels of the icon image."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                        }
+                      },
+                      "id": "iconBean",
+                      "type": "object"
+                    },
+                    "weight": {
+                      "type": "integer"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "isDefault": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "id": "configurePageModuleBean",
+                  "type": "object",
+                  "description": "A configure page module is a page module used to configure the addon itself.\n Other than that it is the same as other pages.\n\n If more than one configure page is specified, then exactly one of them must have the [default] field set.\n A 'configure' button will link to this page from the manage plugins administration console.\n\n If there is only one configure page specified then it will automatically be used regardless of the default field.\n\n If no configure page modules are specified then no configure button will be included on the install page.\n"
+                },
+                "type": "array",
+                "title": "Configure Page"
+              },
               "generalPages": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "icon": {
                       "properties": {
                         "height": {
@@ -146,6 +322,21 @@
                     "location": {
                       "type": "string",
                       "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "url": {
                       "type": "string",
@@ -162,8 +353,58 @@
               "jiraComponentTabPanels": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "weight": {
                       "type": "integer"
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "url": {
                       "type": "string"
@@ -178,8 +419,58 @@
               "jiraIssueTabPanels": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "weight": {
                       "type": "integer"
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "url": {
                       "type": "string"
@@ -191,10 +482,132 @@
                 "type": "array",
                 "title": "Issue Tab Panel"
               },
+              "jiraProfileTabPanels": {
+                "items": {
+                  "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
+                    "weight": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "id": "connectTabPanelModuleBean",
+                  "type": "object"
+                },
+                "type": "array",
+                "title": "User Profile Tab Panel"
+              },
               "jiraProjectAdminTabPanels": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
+                    "weight": {
+                      "type": "integer"
+                    },
                     "location": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
+                    },
+                    "url": {
                       "type": "string"
                     }
                   },
@@ -208,8 +621,58 @@
               "jiraProjectTabPanels": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "weight": {
                       "type": "integer"
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "url": {
                       "type": "string"
@@ -224,6 +687,41 @@
               "jiraSearchRequestViews": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "weight": {
                       "type": "integer",
                       "description": "Determines the order in which the Search Request View entry appears in the *Export* menu.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list."
@@ -241,6 +739,21 @@
                       "type": "object",
                       "description": "A description of your Search Request View"
                     },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
+                    },
                     "url": {
                       "type": "string",
                       "description": "The URL of the service that will render the representation for the result set. The URL is\n interpreted relative to the *baseUrl* in the descriptor."
@@ -256,8 +769,58 @@
               "jiraVersionTabPanels": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "weight": {
                       "type": "integer"
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "url": {
                       "type": "string"
@@ -284,6 +847,18 @@
                       "id": "i18nProperty",
                       "type": "object",
                       "description": "The description of the add-on's functionality that will show up in the *Manage add-ons* page."
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
                     },
                     "edit": {
                       "properties": {
@@ -336,6 +911,41 @@
               "webItems": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "icon": {
                       "properties": {
                         "height": {
@@ -370,14 +980,29 @@
                       "type": "string",
                       "description": "The location in the application interface where the web item should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n <p/>\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
                     },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
                     "link": {
                       "type": "string",
                       "description": "Specifies the URL targeted by the link. The URL can be absolute or relative to either the\n  product URL or the add-on's base URL, depending on the {@link AddOnUrlContext} parameter."
                     },
                     "target": {
                       "properties": {
+                        "params": {
+                          "additionalProperties": true
+                        },
                         "type": {
-                          "enumList": [
+                          "enum": [
                             "page",
                             "dialog",
                             "inlinedialog"
@@ -393,12 +1018,15 @@
                       "description": "Defines the way the link is opened in the browser, such as in a modal or inline dialog.\n  If omitted, the link behaves as a regular hyperlink."
                     },
                     "context": {
-                      "enumList": [
+                      "enum": [
                         "addon",
                         "product"
                       ],
                       "type": "string",
                       "description": "The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.\n\n <p/>\n\n  This context can be either \"add-on\", which renders the URL relative to the add-on's base URL, or\n  \"product\", which renders the URL relative to the product's base URL."
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "tooltip": {
                       "properties": {
@@ -424,6 +1052,41 @@
               "webPanels": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "weight": {
                       "type": "integer",
                       "description": "Determines the order in which web panels appear. Web panels are displayed top to bottom or left to right in\n  order of ascending weight. The \"lightest\" weight is displayed first, while the \"heaviest\" weights sink to the\n  bottom. The weight values for most panels start from 100, and the weights for the links\n  generally start from 10. The weight is incremented by 10 for each in sequence to leave room for custom\n  panels."
@@ -431,6 +1094,18 @@
                     "location": {
                       "type": "string",
                       "description": "Location in the application interface for this panel."
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
                     },
                     "layout": {
                       "properties": {
@@ -444,6 +1119,9 @@
                       "id": "webPanelLayout",
                       "type": "object",
                       "description": "The width and height of the web panel on the page."
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "url": {
                       "type": "string",
@@ -464,6 +1142,9 @@
                       "type": "string",
                       "description": "Specifies the named event you would like to listen to (e.g., \"enabled\", \"jira:issue_created\", etc.)"
                     },
+                    "params": {
+                      "additionalProperties": true
+                    },
                     "url": {
                       "type": "string",
                       "description": "Specifies your add-on's POST webhook handler URL. This property has to be a relative URL."
@@ -477,6 +1158,7 @@
                 "type": "array"
               }
             },
+            "additionalProperties": false,
             "id": "moduleList",
             "type": "object",
             "description": "This class represents the list of modules in the json descriptor.\n Every new module type needs to be added here as a private field and annotated with @ConnectModule\n \n The field name will be what appears in the json.\n \n Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder\n that will handle adding beans to the proper fields in this class by name and type.\n You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.\n"
@@ -502,12 +1184,12 @@
           },
           "authentication": {
             "properties": {
-              "sharedKey": {
+              "publicKey": {
                 "type": "string",
-                "description": "Either the JWT shared secret ot the OAUTH publickKey depending on authentication type."
+                "description": "The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with\n a shared secret."
               },
               "type": {
-                "enumList": [
+                "enum": [
                   "oauth",
                   "jwt",
                   "none"
@@ -518,7 +1200,7 @@
             },
             "id": "authenticationBean",
             "type": "object",
-            "description": "Defines the authentication type to use when signing requests between the host application and the connect add on.\n The authentication type can be eithe jwt or oauth. If the type is not supplied it will default to jwt.\n"
+            "description": "Defines the authentication type to use when signing requests between the host application and the connect add on.\n The authentication type can be either jwt or oauth. If the type is not supplied it will default to jwt.\n"
           },
           "lifecycle": {
             "properties": {
@@ -570,6 +1252,41 @@
               "adminPages": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "icon": {
                       "properties": {
                         "height": {
@@ -596,6 +1313,21 @@
                     "location": {
                       "type": "string",
                       "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "url": {
                       "type": "string",
@@ -609,9 +1341,135 @@
                 "type": "array",
                 "title": "Admin Page"
               },
+              "configurePages": {
+                "items": {
+                  "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
+                    "icon": {
+                      "properties": {
+                        "height": {
+                          "type": "integer",
+                          "description": "The height in pixels of the icon image."
+                        },
+                        "width": {
+                          "type": "integer",
+                          "description": "The width in pixels of the icon image."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                        }
+                      },
+                      "id": "iconBean",
+                      "type": "object"
+                    },
+                    "weight": {
+                      "type": "integer"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "isDefault": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "id": "configurePageModuleBean",
+                  "type": "object",
+                  "description": "A configure page module is a page module used to configure the addon itself.\n Other than that it is the same as other pages.\n\n If more than one configure page is specified, then exactly one of them must have the [default] field set.\n A 'configure' button will link to this page from the manage plugins administration console.\n\n If there is only one configure page specified then it will automatically be used regardless of the default field.\n\n If no configure page modules are specified then no configure button will be included on the install page.\n"
+                },
+                "type": "array",
+                "title": "Configure Page"
+              },
               "generalPages": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "icon": {
                       "properties": {
                         "height": {
@@ -639,6 +1497,21 @@
                       "type": "string",
                       "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
                     },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
+                    },
                     "url": {
                       "type": "string",
                       "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL"
@@ -651,9 +1524,136 @@
                 "type": "array",
                 "title": "General Page"
               },
+              "profilePages": {
+                "items": {
+                  "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
+                    "icon": {
+                      "properties": {
+                        "height": {
+                          "type": "integer",
+                          "description": "The height in pixels of the icon image."
+                        },
+                        "width": {
+                          "type": "integer",
+                          "description": "The width in pixels of the icon image."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                        }
+                      },
+                      "id": "iconBean",
+                      "type": "object",
+                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels."
+                    },
+                    "weight": {
+                      "type": "integer",
+                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items."
+                    },
+                    "location": {
+                      "type": "string",
+                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
+                    "params": {
+                      "additionalProperties": true
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL"
+                    }
+                  },
+                  "id": "connectPageModuleBean",
+                  "type": "object",
+                  "description": "Page modules are UI extension points that add-ons can use to insert content into various areas of the host\n application's interface. You implement a page module (along with the other type of module you can use with\n Atlassian Connect, webhooks) by declaring it in the add-on descriptor and implementing the add-on code that\n composes it.\n\n Each application has page module types that are specific for it, but there are some common page types as well.\n For instance, both JIRA and Confluence support the general-page and profile-page module, but only JIRA has the\n issue-panel-page.\n\n The page module takes care of integrating the add-on content into the application for you. The add-on content\n automatically gets the page styles and decorators from the host application.\n"
+                },
+                "type": "array",
+                "title": "User Profile Page"
+              },
               "webItems": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "icon": {
                       "properties": {
                         "height": {
@@ -688,14 +1688,29 @@
                       "type": "string",
                       "description": "The location in the application interface where the web item should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n <p/>\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
                     },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
+                    },
                     "link": {
                       "type": "string",
                       "description": "Specifies the URL targeted by the link. The URL can be absolute or relative to either the\n  product URL or the add-on's base URL, depending on the {@link AddOnUrlContext} parameter."
                     },
                     "target": {
                       "properties": {
+                        "params": {
+                          "additionalProperties": true
+                        },
                         "type": {
-                          "enumList": [
+                          "enum": [
                             "page",
                             "dialog",
                             "inlinedialog"
@@ -711,12 +1726,15 @@
                       "description": "Defines the way the link is opened in the browser, such as in a modal or inline dialog.\n  If omitted, the link behaves as a regular hyperlink."
                     },
                     "context": {
-                      "enumList": [
+                      "enum": [
                         "addon",
                         "product"
                       ],
                       "type": "string",
                       "description": "The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.\n\n <p/>\n\n  This context can be either \"add-on\", which renders the URL relative to the add-on's base URL, or\n  \"product\", which renders the URL relative to the product's base URL."
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "tooltip": {
                       "properties": {
@@ -742,6 +1760,41 @@
               "webPanels": {
                 "items": {
                   "properties": {
+                    "conditions": {
+                      "items": {
+                        "type": "object",
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
                     "weight": {
                       "type": "integer",
                       "description": "Determines the order in which web panels appear. Web panels are displayed top to bottom or left to right in\n  order of ascending weight. The \"lightest\" weight is displayed first, while the \"heaviest\" weights sink to the\n  bottom. The weight values for most panels start from 100, and the weights for the links\n  generally start from 10. The weight is incremented by 10 for each in sequence to leave room for custom\n  panels."
@@ -749,6 +1802,18 @@
                     "location": {
                       "type": "string",
                       "description": "Location in the application interface for this panel."
+                    },
+                    "name": {
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "i18n": {
+                          "type": "string"
+                        }
+                      },
+                      "id": "i18nProperty",
+                      "type": "object"
                     },
                     "layout": {
                       "properties": {
@@ -762,6 +1827,9 @@
                       "id": "webPanelLayout",
                       "type": "object",
                       "description": "The width and height of the web panel on the page."
+                    },
+                    "params": {
+                      "additionalProperties": true
                     },
                     "url": {
                       "type": "string",
@@ -782,6 +1850,9 @@
                       "type": "string",
                       "description": "Specifies the named event you would like to listen to (e.g., \"enabled\", \"jira:issue_created\", etc.)"
                     },
+                    "params": {
+                      "additionalProperties": true
+                    },
                     "url": {
                       "type": "string",
                       "description": "Specifies your add-on's POST webhook handler URL. This property has to be a relative URL."
@@ -795,6 +1866,7 @@
                 "type": "array"
               }
             },
+            "additionalProperties": false,
             "id": "moduleList",
             "type": "object",
             "description": "This class represents the list of modules in the json descriptor.\n Every new module type needs to be added here as a private field and annotated with @ConnectModule\n \n The field name will be what appears in the json.\n \n Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder\n that will handle adding beans to the proper fields in this class by name and type.\n You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.\n"

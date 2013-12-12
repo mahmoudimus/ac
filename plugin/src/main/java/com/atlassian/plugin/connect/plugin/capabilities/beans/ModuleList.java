@@ -2,10 +2,15 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import java.util.List;
 
+import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseModuleBeanBuilder;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -19,9 +24,10 @@ import static com.google.common.collect.Lists.newArrayList;
  * that will handle adding beans to the proper fields in this class by name and type.
  * You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.
  */
+@ObjectSchemaAttributes(additionalProperties = false)
 public class ModuleList extends BaseModuleBean
 {
-    @ConnectModule (WebItemModuleProvider.class)
+    @ConnectModule(WebItemModuleProvider.class)
     private List<WebItemModuleBean> webItems;
 
     /**
@@ -51,7 +57,13 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule (value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraVersionTabPanels;
 
-    @ConnectModule (value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
+    /**
+     * @schemaTitle User Profile Tab Panel
+     */
+    @ConnectModule(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectTabPanelModuleBean> jiraProfileTabPanels;
+
+    @ConnectModule(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
     private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
     
     @ConnectModule (WebPanelModuleProvider.class)
@@ -69,7 +81,19 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule (AdminPageModuleProvider.class)
     private List<ConnectPageModuleBean> adminPages;
 
-    @ConnectModule (WebHookModuleProvider.class)
+    /**
+     * @schemaTitle Configure Page
+     */
+    @ConnectModule (ConfigurePageModuleProvider.class)
+    private List<ConfigurePageModuleBean> configurePages;
+
+    /**
+     * @schemaTitle User Profile Page
+     */
+    @ConnectModule(value = ProfilePageModuleProvider.class, products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
+    private List<ConnectPageModuleBean> profilePages;
+
+    @ConnectModule(WebHookModuleProvider.class)
     private List<WebHookModuleBean> webhooks;
 
     @ConnectModule (value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
@@ -77,11 +101,19 @@ public class ModuleList extends BaseModuleBean
 
     public ModuleList()
     {
+        this.adminPages = newArrayList();
+        this.configurePages = newArrayList();
+        this.generalPages = newArrayList();
         this.jiraComponentTabPanels = newArrayList();
         this.jiraIssueTabPanels = newArrayList();
+        this.jiraProfileTabPanels = newArrayList();
         this.jiraProjectAdminTabPanels = newArrayList();
         this.jiraProjectTabPanels = newArrayList();
+        this.jiraSearchRequestViews = newArrayList();
         this.jiraVersionTabPanels = newArrayList();
+        this.jiraWorkflowPostFunctions = newArrayList();
+        this.profilePages = newArrayList();
+        this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.generalPages = newArrayList();
@@ -115,6 +147,10 @@ public class ModuleList extends BaseModuleBean
         {
             this.jiraVersionTabPanels = newArrayList();
         }
+        if (null == jiraProfileTabPanels)
+        {
+            this.jiraProfileTabPanels = newArrayList();
+        }
         if (null == webItems)
         {
             this.webItems = newArrayList();
@@ -130,6 +166,14 @@ public class ModuleList extends BaseModuleBean
         if (null == adminPages)
         {
             this.adminPages = newArrayList();
+        }
+        if (null == configurePages)
+        {
+            this.configurePages = newArrayList();
+        }
+        if (null == profilePages)
+        {
+            this.profilePages = newArrayList();
         }
         if (null == jiraWorkflowPostFunctions)
         {
@@ -175,6 +219,11 @@ public class ModuleList extends BaseModuleBean
         return jiraVersionTabPanels;
     }
 
+    public List<ConnectTabPanelModuleBean> getJiraProfileTabPanels()
+    {
+        return jiraProfileTabPanels;
+    }
+
     public List<WebPanelModuleBean> getWebPanels()
     {
         return webPanels;
@@ -195,6 +244,16 @@ public class ModuleList extends BaseModuleBean
         return adminPages;
     }
 
+    public List<ConfigurePageModuleBean> getConfigurePages()
+    {
+        return configurePages;
+    }
+
+    public List<ConnectPageModuleBean> getProfilePages()
+    {
+        return profilePages;
+    }
+
     public List<WebHookModuleBean> getWebhooks()
     {
         return webhooks;
@@ -203,5 +262,63 @@ public class ModuleList extends BaseModuleBean
     public List<SearchRequestViewModuleBean> getJiraSearchRequestViews()
     {
         return jiraSearchRequestViews;
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof ModuleList))
+        {
+            return false;
+        }
+
+        ModuleList other = (ModuleList) otherObj;
+
+        return new EqualsBuilder()
+                .append(adminPages, other.adminPages)
+                .append(configurePages, other.configurePages)
+                .append(generalPages, other.generalPages)
+                .append(jiraComponentTabPanels, other.jiraComponentTabPanels)
+                .append(jiraIssueTabPanels, other.jiraIssueTabPanels)
+                .append(jiraProfileTabPanels, other.jiraProfileTabPanels)
+                .append(jiraProjectAdminTabPanels, other.jiraProjectAdminTabPanels)
+                .append(jiraProjectTabPanels, other.jiraProjectTabPanels)
+                .append(jiraSearchRequestViews, other.jiraSearchRequestViews)
+                .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
+                .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
+                .append(profilePages, other.profilePages)
+                .append(webhooks, other.webhooks)
+                .append(webItems, other.webItems)
+                .append(webPanels, webPanels)
+                .build();
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(29, 37)
+                .append(adminPages)
+                .append(configurePages)
+                .append(generalPages)
+                .append(jiraComponentTabPanels)
+                .append(jiraIssueTabPanels)
+                .append(jiraProfileTabPanels)
+                .append(jiraProjectAdminTabPanels)
+                .append(jiraProjectTabPanels)
+                .append(jiraSearchRequestViews)
+                .append(jiraVersionTabPanels)
+                .append(jiraWorkflowPostFunctions)
+                .append(profilePages)
+                .append(webhooks)
+                .append(webItems)
+                .append(webPanels)
+                .build();
     }
 }

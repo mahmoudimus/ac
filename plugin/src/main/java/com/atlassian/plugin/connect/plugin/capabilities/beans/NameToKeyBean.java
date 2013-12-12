@@ -2,8 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.NameToKeyBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-
 import com.google.common.base.Strings;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator.nameToKey;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -59,5 +60,37 @@ public class NameToKeyBean extends BaseModuleBean
     public String getDisplayName()
     {
         return (!isNullOrEmpty(getName().getValue()) ? getName().getValue() : getKey());
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof NameToKeyBean))
+        {
+            return false;
+        }
+
+        NameToKeyBean other = (NameToKeyBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(name, other.name)
+                .append(key, other.key)
+                .isEquals();
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(51, 13)
+                .append(key)
+                .append(name)
+                .build();
     }
 }

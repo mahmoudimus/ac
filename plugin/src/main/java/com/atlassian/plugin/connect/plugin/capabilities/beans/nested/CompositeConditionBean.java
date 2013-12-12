@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.CompositeConditionBeanBuilder;
-
 import com.google.common.base.Objects;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @since 1.0

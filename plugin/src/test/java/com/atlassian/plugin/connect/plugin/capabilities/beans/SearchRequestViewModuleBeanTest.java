@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -69,7 +68,7 @@ public class SearchRequestViewModuleBeanTest
                         .withParam("delimiter", ",")
                         .withConditions(newSingleConditionBean().withCondition("user_is_logged_in").build())
                         .build())
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey("S0m3Publ1cK3y").build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
                 .build();
     }
 

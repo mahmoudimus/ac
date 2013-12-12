@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.applinks;
 
-import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.PublicKey;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.TypeNotInstalledException;
@@ -24,6 +16,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
+import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -31,9 +24,15 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.net.URI;
+import java.security.GeneralSecurityException;
+import java.security.PublicKey;
+import java.util.List;
 
 @ExportAsDevService
 @Named
@@ -60,7 +59,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     }
 
     @Override
-    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String sharedKey)
+    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String publicKey)
     {
         transactionTemplate.execute(new TransactionCallback<Void>()
         {
@@ -98,11 +97,12 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                     switch (authType)
                     {
                         case JWT:
-                            //TODO: not sure what to do here.
+                            link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
+                            link.putProperty(/*ApplinksJwtPeerService.ATLASSIAN_JWT_SHARED_SECRET*/"atlassian.jwt.shared.secret", publicKey); // TODO: extract in ACDEV-663
                             break;
                         case OAUTH:
                             oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
-                            registerOAuth(link, plugin, sharedKey, baseUri);
+                            registerOAuth(link, plugin, publicKey);
                             break;
                         default:
                             log.warn("Unknown authType encountered: " + authType.name());
@@ -207,6 +207,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
     }
 
+    @SuppressWarnings ("unchecked")
     private void manuallyDeleteApplicationId(ApplicationId expectedApplicationId)
     {
         PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
@@ -234,7 +235,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         return new ServiceProvider(dummyUri, dummyUri, dummyUri);
     }
 
-    private void registerOAuth(ApplicationLink link, Plugin plugin, String oauthKey, URI baseUri)
+    private void registerOAuth(ApplicationLink link, Plugin plugin, String publicKey)
     {
         String pluginKey = plugin.getKey();
         permissionManager.requirePermission(pluginKey, Permissions.CREATE_OAUTH_LINK);
@@ -243,9 +244,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         final String name = plugin.getName();
         final String description = pluginInfo.getDescription();
 
-        final PublicKey publicKey = getPublicKey(oauthKey);
+        final PublicKey publicKeyObj = getPublicKey(publicKey);
 
-        Consumer consumer = Consumer.key(pluginKey).name(name != null ? name : pluginKey).publicKey(publicKey).description(description).build();
+        Consumer consumer = Consumer.key(pluginKey).name(name != null ? name : pluginKey).publicKey(publicKeyObj).description(description).build();
 
         oAuthLinkManager.associateConsumerWithLink(link, consumer);
     }

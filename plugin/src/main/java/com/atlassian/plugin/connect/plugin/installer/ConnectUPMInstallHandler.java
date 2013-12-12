@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -9,6 +10,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.schema.DescriptorValidationResult;
+import com.atlassian.plugin.connect.plugin.capabilities.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -42,15 +45,17 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     private final UserManager userManager;
     private final FormatConverter formatConverter;
     private final BundleContext bundleContext;
+    private final JsonDescriptorValidator jsonDescriptorValidator;
 
     @Inject
-    public ConnectUPMInstallHandler(LegacyAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext)
+    public ConnectUPMInstallHandler(LegacyAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext, JsonDescriptorValidator jsonDescriptorValidator)
     {
         this.connectIdentifier = connectIdentifier;
         this.connectInstaller = connectInstaller;
         this.userManager = userManager;
         this.formatConverter = formatConverter;
         this.bundleContext = bundleContext;
+        this.jsonDescriptorValidator = jsonDescriptorValidator;
     }
 
     @Override
@@ -58,24 +63,26 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     {
         boolean isConnectXml = connectIdentifier.isConnectAddOn(descriptorFile);
         boolean canInstall = isConnectXml;
-
+        DescriptorValidationResult result;
+        
         if (!isConnectXml)
         {
             try
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson(bundleContext).fromJson(json, ConnectAddonBean.class);
+                result = jsonDescriptorValidator.validate(json);
 
-                canInstall = (null != addOn && !Strings.isNullOrEmpty(addOn.getKey()));
+                canInstall = result.isSuccess();
             }
             catch (Exception e)
             {
-                log.error(ConnectUPMInstallHandler.class.getSimpleName() + " can not install descriptor " +
-                            descriptorFile.getName(), e);
+                log.error(ConnectUPMInstallHandler.class.getSimpleName() + " can not load descriptor " + descriptorFile.getName(), e);
                 canInstall = false;
             }
         }
 
+        //TODO: if we have a json validation error and we can determine an error lifecycle url, we need to post the error message to the remote
+        
         return canInstall;
     }
 

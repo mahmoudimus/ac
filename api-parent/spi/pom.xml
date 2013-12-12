@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-api-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m24-SNAPSHOT</version>
+        <version>1.0-m25-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -47,6 +47,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>com.atlassian.fugue</groupId>
             <artifactId>fugue</artifactId>

@@ -48,10 +48,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_TYPE_VELOCITY;
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION_UUID;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -191,7 +188,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
                     iFrameContext,
                     "",
                     ImmutableMap.of(POST_FUNCTION_CONFIGURATION_UUID, new String[]{uuid.toString()}),
-                    user.getDisplayName(),
+                    user.getUsername(),
                     Collections.<String, Object>emptyMap());
         }
         catch (IOException e)

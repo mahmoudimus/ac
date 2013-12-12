@@ -64,7 +64,7 @@ public final class AtlassianConnectRestClient
 
         JSON json = JSON.parse(response);
         boolean done = (null != json.get("enabled"));
-        int timeout = 5000;
+        int timeout = 1000;
 
         while (!done && timeout > 1)
         {
@@ -81,7 +81,7 @@ public final class AtlassianConnectRestClient
 
         if (timeout < 2)
         {
-            throw new Exception("Connect App Plugin did not install within the allotted timeout!!!");
+            throw new Exception("Connect App Plugin did not install within the allotted timeout: " + json.get("status").get("subCode"));
         }
     }
 

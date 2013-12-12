@@ -9,14 +9,13 @@ import com.atlassian.jwt.core.writer.JwtClaimsBuilder;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Supplier;
-import org.apache.http.client.methods.HttpGet;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -57,7 +56,6 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     public String signGetUrl(URI targetPath, Map<String, String[]> params)
     {
         assertThatTargetPathAndParamsDoNotDuplicateParams(targetPath, params);
-        final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(createGetUrl(targetPath, params))));
 
         ApplicationLink appLink = connectApplinkManager.getAppLink(getKey());
         JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
@@ -67,7 +65,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
 
         try
         {
-            JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, new CanonicalHttpUriRequest(new HttpGet(uriBuilder.toString()), ""));
+            JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, new CanonicalHttpUriRequest(HttpMethod.GET.toString(), targetPath.getPath(), "", params));
         }
         catch (UnsupportedEncodingException e)
         {
@@ -79,6 +77,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
         }
 
         String encodedJwt = jwtService.issueJwt(jsonBuilder.build(), appLink);
+        final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(createGetUrl(targetPath, params))));
         uriBuilder.addQueryParameter(JwtConstants.JWT_PARAM_NAME, encodedJwt);
 
         return uriBuilder.toString();

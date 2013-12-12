@@ -1,6 +1,6 @@
-- var module = schemas[product].properties.modules.properties[current.source]
+- var capability = schemas[product].properties.modules.properties[current.source]
 h1
-    = module.title || module.items.title
+    = capability.title || capability.items.title
 
 != yield
 
@@ -13,17 +13,49 @@ table.aui
           th Type
           th Description
       tbody
-        - for(var prop in module.items.properties)
+        - for(var prop in capability.items.properties)
             tr
                 td
                     = prop
                 td
                     span.aui-lozenge
-                        = module.items.properties[prop].type
+                        = capability.items.properties[prop].type
                 td
-                    = module.items.properties[prop].description
+                    = capability.items.properties[prop].description
 
 
 //- h2 JSON Schema
 //- textarea.code
-//-     != JSON.stringify(module,null,2)
+//-     != JSON.stringify(capability,null,2)
+
+script.
+    var cmOpts = {
+        mode: "javascript",
+        theme: "neat",
+        lineNumbers:true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        indentWithTabs:false,
+        electricChars:true,
+        matchBrackets:true,
+        autoCloseBrackets:true,
+        highlightSelectionMatches:true,
+        indentUnit:2,
+        lineWrapping: true,
+        readOnly:true
+    };
+    $('.code').each(function(){
+        CodeMirror.fromTextArea(this, cmOpts);
+    });
+
+    function cmIfyPreCodeBlocks(block){
+        var sample = block;
+        var text = sample.textContent || sample.innerText;
+        var newOpts = cmOpts;
+        newOpts.value = text;
+        CodeMirror(
+            function(node){
+                sample.parentNode.replaceChild(node, sample)
+            }, newOpts
+        );
+    }
+    $('pre code').each(function(){cmIfyPreCodeBlocks(this)});
