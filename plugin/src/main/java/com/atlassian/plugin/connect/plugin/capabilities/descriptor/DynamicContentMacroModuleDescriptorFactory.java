@@ -8,6 +8,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroCategory;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
@@ -21,13 +22,17 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.Sets;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URISyntaxException;
@@ -35,10 +40,14 @@ import java.net.URISyntaxException;
 @ConfluenceComponent
 public class DynamicContentMacroModuleDescriptorFactory implements ConnectModuleDescriptorFactory<DynamicContentMacroModuleBean, XhtmlMacroModuleDescriptor>
 {
-    private final UserManager userManager;
-    private final IFrameRenderer iFrameRenderer;
+    private static final Logger log = LoggerFactory.getLogger(DynamicContentMacroModuleDescriptorFactory.class);
+
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final IFrameRenderer iFrameRenderer;
+    private final UserManager userManager;
+    private final HostContainer hostContainer;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
+    private final AbsoluteAddOnUrlConverter urlConverter;
 
 
     @Autowired
@@ -46,21 +55,25 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
             RemotablePluginAccessorFactory remotablePluginAccessorFactory,
             IFrameRenderer iFrameRenderer,
             UserManager userManager,
-            UrlVariableSubstitutor urlVariableSubstitutor)
+            HostContainer hostContainer,
+            UrlVariableSubstitutor urlVariableSubstitutor,
+            AbsoluteAddOnUrlConverter urlConverter)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.iFrameRenderer = iFrameRenderer;
         this.userManager = userManager;
+        this.hostContainer = hostContainer;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.urlConverter = urlConverter;
     }
 
     @Override
     public XhtmlMacroModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, DynamicContentMacroModuleBean bean)
     {
-        DOMElement element = createDOMElement(bean);
+        DOMElement element = createDOMElement(plugin, bean);
         ModuleFactory moduleFactory = createModuleFactory(plugin, element, bean);
 
-        ConnectDocumentationBeanFactory docBeanFactory = new ConnectDocumentationBeanFactory(remotablePluginAccessorFactory.get(plugin.getKey()));
+        ConnectDocumentationBeanFactory docBeanFactory = new ConnectDocumentationBeanFactory(urlConverter, plugin.getKey());
         MacroMetadataParser macroMetadataParser = new MacroMetadataParser(docBeanFactory);
 
         FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
@@ -68,7 +81,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         return descriptor;
     }
 
-    private DOMElement createDOMElement(DynamicContentMacroModuleBean bean)
+    private DOMElement createDOMElement(Plugin plugin, DynamicContentMacroModuleBean bean)
     {
         DOMElement element = new DOMElement("macro");
         element.setAttribute("key", bean.getKey());
@@ -84,7 +97,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
 
         if (bean.getIcon().hasUrl())
         {
-            element.setAttribute("icon", bean.getIcon().getUrl());
+            element.setAttribute("icon", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
         }
 
         handleParameters(bean, element);
@@ -116,8 +129,8 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         for (MacroParameterBean parameterBean : bean.getParameters())
         {
             Element parameter = parameters.addElement("parameter")
-                .addAttribute("name", parameterBean.getName())
-                .addAttribute("type", parameterBean.getType().toString());
+                    .addAttribute("name", parameterBean.getName())
+                    .addAttribute("type", parameterBean.getType().toString());
             if (parameterBean.getRequired())
             {
                 parameter.addAttribute("required", "true");
@@ -134,6 +147,40 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         }
     }
 
+    // No web-resource beans, so falling back to XML
+    public ModuleDescriptor createFeaturedIconWebResource(Plugin plugin, DynamicContentMacroModuleBean bean)
+    {
+        String macroKey = bean.getKey();
+
+        Element webResource = new DOMElement("web-resource")
+                .addAttribute("key", macroKey + "-featured-macro-resources");
+
+        webResource.addElement("resource")
+                .addAttribute("type", "download")
+                .addAttribute("name", macroKey + "-icon.css")
+                .addAttribute("location", "css/confluence/macro/featured-macro-icon.css");
+
+        webResource.addElement("context")
+                .setText("editor");
+
+        Element transformation = webResource.addElement("transformation")
+                .addAttribute("extension", "css");
+
+        transformation.addElement("transformer")
+                .addAttribute("key", "confluence-macroVariableTransformer")
+                .addElement("var")
+                .addAttribute("name", "KEY")
+                .addAttribute("value", macroKey).getParent()
+                .addElement("var")
+                .addAttribute("name", "ICON_URL")
+                .addAttribute("value", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
+
+        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
+        jsDescriptor.init(plugin, webResource);
+
+        return jsDescriptor;
+    }
+
     private ModuleFactory createModuleFactory(final Plugin plugin, final DOMElement element, final DynamicContentMacroModuleBean bean)
     {
         return new ModuleFactory()
@@ -143,7 +190,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
             {
                 try
                 {
-                    // TODO: Handle context params if needed
+                    // TODO: Replace context params by URL variable subsitution --> ACDEV-677
                     RequestContextParameterFactory requestContextParameterFactory = new RequestContextParameterFactory(Sets.<String>newHashSet(), Sets.<String>newHashSet());
                     RemoteMacroInfo macroInfo = new RemoteMacroInfo(element, plugin.getKey(),
                             MacroEnumMapper.map(bean.getBodyType()),
@@ -168,4 +215,25 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         };
     }
 
+    private String getAbsoluteUrl(Plugin plugin, String url)
+    {
+        try
+        {
+            return urlConverter.getAbsoluteUrl(plugin.getKey(), url);
+        }
+        catch (URISyntaxException e)
+        {
+            logUriSyntaxError(plugin, url);
+            return url;
+        }
+    }
+
+    private void logUriSyntaxError(Plugin plugin, String url)
+    {
+        // help vendors find errors in their descriptors
+        log.error("Malformed documentation link declared by '"
+                + plugin.getName()
+                + "' (" + plugin.getKey() + "): "
+                + url);
+    }
 }

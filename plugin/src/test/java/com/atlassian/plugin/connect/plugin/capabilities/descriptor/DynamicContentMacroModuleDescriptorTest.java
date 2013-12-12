@@ -10,10 +10,12 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyTy
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroCategory;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterType;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.sal.api.user.UserManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +49,8 @@ public class DynamicContentMacroModuleDescriptorTest
     private UserManager userManager;
     @Mock
     private UrlVariableSubstitutor urlVariableSubsitutor;
+    @Mock
+    private HostContainer hostContainer;
 
     private Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     private XhtmlMacroModuleDescriptor descriptor;
@@ -60,7 +64,9 @@ public class DynamicContentMacroModuleDescriptorTest
                 remotablePluginAccessorFactoryForTests,
                 iFrameRenderer,
                 userManager,
-                urlVariableSubsitutor);
+                hostContainer,
+                urlVariableSubsitutor,
+                new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests));
 
         DynamicContentMacroModuleBean bean = createBean();
 
@@ -139,7 +145,7 @@ public class DynamicContentMacroModuleDescriptorTest
         assertThat(icon, allOf(
                 hasProperty("width", is(80)),
                 hasProperty("height", is(80)),
-                hasProperty("location", is("/assets/macro.png"))
+                hasProperty("location", is("http://www.example.com/assets/macro.png"))
         ));
     }
 
@@ -156,7 +162,6 @@ public class DynamicContentMacroModuleDescriptorTest
                 hasProperty("required", is(true))
         ));
     }
-
 
     @Test
     public void verifyDocumentationLink() throws Exception

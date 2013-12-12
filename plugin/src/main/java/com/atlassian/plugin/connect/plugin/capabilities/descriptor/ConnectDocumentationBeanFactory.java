@@ -2,8 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.confluence.util.i18n.DocumentationBean;
 import com.atlassian.confluence.util.i18n.DocumentationBeanFactory;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.uri.UriBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,11 +13,13 @@ public class ConnectDocumentationBeanFactory implements DocumentationBeanFactory
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectDocumentationBeanFactory.class);
 
-    private final RemotablePluginAccessor remotablePluginAccessor;
+    private final AbsoluteAddOnUrlConverter urlConverter;
+    private final String pluginKey;
 
-    public ConnectDocumentationBeanFactory(RemotablePluginAccessor remotablePluginAccessor)
+    public ConnectDocumentationBeanFactory(AbsoluteAddOnUrlConverter urlConverter, String pluginKey)
     {
-        this.remotablePluginAccessor = remotablePluginAccessor;
+        this.urlConverter = urlConverter;
+        this.pluginKey = pluginKey;
     }
 
     @Override
@@ -32,19 +33,15 @@ public class ConnectDocumentationBeanFactory implements DocumentationBeanFactory
         @Override
         public String getLink(String docLink)
         {
-            if (isLocal(docLink))
+            try
             {
-                URI baseUrl = remotablePluginAccessor.getBaseUrl();
-                URI docLinkURI = URI.create(docLink);
-                return new UriBuilder()
-                        .setScheme(baseUrl.getScheme())
-                        .setAuthority(baseUrl.getAuthority())
-                        .setPath(docLinkURI.getPath())
-                        .setQuery(docLinkURI.getQuery())
-                        .setFragment(docLinkURI.getFragment())
-                        .toString();
+                return urlConverter.getAbsoluteUrl(pluginKey, docLink);
             }
-            return docLink;
+            catch (URISyntaxException e)
+            {
+                logError(docLink);
+                return docLink;
+            }
         }
 
         @Override
@@ -69,13 +66,17 @@ public class ConnectDocumentationBeanFactory implements DocumentationBeanFactory
             }
             catch (URISyntaxException e)
             {
-                // help vendors find errors in their descriptors
-                log.error("Malformed documentation link declared by "
-                        + remotablePluginAccessor.getName()
-                        + " (" + remotablePluginAccessor.getKey() + "):"
-                        + docLink);
+                logError(docLink);
+                return false;
             }
-            return false;
+        }
+
+        private void logError(String docLink)
+        {
+            // help vendors find errors in their descriptors
+            log.error("Malformed documentation link declared by '"
+                    + pluginKey + "': "
+                    + docLink);
         }
 
         @Override

@@ -4,7 +4,6 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -14,6 +13,8 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 
 @ConfluenceComponent
 public class DynamicContentMacroModuleProvider implements ConnectModuleProvider<DynamicContentMacroModuleBean>
@@ -56,8 +57,9 @@ public class DynamicContentMacroModuleProvider implements ConnectModuleProvider<
             descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, bundleContext, featuredWebItem));
 
             // Add a featured icon web resource
-            if (macroBean.getIcon().hasUrl()) {
-                descriptors.add(createFeaturedIconWebResource(macroBean.getIcon()));
+            if (macroBean.getIcon().hasUrl())
+            {
+                descriptors.add(createFeaturedIconWebResource(plugin, macroBean));
             }
         }
 
@@ -67,13 +69,17 @@ public class DynamicContentMacroModuleProvider implements ConnectModuleProvider<
         return ImmutableList.copyOf(descriptors);
     }
 
-    private ModuleDescriptor createFeaturedIconWebResource(IconBean icon)
+    private ModuleDescriptor createFeaturedIconWebResource(Plugin plugin, DynamicContentMacroModuleBean bean)
     {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+        return dynamicContentMacroModuleDescriptorFactory.createFeaturedIconWebResource(plugin, bean);
     }
 
     private WebItemModuleBean createFeaturedWebItem(DynamicContentMacroModuleBean bean)
     {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+        return newWebItemBean()
+            .withName(bean.getName())
+            .withKey("editor-featured-macro-" + bean.getKey())
+            .withLocation("system.editor.featured.macros.default")
+            .build();
     }
 }

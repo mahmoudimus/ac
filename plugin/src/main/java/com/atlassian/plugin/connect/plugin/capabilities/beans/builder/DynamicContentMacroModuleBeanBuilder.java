@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutput
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 import java.util.Collection;
 import java.util.List;
