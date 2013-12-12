@@ -1,11 +1,7 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
-import com.atlassian.httpclient.api.DefaultResponseTransformation;
-import com.atlassian.httpclient.api.HttpClient;
-import com.atlassian.httpclient.api.Request;
-import com.atlassian.httpclient.api.ResponsePromise;
-import com.atlassian.httpclient.api.ResponseTransformation;
+import com.atlassian.httpclient.api.*;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.oauth.ServiceProvider;
@@ -27,22 +23,14 @@ import net.oauth.OAuth;
 import org.junit.Test;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class OAuthSigningRemotablePluginAccessorTest
 {

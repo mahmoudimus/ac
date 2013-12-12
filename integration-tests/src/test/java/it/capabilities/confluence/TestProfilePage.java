@@ -1,8 +1,5 @@
 package it.capabilities.confluence;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
@@ -14,6 +11,9 @@ import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;

@@ -5,7 +5,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
-
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;

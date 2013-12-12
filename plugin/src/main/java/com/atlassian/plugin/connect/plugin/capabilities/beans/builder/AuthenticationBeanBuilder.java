@@ -6,17 +6,17 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType
 public class AuthenticationBeanBuilder extends BaseModuleBeanBuilder<AuthenticationBeanBuilder, AuthenticationBean>
 {
     private AuthenticationType type;
-    private String sharedKey;
+    private String publicKey;
     
     public AuthenticationBeanBuilder()
     {
         this.type = AuthenticationType.JWT;
-        this.sharedKey = "";
+        this.publicKey = "";
     }
 
     public AuthenticationBeanBuilder(AuthenticationBean defaultBean)
     {
-        this.sharedKey = defaultBean.getSharedKey();
+        this.publicKey = defaultBean.getPublicKey();
         this.type = defaultBean.getType();
     }
 
@@ -26,9 +26,9 @@ public class AuthenticationBeanBuilder extends BaseModuleBeanBuilder<Authenticat
         return this;
     }
 
-    public AuthenticationBeanBuilder withSharedKey(String key)
+    public AuthenticationBeanBuilder withPublicKey(String key)
     {
-        this.sharedKey = key;
+        this.publicKey = key;
         return this;
     }
 

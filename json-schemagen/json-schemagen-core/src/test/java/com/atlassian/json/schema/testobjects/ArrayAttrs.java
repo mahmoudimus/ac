@@ -1,9 +1,9 @@
 package com.atlassian.json.schema.testobjects;
 
-import java.util.List;
-
 import com.atlassian.json.schema.annotation.ArraySchemaAttributes;
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
+
+import java.util.List;
 
 public class ArrayAttrs
 {

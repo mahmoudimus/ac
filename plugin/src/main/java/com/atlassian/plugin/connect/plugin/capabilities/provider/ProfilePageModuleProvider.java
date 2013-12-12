@@ -7,7 +7,6 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @ConfluenceComponent
 public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider

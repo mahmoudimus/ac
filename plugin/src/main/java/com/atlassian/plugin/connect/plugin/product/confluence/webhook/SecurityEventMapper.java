@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.product.confluence.webhook;
 
-import java.util.Map;
-
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.event.events.security.SecurityEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 public class SecurityEventMapper extends ConfluenceEventMapper
 {

@@ -1,17 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import org.junit.Test;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
@@ -20,7 +18,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @since 1.0
