@@ -84,18 +84,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -107,6 +95,18 @@
                               }
                             },
                             "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -359,6 +359,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -370,18 +382,6 @@
                               }
                             },
                             "id": "singleConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -491,18 +491,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -514,6 +502,18 @@
                               }
                             },
                             "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -627,18 +627,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -650,6 +638,18 @@
                               }
                             },
                             "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -693,18 +693,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -716,6 +704,18 @@
                               }
                             },
                             "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -775,18 +775,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -798,6 +786,18 @@
                               }
                             },
                             "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -917,6 +917,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -928,18 +940,6 @@
                               }
                             },
                             "id": "singleConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -1441,6 +1441,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -1452,18 +1464,6 @@
                               }
                             },
                             "id": "singleConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -1533,18 +1533,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -1556,6 +1544,18 @@
                               }
                             },
                             "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -1766,18 +1766,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -1789,6 +1777,18 @@
                               }
                             },
                             "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
