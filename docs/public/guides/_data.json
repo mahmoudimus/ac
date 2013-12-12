@@ -5,13 +5,7 @@
     "getting-started.html": {
         "title": "Getting Started"
     },
-    "hello-world.html": {
-        "title": "Hello World"
-    },
     "installing-an-addon.html": {
         "title": "Installing an Add-on"
-    },
-    "addon-descriptor.html": {
-        "title": "Add-on Descriptor"
     }
 }
