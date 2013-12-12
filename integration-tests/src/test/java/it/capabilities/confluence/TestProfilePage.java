@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
+import it.capabilities.AbstractPageTst;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

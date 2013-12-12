@@ -6,7 +6,6 @@ import java.net.URISyntaxException;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.upm.pageobjects.PluginManager;
-import it.capabilities.confluence.AbstractPageTst;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

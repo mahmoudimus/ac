@@ -1,4 +1,4 @@
-package it.capabilities.confluence;
+package it.capabilities;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
