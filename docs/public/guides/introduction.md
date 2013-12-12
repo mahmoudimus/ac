@@ -69,14 +69,17 @@ Security is a important concern in a distributed component model such as Atlassi
 
 Further, the add-on's actions in the context of the application are constrained by well-defined permissions. The add-on can only perform activities it declares in its descriptor, and which are accepted by the administrator. These include, for example, permissions governing reading content, creating pages, creating issues, and more. This helps to ensure the security and stability of the OnDemand instance.  
 
-For more about security, see **LINK TO JWT???**. 
+For more about security, see [jwt.html](JWT)
 
 ## About REST APIs
 Module declarations are one piece to the integration between the add-on and the Atlassian OnDemand application. But Atlassian Connect add-ons will also use the Atlassian REST APIs. Add-ons can use these APIs to access services of the Atlassian platform. The services vary between the application type, but there are some common APIs as well. 
 
 Since the APIs vary, not only by application and by version but also depending on what other add-on are installed in the application, the best way to find out what's available is to view the REST API Browser (RAB). The RAB presents a dynamic view of the REST API in a specific Atlassian application instance.
 
-To learn more about the RAB, see the REST API Browser section of this documentation.
+To learn more about the RAB, see the REST API Browser section of this documentation. Or view the current versions online:
+
+ * [Rest API for Jira](https://jira.atlassian.com/plugins/servlet/restbrowser#/)
+ * [Rest API for Confluence](https://confluence.atlassian.com/plugins/servlet/restbrowser#/)
 
 ## About this guide
 This guide is written for any developer who wants to create Atlassian Connect add-ons to extend Atlassian OnDemand or installable applications. 

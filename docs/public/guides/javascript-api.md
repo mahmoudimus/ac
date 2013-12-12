@@ -11,6 +11,17 @@ However, Atlassian Connect makes use of a technique called [cross-domain messagi
 
 Atlassian Connect transparently enables cross-domain messaging in its page modules. One benefit you'll see from this is that your add-on's page modules are automatically resized based on its content when loaded on the page.
 
+## Debugging the all.js javascript
+
+A non-compressed version of the all.js javascript can be viewed by replaceing `all.js` with `all-debug.js` for example:
+```
+<script src="https://{OnDemand hostname}/{context}/atlassian-connect/all.js"></script>
+<!-- replace with -->
+<script src="https://{OnDemand hostname}/{context}/atlassian-connect/all-debug.js"></script>
+```
+
+This can be helpful when trying to trace errors or debug the add-on javascript.
+
 ## Sharing data between iframes
 A single add-on can generate multiple iframes in a particular page in the target application. Depending on the use case for the add-on, the iframes may need to share information between each other.
 
