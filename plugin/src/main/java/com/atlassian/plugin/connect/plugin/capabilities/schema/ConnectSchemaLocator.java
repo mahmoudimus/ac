@@ -42,8 +42,7 @@ public class ConnectSchemaLocator
         String path = String.format(format, productFilter.name().toLowerCase());
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         InputStream in = plugin.getResourceAsStream(path);
-        IOUtils.copy(in, bout);
-        
-        return new String(bout.toByteArray());
+                
+        return IOUtils.toString(in);
     }
 }

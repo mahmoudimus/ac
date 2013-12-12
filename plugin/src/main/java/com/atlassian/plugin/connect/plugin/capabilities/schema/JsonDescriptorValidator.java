@@ -56,7 +56,7 @@ public class JsonDescriptorValidator implements ConnectDescriptorValidator
         }
         catch (IOException e)
         {
-            result = new DescriptorValidationResult(false,e.getMessage(),e.getMessage());
+            throw new IllegalStateException("Unable to load atlassian connect schema", e);
         }
 
         return result;
