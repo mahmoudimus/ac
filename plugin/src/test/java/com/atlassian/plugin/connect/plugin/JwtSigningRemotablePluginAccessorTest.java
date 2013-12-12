@@ -9,6 +9,7 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
@@ -373,7 +374,10 @@ public class JwtSigningRemotablePluginAccessorTest
                 return URI.create(BASE_URL);
             }
         };
-        return new JwtSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, jwtService, connectApplinkManager, mockCachingHttpContentRetriever());
+
+        ConsumerService consumerService = mock(ConsumerService.class);
+
+        return new JwtSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, jwtService, consumerService, connectApplinkManager, mockCachingHttpContentRetriever());
     }
 
     private HttpContentRetriever mockCachingHttpContentRetriever()

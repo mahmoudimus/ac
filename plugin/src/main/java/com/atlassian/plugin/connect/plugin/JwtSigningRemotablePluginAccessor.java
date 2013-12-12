@@ -8,6 +8,7 @@ import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
 import com.atlassian.jwt.core.writer.JwtClaimsBuilder;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
@@ -30,6 +31,7 @@ import java.util.Map;
 public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAccessorBase
 {
     private final JwtService jwtService;
+    private final ConsumerService consumerService;
     private final ConnectApplinkManager connectApplinkManager;
 
     private static final String JWT_EXPIRY_SECONDS_PROPERTY = "com.atlassian.connect.jwt.expiry_seconds";
@@ -41,14 +43,16 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     private static final AuthorizationGenerator AUTH_GENERATOR = new JwtAuthorizationGenerator(); // it's tiny and does very little, so share this instance
 
     public JwtSigningRemotablePluginAccessor(String pluginKey,
-            String pluginName,
-            Supplier<URI> baseUrlSupplier,
-            JwtService jwtService,
-            ConnectApplinkManager connectApplinkManager,
-            HttpContentRetriever httpContentRetriever)
+                                             String pluginName,
+                                             Supplier<URI> baseUrlSupplier,
+                                             JwtService jwtService,
+                                             ConsumerService consumerService,
+                                             ConnectApplinkManager connectApplinkManager,
+                                             HttpContentRetriever httpContentRetriever)
     {
         super(pluginKey, pluginName, baseUrlSupplier, httpContentRetriever);
         this.jwtService = jwtService;
+        this.consumerService = consumerService;
         this.connectApplinkManager = connectApplinkManager;
     }
 
@@ -61,7 +65,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
         JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuedAt(TimeUtil.currentTimeSeconds())
                 .expirationTime(TimeUtil.currentTimePlusNSeconds(JWT_EXPIRY_WINDOW_SECONDS))
-                .issuer(appLink.getId().get());
+                .issuer(consumerService.getConsumer().getKey());
 
         try
         {
