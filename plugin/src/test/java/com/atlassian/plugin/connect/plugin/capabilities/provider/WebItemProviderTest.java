@@ -32,9 +32,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.ConnectAsserts.as
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,13 +42,13 @@ import static org.mockito.Mockito.when;
 public class WebItemProviderTest
 {
     private static final String JSON_FIELD_NAME = "webItems";
-    
+
     Plugin plugin;
     WebInterfaceManager webInterfaceManager;
     WebFragmentHelper webFragmentHelper;
     WebItemModuleDescriptorFactory webItemFactory;
     HttpServletRequest servletRequest;
-    
+
     @Before
     public void setup() throws Exception
     {
@@ -60,11 +58,12 @@ public class WebItemProviderTest
         webFragmentHelper = mock(WebFragmentHelper.class);
         webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager), new IconModuleFragmentFactory(remotablePluginAccessorFactoryForTests), new ConditionModuleFragmentFactory(mock(ProductAccessor.class), new ParamsModuleFragmentFactory()));
         servletRequest = mock(HttpServletRequest.class);
-        
+
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
 
-        when(webFragmentHelper.renderVelocityFragment(anyString(),anyMap())).thenAnswer(
-                new Answer<Object>() {
+        when(webFragmentHelper.renderVelocityFragment(anyString(), anyMap())).thenAnswer(
+                new Answer<Object>()
+                {
                     @Override
                     public Object answer(InvocationOnMock invocationOnMock) throws Throwable
                     {
@@ -75,10 +74,10 @@ public class WebItemProviderTest
         );
 
         when(webFragmentHelper.loadCondition(anyString(), any(Plugin.class))).thenReturn(new DynamicMarkerCondition());
-        
+
         when(servletRequest.getContextPath()).thenReturn("http://ondemand.com/jira");
     }
-    
+
     @Test
     public void singleAbsoluteLink() throws Exception
     {
@@ -88,16 +87,16 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
-        
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
-        
-        assertEquals(1,descriptors.size());
+        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
+
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+
+        assertEquals(1, descriptors.size());
 
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals("http://www.google.com",descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
     }
 
     @Test
@@ -110,16 +109,16 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.addon)
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
+        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
-        assertEquals(1,descriptors.size());
+        assertEquals(1, descriptors.size());
 
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals("http://www.google.com",descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
     }
 
     @Test
@@ -132,16 +131,16 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
+        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
-        assertEquals(1,descriptors.size());
+        assertEquals(1, descriptors.size());
 
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals("http://www.google.com",descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
     }
 
     @Test
@@ -153,16 +152,16 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
+        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
-        assertEquals(1,descriptors.size());
+        assertEquals(1, descriptors.size());
 
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals("http://ondemand.com/jira/plugins/servlet/ac/my-key/some/admin",descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals("http://ondemand.com/jira/plugins/servlet/ac/my-key/some/admin", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
     }
 
     @Test
@@ -175,18 +174,18 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.addon)
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
+        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
-        assertEquals(1,descriptors.size());
+        assertEquals(1, descriptors.size());
 
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
         assertURIEquals("http://ondemand.com/jira/plugins/servlet/ac/my-key/some/admin", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
     }
-    
+
     @Test
     public void singleProductLink() throws Exception
     {
@@ -197,16 +196,16 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
+        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
-        assertEquals(1,descriptors.size());
+        assertEquals(1, descriptors.size());
 
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals("http://ondemand.com/jira/local/jira/admin",descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals("http://ondemand.com/jira/local/jira/admin", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
     }
 
     @Test
@@ -224,11 +223,11 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
+        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean,bean2));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean, bean2));
 
-        assertEquals(2,descriptors.size());
+        assertEquals(2, descriptors.size());
 
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
@@ -236,8 +235,8 @@ public class WebItemProviderTest
         WebItemModuleDescriptor descriptor2 = (WebItemModuleDescriptor) descriptors.get(1);
         descriptor2.enabled();
 
-        assertEquals("http://www.google.com",descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
-        assertEquals("http://ondemand.com/jira/plugins/servlet/ac/my-key/my/addon",descriptor2.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals("http://ondemand.com/jira/plugins/servlet/ac/my-key/my/addon", descriptor2.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
     }
-    
+
 }

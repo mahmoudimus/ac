@@ -5,7 +5,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
-
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +62,7 @@ public class ConnectTabPanelModuleDescriptorFactory
         }
 
         ModuleDescriptor descriptor = connectAutowireUtil.createBean(hints.getDescriptorClass());
-        descriptor.init(plugin,element);
+        descriptor.init(plugin, element);
         
         return descriptor;
     }

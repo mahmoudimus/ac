@@ -1,13 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
-
 import com.google.gson.Gson;
-
 import org.junit.Test;
+
+import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertEquals;
