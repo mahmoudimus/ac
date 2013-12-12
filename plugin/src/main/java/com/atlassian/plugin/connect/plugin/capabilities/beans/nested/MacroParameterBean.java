@@ -7,14 +7,49 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+/**
+ * Describes a parameter input field for a macro.
+ *
+ * Json Example:
+ * @exampleJson {@see ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
+ * @schemaTitle Macro Input Parameter
+ * @since 1.0
+ */
 public class MacroParameterBean extends BaseModuleBean
 {
+    /**
+     * A unique name of the parameter, or "" for the default (unnamed) parameter.
+     */
     private String name;
+
+    /**
+     * The type of parameter.
+     */
     private MacroParameterType type;
+
+    /**
+     * Whether it is a required parameter, defaults to 'false'.
+     */
     private Boolean required;
+
+    /**
+     * Whether it takes multiple values, defaults to 'false'.
+     */
     private Boolean multiple;
+
+    /**
+     * The default value for the parameter.
+     */
     private String defaultValue;
+
+    /**
+     * Describes the 'enum' values - only applicable for enum typed parameters.
+     */
     private List<String> values;
+
+    /**
+     * Aliases for the macro parameter.
+     */
     private List<String> aliases;
 
     public MacroParameterBean(MacroParameterBeanBuilder builder)
