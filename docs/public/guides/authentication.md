@@ -17,11 +17,13 @@ Most modern languages have JWT libraries available. Prior to implementing JWT, c
 The [py-jwt-decoder](http://py-jwt-decoder.appspot.com/) is a handy web based decoder of JWT tokens.
 
 
-## Handling JWT requests
+# Installation Handshake
 
-Atlassian Connect add-ons specify that they are using the JWT authentication mechanism in the `authentication` module.
-An add-on must accompany this with the `lifecycle` module to enable the add-on to handle the authentication process.
+For an Atlassian Connect add-on to authenticate securely with the host Atlassian product, it must advertise itself as
+being JWT aware, and provide a resource to receive important installation information. This is done by specifying the
+elements `authentication` and `lifecycle`.
 
+For example:
 
     {
         "baseUrl": "http://localhost:3000",
@@ -36,9 +38,9 @@ An add-on must accompany this with the `lifecycle` module to enable the add-on t
     }
 
 
-The `lifecycle:installed` property is a callback url which is called when an add-on is installed into an Atlassian
-application. Delivered with it is a payload with important tenant information that you will need to store in your add-on
-in order to authenticate future calls. The payload contains the following attributes:
+The `lifecycle:installed` property is a url which is synchronously called by the Atlassian application when the add-on
+is installed. The request contains a payload with important tenant information that you will need to store in your add-on
+in order to sign and verify future requests. The payload contains the following attributes:
 
     {
         "key": "atlassian-connect-jira-addon-jwt",
@@ -50,6 +52,9 @@ in order to authenticate future calls. The payload contains the following attrib
         "userKey": "admin",
         "eventType": "installed"
     }
+
+Upon successful registration, the add-on must return either a `200 OK` or `204 No Content` response code, otherwise the
+operation will fail and the installation will be marked as incomplete.
 
 ## Details
 
@@ -87,3 +92,8 @@ in order to authenticate future calls. The payload contains the following attrib
         <td></td>
     </tr>
 </table>
+
+
+# Validating Incoming Requests
+
+# Signing Outgoing Requests
