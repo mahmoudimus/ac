@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.AdminHomePage;
@@ -41,6 +42,7 @@ public class OwnerOfTestedProduct
         {
             INSTANCE.getPageBinder().override(AdminHomePage.class, JiraAdminSummaryPage.class);
             INSTANCE.getPageBinder().override(GeneralPage.class, JiraGeneralPage.class);
+            INSTANCE.getPageBinder().override(HomePage.class, DashboardPage.class);
         }
         else if (INSTANCE instanceof ConfluenceTestedProduct)
         {

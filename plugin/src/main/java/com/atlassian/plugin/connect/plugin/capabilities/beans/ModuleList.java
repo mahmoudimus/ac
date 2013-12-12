@@ -78,6 +78,12 @@ public class ModuleList extends BaseModuleBean
     private List<ConnectPageModuleBean> adminPages;
 
     /**
+     * @schemaTitle Configure Page
+     */
+    @ConnectModule (ConfigurePageModuleProvider.class)
+    private List<ConfigurePageModuleBean> configurePages;
+
+    /**
      * @schemaTitle User Profile Page
      */
     @ConnectModule(value = ProfilePageModuleProvider.class, products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
@@ -101,6 +107,7 @@ public class ModuleList extends BaseModuleBean
         this.webPanels = newArrayList();
         this.generalPages = newArrayList();
         this.adminPages = newArrayList();
+        this.configurePages = newArrayList();
         this.profilePages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
@@ -150,6 +157,10 @@ public class ModuleList extends BaseModuleBean
         if (null == adminPages)
         {
             this.adminPages = newArrayList();
+        }
+        if (null == configurePages)
+        {
+            this.configurePages = newArrayList();
         }
         if (null == profilePages)
         {
@@ -222,6 +233,11 @@ public class ModuleList extends BaseModuleBean
     public List<ConnectPageModuleBean> getAdminPages()
     {
         return adminPages;
+    }
+
+    public List<ConfigurePageModuleBean> getConfigurePages()
+    {
+        return configurePages;
     }
 
     public List<ConnectPageModuleBean> getProfilePages()
