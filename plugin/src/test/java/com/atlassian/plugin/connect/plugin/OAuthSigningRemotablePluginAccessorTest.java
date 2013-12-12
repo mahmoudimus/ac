@@ -1,11 +1,7 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
-import com.atlassian.httpclient.api.DefaultResponseTransformation;
-import com.atlassian.httpclient.api.HttpClient;
-import com.atlassian.httpclient.api.Request;
-import com.atlassian.httpclient.api.ResponsePromise;
-import com.atlassian.httpclient.api.ResponseTransformation;
+import com.atlassian.httpclient.api.*;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.oauth.ServiceProvider;
@@ -27,33 +23,30 @@ import net.oauth.OAuth;
 import org.junit.Test;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class OAuthSigningRemotablePluginAccessorTest
 {
     private static final String PLUGIN_KEY = "key";
     private static final String PLUGIN_NAME = "name";
-    private static final String GET_FULL_URL = "http://server:1234/contextPath/path?param=param+value&lic=active&loc=whatever";
+    private static final String BASE_URL = "http://server:1234/contextPath";
+    private static final String FULL_PATH_URL = BASE_URL + "/path";
+    private static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
+    private static final String GET_FULL_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";
     private static final Map<String,String> GET_HEADERS = Collections.singletonMap("header", "header value");
     private static final Map<String,String> GET_PARAMS = Collections.singletonMap("param", "param value");
+    private static final Map<String,String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
+    private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
+    private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
     private static final String EXPECTED_GET_RESPONSE = "expected";
-    private static final String BASE_URL = "http://server:1234/contextPath";
 
     @Test
     public void createdRemotePluginAccessorHasCorrectPluginKey() throws ExecutionException, InterruptedException
@@ -90,7 +83,19 @@ public class OAuthSigningRemotablePluginAccessorTest
     public void createdRemotePluginAccessorCreatesCorrectGetUrl() throws ExecutionException, InterruptedException
     {
         // FIXME: due to a bug in OAuthSigningRemotablePluginAccessor or its dependencies, using multiple parameter values causes only the first value to be used
-        assertThat(createRemotePluginAccessor().createGetUrl(GET_PATH, Collections.singletonMap("param", new String[]{"value1"})), is("http://server:1234/contextPath/path?param=value1"));
+        assertThat(createRemotePluginAccessor().createGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsIncorrectlyAbsolute() throws ExecutionException, InterruptedException
+    {
+        assertThat(createRemotePluginAccessor().createGetUrl(UNEXPECTED_ABSOLUTE_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsAbsoluteToAddon() throws ExecutionException, InterruptedException
+    {
+        assertThat(createRemotePluginAccessor().createGetUrl(FULL_PATH_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
     }
 
     @Test
