@@ -1,5 +1,7 @@
 package com.atlassian.json.schema.model;
 
+import java.util.Set;
+
 public class AbstractSchema implements JsonSchema
 {
     private String id;
@@ -7,7 +9,13 @@ public class AbstractSchema implements JsonSchema
     private String type;
     private String title;
     private String description;
-
+    private Set<ObjectSchema> allOf;
+    private Set<ObjectSchema> anyOf;
+    private Set<ObjectSchema> oneOf;
+    private ObjectSchema not;
+    private Set<ObjectSchema> definitions;
+    private String defaultValue;
+    
     @Override
     public String getId()
     {
@@ -65,4 +73,69 @@ public class AbstractSchema implements JsonSchema
         this.description = description;
     }
 
+    @Override
+    public Set<ObjectSchema> getAllOf()
+    {
+        return allOf;
+    }
+
+    public void setAllOf(Set<ObjectSchema> allOf)
+    {
+        this.allOf = allOf;
+    }
+
+    @Override
+    public Set<ObjectSchema> getAnyOf()
+    {
+        return anyOf;
+    }
+
+    public void setAnyOf(Set<ObjectSchema> anyOf)
+    {
+        this.anyOf = anyOf;
+    }
+
+    @Override
+    public Set<ObjectSchema> getOneOf()
+    {
+        return oneOf;
+    }
+
+    public void setOneOf(Set<ObjectSchema> oneOf)
+    {
+        this.oneOf = oneOf;
+    }
+
+    @Override
+    public ObjectSchema getNot()
+    {
+        return not;
+    }
+
+    public void setNot(ObjectSchema not)
+    {
+        this.not = not;
+    }
+
+    @Override
+    public Set<ObjectSchema> getDefinitions()
+    {
+        return definitions;
+    }
+
+    public void setDefinitions(Set<ObjectSchema> definitions)
+    {
+        this.definitions = definitions;
+    }
+
+    @Override
+    public String getDefaultValue()
+    {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue)
+    {
+        this.defaultValue = defaultValue;
+    }
 }

@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonEventD
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
-public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<ConnectAddonEventDataBuilder,ConnectAddonEventData>
+public class ConnectAddonEventDataBuilder extends BaseModuleBeanBuilder<ConnectAddonEventDataBuilder,ConnectAddonEventData>
 {
     private Map<String,String> links;
     //this is the plugin key
@@ -18,8 +18,9 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
     private String pluginsVersion;
     private String baseUrl;
     private String productType;
-    private String decription;
+    private String description;
     private String userKey;
+    private String serviceEntitlementNumber;
     private String eventType;
     
     public ConnectAddonEventDataBuilder()
@@ -37,8 +38,9 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
         this.pluginsVersion = defaultBean.getPluginsVersion();
         this.baseUrl = defaultBean.getBaseUrl();
         this.productType = defaultBean.getProductType();
-        this.decription = defaultBean.getDecription();
+        this.description = defaultBean.getDescription();
         this.userKey = defaultBean.getUserKey();
+        this.serviceEntitlementNumber = defaultBean.getServiceEntitlementNumber();
         this.eventType = defaultBean.getEventType();
     }
 
@@ -100,13 +102,19 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
 
     public ConnectAddonEventDataBuilder withDescription(String description)
     {
-        this.decription = description;
+        this.description = description;
         return this;
     }
 
     public ConnectAddonEventDataBuilder withUserKey(String key)
     {
         this.userKey = key;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withServiceEntitlementNumber(String sen)
+    {
+        this.serviceEntitlementNumber = sen;
         return this;
     }
 

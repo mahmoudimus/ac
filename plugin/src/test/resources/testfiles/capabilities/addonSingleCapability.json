@@ -11,7 +11,7 @@
         "self": "http://www.example.com/capabilities",
         "homepage": "http://www.example.com"
     },
-    "capabilities": {
+    "modules": {
         "webItems": [
             {
                 "name": {"value": "a web item", "i18n":"name.key"}

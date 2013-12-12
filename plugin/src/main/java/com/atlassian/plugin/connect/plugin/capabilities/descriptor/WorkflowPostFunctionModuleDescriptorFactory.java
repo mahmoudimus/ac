@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
@@ -21,10 +21,10 @@ import static com.atlassian.plugin.connect.plugin.capabilities.descriptor.Connec
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A Factory that creates WorkflowFunctionModuleDescriptors from WorkflowPostFunctionCapabilityBeans
+ * A Factory that creates WorkflowFunctionModuleDescriptors from {@link WorkflowPostFunctionModuleBean}
  */
 @JiraComponent
-public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WorkflowPostFunctionCapabilityBean, WorkflowFunctionModuleDescriptor>
+public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WorkflowPostFunctionModuleBean, WorkflowFunctionModuleDescriptor>
 {
     private final ConnectAutowireUtil connectAutowireUtil;
 
@@ -35,7 +35,7 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
     }
 
     @Override
-    public WorkflowFunctionModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WorkflowPostFunctionCapabilityBean bean)
+    public WorkflowFunctionModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WorkflowPostFunctionModuleBean bean)
     {
         Element element = createDOMElement(bean);
         ConnectWorkflowFunctionModuleDescriptor moduleDescriptor = connectAutowireUtil.createBean(ConnectWorkflowFunctionModuleDescriptor.class);
@@ -43,7 +43,7 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
         return moduleDescriptor;
     }
 
-    private Element createDOMElement(WorkflowPostFunctionCapabilityBean bean)
+    private Element createDOMElement(WorkflowPostFunctionModuleBean bean)
     {
         Element element = new DOMElement("remote-workflow-post-function");
 

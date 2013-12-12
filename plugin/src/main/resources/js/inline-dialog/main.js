@@ -8,8 +8,18 @@ _AP.define("inline-dialog", ["_dollar"], function($) {
         getInlineDialog($content).show();
     }
 
+    function resizeInlineDialog($content, width, height) {
+        $content.closest('.contents').css({width: width, height: height});
+        refreshInlineDialog($content);
+    }
+
+    function refreshInlineDialog($content) {
+        getInlineDialog($content).refresh();
+    }
+
     return {
-        showInlineDialog: showInlineDialog
+        showInlineDialog: showInlineDialog,
+        resizeInlineDialog: resizeInlineDialog
     };
 
 });

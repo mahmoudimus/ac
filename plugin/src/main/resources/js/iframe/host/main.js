@@ -6,7 +6,8 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
       events = (AJS.EventQueue = AJS.EventQueue || []),
-      defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); };
+      defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); },
+      log = (window.AJS && window.AJS.log) || (window.console && window.console.log) || (function() {});
 
   function contentDiv(ns) {
     return $("#embedded-" + ns);
@@ -24,6 +25,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
         initHeight = options.h || "0",
         start = new Date().getTime(),
         isDialog = !!options.dlg,
+        isInlineDialog = ($content.closest('.aui-inline-dialog').length > 0),
         isSimpleDialog = !!options.simpleDlg,
         isGeneral = !!options.general,
         // json string representing product context
@@ -96,6 +98,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
           if (!isDialog) {
             // dialog content plugins do not honor resize requests, since their content size is fixed
             $("iframe", $content).css({width: width, height: height});
+            if(isInlineDialog){
+                _AP.require(["inline-dialog"], function (inlineDialog) {
+                    inlineDialog.resizeInlineDialog($content, width, height);
+                });
+            }
           }
         }),
         sizeToParent: debounce(function() {
@@ -142,7 +149,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
             // @todo adding #aui-message-bar only works for the view-issue page for now
             $.html("div").attr("id", "aui-message-bar").prependTo("#details-module");
           }
-          $(".aui-message#" + id).remove();
+          this.clearMessage(id);
           AJS.messages.info({
             title: title,
             body: "<p>" + $("<div/>").text(body).html() + "<p>",
@@ -151,7 +158,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
           });
         },
         clearMessage: function (id) {
-          $(".aui-message#" + id).remove();
+          var selector = $(".aui-message#" + id).first();
+          if(selector.length === 1 && selector.hasClass("aui-message")){
+            selector.remove();
+          } else {
+            log("Unable to clear message");
+          }
         },
         setDialogButtonEnabled: function (name, enabled) {
           var button = getDialogButton(name);
@@ -214,7 +226,16 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
         },
         // !!! JIRA specific !!!
         getWorkflowConfiguration: function (uuid, callback) {
-          callback($("#remoteWorkflowPostFunctionConfiguration-"+uuid).val());
+          var value,
+          selector = $("#remoteWorkflowPostFunctionConfiguration-"+uuid)[0];
+
+          // if the matching selector has an id that starts with the correct string
+          if(selector && selector.id.match(/remoteWorkflowPostFunctionConfiguration\-/).length === 1){
+            value = $(selector).val();
+          } else {
+            throw ("Workflow configuration not found");
+          }
+          callback(value);
         },
         // !!! Confluence specific !!!
         saveMacro: function(updatedParams) {

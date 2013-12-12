@@ -12,7 +12,7 @@ import static com.google.common.collect.Lists.newArrayList;
 /**
  * @since 1.0
  */
-public class CompositeConditionBeanBuilder extends BaseCapabilityBeanBuilder<CompositeConditionBeanBuilder,CompositeConditionBean>
+public class CompositeConditionBeanBuilder extends BaseModuleBeanBuilder<CompositeConditionBeanBuilder,CompositeConditionBean>
 {
     private List<ConditionalBean> conditions;
     private CompositeConditionType type;

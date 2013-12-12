@@ -64,7 +64,7 @@ public final class AtlassianConnectRestClient
 
         JSON json = JSON.parse(response);
         boolean done = (null != json.get("enabled"));
-        int timeout = 5000;
+        int timeout = 1000;
 
         while (!done && timeout > 1)
         {
@@ -81,16 +81,24 @@ public final class AtlassianConnectRestClient
 
         if (timeout < 2)
         {
-            throw new Exception("Connect App Plugin did not install within the allotted timeout!!!");
+            throw new Exception("Connect App Plugin did not install within the allotted timeout: " + json.get("status").get("subCode"));
         }
     }
 
     public void uninstall(String appKey) throws Exception
     {
-        HttpDelete post = new HttpDelete(baseUrl + UPM_URL_PATH + appKey + "-key");
+        HttpDelete delete = new HttpDelete(getUpmPluginResource(appKey));
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        sendRequestAsUser(post, responseHandler, defaultUsername, defaultPassword);
+        sendRequestAsUser(delete, responseHandler, defaultUsername, defaultPassword);
+    }
+
+    public String getUpmPluginJson(String appKey) throws Exception
+    {
+        HttpGet get = new HttpGet(getUpmPluginResource(appKey));
+
+        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+        return sendRequestAsUser(get, responseHandler, defaultUsername, defaultPassword);
     }
 
     private String getUpmToken() throws IOException
@@ -154,5 +162,10 @@ public final class AtlassianConnectRestClient
         boolean removeExtraSlash = baseURL.endsWith("/");
         String url = baseURL.substring(0, baseURL.length() - (removeExtraSlash ? 1 : 0)) + path;
         return url + (cacheBuster ? "?_=" + RAND.nextLong() : "");
+    }
+
+    private String getUpmPluginResource(final String appKey)
+    {
+        return baseUrl + UPM_URL_PATH + appKey + "-key";
     }
 }

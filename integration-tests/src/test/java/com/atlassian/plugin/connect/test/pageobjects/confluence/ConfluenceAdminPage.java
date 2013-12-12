@@ -37,7 +37,7 @@ public class ConfluenceAdminPage implements AdminPage
     @Override
     public boolean isRemotePluginLinkPresent()
     {
-        return findLinkElement() != null;
+        return findLinkElement().isPresent();
     }
 
     @Override

@@ -30,7 +30,9 @@ public class SecurityEventMapper extends ConfluenceEventMapper
         // Note: don't call the base implementation because we want to populate the 'user' parameter differently.
         return ImmutableMap.<String, Object>of(
             "timestamp", e.getTimestamp(),
-            "user", event.getUsername()
+            "user", event.getUsername(),
+            "remoteHost", event.getRemoteHost(),
+            "remoteIP", event.getRemoteIP()
         );
     }
 }

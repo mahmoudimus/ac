@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebHookModuleDescriptorFactory;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class WebHookModuleProvider implements ConnectModuleProvider<WebHookCapabilityBean>
+public class WebHookModuleProvider implements ConnectModuleProvider<WebHookModuleBean>
 {
     private ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory;
 
@@ -24,11 +24,11 @@ public class WebHookModuleProvider implements ConnectModuleProvider<WebHookCapab
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebHookCapabilityBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebHookModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        for (WebHookCapabilityBean bean : beans)
+        for (WebHookModuleBean bean : beans)
         {
             descriptors.addAll(beanToDescriptors(plugin, addonBundleContext, bean));
         }
@@ -36,7 +36,7 @@ public class WebHookModuleProvider implements ConnectModuleProvider<WebHookCapab
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WebHookCapabilityBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WebHookModuleBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
         descriptors.add(connectWebHookModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, bean));

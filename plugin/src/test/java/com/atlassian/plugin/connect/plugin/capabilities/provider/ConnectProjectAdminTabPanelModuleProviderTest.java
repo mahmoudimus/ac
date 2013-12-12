@@ -3,8 +3,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -28,8 +28,8 @@ import org.osgi.framework.BundleContext;
 import java.util.List;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean.newProjectAdminTabPanelBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.WebItemCapabilityBeanMatchers.*;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.WebItemModuleBeanMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
@@ -79,7 +79,7 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
     private IFramePageServletDescriptorFactory servletDescriptorFactory;
 
     private ConnectProjectAdminTabPanelModuleProvider projectAdminTabPanelModuleProvider;
-    private ConnectProjectAdminTabPanelCapabilityBean bean;
+    private ConnectProjectAdminTabPanelModuleBean bean;
 
 
     @Before
@@ -88,17 +88,17 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
         when(plugin.getKey()).thenReturn(ADDON_KEY);
         when(plugin.getName()).thenReturn(ADDON_NAME);
 
-        when(webItemModuleDescriptorFactory.createModuleDescriptor(eq(plugin), eq(bundleContext), any(WebItemCapabilityBean.class)))
+        when(webItemModuleDescriptorFactory.createModuleDescriptor(eq(plugin), eq(bundleContext), any(WebItemModuleBean.class)))
                 .thenReturn(webItemDescriptor);
 
-        when(servletDescriptorFactory.createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class), anyString(),
+        when(servletDescriptorFactory.createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemModuleBean.class), anyString(),
                 anyString(), anyString(), anyString(), any(Condition.class), anyMap())).thenReturn(servletModuleDescriptor);
 
         when(relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(ADDON_KEY, ADDON_URL)).thenReturn(EXPECTED_IFRAME_URL_HOLDER);
 
         projectAdminTabPanelModuleProvider = new ConnectProjectAdminTabPanelModuleProvider(webItemModuleDescriptorFactory,
                 servletDescriptorFactory, relativeAddOnUrlConverter, mock(JiraAuthenticationContext.class));
-        bean = createCapabilityBean();
+        bean = createModuleBean();
         providedModules();
     }
 
@@ -109,37 +109,37 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
     }
 
     @Test
-    public void capabilityBeanHasCorrectKey()
+    public void moduleBeanHasCorrectKey()
     {
         verify(webItemModuleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasAddonKeyValue(ADDON_KEY)));
     }
 
     @Test
-    public void capabilityBeanHasCorrectName()
+    public void moduleBeanHasCorrectName()
     {
         verify(webItemModuleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasAddonNameValue(ADDON_NAME)));
     }
 
     @Test
-    public void capabilityBeanHasCorrectI18NameKey()
+    public void moduleBeanHasCorrectI18NameKey()
     {
         verify(webItemModuleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasAddonNameI18KeyValue(ADDON_I18_NAME_KEY)));
     }
 
     @Test
-    public void capabilityBeanHasCorrectUrl()
+    public void moduleBeanHasCorrectUrl()
     {
         verify(webItemModuleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasUrlValue(EXPECTED_IFRAME_URL)));
     }
 
     @Test
-    public void capabilityBeanHasCorrectWeight()
+    public void moduleBeanHasCorrectWeight()
     {
         verify(webItemModuleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasWeightValue(WEIGHT)));
     }
 
     @Test
-    public void capabilityBeanHasCorrectLocation()
+    public void moduleBeanHasCorrectLocation()
     {
         verify(webItemModuleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasLocationValue(EXPECTED_LOCATION)));
     }
@@ -147,46 +147,46 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
     @Test
     public void callsServletDescriptorFactoryWithCorrectLocalUrl()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemModuleBean.class),
                 eq(EXPECTED_IFRAME_DESCRIPTOR_URL), anyString(), anyString(), anyString(), any(Condition.class), anyMap());
     }
 
     @Test
     public void callsServletDescriptorFactoryWithCorrectAddonUrl()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemModuleBean.class),
                 anyString(), eq(ADDON_URL), anyString(), anyString(), any(Condition.class), anyMap());
     }
 
     @Test
     public void callsServletDescriptorFactoryWithCorrectDecorator()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemModuleBean.class),
                 anyString(), anyString(), eq(EXPECTED_DECORATOR), anyString(), any(Condition.class), anyMap());
     }
 
     @Test
     public void callsServletDescriptorFactoryWithCorrectTemplateSuffix()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemModuleBean.class),
                 anyString(), anyString(), anyString(), eq(EXPECTED_TEMPLATE_SUFFIX), any(Condition.class), anyMap());
     }
 
     @Test
     public void callsServletDescriptorFactoryWithCorrectCondition()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemModuleBean.class),
                 anyString(), anyString(), anyString(), anyString(), any(IsProjectAdminCondition.class), anyMap());
     }
 
     @Test
     public void callsServletDescriptorFactoryWithCorrectTemplateMetaTags()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemModuleBean.class),
                 anyString(), anyString(), anyString(), anyString(), any(Condition.class), eq(EXPECTED_META_TAGS));
     }
 
-    private ConnectProjectAdminTabPanelCapabilityBean createCapabilityBean()
+    private ConnectProjectAdminTabPanelModuleBean createModuleBean()
     {
         return newProjectAdminTabPanelBean()
                 .withKey(ADDON_KEY)

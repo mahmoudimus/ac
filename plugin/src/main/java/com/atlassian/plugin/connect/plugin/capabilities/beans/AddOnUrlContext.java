@@ -7,7 +7,6 @@ public enum AddOnUrlContext
 {
     addon, product;
 
-
     @Override
     public String toString()
     {

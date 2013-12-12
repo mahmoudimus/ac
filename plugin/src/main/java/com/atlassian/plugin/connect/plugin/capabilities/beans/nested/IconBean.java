@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBuilder;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.util.CapabilityBeanUtils.copyFieldsByNameAndType;
+import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleBeanUtils.copyFieldsByNameAndType;
 
 /**
  * @since 1.0

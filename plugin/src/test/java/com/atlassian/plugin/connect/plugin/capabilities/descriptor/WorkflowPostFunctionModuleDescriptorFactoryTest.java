@@ -7,7 +7,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.ConnectAutowireUtilForTests;
@@ -106,7 +106,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyDescriptorKeyIsSet() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withName(new I18nProperty("My Post Function", null))
                 .withTriggered(new UrlBean("/callme"))
                 .build();
@@ -119,7 +119,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyNameIsSet() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withName(new I18nProperty("My Post Function", null))
                 .withTriggered(new UrlBean("/callme"))
                 .build();
@@ -132,7 +132,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyDescriptionIsSet() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withDescription(new I18nProperty("Some description", null))
                 .withTriggered(new UrlBean("/callme"))
                 .build();
@@ -145,7 +145,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyIsEditable() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withCreate(new UrlBean("/create"))
                 .withEdit(new UrlBean("/edit"))
                 .withTriggered(new UrlBean("/callme"))
@@ -159,7 +159,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyIsNotEditable() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withView(new UrlBean("/view"))
                 .withTriggered(new UrlBean("/callme"))
                 .build();
@@ -172,7 +172,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyResourceDescriptorsArePresent() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withView(new UrlBean("/view"))
                 .withEdit(new UrlBean(("/edit")))
                 .withCreate(new UrlBean("/create"))
@@ -187,7 +187,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyIsDeletable() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withTriggered(new UrlBean("/callme"))
                 .build();
 
@@ -199,7 +199,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyIsOrderable() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withTriggered(new UrlBean("/callme"))
                 .build();
 
@@ -211,7 +211,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyIsNotUnique() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withTriggered(new UrlBean("/callme"))
                 .build();
 
@@ -223,7 +223,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyIsNoSystemModule() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withTriggered(new UrlBean("/callme"))
                 .build();
 
@@ -235,7 +235,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyIsEnabledByDefault() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withTriggered(new UrlBean("/callme"))
                 .build();
 
@@ -247,7 +247,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyCreateUrl() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withTriggered(new UrlBean("/callme"))
                 .withCreate(new UrlBean("/create"))
                 .build();
@@ -261,7 +261,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyEditUrl() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withTriggered(new UrlBean("/callme"))
                 .withEdit(new UrlBean("/edit"))
                 .build();
@@ -275,7 +275,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyViewUrl() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withTriggered(new UrlBean("/callme"))
                 .withView(new UrlBean("/view"))
                 .build();
@@ -289,7 +289,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Test
     public void verifyIFrameURL() throws Exception
     {
-        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withTriggered(new UrlBean("/callme"))
                 .withView(new UrlBean("/view"))
                 .build();
