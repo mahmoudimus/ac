@@ -98,6 +98,7 @@ public class StaticResourcesFilter implements Filter
                 "_amd.js",
                 "plugin/_util.js",
                 "plugin/_dollar.js",
+                "_base64.js",
                 "_events.js",
                 "_xdm.js",
                 "plugin/_rpc.js",

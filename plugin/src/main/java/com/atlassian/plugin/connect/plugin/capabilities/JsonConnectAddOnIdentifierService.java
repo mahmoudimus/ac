@@ -56,7 +56,7 @@ public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifier
             }
             else
             {
-                log.debug("Plugin '{}' has no MANIFEST.MF file. Defaulting to isConnectAddon=false.");
+                log.debug("Plugin '{}' has no MANIFEST.MF file. Defaulting to isConnectAddon=false.", plugin.getKey());
             }
         }
         catch (Exception e)

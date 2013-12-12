@@ -18,7 +18,6 @@ import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.ContextParameterParser;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.spi.Permissions;
@@ -29,6 +28,7 @@ import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.atlassian.sal.api.component.ComponentLocator;
@@ -450,11 +450,6 @@ public class MacroModuleDescriptorCreator
 
         private ImagePlaceholderConfig parseImagePlaceholder(Element entity)
         {
-            return null;
-
-            // Uncomment when https://jira.atlassian.com/browse/CONF-31585 is deployed
-
-            /*
             Element placeholder = entity.element("image-placeholder");
             if (placeholder == null)
             {
@@ -469,7 +464,6 @@ public class MacroModuleDescriptorCreator
                     width == null ? null : Integer.parseInt(width),
                     height == null ? null : Integer.parseInt(height),
                     applyChrome == null || Boolean.parseBoolean(applyChrome)); // applyChrome defaults to true
-            */
         }
 
         private class ImagePlaceholderConfig

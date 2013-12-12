@@ -1,49 +1,47 @@
 package com.atlassian.plugin.connect.plugin.module.jira.workflow;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.Resources;
-import com.atlassian.plugin.elements.ResourceDescriptor;
-import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.elements.ResourceDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.FunctionProvider;
 import com.opensymphony.workflow.TypeResolver;
 import com.opensymphony.workflow.WorkflowException;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
-
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;
@@ -177,6 +175,9 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
             final String uuid = (String) params.get(POST_FUNCTION_CONFIGURATION_UUID);
             final IFrameParams iFrameParams = createIFrameParams(params, uuid);
             final String namespace = moduleKey + uuid;
+            ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getUser();
+            String username = user == null ? "" : user.getUsername();
+
             return iFrameRenderer.render(
                     new IFrameContextImpl(getPluginKey(),
                             workflowFunctionActionUris.get(resourceName),
@@ -184,7 +185,7 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
                             iFrameParams),
                     "",
                     ImmutableMap.of(POST_FUNCTION_CONFIGURATION_UUID, new String[] { uuid }),
-                    ComponentAccessor.getJiraAuthenticationContext().getUser().getDisplayName(),
+                    username,
                     Collections.<String, Object>emptyMap());
         }
         catch (IOException e)
