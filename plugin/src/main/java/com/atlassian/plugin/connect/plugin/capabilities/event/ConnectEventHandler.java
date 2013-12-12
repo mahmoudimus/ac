@@ -243,10 +243,12 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             requestSigner.sign(installHandler, pluginKey, request);
 
             Response response = request.execute(Request.Method.POST).claim();
-            if (response.getStatusCode() != 200)
+            int statusCode = response.getStatusCode();
+            if (statusCode != 200 && statusCode != 204)
             {
-                log.error("Error contacting remote application at " + callbackUrl + " [" + response.getStatusText() + "]");
-                throw new PluginInstallException("Error contacting remote application [" + response.getStatusText() + "]", errorI18nKey);
+                String statusText = response.getStatusText();
+                log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]");
+                throw new PluginInstallException("Error contacting remote application " + statusCode + ":[" + statusText + "]", errorI18nKey);
             }
 
         }
