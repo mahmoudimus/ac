@@ -23,7 +23,7 @@ The following sections outline the activities most add-on must or should do.
 	- Pages in any application
 	- Webhooks for event notifications
 
-	Note that not every add-on will need to touch the application UI. An add-on may simply respond to webhooks, for example, by invoking external processes say in another SaaS application.
+Note that not every add-on will need to touch the application UI. An add-on may simply respond to webhooks, for example, by invoking external processes say in another SaaS application.
 - **Recognize the user.** Because your add-on has been authenticated via two-legged OAuth, each request from the target application to your add-on contains details about the user currently viewing that page. This allows you to serve the right context, respect necessary permissions and make other decisions based on the user's identity. 
 Any application that touches the Atlassian application UI will likely need to recognize the user so that it can adapt the UI for the user as needed. 
 - **Call the application's remote API.** Your add-on can call the application's API via REST, either on behalf of a given user via OAuth or, in some circumstances, as the add-on itself. You can use this to retrieve data (for example, to build a report) or to push information into the target application (for example, to create an issue in response to an external event).
