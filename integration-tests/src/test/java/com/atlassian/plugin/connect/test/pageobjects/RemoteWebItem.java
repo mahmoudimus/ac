@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.google.common.base.Optional;
 import org.openqa.selenium.By;
+
+import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static it.TestConstants.IFRAME_ID_SUFFIX;

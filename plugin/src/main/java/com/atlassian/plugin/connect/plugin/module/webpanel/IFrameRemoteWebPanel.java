@@ -1,24 +1,22 @@
 package com.atlassian.plugin.connect.plugin.module.webpanel;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.Map;
-
-import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.atlassian.sal.api.user.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

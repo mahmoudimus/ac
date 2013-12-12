@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
@@ -18,6 +15,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Map;
 
 @JiraComponent
 public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<ConnectTabPanelModuleBean>

@@ -48,7 +48,8 @@ public class JwtSigningRemotablePluginAccessorTest
 {
     private static final String PLUGIN_KEY = "key";
     private static final String PLUGIN_NAME = "name";
-    private static final String BASE_URL = "http://server:1234/basepath";
+    private static final String BASE_PATH = "/basepath";
+    private static final String BASE_URL = "http://server:1234" + BASE_PATH;
     private static final String FULL_PATH_URL = BASE_URL + "/path";
     private static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
     private static final String INTERNAL_FULL_GET_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";

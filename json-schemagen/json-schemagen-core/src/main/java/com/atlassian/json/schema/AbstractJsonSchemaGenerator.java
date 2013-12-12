@@ -1,8 +1,5 @@
 package com.atlassian.json.schema;
 
-import java.lang.reflect.Field;
-import java.util.*;
-
 import com.atlassian.json.schema.annotation.*;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.doclet.model.SchemaClassDoc;
@@ -11,6 +8,9 @@ import com.atlassian.json.schema.model.*;
 import com.atlassian.json.schema.scanner.model.InterfaceList;
 import com.atlassian.json.schema.util.ReflectionUtil;
 import com.atlassian.json.schema.util.StringUtil;
+
+import java.lang.reflect.Field;
+import java.util.*;
 
 import static com.atlassian.json.schema.util.StringUtil.isNotBlank;
 import static com.atlassian.json.schema.util.StringUtil.lowerCamel;
