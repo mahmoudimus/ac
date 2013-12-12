@@ -8,7 +8,11 @@ Traditional Atlassian add-ons run within an Atlassian application, and were requ
 
 Add-ons can modify and extend Atlassian application in a variety of ways, depending on the purpose of the add-on. The add-on may modify and extend the Atlassian application UI or invoke processes and interact with systems external to the Atlassian application.
 
-The following sections outline the activities most add-on must or should do.
+## Supported versions of Atlassian applications
+Atlassian Connect relies on some infrastructure components to be present in the Atlassian application platform. Not all versions of the application has these. An Atlassian Connect add-on works with these versions of the product: 
+
+- Confluence 5.1 and later.
+- JIRA 6.0, and later.
 
 ## What every add-on must do
 - **Declare itself in a plugin descriptor.** The add-on descriptor is an XML file that tells the application about the add-on. Among other information, it tells the Atlassian application about the add-on's URL and the modules it wants to extend. Administrators install add-ons into Atlassian applications through a registration process. 
@@ -24,6 +28,7 @@ The following sections outline the activities most add-on must or should do.
 	- Webhooks for event notifications
 
 Note that not every add-on will need to touch the application UI. An add-on may simply respond to webhooks, for example, by invoking external processes say in another SaaS application.
+
 - **Recognize the user.** Because your add-on has been authenticated via two-legged OAuth, each request from the target application to your add-on contains details about the user currently viewing that page. This allows you to serve the right context, respect necessary permissions and make other decisions based on the user's identity. 
 Any application that touches the Atlassian application UI will likely need to recognize the user so that it can adapt the UI for the user as needed. 
 - **Call the application's remote API.** Your add-on can call the application's API via REST, either on behalf of a given user via OAuth or, in some circumstances, as the add-on itself. You can use this to retrieve data (for example, to build a report) or to push information into the target application (for example, to create an issue in response to an external event).
@@ -35,6 +40,7 @@ The Atlassian application exposes extension points to add-ons through what are c
 So the first step in discovering what add-ons can do is getting to know the modules. Some modules are common to Confluence and JIRA, but other are application specific. Modules exist for adding general pages to the application, configuration pages to the administration console, project tabs to JIRA, and more.
 
 When you declare a module, the framework takes care of many of the details of the integration for you. So, for instance, if you add a configuration page module, the framework gives you:
+
 - A page in the administration console area of the application
 - A link in the navigation menu to your page
 - A button in the add-on details view for accessing the configuration
@@ -63,7 +69,7 @@ Module declarations are one piece to the integration between the add-on and the 
 
 Since the APIs vary, not only by application and by version but also depending on what other add-on are installed in the application, the best way to find out what's available is to view the REST API Browser (RAB). The RAB presents a dynamic view of the REST API in a specific Atlassian application instance.
 
-For more about the RAB, see **LINK TO Developer Resources?**.
+To learn more about the RAB, see the REST API Browser section of this documentation.
 
 ## About this guide
 This guide is written for any developer who wants to create Atlassian Connect add-ons to extend Atlassian OnDemand or installable applications. 
