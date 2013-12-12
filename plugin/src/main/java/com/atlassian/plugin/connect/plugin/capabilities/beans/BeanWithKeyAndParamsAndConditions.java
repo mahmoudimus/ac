@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BeanWithKeyParamsAndConditionsBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -28,5 +30,34 @@ public class BeanWithKeyAndParamsAndConditions extends BeanWithKeyAndParams
     public List<ConditionalBean> getConditions()
     {
         return conditions;
+    }
+
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof BeanWithKeyAndParamsAndConditions && super.equals(otherObj)))
+        {
+            return false;
+        }
+
+        BeanWithKeyAndParamsAndConditions other = (BeanWithKeyAndParamsAndConditions) otherObj;
+
+        return new EqualsBuilder()
+                .append(conditions, other.conditions)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(59, 29)
+                .append(super.hashCode())
+                .append(conditions)
+                .build();
     }
 }

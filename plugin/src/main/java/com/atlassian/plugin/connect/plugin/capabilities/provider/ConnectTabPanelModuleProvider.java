@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.List;
-import java.util.Map;
-
-import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
@@ -15,14 +11,13 @@ import com.atlassian.plugin.connect.plugin.module.jira.projecttab.IFrameProjectT
 import com.atlassian.plugin.connect.plugin.module.jira.versiontab.IFrameVersionTab;
 import com.atlassian.plugin.connect.spi.module.IFrameViewProfilePanel;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import java.util.List;
+import java.util.Map;
 
 @JiraComponent
 public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<ConnectTabPanelModuleBean>

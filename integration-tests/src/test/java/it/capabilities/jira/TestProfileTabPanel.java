@@ -1,7 +1,5 @@
 package it.capabilities.jira;
 
-import java.rmi.RemoteException;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
@@ -14,6 +12,8 @@ import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static org.hamcrest.Matchers.equalTo;

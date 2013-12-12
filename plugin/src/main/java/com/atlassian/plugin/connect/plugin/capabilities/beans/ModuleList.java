@@ -1,11 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseModuleBeanBuilder;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -21,7 +23,7 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 public class ModuleList extends BaseModuleBean
 {
-    @ConnectModule (WebItemModuleProvider.class)
+    @ConnectModule(WebItemModuleProvider.class)
     private List<WebItemModuleBean> webItems;
 
     /**
@@ -251,5 +253,55 @@ public class ModuleList extends BaseModuleBean
     public List<SearchRequestViewModuleBean> getJiraSearchRequestViews()
     {
         return jiraSearchRequestViews;
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof ModuleList))
+        {
+            return false;
+        }
+
+        ModuleList other = (ModuleList) otherObj;
+
+        return new EqualsBuilder()
+                .append(adminPages, other.adminPages)
+                .append(generalPages, other.generalPages)
+                .append(jiraComponentTabPanels, other.jiraComponentTabPanels)
+                .append(jiraIssueTabPanels, other.jiraIssueTabPanels)
+                .append(jiraProjectAdminTabPanels, other.jiraProjectAdminTabPanels)
+                .append(jiraProjectTabPanels, other.jiraProjectTabPanels)
+                .append(jiraSearchRequestViews, other.jiraSearchRequestViews)
+                .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
+                .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
+                .append(webhooks, other.webhooks)
+                .append(webItems, other.webItems)
+                .build();
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(29, 37)
+                .append(adminPages)
+                .append(generalPages)
+                .append(jiraComponentTabPanels)
+                .append(jiraIssueTabPanels)
+                .append(jiraProjectAdminTabPanels)
+                .append(jiraProjectTabPanels)
+                .append(jiraSearchRequestViews)
+                .append(jiraVersionTabPanels)
+                .append(jiraWorkflowPostFunctions)
+                .append(webhooks)
+                .append(webItems)
+                .build();
     }
 }

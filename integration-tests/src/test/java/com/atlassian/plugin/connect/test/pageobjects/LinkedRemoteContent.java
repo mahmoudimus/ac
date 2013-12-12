@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.google.common.base.Optional;
+
+import javax.inject.Inject;
 
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.ID;

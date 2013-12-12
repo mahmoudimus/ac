@@ -1,14 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.html.encode.JavascriptEncoder;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
@@ -22,14 +13,21 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.json.simple.JSONObject;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
+
 import static com.atlassian.plugin.connect.plugin.util.EncodingUtils.escapeQuotes;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 
 @Named
@@ -107,7 +105,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         UserProfile user = userManager.getUserProfile(remoteUsername);
 
         Map<String, String[]> allParams = newHashMap(queryParams);
-        allParams.put("user_id", new String[]{remoteUsername});
+        allParams.put("user_id", new String[]{nullToEmpty(remoteUsername)});
         allParams.put("user_key", new String[]{user == null ? "" : user.getUserKey().getStringValue()});
         allParams.put("xdm_e", new String[]{hostUrl.toString()});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});

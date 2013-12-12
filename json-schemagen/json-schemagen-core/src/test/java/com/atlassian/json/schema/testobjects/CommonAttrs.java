@@ -1,8 +1,5 @@
 package com.atlassian.json.schema.testobjects;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 
 public class CommonAttrs

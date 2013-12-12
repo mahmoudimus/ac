@@ -1,18 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
-
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.gson.Gson;
-
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
@@ -67,7 +64,7 @@ public class JunkTest
                         .withStyleClasses("ac-link", "aui-link")
                         .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
                         .build())
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey("S0m3Publ1cK3y").build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
                 .build();
 
         Gson gson = ConnectModulesGsonFactory.getGson();

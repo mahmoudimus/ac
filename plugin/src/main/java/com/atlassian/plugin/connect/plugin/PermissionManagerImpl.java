@@ -22,16 +22,14 @@ import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Set;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterables.*;
 import static java.lang.String.format;
 
 /**

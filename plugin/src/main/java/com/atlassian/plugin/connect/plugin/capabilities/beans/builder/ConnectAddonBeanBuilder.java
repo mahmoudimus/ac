@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-
-import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedList;
 

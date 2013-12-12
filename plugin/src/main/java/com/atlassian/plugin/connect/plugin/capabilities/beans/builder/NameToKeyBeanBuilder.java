@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.NameToKeyBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 
 /**
  * @since 1.0
