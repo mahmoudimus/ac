@@ -1,8 +1,11 @@
 # Conditions
 
+ * [Jira Conditions](#jiraconditions)
+ * [Confluence Conditions](#confluenceconditions)
+
 A condition specifies requirements that must be met for a user to access the features or UI exposed by a module. For instance, the condition can require a user to be an administrator, have edit permissions, and apply other requirements for access. If the condition is not met, the panel, page, or other UI element exposed by the add-on does not appear on the page. 
 
-Various types of modules accept conditions, including generalPage, adminPage, and web-item. To see whether a certain module accepts conditions, see their specific module documentation page.
+Various types of modules accept conditions, including generalPage, adminPage, and webItems. To see whether a certain module accepts conditions, see their specific module documentation page.
 
 ## Sample condition
 You specify a permission condition in the module declaration in the add-on descriptor as follows:
@@ -29,9 +32,6 @@ The static condition ensures that only a logged in users can view the page speci
 
 The second condition (onlyBettyCondition) is a remote condition. For a remote condition, the Atlassian application issues a request to the remote resource and expects in the response either a true or false value that specifies whether to show or hide the module feature. The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request authentication information passed through as a header, rather than as a query string parameter.
 
- * [Jira Conditions](#jiraconditions)
- * [Confluence Conditions](#confluenceconditions)
-
 ## Condition parameters
 
 Certain static conditions also accept parameters. These include the following JIRA conditions:
@@ -53,11 +53,12 @@ You can pass parameters to conditions as follows:
 }
 ```
 
-In this case, the user must have not just access to the issue but resolve permissions specifically. The permissions applicable to Atlassian Connect JIRA add-on modules are equivalent to those applicable to JIRA Java plugin development, as described in the [JIRA Permissions class reference](https://docs.atlassian.com/jira/latest/com/atlassian/jira/security/Permissions.html) documentation. The following section describes the mapping of [JIRA permissions] to the permissions you can use in the Atlassian Connect add-on descriptor.  
+In this case, the user must have not just access to the issue but resolve permissions specifically. The permissions applicable to Atlassian Connect JIRA add-on modules are equivalent to those applicable to JIRA Java plugin development, as described in the [JIRA Permissions class reference](https://docs.atlassian.com/jira/latest/com/atlassian/jira/security/Permissions.html) documentation. The following section describes the mapping of [JIRA permissions] to the permissions you can use in the Atlassian Connect add-on descriptor.
 
 
 # JIRA condition parameter mappings
 The following table shows the condition parameters available for `has_issue_permission` and `has_project_permission` in Atlassian Connect module declarations and how they map to the permissions described in the [Permissions](https://docs.atlassian.com/jira/latest/com/atlassian/jira/security/Permissions.html) class documentation.
+
 <table>
     <thead>
         <tr><th>JIRA condition parameters</th><th>Atlassian Connect equivalent</th></tr>
