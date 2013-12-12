@@ -12,12 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
@@ -37,7 +35,6 @@ import it.servlet.ContextServlet;
 import it.servlet.HttpContextServlet;
 import net.oauth.signature.RSA_SHA1;
 
-import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
@@ -59,7 +56,7 @@ public class ConnectRunner
     private final AtlassianConnectRestClient installer;
     private final ConnectAddonBeanBuilder addonBuilder;
     private final String pluginKey;
-    private Option<? extends SignedRequestHandler> signedRequestHandler;
+    private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
     
     private int port;
@@ -111,6 +108,21 @@ public class ConnectRunner
     {
         stopRunnerServer();
         uninstall();
+    }
+
+    public static void stopAndUninstallQuietly(ConnectRunner runner)
+    {
+        if (runner != null)
+        {
+            try
+            {
+                runner.stopAndUninstall();
+            }
+            catch (Exception e)
+            {
+                // ignore
+            }
+        }
     }
 
     public ConnectRunner addInstallLifecycle()
@@ -182,12 +194,17 @@ public class ConnectRunner
 
     public ConnectRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
     {
-        this.signedRequestHandler = some(signedRequestHandler);
+        this.signedRequestHandler = signedRequestHandler;
 
         addonBuilder.withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString()).build());
 
         //return addPermission(Permissions.CREATE_OAUTH_LINK);
         return this;
+    }
+
+    public SignedRequestHandler getSignedRequestHandler()
+    {
+        return signedRequestHandler;
     }
 
     public static RunnerSignedRequestHandler createSignedRequestHandler(String appKey) throws NoSuchAlgorithmException, IOException
