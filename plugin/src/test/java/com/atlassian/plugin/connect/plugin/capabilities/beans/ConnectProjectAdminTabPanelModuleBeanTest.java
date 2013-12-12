@@ -1,17 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
+import com.opensymphony.util.FileUtils;
+import org.junit.Test;
+import org.springframework.core.io.DefaultResourceLoader;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
-
-import com.opensymphony.util.FileUtils;
-
-import org.junit.Test;
-import org.springframework.core.io.DefaultResourceLoader;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
@@ -75,7 +73,7 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
                         .withWeight(100)
                         .withLocation("a-location")
                         .build())
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey("S0m3Publ1cK3y").build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
                 .build();
     }
 

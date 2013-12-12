@@ -33,6 +33,8 @@ public class DynamicContentMacroModuleBeanTest
         String json = gson.toJson(bean, ConnectAddonBean.class);
         String expectedJson = readTestFile();
 
+        System.out.println(json);
+
         assertThat(json, is(sameJSONAs(expectedJson)));
     }
 
@@ -92,7 +94,6 @@ public class DynamicContentMacroModuleBeanTest
                         )
                         .build()
                 )
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey("S0m3Publ1cK3y").build())
                 .build();
     }
 

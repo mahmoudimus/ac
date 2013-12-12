@@ -1,10 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import java.io.IOException;
-
 import com.opensymphony.util.FileUtils;
-
 import org.springframework.core.io.DefaultResourceLoader;
+
+import java.io.IOException;
 
 public class TestFileReader
 {

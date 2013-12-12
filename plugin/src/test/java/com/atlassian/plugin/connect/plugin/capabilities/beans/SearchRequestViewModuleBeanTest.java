@@ -68,7 +68,7 @@ public class SearchRequestViewModuleBeanTest
                         .withParam("delimiter", ",")
                         .withConditions(newSingleConditionBean().withCondition("user_is_logged_in").build())
                         .build())
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey("S0m3Publ1cK3y").build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
                 .build();
     }
 

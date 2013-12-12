@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.event;
 
-import java.net.URI;
-import java.util.Map;
-
-import javax.ws.rs.core.MediaType;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
@@ -31,11 +26,9 @@ import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-
 import org.json.JSONObject;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -46,6 +39,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.core.MediaType;
+import java.net.URI;
+import java.util.Map;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
@@ -53,7 +50,7 @@ import static com.google.common.collect.Maps.newHashMap;
 //import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 
 @Component
-public final class RemoteEventsHandler implements InitializingBean, DisposableBean
+public class RemoteEventsHandler implements InitializingBean, DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(RemoteEventsHandler.class);
     private final EventPublisher eventPublisher;

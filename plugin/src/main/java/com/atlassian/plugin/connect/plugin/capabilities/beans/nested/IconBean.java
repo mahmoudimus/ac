@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBuilder;
 import com.google.common.base.Strings;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleBeanUtils.copyFieldsByNameAndType;
 
@@ -69,5 +71,37 @@ public class IconBean
     public static IconBeanBuilder newIconBean(IconBean defaultBean)
     {
         return new IconBeanBuilder(defaultBean);
+    }
+
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof IconBean))
+        {
+            return false;
+        }
+
+        IconBean other = (IconBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(width, other.width)
+                .append(height, other.height)
+                .append(url, other.url)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(53, 11)
+                .append(width)
+                .append(height)
+                .append(url)
+                .build();
     }
 }

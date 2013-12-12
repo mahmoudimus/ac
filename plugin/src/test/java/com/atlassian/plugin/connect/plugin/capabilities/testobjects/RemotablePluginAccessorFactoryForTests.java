@@ -1,19 +1,31 @@
 package com.atlassian.plugin.connect.plugin.capabilities.testobjects;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.util.concurrent.Promise;
 
+import java.net.URI;
+import java.util.Map;
+
 /**
  * @since 1.0
  */
 public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAccessorFactory
 {
+    public static final String ADDON_BASE_URL = "http://www.example.com";
+    private String baseUrl;
+
+    public RemotablePluginAccessorFactoryForTests()
+    {
+        baseUrl = ADDON_BASE_URL;
+    }
+
+    public void withBaseUrl(String baseUrl)
+    {
+        this.baseUrl = baseUrl;
+    }
 
     @Override
     public RemotablePluginAccessor get(final String pluginKey)
@@ -28,7 +40,7 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
             @Override
             public URI getBaseUrl()
             {
-                return URI.create("http://www.example.com");
+                return URI.create(baseUrl);
             }
 
             @Override

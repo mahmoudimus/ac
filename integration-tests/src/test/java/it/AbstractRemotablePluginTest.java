@@ -14,6 +14,7 @@ import org.openqa.selenium.By;
 
 import static it.TestConstants.ADMIN_USERNAME;
 
+@Deprecated // pretty sure this is just a lot of unnecessary baggage. Use ConnectWebDriverTestBase
 public abstract class AbstractRemotablePluginTest
 {
     protected final static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;

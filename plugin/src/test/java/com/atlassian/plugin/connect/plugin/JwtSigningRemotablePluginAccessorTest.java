@@ -2,11 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.httpclient.api.DefaultResponseTransformation;
-import com.atlassian.httpclient.api.HttpClient;
-import com.atlassian.httpclient.api.Request;
-import com.atlassian.httpclient.api.ResponsePromise;
-import com.atlassian.httpclient.api.ResponseTransformation;
+import com.atlassian.httpclient.api.*;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jwt.JwtConstants;
@@ -29,7 +25,6 @@ import com.google.common.base.Supplier;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
-import org.apache.http.client.methods.HttpGet;
 import org.hamcrest.Description;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,40 +35,31 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JwtSigningRemotablePluginAccessorTest
 {
     private static final String PLUGIN_KEY = "key";
     private static final String PLUGIN_NAME = "name";
-    private static final String OUTGOING_FULL_GET_URL = "http://server:1234/basepath/path?param=param+value";
+    private static final String BASE_PATH = "/basepath";
+    private static final String BASE_URL = "http://server:1234" + BASE_PATH;
+    private static final String FULL_PATH_URL = BASE_URL + "/path";
+    private static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
     private static final String INTERNAL_FULL_GET_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";
     private static final Map<String,String> GET_HEADERS = Collections.singletonMap("header", "header value");
     private static final Map<String,String> GET_PARAMS = Collections.singletonMap("param", "param value");
     private static final Map<String,String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
+    private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
+    private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
     private static final String EXPECTED_GET_RESPONSE = "expected";
-    private static final String BASE_URL = "http://server:1234/basepath";
     private static final String MOCK_JWT = "just.an.example";
     private @Mock JwtService jwtService;
     private @Mock ApplicationLink applicationLink;
@@ -112,6 +98,18 @@ public class JwtSigningRemotablePluginAccessorTest
     public void createdRemotePluginAccessorCreatesCorrectGetUrl() throws ExecutionException, InterruptedException
     {
         assertThat(createRemotePluginAccessor().createGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsIncorrectlyAbsolute() throws ExecutionException, InterruptedException
+    {
+        assertThat(createRemotePluginAccessor().createGetUrl(UNEXPECTED_ABSOLUTE_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsAbsoluteToAddon() throws ExecutionException, InterruptedException
+    {
+        assertThat(createRemotePluginAccessor().createGetUrl(FULL_PATH_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
     }
 
     @Test
@@ -173,7 +171,7 @@ public class JwtSigningRemotablePluginAccessorTest
     public void queryHashClaimIsCorrect() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(new HttpGet(OUTGOING_FULL_GET_URL), ""));
+        String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(HttpMethod.GET.toString(), URI.create(OUTGOING_FULL_GET_URL).getPath(), BASE_PATH, GET_PARAMS_STRING_ARRAY));
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), any(ApplicationLink.class));
     }
 

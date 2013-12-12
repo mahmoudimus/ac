@@ -1,10 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.AuthenticationBeanBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Defines the authentication type to use when signing requests between the host application and the connect add on.
- * The authentication type can be eithe jwt or oauth. If the type is not supplied it will default to jwt.
+ * The authentication type can be either jwt or oauth. If the type is not supplied it will default to jwt.
  */
 public class AuthenticationBean extends BaseModuleBean
 {
@@ -14,22 +16,23 @@ public class AuthenticationBean extends BaseModuleBean
     private AuthenticationType type;
 
     /**
-     * Either the JWT shared secret ot the OAUTH publickKey depending on authentication type.
+     * The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with
+     * a shared secret.
      */
-    private String sharedKey;
+    private String publicKey;
 
     public AuthenticationBean()
     {
         this.type = AuthenticationType.JWT;
-        this.sharedKey = "";
+        this.publicKey = "";
     }
 
     public AuthenticationBean(AuthenticationBeanBuilder builder)
     {
         super(builder);
-        if(null == sharedKey)
+        if(null == publicKey)
         {
-            this.sharedKey = "";
+            this.publicKey = "";
         }
         if(null == type)
         {
@@ -42,9 +45,9 @@ public class AuthenticationBean extends BaseModuleBean
         return type;
     }
 
-    public String getSharedKey()
+    public String getPublicKey()
     {
-        return sharedKey;
+        return publicKey;
     }
 
     public static AuthenticationBeanBuilder newAuthenticationBean()
@@ -55,5 +58,37 @@ public class AuthenticationBean extends BaseModuleBean
     public static AuthenticationBeanBuilder newAuthenticationBean(AuthenticationBean defaultBean)
     {
         return new AuthenticationBeanBuilder(defaultBean);
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof AuthenticationBean))
+        {
+            return false;
+        }
+
+        AuthenticationBean other = (AuthenticationBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(type, other.type)
+                .append(publicKey, other.publicKey)
+                .isEquals();
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(59, 5)
+                .append(type)
+                .append(publicKey)
+                .build();
     }
 }

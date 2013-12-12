@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+
+import java.util.Map;
 
 public class ConnectTabPanelModuleBeanBuilder<T extends ConnectTabPanelModuleBeanBuilder, B extends ConnectTabPanelModuleBean> extends BeanWithKeyParamsAndConditionsBuilder<T, B>
 {

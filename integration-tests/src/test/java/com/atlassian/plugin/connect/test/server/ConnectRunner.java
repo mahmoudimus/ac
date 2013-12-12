@@ -1,5 +1,31 @@
 package com.atlassian.plugin.connect.test.server;
 
+import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.test.Environment;
+import com.atlassian.plugin.connect.test.HttpUtils;
+import com.atlassian.plugin.connect.test.Utils;
+import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import it.servlet.ContextServlet;
+import it.servlet.HttpContextServlet;
+import net.oauth.signature.RSA_SHA1;
+import org.bouncycastle.openssl.PEMWriter;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.security.KeyPair;
@@ -7,37 +33,6 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
-
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.test.Environment;
-import com.atlassian.plugin.connect.test.HttpUtils;
-import com.atlassian.plugin.connect.test.Utils;
-import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
-import org.bouncycastle.openssl.PEMWriter;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-
-import it.servlet.ContextServlet;
-import it.servlet.HttpContextServlet;
-import net.oauth.signature.RSA_SHA1;
-
-import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
@@ -59,7 +54,7 @@ public class ConnectRunner
     private final AtlassianConnectRestClient installer;
     private final ConnectAddonBeanBuilder addonBuilder;
     private final String pluginKey;
-    private Option<? extends SignedRequestHandler> signedRequestHandler;
+    private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
     
     private int port;
@@ -89,6 +84,11 @@ public class ConnectRunner
         installer.uninstall(addon.getKey());
     }
 
+    public ConnectAddonBean getAddon()
+    {
+        return addon;
+    }
+
     /**
      * @return the UPM's JSON representation of this add-on.
      */
@@ -106,6 +106,21 @@ public class ConnectRunner
     {
         stopRunnerServer();
         uninstall();
+    }
+
+    public static void stopAndUninstallQuietly(ConnectRunner runner)
+    {
+        if (runner != null)
+        {
+            try
+            {
+                runner.stopAndUninstall();
+            }
+            catch (Exception e)
+            {
+                // ignore
+            }
+        }
     }
 
     public ConnectRunner addInstallLifecycle()
@@ -177,12 +192,17 @@ public class ConnectRunner
 
     public ConnectRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
     {
-        this.signedRequestHandler = some(signedRequestHandler);
+        this.signedRequestHandler = signedRequestHandler;
 
-        addonBuilder.withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString()).build());
+        addonBuilder.withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString()).build());
 
         //return addPermission(Permissions.CREATE_OAUTH_LINK);
         return this;
+    }
+
+    public SignedRequestHandler getSignedRequestHandler()
+    {
+        return signedRequestHandler;
     }
 
     public static RunnerSignedRequestHandler createSignedRequestHandler(String appKey) throws NoSuchAlgorithmException, IOException

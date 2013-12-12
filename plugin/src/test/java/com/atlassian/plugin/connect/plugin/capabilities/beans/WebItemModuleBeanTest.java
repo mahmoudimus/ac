@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemMod
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -111,7 +110,7 @@ public class WebItemModuleBeanTest
                 .withAuthentication(
                         newAuthenticationBean()
                                 .withType(AuthenticationType.OAUTH)
-                                .withSharedKey("S0m3Publ1cK3y").build());
+                                .withPublicKey("S0m3Publ1cK3y").build());
     }
 
     private WebItemModuleBeanBuilder createWebItemBeanBuilder()
