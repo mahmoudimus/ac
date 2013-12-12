@@ -97,21 +97,21 @@ public class ModuleList extends BaseModuleBean
 
     public ModuleList()
     {
-        this.jiraComponentTabPanels = newArrayList();
-        this.jiraIssueTabPanels = newArrayList();
-        this.jiraProjectAdminTabPanels = newArrayList();
-        this.jiraProjectTabPanels = newArrayList();
-        this.jiraVersionTabPanels = newArrayList();
-        this.jiraProfileTabPanels = newArrayList();
-        this.webItems = newArrayList();
-        this.webPanels = newArrayList();
-        this.generalPages = newArrayList();
         this.adminPages = newArrayList();
         this.configurePages = newArrayList();
-        this.profilePages = newArrayList();
-        this.jiraWorkflowPostFunctions = newArrayList();
-        this.webhooks = newArrayList();
+        this.generalPages = newArrayList();
+        this.jiraComponentTabPanels = newArrayList();
+        this.jiraIssueTabPanels = newArrayList();
+        this.jiraProfileTabPanels = newArrayList();
+        this.jiraProjectAdminTabPanels = newArrayList();
+        this.jiraProjectTabPanels = newArrayList();
         this.jiraSearchRequestViews = newArrayList();
+        this.jiraVersionTabPanels = newArrayList();
+        this.jiraWorkflowPostFunctions = newArrayList();
+        this.profilePages = newArrayList();
+        this.webhooks = newArrayList();
+        this.webItems = newArrayList();
+        this.webPanels = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -273,16 +273,20 @@ public class ModuleList extends BaseModuleBean
 
         return new EqualsBuilder()
                 .append(adminPages, other.adminPages)
+                .append(configurePages, other.configurePages)
                 .append(generalPages, other.generalPages)
                 .append(jiraComponentTabPanels, other.jiraComponentTabPanels)
                 .append(jiraIssueTabPanels, other.jiraIssueTabPanels)
+                .append(jiraProfileTabPanels, other.jiraProfileTabPanels)
                 .append(jiraProjectAdminTabPanels, other.jiraProjectAdminTabPanels)
                 .append(jiraProjectTabPanels, other.jiraProjectTabPanels)
                 .append(jiraSearchRequestViews, other.jiraSearchRequestViews)
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
+                .append(profilePages, other.profilePages)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
+                .append(webPanels, webPanels)
                 .build();
     }
 
@@ -292,16 +296,20 @@ public class ModuleList extends BaseModuleBean
     {
         return new HashCodeBuilder(29, 37)
                 .append(adminPages)
+                .append(configurePages)
                 .append(generalPages)
                 .append(jiraComponentTabPanels)
                 .append(jiraIssueTabPanels)
+                .append(jiraProfileTabPanels)
                 .append(jiraProjectAdminTabPanels)
                 .append(jiraProjectTabPanels)
                 .append(jiraSearchRequestViews)
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
+                .append(profilePages)
                 .append(webhooks)
                 .append(webItems)
+                .append(webPanels)
                 .build();
     }
 }
