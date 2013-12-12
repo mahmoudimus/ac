@@ -1,6 +1,13 @@
 # Introduction to Atlassian Connect
 Atlassian Connect is a new development model for building and delivering add-ons for Atlassian applications. Atlassian Connect add-ons work using standard web protocols and APIs (such as HTTP and REST). As such, Atlassian Connect add-ons can extend Atlassian applications whether running in OnDemand application or installed behind-the-firewall.
 
+<div class="aui-message hint shadowed information-macro">
+	<span class="aui-icon icon-hint">Icon</span>
+	<div class="message-content">
+    	<p>Atlassian Connect is new and in Beta for now, but it's growing all the time. If there's a feature you'd like to see added to Atlassian Connect—say a new extension point or a REST resource—please let us know.</p><p>Submit new feature requests, bugs, and feature votes in the <a href="https://ecosystem.atlassian.net/browse/AC" class="external-link" rel="nofollow">Atlassian Connect JIRA project</a>.</p><p><strong>IMPORTANT:</strong> If you are building an add-on with Atlassian Connect, please subscribe to the <a href="https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev" class="external-link" rel="nofollow">mailing list</a>. Updates and changes to the framework will be posted there. You can ask questions on <a href="http://answers.atlassian.com" class="external-link" rel="nofollow">Atlassian Answers</a> by tagging your post "atlassian-connect".</p>
+	</div>
+</div>
+
 ## What is an Atlassian Connect add-on?
 An add-on is simply a web application that extends an Atlassian application. It may be an existing application that you integrate with the Atlassian application or a new application that you create to add features to an Atlassian application.
 
