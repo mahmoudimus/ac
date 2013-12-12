@@ -88,7 +88,6 @@ Remote conditions can be migrated as follows:
         "condition": "http://example.com/condition/onlyBettyCondition"
     }
 ]
-
 ```
 
 ## Modules
@@ -108,7 +107,7 @@ The [Getting Started guide](getting-started.html) provides a good example of a `
 ## Atlassian Connect Play
 [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
 
- * By upgrading to the new version of [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java) you will gain support for JWT and the new atlassian-plugin.json descriptor format.
+By upgrading to the new version of [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java) you will gain support for JWT and the new atlassian-plugin.json descriptor format.
 
 ## oAuth
 <div class="aui-message warning shadowed information-macro">
@@ -129,7 +128,7 @@ The `atlassian-plugin.json` now contains an `authentication` section that can be
         "callback": "",
         "publicKey": "S0m3Publ1cK3y",
         "requestTokenUrl": ""
-    },
+    }
 }
 ```
 
