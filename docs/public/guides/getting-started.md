@@ -14,7 +14,11 @@ The easiest way to get a local instance of the Atlassian application running is 
 
 We'll use the `atlas-run-standalone` command, which starts an Atlassian application. The SDK lets you specify a particular version of the Atlassian application to start. For testing and developing Atlassian Connect add-ons, we're going to start the application with some specific component versions we need. 
 
-<div class="aui-message warning shadowed information-macro">
+<div class="aui-message warning">
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Important</strong>
+    </p>
     We recommend you start the host application using the SDK command shown here. Atlassian Connect is only present in Atlassian OnDemand and not yet included with Download instances of our software. Therefore certain components, including the Atlassian Connect Framework itself, are included here in the startup command. Without these components present, Connect add-ons cannot be installed. If you are not using the commands below, you must ensure all of the components listed in the `--bundled-plugins` argument are present in your Atlassian application.
 </div>
 

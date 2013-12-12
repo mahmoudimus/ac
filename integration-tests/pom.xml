@@ -296,6 +296,11 @@
                                     <artifactId>jwt-plugin</artifactId>
                                     <version>${atlassian.jwt.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.bundles</groupId>
+                                    <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                                    <version>${atlassian.json.schema.validator.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>
@@ -344,6 +349,11 @@
                                     <groupId>com.atlassian.jwt</groupId>
                                     <artifactId>jwt-plugin</artifactId>
                                     <version>${atlassian.jwt.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.bundles</groupId>
+                                    <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                                    <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                         </product>

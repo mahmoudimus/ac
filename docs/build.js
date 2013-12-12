@@ -15,7 +15,7 @@ function sortModules(schema, modules) {
     return obj;
 }
 
-harpGlobals.globals.schemas = {}
+harpGlobals.globals.schemas = {};
 
 jiraSchema.properties.modules.properties = sortModules(jiraSchema, jiraSchema.properties.modules.properties);
 harpGlobals.globals.schemas.jira = jiraSchema;
