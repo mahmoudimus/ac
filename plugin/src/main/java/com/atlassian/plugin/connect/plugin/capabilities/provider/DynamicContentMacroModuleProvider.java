@@ -61,8 +61,8 @@ public class DynamicContentMacroModuleProvider implements ConnectModuleProvider<
             }
         }
 
-        // TODO: Add Image Placeholder
-        // TODO: Add Editor
+        // TODO: Add Image Placeholder --> ACDEV-678
+        // TODO: Add Editor --> ACDEV-676
 
         return ImmutableList.copyOf(descriptors);
     }

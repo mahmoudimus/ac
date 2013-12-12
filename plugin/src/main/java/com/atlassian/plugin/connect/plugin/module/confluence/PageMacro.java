@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
@@ -21,11 +21,11 @@ public final class PageMacro extends AbstractRemoteMacro
     private final UserManager userManager;
     private final IFrameContext iframeContext;
     private final IFrameRenderer iFrameRenderer;
-    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
     public PageMacro(RemoteMacroInfo remoteMacroInfo, UserManager userManager,
             IFrameRenderer iFrameRenderer, IFrameContext iframeContext,
-            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory
     )
     {
         super(remotablePluginAccessorFactory, remoteMacroInfo);

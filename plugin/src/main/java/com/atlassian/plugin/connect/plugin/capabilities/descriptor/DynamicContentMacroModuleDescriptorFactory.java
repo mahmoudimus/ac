@@ -5,7 +5,6 @@ import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroCategory;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
@@ -17,13 +16,13 @@ import com.atlassian.plugin.connect.plugin.module.confluence.RemoteMacroInfo;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.Sets;
 import org.dom4j.Element;
@@ -38,14 +37,13 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
 {
     private final UserManager userManager;
     private final IFrameRenderer iFrameRenderer;
-    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final MacroMetadataParser macroMetadataParser;
 
 
     @Autowired
     public DynamicContentMacroModuleDescriptorFactory(
-            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
             IFrameRenderer iFrameRenderer,
             UserManager userManager,
             UrlVariableSubstitutor urlVariableSubstitutor)
@@ -54,9 +52,6 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         this.iFrameRenderer = iFrameRenderer;
         this.userManager = userManager;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
-
-        // todo: fix this in confluence
-        this.macroMetadataParser = ComponentLocator.getComponent(MacroMetadataParser.class);
     }
 
     @Override
@@ -64,6 +59,9 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
     {
         DOMElement element = createDOMElement(bean);
         ModuleFactory moduleFactory = createModuleFactory(plugin, element, bean);
+
+        ConnectDocumentationBeanFactory docBeanFactory = new ConnectDocumentationBeanFactory(remotablePluginAccessorFactory.get(plugin.getKey()));
+        MacroMetadataParser macroMetadataParser = new MacroMetadataParser(docBeanFactory);
 
         FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
         descriptor.init(plugin, element);
@@ -76,6 +74,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         element.setAttribute("key", bean.getKey());
         element.setAttribute("name", bean.getDisplayName());
         element.setAttribute("i18n-name-key", bean.getName().getI18n());
+        element.setAttribute("documentation-url", bean.getDocumentationUrl());
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
 

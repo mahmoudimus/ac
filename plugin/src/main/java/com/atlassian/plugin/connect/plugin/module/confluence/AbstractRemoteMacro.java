@@ -1,18 +1,18 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
-import java.net.URI;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
+import java.net.URI;
 
 /**
  * Base for remote macros
  */
 public abstract class AbstractRemoteMacro implements RemoteMacro
 {
-    protected final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    protected final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     protected final RemoteMacroInfo remoteMacroInfo;
 
-    public AbstractRemoteMacro(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+    public AbstractRemoteMacro(RemotablePluginAccessorFactory remotablePluginAccessorFactory,
             RemoteMacroInfo remoteMacroInfo)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
