@@ -53,8 +53,15 @@ in order to sign and verify future requests. The payload contains the following 
         "eventType": "installed"
     }
 
-Upon successful registration, the add-on must return either a `200 OK` or `204 No Content` response code, otherwise the
-operation will fail and the installation will be marked as incomplete.
+
+<div class="aui-message warning">
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Important</strong>
+    </p>
+    Upon successful registration, the add-on must return either a `200 OK` or `204 No Content` response code, otherwise
+    the operation will fail and the installation will be marked as incomplete.
+</div>
 
 ## Details
 
