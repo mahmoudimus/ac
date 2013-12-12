@@ -4,7 +4,6 @@ import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.event.events.security.LoginEvent;
 import com.atlassian.confluence.event.events.security.LoginFailedEvent;
 import com.atlassian.confluence.event.events.security.LogoutEvent;
-import com.atlassian.confluence.event.events.security.SecurityEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.sal.api.user.UserManager;
 import org.junit.Test;
@@ -14,11 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith (MockitoJUnitRunner.class)
 public class SecurityEventMapperTest

@@ -1,13 +1,13 @@
 package com.atlassian.json.schema;
 
+import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
+import com.atlassian.json.schema.model.*;
+import com.atlassian.json.schema.scanner.model.InterfaceList;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.util.*;
-
-import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
-import com.atlassian.json.schema.model.*;
-import com.atlassian.json.schema.scanner.model.InterfaceList;
 
 import static com.atlassian.json.schema.util.ReflectionUtil.isParameterizedType;
 

@@ -1,29 +1,37 @@
 package com.atlassian.plugin.connect.plugin.applinks;
 
+import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.api.application.generic.GenericApplicationType;
 import com.atlassian.applinks.api.application.jira.JiraApplicationType;
+import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
+import com.atlassian.applinks.spi.link.MutableApplicationLink;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl;
+import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.google.common.collect.Lists;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-
-import org.junit.Before;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultConnectApplinkManagerTest
@@ -33,21 +41,12 @@ public class DefaultConnectApplinkManagerTest
     @Mock private PluginSettingsFactory pluginSettingsFactory;
     @Mock private OAuthLinkManager oAuthLinkManager;
     @Mock private PermissionManager permissionManager;
-    @Mock private TransactionTemplate transactionTemplate;
+    private TransactionTemplate transactionTemplate;
 
     private ConnectApplinkManager connectApplinkManager;
     @Mock private RemotePluginContainerApplicationType connectApplicationType;
     @Mock private JiraApplicationType jiraApplicationType;
     @Mock private GenericApplicationType genericApplicationType;
-
-    @Before
-    public void setup()
-    {
-        connectApplinkManager = new DefaultConnectApplinkManager(applicationLinkService, typeAccessor,
-                        pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
-
-        when(connectApplicationType.getId()).thenReturn(RemotePluginContainerApplicationTypeImpl.TYPE_ID);
-    }
 
     @Test
     public void testGetAppLinkForConnectAddon() throws Exception
@@ -110,5 +109,48 @@ public class DefaultConnectApplinkManagerTest
         when(applicationLinkService.getApplicationLinks()).thenReturn(links);
 
         connectApplinkManager.getAppLink(jiraKey);
+    }
+
+    @Test
+    public void creatingAnAddOnWithJwtAuthenticationSetsAuthenticationMethod()
+    {
+        MutableApplicationLink appLink = createAppLink();
+        verify(appLink).putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
+    }
+
+    @Test
+    public void creatingAnAddOnWithJwtAuthenticationSetsTheSharedSecret()
+    {
+        MutableApplicationLink appLink = createAppLink();
+        verify(appLink).putProperty("atlassian.jwt.shared.secret", "signing key");
+    }
+
+    @Before
+    public void setup()
+    {
+        transactionTemplate = new TransactionTemplate()
+        {
+            @Override
+            public <T> T execute(TransactionCallback<T> action)
+            {
+                return action.doInTransaction();
+            }
+        };
+
+        connectApplinkManager = new DefaultConnectApplinkManager(applicationLinkService, typeAccessor,
+                pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
+
+        when(connectApplicationType.getId()).thenReturn(RemotePluginContainerApplicationTypeImpl.TYPE_ID);
+    }
+
+    private MutableApplicationLink createAppLink()
+    {
+        MutableApplicationLink appLink = mock(MutableApplicationLink.class);
+        Plugin plugin = mock(Plugin.class);
+        when(plugin.getKey()).thenReturn("my-connect-addon");
+        when(applicationLinkService.addApplicationLink(any(ApplicationId.class), any(ApplicationType.class), any(ApplicationLinkDetails.class))).thenReturn(appLink);
+        when(applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class)).thenReturn(Collections.<ApplicationLink>emptyList());
+        connectApplinkManager.createAppLink(plugin, "/baseUrl", AuthenticationType.JWT, "signing key");
+        return appLink;
     }
 }

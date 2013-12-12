@@ -1,7 +1,5 @@
 package com.atlassian.json.schema.model;
 
-import com.atlassian.json.schema.SchemaType;
-
 public class NumericSchema extends SimpleTypeSchema
 {
     private Double multipleOf;

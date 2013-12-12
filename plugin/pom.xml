@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m24-SNAPSHOT</version>
+        <version>1.0-m25-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -607,6 +607,7 @@
                                         <include>js/iframe-min/plugin/_util-min.js</include>
                                         <include>js/iframe-min/plugin/_dollar-min.js</include>
                                         <include>js/iframe-min/_events-min.js</include>
+                                        <include>js/iframe-min/_base64-min.js</include>
                                         <include>js/iframe-min/_xdm-min.js</include>
                                         <include>js/iframe-min/plugin/_rpc-min.js</include>
                                         <include>js/iframe-min/plugin/events-min.js</include>

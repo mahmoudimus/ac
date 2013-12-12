@@ -18,16 +18,11 @@ import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
-import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasAttributeValue;
-import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasSubElementAttributeValue;
-import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasSubElementTextValue;
+import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)

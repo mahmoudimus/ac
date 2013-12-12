@@ -1,15 +1,14 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
-
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.google.common.collect.Lists.newArrayList;

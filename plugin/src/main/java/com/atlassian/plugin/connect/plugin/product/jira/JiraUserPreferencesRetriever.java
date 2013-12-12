@@ -8,8 +8,8 @@ import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.TimeZone;
 import javax.annotation.Nullable;
+import java.util.TimeZone;
 
 @JiraComponent
 public class JiraUserPreferencesRetriever implements UserPreferencesRetriever
