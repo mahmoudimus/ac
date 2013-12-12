@@ -9,8 +9,8 @@ import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.util.ProductFilterUtil;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
-import com.github.fge.jsonschema.examples.Utils;
 import com.github.fge.jsonschema.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
@@ -46,8 +46,10 @@ public class JsonDescriptorValidator implements ConnectDescriptorValidator
         DescriptorValidationResult result = null;
         try
         {
-            JsonSchema schema = factory.getJsonSchema(JsonLoader.fromString(schemaLocator.getSchema(productFilter)));
-            ListProcessingReport report = (ListProcessingReport) schema.validate(JsonLoader.fromString(descriptor));
+            JsonNode schemaNode = JsonLoader.fromString(schemaLocator.getSchema(productFilter));
+            JsonSchema schema = factory.getJsonSchema(schemaNode);
+            JsonNode descriptorNode = JsonLoader.fromString(descriptor);
+            ListProcessingReport report = (ListProcessingReport) schema.validate(descriptorNode);
             result = new DescriptorValidationResult(report.isSuccess(),report.asJson().toString(),report.toString());
         }
         catch (ProcessingException e)
