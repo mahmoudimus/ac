@@ -51,7 +51,13 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule (value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraVersionTabPanels;
 
-    @ConnectModule (value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
+    /**
+     * @schemaTitle User Profile Tab Panel
+     */
+    @ConnectModule(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectTabPanelModuleBean> jiraProfileTabPanels;
+
+    @ConnectModule(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
     private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
     
     @ConnectModule (WebPanelModuleProvider.class)
@@ -69,7 +75,13 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule (AdminPageModuleProvider.class)
     private List<ConnectPageModuleBean> adminPages;
 
-    @ConnectModule (WebHookModuleProvider.class)
+    /**
+     * @schemaTitle User Profile Page
+     */
+    @ConnectModule(value = ProfilePageModuleProvider.class, products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
+    private List<ConnectPageModuleBean> profilePages;
+
+    @ConnectModule(WebHookModuleProvider.class)
     private List<WebHookModuleBean> webhooks;
 
     @ConnectModule (value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
@@ -82,10 +94,12 @@ public class ModuleList extends BaseModuleBean
         this.jiraProjectAdminTabPanels = newArrayList();
         this.jiraProjectTabPanels = newArrayList();
         this.jiraVersionTabPanels = newArrayList();
+        this.jiraProfileTabPanels = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.generalPages = newArrayList();
         this.adminPages = newArrayList();
+        this.profilePages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
         this.jiraSearchRequestViews = newArrayList();
@@ -115,6 +129,10 @@ public class ModuleList extends BaseModuleBean
         {
             this.jiraVersionTabPanels = newArrayList();
         }
+        if (null == jiraProfileTabPanels)
+        {
+            this.jiraProfileTabPanels = newArrayList();
+        }
         if (null == webItems)
         {
             this.webItems = newArrayList();
@@ -130,6 +148,10 @@ public class ModuleList extends BaseModuleBean
         if (null == adminPages)
         {
             this.adminPages = newArrayList();
+        }
+        if (null == profilePages)
+        {
+            this.profilePages = newArrayList();
         }
         if (null == jiraWorkflowPostFunctions)
         {
@@ -175,6 +197,11 @@ public class ModuleList extends BaseModuleBean
         return jiraVersionTabPanels;
     }
 
+    public List<ConnectTabPanelModuleBean> getJiraProfileTabPanels()
+    {
+        return jiraProfileTabPanels;
+    }
+
     public List<WebPanelModuleBean> getWebPanels()
     {
         return webPanels;
@@ -193,6 +220,11 @@ public class ModuleList extends BaseModuleBean
     public List<ConnectPageModuleBean> getAdminPages()
     {
         return adminPages;
+    }
+
+    public List<ConnectPageModuleBean> getProfilePages()
+    {
+        return profilePages;
     }
 
     public List<WebHookModuleBean> getWebhooks()
