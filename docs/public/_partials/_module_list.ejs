@@ -2,8 +2,8 @@
     <strong><%= product.title %> Modules</strong>
 </div>
 <ul class="aui-nav">
-    <% for (var key in schemas[product.key].properties.capabilities.properties) { %>
-        <% var module = schemas[product.key].properties.capabilities.properties[key]; %>
+    <% for (var key in schemas[product.key].properties.modules.properties) { %>
+        <% var module = schemas[product.key].properties.modules.properties[key]; %>
         <% var selected = key === current.source && current.path[1] === [product.key] ? "class=aui-nav-selected" : ""; %>
         <li <%= selected %>>
             <%

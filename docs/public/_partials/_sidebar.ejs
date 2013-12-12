@@ -10,6 +10,47 @@
                 <% } %>
             </ul>
 
+             <div class="aui-nav-heading">
+                <strong>Core Concepts</strong>
+            </div>
+            <ul class="aui-nav">
+            <% var concepts = {
+                "addon-descriptor.html": {
+                    "title": "Descriptors"
+                },
+                "modules.html": {
+                    "title": "Modules"
+                },
+                "pages.html": {
+                    "title": "Pages"
+                },
+                "jwt.html": {
+                    "title": "JWT"
+                },
+                "scopes.html": {
+                    "title": "Scopes"
+                },
+                "conditions.html": {
+                    "title": "Conditions"
+                },
+                "javascript-api.html": {
+                    "title": "Javascript API"
+                },
+                "styling-with-aui.html": {
+                    "title": "Styling Add-ons with AUI"
+                },
+                "addon-installation-full.html": {
+                    "title": "Installing an Add-on"
+                },
+                "development-loop.html": {
+                    "title": "Development Loop"
+                }
+            };
+            for(var concept in concepts) { %>
+            <li>
+                <a href="/guides/<%= concept %>"><%= concepts[concept].title %></a>
+            </li>
+            <% } %>
 <!--
             <div class="aui-nav-heading">
                 <strong>Add-on Descriptor</strong>
@@ -33,25 +74,31 @@
             </div>
             <ul class="aui-nav">
                 <li>
-                    <a href="#">JIRA</a>
+                    <a href="https://jira.atlassian.com/plugins/servlet/restbrowser#/">JIRA</a>
                 </li>
                 <li>
-                    <a href="#">Confluence</a>
+                    <a href="https://confluence.atlassian.com/plugins/servlet/restbrowser#/">Confluence</a>
                 </li>
             </ul>
 
             <div class="aui-nav-heading">
-                <strong>Help and Support</strong>
+                <strong>Resources</strong>
             </div>
             <ul class="aui-nav">
+                <li>
+                    <a href="/samples.html">Sample Add-ons</a>
+                </li>
                 <li>
                     <a href="/faqs.html">FAQs</a>
                 </li>
                 <li>
-                    <a href="/contact-us.html">Contact Us</a>
+                    <a href="https://groups.google.com/forum/?fromgroups=#%21forum/atlassian-connect-dev">Mailing List</a>
                 </li>
                 <li>
                     <a href="https://answers.atlassian.com/tags/atlassian-connect">Atlassian Answers</a>
+                </li>
+                <li>
+                    <a href="https://ecosystem.atlassian.net/browse/AC">JIRA Project</a>
                 </li>
             </ul>
 
