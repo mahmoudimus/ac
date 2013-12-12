@@ -143,7 +143,14 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
             {
                 parameter.addAttribute("default", parameterBean.getDefaultValue());
             }
-            // TODO: values and aliases
+            for (String value : parameterBean.getValues())
+            {
+                parameter.addElement("value").addAttribute("name", value);
+            }
+            for (String value : parameterBean.getAliases())
+            {
+                parameter.addElement("alias").addAttribute("name", value);
+            }
         }
     }
 

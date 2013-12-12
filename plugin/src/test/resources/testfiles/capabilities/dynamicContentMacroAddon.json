@@ -34,11 +34,18 @@
         "outputType": "block",
         "parameters": [
           {
+            "aliases": [
+              "paramAlias1"
+            ],
             "defaultValue": "default",
             "multiple": false,
             "name": "Parameter Name",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "values": [
+              "paramValue1",
+              "paramValue2"
+            ]
           }
         ],
         "url": "/my-macro",

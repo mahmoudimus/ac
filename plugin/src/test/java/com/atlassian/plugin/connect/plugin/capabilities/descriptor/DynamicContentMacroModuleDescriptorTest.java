@@ -35,6 +35,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayContainingInAnyOrder;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.mockito.Mockito.mock;
@@ -157,7 +158,7 @@ public class DynamicContentMacroModuleDescriptorTest
         assertThat(macroParameter, allOf(
                 hasProperty("defaultValue", is("default")),
                 hasProperty("name", is("Parameter Name")),
-                hasProperty("type", hasToString(MacroParameterType.STRING.toString())),
+                hasProperty("type", hasToString(MacroParameterType.ENUM.toString())),
                 hasProperty("multiple", is(false)),
                 hasProperty("required", is(true))
         ));
@@ -168,6 +169,24 @@ public class DynamicContentMacroModuleDescriptorTest
     {
         String documentationUrl = descriptor.getMacroMetadata().getFormDetails().getDocumentationUrl();
         assertThat(documentationUrl, is("http://docs.example.com/macro"));
+    }
+
+    @Test
+    public void verifyParameterValue() throws Exception
+    {
+        List<MacroParameter> parameters = descriptor.getMacroMetadata().getFormDetails().getParameters();
+        MacroParameter macroParameter = parameters.get(0);
+
+        assertThat(macroParameter.getEnumValues(), contains("Parameter Value"));
+    }
+
+    @Test
+    public void verifyParameterAlias() throws Exception
+    {
+        List<MacroParameter> parameters = descriptor.getMacroMetadata().getFormDetails().getParameters();
+        MacroParameter macroParameter = parameters.get(0);
+
+        assertThat(macroParameter.getAliases(), contains("Parameter Alias"));
     }
 
     @Test
@@ -196,10 +215,12 @@ public class DynamicContentMacroModuleDescriptorTest
                 .withIcon(newIconBean().withUrl("/assets/macro.png").withHeight(80).withWidth(80).build())
                 .withParameters(newMacroParameterBean()
                         .withName("Parameter Name")
-                        .withType(MacroParameterType.STRING)
+                        .withType(MacroParameterType.ENUM)
                         .withDefaultValue("default")
                         .withMultiple(false)
                         .withRequired(true)
+                        .withValues("Parameter Value")
+                        .withAliases("Parameter Alias")
                         .build()
                 )
                 .build();

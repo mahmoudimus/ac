@@ -2,6 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterType;
+import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParameterBeanBuilder, MacroParameterBean>
 {
@@ -10,6 +13,8 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
     private Boolean required;
     private Boolean multiple;
     private String defaultValue;
+    private List<String> values;
+    private List<String> aliases;
 
     public MacroParameterBeanBuilder()
     {
@@ -22,6 +27,8 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
         this.required = defaultBean.getRequired();
         this.multiple = defaultBean.getMultiple();
         this.defaultValue = defaultBean.getDefaultValue();
+        this.values = defaultBean.getValues();
+        this.aliases = defaultBean.getAliases();
     }
 
     public MacroParameterBeanBuilder withName(String name)
@@ -51,6 +58,18 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
     public MacroParameterBeanBuilder withDefaultValue(String defaultValue)
     {
         this.defaultValue = defaultValue;
+        return this;
+    }
+
+    public MacroParameterBeanBuilder withValues(String... values)
+    {
+        this.values = Lists.newArrayList(values);
+        return this;
+    }
+
+    public MacroParameterBeanBuilder withAliases(String... aliases)
+    {
+        this.aliases = Lists.newArrayList(aliases);
         return this;
     }
 

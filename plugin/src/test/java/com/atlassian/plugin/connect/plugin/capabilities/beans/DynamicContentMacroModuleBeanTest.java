@@ -86,6 +86,8 @@ public class DynamicContentMacroModuleBeanTest
                                 .withDefaultValue("default")
                                 .withMultiple(false)
                                 .withRequired(true)
+                                .withValues("paramValue1", "paramValue2")
+                                .withAliases("paramAlias1")
                                 .build()
                         )
                         .build()

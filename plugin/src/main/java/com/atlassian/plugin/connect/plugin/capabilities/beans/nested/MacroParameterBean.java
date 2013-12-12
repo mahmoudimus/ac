@@ -3,6 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.MacroParameterBeanBuilder;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 public class MacroParameterBean extends BaseModuleBean
 {
@@ -11,6 +14,8 @@ public class MacroParameterBean extends BaseModuleBean
     private Boolean required;
     private Boolean multiple;
     private String defaultValue;
+    private List<String> values;
+    private List<String> aliases;
 
     public MacroParameterBean(MacroParameterBeanBuilder builder)
     {
@@ -34,6 +39,14 @@ public class MacroParameterBean extends BaseModuleBean
         if (null == defaultValue)
         {
             defaultValue = "";
+        }
+        if (null == values)
+        {
+            values = ImmutableList.of();
+        }
+        if (null == aliases)
+        {
+            aliases = ImmutableList.of();
         }
     }
 
@@ -65,6 +78,16 @@ public class MacroParameterBean extends BaseModuleBean
     public boolean hasDefaultValue()
     {
         return !Strings.isNullOrEmpty(defaultValue);
+    }
+
+    public List<String> getValues()
+    {
+        return values;
+    }
+
+    public List<String> getAliases()
+    {
+        return aliases;
     }
 
     public static MacroParameterBeanBuilder newMacroParameterBean()
