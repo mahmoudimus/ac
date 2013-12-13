@@ -5,7 +5,8 @@
   "dependencies": {
     "harp": "*",
     "lodash": "*",
-    "fs-extra": "*"
+    "fs-extra": "*",
+    "markdown-js": "*"
   },
   "scripts": {
     "start": "./build.js && ./node_modules/.bin/harp server",
