@@ -236,3 +236,42 @@ on the verified token.
 
 <a name='outgoing'></a>
 # Signing Outgoing Requests
+
+When communicating server-to-server with the Atlassian host product your add-on must include a JWT token when accessing an protected resources. This covers most of the REST APIs.
+
+You may also find it useful to include tokens in iframe HTML for communication from the browser back to your add-on. For example, the URL of a link to an add-on resource could include a JWT token that the add-on uses to verify that it itself generated the link, and that therefore it can trust the link's query string parameters.
+
+Construct a token that identifies your add-on, validates the query, limits the token's lifespan and allows the receiver to verify that this token was genuinely constructed by your add-on.
+
+## Construct the Header
+
+The header is a JSON object that looks like this example:
+
+    {
+        "alg": "HS256",
+        "typ": "JWT"
+    }
+
+The "typ" field specifies that this is a JWT token. This is mandatory.
+
+The "alg" field specifies the algorithm used to sign the token. In atlassian-connect version 1.0 we support the HMAC SHA-256 algorithm, which the [JWT specification](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13) identifies using the string ["HS256"](http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-18#section-3.1).
+
+## Construct the Claims Set
+
+The claims set is a JSON object that looks like this example:
+
+    {
+        "iss": "1234567890",
+        "iat": 1386898951,
+        "exp": 1386899131,
+        "qsh": "8063ff4ca1e41df7bc90c8ab6d0f6207d491cf6dad7c66ea797b4614b71922e9",
+        "sub": "a_user_key"
+    }
+
+Let's examine each of these claims.
+
+* "iss": The issuer identifier. Use your add-on's client key that you received in the "installed" lifecycle callback.
+* "iat": Issued-at time. The UTC Unix time when your add-on constructed this token. Used for detecting tokens illegally issued "in the future" and potentially in debugging the replay of outrageously old tokens.
+* "exp" Expiration time. The UTC Unix time after which the receiver should NOT use this token. Used for limiting replays.
+* "qsh": Query hash. A custom Atlassian claim that prevents URL tampering (described [above](#qsh)).
+* "sub": The subject of this token. In atlassian-connect pre 1.0 we use this to identify the user key of the user that the add-on wishes to impersonate with this call; from 1.0 onwards this claim will be ignored, as user impersonation will not be possible.
