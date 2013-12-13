@@ -61,7 +61,7 @@ Be sure to explore the JIRA Modules and Confluence Modules sections of this docu
 ## Deployment architecture
 From the Atlassian application instance's perspective, the add-ons themselves operate as a software-as-a-service. To an end user, the add-on appears as a fully integrated part of the Atlassian application. After subscribing to the add-on, the features are delivered from within the UI and workflows of the host application.
 
-Most Atlassian Connect developers will choose to implement their add-ons as multi-tenant services. This means that a single Atlassian Connect application must take into account multiple subscribing organizations. For example, each add-on will  maintain subscriber-specific data and configuration. For more about multi-tenancy design considerations, see Add-on Design Considerations.
+Most Atlassian Connect developers will choose to implement their add-ons as multi-tenant services. This means that a single Atlassian Connect application must take into account multiple subscribing organizations. For example, each add-on will maintain subscriber-specific data and configuration. For more about multi-tenancy design considerations, see [Add-on Design Considerations](https://developer.atlassian.com/display/AC/Add-on+Design+Considerations).
 
 <img src="../assets/images/DocDiagram.png" alt="Deployment architecture" />
 
@@ -89,6 +89,6 @@ To get the most out of this information, you should be familiar with:
 - Using and administering Atlassian applications
 - Web programming, whether using Java or another language
 - Web server concepts and administration.
-- Web security standards, such as Basic Auth and JWT.
+- Web security standards, such as JWT.
 - Interacting with REST APIs
 

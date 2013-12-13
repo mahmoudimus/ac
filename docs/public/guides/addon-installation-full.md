@@ -56,9 +56,13 @@ In your request:
 
 This registers the add-on declared by the `atlassian-plugin.json` file at the URL.
 
-Note that you should not rely on the response returned from the POST request to confirm that the plugin has been installed. Instead, the best way to confirm that the plugin has been installed is to add a webhook to your add-on descriptor that listens for the add-on installation event. The webhook declaration in the `atlassian-plugin.json` file would look something like this:
+Note that you should not rely on the response returned from the POST request to confirm that the plugin has been installed. Instead, the best way to confirm that the plugin has been installed is to add a lifecycle event to your add-on descriptor that listens for the add-on installation event. The lifecycle declaration in the `atlassian-plugin.json` file would look something like this:
 ```
-<webhook key="installed" event="remote_plugin_installed" url="/your-url-here" />
+{
+    "lifecycle": {
+        "installed" : "/your-url-here"
+    }
+}
 ```
 
 ## Troubleshooting authentication
