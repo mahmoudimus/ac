@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.httpclient.api.*;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;

@@ -1,17 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities.schema;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.ProductFilter;
-
 import org.apache.commons.io.IOUtils;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Named
 public class ConnectSchemaLocator
