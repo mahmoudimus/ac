@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
@@ -43,6 +45,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      *  Specifies the URL targeted by the link. The URL can be absolute or relative to either the
      *  product URL or the add-on's base URL, depending on the *context* parameter.
      */
+    @StringSchemaAttributes(format = "uri")
     private String link;
 
     /**
@@ -56,6 +59,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * For example, the "system.admin/globalsettings" location is in the administrative
      * menu link on the left side of the Administration Console.
      */
+    @Required
     private String location;
 
     /**
