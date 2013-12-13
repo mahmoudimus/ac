@@ -7,8 +7,28 @@ A condition specifies requirements that must be met for a user to access the fea
 
 Various types of modules accept conditions, including generalPage, adminPage, and webItems. To see whether a certain module accepts conditions, see their specific module documentation page.
 
-## Sample condition
+## Remote Conditions
+
+```
+"generalPages": [
+    {
+        "conditions": [
+            {
+                "condition": "http://example.com/condition/onlyBettyCondition"
+            }
+        ]
+    }
+]
+```
+
+For a remote condition, the Atlassian application issues a request to the remote resource and expects in the response either a true or false value that specifies whether to show or hide the module feature. The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request authentication information passed through as a header, rather than as a query string parameter.
+
+
+## Static conditions
+
 You specify a permission condition in the module declaration in the add-on descriptor as follows:
+
+A static condition ensures that only a logged in users can view the page specified by this module declaration.
 
 ```
 "generalPages": [
@@ -17,24 +37,15 @@ You specify a permission condition in the module declaration in the add-on descr
             {
                 "condition": "user_is_logged_in",
                 "invert": false
-            },
-            {
-                "condition": "http://example.com/condition/onlyBettyCondition"
             }
         ],
     }
 ]
 ```
 
-The sample shows two conditions, one is a static condition named `user_is_logged_in` and a remote condition, `onlyBettyCondition`.
+### Condition parameters
 
-The static condition ensures that only a logged in users can view the page specified by this module declaration. 
-
-The second condition (onlyBettyCondition) is a remote condition. For a remote condition, the Atlassian application issues a request to the remote resource and expects in the response either a true or false value that specifies whether to show or hide the module feature. The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request authentication information passed through as a header, rather than as a query string parameter.
-
-## Condition parameters
-
-Certain static conditions also accept parameters. These include the following JIRA conditions:
+Certain static conditions also accept parameters. For example:
 
 * `has_issue_permission`
 * `has_project_permission`
@@ -109,85 +120,85 @@ The following table shows the condition parameters available for `has_issue_perm
 
 <a name="jiraconditions" id="jiraconditions"></a>
 # Jira conditions
- * has_selected_project
- * sub_tasks_enabled
- * linking_enabled
- * smtp_mail_server_configured
- * external_user_management_disabled
- * time_tracking_enabled
- * user_has_issue_history
- * user_is_project_admin
- * is_field_hidden
  * browse_users_permission
- * voting_enabled
- * user_is_the_logged_in_user
- * not_version_context
- * user_is_sysadmin
- * has_link_types_available
- * can_create_shared_objects
- * user_is_logged_in
- * watching_enabled
- * is_keyboard_shortcuts_enabled
- * user_is_admin
- * is_admin_mode
+ * can_attach_file_to_issue
+ * can_attach_screenshot_to_issue
  * can_convert_to_issue
- * is_sub_task
+ * can_convert_to_sub_task
+ * can_create_shared_objects
  * can_manage_attachments
+ * external_user_management_disabled
+ * has_issue_permission
+ * has_link_types_available
+ * has_project_permission
+ * has_selected_project
+ * has_sub_tasks_available
+ * has_voted_for_issue
+ * is_admin_mode
+ * is_field_hidden
+ * is_issue_assigned_to_current_user
  * is_issue_editable
  * is_issue_unresolved
- * can_attach_file_to_issue
- * has_voted_for_issue
- * can_attach_screenshot_to_issue
- * is_issue_assigned_to_current_user
+ * is_keyboard_shortcuts_enabled
+ * is_sub_task
  * is_watching_issue
- * has_sub_tasks_available
- * can_convert_to_sub_task
- * has_issue_permission
- * has_project_permission
+ * linking_enabled
+ * not_version_context
+ * smtp_mail_server_configured
+ * sub_tasks_enabled
+ * time_tracking_enabled
+ * user_has_issue_history
+ * user_is_admin
+ * user_is_logged_in
+ * user_is_project_admin
+ * user_is_sysadmin
+ * user_is_the_logged_in_user
+ * voting_enabled
+ * watching_enabled
 
 <a name="confluenceconditions" id="confluenceconditions"></a>
 # Confluence Conditions
 
- * not_personal_space
- * user_is_confluence_administrator
- * user_can_use_confluence
- * user_can_update_user_status
- * email_address_public
- * content_has_any_permissions_set
- * user_watching_space_for_content_type
- * space_function_permission
- * following_target_user
- * has_space
- * target_user_can_set_status
- * user_favouriting_target_user_personal_space
- * user_is_sysadmin
- * favourite_page
- * threaded_comments
- * user_is_logged_in
- * user_has_personal_space
- * can_signup
- * target_user_has_personal_space
- * viewing_content
- * viewing_own_profile
- * can_cluster
  * active_theme
- * printable_version
- * writable_directory_exists
- * user_can_create_personal_space
- * tiny_url_supported
- * latest_version
- * has_page
- * create_content
+ * can_cluster
  * can_edit_space_styles
- * showing_page_attachments
- * has_template
- * user_has_personal_blog
+ * can_signup
+ * content_has_any_permissions_set
+ * create_content
+ * email_address_public
+ * favourite_page
+ * favourite_space
+ * following_target_user
  * has_attachment
- * target_user_has_personal_blog
- * user_watching_space
  * has_blog_post
+ * has_page
+ * has_space
+ * has_template
+ * latest_version
+ * not_personal_space
+ * printable_version
+ * showing_page_attachments
+ * space_function_permission
+ * target_user_can_set_status
+ * target_user_has_personal_blog
+ * target_user_has_personal_space
+ * threaded_comments
+ * tiny_url_supported
+ * user_can_create_personal_space
+ * user_can_update_user_status
+ * user_can_use_confluence
+ * user_favouriting_target_user_personal_space
+ * user_has_personal_blog
+ * user_has_personal_space
+ * user_is_confluence_administrator
+ * user_is_logged_in
+ * user_is_sysadmin
  * user_logged_in_editable
  * user_watching_page
- * favourite_space
+ * user_watching_space
+ * user_watching_space_for_content_type
+ * viewing_content
+ * viewing_own_profile
+ * writable_directory_exists
 
 
