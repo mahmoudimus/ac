@@ -84,7 +84,7 @@ Most modern languages have JWT libraries available. Prior to implementing JWT, c
 
 The [py-jwt-decoder](http://py-jwt-decoder.appspot.com/) is a handy web based decoder of JWT tokens.
 
-
+<a name='installation'></a>
 # Installation Handshake
 
 For an Atlassian Connect add-on to authenticate securely with the host Atlassian product, it must advertise itself as
@@ -168,47 +168,120 @@ in order to sign and verify future requests. The payload contains the following 
     </tr>
 </table>
 
-
+<a name='incoming'></a>
 # Validating Incoming Requests
 
+All incoming requests should check for the presence of the `jwt` query string parameter, which needs to be decoded and
+verified.
+
+1. Extract the JWT token from the request's `jwt` query parameter
+2. Decode the JWT token, without verification
+3. Inspect the decoded, unverified token for the `iss` ([token issuer](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13#section-4.1.1))
+claim. This is the `clientKey` for the tenant
+4. Look up the `sharedSecret` for the `clientKey`. This should have been stored as part of the [installation handshake](#installation)
+process
+5. Decode the same JWT token, this time verifying the signature with `SHA-256` algorithm and the `sharedSecret`
+6. Verify the query string by [creating a query string hash](#qsh) and comparing against the `qsh` claim on the verified token.
+
+## Example
+
+An incoming request might look like:
+
+    GET /hello-world?lic=none&tz=Australia%2FSydney&cp=%2Fjira&user_key=&loc=en-US&user_id=&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzODY4OTkxMzEsImlzcyI6ImppcmE6MTU0ODk1OTUiLCJxc2giOiI4MDYzZmY0Y2ExZTQxZGY3YmM5MGM4YWI2ZDBmNjIwN2Q0OTFjZjZkYWQ3YzY2ZWE3OTdiNDYxNGI3MTkyMmU5IiwiaWF0IjoxMzg2ODk4OTUxfQ.uKqU9dTB6gKwG6jQCuXYAiMNdfNRw98Hw_IWuA5MaMo&xdm_e=http%3A%2F%2Fstorm%3A2990&xdm_c=channel-servlet-hello-world&xdm_p=1
+
+### 1. Decode the `jwt` token:
+
+    jwtToken = request.getParameter('jwt');
+    unverifiedClaims = base64decode(jwtToken);
+    segments = unverifiedClaims.split('.');
+    headerSegment = segments[0];
+    payloadSegment = segments[1];
+    signatureSegment = segments[2];
+
+Header Segment
+
+    {
+        "alg": "HS256",
+        "typ": "JWT"
+    }
+
+Payload Segment
+
+    {
+        "iss": "jira:15489595",
+        "iat": 1386898951,
+        "qsh": "8063ff4ca1e41df7bc90c8ab6d0f6207d491cf6dad7c66ea797b4614b71922e9",
+        "exp": 1386899131
+    }
+
+Signature Segment
+
+    uKqU9dTB6gKwG6jQCuXYAiMNdfNRw98Hw_IWuA5MaMo
+
+Look up the `sharedSecret` for the `iss` (issuer).
+
+### 2. Verify the `jwt` token with the shared secret
+
+    signingInput = [headerSegment, payloadSegment].join('.');
+    expectedSignature = sign(signingInput, sharedSecret, signingMethod);
+
+    if (expectedSignature !== signatureSegment) {
+        throw new Error('Signature verification failed');
+    }
+
+### 3. Verify query string hash
+
+Verify the query string by [creating a query string hash](#qsh) for the request and comparing against the `qsh` claim
+on the verified token.
+
+<a name='outgoing'></a>
 # Signing Outgoing Requests
 
-# Custom Atlassian "Query Hash" Claim
+<a name='qsh'></a>
+# Creating a query string hash
 
-Instructions for computing the query hash parameter (```qsh```) from a HTTP request.
+### Overview
+query signature = `sign(canonical-request)`
 
-Overview:
+canonical-request = `canonical-method + '&' + canonical-URI + '&' + canonical-query-string`
 
-           query hash = hash(canonical-request)
-    canonical-request = canonical-method + '&' + canonical-URI + '&' + canonical-query-string
+### Method
 
-1. Compute canonical method.
-   Simply upper-case the method name (e.g. ```GET```, ```PUT```).
+1. Compute canonical method
+  *  Simply the upper-case of the method name (e.g. `"GET"` or `"PUT"`)<br><br>
+2. Append the character `'&'`<br><br>
+3. Compute canonical URI
+  *  Discard the protocol, server, port, context path and query parameters from the full URL.
+  *  Removing the context path allows a reverse proxy to redirect incoming requests for `"jira.example.com/getsomething"`
+   to `"example.com/jira/getsomething"` without breaking authentication. The requester cannot know that the reverse proxy
+   will prepend the context path `"/jira"` to the originally requested path `"/getsomething"`
+  *  Empty-string is not permitted; use `"/"` instead.
+  *  Do not suffix with a `'/'` character unless it is the only character. e.g.
+     *  Canonical URI of `"http://server:80/some/path/?param=value"` is `"/some/path"`
+     *  Canonical URI of `"http://server:80"` is `"/"`
+    <br><br>
+4. Append the character `'&'`<br><br>
+5. Compute canonical query string
+  *  Sort the query parameters primarily by their percent-encoded names and secondarily by their percent-encoded values
+  *  Sorting is by codepoint: `sort(["a", "A", "b", "B"]) => ["A", "B", "a", "b"]`
+  *  For each parameter append its percent-encoded name, the `'='` character and then its percent-encoded value.
+  *  In the case of repeated parameters append the `','` character and subsequent percent-encoded values.
+  *  Ignore the `jwt` parameter, if present.
+  *  Some particular values to be aware of:
+    *  `"+"` is encoded as `"%20"`,
+    *  `"*"` as `"%2A"` and
+    *  `"~"` as `"~"`.<br>
+    (These values used for consistency with OAuth1.)
 
-2. Append the character ```&```.
+  An example: for a `GET` request to the not-yet-percent-encoded URL
 
-3. Compute canonical URI.
-   Discard the protocol, server, port, context path and query parameters from the full URL.
-   (Removing the context path allows a reverse proxy to redirect incoming requests for ```jira.example.com/getsomething```
-   to ```example.com/jira/getsomething``` without breaking authentication. The requester cannot know that the reverse proxy
-   will prepend the context path ```/jira``` to the originally requested path ```/getsomething```.)
-   Empty-string is not permitted; use ```/``` instead.
-   Do not suffix with repeated ```/``` characters.
-   E.g. in ```http://server:80/some/path/?param=value``` the canonical URI is ```/some/path``` and in ```http://server:80``` the canonical URI is ```/```.
+        "http://localhost:2990/path/to/service?zee_last=param&repeated=parameter 1&first=param&repeated=parameter 2"
 
-4. Append the character ```&```.
+  the canonical request is
 
-5. Compute the canonical query string.
-   Sort the query parameters primarily by their percent-encoded names and secondarily by their percent-encoded values.
-   Sorting is by codepoint: ```sort(["a", "A", "b", "B"]) => ["A", "B", "a", "b"]```.
-   For each parameter append its percent-encoded name, the '=' character and then its percent-encoded value.
-   In the case of repeated parameters append the ```,``` character and subsequent percent-encoded values.
-   Ignore the "jwt" parameter, if present.
-   Some particular values to be aware of: ```+``` is encoded as ```%20```, ```*``` as ```%2A``` and ```~``` as ```~```. These values used for consistency with OAuth1.
-   An example: for a GET request to the not-yet-percent-encoded URL ```http://localhost:2990/path/to/service?zee_last=param&repeated=parameter 1&first=param&repeated=parameter 2``` the canonical request is ```GET&/path/to/service&first=param&repeated=parameter%201,parameter%202&zee_last=param```.
+        "GET&/path/to/service&first=param&repeated=parameter%201,parameter%202&zee_last=param"
 
-6. Convert the canonical request string to bytes.
-   The encoding used to represent characters as bytes is UTF-8.
-
-7. Hash the canonical request bytes using the SHA-256 algorithm.
-   E.g. The SHA-256 hash of ```foo``` is ```2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae```.
+6. Convert the canonical request string to bytes
+   *  The encoding used to represent characters as bytes is `UTF-8`<br><br>
+7. Hash the canonical request bytes using the `SHA-256` algorithm
+   * e.g. The `SHA-256` hash of `"foo"` is `"2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"`

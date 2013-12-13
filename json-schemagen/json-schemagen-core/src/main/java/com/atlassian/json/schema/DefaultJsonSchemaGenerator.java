@@ -68,7 +68,7 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
             {
                 try
                 {
-                    Class<?> implClass = Class.forName(impl);
+                    Class<?> implClass = Thread.currentThread().getContextClassLoader().loadClass(impl);
                     anyOf.add((ObjectSchema) generateObjectSchema(implClass,null,clazz));
                 }
                 catch (ClassNotFoundException e)

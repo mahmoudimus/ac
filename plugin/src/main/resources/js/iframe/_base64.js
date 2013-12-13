@@ -224,11 +224,11 @@
     };
 
     function encode(plainText) {
-        return Base64.encode(plainText);
+        return window.btoa ? window.btoa(plainText) : Base64.encode(plainText);
     }
 
     function decode(encodedText) {
-        return Base64.decode(encodedText);
+        return window.atob ? window.atob(encodedText) : Base64.decode(encodedText);
     }
 
     return {

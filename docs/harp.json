@@ -15,7 +15,7 @@
                 "description": "The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with\n a shared secret."
               },
               "type": {
-                "enumList": [
+                "enum": [
                   "oauth",
                   "jwt",
                   "none"
@@ -81,7 +81,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -145,7 +173,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -208,7 +264,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -272,7 +356,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -310,7 +422,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -348,7 +488,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -386,7 +554,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -428,7 +624,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -466,7 +690,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -520,7 +772,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -634,7 +914,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -694,7 +1002,7 @@
                           "additionalProperties": true
                         },
                         "type": {
-                          "enumList": [
+                          "enum": [
                             "page",
                             "dialog",
                             "inlinedialog"
@@ -710,7 +1018,7 @@
                       "description": "Defines the way the link is opened in the browser, such as in a modal or inline dialog.\n  If omitted, the link behaves as a regular hyperlink."
                     },
                     "context": {
-                      "enumList": [
+                      "enum": [
                         "addon",
                         "product"
                       ],
@@ -747,7 +1055,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -822,6 +1158,7 @@
                 "type": "array"
               }
             },
+            "additionalProperties": false,
             "id": "moduleList",
             "type": "object",
             "description": "This class represents the list of modules in the json descriptor.\n Every new module type needs to be added here as a private field and annotated with @ConnectModule\n \n The field name will be what appears in the json.\n \n Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder\n that will handle adding beans to the proper fields in this class by name and type.\n You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.\n"
@@ -852,7 +1189,7 @@
                 "description": "The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with\n a shared secret."
               },
               "type": {
-                "enumList": [
+                "enum": [
                   "oauth",
                   "jwt",
                   "none"
@@ -918,7 +1255,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -982,7 +1347,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -1045,7 +1438,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -1109,7 +1530,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -1173,7 +1622,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -1233,7 +1710,7 @@
                           "additionalProperties": true
                         },
                         "type": {
-                          "enumList": [
+                          "enum": [
                             "page",
                             "dialog",
                             "inlinedialog"
@@ -1249,7 +1726,7 @@
                       "description": "Defines the way the link is opened in the browser, such as in a modal or inline dialog.\n  If omitted, the link behaves as a regular hyperlink."
                     },
                     "context": {
-                      "enumList": [
+                      "enum": [
                         "addon",
                         "product"
                       ],
@@ -1286,7 +1763,35 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-                        "anyOf": []
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          }
+                        ]
                       },
                       "type": "array"
                     },
@@ -1361,6 +1866,7 @@
                 "type": "array"
               }
             },
+            "additionalProperties": false,
             "id": "moduleList",
             "type": "object",
             "description": "This class represents the list of modules in the json descriptor.\n Every new module type needs to be added here as a private field and annotated with @ConnectModule\n \n The field name will be what appears in the json.\n \n Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder\n that will handle adding beans to the proper fields in this class by name and type.\n You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.\n"

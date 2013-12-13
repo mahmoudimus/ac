@@ -10,6 +10,10 @@ import static com.google.common.collect.Maps.newHashMap;
 
 public class BeanWithKeyAndParams extends NameToKeyBean
 {
+    /**
+     * Extra params
+     * @schemaTitle parameters
+     */
     private Map<String, String> params;
 
     public BeanWithKeyAndParams()
