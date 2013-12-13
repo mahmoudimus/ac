@@ -275,3 +275,64 @@ Let's examine each of these claims.
 * "exp" Expiration time. The UTC Unix time after which the receiver should NOT use this token. Used for limiting replays.
 * "qsh": Query hash. A custom Atlassian claim that prevents URL tampering (described [above](#qsh)).
 * "sub": The subject of this token. In atlassian-connect pre 1.0 we use this to identify the user key of the user that the add-on wishes to impersonate with this call; from 1.0 onwards this claim will be ignored, as user impersonation will not be possible.
+
+## Encode and Sign
+
+First convert the header and claims set JSON objects to UTF-8 encoded strings and base-64 encode each of them.
+
+Second, concatenate the encoded header, a period character (```.```) and the encoded claims set. This yields the input to the signing algorithm.
+
+Third, compute the signature using the JWT or cryptographic library of your choice.
+
+Finally, concatenate the signing input, another period character and the signature.
+
+Here is an example in Java using json-smart, guava and commons-codec:
+
+    import com.google.common.collect.ImmutableMap;
+    import net.minidev.json.JSONObject;
+    
+    import javax.crypto.Mac;
+    import javax.crypto.SecretKey;
+    import javax.crypto.spec.SecretKeySpec;
+    import java.security.InvalidKeyException;
+    import java.security.NoSuchAlgorithmException;
+    
+    import static org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString;
+
+    public String jsonToHmacSha256Jwt(JSONObject claimsSet) throws NoSuchAlgorithmException, InvalidKeyException
+    {
+        String jwtHeader = new JSONObject(ImmutableMap.of("alg", "HS256", "typ", "JWT")).toJSONString();
+        String signingInput = encodeBase64URLSafeString(jwtHeader.getBytes()) + "." + encodeBase64URLSafeString(claimsSet.toJSONString().getBytes());
+        return signingInput + "." + signHmac256(signingInput);
+    }
+
+    public String signHmac256(String signingInput) throws NoSuchAlgorithmException, InvalidKeyException
+    {
+        SecretKey key = new SecretKeySpec("shared secret".getBytes(), HMAC_SHA_256);
+        Mac mac = Mac.getInstance(HMAC_SHA_256);
+        mac.init(key);
+        return encodeBase64URLSafeString(mac.doFinal(signingInput.getBytes()));
+    }
+
+Here is an example in Java using nimbus-jose-jwt:
+
+    import com.nimbusds.jose.*;
+    import com.nimbusds.jose.crypto.MACSigner;
+
+    public String jsonToJwt(String claimsSetAsJsonString) throws JOSEException
+    {
+        // Serialise JWS object to compact format
+        return generateJwsObject(claimsSetAsJsonString).serialize();
+    }
+
+    private JWSObject generateJwsObject(String claimsSetAsJsonString) throws JOSEException
+    {
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
+        header.setType(new JOSEObjectType(JWT));
+
+        // Create JWS object
+        JWSObject jwsObject = new JWSObject(header, new Payload(claimsSetAsJsonString));
+        jwsObject.sign(new MACSigner("shared secret"));
+        
+        return jwsObject;
+    }
