@@ -2,10 +2,10 @@
     <nav class="aui-navgroup aui-navgroup-vertical">
         <div class="aui-navgroup-inner">
             <ul class="aui-nav">
-                <% for (var page in public.guides._data) { %>
+                <% for (var page in public.guides._data.guides) { %>
                 <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
                 <li <%= selected %>>
-                    <a href="/guides/<%= page %>"><%= public.guides._data[page].title %></a>
+                    <a href="/guides/<%= page %>"><%= public.guides._data.guides[page].title %></a>
                 </li>
                 <% } %>
             </ul>
@@ -14,41 +14,9 @@
                 <strong>Core Concepts</strong>
             </div>
             <ul class="aui-nav">
-            <% var concepts = {
-                "addon-descriptor.html": {
-                    "title": "Descriptors"
-                },
-                "modules.html": {
-                    "title": "Modules"
-                },
-                "pages.html": {
-                    "title": "Pages"
-                },
-                "jwt.html": {
-                    "title": "JWT"
-                },
-                "scopes.html": {
-                    "title": "Scopes"
-                },
-                "conditions.html": {
-                    "title": "Conditions"
-                },
-                "javascript-api.html": {
-                    "title": "Javascript API"
-                },
-                "styling-with-aui.html": {
-                    "title": "Styling Add-ons with AUI"
-                },
-                "addon-installation-full.html": {
-                    "title": "Installing an Add-on"
-                },
-                "development-loop.html": {
-                    "title": "Development Loop"
-                }
-            };
-            for(var concept in concepts) { %>
+            <% for(var concept in public.guides._data.concepts){ %>
             <li>
-                <a href="/guides/<%= concept %>"><%= concepts[concept].title %></a>
+                <a href="/guides/<%= concept %>"><%= public.guides._data.concepts[concept].title %></a>
             </li>
             <% } %>
 <!--
