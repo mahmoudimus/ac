@@ -74,7 +74,9 @@ Webhooks are available in the new JSON format by adding a `webhooks` json object
 
 ```
 
-To read more about webhooks: visit the [webhook module documentation](../modules/jira/webhooks.html)
+To read more about webhooks:
+ * [JIRA webhook module documentation](../modules/jira/webhooks.html)
+ * [Confluence webhook module documentation](../modules/confluence/webhooks.html)
 
 ## Conditions
 
@@ -164,11 +166,7 @@ The `atlassian-plugin.json` now contains an `authentication` section that can be
     "name": "My sample Add-on",
     "authentication": {
         "type": "oAuth",
-        "accessTokenUrl": "",
-        "authorizeUrl": "",
-        "callback": "",
-        "publicKey": "S0m3Publ1cK3y",
-        "requestTokenUrl": ""
+        "publicKey": "S0m3Publ1cK3y"
     }
 }
 ```
