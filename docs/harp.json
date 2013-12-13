@@ -173,10 +173,19 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
                           {
                             "properties": {
                               "invert": {
@@ -191,21 +200,8 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -268,9 +264,6 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
                           {
                             "properties": {
@@ -300,7 +293,6 @@
                             "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -364,22 +356,7 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
                           {
                             "properties": {
                               "invert": {
@@ -394,9 +371,20 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -434,10 +422,19 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
                           {
                             "properties": {
                               "invert": {
@@ -452,21 +449,8 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -504,10 +488,19 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
                           {
                             "properties": {
                               "invert": {
@@ -522,21 +515,8 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -574,10 +554,19 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
                           {
                             "properties": {
                               "invert": {
@@ -592,21 +581,8 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -648,9 +624,6 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
                           {
                             "properties": {
@@ -680,7 +653,6 @@
                             "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -718,9 +690,6 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
                           {
                             "properties": {
@@ -750,7 +719,6 @@
                             "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -804,10 +772,19 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
                           {
                             "properties": {
                               "invert": {
@@ -822,21 +799,8 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -950,22 +914,7 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
                           {
                             "properties": {
                               "invert": {
@@ -980,9 +929,20 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -1095,9 +1055,6 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
                           {
                             "properties": {
@@ -1127,7 +1084,6 @@
                             "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -1299,9 +1255,6 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
                           {
                             "properties": {
@@ -1331,7 +1284,6 @@
                             "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -1395,22 +1347,7 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
                           {
                             "properties": {
                               "invert": {
@@ -1425,9 +1362,20 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -1490,9 +1438,6 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
                           {
                             "properties": {
@@ -1522,7 +1467,6 @@
                             "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -1586,9 +1530,6 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
                           {
                             "properties": {
@@ -1618,7 +1559,6 @@
                             "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -1682,9 +1622,6 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
                           {
                             "properties": {
@@ -1714,7 +1651,6 @@
                             "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
@@ -1827,9 +1763,6 @@
                     "conditions": {
                       "items": {
                         "type": "object",
-<<<<<<< HEAD
-                        "anyOf": []
-=======
                         "anyOf": [
                           {
                             "properties": {
@@ -1859,7 +1792,6 @@
                             "type": "object"
                           }
                         ]
->>>>>>> feature/ACDEV-625-getting-started-guide
                       },
                       "type": "array"
                     },
