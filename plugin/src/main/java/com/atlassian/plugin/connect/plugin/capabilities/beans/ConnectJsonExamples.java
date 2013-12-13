@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -9,11 +12,14 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.Vend
 
 public class ConnectJsonExamples
 {
+    private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
+    
     public static final String ADDON_EXAMPLE = getAddonExample();
+
+    public static final String PARAMS_EXAMPLE = getParamsExample();
 
     private static String getAddonExample()
     {
-        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
         ConnectAddonBean addonBean = newConnectAddonBean()
                 .withKey("my-addon-key")
                 .withName("My Connect Addon")
@@ -27,5 +33,14 @@ public class ConnectJsonExamples
         return gson.toJson(addonBean);
     }
 
+    private static String getParamsExample()
+    {
+        Map<String,String> params = new HashMap<String, String>(2);
+        params.put("myCustomProperty","myValue");
+        params.put("someOtherProperty","someValue");
+
+
+        return gson.toJson(params);
+    }
     
 }

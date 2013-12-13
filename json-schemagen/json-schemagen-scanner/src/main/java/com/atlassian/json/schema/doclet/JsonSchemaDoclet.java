@@ -82,19 +82,19 @@ public class JsonSchemaDoclet
                 SchemaFieldDoc schemaFieldDoc = new SchemaFieldDoc();
                 schemaFieldDoc.setFieldName(fieldDoc.name());
                 schemaFieldDoc.setFieldTitle(getTitle(fieldDoc));
-
+                
+                Doc docForField = fieldDoc;
+                
                 if (Strings.isNullOrEmpty(fieldDoc.commentText()))
                 {
                     MethodDoc accessor = findFieldAccessor(classDoc, fieldDoc);
                     if (null != accessor && !Strings.isNullOrEmpty(accessor.commentText()))
                     {
-                        schemaFieldDoc.setFieldDocs(accessor.commentText());
+                        docForField = accessor;
                     }
                 }
-                else
-                {
-                    schemaFieldDoc.setFieldDocs(fieldDoc.commentText());
-                }
+
+                schemaFieldDoc.setFieldDocs(getDocWithExample(docForField));
 
                 schemaFieldDocs.add(schemaFieldDoc);
             }
@@ -211,12 +211,19 @@ public class JsonSchemaDoclet
         if (fieldDoc.type().simpleTypeName().equals("boolean") || fieldDoc.type().simpleTypeName().equals("Boolean"))
         {
             accessorName = "is" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
+            
+            //try to find method starting with "is". If not found, we'll fall through to finding the getter
+            for (MethodDoc methodDoc : classDoc.methods())
+            {
+                if (methodDoc.name().equals(accessorName))
+                {
+                    return methodDoc;
+                }
+            }
         }
-        else
-        {
-            accessorName = "get" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
-        }
-
+        
+        accessorName = "get" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
+        
         for (MethodDoc methodDoc : classDoc.methods())
         {
             if (methodDoc.name().equals(accessorName))

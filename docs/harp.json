@@ -12,7 +12,7 @@
             "properties": {
               "publicKey": {
                 "type": "string",
-                "description": "The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with\n a shared secret."
+                "description": "The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with\n a shared secret.\n"
               },
               "type": {
                 "enum": [
@@ -21,7 +21,7 @@
                   "none"
                 ],
                 "type": "string",
-                "description": "The type of authentication to use. Defaults to jwt."
+                "description": "The type of authentication to use. Defaults to jwt.\n"
               }
             },
             "id": "authenticationBean",
@@ -65,7 +65,7 @@
           },
           "name": {
             "type": "string",
-            "description": "the name of the addon"
+            "description": "the name of the addon\n"
           },
           "enableLicensing": {
             "type": "boolean"
@@ -85,6 +85,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -98,18 +110,6 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
                       },
@@ -119,28 +119,28 @@
                       "properties": {
                         "height": {
                           "type": "integer",
-                          "description": "The height in pixels of the icon image."
+                          "description": "The height in pixels of the icon image.\n"
                         },
                         "width": {
                           "type": "integer",
-                          "description": "The width in pixels of the icon image."
+                          "description": "The width in pixels of the icon image.\n"
                         },
                         "url": {
                           "type": "string",
-                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL.\n"
                         }
                       },
                       "id": "iconBean",
                       "type": "object",
-                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels."
+                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels.\n"
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items."
+                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n"
                     },
                     "name": {
                       "properties": {
@@ -157,12 +157,12 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string",
-                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL"
+                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL\n"
                     }
                   },
                   "id": "connectPageModuleBean",
@@ -181,6 +181,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -194,18 +206,6 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
                       },
@@ -215,28 +215,28 @@
                       "properties": {
                         "height": {
                           "type": "integer",
-                          "description": "The height in pixels of the icon image."
+                          "description": "The height in pixels of the icon image.\n"
                         },
                         "width": {
                           "type": "integer",
-                          "description": "The width in pixels of the icon image."
+                          "description": "The width in pixels of the icon image.\n"
                         },
                         "url": {
                           "type": "string",
-                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL.\n"
                         }
                       },
                       "id": "iconBean",
                       "type": "object",
-                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels."
+                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels.\n"
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items."
+                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n"
                     },
                     "isDefault": {
                       "type": "boolean"
@@ -256,12 +256,12 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string",
-                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL"
+                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL\n"
                     }
                   },
                   "id": "configurePageModuleBean",
@@ -280,18 +280,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -305,6 +293,18 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
                           }
                         ]
                       },
@@ -314,28 +314,28 @@
                       "properties": {
                         "height": {
                           "type": "integer",
-                          "description": "The height in pixels of the icon image."
+                          "description": "The height in pixels of the icon image.\n"
                         },
                         "width": {
                           "type": "integer",
-                          "description": "The width in pixels of the icon image."
+                          "description": "The width in pixels of the icon image.\n"
                         },
                         "url": {
                           "type": "string",
-                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL.\n"
                         }
                       },
                       "id": "iconBean",
                       "type": "object",
-                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels."
+                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels.\n"
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items."
+                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n"
                     },
                     "name": {
                       "properties": {
@@ -352,12 +352,12 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string",
-                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL"
+                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL\n"
                     }
                   },
                   "id": "connectPageModuleBean",
@@ -424,8 +424,8 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string"
@@ -446,6 +446,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -458,18 +470,6 @@
                               }
                             },
                             "id": "singleConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -494,8 +494,8 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string"
@@ -516,18 +516,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -540,6 +528,18 @@
                               }
                             },
                             "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -564,8 +564,8 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string"
@@ -637,8 +637,8 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string"
@@ -708,8 +708,8 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string"
@@ -762,7 +762,7 @@
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which the Search Request View entry appears in the *Export* menu.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list."
+                      "description": "Determines the order in which the Search Request View entry appears in the *Export* menu.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n"
                     },
                     "description": {
                       "properties": {
@@ -775,7 +775,7 @@
                       },
                       "id": "i18nProperty",
                       "type": "object",
-                      "description": "A description of your Search Request View"
+                      "description": "A description of your Search Request View\n"
                     },
                     "name": {
                       "properties": {
@@ -792,12 +792,12 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string",
-                      "description": "The URL of the service that will render the representation for the result set. The URL is\n interpreted relative to the *baseUrl* in the descriptor."
+                      "description": "The URL of the service that will render the representation for the result set. The URL is\n interpreted relative to the *baseUrl* in the descriptor.\n"
                     }
                   },
                   "id": "searchRequestViewModuleBean",
@@ -816,6 +816,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -828,18 +840,6 @@
                               }
                             },
                             "id": "singleConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
                             "type": "object"
                           }
                         ]
@@ -864,8 +864,8 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string"
@@ -891,7 +891,7 @@
                       },
                       "id": "i18nProperty",
                       "type": "object",
-                      "description": "The description of the add-on's functionality that will show up in the *Manage add-ons* page."
+                      "description": "The description of the add-on's functionality that will show up in the *Manage add-ons* page.\n"
                     },
                     "name": {
                       "properties": {
@@ -913,7 +913,7 @@
                       },
                       "id": "urlBean",
                       "type": "object",
-                      "description": "The relative URL to the add-on page that allows to configure the workflow post function once it exists."
+                      "description": "The relative URL to the add-on page that allows to configure the workflow post function once it exists.\n"
                     },
                     "view": {
                       "properties": {
@@ -923,7 +923,7 @@
                       },
                       "id": "urlBean",
                       "type": "object",
-                      "description": "The relative URL to the add-on page that shows the read-only configuration or summary of the workflow post function."
+                      "description": "The relative URL to the add-on page that shows the read-only configuration or summary of the workflow post function.\n"
                     },
                     "create": {
                       "properties": {
@@ -933,7 +933,7 @@
                       },
                       "id": "urlBean",
                       "type": "object",
-                      "description": "The relative URL to the add-on page that allows to configure the workflow post function on creation."
+                      "description": "The relative URL to the add-on page that allows to configure the workflow post function on creation.\n"
                     },
                     "triggered": {
                       "properties": {
@@ -943,7 +943,7 @@
                       },
                       "id": "urlBean",
                       "type": "object",
-                      "description": "The relative URL to the add-on resource that will receive the HTTP POST after a workflow transition."
+                      "description": "The relative URL to the add-on resource that will receive the HTTP POST after a workflow transition.\n"
                     }
                   },
                   "id": "workflowPostFunctionModuleBean",
@@ -996,35 +996,35 @@
                       "properties": {
                         "height": {
                           "type": "integer",
-                          "description": "The height in pixels of the icon image."
+                          "description": "The height in pixels of the icon image.\n"
                         },
                         "width": {
                           "type": "integer",
-                          "description": "The width in pixels of the icon image."
+                          "description": "The width in pixels of the icon image.\n"
                         },
                         "url": {
                           "type": "string",
-                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL.\n"
                         }
                       },
                       "id": "iconBean",
                       "type": "object",
-                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels."
+                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels.\n"
                     },
                     "styleClasses": {
                       "items": {
                         "type": "string"
                       },
                       "type": "array",
-                      "description": "Specifies custom styles for the web link target page, if desired. By default, the web item content gets\n styled in the default style of the target application."
+                      "description": "Specifies custom styles for the web link target page, if desired. By default, the web item content gets\n styled in the default style of the target application.\n"
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which the web item appears in the menu or list.\n\n <p/>\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n <p/>\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items."
+                      "description": "Determines the order in which the web item appears in the menu or list.\n\n <p/>\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n <p/>\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "The location in the application interface where the web item should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n <p/>\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                      "description": "The location in the application interface where the web item should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n <p/>\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n"
                     },
                     "name": {
                       "properties": {
@@ -1040,7 +1040,7 @@
                     },
                     "link": {
                       "type": "string",
-                      "description": "Specifies the URL targeted by the link. The URL can be absolute or relative to either the\n  product URL or the add-on's base URL, depending on the {@link AddOnUrlContext} parameter."
+                      "description": "Specifies the URL targeted by the link. The URL can be absolute or relative to either the\n  product URL or the add-on's base URL, depending on the *context* parameter.\n"
                     },
                     "target": {
                       "properties": {
@@ -1063,7 +1063,7 @@
                       },
                       "id": "webItemTargetBean",
                       "type": "object",
-                      "description": "Defines the way the link is opened in the browser, such as in a modal or inline dialog.\n  If omitted, the link behaves as a regular hyperlink."
+                      "description": "Defines the way the link is opened in the browser, such as in a modal or inline dialog.\n  If omitted, the link behaves as a regular hyperlink.\n"
                     },
                     "context": {
                       "enum": [
@@ -1071,13 +1071,13 @@
                         "product"
                       ],
                       "type": "string",
-                      "description": "The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.\n\n <p/>\n\n  This context can be either \"add-on\", which renders the URL relative to the add-on's base URL, or\n  \"product\", which renders the URL relative to the product's base URL."
+                      "description": "The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.\n\n <p/>\n\n  This context can be either \"add-on\", which renders the URL relative to the add-on's base URL, or\n  \"product\", which renders the URL relative to the product's base URL.\n"
                     },
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "tooltip": {
                       "properties": {
@@ -1090,7 +1090,7 @@
                       },
                       "id": "i18nProperty",
                       "type": "object",
-                      "description": "The internationalised text to be used in the link's tooltip."
+                      "description": "The internationalised text to be used in the link's tooltip.\n"
                     }
                   },
                   "id": "webItemModuleBean",
@@ -1141,11 +1141,11 @@
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which web panels appear. Web panels are displayed top to bottom or left to right in\n  order of ascending weight. The \"lightest\" weight is displayed first, while the \"heaviest\" weights sink to the\n  bottom. The weight values for most panels start from 100, and the weights for the links\n  generally start from 10. The weight is incremented by 10 for each in sequence to leave room for custom\n  panels."
+                      "description": "Determines the order in which web panels appear. Web panels are displayed top to bottom or left to right in\n  order of ascending weight. The \"lightest\" weight is displayed first, while the \"heaviest\" weights sink to the\n  bottom. The weight values for most panels start from 100, and the weights for the links\n  generally start from 10. The weight is incremented by 10 for each in sequence to leave room for custom\n  panels.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "Location in the application interface for this panel."
+                      "description": "Location in the application interface for this panel.\n"
                     },
                     "name": {
                       "properties": {
@@ -1170,17 +1170,17 @@
                       },
                       "id": "webPanelLayout",
                       "type": "object",
-                      "description": "The width and height of the web panel on the page."
+                      "description": "The width and height of the web panel on the page.\n"
                     },
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string",
-                      "description": "The URL of the add-on resource that provides the web panel content."
+                      "description": "The URL of the add-on resource that provides the web panel content.\n"
                     }
                   },
                   "id": "webPanelModuleBean",
@@ -1195,7 +1195,7 @@
                   "properties": {
                     "event": {
                       "type": "string",
-                      "description": "Specifies the named event you would like to listen to (e.g., \"enabled\", \"jira:issue_created\", etc.)"
+                      "description": "Specifies the named event you would like to listen to (e.g., \"enabled\", \"jira:issue_created\", etc.)\n"
                     },
                     "params": {
                       "additionalProperties": true,
@@ -1203,7 +1203,7 @@
                     },
                     "url": {
                       "type": "string",
-                      "description": "Specifies your add-on's POST webhook handler URL. This property has to be a relative URL."
+                      "description": "Specifies your add-on's POST webhook handler URL. This property has to be a relative URL.\n"
                     }
                   },
                   "id": "webHookModuleBean",
@@ -1221,7 +1221,7 @@
           },
           "key": {
             "type": "string",
-            "description": "The plugin key for the add on"
+            "description": "The plugin key for the add on\n"
           },
           "version": {
             "type": "string"
@@ -1242,7 +1242,7 @@
             "properties": {
               "publicKey": {
                 "type": "string",
-                "description": "The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with\n a shared secret."
+                "description": "The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with\n a shared secret.\n"
               },
               "type": {
                 "enum": [
@@ -1251,7 +1251,7 @@
                   "none"
                 ],
                 "type": "string",
-                "description": "The type of authentication to use. Defaults to jwt."
+                "description": "The type of authentication to use. Defaults to jwt.\n"
               }
             },
             "id": "authenticationBean",
@@ -1295,7 +1295,7 @@
           },
           "name": {
             "type": "string",
-            "description": "the name of the addon"
+            "description": "the name of the addon\n"
           },
           "enableLicensing": {
             "type": "boolean"
@@ -1349,28 +1349,28 @@
                       "properties": {
                         "height": {
                           "type": "integer",
-                          "description": "The height in pixels of the icon image."
+                          "description": "The height in pixels of the icon image.\n"
                         },
                         "width": {
                           "type": "integer",
-                          "description": "The width in pixels of the icon image."
+                          "description": "The width in pixels of the icon image.\n"
                         },
                         "url": {
                           "type": "string",
-                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL.\n"
                         }
                       },
                       "id": "iconBean",
                       "type": "object",
-                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels."
+                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels.\n"
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items."
+                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n"
                     },
                     "name": {
                       "properties": {
@@ -1387,12 +1387,12 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string",
-                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL"
+                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL\n"
                     }
                   },
                   "id": "connectPageModuleBean",
@@ -1411,18 +1411,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -1436,6 +1424,18 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
                           }
                         ]
                       },
@@ -1445,28 +1445,28 @@
                       "properties": {
                         "height": {
                           "type": "integer",
-                          "description": "The height in pixels of the icon image."
+                          "description": "The height in pixels of the icon image.\n"
                         },
                         "width": {
                           "type": "integer",
-                          "description": "The width in pixels of the icon image."
+                          "description": "The width in pixels of the icon image.\n"
                         },
                         "url": {
                           "type": "string",
-                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL.\n"
                         }
                       },
                       "id": "iconBean",
                       "type": "object",
-                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels."
+                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels.\n"
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items."
+                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n"
                     },
                     "isDefault": {
                       "type": "boolean"
@@ -1486,12 +1486,12 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string",
-                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL"
+                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL\n"
                     }
                   },
                   "id": "configurePageModuleBean",
@@ -1544,28 +1544,28 @@
                       "properties": {
                         "height": {
                           "type": "integer",
-                          "description": "The height in pixels of the icon image."
+                          "description": "The height in pixels of the icon image.\n"
                         },
                         "width": {
                           "type": "integer",
-                          "description": "The width in pixels of the icon image."
+                          "description": "The width in pixels of the icon image.\n"
                         },
                         "url": {
                           "type": "string",
-                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL.\n"
                         }
                       },
                       "id": "iconBean",
                       "type": "object",
-                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels."
+                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels.\n"
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items."
+                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n"
                     },
                     "name": {
                       "properties": {
@@ -1582,12 +1582,12 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string",
-                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL"
+                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL\n"
                     }
                   },
                   "id": "connectPageModuleBean",
@@ -1640,28 +1640,28 @@
                       "properties": {
                         "height": {
                           "type": "integer",
-                          "description": "The height in pixels of the icon image."
+                          "description": "The height in pixels of the icon image.\n"
                         },
                         "width": {
                           "type": "integer",
-                          "description": "The width in pixels of the icon image."
+                          "description": "The width in pixels of the icon image.\n"
                         },
                         "url": {
                           "type": "string",
-                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL.\n"
                         }
                       },
                       "id": "iconBean",
                       "type": "object",
-                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels."
+                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels.\n"
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items."
+                      "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                      "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n"
                     },
                     "name": {
                       "properties": {
@@ -1678,12 +1678,12 @@
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string",
-                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL"
+                      "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL\n"
                     }
                   },
                   "id": "connectPageModuleBean",
@@ -1736,35 +1736,35 @@
                       "properties": {
                         "height": {
                           "type": "integer",
-                          "description": "The height in pixels of the icon image."
+                          "description": "The height in pixels of the icon image.\n"
                         },
                         "width": {
                           "type": "integer",
-                          "description": "The width in pixels of the icon image."
+                          "description": "The width in pixels of the icon image.\n"
                         },
                         "url": {
                           "type": "string",
-                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL."
+                          "description": "The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the\n URL as an absolute URL or relative to the add-on's base URL.\n"
                         }
                       },
                       "id": "iconBean",
                       "type": "object",
-                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels."
+                      "description": "An optional icon to display with the link text or as the link, specified by URL to its hosted location.\n  You can specify a particular width and height for the icon. Most link icons in Atlassian applications\n  are 16 by 16 pixels.\n"
                     },
                     "styleClasses": {
                       "items": {
                         "type": "string"
                       },
                       "type": "array",
-                      "description": "Specifies custom styles for the web link target page, if desired. By default, the web item content gets\n styled in the default style of the target application."
+                      "description": "Specifies custom styles for the web link target page, if desired. By default, the web item content gets\n styled in the default style of the target application.\n"
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which the web item appears in the menu or list.\n\n <p/>\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n <p/>\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items."
+                      "description": "Determines the order in which the web item appears in the menu or list.\n\n <p/>\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n <p/>\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "The location in the application interface where the web item should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n <p/>\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console."
+                      "description": "The location in the application interface where the web item should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n <p/>\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n"
                     },
                     "name": {
                       "properties": {
@@ -1780,7 +1780,7 @@
                     },
                     "link": {
                       "type": "string",
-                      "description": "Specifies the URL targeted by the link. The URL can be absolute or relative to either the\n  product URL or the add-on's base URL, depending on the {@link AddOnUrlContext} parameter."
+                      "description": "Specifies the URL targeted by the link. The URL can be absolute or relative to either the\n  product URL or the add-on's base URL, depending on the *context* parameter.\n"
                     },
                     "target": {
                       "properties": {
@@ -1803,7 +1803,7 @@
                       },
                       "id": "webItemTargetBean",
                       "type": "object",
-                      "description": "Defines the way the link is opened in the browser, such as in a modal or inline dialog.\n  If omitted, the link behaves as a regular hyperlink."
+                      "description": "Defines the way the link is opened in the browser, such as in a modal or inline dialog.\n  If omitted, the link behaves as a regular hyperlink.\n"
                     },
                     "context": {
                       "enum": [
@@ -1811,13 +1811,13 @@
                         "product"
                       ],
                       "type": "string",
-                      "description": "The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.\n\n <p/>\n\n  This context can be either \"add-on\", which renders the URL relative to the add-on's base URL, or\n  \"product\", which renders the URL relative to the product's base URL."
+                      "description": "The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.\n\n <p/>\n\n  This context can be either \"add-on\", which renders the URL relative to the add-on's base URL, or\n  \"product\", which renders the URL relative to the product's base URL.\n"
                     },
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "tooltip": {
                       "properties": {
@@ -1830,7 +1830,7 @@
                       },
                       "id": "i18nProperty",
                       "type": "object",
-                      "description": "The internationalised text to be used in the link's tooltip."
+                      "description": "The internationalised text to be used in the link's tooltip.\n"
                     }
                   },
                   "id": "webItemModuleBean",
@@ -1881,11 +1881,11 @@
                     },
                     "weight": {
                       "type": "integer",
-                      "description": "Determines the order in which web panels appear. Web panels are displayed top to bottom or left to right in\n  order of ascending weight. The \"lightest\" weight is displayed first, while the \"heaviest\" weights sink to the\n  bottom. The weight values for most panels start from 100, and the weights for the links\n  generally start from 10. The weight is incremented by 10 for each in sequence to leave room for custom\n  panels."
+                      "description": "Determines the order in which web panels appear. Web panels are displayed top to bottom or left to right in\n  order of ascending weight. The \"lightest\" weight is displayed first, while the \"heaviest\" weights sink to the\n  bottom. The weight values for most panels start from 100, and the weights for the links\n  generally start from 10. The weight is incremented by 10 for each in sequence to leave room for custom\n  panels.\n"
                     },
                     "location": {
                       "type": "string",
-                      "description": "Location in the application interface for this panel."
+                      "description": "Location in the application interface for this panel.\n"
                     },
                     "name": {
                       "properties": {
@@ -1910,17 +1910,17 @@
                       },
                       "id": "webPanelLayout",
                       "type": "object",
-                      "description": "The width and height of the web panel on the page."
+                      "description": "The width and height of the web panel on the page.\n"
                     },
                     "params": {
                       "additionalProperties": true,
                       "type": "object",
-                      "title": "parameters",
-                      "description": "Extra params"
+                      "title": "Parameters",
+                      "description": "This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.\n \n Example:\n{\n  \"myCustomProperty\": \"myValue\",\n  \"someOtherProperty\": \"someValue\"\n}"
                     },
                     "url": {
                       "type": "string",
-                      "description": "The URL of the add-on resource that provides the web panel content."
+                      "description": "The URL of the add-on resource that provides the web panel content.\n"
                     }
                   },
                   "id": "webPanelModuleBean",
@@ -1935,7 +1935,7 @@
                   "properties": {
                     "event": {
                       "type": "string",
-                      "description": "Specifies the named event you would like to listen to (e.g., \"enabled\", \"jira:issue_created\", etc.)"
+                      "description": "Specifies the named event you would like to listen to (e.g., \"enabled\", \"jira:issue_created\", etc.)\n"
                     },
                     "params": {
                       "additionalProperties": true,
@@ -1943,7 +1943,7 @@
                     },
                     "url": {
                       "type": "string",
-                      "description": "Specifies your add-on's POST webhook handler URL. This property has to be a relative URL."
+                      "description": "Specifies your add-on's POST webhook handler URL. This property has to be a relative URL.\n"
                     }
                   },
                   "id": "webHookModuleBean",
@@ -1961,7 +1961,7 @@
           },
           "key": {
             "type": "string",
-            "description": "The plugin key for the add on"
+            "description": "The plugin key for the add on\n"
           },
           "version": {
             "type": "string"

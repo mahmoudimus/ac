@@ -41,7 +41,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
      *  Specifies the URL targeted by the link. The URL can be absolute or relative to either the
-     *  product URL or the add-on's base URL, depending on the {@link AddOnUrlContext} parameter.
+     *  product URL or the add-on's base URL, depending on the *context* parameter.
      */
     private String link;
 
