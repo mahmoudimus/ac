@@ -18,7 +18,11 @@
           "i18n": "some.macro.desc",
           "value": "Some Description"
         },
-        "documentationUrl": "http://docs.example.com/macro",
+        "documentation": {
+          "altText": "Doc Alt Text",
+          "title": "Doc Title",
+          "url": "http://docs.example.com/macro"
+        },
         "featured": true,
         "height": 50,
         "icon": {

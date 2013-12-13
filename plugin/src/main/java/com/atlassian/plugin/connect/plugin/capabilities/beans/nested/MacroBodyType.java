@@ -1,5 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
+/**
+ * The type of body content, if any, for this macro
+ *
+ * @schemaTitle Macro Body Type
+ * @since 1.0
+ */
 public enum MacroBodyType
 {
     /**

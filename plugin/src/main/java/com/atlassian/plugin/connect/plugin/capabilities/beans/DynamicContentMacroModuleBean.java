@@ -1,10 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.DynamicContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroCategory;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.google.common.collect.ImmutableSet;
@@ -15,11 +16,14 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty.empty;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
+
 /**
  * A Confluence macro that loads the remote content as an IFrame.
- * Dynamic Content Macros render content on every
- * page request and are suitable for Add-Ons that need to display content
- * that changes over time, or content is specific to the authenticated user.
+ * Dynamic Content Macros render content on every page request and are suitable for add-ons that need to display content
+ * that changes over time, or content that is specific to the authenticated user.
  *
  * Json Example:
  * @exampleJson {@see ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
@@ -29,9 +33,10 @@ import java.util.Set;
 public class DynamicContentMacroModuleBean extends NameToKeyBean
 {
     /**
-     * The link to the Add-On resource that provides the content for the iFrame.
-     * This URL has to be relative to the Add-On base URL.
+     * The link to the add-on resource that provides the content for the iFrame.
+     * This URL has to be relative to the add-on base URL.
      */
+    @Required
     private String url;
 
     /**
@@ -40,20 +45,35 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
     private I18nProperty description;
 
     /**
-     * A link to the icon resource (80x80 pixels)that will be shown in the macro selection dialog.
-     * The URL can be absolute to relative to the Add-On base URL.
+     * A link to the icon resource (80x80 pixels) that will be shown in the macro selection dialog.
+     * The URL can be absolute or relative to the add-on base URL.
      */
     private IconBean icon;
 
     /**
-     *  A link to the documentation for the macro. The URL can be absolute to relative to the Add-On base URL.
+     *  A link to the documentation for the macro.
      */
-    private String documentationUrl;
+    private LinkBean documentation;
 
     /**
      * The categories the macro should appear in. A macro with no category will show up in the default 'All' category.
+     *
+     * Currently, the following categories are supported by Confluence:
+     *
+     * * __admin__: Administration
+     * * __communication__: Communication
+     * * __confluence-content__: Confluence Content
+     * * __development__: Development
+     * * __external-content__: External Content
+     * * __formatting__: Formatting
+     * * __hidden-macros__: Hidden
+     * * __media__: Media
+     * * __navigation__: Navigation
+     * * __reporting__: Reporting
+     * * __visuals__: Visuals & Images
+     *
      */
-    private Set<MacroCategory> categories;
+    private Set<String> categories;
 
     /**
      * How this macro should be placed along side other page content.
@@ -109,15 +129,15 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
         }
         if (null == icon)
         {
-            icon = IconBean.newIconBean().build();
+            icon = newIconBean().build();
         }
         if (null == description)
         {
-            description = I18nProperty.empty();
+            description = empty();
         }
-        if (null == documentationUrl)
+        if (null == documentation)
         {
-            documentationUrl = "";
+            documentation = newLinkBean().build();
         }
         if (null == categories)
         {
@@ -173,12 +193,12 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
         return icon;
     }
 
-    public String getDocumentationUrl()
+    public LinkBean getDocumentation()
     {
-        return documentationUrl;
+        return documentation;
     }
 
-    public Set<MacroCategory> getCategories()
+    public Set<String> getCategories()
     {
         return categories;
     }
@@ -198,7 +218,7 @@ public class DynamicContentMacroModuleBean extends NameToKeyBean
         return aliases;
     }
 
-    public Boolean getFeatured()
+    public Boolean isFeatured()
     {
         return featured;
     }

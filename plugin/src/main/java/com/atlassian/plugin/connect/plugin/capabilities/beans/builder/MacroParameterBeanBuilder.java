@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterType;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.List;
 public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParameterBeanBuilder, MacroParameterBean>
 {
     private String name;
-    private MacroParameterType type;
+    private String type;
     private Boolean required;
     private Boolean multiple;
     private String defaultValue;
@@ -24,8 +23,8 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
     {
         this.name = defaultBean.getName();
         this.type = defaultBean.getType();
-        this.required = defaultBean.getRequired();
-        this.multiple = defaultBean.getMultiple();
+        this.required = defaultBean.isRequired();
+        this.multiple = defaultBean.isMultiple();
         this.defaultValue = defaultBean.getDefaultValue();
         this.values = defaultBean.getValues();
         this.aliases = defaultBean.getAliases();
@@ -37,7 +36,7 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
         return this;
     }
 
-    public MacroParameterBeanBuilder withType(MacroParameterType type)
+    public MacroParameterBeanBuilder withType(String type)
     {
         this.type = type;
         return this;

@@ -51,7 +51,7 @@ public class DynamicContentMacroModuleProvider implements ConnectModuleProvider<
         descriptors.add(dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(plugin, bundleContext, macroBean));
 
         // Add a web item if the Macro is featured
-        if (macroBean.getFeatured())
+        if (macroBean.isFeatured())
         {
             WebItemModuleBean featuredWebItem = createFeaturedWebItem(macroBean);
             descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, bundleContext, featuredWebItem));

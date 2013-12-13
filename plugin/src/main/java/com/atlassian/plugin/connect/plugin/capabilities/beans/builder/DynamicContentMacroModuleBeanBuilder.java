@@ -3,8 +3,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroCategory;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.google.common.collect.ImmutableList;
@@ -19,8 +19,8 @@ public class DynamicContentMacroModuleBeanBuilder extends NameToKeyBeanBuilder<D
     private String url;
     private I18nProperty description;
     private IconBean icon;
-    private String documentationUrl;
-    private Set<MacroCategory> categories;
+    private LinkBean documentation;
+    private Set<String> categories;
     private MacroOutputType outputType;
     private MacroBodyType bodyType;
     private Set<String> aliases;
@@ -38,12 +38,12 @@ public class DynamicContentMacroModuleBeanBuilder extends NameToKeyBeanBuilder<D
         this.url = defaultBean.getUrl();
         this.description = defaultBean.getDescription();
         this.icon = defaultBean.getIcon();
-        this.documentationUrl = defaultBean.getDocumentationUrl();
+        this.documentation = defaultBean.getDocumentation();
         this.categories = defaultBean.getCategories();
         this.outputType = defaultBean.getOutputType();
         this.bodyType = defaultBean.getBodyType();
         this.aliases = defaultBean.getAliases();
-        this.featured = defaultBean.getFeatured();
+        this.featured = defaultBean.isFeatured();
         this.width = defaultBean.getWidth();
         this.height = defaultBean.getHeight();
         this.parameters = defaultBean.getParameters();
@@ -67,13 +67,13 @@ public class DynamicContentMacroModuleBeanBuilder extends NameToKeyBeanBuilder<D
         return this;
     }
 
-    public DynamicContentMacroModuleBeanBuilder withDocumentationUrl(String documentationUrl)
+    public DynamicContentMacroModuleBeanBuilder withDocumentation(LinkBean documentation)
     {
-        this.documentationUrl = documentationUrl;
+        this.documentation = documentation;
         return this;
     }
 
-    public DynamicContentMacroModuleBeanBuilder withCategories(MacroCategory... categories)
+    public DynamicContentMacroModuleBeanBuilder withCategories(String... categories)
     {
         this.categories = ImmutableSet.copyOf(categories);
         return this;

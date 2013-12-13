@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
+import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.MacroParameterBeanBuilder;
 import com.google.common.base.Strings;
@@ -20,12 +21,25 @@ public class MacroParameterBean extends BaseModuleBean
     /**
      * A unique name of the parameter, or "" for the default (unnamed) parameter.
      */
+    @Required
     private String name;
 
     /**
      * The type of parameter.
+     *
+     * Currently the following parameter types are supported in the macro browser's UI:
+     *
+     * * __attachment__: displays an autocomplete field for search on attachment filenames.
+     * * __boolean__: displays a check box.
+     * * __confluence-content__: displays an autocomplete field for search on page and blog titles.
+     * * __enum__: displays a select field.
+     * * __spacekey__: displays an autocomplete field for search on space names.
+     * * __string__: displays an input field (this is the default if unknown type).
+     * * __username__: displays an autocomplete field for search on username and full name.
+     *
      */
-    private MacroParameterType type;
+    @Required
+    private String type;
 
     /**
      * Whether it is a required parameter, defaults to 'false'.
@@ -61,7 +75,7 @@ public class MacroParameterBean extends BaseModuleBean
         }
         if (null == type)
         {
-            type = MacroParameterType.STRING;
+            type = "string";
         }
         if (null == required)
         {
@@ -90,17 +104,17 @@ public class MacroParameterBean extends BaseModuleBean
         return name;
     }
 
-    public MacroParameterType getType()
+    public String getType()
     {
         return type;
     }
 
-    public Boolean getRequired()
+    public Boolean isRequired()
     {
         return required;
     }
 
-    public Boolean getMultiple()
+    public Boolean isMultiple()
     {
         return multiple;
     }

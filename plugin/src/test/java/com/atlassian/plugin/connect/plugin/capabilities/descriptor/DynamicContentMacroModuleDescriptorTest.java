@@ -6,10 +6,9 @@ import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroCategory;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterType;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
@@ -135,8 +134,8 @@ public class DynamicContentMacroModuleDescriptorTest
     {
         String[] categories = descriptor.getMacroMetadata().getCategories().toArray(new String[2]);
         assertThat(categories, arrayContainingInAnyOrder(
-                MacroCategory.MEDIA.toString(),
-                MacroCategory.CONFLUENCE_CONTENT.toString()));
+                "media",
+                "confluence_content"));
     }
 
     @Test
@@ -158,7 +157,7 @@ public class DynamicContentMacroModuleDescriptorTest
         assertThat(macroParameter, allOf(
                 hasProperty("defaultValue", is("default")),
                 hasProperty("name", is("Parameter Name")),
-                hasProperty("type", hasToString(MacroParameterType.ENUM.toString())),
+                hasProperty("type", hasToString("enum")),
                 hasProperty("multiple", is(false)),
                 hasProperty("required", is(true))
         ));
@@ -209,13 +208,18 @@ public class DynamicContentMacroModuleDescriptorTest
                 .withAliases("alias1", "alias2")
                 .withBodyType(MacroBodyType.PLAIN_TEXT)
                 .withOutputType(MacroOutputType.BLOCK)
-                .withCategories(MacroCategory.MEDIA, MacroCategory.CONFLUENCE_CONTENT)
+                .withCategories("media", "confluence_content")
                 .withDescription(new I18nProperty("The Macro Description", "macro.desc.key"))
-                .withDocumentationUrl("http://docs.example.com/macro")
+                .withDocumentation(LinkBean.newLinkBean()
+                        .withUrl("http://docs.example.com/macro")
+                        .withTitle("Doc Title")
+                        .withAltText("Doc Alt Text")
+                        .build()
+                )
                 .withIcon(newIconBean().withUrl("/assets/macro.png").withHeight(80).withWidth(80).build())
                 .withParameters(newMacroParameterBean()
                         .withName("Parameter Name")
-                        .withType(MacroParameterType.ENUM)
+                        .withType("enum")
                         .withDefaultValue("default")
                         .withMultiple(false)
                         .withRequired(true)

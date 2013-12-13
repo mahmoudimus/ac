@@ -1,10 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroCategory;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterType;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -43,16 +42,21 @@ public class ConnectJsonExamples
                 .withAliases("map")
                 .withBodyType(MacroBodyType.NONE)
                 .withOutputType(MacroOutputType.BLOCK)
-                .withCategories(MacroCategory.VISUALS)
+                .withCategories("visuals")
                 .withDescription(new I18nProperty("Shows a configurable map", "maps.macro.desc"))
-                .withDocumentationUrl("http://docs.example.com/addons/maps")
+                .withDocumentation(LinkBean.newLinkBean()
+                        .withUrl("http://docs.example.com/addons/maps")
+                        .withTitle("Maps Documentation")
+                        .withAltText("Maps Documentation")
+                        .build()
+                )
                 .withFeatured(true)
                 .withWidth(200)
                 .withHeight(200)
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .withParameters(newMacroParameterBean()
                         .withName("View")
-                        .withType(MacroParameterType.ENUM)
+                        .withType("enum")
                         .withDefaultValue("Map")
                         .withMultiple(false)
                         .withRequired(true)

@@ -6,7 +6,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroCategory;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URISyntaxException;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
 
 @ConfluenceComponent
 public class DynamicContentMacroModuleDescriptorFactory implements ConnectModuleDescriptorFactory<DynamicContentMacroModuleBean, XhtmlMacroModuleDescriptor>
@@ -73,7 +75,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         DOMElement element = createDOMElement(plugin, bean);
         ModuleFactory moduleFactory = createModuleFactory(plugin, element, bean);
 
-        ConnectDocumentationBeanFactory docBeanFactory = new ConnectDocumentationBeanFactory(urlConverter, plugin.getKey());
+        ConnectDocumentationBeanFactory docBeanFactory = new ConnectDocumentationBeanFactory(makeAbsolute(plugin, bean.getDocumentation()));
         MacroMetadataParser macroMetadataParser = new MacroMetadataParser(docBeanFactory);
 
         FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
@@ -87,7 +89,6 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         element.setAttribute("key", bean.getKey());
         element.setAttribute("name", bean.getDisplayName());
         element.setAttribute("i18n-name-key", bean.getName().getI18n());
-        element.setAttribute("documentation-url", bean.getDocumentationUrl());
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
 
@@ -95,6 +96,10 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
                 .addText(bean.getDescription().getValue())
                 .addAttribute("key", bean.getDescription().getI18n());
 
+        if (bean.getDocumentation().hasUrl())
+        {
+            element.setAttribute("documentation-url", bean.getDocumentation().getUrl());
+        }
         if (bean.getIcon().hasUrl())
         {
             element.setAttribute("icon", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
@@ -117,9 +122,9 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
 
     private void handleCategories(DynamicContentMacroModuleBean bean, DOMElement element)
     {
-        for (MacroCategory category : bean.getCategories())
+        for (String category : bean.getCategories())
         {
-            element.addElement("category").addAttribute("name", category.toString());
+            element.addElement("category").addAttribute("name", category);
         }
     }
 
@@ -131,11 +136,11 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
             Element parameter = parameters.addElement("parameter")
                     .addAttribute("name", parameterBean.getName())
                     .addAttribute("type", parameterBean.getType().toString());
-            if (parameterBean.getRequired())
+            if (parameterBean.isRequired())
             {
                 parameter.addAttribute("required", "true");
             }
-            if (parameterBean.getMultiple())
+            if (parameterBean.isMultiple())
             {
                 parameter.addAttribute("multiple", "true");
             }
@@ -154,7 +159,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         }
     }
 
-    // No web-resource beans, so falling back to XML
+    // No web-resource beans/builders/descriptors/providers, so falling back to XML
     public ModuleDescriptor createFeaturedIconWebResource(Plugin plugin, DynamicContentMacroModuleBean bean)
     {
         String macroKey = bean.getKey();
@@ -220,6 +225,16 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
                 }
             }
         };
+    }
+
+    private LinkBean makeAbsolute(Plugin plugin, LinkBean documentation)
+    {
+        if (documentation.hasUrl())
+        {
+            String absoluteUrl = getAbsoluteUrl(plugin, documentation.getUrl());
+            return newLinkBean(documentation).withUrl(absoluteUrl).build();
+        }
+        return documentation;
     }
 
     private String getAbsoluteUrl(Plugin plugin, String url)

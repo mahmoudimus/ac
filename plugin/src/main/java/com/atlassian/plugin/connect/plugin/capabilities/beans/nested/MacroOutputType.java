@@ -1,5 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
+/**
+ * How this macro should be placed along side other page content
+ *
+ * @schemaTitle Macro Output Type
+ * @since 1.0
+ */
 public enum MacroOutputType
 {
     /**

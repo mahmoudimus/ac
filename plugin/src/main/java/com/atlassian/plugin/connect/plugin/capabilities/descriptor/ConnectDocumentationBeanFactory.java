@@ -2,87 +2,52 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.confluence.util.i18n.DocumentationBean;
 import com.atlassian.confluence.util.i18n.DocumentationBeanFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.net.URISyntaxException;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 
 public class ConnectDocumentationBeanFactory implements DocumentationBeanFactory
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectDocumentationBeanFactory.class);
+    private final LinkBean linkBean;
 
-    private final AbsoluteAddOnUrlConverter urlConverter;
-    private final String pluginKey;
-
-    public ConnectDocumentationBeanFactory(AbsoluteAddOnUrlConverter urlConverter, String pluginKey)
+    public ConnectDocumentationBeanFactory(LinkBean linkBean)
     {
-        this.urlConverter = urlConverter;
-        this.pluginKey = pluginKey;
+        this.linkBean = linkBean;
     }
 
     @Override
     public DocumentationBean getDocumentationBean()
     {
-        return new ConnectDocumentationBean();
-    }
-
-    private class ConnectDocumentationBean implements DocumentationBean
-    {
-        @Override
-        public String getLink(String docLink)
+        return new DocumentationBean()
         {
-            try
+            @Override
+            public String getLink(String docLink)
             {
-                return urlConverter.getAbsoluteUrl(pluginKey, docLink);
+                return linkBean.getUrl();
             }
-            catch (URISyntaxException e)
+
+            @Override
+            public String getTitle(String docLink)
             {
-                logError(docLink);
-                return docLink;
+                return linkBean.getTitle();
             }
-        }
 
-        @Override
-        public String getTitle(String docLink)
-        {
-            return "";
-        }
-
-        @Override
-        public String getAlt(String docLink)
-        {
-            return "";
-        }
-
-        @Override
-        public boolean isLocal(String docLink)
-        {
-            try
+            @Override
+            public String getAlt(String docLink)
             {
-                URI uri = new URI(docLink);
-                return !uri.isAbsolute();
+                return linkBean.getAltText();
             }
-            catch (URISyntaxException e)
+
+            @Override
+            public boolean isLocal(String docLink)
             {
-                logError(docLink);
+                // always remote from Confluence's perspective
                 return false;
             }
-        }
 
-        private void logError(String docLink)
-        {
-            // help vendors find errors in their descriptors
-            log.error("Malformed documentation link declared by '"
-                    + pluginKey + "': "
-                    + docLink);
-        }
-
-        @Override
-        public boolean exists(String docLink)
-        {
-            return true;
-        }
+            @Override
+            public boolean exists(String docLink)
+            {
+                return linkBean.hasUrl();
+            }
+        };
     }
 }
