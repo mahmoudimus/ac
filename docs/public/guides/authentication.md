@@ -16,7 +16,7 @@ Most modern languages have JWT libraries available. Prior to implementing JWT, c
 
 The [py-jwt-decoder](http://py-jwt-decoder.appspot.com/) is a handy web based decoder of JWT tokens.
 
-
+<a name='installation'></a>
 # Installation Handshake
 
 For an Atlassian Connect add-on to authenticate securely with the host Atlassian product, it must advertise itself as
@@ -100,7 +100,22 @@ in order to sign and verify future requests. The payload contains the following 
     </tr>
 </table>
 
-
+<a name='incoming'></a>
 # Validating Incoming Requests
 
+All incoming requests should check for the presence of the `jwt` query string parameter, which needs to be decoded and
+verified. An incoming request might look like:
+
+    GET /hello-world?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzODY4OTM4OTYsImlzcyI6ImppcmE6MTU0ODk1OTUiLCJxc2giOiI4MDYzZmY0Y2ExZTQxZGY3YmM5MGM4YWI2ZDBmNjIwN2Q0OTFjZjZkYWQ3YzY2ZWE3OTdiNDYxNGI3MTkyMmU5IiwiaWF0IjoxMzg2ODkzNzE2fQ.2hJD79ZF0dauaczjfn42f3KaKVYi006u7mDzAO18FoA
+
+
+1. Extract the JWT token from the request's `jwt` query parameter
+2. Decode the JWT token, without verification.
+3. Inspect the decoded, unverified token for the `iss` ([token issuer](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13#section-4.1.1))
+claim. This is the `clientKey` for the tenant.
+4. Look up the `sharedSecret` for the `clientKey`. This should have been stored as part of the [installation handshake](#installation)
+process.
+5. Decode the same JWT token, this time verifying the signature with the `sharedSecret`.
+
+<a name='outgoing'></a>
 # Signing Outgoing Requests
