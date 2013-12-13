@@ -64,14 +64,21 @@ function collapseArrayAndObjectProperties(properties, required) {
 function schemaToModel(schemaEntity, id) {
     var name = schemaEntity.title || id;
     var description = renderMarkdown(schemaEntity.description || name);
-    var properties = collapseArrayAndObjectProperties(schemaEntity.properties, schemaEntity.required);
 
-    return {
+    var model = {
         id: id,
         name: name,
         description: description,
-        properties: properties
+        type: schemaEntity.type
     };
+
+    if (model.type === 'array') {
+        model.arrayType = schemaEntity.items.id;
+    } else {
+        model.properties = collapseArrayAndObjectProperties(schemaEntity.properties, schemaEntity.required);
+    }
+
+    return model;
 }
 
 var entities = {
