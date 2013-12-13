@@ -133,7 +133,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             long endTime = System.currentTimeMillis();
 
-            log.info("Capabilities based connect app started in " + (endTime - startTime) + "ms");
+            log.info("Connect add-on installed in " + (endTime - startTime) + "ms");
 
             return installedPlugin;
 
