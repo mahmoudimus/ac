@@ -85,18 +85,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -110,10 +98,23 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "icon": {
                       "properties": {
@@ -181,18 +182,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -206,10 +195,23 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "icon": {
                       "properties": {
@@ -280,6 +282,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -293,22 +307,11 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "icon": {
                       "properties": {
@@ -404,7 +407,8 @@
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "weight": {
                       "type": "integer"
@@ -446,18 +450,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -471,10 +463,23 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "weight": {
                       "type": "integer"
@@ -544,7 +549,8 @@
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "weight": {
                       "type": "integer"
@@ -586,18 +592,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -611,10 +605,23 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "weight": {
                       "type": "integer"
@@ -660,6 +667,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -673,22 +692,11 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "weight": {
                       "type": "integer"
@@ -730,6 +738,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -743,22 +763,11 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "weight": {
                       "type": "integer",
@@ -844,7 +853,8 @@
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "weight": {
                       "type": "integer"
@@ -962,6 +972,18 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -975,22 +997,11 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "icon": {
                       "properties": {
@@ -1109,18 +1120,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "conditions": {
-                                "items": {
-                                  "$ref": "#"
-                                },
-                                "type": "array"
-                              }
-                            },
-                            "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "invert": {
                                 "type": "boolean"
                               },
@@ -1134,10 +1133,23 @@
                             },
                             "id": "singleConditionBean",
                             "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "conditions": {
+                                "items": {
+                                  "$ref": "#"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "id": "compositeConditionBean",
+                            "type": "object"
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "weight": {
                       "type": "integer",
@@ -1343,7 +1355,8 @@
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "icon": {
                       "properties": {
@@ -1439,7 +1452,8 @@
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "icon": {
                       "properties": {
@@ -1538,7 +1552,8 @@
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "icon": {
                       "properties": {
@@ -1634,7 +1649,8 @@
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "icon": {
                       "properties": {
@@ -1730,7 +1746,8 @@
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "icon": {
                       "properties": {
@@ -1877,7 +1894,8 @@
                           }
                         ]
                       },
-                      "type": "array"
+                      "type": "array",
+                      "description": "Conditions can be added to display only when all the given conditions are true.\n"
                     },
                     "weight": {
                       "type": "integer",
