@@ -37,6 +37,22 @@ The information contained in these two descriptors is identical. It shows the ne
 }
 ```
 
+## Lifecycle Events
+installation, enabled, disabled and uninstalled webhooks have been renamed to life cycle events. Below is an example:
+
+```
+    {
+        "baseUrl": "http://www.example.com",
+        "key": "my-add-on",
+        "lifecycle": {
+            "disabled": "/disabled",
+            "enabled": "/enabled",
+            "installed": "/installed",
+            "uninstalled": "/uninstalled"
+        }
+    }
+```
+
 ## Webhooks
 
 Webhooks are available in the new JSON format by adding a `webhooks` json object to the root of the json descriptor.
@@ -94,6 +110,26 @@ Remote conditions can be migrated as follows:
 Not all modules have been directly mapped in the new descriptor. This means you will need to check the appropriate module configuration from this documentation and apply it to your own configuration.
 The [Getting Started guide](getting-started.html) provides a good example of a `general-page` json descriptor.
 
+### Dialog Page
+The `dialog-page` module has been removed. You can achieve the same result by defining a webitem with a target of dialog.
+
+```
+{
+    "modules": {
+        "webItems": [{
+            "location": "system.top.navigation.bar",
+            "target": {
+                "type": "dialog"
+            },
+            "url": "/dialog",
+            "name": {
+                "value": "Hello World"
+            }
+        }]
+    }
+}
+```
+
 ## Atlassian Connect Express
 
 [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) now contains support for JWT and the `atlassian-plugin.json`. By upgrading these framework you will benifit from the new functionality.
@@ -132,3 +168,13 @@ The `atlassian-plugin.json` now contains an `authentication` section that can be
 }
 ```
 
+
+# Licensing
+`atlassian-licensing-enabled` is now a top level boolean element.
+
+```
+{
+    enableLicensing: true,
+    name: "My sample Add-on"
+}
+```
