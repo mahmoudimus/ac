@@ -174,14 +174,14 @@ in order to sign and verify future requests. The payload contains the following 
 All incoming requests should check for the presence of the `jwt` query string parameter, which needs to be decoded and
 verified.
 
-1. Extract the JWT token from the request's `jwt` query parameter
-2. Decode the JWT token, without verification
+1. Extract the JWT token from the request's `jwt` query parameter.
+2. Decode the JWT token, without verification.
 3. Inspect the decoded, unverified token for the `iss` ([token issuer](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13#section-4.1.1))
-claim. This is the `clientKey` for the tenant
+claim. This is the `clientKey` for the tenant.
 4. Look up the `sharedSecret` for the `clientKey`. This should have been stored as part of the [installation handshake](#installation)
-process
-5. Decode the same JWT token, this time verifying the signature with `SHA-256` algorithm and the `sharedSecret`
-6. Verify the query string by [creating a query string hash](#qsh) and comparing against the `qsh` claim on the verified token.
+process.
+5. Decode the same JWT token, this time verifying the signature with the `sharedSecret` and the algorithm specified in the header's `alg` field.
+6. Verify the query by [creating a query hash](#qsh) and comparing it against the `qsh` claim on the verified token.
 
 ## Example
 
@@ -192,11 +192,12 @@ An incoming request might look like:
 ### 1. Decode the `jwt` token:
 
     jwtToken = request.getParameter('jwt');
-    unverifiedClaims = base64decode(jwtToken);
-    segments = unverifiedClaims.split('.');
-    headerSegment = segments[0];
-    payloadSegment = segments[1];
-    signatureSegment = segments[2];
+    base64EncodedSegments = jwtToken.split('.');
+    base64EncodedHeader = base64EncodedSegments[0];
+    base64EncodedClaims = base64EncodedSegments[1];
+    signature = base64EncodedSegments[2];
+    unverifiedHeader = base64decode(base64EncodedHeader);
+    unverifiedClaims = base64decode(base64EncodedClaims);
 
 Header Segment
 
@@ -222,6 +223,8 @@ Look up the `sharedSecret` for the `iss` (issuer).
 
 ### 2. Verify the `jwt` token with the shared secret
 
+Example using symmetric signing and a shared secret:
+
     signingInput = [headerSegment, payloadSegment].join('.');
     expectedSignature = sign(signingInput, sharedSecret, signingMethod);
 
@@ -229,10 +232,49 @@ Look up the `sharedSecret` for the `iss` (issuer).
         throw new Error('Signature verification failed');
     }
 
+You may alternatively verify the token's signature using a JWT library.
+Here is an example using nimbus-jose-jwt and json-smart:
+
+    import com.nimbusds.jose.JOSEException;
+    import com.nimbusds.jose.JWSObject;
+    import com.nimbusds.jose.JWSVerifier;
+    import com.nimbusds.jwt.JWTClaimsSet;
+    import net.minidev.json.JSONObject;
+
+    public JWTClaimsSet read(String jwt, JWSVerifier verifier) throws ParseException, JOSEException
+    {
+        JWSObject jwsObject = JWSObject.parse(jwt);
+
+        if (!jwsObject.verify(verifier))
+        {
+            throw new IllegalArgumentException("Fraudulent JWT token: " + jwt);
+        }
+
+        JSONObject jsonPayload = jwsObject.getPayload().toJSONObject();
+        return JWTClaimsSet.parse(jsonPayload);
+    }
+
+
 ### 3. Verify query string hash
 
 Verify the query string by [creating a query string hash](#qsh) for the request and comparing against the `qsh` claim
 on the verified token.
+
+### 4. Verify the standard claims
+
+The JWT specification lists some [standard claims](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13#section-4.1.1) that, if present, you should verify.
+Issuers include these to help you ensure that tokens you receive are used according to the intentions of the issuer and with the best possible results.
+For example, if you ignore the `exp` (expiration time) claim then you will be more vulnerable to replay attacks.
+You may even be reading tokens issued by yourself.
+
+In particular:
+
+* The `iss` claim contains the unique identifier of the tenant. For Atlassian products this is the `clientKey` that you receive in the `installed` callback. You should reject unrecognised issuers.
+* The `iat` claim contains the UTC Unix time at which this token was issued. There are no hard requirements around this claim but it does not make sense for it to be significantly in the future and significantly old issued-at times may indicate the replay of suspiciously old tokens.
+* The `exp` claim contains the UTC Unix time after which you should no longer accept this token. It should be after the issued-at and not-before times.
+* The `nbf` claim contains the UTC Unix time before which you should not accept this token. It should be at or after the issued-at time and before the expiry-time.
+* You should use a little leeway when processing time-based claims, as clocks may drift apart. The JWT specification suggests no more than a few minutes.
+* Judicious use of the time-based claims allows for replays within a limited window. This can be useful when all or part of a page is refreshed or when it is valid for a user to repeatedly perform identical actions (e.g. clicking the same button).
 
 <a name='outgoing'></a>
 # Signing Outgoing Requests
