@@ -90,7 +90,7 @@
     $(".diagram").sequenceDiagram({theme: 'simple'});
     </script>
     <script>
-        var cmOpts = {
+        var codeDefaults = {
             mode: "javascript",
             theme: "neat",
             lineNumbers:true,
@@ -105,21 +105,29 @@
             readOnly:true
         };
         $('.code').each(function(){
-            CodeMirror.fromTextArea(this, cmOpts);
+            CodeMirror.fromTextArea(this, codeDefaults);
         });
 
         function cmIfyPreCodeBlocks(block){
             var sample = block;
             var text = sample.textContent || sample.innerText;
-            var newOpts = cmOpts;
+            var newOpts = $.extend({}, codeDefaults);
+
+            if (text.split("\n").length <= 1) {
+                newOpts.lineNumbers = false;
+                newOpts.gutters = [];
+            }
+
             newOpts.value = text;
-            CodeMirror(
+            var cm = CodeMirror(
                 function(node){
                     sample.parentNode.replaceChild(node, sample)
                 }, newOpts
             );
         }
-        $('pre code').each(function(){cmIfyPreCodeBlocks(this)});
+        $('pre code').each(function(){
+            cmIfyPreCodeBlocks(this)
+        });
     </script>
 </body>
 
