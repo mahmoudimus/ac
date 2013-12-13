@@ -83,16 +83,38 @@ function schemaToModel(schemaEntity, id) {
 
 var entities = {
     topLevel: findEntities(jiraSchema.properties),
-    jira: findEntities(jiraSchema.properties.modules.properties),
-    confluence: findEntities(confluenceSchema.properties.modules.properties)
+    jiraModuleList: findEntities(jiraSchema.properties.modules.properties),
+    confluenceModuleList: findEntities(confluenceSchema.properties.modules.properties)
 };
 
 var allEntities = _.extend(findEntitiesRecursively(jiraSchema), findEntitiesRecursively(confluenceSchema));
-entities.nested = _.omit(allEntities, _.keys(entities.topLevel), _.keys(entities.jira), _.keys(entities.confluence));
+entities.nested = _.omit(allEntities, _.keys(entities.topLevel), _.keys(entities.jiraModuleList), _.keys(entities.confluenceModuleList));
 
 entities = _.mapValues(entities, function(val) {
     return _.map(val, schemaToModel);
 });
+
+function uniqueArrayTypes(moduleList) {
+    return _.unique(_.pluck(moduleList, "arrayType"));
+}
+
+var jiraTypes = uniqueArrayTypes(entities.jiraModuleList);
+var confluenceTypes = uniqueArrayTypes(entities.confluenceModuleList);
+var commonTypes = _.intersection(jiraTypes, confluenceTypes);
+jiraTypes = _.difference(jiraTypes, commonTypes);
+confluenceTypes = _.difference(confluenceTypes, commonTypes);
+
+function extractNestedModules(ids) {
+    var extracted = _.filter(entities.nested, function (val) {
+        return ids.indexOf(val.id) > -1;
+    });
+    entities.nested = _.difference(entities.nested, extracted);
+    return extracted;
+}
+
+entities.commonModules = extractNestedModules(commonTypes);
+entities.jiraModules = extractNestedModules(jiraTypes);
+entities.confluenceModules = extractNestedModules(confluenceTypes);
 
 console.log(util.inspect(entities, {depth: 5}));
 
