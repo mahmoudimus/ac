@@ -2,7 +2,7 @@
 
 ## Resources
  * [Getting Started](getting-started.html) - the hello world tutorial has been renamed to the getting started guide and now uses the new JSON descriptor format for all examples.
- * [Modules](#modules) - You can view all available modules and their respective documentation under the "Jira Modules" and "Confluence Modules" sections of the navigation menu.
+ * [Modules](#modules) - You can view all available modules and their respective documentation under the "JIRA Modules" and "Confluence Modules" sections of the navigation menu.
 
 ## Basic Add-on information
 
@@ -26,9 +26,6 @@ The information contained in these two descriptors is identical. It shows the ne
     "key": "myaddon_helloworld",
     "baseUrl": "http://localhost:8000",
     "name": "Hello World",
-    "authentication": {
-        "type": "JWT"
-    },
     "vendor": {
         "name": "My Organization, Inc",
         "url": "https://developer.atlassian.com"
@@ -38,7 +35,7 @@ The information contained in these two descriptors is identical. It shows the ne
 ```
 
 ## Lifecycle Events
-installation, enabled, disabled and uninstalled webhooks have been renamed to life cycle events. Below is an example:
+installation, enabled, disabled and uninstalled webhooks have been replaced with life cycle events. Below is an example:
 
 ```
     {
@@ -53,27 +50,33 @@ installation, enabled, disabled and uninstalled webhooks have been renamed to li
     }
 ```
 
+The installed event is synchronous. All others are asynchronous.
+
 ## Webhooks
 
-Webhooks are available in the new JSON format by adding a `webhooks` json object to the root of the json descriptor.
+Webhooks are available in the new JSON format by adding a `webhooks` json object to the modules element of the json descriptor.
 
 ```
-"webhooks": [
-    {
-        "event": "jira:issue_created",
-        "url": "/issue-created"
-    },
-    {
-        "event": "jira:issue_updated",
-        "url": "/issue-updated"
+{
+    "modules": {
+        "webhooks": [
+            {
+                "event": "jira:issue_created",
+                "url": "/issue-created"
+            },
+            {
+                "event": "jira:issue_updated",
+                "url": "/issue-updated"
+            }
+        ]
     }
-]
+}
+
 ```
 
 To read more about webhooks: visit the [webhook module documentation](../modules/jira/webhooks.html)
 
 ## Conditions
-The [Conditions documentation](conditions.html) as been updated to display the new format.
 
 A simple condition can be converted as follows:
 ```
@@ -85,8 +88,7 @@ A simple condition can be converted as follows:
 ```
 "conditions": [
     {
-        "condition": "user_is_logged_in",
-        "invert": false
+        "condition": "user_is_logged_in"
     }
 ]
 ```
@@ -101,10 +103,13 @@ Remote conditions can be migrated as follows:
 ```
 "conditions": [
     {
-        "condition": "http://example.com/condition/onlyBettyCondition"
+        "condition": "/onlyBettyCondition"
     }
 ]
 ```
+
+See the [Conditions documentation](conditions.html) for more details.
+
 
 ## Modules
 Not all modules have been directly mapped in the new descriptor. This means you will need to check the appropriate module configuration from this documentation and apply it to your own configuration.
@@ -147,7 +152,7 @@ By upgrading to the new version of [atlassian-connect-play-java](https://bitbuck
 
 ## oAuth
 <div class="aui-message warning shadowed information-macro">
-    oAuth has been deprecated. Please consider migrating to [JWT](JWT.html).
+    oAuth has been deprecated. Please consider migrating to [JWT](authentication.html).
 </div>
 
 If your add-on was created using the [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java) or [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) frameworks you can download the latest version for JSON descriptor and JWT support.
