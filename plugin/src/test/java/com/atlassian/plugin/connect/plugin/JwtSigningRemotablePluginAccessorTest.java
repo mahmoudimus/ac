@@ -9,6 +9,8 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import com.atlassian.oauth.Consumer;
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
@@ -48,6 +50,7 @@ public class JwtSigningRemotablePluginAccessorTest
 {
     private static final String PLUGIN_KEY = "key";
     private static final String PLUGIN_NAME = "name";
+    private static final String CONSUMER_KEY = "12345-abcde-09876-zyxwv";
     private static final String BASE_PATH = "/basepath";
     private static final String BASE_URL = "http://server:1234" + BASE_PATH;
     private static final String FULL_PATH_URL = BASE_URL + "/path";
@@ -157,7 +160,7 @@ public class JwtSigningRemotablePluginAccessorTest
     public void issuerClaimIsCorrect()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasIssuer(applicationLink.getId().get())), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasIssuer(CONSUMER_KEY)), any(ApplicationLink.class));
     }
 
     @Test
@@ -361,7 +364,6 @@ public class JwtSigningRemotablePluginAccessorTest
 
     private RemotablePluginAccessor createRemotePluginAccessor()
     {
-        when(applicationLink.getId()).thenReturn(new ApplicationId(UUID.randomUUID().toString()));
         when(jwtService.issueJwt(any(String.class), eq(applicationLink))).thenReturn(MOCK_JWT);
         ConnectApplinkManager connectApplinkManager = mock(DefaultConnectApplinkManager.class);
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(applicationLink);
@@ -373,7 +375,15 @@ public class JwtSigningRemotablePluginAccessorTest
                 return URI.create(BASE_URL);
             }
         };
-        return new JwtSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, jwtService, connectApplinkManager, mockCachingHttpContentRetriever());
+
+        ConsumerService consumerService = mock(ConsumerService.class);
+        Consumer consumer = new Consumer.InstanceBuilder(CONSUMER_KEY)
+                .name("JIRA")
+                .signatureMethod(Consumer.SignatureMethod.HMAC_SHA1)
+                .build();
+        when(consumerService.getConsumer()).thenReturn(consumer);
+
+        return new JwtSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, jwtService, consumerService, connectApplinkManager, mockCachingHttpContentRetriever());
     }
 
     private HttpContentRetriever mockCachingHttpContentRetriever()
