@@ -71,7 +71,8 @@
             "type": "boolean"
           },
           "links": {
-            "additionalProperties": true
+            "additionalProperties": true,
+            "type": "object"
           },
           "modules": {
             "properties": {
@@ -91,7 +92,8 @@
                                 "type": "string"
                               },
                               "params": {
-                                "additionalProperties": true
+                                "additionalProperties": true,
+                                "type": "object"
                               }
                             },
                             "id": "singleConditionBean",
@@ -154,6 +156,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -185,7 +188,8 @@
                                 "type": "string"
                               },
                               "params": {
-                                "additionalProperties": true
+                                "additionalProperties": true,
+                                "type": "object"
                               }
                             },
                             "id": "singleConditionBean",
@@ -251,6 +255,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -275,21 +280,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "invert": {
-                                "type": "boolean"
-                              },
-                              "condition": {
-                                "type": "string"
-                              },
-                              "params": {
-                                "additionalProperties": true
-                              }
-                            },
-                            "id": "singleConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "conditions": {
                                 "items": {
                                   "$ref": "#"
@@ -298,6 +288,22 @@
                               }
                             },
                             "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true,
+                                "type": "object"
+                              }
+                            },
+                            "id": "singleConditionBean",
                             "type": "object"
                           }
                         ]
@@ -345,6 +351,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -369,21 +376,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "invert": {
-                                "type": "boolean"
-                              },
-                              "condition": {
-                                "type": "string"
-                              },
-                              "params": {
-                                "additionalProperties": true
-                              }
-                            },
-                            "id": "singleConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "conditions": {
                                 "items": {
                                   "$ref": "#"
@@ -392,6 +384,22 @@
                               }
                             },
                             "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true,
+                                "type": "object"
+                              }
+                            },
+                            "id": "singleConditionBean",
                             "type": "object"
                           }
                         ]
@@ -415,6 +423,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -444,7 +453,8 @@
                                 "type": "string"
                               },
                               "params": {
-                                "additionalProperties": true
+                                "additionalProperties": true,
+                                "type": "object"
                               }
                             },
                             "id": "singleConditionBean",
@@ -483,6 +493,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -524,7 +535,8 @@
                                 "type": "string"
                               },
                               "params": {
-                                "additionalProperties": true
+                                "additionalProperties": true,
+                                "type": "object"
                               }
                             },
                             "id": "singleConditionBean",
@@ -551,6 +563,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -573,21 +586,6 @@
                         "anyOf": [
                           {
                             "properties": {
-                              "invert": {
-                                "type": "boolean"
-                              },
-                              "condition": {
-                                "type": "string"
-                              },
-                              "params": {
-                                "additionalProperties": true
-                              }
-                            },
-                            "id": "singleConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
                               "conditions": {
                                 "items": {
                                   "$ref": "#"
@@ -596,6 +594,22 @@
                               }
                             },
                             "id": "compositeConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true,
+                                "type": "object"
+                              }
+                            },
+                            "id": "singleConditionBean",
                             "type": "object"
                           }
                         ]
@@ -622,6 +636,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -645,6 +660,22 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true,
+                                "type": "object"
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "conditions": {
                                 "items": {
                                   "$ref": "#"
@@ -653,21 +684,6 @@
                               }
                             },
                             "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "invert": {
-                                "type": "boolean"
-                              },
-                              "condition": {
-                                "type": "string"
-                              },
-                              "params": {
-                                "additionalProperties": true
-                              }
-                            },
-                            "id": "singleConditionBean",
                             "type": "object"
                           }
                         ]
@@ -691,6 +707,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -713,6 +730,22 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true,
+                                "type": "object"
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "conditions": {
                                 "items": {
                                   "$ref": "#"
@@ -721,21 +754,6 @@
                               }
                             },
                             "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "invert": {
-                                "type": "boolean"
-                              },
-                              "condition": {
-                                "type": "string"
-                              },
-                              "params": {
-                                "additionalProperties": true
-                              }
-                            },
-                            "id": "singleConditionBean",
                             "type": "object"
                           }
                         ]
@@ -773,6 +791,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -797,6 +816,22 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true,
+                                "type": "object"
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "conditions": {
                                 "items": {
                                   "$ref": "#"
@@ -805,21 +840,6 @@
                               }
                             },
                             "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "invert": {
-                                "type": "boolean"
-                              },
-                              "condition": {
-                                "type": "string"
-                              },
-                              "params": {
-                                "additionalProperties": true
-                              }
-                            },
-                            "id": "singleConditionBean",
                             "type": "object"
                           }
                         ]
@@ -843,6 +863,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -948,7 +969,8 @@
                                 "type": "string"
                               },
                               "params": {
-                                "additionalProperties": true
+                                "additionalProperties": true,
+                                "type": "object"
                               }
                             },
                             "id": "singleConditionBean",
@@ -1023,7 +1045,8 @@
                     "target": {
                       "properties": {
                         "params": {
-                          "additionalProperties": true
+                          "additionalProperties": true,
+                          "type": "object"
                         },
                         "type": {
                           "enum": [
@@ -1034,7 +1057,8 @@
                           "type": "string"
                         },
                         "options": {
-                          "additionalProperties": true
+                          "additionalProperties": true,
+                          "type": "object"
                         }
                       },
                       "id": "webItemTargetBean",
@@ -1051,6 +1075,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -1103,7 +1128,8 @@
                                 "type": "string"
                               },
                               "params": {
-                                "additionalProperties": true
+                                "additionalProperties": true,
+                                "type": "object"
                               }
                             },
                             "id": "singleConditionBean",
@@ -1148,6 +1174,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -1171,7 +1198,8 @@
                       "description": "Specifies the named event you would like to listen to (e.g., \"enabled\", \"jira:issue_created\", etc.)"
                     },
                     "params": {
-                      "additionalProperties": true
+                      "additionalProperties": true,
+                      "type": "object"
                     },
                     "url": {
                       "type": "string",
@@ -1273,7 +1301,8 @@
             "type": "boolean"
           },
           "links": {
-            "additionalProperties": true
+            "additionalProperties": true,
+            "type": "object"
           },
           "modules": {
             "properties": {
@@ -1293,7 +1322,8 @@
                                 "type": "string"
                               },
                               "params": {
-                                "additionalProperties": true
+                                "additionalProperties": true,
+                                "type": "object"
                               }
                             },
                             "id": "singleConditionBean",
@@ -1356,6 +1386,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -1399,7 +1430,8 @@
                                 "type": "string"
                               },
                               "params": {
-                                "additionalProperties": true
+                                "additionalProperties": true,
+                                "type": "object"
                               }
                             },
                             "id": "singleConditionBean",
@@ -1453,6 +1485,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -1477,6 +1510,22 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true,
+                                "type": "object"
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "conditions": {
                                 "items": {
                                   "$ref": "#"
@@ -1485,21 +1534,6 @@
                               }
                             },
                             "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "invert": {
-                                "type": "boolean"
-                              },
-                              "condition": {
-                                "type": "string"
-                              },
-                              "params": {
-                                "additionalProperties": true
-                              }
-                            },
-                            "id": "singleConditionBean",
                             "type": "object"
                           }
                         ]
@@ -1547,6 +1581,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -1571,6 +1606,22 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true,
+                                "type": "object"
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "conditions": {
                                 "items": {
                                   "$ref": "#"
@@ -1579,21 +1630,6 @@
                               }
                             },
                             "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "invert": {
-                                "type": "boolean"
-                              },
-                              "condition": {
-                                "type": "string"
-                              },
-                              "params": {
-                                "additionalProperties": true
-                              }
-                            },
-                            "id": "singleConditionBean",
                             "type": "object"
                           }
                         ]
@@ -1641,6 +1677,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -1672,7 +1709,8 @@
                                 "type": "string"
                               },
                               "params": {
-                                "additionalProperties": true
+                                "additionalProperties": true,
+                                "type": "object"
                               }
                             },
                             "id": "singleConditionBean",
@@ -1747,7 +1785,8 @@
                     "target": {
                       "properties": {
                         "params": {
-                          "additionalProperties": true
+                          "additionalProperties": true,
+                          "type": "object"
                         },
                         "type": {
                           "enum": [
@@ -1758,7 +1797,8 @@
                           "type": "string"
                         },
                         "options": {
-                          "additionalProperties": true
+                          "additionalProperties": true,
+                          "type": "object"
                         }
                       },
                       "id": "webItemTargetBean",
@@ -1775,6 +1815,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -1808,6 +1849,22 @@
                         "anyOf": [
                           {
                             "properties": {
+                              "invert": {
+                                "type": "boolean"
+                              },
+                              "condition": {
+                                "type": "string"
+                              },
+                              "params": {
+                                "additionalProperties": true,
+                                "type": "object"
+                              }
+                            },
+                            "id": "singleConditionBean",
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
                               "conditions": {
                                 "items": {
                                   "$ref": "#"
@@ -1816,21 +1873,6 @@
                               }
                             },
                             "id": "compositeConditionBean",
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "invert": {
-                                "type": "boolean"
-                              },
-                              "condition": {
-                                "type": "string"
-                              },
-                              "params": {
-                                "additionalProperties": true
-                              }
-                            },
-                            "id": "singleConditionBean",
                             "type": "object"
                           }
                         ]
@@ -1872,6 +1914,7 @@
                     },
                     "params": {
                       "additionalProperties": true,
+                      "type": "object",
                       "title": "parameters",
                       "description": "Extra params"
                     },
@@ -1895,7 +1938,8 @@
                       "description": "Specifies the named event you would like to listen to (e.g., \"enabled\", \"jira:issue_created\", etc.)"
                     },
                     "params": {
-                      "additionalProperties": true
+                      "additionalProperties": true,
+                      "type": "object"
                     },
                     "url": {
                       "type": "string",
