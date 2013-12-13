@@ -5,8 +5,8 @@ Atlassian Connect employs usage of a technology called [JWT (JSON Web Token)](to
 
 ## JWT
 
-The JWT protocol describes the format and verification of individual JWT messages, which are base-64 encoded UTF-8 strings. It does not prescribe a method
-of transportation; we are transporting JWT messages as query-string parameters and as authorization headers.
+The JWT protocol describes the format and verification of individual JWT tokens, which are base-64 encoded UTF-8 strings. It does not prescribe a method
+of transportation; we are transporting JWT tokens as query-string parameters and as authorization headers.
 
 Query string example:
 
@@ -17,15 +17,15 @@ Headers example:
     POST http://ecosystem.atlassian.net/rest/api/2/issue/AC-1/attachments
     "Authorization" header value: "JWT <insert jwt here>"
 
-The format of a JWT message is simple: ```<header>.<claims>.<signature>```.
+The format of a JWT token is simple: ```<header>.<claims>.<signature>```.
 
 * Each section is separated from the others by a period character (```.```).
 * Each section is base-64 encoded, so you will need to decode each one to make them human-readable. There is a handy JWT decoder [here](https://py-jwt-decoder.appspot.com).
-* The header specifies a very small amount of information that the receiver needs in order to parse and verify the JWT message.
- * All JWT message headers state that the type is "JWT".
- * The algorithm used to sign the JWT message is needed so that the receiver can verify the signature.
+* The header specifies a very small amount of information that the receiver needs in order to parse and verify the JWT token.
+ * All JWT token headers state that the type is "JWT".
+ * The algorithm used to sign the JWT token is needed so that the receiver can verify the signature.
 * The claims are a list of assertions that the issuer is making: each says that "this named field" has "this value".
- * Some, like the "iss" claim, which identifies the issuer of this JWT message, have standard names and uses.
+ * Some, like the "iss" claim, which identifies the issuer of this JWT token, have standard names and uses.
  * Others are custom claims. We limit our use of custom claims as much as possible, for ease of implementation.
 * The signature is computed by using an algorithm such as HMAC SHA-256 plus the header and claims sections.
  * The receiver verifies that the signature must have been computed using the genuine JWT header and claims sections, the indicated algorithm and a previously established secret.
@@ -34,7 +34,7 @@ The format of a JWT message is simple: ```<header>.<claims>.<signature>```.
  * There are various algorithm choices legal in the JWT spec. In atlassian-connect version 1.0 we support HMAC SHA-256.
  * While you may implement signing and signature verification yourself we recommend using a library.
 
-### Example JWT message
+### Example JWT token
 
     eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
 
@@ -69,7 +69,7 @@ Computing the MAC of the encoded JWS Header and encoded JWS Payload with the HMA
 
     dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
 
-Concatenating ```<encoded header>``` + ```.``` + ```<encoded claims>``` + ```.``` + ```<encoded signature>``` yields the JWT message above.
+Concatenating ```<encoded header>``` + ```.``` + ```<encoded claims>``` + ```.``` + ```<encoded signature>``` yields the JWT token above.
 
 ## Implementation Examples
 
@@ -236,52 +236,3 @@ on the verified token.
 
 <a name='outgoing'></a>
 # Signing Outgoing Requests
-
-<a name='qsh'></a>
-# Creating a query string hash
-
-### Overview
-query signature = `sign(canonical-request)`
-
-canonical-request = `canonical-method + '&' + canonical-URI + '&' + canonical-query-string`
-
-### Method
-
-1. Compute canonical method
-  *  Simply the upper-case of the method name (e.g. `"GET"` or `"PUT"`)<br><br>
-2. Append the character `'&'`<br><br>
-3. Compute canonical URI
-  *  Discard the protocol, server, port, context path and query parameters from the full URL.
-  *  Removing the context path allows a reverse proxy to redirect incoming requests for `"jira.example.com/getsomething"`
-   to `"example.com/jira/getsomething"` without breaking authentication. The requester cannot know that the reverse proxy
-   will prepend the context path `"/jira"` to the originally requested path `"/getsomething"`
-  *  Empty-string is not permitted; use `"/"` instead.
-  *  Do not suffix with a `'/'` character unless it is the only character. e.g.
-     *  Canonical URI of `"http://server:80/some/path/?param=value"` is `"/some/path"`
-     *  Canonical URI of `"http://server:80"` is `"/"`
-    <br><br>
-4. Append the character `'&'`<br><br>
-5. Compute canonical query string
-  *  Sort the query parameters primarily by their percent-encoded names and secondarily by their percent-encoded values
-  *  Sorting is by codepoint: `sort(["a", "A", "b", "B"]) => ["A", "B", "a", "b"]`
-  *  For each parameter append its percent-encoded name, the `'='` character and then its percent-encoded value.
-  *  In the case of repeated parameters append the `','` character and subsequent percent-encoded values.
-  *  Ignore the `jwt` parameter, if present.
-  *  Some particular values to be aware of:
-    *  `"+"` is encoded as `"%20"`,
-    *  `"*"` as `"%2A"` and
-    *  `"~"` as `"~"`.<br>
-    (These values used for consistency with OAuth1.)
-
-  An example: for a `GET` request to the not-yet-percent-encoded URL
-
-        "http://localhost:2990/path/to/service?zee_last=param&repeated=parameter 1&first=param&repeated=parameter 2"
-
-  the canonical request is
-
-        "GET&/path/to/service&first=param&repeated=parameter%201,parameter%202&zee_last=param"
-
-6. Convert the canonical request string to bytes
-   *  The encoding used to represent characters as bytes is `UTF-8`<br><br>
-7. Hash the canonical request bytes using the `SHA-256` algorithm
-   * e.g. The `SHA-256` hash of `"foo"` is `"2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"`
