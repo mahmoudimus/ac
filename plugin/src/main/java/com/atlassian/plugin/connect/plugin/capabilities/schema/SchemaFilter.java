@@ -20,18 +20,15 @@ import org.slf4j.LoggerFactory;
 public class SchemaFilter implements Filter
 {
     private static final Logger log = LoggerFactory.getLogger(SchemaFilter.class);
-
     public static final String JSON_SCHEMA_TYPE = "application/schema+json";
-    public static final String RAW = "/schema/%s-schema.json";
-    public static final String PRETTY = "/schema/%s-schema-pretty.json";
-
+    
     private FilterConfig config;
-
     private final Plugin plugin;
+    private final ConnectSchemaLocator schemaLocator;
 
-
-    public SchemaFilter(PluginRetrievalService pluginRetrievalService)
+    public SchemaFilter(PluginRetrievalService pluginRetrievalService, ConnectSchemaLocator schemaLocator)
     {
+        this.schemaLocator = schemaLocator;
         this.plugin = pluginRetrievalService.getPlugin();
     }
 
@@ -46,36 +43,33 @@ public class SchemaFilter implements Filter
     {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
-        String jsonFormat;
-
-        if (null != servletRequest.getParameter("pretty"))
+        boolean pretty = false;
+        
+        String prettyParam = servletRequest.getParameter("pretty");
+        if (null != prettyParam && (prettyParam.length() == 0 || Boolean.parseBoolean(prettyParam)))
         {
-            jsonFormat = PRETTY;
-        }
-        else
-        {
-            jsonFormat = RAW;
+            pretty = true;
         }
 
         String productPath = StringUtils.substringAfterLast(req.getRequestURI(), "/schema/");
-
         try
         {
             ProductFilter requestedProduct = ProductFilter.valueOf(productPath.toUpperCase());
-
-            String path = String.format(jsonFormat, requestedProduct.name().toLowerCase());
-            System.out.println("path = " + path);
-
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            InputStream in = plugin.getResourceAsStream(path);
-            IOUtils.copy(in, bout);
-            byte[] data = bout.toByteArray();
+            String schema;
+            if(pretty)
+            {
+                schema = schemaLocator.getPrettySchema(requestedProduct);
+            }
+            else
+            {
+                schema = schemaLocator.getSchema(requestedProduct);
+            }
 
             res.setContentType(JSON_SCHEMA_TYPE);
             res.setStatus(HttpServletResponse.SC_OK);
-            res.setContentLength(data.length);
+            res.setContentLength(schema.length());
             ServletOutputStream sos = res.getOutputStream();
-            sos.write(data);
+            sos.write(schema.getBytes());
             sos.flush();
             sos.close();
         }
