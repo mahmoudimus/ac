@@ -4,7 +4,7 @@ Atlassian Connect is a new development model for building and delivering add-ons
 <div class="aui-message hint shadowed information-macro">
 	<span class="aui-icon icon-hint">Icon</span>
 	<div class="message-content">
-    	<p>Atlassian Connect is new and in Beta for now, but it's growing all the time. If there's a feature you'd like to see added to Atlassian Connect—say a new extension point or a REST resource—please let us know.</p><p>Submit new feature requests, bugs, and feature votes in the <a href="https://ecosystem.atlassian.net/browse/AC" class="external-link" rel="nofollow">Atlassian Connect JIRA project</a>.</p><p><strong>IMPORTANT:</strong> If you are building an add-on with Atlassian Connect, please subscribe to the <a href="https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev" class="external-link" rel="nofollow">mailing list</a>. Updates and changes to the framework will be posted there. You can ask questions on <a href="http://answers.atlassian.com" class="external-link" rel="nofollow">Atlassian Answers</a> by tagging your post "atlassian-connect".</p>
+    	<p>Atlassian Connect is new and in active development for now, but it's growing all the time. If there's a feature you'd like to see added to Atlassian Connect—say a new extension point or a REST resource—please let us know.</p><p>Submit new feature requests, bugs, and feature votes in the <a href="https://ecosystem.atlassian.net/browse/AC" class="external-link" rel="nofollow">Atlassian Connect JIRA project</a>.</p><p><strong>IMPORTANT:</strong> If you are building an add-on with Atlassian Connect, please subscribe to the <a href="https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev" class="external-link" rel="nofollow">mailing list</a>. Updates and changes to the framework will be posted there. You can ask questions on <a href="http://answers.atlassian.com" class="external-link" rel="nofollow">Atlassian Answers</a> by tagging your post "atlassian-connect".</p>
 	</div>
 </div>
 
@@ -36,7 +36,7 @@ Atlassian Connect relies on some infrastructure components to be present in the 
 
 Note that not every add-on will need to touch the application UI. An add-on may simply respond to webhooks, for example, by invoking external processes say in another SaaS application.
 
-- **Recognize the user.** Because your add-on has been authenticated via two-legged OAuth, each request from the target application to your add-on contains details about the user currently viewing that page. This allows you to serve the right context, respect necessary permissions and make other decisions based on the user's identity. 
+- **Recognize the user.** Because your add-on has been authenticated via JWT, each request from the target application to your add-on contains details about the user currently viewing that page. This allows you to serve the right context, respect necessary permissions and make other decisions based on the user's identity. 
 Any application that touches the Atlassian application UI will likely need to recognize the user so that it can adapt the UI for the user as needed. 
 - **Call the application's remote API.** Your add-on can call the application's API via REST, either on behalf of a given user via OAuth or, in some circumstances, as the add-on itself. You can use this to retrieve data (for example, to build a report) or to push information into the target application (for example, to create an issue in response to an external event).
 - **Respect add-on licensing.** Every request from the Atlassian application to your add-on contains the add-on license status for that instance. Your add-on can respond appropriately, for example, by alerting the user, locking down functionality, or encouraging an upgrade.
@@ -89,6 +89,6 @@ To get the most out of this information, you should be familiar with:
 - Using and administering Atlassian applications
 - Web programming, whether using Java or another language
 - Web server concepts and administration.
-- Web security standards, such as Basic Auth and OAuth.
+- Web security standards, such as Basic Auth and JWT.
 - Interacting with REST APIs
 

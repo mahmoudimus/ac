@@ -1,12 +1,13 @@
 # Add-on Descriptor
-The add-on descriptor is an JSON file (`atlassian-plugin.json`) that describes the add-on to the Atlassian application. If you're familiar with Java add-on development with previous versions of the Atlassian Framework, you should already be familiar with plugin descriptors.
+The add-on descriptor is an JSON file (`atlassian-connect.json`) that describes the add-on to the Atlassian application.
+If you're familiar with Java add-on development with previous versions of the Atlassian Framework, you should already be familiar with plugin descriptors.
 
 The descriptor serves as the glue between the remote add-on and the Atlassian application. When an administrator for an Atlassian OnDemand instance subscribes to an add-on, the Atlassian instance retrieves the add-on descriptor from its published location. 
 
 The descriptor includes general information for the add-on (in the `modules` element). It also declares the modules that the add-on wants to use or extend, as described in the following sections.
 
 ## About `modules`
-The `modules` element tells the Atlassian OnDemand instance about the add-on. Among other things, the descriptor informs the instance about the name and description of the add-on and the modules it wants to implement.
+The `modules` element tells the application instance about the add-on. Among other things, the descriptor informs the instance about the name and description of the add-on and the modules it wants to implement.
 
 Let's look at an example:
 
@@ -19,12 +20,13 @@ Let's look at an example:
         "name": "Example, Inc.",
         "url": "https://www.example.com"
     },
+    "baseUrl": "http://localhost:8000",
     "version": "1.0"
 }
 ```
 Omitted here are any module descriptors. We'll cover those in the next section.
 
-Also, for details and application-specific reference information on the descriptor, you should always refer to the [Interactive Descriptor Guide](https://developer.atlassian.com/display/AC/Interactive+Descriptor+Guide). But we'll call out a few highlights from the example here.
+Also, for details and application-specific reference information on the descriptor please refer to the "jira modules" and "confluence modules" sections of this documentation. But we'll call out a few highlights from the example here.
 
 For the `description` value, you should supply a brief textual description of your add-on. When your add-on is installed in the Atlassian application, this information appears with the add-on in the Manage Add-ons page of the administration console. Thus, your description should provide meaningful and identifying information for the instance administrator. 
 
@@ -34,15 +36,15 @@ Since Atlassian Connect add-ons are remote and largely independent from the Atla
 
 However, some add-ons changes do require a change in the descriptor file as well. For example, say you modify the add-on to have a new page module. Since this requires a page module declaration in the descriptor, it means making an updated descriptor available, which instances will have to re-register. To implement this change, you need to create a new version of the add-on in its Marketplace listing. The Marketplace and UPM will take care of the rest: informing administrators of the available update.
 
-For more information about the permissions and license-related elements, see [Scopes](https://developer.atlassian.com/display/AC/Scopes) and [Licensing](https://developer.atlassian.com/display/AC/Licensing).
+For more information about the permissions and license-related elements, see [Scopes](scopes.html) and [Licensing](https://developer.atlassian.com/display/AC/Licensing).
 
 
 ## About Modules
 A module is a service or extension point in the Atlassian application that add-ons use to integrate with the Atlassian application. 
 
-An add-on can implement as many modules as needed. For example, a typical add-on would likely provide modules for at least one webhook, a configuration page, and possibly multiple general pages.
+An add-on can implement as many modules as needed. For example, a typical add-on would likely provide modules for at least one lifecycle element, a configuration page, and possibly multiple general pages.
 
-All modules declarations must have a `url` attribute. The url attribute identifies the path on the add-on host to the resource that implements the module. The URL value should be valid relative to the display-url value of the remote-plugin-container value in the add-on descriptor. 
+All modules declarations must have a `url` attribute. The url attribute identifies the path on the add-on host to the resource that implements the module. The URL value must be valid relative to the `baseUrl` value in the add-on descriptor. 
 
 <div class="aui-message warning shadowed information-macro">
     You can add variables to URL attributes to receive context information from the Atlassian application, such as the current JIRA issue or Confluence page ID. For more information, see the following section.
@@ -66,7 +68,7 @@ Here's an example of a module declaration:
                     "condition": "is_issue_unresolved"
                 }
             ],
-            section: "operations-subtasks",
+            location: "operations-subtasks",
             target: "dialog",
             "url": "/dialog",
             "name": {

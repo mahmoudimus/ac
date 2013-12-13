@@ -45,29 +45,28 @@ First, set up your project and create the descriptor file for the Hello World ap
  1. Create a project directory for your add-on source files, or choose an existing directory location. 
 In choosing a location, it's worth considering that you'll need to expose this directory by web server (or copy the files you create here to a location that is served by a web server).
  2. In your project directory, create a new file named `atlassian-plugin.json`.
- 3. Add the following text to the file: <code><pre>
-{
-    "modules": {
-        "generalPages": [{
-            "url": "/helloworld.html",
-            "name": {
-                "value": "Greeting"
-            }
-        }]
-    },
-    "description": "Atlassian Connect add-on",
-    "key": "myaddon_helloworld",
-    "baseUrl": "http://localhost:8000",
-    "name": "Hello World",
-    "authentication": {
-        "type": "jwt"
-    },
-    "vendor": {
-        "name": "My Organization, Inc",
-        "url": "https://developer.atlassian.com"
-    },
-    "version": "1.0"
-}</pre></code>
+ 3. Add the following text to the file:
+```
+    {
+        "modules": {
+            "generalPages": [{
+                "url": "/helloworld.html",
+                "name": {
+                    "value": "Greeting"
+                }
+            }]
+        },
+        "description": "Atlassian Connect add-on",
+        "key": "myaddon_helloworld",
+        "baseUrl": "http://localhost:8000",
+        "name": "Hello World",
+        "vendor": {
+            "name": "My Organization, Inc",
+            "url": "https://developer.atlassian.com"
+        },
+        "version": "1.0"
+    }
+```
  4. Make the following changes to the file content:
     * Change the key and name attribute values for atlassian-plugin.json to anything you like. Note that the key value must be unique for all add-ons in this instance. 
     For an add-on meant for delivery on the Atlassian Marketplace, you'll need to give it a name that won't collide with any other add-ons that the subscriber may install. The best way to do this is to qualify the key with your organization name. A common convention is to use the reverse web address for the organization, such as com.atlassian.jira.list-users.
@@ -198,4 +197,4 @@ This is where our framework helpers come in. They help you build some of the plu
  * [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
  * [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express)
 
-Also take a look at our [sample applications](https://developer.atlassian.com/display/AC/Sample+Add-ons). They demonstrate authentication and many other patterns you can use to develop Atlassian Connect add-ons.
+Also take a look at our [sample applications](samples.html). They demonstrate authentication and many other patterns you can use to develop Atlassian Connect add-ons.
