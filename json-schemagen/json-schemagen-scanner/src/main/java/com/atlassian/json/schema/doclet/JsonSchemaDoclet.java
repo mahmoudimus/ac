@@ -42,31 +42,9 @@ public class JsonSchemaDoclet
             schemaClassDoc.setClassTitle(getTitle(classDoc));
 
             List<SchemaFieldDoc> schemaFieldDocs = new ArrayList<SchemaFieldDoc>();
-
-            for (FieldDoc fieldDoc : classDoc.fields())
-            {
-                if (!fieldDoc.isTransient() && !fieldDoc.isStatic())
-                {
-                    SchemaFieldDoc schemaFieldDoc = new SchemaFieldDoc();
-                    schemaFieldDoc.setFieldName(fieldDoc.name());
-                    schemaFieldDoc.setFieldTitle(getTitle(fieldDoc));
-
-                    if (Strings.isNullOrEmpty(fieldDoc.commentText()))
-                    {
-                        MethodDoc accessor = findFieldAccessor(classDoc, fieldDoc);
-                        if (null != accessor && !Strings.isNullOrEmpty(accessor.commentText()))
-                        {
-                            schemaFieldDoc.setFieldDocs(accessor.commentText());
-                        }
-                    }
-                    else
-                    {
-                        schemaFieldDoc.setFieldDocs(fieldDoc.commentText());
-                    }
-
-                    schemaFieldDocs.add(schemaFieldDoc);
-                }
-            }
+            
+            addFieldDocs(classDoc,schemaFieldDocs);
+            
 
             schemaClassDoc.setFieldDocs(schemaFieldDocs);
 
@@ -88,6 +66,41 @@ public class JsonSchemaDoclet
         }
 
         return true;
+    }
+
+    private static void addFieldDocs(ClassDoc classDoc, List<SchemaFieldDoc> schemaFieldDocs)
+    {
+        if(null == classDoc || Object.class.getName().equals(classDoc.qualifiedName()))
+        {
+            return;
+        }
+        
+        for (FieldDoc fieldDoc : classDoc.fields())
+        {
+            if (!fieldDoc.isTransient() && !fieldDoc.isStatic())
+            {
+                SchemaFieldDoc schemaFieldDoc = new SchemaFieldDoc();
+                schemaFieldDoc.setFieldName(fieldDoc.name());
+                schemaFieldDoc.setFieldTitle(getTitle(fieldDoc));
+
+                if (Strings.isNullOrEmpty(fieldDoc.commentText()))
+                {
+                    MethodDoc accessor = findFieldAccessor(classDoc, fieldDoc);
+                    if (null != accessor && !Strings.isNullOrEmpty(accessor.commentText()))
+                    {
+                        schemaFieldDoc.setFieldDocs(accessor.commentText());
+                    }
+                }
+                else
+                {
+                    schemaFieldDoc.setFieldDocs(fieldDoc.commentText());
+                }
+
+                schemaFieldDocs.add(schemaFieldDoc);
+            }
+        }
+        
+        addFieldDocs(classDoc.superclass(),schemaFieldDocs);
     }
 
     private static String getDocWithExample(Doc doc)
