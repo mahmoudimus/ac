@@ -79,7 +79,7 @@ Most modern languages have JWT libraries available. Prior to implementing JWT, c
 * Java - [jsontoken](https://code.google.com/p/jsontoken/)
 * Node.js - [node-jwt-simple](https://github.com/hokaccha/node-jwt-simple)
 * Ruby - [ruby-jwt](https://github.com/progrium/ruby-jwt)
-* PHP - [jwt](https://github.com/luciferous/jwt)
+* PHP - [firebase php-jwt](https://github.com/firebase/php-jwt) and [luciferous jwt](https://github.com/luciferous/jwt)
 * .NET - [jwt](https://github.com/johnsheehan/jwt)
 
 The [py-jwt-decoder](http://py-jwt-decoder.appspot.com/) is a handy web based decoder of JWT tokens.
@@ -279,7 +279,7 @@ In particular:
 <a name='outgoing'></a>
 # Signing Outgoing Requests
 
-When communicating server-to-server with the Atlassian host product your add-on must include a JWT token when accessing an protected resources. This covers most of the REST APIs.
+When communicating server-to-server with the Atlassian host product your add-on must include a JWT token when accessing protected resources. This covers most of the REST APIs.
 
 You may also find it useful to include tokens in iframe HTML for communication from the browser back to your add-on. For example, the URL of a link to an add-on resource could include a JWT token that the add-on uses to verify that it itself generated the link, and that therefore it can trust the link's query string parameters.
 
