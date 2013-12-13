@@ -520,7 +520,7 @@
                                 <pluginArtifact>
                                     <artifactId>json-schema-validator-atlassian-bundle</artifactId>
                                     <groupId>com.atlassian.bundles</groupId>
-                                    <version>1.0-SNAPSHOT</version>
+                                    <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <bundledArtifacts>
