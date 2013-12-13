@@ -104,9 +104,7 @@ in order to sign and verify future requests. The payload contains the following 
 # Validating Incoming Requests
 
 All incoming requests should check for the presence of the `jwt` query string parameter, which needs to be decoded and
-verified. An incoming request might look like:
-
-    GET /hello-world?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzODY4OTM4OTYsImlzcyI6ImppcmE6MTU0ODk1OTUiLCJxc2giOiI4MDYzZmY0Y2ExZTQxZGY3YmM5MGM4YWI2ZDBmNjIwN2Q0OTFjZjZkYWQ3YzY2ZWE3OTdiNDYxNGI3MTkyMmU5IiwiaWF0IjoxMzg2ODkzNzE2fQ.2hJD79ZF0dauaczjfn42f3KaKVYi006u7mDzAO18FoA
+verified.
 
 1. Extract the JWT token from the request's `jwt` query parameter
 2. Decode the JWT token, without verification
@@ -114,8 +112,59 @@ verified. An incoming request might look like:
 claim. This is the `clientKey` for the tenant
 4. Look up the `sharedSecret` for the `clientKey`. This should have been stored as part of the [installation handshake](#installation)
 process
-5. Decode the same JWT token, this time verifying the signature with the `sharedSecret`
+5. Decode the same JWT token, this time verifying the signature with `SHA-256` algorithm and the `sharedSecret`
 6. Verify the query string by [creating a query string hash](#qsh) and comparing against the `qsh` claim on the verified token.
+
+## Example
+
+An incoming request might look like:
+
+    GET /hello-world?lic=none&tz=Australia%2FSydney&cp=%2Fjira&user_key=&loc=en-US&user_id=&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzODY4OTkxMzEsImlzcyI6ImppcmE6MTU0ODk1OTUiLCJxc2giOiI4MDYzZmY0Y2ExZTQxZGY3YmM5MGM4YWI2ZDBmNjIwN2Q0OTFjZjZkYWQ3YzY2ZWE3OTdiNDYxNGI3MTkyMmU5IiwiaWF0IjoxMzg2ODk4OTUxfQ.uKqU9dTB6gKwG6jQCuXYAiMNdfNRw98Hw_IWuA5MaMo&xdm_e=http%3A%2F%2Fstorm%3A2990&xdm_c=channel-servlet-hello-world&xdm_p=1
+
+### 1. Decode the `jwt` token:
+
+    jwtToken = request.getParameter('jwt');
+    unverifiedClaims = base64decode(jwtToken);
+    segments = unverifiedClaims.split('.');
+    headerSegment = segments[0];
+    payloadSegment = segments[1];
+    signatureSegment = segments[2];
+
+Header Segment
+
+    {
+        "alg": "HS256",
+        "typ": "JWT"
+    }
+
+Payload Segment
+
+    {
+        "iss": "jira:15489595",
+        "iat": 1386898951,
+        "qsh": "8063ff4ca1e41df7bc90c8ab6d0f6207d491cf6dad7c66ea797b4614b71922e9",
+        "exp": 1386899131
+    }
+
+Signature Segment
+
+    uKqU9dTB6gKwG6jQCuXYAiMNdfNRw98Hw_IWuA5MaMo
+
+Look up the `sharedSecret` for the `iss` (issuer).
+
+### 2. Verify the `jwt` token with the shared secret
+
+    signingInput = [headerSegment, payloadSegment].join('.');
+    expectedSignature = sign(signingInput, sharedSecret, signingMethod);
+
+    if (expectedSignature !== signatureSegment) {
+        throw new Error('Signature verification failed');
+    }
+
+### 3. Verify query string hash
+
+Verify the query string by [creating a query string hash](#qsh) for the request and comparing against the `qsh` claim
+on the verified token.
 
 <a name='outgoing'></a>
 # Signing Outgoing Requests
