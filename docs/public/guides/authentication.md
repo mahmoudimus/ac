@@ -142,29 +142,29 @@ in order to sign and verify future requests. The payload contains the following 
     </thead>
     <tr>
         <td>`key`</td>
-        <td>Add-on key that was installed into the Atlassian Product</td>
+        <td>Add-on key that was installed into the Atlassian Product, as it appears in your add-on's descriptor.</td>
     </tr>
     <tr>
         <td>`clientKey`</td>
-        <td>Identifying key for the instance that the add-on was installed into. This will never change for a given
+        <td>Identifying key for the Atlassian product instance that the add-on was installed into. This will never change for a given
         instance, and is unique across all Atlassian OnDemand tenants. This value should be used to key tenant details
         in your add-on.</td>
     </tr>
     <tr>
         <td>`publicKey`</td>
-        <td>This is the public key for the Atlassian OnDemand application.</td>
+        <td>This is the public key for this Atlassian OnDemand product instance. You may verify that this `baseUrl` uses this `publicKey` at the standard URL `<host baseUrl>/plugins/servlet/oauth/consumer-info`.</td>
     </tr>
     <tr>
         <td>`sharedSecret`</td>
-        <td></td>
+        <td>Use this string to sign outgoing JWT tokens and validate incoming JWT tokens.</td>
     </tr>
     <tr>
         <td>`baseUrl`</td>
-        <td></td>
+        <td>URL prefix for this Atlassian OnDemand product instance. All of its REST endpoints begin with this `baseUrl`.</td>
     </tr>
     <tr>
         <td>`productType`</td>
-        <td></td>
+        <td>Identifies the category of Atlassian host product, e.g. `jira` or `confluence`.</td>
     </tr>
 </table>
 
