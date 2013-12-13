@@ -7,6 +7,7 @@ import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -53,6 +54,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     @Mock private LocaleHelper localeHelper;
     @Mock private PluginRetrievalService pluginRetrievalService;
     @Mock private JwtService jwtService;
+    @Mock private ConsumerService consumerService;
 
     private DefaultRemotablePluginAccessorFactory factory;
 
@@ -63,7 +65,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
-        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService);
+        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService);
     }
 
     @Test
