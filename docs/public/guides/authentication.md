@@ -1,6 +1,6 @@
 # Authentication
 
-Atlassian Connect employs usage of a technology called [JWT (JSON Web Token)](tools.ietf.org/html/draft-ietf-oauth-json-web-token‎)
+Atlassian Connect employs usage of a technology called [JWT (JSON Web Token)](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token‎)
  to authenticate add-ons. There is a nicely presented copy of the specification [here](http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html).
 
 ## JWT
