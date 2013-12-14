@@ -135,17 +135,17 @@ function sortModules(modules) {
     return obj;
 }
 
-jiraSchema.properties.modules.properties = sortModules(jiraSchema.properties.modules.properties);
-harpGlobals.globals.schemas.jira = jiraSchema;
-for (var k in jiraSchema.properties.modules.properties) {
-    fs.outputFile('./public/modules/jira/'+k+'.md', String(jiraSchema.properties.modules.properties[k].items.description).replace(/\n /g,"\n"));
+function sortAndWriteOutProperties(schema, product)
+{
+    schema.properties.modules.properties = sortModules(schema.properties.modules.properties);
+    harpGlobals.globals.schemas[product] = schema;
+    for (var k in schema.properties.modules.properties) {
+        fs.outputFile('./public/modules/' + product + '/' + k +'.md', String(schema.properties.modules.properties[k].items.description).replace(/\n /g,"\n"));
+    }
 }
 
-confluenceSchema.properties.modules.properties = sortModules(confluenceSchema.properties.modules.properties);
-harpGlobals.globals.schemas.confluence = confluenceSchema;
-for (var k in confluenceSchema.properties.modules.properties) {
-    fs.outputFile('./public/modules/confluence/'+k+'.md', String(confluenceSchema.properties.modules.properties[k].items.description).replace(/\n /g,"\n"));
-}
+sortAndWriteOutProperties(jiraSchema, 'jira');
+sortAndWriteOutProperties(confluenceSchema, 'confluence');
 
 // Store schema info into Harp globals
 fs.writeFile('./harp.json', JSON.stringify(harpGlobals,null,2), function(err) {
