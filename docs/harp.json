@@ -444,7 +444,375 @@
           ]
         }
       ],
-      "commonModules": [
+      "jiraModules": [
+        {
+          "id": "connectTabPanelModuleBean",
+          "name": "connectTabPanelModuleBean",
+          "description": "<p>connectTabPanelModuleBean</p>",
+          "type": "object",
+          "properties": [
+            {
+              "id": "conditions",
+              "type": "array",
+              "key": "conditions"
+            },
+            {
+              "type": "integer",
+              "key": "weight"
+            },
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "name"
+            },
+            {
+              "type": "object",
+              "title": "Parameters",
+              "key": "params"
+            },
+            {
+              "type": "string",
+              "key": "url"
+            }
+          ]
+        },
+        {
+          "id": "connectProjectAdminTabPanelModuleBean",
+          "name": "Project Admin Tab Panel",
+          "description": "<p>Module bean for Jira ProjectAdmin Tab Pages. The module JSON looks like\n <p>\n <pre>\n \"jiraProjectAdminTabPanels\": [{\n   \"name\": {\n     \"value\": \"My ProjectAdmin Tab\",\n     \"i18n\": \"my.tab\"\n   },\n   \"url\": \"/my-general-page\",\n   \"weight\": 100\n   \"location\" : \"projectgroup4\"\n }]\n </pre>\n </p></p>",
+          "type": "object",
+          "properties": [
+            {
+              "id": "conditions",
+              "type": "array",
+              "key": "conditions"
+            },
+            {
+              "type": "integer",
+              "key": "weight"
+            },
+            {
+              "type": "string",
+              "key": "location"
+            },
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "name"
+            },
+            {
+              "type": "object",
+              "title": "Parameters",
+              "key": "params"
+            },
+            {
+              "type": "string",
+              "key": "url"
+            }
+          ]
+        },
+        {
+          "id": "webPanelModuleBean",
+          "name": "Web Panel",
+          "description": "<p>Adds a panel (or section) to a page in the Atlassian application. Panels let you present related information and\n controls in the application interface as a group. For example, the existing \"People\" panel in JIRA issue view\n shows the assignee, reporter, and similar information for the issue.</p>",
+          "type": "object",
+          "properties": [
+            {
+              "id": "conditions",
+              "type": "array",
+              "key": "conditions"
+            },
+            {
+              "type": "integer",
+              "description": "Determines the order in which web panels appear. Web panels are displayed top to bottom or left to right in\n  order of ascending weight. The \"lightest\" weight is displayed first, while the \"heaviest\" weights sink to the\n  bottom. The weight values for most panels start from 100, and the weights for the links\n  generally start from 10. The weight is incremented by 10 for each in sequence to leave room for custom\n  panels.\n",
+              "key": "weight"
+            },
+            {
+              "type": "string",
+              "description": "Location in the application interface for this panel.\n",
+              "key": "location"
+            },
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "name"
+            },
+            {
+              "id": "webPanelLayout",
+              "type": "object",
+              "key": "layout"
+            },
+            {
+              "type": "object",
+              "title": "Parameters",
+              "key": "params"
+            },
+            {
+              "type": "string",
+              "description": "The URL of the add-on resource that provides the web panel content.\n",
+              "key": "url"
+            }
+          ]
+        },
+        {
+          "id": "connectPageModuleBean",
+          "name": "connectPageModuleBean",
+          "description": "<p>Page modules are UI extension points that add-ons can use to insert content into various areas of the host\n application's interface. You implement a page module (along with the other type of module you can use with\n Atlassian Connect, webhooks) by declaring it in the add-on descriptor and implementing the add-on code that\n composes it.</p>\n\n<p>Each application has page module types that are specific for it, but there are some common page types as well.\n For instance, both JIRA and Confluence support the general-page and profile-page module, but only JIRA has the\n issue-panel-page.</p>\n\n<p>The page module takes care of integrating the add-on content into the application for you. The add-on content\n automatically gets the page styles and decorators from the host application.</p>",
+          "type": "object",
+          "properties": [
+            {
+              "id": "conditions",
+              "type": "array",
+              "key": "conditions"
+            },
+            {
+              "id": "iconBean",
+              "type": "object",
+              "key": "icon"
+            },
+            {
+              "type": "integer",
+              "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n",
+              "key": "weight"
+            },
+            {
+              "type": "string",
+              "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n",
+              "key": "location"
+            },
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "name"
+            },
+            {
+              "type": "object",
+              "title": "Parameters",
+              "key": "params"
+            },
+            {
+              "type": "string",
+              "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL\n",
+              "key": "url"
+            }
+          ]
+        },
+        {
+          "id": "webItemModuleBean",
+          "name": "Web Item",
+          "description": "<p>Adds a web item to a specified location in the application interface. A web item is a hyperlink\n that’s inserted into some standard place in the Atlassian application interface, such as the\n administration menu.</p>\n\n<p><p/></p>\n\n<p>The form that the link takes can vary depending on the location. For instance, a web item in the header bar\n (with a location section of system.top.navigation.bar) adds a link to the navigation bar across the top of the\n interface. On the other hand, a web item in the opsbar-operation location section in JIRA adds an item to the issue\n operation buttons.</p>\n\n<p><p/></p>\n\n<p>A web item link can open a new page in the application or a dialog, depending on your configuration.</p>\n\n<p><p/></p>\n\n<p>Web links are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian\n application and don't know where to start, a web item may be all you need.</p>",
+          "type": "object",
+          "properties": [
+            {
+              "id": "conditions",
+              "type": "array",
+              "key": "conditions"
+            },
+            {
+              "id": "iconBean",
+              "type": "object",
+              "key": "icon"
+            },
+            {
+              "id": "styleClasses",
+              "type": "array",
+              "key": "styleClasses"
+            },
+            {
+              "type": "integer",
+              "description": "Determines the order in which the web item appears in the menu or list.\n\n <p/>\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n <p/>\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n",
+              "key": "weight"
+            },
+            {
+              "type": "string",
+              "description": "The location in the application interface where the web item should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n <p/>\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n",
+              "required": true,
+              "key": "location"
+            },
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "name"
+            },
+            {
+              "format": "uri",
+              "type": "string",
+              "description": "Specifies the URL targeted by the link. The URL can be absolute or relative to either the\n  product URL or the add-on's base URL, depending on the *context* parameter.\n",
+              "key": "link"
+            },
+            {
+              "id": "webItemTargetBean",
+              "type": "object",
+              "key": "target"
+            },
+            {
+              "enum": [
+                "addon",
+                "product"
+              ],
+              "type": "string",
+              "description": "The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.\n\n <p/>\n\n  This context can be either \"add-on\", which renders the URL relative to the add-on's base URL, or\n  \"product\", which renders the URL relative to the product's base URL.\n",
+              "key": "context"
+            },
+            {
+              "type": "object",
+              "title": "Parameters",
+              "key": "params"
+            },
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "tooltip"
+            }
+          ]
+        },
+        {
+          "id": "searchRequestViewModuleBean",
+          "name": "Search Request View",
+          "description": "<p>A Search Request View allows you to render a custom representation of a search result. Rendering a custom XML format\n is a common example.</p>\n\n<p>After an add-on declaring a Search Request View module is installed, a new entry will show up in the\n <em>Export</em> menu on the Issue Navigator page. Clicking the entry will redirect to the URL that is provided\n by your add-on, passing in the issue keys, pagination information and the OAuth parameters that allow you\n to verify the validity of the request.</p>\n\n<p>To declare a Search Request View, you must mainly provide the URL that will handle the HTTP GET request.\n This URL is relative to the base url of the descriptor. Here is an example:</p>\n\n<pre><code> \"jiraSearchRequestViews\": [\n    {\n       \"conditions\": [\n          {\n             \"condition\": \"user_is_logged_in\",\n             \"invert\": false\n          }\n       ],\n       \"description\": {\n          \"i18n\": \"my.searchRequestView.desc\",\n          \"value\": \"My description\"\n       },\n       \"name\": {\n          \"i18n\": \"my.searchRequestView.name\",\n          \"value\": \"My Name\"\n       },\n       \"url\": \"/search-request.csv\",\n       \"weight\": 10\n    }\n ]\n</code></pre>\n\n<p>Your service will be invoked with these parameters:</p>\n\n<ul>\n<li><strong>issues</strong>: A comma-separated list of issue keys</li>\n<li><strong>link</strong>: A link back to the JIRA Issue Navigator where the action was invoked</li>\n<li><strong>startIssue</strong>: The index of the first passed issue key in the list of all issues</li>\n<li><strong>endIssue</strong>: The index of the last passed issue key in the list of all issues</li>\n<li><strong>totalIssues</strong>: The number of issues in the entire search result</li>\n</ul>",
+          "type": "object",
+          "properties": [
+            {
+              "id": "conditions",
+              "type": "array",
+              "key": "conditions"
+            },
+            {
+              "type": "integer",
+              "description": "Determines the order in which the Search Request View entry appears in the *Export* menu.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n",
+              "key": "weight"
+            },
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "description"
+            },
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "name"
+            },
+            {
+              "type": "object",
+              "title": "Parameters",
+              "key": "params"
+            },
+            {
+              "type": "string",
+              "description": "The URL of the service that will render the representation for the result set. The URL is\n interpreted relative to the *baseUrl* in the descriptor.\n",
+              "key": "url"
+            }
+          ]
+        },
+        {
+          "id": "webHookModuleBean",
+          "name": "Webhooks",
+          "description": "<p>A webhook is a standard mechanism for implementing HTTP callbacks. Atlassian OnDemand applications can execute\n webhooks that your add-ons can use to be notified of certain events that happen in JIRA or Confluence.</p>\n\n<p>Just to give you an idea of how you can use them in add-ons, here are a few sample webhook events:</p>\n\n<ul>\n<li>When an add-on is enabled or disabled</li>\n<li>When an issue is created or closed in JIRA</li>\n<li><p>When a page is created or updated in Confluence</p>\n\n<p>While some webhooks are specific to the Atlassian application, JIRA or Confluence, others are common to all\napplications. This type includes, for example, the webhooks that generate notifications when the add-on is enabled.</p>\n\n<p>Most add-ons should implement the remote<em>plugin</em>enabled webhook. The Atlassian application uses this event to supply\nits public key to the add-on. The Authenticating with OAuth page shows an example of how to use this webhook.</p>\n\n<h3>Handling the webhook event</h3>\n\n<p>To receive webhook events, your add-on needs to include the webhook module declaration in its JSON descriptor. The\ndeclaration indicates the relative URL of the local resource at which it will receive the notification. In other\nwords, the Atlassian application will send an HTTP POST to this resource in response to an application event. The\nadd-on code that handles the POST should process any information passed in the body of the message, as appropriate.\nEach webhook POST sent to the add-on will also include the authentication headers that allow the add-on to\nvalidate the authenticity of that request.</p>\n\n<h4>Sample webhooks JSON block</h4>\n\n<p>{\n     \"webhooks\": [\n         {\n             \"event\": \"jira:issue<em>created\",\n             \"url\": \"/issue-created\"\n         },\n         ...\n         {\n             \"event\": \"jira:issue</em>updated\",\n             \"url\": \"/issue-updated\"\n         }\n     ]\n }</p>\n\n<h3>Webhook event types</h3>\n\n<p>To find out what webhooks are available for each application, the best place to look is in the Interactive\nDescriptor Guide <a href=\"https://developer.atlassian.com/connect/api/jira\">JIRA</a> or\n<a href=\"https://developer.atlassian.com/connect/api/confluence\">Confluence</a>.</p>\n\n<h3>Inspecting webhook contents</h3>\n\n<p>Each type of webhook event includes information specific to that event in the body content of the POST message. The\nadd-on resource that listens for webhook posts should receive and process the content as appropriate for the add-on.\nTo understand what type of content each webhook generates, you can use the webhook inspector tool.</p>\n\n<p>The <a href=\"https://bitbucket.org/atlassianlabs/webhook-inspector\">Webhook Inspector</a> is a\n<a href=\"https://bitbucket.org/atlassian/atlassian-connect-express\">atlassian-connect-express</a> Connect add-on\nthat you can install in your development environment to inspect the content of event messages. The Webhook Inspector\nsubscribes and generates each webhook event type available on the running instance of the Atlassian application,\nand prints the body posted by the instance to the console screen.</p></li>\n</ul>",
+          "type": "object",
+          "properties": [
+            {
+              "type": "string",
+              "description": "Specifies the named event you would like to listen to (e.g., \"enabled\", \"jira:issue_created\", etc.)\n",
+              "key": "event"
+            },
+            {
+              "type": "object",
+              "key": "params"
+            },
+            {
+              "type": "string",
+              "description": "Specifies your add-on's POST webhook handler URL. This property has to be a relative URL.\n",
+              "key": "url"
+            }
+          ]
+        },
+        {
+          "id": "workflowPostFunctionModuleBean",
+          "name": "Workflow Post Function",
+          "description": "<p>Post functions carry out any additional processing required <em>after</em> a JIRA workflow transition is executed, such as:</p>\n\n<ul>\n<li>updating an issue's fields</li>\n<li><p>adding a comment to an issue</p>\n\n<p>Your add-on needs to declare the URL that JIRA will invoke with an HTTP POST after the transition is completed.\nEach POST will include the issue and transition details and the configuration of the workflow function. It\nwill also include the authentication headers that allow the add-on to validate the authenticity of that request.</p>\n\n<p>Often, the workflow post function will allow some degree of configuration of its behavior. As an example:\nYou may want to react to a state transition only if the issue has a particular label, and you want the project\nadministrator to configure that label. For this purpose, three additional (optional) URLs in the descriptor\nallow you to declare the pages that will show:</p></li>\n<li><p>The read-only view or summary of the configuration</p></li>\n<li>The form that is shown when a workflow post function is first created</li>\n<li><p>The form that is shown when a workflow post function is edited</p>\n\n<p>All URLs are relative to the base URL that is declared in the connect-container element of the descriptor.</p>\n\n<p>Example workflow post function descriptor block</p>\n\n<p>\"jiraWorkflowPostFunctions\": [\n    {\n     \"name\": {\n         \"i18n\": \"my.function\",\n         \"value\": \"My  function\"\n     },\n     \"description\": {\n         \"i18n\": \"my.function.desc\",\n         \"value\": \"My function description\"\n     },\n     \"triggered\": {\n         \"url\": \"/triggered\"\n     },\n     \"create\": {\n         \"url\": \"/create\"\n     },\n     \"edit\": {\n         \"url\": \"/edit\"\n     },\n     \"view\": {\n         \"url\": \"/view\"\n     }\n }]</p>\n\n<h2>Contents of the HTTP POST</h2>\n\n<p>To understand the type of content that is sent to the add-on after a state transition, you can use the webhook\ninspector tool. The <a href=\"https://bitbucket.org/atlassianlabs/webhook-inspector\">Webhook Inspector</a> is a Connect add-on\nthat you can install in your development environment to inspect the content of event messages.</p>\n\n<p>Here is an example POST body:</p>\n\n<p>{\n      \"configuration\": {\n          \"value\": \"Configuration from the post function edit page\"\n      },\n      \"issue\": {\n          \"fields\": {\n              \"assignee\": {\n                  \"active\": true,\n                  \"avatarUrls\": {\n                      \"16x16\": \"http://issues.example.com/jira/secure/useravatar?size=xsmall&amp;avatarId=10062\",\n                      \"24x24\": \"http://issues.example.com/jira/secure/useravatar?size=small&amp;avatarId=10062\",\n                      \"32x32\": \"http://issues.example.com/jira/secure/useravatar?size=medium&amp;avatarId=10062\",\n                      \"48x48\": \"http://issues.example.com/jira/secure/useravatar?avatarId=10062\"\n                  },\n                  \"displayName\": \"A. D. Ministrator (Sysadmin)\",\n                  \"emailAddress\": \"admin@example.com\",\n                  \"name\": \"admin\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/user?username=admin\"\n              },\n              \"attachment\": [],\n              \"comment\": {\n                  \"comments\": [],\n                  \"maxResults\": 0,\n                  \"startAt\": 0,\n                  \"total\": 0\n              },\n              \"components\": [],\n              \"created\": \"2013-11-18T17:56:23.864+1100\",\n              \"description\": null,\n              \"duedate\": null,\n              \"environment\": null,\n              \"fixVersions\": [],\n              \"issuetype\": {\n                  \"description\": \"A problem which impairs or prevents the functions of the product.\",\n                  \"iconUrl\": \"http://issues.example.com/jira/images/icons/issuetypes/bug.png\",\n                  \"id\": \"1\",\n                  \"name\": \"Bug\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/issuetype/1\",\n                  \"subtask\": false\n              },\n              \"labels\": [],\n              \"lastViewed\": \"2013-11-18T17:56:31.793+1100\",\n              \"priority\": {\n                  \"iconUrl\": \"http://issues.example.com/jira/images/icons/priorities/major.png\",\n                  \"id\": \"3\",\n                  \"name\": \"Major\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/priority/3\"\n              },\n              \"project\": {\n                  \"avatarUrls\": {\n                      \"16x16\": \"http://issues.example.com/jira/secure/projectavatar?size=xsmall&amp;pid=10000&amp;avatarId=10011\",\n                      \"24x24\": \"http://issues.example.com/jira/secure/projectavatar?size=small&amp;pid=10000&amp;avatarId=10011\",\n                      \"32x32\": \"http://issues.example.com/jira/secure/projectavatar?size=medium&amp;pid=10000&amp;avatarId=10011\",\n                      \"48x48\": \"http://issues.example.com/jira/secure/projectavatar?pid=10000&amp;avatarId=10011\"\n                  },\n                  \"id\": \"10000\",\n                  \"key\": \"TEST\",\n                  \"name\": \"Test\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/project/10000\"\n              },\n              \"reporter\": {\n                  \"active\": true,\n                  \"avatarUrls\": {\n                      \"16x16\": \"http://issues.example.com/jira/secure/useravatar?size=xsmall&amp;avatarId=10062\",\n                      \"24x24\": \"http://issues.example.com/jira/secure/useravatar?size=small&amp;avatarId=10062\",\n                      \"32x32\": \"http://issues.example.com/jira/secure/useravatar?size=medium&amp;avatarId=10062\",\n                      \"48x48\": \"http://issues.example.com/jira/secure/useravatar?avatarId=10062\"\n                  },\n                  \"displayName\": \"A. D. Ministrator (Sysadmin)\",\n                  \"emailAddress\": \"admin@example.com\",\n                  \"name\": \"admin\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/user?username=admin\"\n              },\n              \"resolution\": {\n                  \"description\": \"A fix for this issue is checked into the tree and tested.\",\n                  \"id\": \"1\",\n                  \"name\": \"Fixed\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/resolution/1\"\n              },\n              \"resolutiondate\": \"2013-11-18T17:56:31.799+1100\",\n              \"status\": {\n                  \"description\": \"The issue is open and ready for the assignee to start work on it.\",\n                  \"iconUrl\": \"http://issues.example.com/jira/images/icons/statuses/open.png\",\n                  \"id\": \"1\",\n                  \"name\": \"Open\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/status/1\"\n              },\n              \"summary\": \"The issue summary\",\n              \"updated\": \"2013-11-18T17:56:23.864+1100\",\n              \"versions\": [],\n              \"votes\": {\n                  \"hasVoted\": false,\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/issue/TEST-1/votes\",\n                  \"votes\": 0\n              },\n              \"watches\": {\n                  \"isWatching\": true,\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/issue/TEST-1/watchers\",\n                  \"watchCount\": 1\n              },\n              \"workratio\": -1\n          },\n          \"id\": \"10000\",\n          \"key\": \"TEST-1\",\n          \"self\": \"http://issues.example.com/jira/issue/10000\"\n      },\n      \"transition\": {\n          \"from<em>status\": \"Open\",\n          \"to</em>status\": \"Resolved\",\n          \"transitionId\": 5,\n          \"transitionName\": \"Resolve Issue\",\n          \"workflowId\": 10000,\n          \"workflowName\": \"classic default workflow\"\n      }\n  }</p></li>\n</ul>",
+          "type": "object",
+          "properties": [
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "description"
+            },
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "name"
+            },
+            {
+              "id": "urlBean",
+              "type": "object",
+              "key": "edit"
+            },
+            {
+              "id": "urlBean",
+              "type": "object",
+              "key": "view"
+            },
+            {
+              "id": "urlBean",
+              "type": "object",
+              "key": "create"
+            },
+            {
+              "id": "urlBean",
+              "type": "object",
+              "key": "triggered"
+            }
+          ]
+        },
+        {
+          "id": "configurePageModuleBean",
+          "name": "configurePageModuleBean",
+          "description": "<p>A configure page module is a page module used to configure the addon itself.\n Other than that it is the same as other pages.</p>\n\n<p>If more than one configure page is specified, then exactly one of them must have the [default] field set.\n A 'configure' button will link to this page from the manage plugins administration console.</p>\n\n<p>If there is only one configure page specified then it will automatically be used regardless of the default field.</p>\n\n<p>If no configure page modules are specified then no configure button will be included on the install page.</p>",
+          "type": "object",
+          "properties": [
+            {
+              "id": "conditions",
+              "type": "array",
+              "key": "conditions"
+            },
+            {
+              "id": "iconBean",
+              "type": "object",
+              "key": "icon"
+            },
+            {
+              "type": "integer",
+              "description": "Determines the order in which the page's link appears in the menu or list.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n\n Built-in web items have weights that are incremented by numbers that leave room for additional\n items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears\n in a sensible order given existing items.\n",
+              "key": "weight"
+            },
+            {
+              "type": "string",
+              "description": "The location in the application interface where the page's link should appear. For the Atlassian application\n interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or\n navigation list in the UI.\n\n Places in the Atlassian UI are identified by what are known as \"well-known locations.\"\n For example, the \"system.admin/globalsettings\" location is in the administrative\n menu link on the left side of the Administration Console.\n",
+              "key": "location"
+            },
+            {
+              "type": "boolean",
+              "key": "isDefault"
+            },
+            {
+              "id": "i18nProperty",
+              "type": "object",
+              "key": "name"
+            },
+            {
+              "type": "object",
+              "title": "Parameters",
+              "key": "params"
+            },
+            {
+              "type": "string",
+              "description": "Specifies the URL targeted by the page. The URL is relative to either the\n  the add-on's base URL\n",
+              "key": "url"
+            }
+          ]
+        }
+      ],
+      "confluenceModules": [
         {
           "id": "webPanelModuleBean",
           "name": "Web Panel",
@@ -669,152 +1037,7 @@
             }
           ]
         }
-      ],
-      "jiraModules": [
-        {
-          "id": "connectTabPanelModuleBean",
-          "name": "connectTabPanelModuleBean",
-          "description": "<p>connectTabPanelModuleBean</p>",
-          "type": "object",
-          "properties": [
-            {
-              "id": "conditions",
-              "type": "array",
-              "key": "conditions"
-            },
-            {
-              "type": "integer",
-              "key": "weight"
-            },
-            {
-              "id": "i18nProperty",
-              "type": "object",
-              "key": "name"
-            },
-            {
-              "type": "object",
-              "title": "Parameters",
-              "key": "params"
-            },
-            {
-              "type": "string",
-              "key": "url"
-            }
-          ]
-        },
-        {
-          "id": "connectProjectAdminTabPanelModuleBean",
-          "name": "Project Admin Tab Panel",
-          "description": "<p>Module bean for Jira ProjectAdmin Tab Pages. The module JSON looks like\n <p>\n <pre>\n \"jiraProjectAdminTabPanels\": [{\n   \"name\": {\n     \"value\": \"My ProjectAdmin Tab\",\n     \"i18n\": \"my.tab\"\n   },\n   \"url\": \"/my-general-page\",\n   \"weight\": 100\n   \"location\" : \"projectgroup4\"\n }]\n </pre>\n </p></p>",
-          "type": "object",
-          "properties": [
-            {
-              "id": "conditions",
-              "type": "array",
-              "key": "conditions"
-            },
-            {
-              "type": "integer",
-              "key": "weight"
-            },
-            {
-              "type": "string",
-              "key": "location"
-            },
-            {
-              "id": "i18nProperty",
-              "type": "object",
-              "key": "name"
-            },
-            {
-              "type": "object",
-              "title": "Parameters",
-              "key": "params"
-            },
-            {
-              "type": "string",
-              "key": "url"
-            }
-          ]
-        },
-        {
-          "id": "searchRequestViewModuleBean",
-          "name": "Search Request View",
-          "description": "<p>A Search Request View allows you to render a custom representation of a search result. Rendering a custom XML format\n is a common example.</p>\n\n<p>After an add-on declaring a Search Request View module is installed, a new entry will show up in the\n <em>Export</em> menu on the Issue Navigator page. Clicking the entry will redirect to the URL that is provided\n by your add-on, passing in the issue keys, pagination information and the OAuth parameters that allow you\n to verify the validity of the request.</p>\n\n<p>To declare a Search Request View, you must mainly provide the URL that will handle the HTTP GET request.\n This URL is relative to the base url of the descriptor. Here is an example:</p>\n\n<pre><code> \"jiraSearchRequestViews\": [\n    {\n       \"conditions\": [\n          {\n             \"condition\": \"user_is_logged_in\",\n             \"invert\": false\n          }\n       ],\n       \"description\": {\n          \"i18n\": \"my.searchRequestView.desc\",\n          \"value\": \"My description\"\n       },\n       \"name\": {\n          \"i18n\": \"my.searchRequestView.name\",\n          \"value\": \"My Name\"\n       },\n       \"url\": \"/search-request.csv\",\n       \"weight\": 10\n    }\n ]\n</code></pre>\n\n<p>Your service will be invoked with these parameters:</p>\n\n<ul>\n<li><strong>issues</strong>: A comma-separated list of issue keys</li>\n<li><strong>link</strong>: A link back to the JIRA Issue Navigator where the action was invoked</li>\n<li><strong>startIssue</strong>: The index of the first passed issue key in the list of all issues</li>\n<li><strong>endIssue</strong>: The index of the last passed issue key in the list of all issues</li>\n<li><strong>totalIssues</strong>: The number of issues in the entire search result</li>\n</ul>",
-          "type": "object",
-          "properties": [
-            {
-              "id": "conditions",
-              "type": "array",
-              "key": "conditions"
-            },
-            {
-              "type": "integer",
-              "description": "Determines the order in which the Search Request View entry appears in the *Export* menu.\n\n The \"lightest\" weight (i.e., lowest number) appears first, rising relative to other items,\n while the \"heaviest\" weights sink to the bottom of the menu or list.\n",
-              "key": "weight"
-            },
-            {
-              "id": "i18nProperty",
-              "type": "object",
-              "key": "description"
-            },
-            {
-              "id": "i18nProperty",
-              "type": "object",
-              "key": "name"
-            },
-            {
-              "type": "object",
-              "title": "Parameters",
-              "key": "params"
-            },
-            {
-              "type": "string",
-              "description": "The URL of the service that will render the representation for the result set. The URL is\n interpreted relative to the *baseUrl* in the descriptor.\n",
-              "key": "url"
-            }
-          ]
-        },
-        {
-          "id": "workflowPostFunctionModuleBean",
-          "name": "Workflow Post Function",
-          "description": "<p>Post functions carry out any additional processing required <em>after</em> a JIRA workflow transition is executed, such as:</p>\n\n<ul>\n<li>updating an issue's fields</li>\n<li><p>adding a comment to an issue</p>\n\n<p>Your add-on needs to declare the URL that JIRA will invoke with an HTTP POST after the transition is completed.\nEach POST will include the issue and transition details and the configuration of the workflow function. It\nwill also include the authentication headers that allow the add-on to validate the authenticity of that request.</p>\n\n<p>Often, the workflow post function will allow some degree of configuration of its behavior. As an example:\nYou may want to react to a state transition only if the issue has a particular label, and you want the project\nadministrator to configure that label. For this purpose, three additional (optional) URLs in the descriptor\nallow you to declare the pages that will show:</p></li>\n<li><p>The read-only view or summary of the configuration</p></li>\n<li>The form that is shown when a workflow post function is first created</li>\n<li><p>The form that is shown when a workflow post function is edited</p>\n\n<p>All URLs are relative to the base URL that is declared in the connect-container element of the descriptor.</p>\n\n<p>Example workflow post function descriptor block</p>\n\n<p>\"jiraWorkflowPostFunctions\": [\n    {\n     \"name\": {\n         \"i18n\": \"my.function\",\n         \"value\": \"My  function\"\n     },\n     \"description\": {\n         \"i18n\": \"my.function.desc\",\n         \"value\": \"My function description\"\n     },\n     \"triggered\": {\n         \"url\": \"/triggered\"\n     },\n     \"create\": {\n         \"url\": \"/create\"\n     },\n     \"edit\": {\n         \"url\": \"/edit\"\n     },\n     \"view\": {\n         \"url\": \"/view\"\n     }\n }]</p>\n\n<h2>Contents of the HTTP POST</h2>\n\n<p>To understand the type of content that is sent to the add-on after a state transition, you can use the webhook\ninspector tool. The <a href=\"https://bitbucket.org/atlassianlabs/webhook-inspector\">Webhook Inspector</a> is a Connect add-on\nthat you can install in your development environment to inspect the content of event messages.</p>\n\n<p>Here is an example POST body:</p>\n\n<p>{\n      \"configuration\": {\n          \"value\": \"Configuration from the post function edit page\"\n      },\n      \"issue\": {\n          \"fields\": {\n              \"assignee\": {\n                  \"active\": true,\n                  \"avatarUrls\": {\n                      \"16x16\": \"http://issues.example.com/jira/secure/useravatar?size=xsmall&amp;avatarId=10062\",\n                      \"24x24\": \"http://issues.example.com/jira/secure/useravatar?size=small&amp;avatarId=10062\",\n                      \"32x32\": \"http://issues.example.com/jira/secure/useravatar?size=medium&amp;avatarId=10062\",\n                      \"48x48\": \"http://issues.example.com/jira/secure/useravatar?avatarId=10062\"\n                  },\n                  \"displayName\": \"A. D. Ministrator (Sysadmin)\",\n                  \"emailAddress\": \"admin@example.com\",\n                  \"name\": \"admin\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/user?username=admin\"\n              },\n              \"attachment\": [],\n              \"comment\": {\n                  \"comments\": [],\n                  \"maxResults\": 0,\n                  \"startAt\": 0,\n                  \"total\": 0\n              },\n              \"components\": [],\n              \"created\": \"2013-11-18T17:56:23.864+1100\",\n              \"description\": null,\n              \"duedate\": null,\n              \"environment\": null,\n              \"fixVersions\": [],\n              \"issuetype\": {\n                  \"description\": \"A problem which impairs or prevents the functions of the product.\",\n                  \"iconUrl\": \"http://issues.example.com/jira/images/icons/issuetypes/bug.png\",\n                  \"id\": \"1\",\n                  \"name\": \"Bug\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/issuetype/1\",\n                  \"subtask\": false\n              },\n              \"labels\": [],\n              \"lastViewed\": \"2013-11-18T17:56:31.793+1100\",\n              \"priority\": {\n                  \"iconUrl\": \"http://issues.example.com/jira/images/icons/priorities/major.png\",\n                  \"id\": \"3\",\n                  \"name\": \"Major\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/priority/3\"\n              },\n              \"project\": {\n                  \"avatarUrls\": {\n                      \"16x16\": \"http://issues.example.com/jira/secure/projectavatar?size=xsmall&amp;pid=10000&amp;avatarId=10011\",\n                      \"24x24\": \"http://issues.example.com/jira/secure/projectavatar?size=small&amp;pid=10000&amp;avatarId=10011\",\n                      \"32x32\": \"http://issues.example.com/jira/secure/projectavatar?size=medium&amp;pid=10000&amp;avatarId=10011\",\n                      \"48x48\": \"http://issues.example.com/jira/secure/projectavatar?pid=10000&amp;avatarId=10011\"\n                  },\n                  \"id\": \"10000\",\n                  \"key\": \"TEST\",\n                  \"name\": \"Test\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/project/10000\"\n              },\n              \"reporter\": {\n                  \"active\": true,\n                  \"avatarUrls\": {\n                      \"16x16\": \"http://issues.example.com/jira/secure/useravatar?size=xsmall&amp;avatarId=10062\",\n                      \"24x24\": \"http://issues.example.com/jira/secure/useravatar?size=small&amp;avatarId=10062\",\n                      \"32x32\": \"http://issues.example.com/jira/secure/useravatar?size=medium&amp;avatarId=10062\",\n                      \"48x48\": \"http://issues.example.com/jira/secure/useravatar?avatarId=10062\"\n                  },\n                  \"displayName\": \"A. D. Ministrator (Sysadmin)\",\n                  \"emailAddress\": \"admin@example.com\",\n                  \"name\": \"admin\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/user?username=admin\"\n              },\n              \"resolution\": {\n                  \"description\": \"A fix for this issue is checked into the tree and tested.\",\n                  \"id\": \"1\",\n                  \"name\": \"Fixed\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/resolution/1\"\n              },\n              \"resolutiondate\": \"2013-11-18T17:56:31.799+1100\",\n              \"status\": {\n                  \"description\": \"The issue is open and ready for the assignee to start work on it.\",\n                  \"iconUrl\": \"http://issues.example.com/jira/images/icons/statuses/open.png\",\n                  \"id\": \"1\",\n                  \"name\": \"Open\",\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/status/1\"\n              },\n              \"summary\": \"The issue summary\",\n              \"updated\": \"2013-11-18T17:56:23.864+1100\",\n              \"versions\": [],\n              \"votes\": {\n                  \"hasVoted\": false,\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/issue/TEST-1/votes\",\n                  \"votes\": 0\n              },\n              \"watches\": {\n                  \"isWatching\": true,\n                  \"self\": \"http://issues.example.com/jira/rest/api/2/issue/TEST-1/watchers\",\n                  \"watchCount\": 1\n              },\n              \"workratio\": -1\n          },\n          \"id\": \"10000\",\n          \"key\": \"TEST-1\",\n          \"self\": \"http://issues.example.com/jira/issue/10000\"\n      },\n      \"transition\": {\n          \"from<em>status\": \"Open\",\n          \"to</em>status\": \"Resolved\",\n          \"transitionId\": 5,\n          \"transitionName\": \"Resolve Issue\",\n          \"workflowId\": 10000,\n          \"workflowName\": \"classic default workflow\"\n      }\n  }</p></li>\n</ul>",
-          "type": "object",
-          "properties": [
-            {
-              "id": "i18nProperty",
-              "type": "object",
-              "key": "description"
-            },
-            {
-              "id": "i18nProperty",
-              "type": "object",
-              "key": "name"
-            },
-            {
-              "id": "urlBean",
-              "type": "object",
-              "key": "edit"
-            },
-            {
-              "id": "urlBean",
-              "type": "object",
-              "key": "view"
-            },
-            {
-              "id": "urlBean",
-              "type": "object",
-              "key": "create"
-            },
-            {
-              "id": "urlBean",
-              "type": "object",
-              "key": "triggered"
-            }
-          ]
-        }
-      ],
-      "confluenceModules": []
+      ]
     },
     "schemas": {
       "jira": {

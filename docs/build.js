@@ -100,23 +100,30 @@ function uniqueArrayTypes(moduleList) {
 
 var jiraTypes = uniqueArrayTypes(entities.jiraModuleList);
 var confluenceTypes = uniqueArrayTypes(entities.confluenceModuleList);
-var commonTypes = _.intersection(jiraTypes, confluenceTypes);
-jiraTypes = _.difference(jiraTypes, commonTypes);
-confluenceTypes = _.difference(confluenceTypes, commonTypes);
 
-function extractNestedModules(ids) {
-    var extracted = _.filter(entities.nested, function (val) {
+function findNestedModules(ids) {
+    return _.filter(entities.nested, function (val) {
         return ids.indexOf(val.id) > -1;
     });
-    entities.nested = _.difference(entities.nested, extracted);
-    return extracted;
 }
 
-entities.commonModules = extractNestedModules(commonTypes);
-entities.jiraModules = extractNestedModules(jiraTypes);
-entities.confluenceModules = extractNestedModules(confluenceTypes);
+entities.jiraModules = findNestedModules(jiraTypes);
+entities.confluenceModules = findNestedModules(confluenceTypes);
+entities.nested = _.difference(entities.nested, entities.jiraModules, entities.confluenceModules);
 
 console.log(util.inspect(entities, {depth: 5}));
+
+// write out our file structure
+_.each(entities, function(entitySet, parentKey) {
+    _.each(entitySet, function(entity) {
+        fs.outputFile(
+            './public/modules2/' + parentKey + '/' + entity.id +'.md',
+            "Placeholder - this file indicates static web directory structure and is not actually used in rendering.\n\n" +
+            "Here's the model JSON for this file, y'know for debugging and stuff:\n\n" +
+            JSON.stringify(entity, null, 2)
+        );
+    });
+});
 
 // OLD STUFF BELOW HERE
 
