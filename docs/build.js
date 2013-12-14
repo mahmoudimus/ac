@@ -120,7 +120,10 @@ console.log(util.inspect(entities, {depth: 5}));
 
 // OLD STUFF BELOW HERE
 
-var harpGlobals = require('./harp.json');
+var harpGlobals = require('./globals.json');
+
+harpGlobals.globals.entities = entities;
+harpGlobals.globals.schemas = {};
 
 // Sort capabilities so that they show up in alpha order
 function sortModules(modules) {
@@ -131,8 +134,6 @@ function sortModules(modules) {
     }
     return obj;
 }
-
-harpGlobals.globals.schemas = {};
 
 jiraSchema.properties.modules.properties = sortModules(jiraSchema.properties.modules.properties);
 harpGlobals.globals.schemas.jira = jiraSchema;
@@ -151,6 +152,6 @@ fs.writeFile('./harp.json', JSON.stringify(harpGlobals,null,2), function(err) {
     if(err) {
         console.log(err);
     } else {
-        console.log("Globals written");
+        console.log("Wrote ./harp.json");
     }
 });
