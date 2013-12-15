@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.google.common.collect.Lists;
 
@@ -7,7 +8,9 @@ import java.util.List;
 
 public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParameterBeanBuilder, MacroParameterBean>
 {
-    private String name;
+    private String identifier;
+    private I18nProperty name;
+    private I18nProperty description;
     private String type;
     private Boolean required;
     private Boolean multiple;
@@ -21,7 +24,9 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
 
     public MacroParameterBeanBuilder(MacroParameterBean defaultBean)
     {
+        this.identifier = defaultBean.getIdentifier();
         this.name = defaultBean.getName();
+        this.description = defaultBean.getDescription();
         this.type = defaultBean.getType();
         this.required = defaultBean.isRequired();
         this.multiple = defaultBean.isMultiple();
@@ -30,9 +35,21 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
         this.aliases = defaultBean.getAliases();
     }
 
-    public MacroParameterBeanBuilder withName(String name)
+    public MacroParameterBeanBuilder withIdentifier(String identifier)
+    {
+        this.identifier = identifier;
+        return this;
+    }
+
+    public MacroParameterBeanBuilder withName(I18nProperty name)
     {
         this.name = name;
+        return this;
+    }
+
+    public MacroParameterBeanBuilder withDescription(I18nProperty name)
+    {
+        this.description = name;
         return this;
     }
 

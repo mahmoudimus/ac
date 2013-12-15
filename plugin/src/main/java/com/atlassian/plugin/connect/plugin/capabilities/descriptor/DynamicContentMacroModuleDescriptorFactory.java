@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
+import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
@@ -50,6 +51,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
     private final HostContainer hostContainer;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final AbsoluteAddOnUrlConverter urlConverter;
+    private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
 
 
     @Autowired
@@ -59,7 +61,8 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
             UserManager userManager,
             HostContainer hostContainer,
             UrlVariableSubstitutor urlVariableSubstitutor,
-            AbsoluteAddOnUrlConverter urlConverter)
+            AbsoluteAddOnUrlConverter urlConverter,
+            I18nPropertiesPluginManager i18nPropertiesPluginManager)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.iFrameRenderer = iFrameRenderer;
@@ -67,6 +70,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         this.hostContainer = hostContainer;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.urlConverter = urlConverter;
+        this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
     }
 
     @Override
@@ -80,20 +84,39 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
 
         FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
         descriptor.init(plugin, element);
+
+        registerI18nProperties(plugin, bean);
+
         return descriptor;
+    }
+
+    private void registerI18nProperties(Plugin plugin, DynamicContentMacroModuleBean bean)
+    {
+        MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(plugin.getKey(), bean.getKey());
+
+        i18nBuilder.addName(bean.getName());
+        i18nBuilder.addDescription(bean.getDescription());
+
+        for (MacroParameterBean parameterBean : bean.getParameters())
+        {
+            i18nBuilder.addParameterLabel(parameterBean.getIdentifier(), parameterBean.getName());
+            i18nBuilder.addParameterDescription(parameterBean.getIdentifier(), parameterBean.getDescription());
+        }
+        i18nPropertiesPluginManager.add(plugin.getKey(), i18nBuilder.getI18nProperties());
     }
 
     private DOMElement createDOMElement(Plugin plugin, DynamicContentMacroModuleBean bean)
     {
         DOMElement element = new DOMElement("macro");
-        element.setAttribute("key", bean.getKey());
-        element.setAttribute("name", bean.getDisplayName());
-        element.setAttribute("i18n-name-key", bean.getName().getI18n());
+        // If 'featured' is true, the web item needs the macro name as it's key...
+        // So chose a different prefix for the macro itself
+        element.setAttribute("key", "macro-" + bean.getKey());
+        // For macros, the name has to be a key and can't contain spaces etc.
+        element.setAttribute("name", bean.getKey());
+        element.setAttribute("i18n-name-key", MacroI18nBuilder.getMacroI18nKey(plugin.getKey(), bean.getKey()));
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
-        element.addElement("description")
-                .addText(bean.getDescription().getValue())
-                .addAttribute("key", bean.getDescription().getI18n());
+
         if (null != bean.getWidth())
         {
             element.setAttribute("width", bean.getWidth().toString());
@@ -140,8 +163,9 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         for (MacroParameterBean parameterBean : bean.getParameters())
         {
             Element parameter = parameters.addElement("parameter")
-                    .addAttribute("name", parameterBean.getName())
+                    .addAttribute("name", parameterBean.getIdentifier())
                     .addAttribute("type", parameterBean.getType().toString());
+
             if (parameterBean.isRequired())
             {
                 parameter.addAttribute("required", "true");
@@ -208,7 +232,7 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
             {
                 try
                 {
-                    // TODO: Replace context params by URL variable subsitution --> ACDEV-677
+                    // TODO: Replace context params by URL variable substitution --> ACDEV-677
                     RequestContextParameterFactory requestContextParameterFactory = new RequestContextParameterFactory(Sets.<String>newHashSet(), Sets.<String>newHashSet());
                     RemoteMacroInfo macroInfo = new RemoteMacroInfo(element, plugin.getKey(),
                             MacroEnumMapper.map(bean.getBodyType()),

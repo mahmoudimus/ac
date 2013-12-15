@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutput
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
+import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.hostcontainer.HostContainer;
@@ -51,6 +52,8 @@ public class DynamicContentMacroModuleDescriptorTest
     private UrlVariableSubstitutor urlVariableSubsitutor;
     @Mock
     private HostContainer hostContainer;
+    @Mock
+    private I18nPropertiesPluginManager i18nPropertiesPluginManager;
 
     private Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     private XhtmlMacroModuleDescriptor descriptor;
@@ -66,7 +69,8 @@ public class DynamicContentMacroModuleDescriptorTest
                 userManager,
                 hostContainer,
                 urlVariableSubsitutor,
-                new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests));
+                new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
+                i18nPropertiesPluginManager);
 
         DynamicContentMacroModuleBean bean = createBean();
 
@@ -83,37 +87,37 @@ public class DynamicContentMacroModuleDescriptorTest
     @Test
     public void verifyKeyIsCorrect()
     {
-        assertThat(descriptor.getKey(), is("the-macro-name"));
+        assertThat(descriptor.getKey(), is("macro-the-macro-name"));
     }
 
     @Test
     public void verifyCompleteKeyIsCorrect()
     {
-        assertThat(descriptor.getCompleteKey(), is("my-plugin:the-macro-name"));
+        assertThat(descriptor.getCompleteKey(), is("my-plugin:macro-the-macro-name"));
     }
 
     @Test
     public void verifyNameIsSet() throws Exception
     {
-        assertThat(descriptor.getName(), is("The Macro Name"));
+        assertThat(descriptor.getName(), is("the-macro-name"));
     }
 
     @Test
     public void verifyMacroNameIsSet() throws Exception
     {
-        assertThat(descriptor.getMacroMetadata().getMacroName(), is("The Macro Name"));
+        assertThat(descriptor.getMacroMetadata().getMacroName(), is("the-macro-name"));
     }
 
     @Test
     public void verifyMacroTitleIsSet() throws Exception
     {
-        assertThat(descriptor.getMacroMetadata().getTitle().getKey(), is("macro.name.key"));
+        assertThat(descriptor.getMacroMetadata().getTitle().getKey(), is("my-plugin.the-macro-name.label"));
     }
 
     @Test
     public void verifyMacroDescriptionIsSet() throws Exception
     {
-        assertThat(descriptor.getMacroMetadata().getDescription().getKey(), is("macro.desc.key"));
+        assertThat(descriptor.getMacroMetadata().getDescription().getKey(), is("my-plugin.the-macro-name.desc"));
     }
 
     @Test
@@ -156,7 +160,7 @@ public class DynamicContentMacroModuleDescriptorTest
         MacroParameter macroParameter = parameters.get(0);
         assertThat(macroParameter, allOf(
                 hasProperty("defaultValue", is("default")),
-                hasProperty("name", is("Parameter Name")),
+                hasProperty("name", is("parametername")),
                 hasProperty("type", hasToString("enum")),
                 hasProperty("multiple", is(false)),
                 hasProperty("required", is(true))
@@ -218,7 +222,7 @@ public class DynamicContentMacroModuleDescriptorTest
                 )
                 .withIcon(newIconBean().withUrl("/assets/macro.png").withHeight(80).withWidth(80).build())
                 .withParameters(newMacroParameterBean()
-                        .withName("Parameter Name")
+                        .withIdentifier("parametername")
                         .withType("enum")
                         .withDefaultValue("default")
                         .withMultiple(false)

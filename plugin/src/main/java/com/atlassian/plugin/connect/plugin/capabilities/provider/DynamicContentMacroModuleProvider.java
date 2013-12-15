@@ -4,7 +4,11 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DynamicContentMacroModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.MacroI18nBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.collect.ImmutableList;
@@ -53,7 +57,7 @@ public class DynamicContentMacroModuleProvider implements ConnectModuleProvider<
         // Add a web item if the Macro is featured
         if (macroBean.isFeatured())
         {
-            WebItemModuleBean featuredWebItem = createFeaturedWebItem(macroBean);
+            WebItemModuleBean featuredWebItem = createFeaturedWebItem(plugin, macroBean);
             descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, bundleContext, featuredWebItem));
 
             // Add a featured icon web resource
@@ -74,12 +78,22 @@ public class DynamicContentMacroModuleProvider implements ConnectModuleProvider<
         return dynamicContentMacroModuleDescriptorFactory.createFeaturedIconWebResource(plugin, bean);
     }
 
-    private WebItemModuleBean createFeaturedWebItem(DynamicContentMacroModuleBean bean)
+    private WebItemModuleBean createFeaturedWebItem(Plugin plugin, DynamicContentMacroModuleBean bean)
     {
-        return newWebItemBean()
-            .withName(bean.getName())
-            .withKey("editor-featured-macro-" + bean.getKey())
-            .withLocation("system.editor.featured.macros.default")
-            .build();
+        WebItemModuleBeanBuilder webItemBean = newWebItemBean()
+                .withName(new I18nProperty(bean.getName().getValue(),
+                        MacroI18nBuilder.getMacroI18nKey(plugin.getKey(), bean.getKey())))
+                .withKey(bean.getKey())
+                .withLocation("system.editor.featured.macros.default");
+
+        if (bean.getIcon().hasUrl())
+        {
+            webItemBean.withIcon(IconBean.newIconBean()
+                    .withUrl(bean.getIcon().getUrl())
+                    .withWidth(16)
+                    .withHeight(16)
+                    .build());
+        }
+        return webItemBean.build();
     }
 }

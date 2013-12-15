@@ -41,10 +41,18 @@
               "paramAlias1"
             ],
             "defaultValue": "default",
+            "description": {
+              "i18n": "desc.key",
+              "value": "Some Description"
+            },
+            "identifier": "myparam",
             "multiple": false,
-            "name": "Parameter Name",
+            "name": {
+              "i18n": "name.key",
+              "value": "Some Name"
+            },
             "required": true,
-            "type": "string",
+            "type": "enum",
             "values": [
               "paramValue1",
               "paramValue2"

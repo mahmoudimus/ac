@@ -19,10 +19,21 @@ import java.util.List;
 public class MacroParameterBean extends BaseModuleBean
 {
     /**
-     * A unique name of the parameter, or "" for the default (unnamed) parameter.
+     * A unique identifier for the parameter. It has to be all lowercase, and must not contain any spaces. This identifier will
+     * be used in the query parameters of the add-on URL.
      */
     @Required
-    private String name;
+    private String identifier;
+
+    /**
+     * The human readable name of the parameter which will be displayed in the UI.
+     */
+    private I18nProperty name;
+
+    /**
+     * The description of the parameter
+     */
+    private I18nProperty description;
 
     /**
      * The type of parameter.
@@ -78,9 +89,17 @@ public class MacroParameterBean extends BaseModuleBean
 
     private void init()
     {
+        if (null == identifier)
+        {
+            identifier = "";
+        }
         if (null == name)
         {
-            name = "";
+            name = I18nProperty.empty();
+        }
+        if (null == description)
+        {
+            description = I18nProperty.empty();
         }
         if (null == type)
         {
@@ -108,9 +127,19 @@ public class MacroParameterBean extends BaseModuleBean
         }
     }
 
-    public String getName()
+    public String getIdentifier()
+    {
+        return identifier;
+    }
+
+    public I18nProperty getName()
     {
         return name;
+    }
+
+    public I18nProperty getDescription()
+    {
+        return description;
     }
 
     public String getType()

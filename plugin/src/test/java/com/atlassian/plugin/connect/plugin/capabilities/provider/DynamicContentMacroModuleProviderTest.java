@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModule
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
+import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.hostcontainer.HostContainer;
@@ -52,6 +53,8 @@ public class DynamicContentMacroModuleProviderTest
     private BundleContext bundleContext;
     @Mock
     private HostContainer hostContainer;
+    @Mock
+    private I18nPropertiesPluginManager i18nPropertiesPluginManager;
 
     private Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     private DynamicContentMacroModuleProvider moduleProvider;
@@ -70,7 +73,8 @@ public class DynamicContentMacroModuleProviderTest
                 userManager,
                 hostContainer,
                 urlVariableSubsitutor,
-                new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests));
+                new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
+                i18nPropertiesPluginManager);
 
         moduleProvider = new DynamicContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory);
     }
