@@ -73,11 +73,11 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         }
         catch (PluginInstallException e)
         {
-            log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...",e);
+            log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...", e);
             pluginController.uninstall(installedPlugin);
             throw e;
         }
-        
+
         return installedPlugin;
     }
 
@@ -110,8 +110,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
 
                 //save the descriptor so we can use it again if we ever need to re-enable the addon
-                connectDescriptorRegistry.storeDescriptor(pluginKey,jsonDescriptor);
-                
+                connectDescriptorRegistry.storeDescriptor(pluginKey, jsonDescriptor);
+
                 //make the sync callback if needed
                 connectEventHandler.pluginInstalled(addOn, sharedSecret);
                 
@@ -120,7 +120,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 This is so we can register webhooks during the module registration phase and they will get fired with this enabled event.
                  */
                 connectEventHandler.publishEnabledEvent(pluginKey);
-                
+
             }
             catch (IllegalStateException e)
             {
@@ -156,7 +156,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
     private void uninstallWithException(Plugin installedPlugin, Exception e) throws Exception
     {
-        log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...",e);
+        log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...", e);
         beanToModuleRegistrar.unregisterDescriptorsForPlugin(installedPlugin);
         pluginController.uninstall(installedPlugin);
         throw e;

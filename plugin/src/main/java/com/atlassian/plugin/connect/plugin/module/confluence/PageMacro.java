@@ -1,33 +1,31 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 public final class PageMacro extends AbstractRemoteMacro
 {
     private final UserManager userManager;
     private final IFrameContext iframeContext;
-    private final IFrameRendererImpl iFrameRenderer;
-    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final IFrameRenderer iFrameRenderer;
+    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
     public PageMacro(RemoteMacroInfo remoteMacroInfo, UserManager userManager,
-            IFrameRendererImpl iFrameRenderer, IFrameContext iframeContext,
-            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory
+            IFrameRenderer iFrameRenderer, IFrameContext iframeContext,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory
     )
     {
         super(remotablePluginAccessorFactory, remoteMacroInfo);

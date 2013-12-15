@@ -99,6 +99,9 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule (value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
     private List<SearchRequestViewModuleBean> jiraSearchRequestViews;
 
+    @ConnectModule (value = DynamicContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
+    private List<DynamicContentMacroModuleBean> dynamicContentMacros;
+
     public ModuleList()
     {
         this.adminPages = newArrayList();
@@ -121,6 +124,7 @@ public class ModuleList extends BaseModuleBean
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
         this.jiraSearchRequestViews = newArrayList();
+        this.dynamicContentMacros = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -186,6 +190,10 @@ public class ModuleList extends BaseModuleBean
         if (null == jiraSearchRequestViews)
         {
             this.jiraSearchRequestViews = newArrayList();
+        }
+        if (null == dynamicContentMacros)
+        {
+            this.dynamicContentMacros = newArrayList();
         }
     }
 
@@ -264,6 +272,11 @@ public class ModuleList extends BaseModuleBean
         return jiraSearchRequestViews;
     }
 
+    public List<DynamicContentMacroModuleBean> getDynamicContentMacros()
+    {
+        return dynamicContentMacros;
+    }
+
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
@@ -282,6 +295,7 @@ public class ModuleList extends BaseModuleBean
 
         return new EqualsBuilder()
                 .append(adminPages, other.adminPages)
+                .append(dynamicContentMacros, other.dynamicContentMacros)
                 .append(configurePages, other.configurePages)
                 .append(generalPages, other.generalPages)
                 .append(jiraComponentTabPanels, other.jiraComponentTabPanels)
@@ -305,6 +319,7 @@ public class ModuleList extends BaseModuleBean
     {
         return new HashCodeBuilder(29, 37)
                 .append(adminPages)
+                .append(dynamicContentMacros)
                 .append(configurePages)
                 .append(generalPages)
                 .append(jiraComponentTabPanels)

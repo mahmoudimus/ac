@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBuilder;
+import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -55,6 +56,11 @@ public class IconBean
     public String getUrl()
     {
         return url;
+    }
+
+    public boolean hasUrl()
+    {
+        return !Strings.isNullOrEmpty(url);
     }
 
     public static IconBeanBuilder newIconBean()

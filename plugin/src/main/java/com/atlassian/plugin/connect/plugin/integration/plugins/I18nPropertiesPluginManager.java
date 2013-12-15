@@ -40,7 +40,7 @@ import static java.lang.Math.abs;
  * around that.
  */
 @Component
-public final class I18nPropertiesPluginManager
+public class I18nPropertiesPluginManager
 {
     private static final Logger log = LoggerFactory.getLogger(I18nPropertiesPluginManager.class);
     public static final String I18N_SYMBOLIC_NAME = "atlassian-connect.i18n";
