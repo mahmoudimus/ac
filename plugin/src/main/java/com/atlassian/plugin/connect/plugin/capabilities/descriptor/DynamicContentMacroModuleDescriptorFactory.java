@@ -91,11 +91,17 @@ public class DynamicContentMacroModuleDescriptorFactory implements ConnectModule
         element.setAttribute("i18n-name-key", bean.getName().getI18n());
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
-
         element.addElement("description")
                 .addText(bean.getDescription().getValue())
                 .addAttribute("key", bean.getDescription().getI18n());
-
+        if (null != bean.getWidth())
+        {
+            element.setAttribute("width", bean.getWidth().toString());
+        }
+        if (null != bean.getHeight())
+        {
+            element.setAttribute("height", bean.getHeight().toString());
+        }
         if (bean.getDocumentation().hasUrl())
         {
             element.setAttribute("documentation-url", bean.getDocumentation().getUrl());

@@ -66,9 +66,18 @@ public class MacroParameterBean extends BaseModuleBean
      */
     private List<String> aliases;
 
+    public MacroParameterBean()
+    {
+        init();
+    }
     public MacroParameterBean(MacroParameterBeanBuilder builder)
     {
         super(builder);
+        init();
+    }
+
+    private void init()
+    {
         if (null == name)
         {
             name = "";
