@@ -6,6 +6,7 @@ var util = require('util');
 var jiraSchema = require('../plugin/target/classes/schema/jira-schema.json');
 var confluenceSchema = require('../plugin/target/classes/schema/confluence-schema.json');
 var renderMarkdown = require("markdown-js").markdown;
+var fork = require("child_process").fork;
 
 function storeEntity(obj, key, bucket) {
     // store entities with ids if they have it, or key if they don't
@@ -113,19 +114,26 @@ entities.nested = _.difference(entities.nested, entities.jiraModules, entities.c
 
 console.log(util.inspect(entities, {depth: 5}));
 
+var buildDir = "./target";
+var genSrcPrefix = buildDir + "/gensrc/";
+
+fs.deleteSync(buildDir);
+
+_.each(["public", "package.json", "node_modules"], function (requiredFile) {
+    fs.copySync(requiredFile, genSrcPrefix + requiredFile);
+});
+
 // write out our file structure
 _.each(entities, function(entitySet, parentKey) {
     _.each(entitySet, function(entity) {
-        fs.outputFile(
-            './public/modules2/' + parentKey + '/' + entity.id +'.md',
+        fs.outputFileSync(
+            genSrcPrefix + 'public/modules2/' + parentKey + '/' + entity.id +'.md',
             "Placeholder - this file indicates static web directory structure and is not actually used in rendering.\n\n" +
             "Here's the model JSON for this file, y'know for debugging and stuff:\n\n" +
             JSON.stringify(entity, null, 2)
         );
     });
 });
-
-// OLD STUFF BELOW HERE
 
 var harpGlobals = require('./globals.json');
 
@@ -147,7 +155,7 @@ function sortAndWriteOutProperties(schema, product)
     schema.properties.modules.properties = sortModules(schema.properties.modules.properties);
     harpGlobals.globals.schemas[product] = schema;
     for (var k in schema.properties.modules.properties) {
-        fs.outputFile('./public/modules/' + product + '/' + k +'.md', String(schema.properties.modules.properties[k].items.description).replace(/\n /g,"\n"));
+        fs.outputFileSync(genSrcPrefix + "public/modules/" + product + '/' + k +'.md', String(schema.properties.modules.properties[k].items.description).replace(/\n /g,"\n"));
     }
 }
 
@@ -155,10 +163,6 @@ sortAndWriteOutProperties(jiraSchema, 'jira');
 sortAndWriteOutProperties(confluenceSchema, 'confluence');
 
 // Store schema info into Harp globals
-fs.writeFile('./harp.json', JSON.stringify(harpGlobals,null,2), function(err) {
-    if(err) {
-        console.log(err);
-    } else {
-        console.log("Wrote ./harp.json");
-    }
-});
+fs.outputFileSync(genSrcPrefix + 'harp.json', JSON.stringify(harpGlobals,null,2));
+
+fork('./node_modules/harp/bin/harp', ["-o", "../www", "compile"], {'cwd': genSrcPrefix});
