@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 
@@ -20,9 +23,20 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
  */
 public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
 {
+    /**
+     * The url to retrieve the content from.
+     * This can be absolute or relative to the addon's baseUrl
+     */
+    @StringSchemaAttributes(format = "uri")
+    @Required
     private String url;
+    
+    @CommonSchemaAttributes(defaultValue = "100")
     private Integer weight;
+    
+    @Required
     private String location;
+    
     private IconBean icon;
 
     public ConnectPageModuleBean(ConnectPageModuleBeanBuilder builder)

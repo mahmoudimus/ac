@@ -51,7 +51,7 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
 
         if (Collection.class.isAssignableFrom(clazz))
         {
-            return generateArraySchema(field);
+            return generateArraySchema(field, null);
         }
 
         if (clazz.isEnum())
@@ -81,7 +81,8 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
 
         for (Field propField : ReflectionUtil.getPropertiesForJson(clazz))
         {
-            JsonSchema fieldSchema = generateSchemaForField(clazz, propField, ifaces);
+            String defaultArrayTitle = getFieldTitle(clazz,propField);
+            JsonSchema fieldSchema = generateSchemaForField(clazz, propField, ifaces, defaultArrayTitle);
 
             if (null != fieldSchema)
             {
@@ -145,6 +146,34 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
                 }
             }
         }
+    }
+
+    protected String getFieldTitle(Class<?> theClass, Field theField)
+    {
+        SchemaClassDoc classDoc = schemaDocs.getClassDoc(theClass.getName());
+        String title = null;
+        if (null != classDoc)
+        {
+            SchemaFieldDoc fieldDoc = classDoc.getFieldDoc(theField.getName());
+
+            if (null != fieldDoc)
+            {
+                if (isNotBlank(fieldDoc.getFieldTitle()))
+                {
+                    title = fieldDoc.getFieldTitle();
+                }
+            }
+        }
+        
+        if(null == title)
+        {
+            if(theField.isAnnotationPresent(CommonSchemaAttributes.class))
+            {
+                title = theField.getAnnotation(CommonSchemaAttributes.class).title();
+            }
+        }
+        
+        return title;
     }
 
     protected void addCommonAttrsForField(AbstractSchema schema, Field theField)
@@ -340,7 +369,7 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
         return schemas;
     }
 
-    protected abstract JsonSchema generateSchemaForField(Class<?> clazz, Field field, Class<?>[] ifaces);
+    protected abstract JsonSchema generateSchemaForField(Class<?> clazz, Field field, Class<?>[] ifaces, String defaultArrayTitle);
 
     protected abstract JsonSchema generateInterfaceSchema(Class<?> clazz, Field field);
 
@@ -350,5 +379,5 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
 
     protected abstract JsonSchema processSimpleType(Class<?> clazz, Field field);
 
-    protected abstract JsonSchema generateArraySchema(Field field, Class... ifaces);
+    protected abstract JsonSchema generateArraySchema(Field field, String defaultArrayTitle, Class... ifaces);
 }

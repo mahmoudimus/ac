@@ -3,6 +3,7 @@ package com.atlassian.json.schema;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.model.*;
 import com.atlassian.json.schema.scanner.model.InterfaceList;
+import com.atlassian.json.schema.util.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -150,12 +151,15 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
     }
 
     @Override
-    protected JsonSchema generateArraySchema(Field field, Class... ifaces)
+    protected JsonSchema generateArraySchema(Field field, String defaultArrayTitle, Class... ifaces)
     {
         ArrayTypeSchema schema = new ArrayTypeSchema();
         
         if(null != field)
         {
+            addCommonAttrsForField(schema,field);
+            addArrayAttrsForField(schema,field);
+            
             if (isParameterizedType(field.getGenericType()))
             {
                 ParameterizedType ptype = (ParameterizedType) field.getGenericType();
@@ -167,23 +171,25 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
                 }
                 else
                 {
-                    schema.setItems(generateSchemaForClass(listType,null));
+                    JsonSchema listTypeSchema = generateSchemaForClass(listType, null);
+                    if(StringUtil.isBlank(listTypeSchema.getTitle()))
+                    {
+                        listTypeSchema.setTitle(defaultArrayTitle);
+                    }
+                    schema.setItems(listTypeSchema);
                 }
             }
-            
-            addCommonAttrsForField(schema,field);
-            addArrayAttrsForField(schema,field);
         }
 
         return schema;
     }
 
     @Override
-    protected JsonSchema generateSchemaForField(Class<?> owner, Field field, Class<?>[] ifaces)
+    protected JsonSchema generateSchemaForField(Class<?> owner, Field field, Class<?>[] ifaces, String defaultArrayTitle)
     {
         if (Collection.class.isAssignableFrom(field.getType()))
         {
-            return generateArraySchema(field, ifaces);
+            return generateArraySchema(field, defaultArrayTitle, ifaces);
         }
         else if(Arrays.asList(ifaces).contains(field.getType()))
         {

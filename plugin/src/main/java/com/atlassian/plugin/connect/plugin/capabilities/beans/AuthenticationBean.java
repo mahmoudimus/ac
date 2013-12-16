@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.AuthenticationBeanBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,8 +12,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class AuthenticationBean extends BaseModuleBean
 {
     /**
-     * The type of authentication to use. Defaults to jwt.
+     * The type of authentication to use.
      */
+    @CommonSchemaAttributes(defaultValue = "jwt")
     private AuthenticationType type;
 
     /**
