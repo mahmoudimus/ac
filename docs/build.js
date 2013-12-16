@@ -133,6 +133,7 @@ var keyToPath = {
 };
 
 var entityData = {};
+var entityLinks = {};
 
 _.each(entities, function(entitySet, parentKey) {
     var pathMapping = keyToPath[parentKey];
@@ -143,6 +144,8 @@ _.each(entities, function(entitySet, parentKey) {
             entityData[parentKey][entity.id] = entity;
             entity.selfLink = pathMapping + '/' + entity.id;
             console.log(entity.id + " selfLink: " + entity.selfLink);
+
+            entityLinks[entity.id] = entity.selfLink;
 
             var placeholder =
                     "Placeholder - this file indicates static web directory " +
@@ -161,6 +164,7 @@ _.each(entities, function(entitySet, parentKey) {
 
 var harpGlobals = require('./globals.json');
 
+harpGlobals.globals.entityLinks = entityLinks;
 harpGlobals.globals.entities = entityData;
 harpGlobals.globals.schemas = {};
 
