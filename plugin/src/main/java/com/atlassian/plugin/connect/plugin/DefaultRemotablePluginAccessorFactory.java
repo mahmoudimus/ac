@@ -214,28 +214,33 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
         checkNotNull(plugin, "Plugin not found: '%s'", pluginKey);
 
-        return signsWithJwt(pluginKey)
-                // don't need to get the actual provider as it doesn't really matter
-                ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, consumerService, connectApplinkManager, httpContentRetriever)
-                : new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider(), httpContentRetriever, oAuthLinkManager);
-    }
-
-    private boolean signsWithJwt(String pluginKey)
-    {
         ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
-        Object authTypeProperty = null;
-
+        AuthenticationMethod authenticationMethod = null;
         if (null == appLink)
         {
             log.error("Found no app link by plugin key '{}'!", pluginKey);
         }
         else
         {
-            authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
+            Object authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
+            if (authTypeProperty != null)
+            {
+                authenticationMethod = AuthenticationMethod.forName(authTypeProperty.toString());
+            }
         }
 
-        // for backwards compatibility default to "not JWT" if the property does not exist
-        return null != authTypeProperty && AuthenticationMethod.JWT.equals(AuthenticationMethod.forName(authTypeProperty.toString()));
+        if (AuthenticationMethod.JWT.equals(authenticationMethod))
+        {
+            return new JwtSigningRemotablePluginAccessor(plugin, displayUrl, jwtService, consumerService, connectApplinkManager, httpContentRetriever);
+        }
+        else if (AuthenticationMethod.OAUTH1.equals(authenticationMethod))
+        {
+            return new OAuthSigningRemotablePluginAccessor(plugin, displayUrl, getDummyServiceProvider(), httpContentRetriever, oAuthLinkManager);
+        }
+        else
+        {
+            return new NoAuthRemotablePluginAccessor(plugin, displayUrl, httpContentRetriever);
+        }
     }
 
     private ServiceProvider getDummyServiceProvider()

@@ -78,7 +78,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     public void createsOAuthSigningPluginAccessorByDefault()
     {
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
-        assertThat(factory.create(PLUGIN_KEY, null), is(instanceOf(OAuthSigningRemotablePluginAccessor.class)));
+        assertThat(factory.create(PLUGIN_KEY, null), is(instanceOf(NoAuthRemotablePluginAccessor.class)));
     }
 
     @Test

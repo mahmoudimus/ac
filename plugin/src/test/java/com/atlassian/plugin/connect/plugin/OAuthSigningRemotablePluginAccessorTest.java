@@ -7,6 +7,7 @@ import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
@@ -106,6 +107,10 @@ public class OAuthSigningRemotablePluginAccessorTest
 
     private RemotablePluginAccessor createRemotePluginAccessor() throws ExecutionException, InterruptedException
     {
+        Plugin plugin = mock(Plugin.class);
+        when(plugin.getKey()).thenReturn(PLUGIN_KEY);
+        when(plugin.getName()).thenReturn(PLUGIN_NAME);
+
         Supplier<URI> baseUrlSupplier = new Supplier<URI>()
         {
             @Override
@@ -115,7 +120,7 @@ public class OAuthSigningRemotablePluginAccessorTest
             }
         };
         OAuthLinkManager oAuthLinkManager = new MockOAuthLinkManager(mock(ServiceProviderConsumerStore.class), mock(AuthenticationConfigurationManager.class), mock(ConsumerService.class, RETURNS_DEEP_STUBS));
-        return new OAuthSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, createDummyServiceProvider(), mockCachingHttpContentRetriever(), oAuthLinkManager);
+        return new OAuthSigningRemotablePluginAccessor(plugin, baseUrlSupplier, createDummyServiceProvider(), mockCachingHttpContentRetriever(), oAuthLinkManager);
     }
 
     private ServiceProvider createDummyServiceProvider()
