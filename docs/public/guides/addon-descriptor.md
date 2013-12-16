@@ -6,7 +6,6 @@ The descriptor serves as the glue between the remote add-on and the Atlassian ap
 
 The descriptor includes general information for the add-on (in the `modules` element). It also declares the modules that the add-on wants to use or extend, as described in the following sections.
 
-## About `modules`
 The `modules` element tells the application instance about the add-on. Among other things, the descriptor informs the instance about the name and description of the add-on and the modules it wants to implement.
 
 Let's look at an example:
