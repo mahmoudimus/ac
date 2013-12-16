@@ -6,7 +6,8 @@
     "harp": "*",
     "lodash": "*",
     "fs-extra": "*",
-    "markdown-js": "*"
+    "markdown-js": "*",
+    "chokidar": "*"
   },
   "scripts": {
     "start": "./build.js && ./node_modules/.bin/harp server",
