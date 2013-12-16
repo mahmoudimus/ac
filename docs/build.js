@@ -20,16 +20,20 @@ function collapseArrayAndObjectProperties(properties, required) {
     return _.map(properties, function(property, id) {
         if (property.type === "array") {
             property.id = id;
-            property = _.pick(property, ["id", "type", "title"]);
+            property = _.pick(property, ["id", "type", "title", "description"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
-            property = _.pick(property, ["id", "type", "title"]);
+            property = _.pick(property, ["id", "type", "title", "description"]);
         }
 
         if (required && required.indexOf(id) > -1) {
             property.required = true;
         }
         property.key = id;
+
+        if (property.description) {
+            property.description = renderMarkdown(property.description);
+        }
 
         return property;
     });
