@@ -13,7 +13,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteA
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -46,8 +45,6 @@ public class DynamicContentMacroModuleProviderTest
     @Mock
     private UserManager userManager;
     @Mock
-    private UrlVariableSubstitutor urlVariableSubsitutor;
-    @Mock
     private WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     @Mock
     private BundleContext bundleContext;
@@ -66,17 +63,16 @@ public class DynamicContentMacroModuleProviderTest
                 .thenReturn(mock(WebItemModuleDescriptor.class));
 
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
+        AbsoluteAddOnUrlConverter urlConverter = new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests);
 
         DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new DynamicContentMacroModuleDescriptorFactory(
                 remotablePluginAccessorFactoryForTests,
                 iFrameRenderer,
                 userManager,
-                hostContainer,
-                urlVariableSubsitutor,
-                new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
+                urlConverter,
                 i18nPropertiesPluginManager);
 
-        moduleProvider = new DynamicContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory);
+        moduleProvider = new DynamicContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory, hostContainer, urlConverter);
     }
 
     @Test

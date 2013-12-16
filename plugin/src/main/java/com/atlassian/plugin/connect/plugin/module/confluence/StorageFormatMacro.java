@@ -1,19 +1,18 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.Format;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFormat;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Map;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
@@ -33,12 +32,12 @@ public class StorageFormatMacro extends AbstractRemoteMacro
     private final URI remoteUrl;
     private final HttpMethod httpMethod;
     private final MacroContentManager macroContentManager;
-    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final Logger log = LoggerFactory.getLogger(StorageFormatMacro.class);
 
     public StorageFormatMacro(RemoteMacroInfo remoteMacroInfo,
                               MacroContentManager macroContentManager,
-                              DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
+                              RemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         super(remotablePluginAccessorFactory, remoteMacroInfo);
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;

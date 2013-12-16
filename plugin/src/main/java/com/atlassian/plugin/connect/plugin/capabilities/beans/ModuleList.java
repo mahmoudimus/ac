@@ -10,8 +10,6 @@ import com.atlassian.plugin.spring.scanner.ProductFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.List;
-
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
@@ -102,6 +100,9 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule (value = DynamicContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
     private List<DynamicContentMacroModuleBean> dynamicContentMacros;
 
+    @ConnectModule (value = StaticContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
+    private List<StaticContentMacroModuleBean> staticContentMacros;
+
     public ModuleList()
     {
         this.adminPages = newArrayList();
@@ -125,6 +126,7 @@ public class ModuleList extends BaseModuleBean
         this.webhooks = newArrayList();
         this.jiraSearchRequestViews = newArrayList();
         this.dynamicContentMacros = newArrayList();
+        this.staticContentMacros = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -194,6 +196,10 @@ public class ModuleList extends BaseModuleBean
         if (null == dynamicContentMacros)
         {
             this.dynamicContentMacros = newArrayList();
+        }
+        if (null == staticContentMacros)
+        {
+            this.staticContentMacros = newArrayList();
         }
     }
 
@@ -277,6 +283,11 @@ public class ModuleList extends BaseModuleBean
         return dynamicContentMacros;
     }
 
+    public List<StaticContentMacroModuleBean> getStaticContentMacros()
+    {
+        return staticContentMacros;
+    }
+
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
@@ -296,6 +307,7 @@ public class ModuleList extends BaseModuleBean
         return new EqualsBuilder()
                 .append(adminPages, other.adminPages)
                 .append(dynamicContentMacros, other.dynamicContentMacros)
+                .append(staticContentMacros, other.staticContentMacros)
                 .append(configurePages, other.configurePages)
                 .append(generalPages, other.generalPages)
                 .append(jiraComponentTabPanels, other.jiraComponentTabPanels)
@@ -320,6 +332,7 @@ public class ModuleList extends BaseModuleBean
         return new HashCodeBuilder(29, 37)
                 .append(adminPages)
                 .append(dynamicContentMacros)
+                .append(staticContentMacros)
                 .append(configurePages)
                 .append(generalPages)
                 .append(jiraComponentTabPanels)
