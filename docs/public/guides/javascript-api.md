@@ -11,9 +11,10 @@ However, Atlassian Connect makes use of a technique called [cross-domain messagi
 
 Atlassian Connect transparently enables cross-domain messaging in its page modules. One benefit you'll see from this is that your add-on's page modules are automatically resized based on its content when loaded on the page.
 
-## Debugging the all.js javascript
+## Debugging `all.js`
 
 A non-compressed version of the all.js javascript can be viewed by replaceing `all.js` with `all-debug.js` for example:
+
 ```
 <script src="https://{OnDemand hostname}/{context}/atlassian-connect/all.js"></script>
 <!-- replace with -->
@@ -46,92 +47,67 @@ Within the declaration, you can add your code for subscribing to and publishing 
 #### Event API method reference
 You can use the following methods to subscribe to, unsubscribe from, or publish events to the event bus:
 
-<div class="table-wrap">
-    <table class="confluenceTable">
-        <tbody>
-            <tr>
-                <th class="confluenceTh">Method</th>
-                <th class="confluenceTh">Description</th>
-            </tr>
-            <tr>
-                <td class="confluenceTd"><code>on</code></td>
-                <td class="confluenceTd">
-                    <p>Adds a listener for all occurrences of an event of a particular name. Listener arguments include any arguments passed to <code>events.emit</code>, followed by an object describing the complete event information.</p>
-                    <div class="code panel pdl" style="border-width: 1px;">
-                        events.on("event-name", function () { /* ... */ })
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>once</code></td>
-                <td colspan="1" class="confluenceTd">
-                    <p>Adds a listener for one occurrence of an event of a particular name. Listener arguments include any argument passed to <code>events.emit</code>, followed by an object describing the complete event information.</p>
-                    <div class="code panel pdl" style="border-width: 1px;">
-                        <div class="codeContent panelContent pdl">
-                            events.once("event-name", function () { /* ... */ })
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>onAny</code></td>
-                <td colspan="1" class="confluenceTd">
-                    Adds a listener for all occurrences of any event, regardless of name. Listener arguments begin with the event name, followed by any arguments passed to <code>events.emit</code>, followed by an object describing the complete event information.
-                    <p> </p>
-                    <div class="code panel pdl" style="border-width: 1px;">
-                        <div class="codeContent panelContent pdl">
-                            events.onAny(function (name) { /* ... */ })
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>off</code></td>
-                <td colspan="1" class="confluenceTd">
-                    <p>Removes a particular listener for an event.</p>
-                    <div class="code panel pdl" style="border-width: 1px;">
-                        <div class="codeContent panelContent pdl">
-                            events.off("event-name", listener)
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>offAll</code></td>
-                <td colspan="1" class="confluenceTd">
-                    <p>Removes all listeners for a given event.</p>
-                    <div class="code panel pdl" style="border-width: 1px;">
-                        <div class="codeContent panelContent pdl">
-                           events.offAll("event-name")
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>offAny</code></td>
-                <td colspan="1" class="confluenceTd">
-                    <p>Removes an <code>any</code> event listener.</p>
-                    <div class="code panel pdl" style="border-width: 1px;">
-                        <div class="codeContent panelContent pdl">
-                            events.offAny(listener)
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>emit</code></td>
-                <td colspan="1" class="confluenceTd">
-                    <p>Publishes an event of a particular name, with an optional list of arguments. <span style="color: rgb(0,51,102);">We recommend that each time a well-defined type of event is published, it includes a consistent number of arguments (including when the argument number is zero).</span> <span> </span></p>
-                    <div class="code panel pdl" style="border-width: 1px;">
-                        <div class="codeContent panelContent pdl">
-                            events.emit("event-name" /* , arg1, arg2, etc */)
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<table class="aui">
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>`on`</td>
+            <td>
+                Adds a listener for all occurrences of an event of a particular name. Listener arguments include any arguments passed to `events.emit`, followed by an object describing the complete event information.
+
+                <pre><code>events.on("event-name", function () { /* ... */ })</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <td>`once`</td>
+            <td>
+                Adds a listener for one occurrence of an event of a particular name. Listener arguments include any argument passed to `events.emit`, followed by an object describing the complete event information.
+
+                <pre><code>events.once("event-name", function () { /* ... */ })</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <td>`onAny`</td>
+            <td>
+                Adds a listener for all occurrences of any event, regardless of name. Listener arguments begin with the event name, followed by any arguments passed to `events.emit`, followed by an object describing the complete event information.
+                <pre><code>events.onAny(function (name) { /* ... */ })</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <td>`off`</td>
+            <td>
+                Removes a particular listener for an event.
+                <pre><code>events.off("event-name", listener)</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <td>`offAll`</td>
+            <td>
+                Removes all listeners for a given event.
+                <pre><code>events.offAll("event-name")</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <td>`offAny`</td>
+            <td>
+                Removes an `any` event listener.
+                <pre><code>events.offAny(listener)</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <td>`emit`</td>
+            <td>
+                Publishes an event of a particular name, with an optional list of arguments. We recommend that each time a well-defined type of event is published, it includes a consistent number of arguments (including when the argument number is zero).
+                <pre><code>events.emit("event-name" /* , arg1, arg2, etc */)</code></pre>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 
 #### Events API sample
@@ -139,117 +115,113 @@ You can use the following methods to subscribe to, unsubscribe from, or publish 
 The following sample code will give you a fuller picture of how an add-on can use the API to exchange data between two iframes.
 
 An add-on can generate (or publish) data from within an iframe as follows:
-```
-AP.require("events", function (events) {
-  $("#save-button").click(function () {
-    events.emit("saved", model);
-  });
-});
-```
+
+    AP.require("events", function (events) {
+        $("#save-button").click(function () {
+            events.emit("saved", model);
+        });
+    });
 
 Notice that the iframe publishes an event named saved, and populates the object named model with the data.
 
 In the same add-on, the iframe that acts as the consumer subscribes to the saved event, and refreshes its view with the data it has obtained from the publisher (in the model object), as follows:
 
-```
-AP.require("events", function (events) {
-  events.on("saved", function (model) {
-    view.refresh(model);
-  });
-});
-```
+    AP.require("events", function (events) {
+        events.on("saved", function (model) {
+            view.refresh(model);
+        });
+    });
 
 ### JavaScript client library
 
 Atlassian Connect provides a JavaScript client library called all.js. The Atlassian application hosts this file, making it available at the following location relative to the Atlassian application URL: 
 
-`<hostname>/<app_context>/atlassian-connect/all.js`
+    <hostname>/<app_context>/atlassian-connect/all.js
 
 For example:
-`http://atlas-laptop:2990/jira/atlassian-connect/all.js`
+
+    http://atlas-laptop:2990/jira/atlassian-connect/all.js
 
 This library establishes the cross-domain messaging bridge with its parent. It also provides several methods and objects that you can use in your pages without making a trip back to your add-on server.
 
 You must add the `all.js` script to your pages in order to establish the cross-domain messaging bridge. Make sure your pages include the following script:
 
-```
-<script src="https://{OnDemand hostname}/{context}/atlassian-connect/all.js"></script>
-```
+    <script src="https://{OnDemand hostname}/{context}/atlassian-connect/all.js"></script>
 
 If you're using the [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) client library to build your add-on, this will automatically be inserted into your pages at run time.
 
-<div class="aui-message warning shadowed information-macro">
-Don't download the all.js file and serve it up from your add-on server directly. The all.js file must be served up by the parent in order for the cross-domain messaging bridge to be established.
+<div class="aui-message warning">
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Important</strong>
+    </p>
+    Don't download the all.js file and serve it up from your add-on server directly. The all.js file must be served up by the parent in order for the cross-domain messaging bridge to be established.
 </div>
 
 ## AP.* helpers 
 The `all.js` script makes available a JavaScript object called AP. The AP object contains a handful of helpful client-side methods and properties. You can use some of these methods to get information from the parent document.
 
-<div class="table-wrap">
-    <table class="confluenceTable">
-        <tbody>
-            <tr>
-                <th class="confluenceTh">Methods/Objects</th>
-                <th class="confluenceTh">Description</th>
-                <th colspan="1" class="confluenceTh">Status</th>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd">
-                    <p><code>AP.Dialog</code></p>
-                </td>
-                <td colspan="1" class="confluenceTd">
-                    <p><span>Provides access to dialog controls when the add-on is running as dialog content.</span></p>
-                </td>
-                <td colspan="1" class="confluenceTd"><span class="status-macro aui-lozenge aui-lozenge-error">EXPERIMENTAL</span></td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>AP.Meta</code></td>
-                <td colspan="1" class="confluenceTd">Gets the metadata that's stored in any &lt;meta&gt; tags on the page.</td>
-                <td colspan="1" class="confluenceTd"><span class="status-macro aui-lozenge aui-lozenge-error">EXPERIMENTAL</span></td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>AP.clearMessage(id)</code></td>
-                <td colspan="1" class="confluenceTd">Clears an AUI message notification on the page.</td>
-                <td colspan="1" class="confluenceTd"><span class="status-macro aui-lozenge aui-lozenge-error">EXPERIMENTAL</span></td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>AP.getLocation(callback)</code></td>
-                <td colspan="1" class="confluenceTd">Gets the host page's window.location.href value.</td>
-                <td colspan="1" class="confluenceTd"><span class="status-macro aui-lozenge aui-lozenge-success">STABLE</span></td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>AP.getTimeZone(callback)</code></td>
-                <td colspan="1" class="confluenceTd">Gets the user's timezone.</td>
-                <td colspan="1" class="confluenceTd"><span class="status-macro aui-lozenge aui-lozenge-success">STABLE</span></td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><span><code>AP.getUser(callback)</code> <br /></span></td>
-                <td colspan="1" class="confluenceTd">Gets the user's basic profile information.</td>
-                <td colspan="1" class="confluenceTd"><span class="status-macro aui-lozenge aui-lozenge-success">STABLE</span></td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>AP.localUrl(path)</code></td>
-                <td colspan="1" class="confluenceTd">Returns the fully qualified URL of the host, concatenated with the supplied path.</td>
-                <td colspan="1" class="confluenceTd"><span class="status-macro aui-lozenge aui-lozenge-error">EXPERIMENTAL</span></td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>AP.request(url, options)</code></td>
-                <td colspan="1" class="confluenceTd">Ajax client for making requests through the parent. Extends jQuery's Ajax object and returns a promise.</td>
-                <td colspan="1" class="confluenceTd"><span class="status-macro aui-lozenge aui-lozenge-success">STABLE</span></td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>AP.resize(options)</code></td>
-                <td colspan="1" class="confluenceTd">Resizes the iframe with the dimensions supplied in the options object. If no dimensions are supplied, the method attempts to determine the size of the page and resizes it accordingly.</td>
-                <td colspan="1" class="confluenceTd"><span class="status-macro aui-lozenge aui-lozenge-success">STABLE</span></td>
-            </tr>
-            <tr>
-                <td colspan="1" class="confluenceTd"><code>AP.showMessage(id, title, body)</code></td>
-                <td colspan="1" class="confluenceTd">Shows an AUI message box.</td>
-                <td colspan="1" class="confluenceTd"><span class="status-macro aui-lozenge aui-lozenge-error">EXPERIMENTAL</span></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<table class="aui">
+    <thead>
+        <tr>
+            <th>Methods/Objects</th>
+            <th>Description</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>`AP.Dialog`</td>
+            <td>Provides access to dialog controls when the add-on is running as dialog content</td>
+            <td><span class="aui-lozenge aui-lozenge-error">EXPERIMENTAL</span></td>
+        </tr>
+        <tr>
+            <td>`AP.Meta`</td>
+            <td>Gets the metadata that's stored in any `<meta>` tags on the page</td>
+            <td><span class="aui-lozenge aui-lozenge-error">EXPERIMENTAL</span></td>
+        </tr>
+        <tr>
+            <td>`AP.clearMessage(id)`</td>
+            <td>Clears an AUI message notification on the page</td>
+            <td><span class="aui-lozenge aui-lozenge-error">EXPERIMENTAL</span></td>
+        </tr>
+        <tr>
+            <td>`AP.getLocation(callback)`</td>
+            <td>Gets the host page's `window.location.href` value</td>
+            <td><span class="aui-lozenge aui-lozenge-success">STABLE</span></td>
+        </tr>
+        <tr>
+            <td>`AP.getTimeZone(callback)`</td>
+            <td>Gets the user's timezone</td>
+            <td><span class="aui-lozenge aui-lozenge-success">STABLE</span></td>
+        </tr>
+        <tr>
+            <td>`AP.getUser(callback)`</td>
+            <td>Gets the user's basic profile information</td>
+            <td><span class="aui-lozenge aui-lozenge-success">STABLE</span></td>
+        </tr>
+        <tr>
+            <td>`AP.localUrl(path)`</td>
+            <td>Returns the fully qualified URL of the host, concatenated with the supplied path</td>
+            <td><span class="aui-lozenge aui-lozenge-error">EXPERIMENTAL</span></td>
+        </tr>
+        <tr>
+            <td>`AP.request(url, options)`</td>
+            <td>Ajax client for making requests through the parent. Extends jQuery's Ajax object and returns a promise.</td>
+            <td><span class="status-macro aui-lozenge aui-lozenge-success">STABLE</span></td>
+        </tr>
+        <tr>
+            <td>`AP.resize(options)`</td>
+            <td>Resizes the iframe with the dimensions supplied in the options object. If no dimensions are supplied, the method attempts to determine the size of the page and resizes it accordingly</td>
+            <td><span class="aui-lozenge aui-lozenge-success">STABLE</span></td>
+        </tr>
+        <tr>
+            <td>`AP.showMessage(id, title, body)`</td>
+            <td>Shows an AUI message box</td>
+            <td><span class="aui-lozenge aui-lozenge-error">EXPERIMENTAL</span></td>
+        </tr>
+    </tbody>
+</table>
 
 The following section provides more usage information on an AP object helper.
 
@@ -263,39 +235,40 @@ Notice that the sample shown contains a submit button, but this is provided by t
 
 In your own add-ons, you can style dialogs to either your own branding or the [Atlassian Design Guidelines](https://developer.atlassian.com/design/latest/modal-dialog.html) (ADG).
 
-<div class="aui-message warning shadowed information-macro">
-The next AUI release (AUI 5.3) will make it much easier for Atlassian Connect developers to render ADG dialogs using the new dialog2 component.
+<div class="aui-message info">
+    <span class="aui-icon icon-info"></span>
+    The next AUI release (AUI 5.3) will make it much easier for Atlassian Connect developers to render ADG dialogs
+    using the new Dialog component.
 </div>
 
 ### Opening a dialog
 To add a dialog to a page, invoke the dialog create function from the iframe from which the dialog should be launched. For example:
-```
-jQuery('#launch-dialog').click(function(evt){
-    AP.require("dialog", function(dialog) {
-        dialog.create({
-            key: "key-of-dialog-page", // the descriptor key of the page that you want to open in a dialog
-            size: "medium", // small, medium, large, x-large (optional)
-            // width: 600, // in pixels (optional)
-            // height: 400, // in pixels (optional)
-        })
-        .on('close', function(data){
-            console.log(data); // do something with data
+
+    jQuery('#launch-dialog').click(function(evt){
+        AP.require("dialog", function(dialog) {
+            dialog.create({
+                key: "key-of-dialog-page", // the descriptor key of the page that you want to open in a dialog
+                size: "medium", // small, medium, large, x-large (optional)
+                // width: 600, // in pixels (optional)
+                // height: 400, // in pixels (optional)
+            })
+            .on('close', function(data){
+                console.log(data); // do something with data
+            });
         });
     });
-});
-```
 
 The dialog `create` function takes a single required parameter, key, which is the add-on descriptor key of the page that presents the dialog content.
 
 The function takes several optional parameters that control the size of the dialog. To specify a size, you can specify either a named size or an explicit width and height for the dialog box. Namely, the parameters are:
 
- * size: the size of the dialog. The sizes correspond to those in the Atlassian Design Guidelines (https://developer.atlassian.com/design/latest/modal-dialog.html):
-    * small
-    * medium
-    * large
-    * x-large
- * width: the explicit width for the dialog in pixels (e.g., 600).
- * height: the explicit height for the dialog in pixels (e.g., 400).
+ * `size`: the size of the dialog. The sizes correspond to those in the [Atlassian Design Guidelines (ADG)](https://developer.atlassian.com/design/latest/modal-dialog.html):
+    * `small`
+    * `medium`
+    * `large`
+    * `x-large`
+ * `width`: the explicit width for the dialog in pixels (e.g., 600).
+ * `height`: the explicit height for the dialog in pixels (e.g., 400).
 
 If the dialog contains ADG-styled content, it should use one of the named sizes. The explicit width and height parameters let you implement fixed-size dialogs that contain non-ADG content (for example, to implement a dialog that has the look and feel of an external web site). In general, we do not advise you to use a specific height, as Atlassian Connect dialogs are sized dynamically to the height of the window.
 
@@ -303,16 +276,15 @@ If you don't specify a size, the dialog uses the default size, medium.
 
 ### Closing the dialog
 The dialog iframe can close itself (say in response to a button click) by calling the `close` method:
-```
-jQuery('#close-dialog').click(function(evt){
-    AP.require("dialog", function(dialog) {
-        // Close the dialog and send the following JSON object
-        dialog.close({
-            hello: "world"
+
+    jQuery('#close-dialog').click(function(evt) {
+        AP.require("dialog", function(dialog) {
+            // Close the dialog and send the following JSON object
+            dialog.close({
+                hello: "world"
+            });
         });
     });
-});
-```
 
 The `close` method takes a single parameter, which must be a pure data object (i.e., no functions).
 
@@ -325,6 +297,7 @@ As mentioned above, by default the dialog iframe is undecorated. It's up to the 
 
 In order to maintain a consistent look and feel between the host application and the add-on, we encourage add-on developers to style their dialogs to match Atlassian's Design Guidelines for modal dialogs. To do that, you'll need to add the AUI styles to your dialog page.
 
-<div class="aui-message warning shadowed information-macro">
-Because the dialog2 component in AUI is still experimental, you can use the [HTML referenced on the dialog2 documentation](https://docs.atlassian.com/aui/5.3-m4/docs/dialog2.html).
+<div class="aui-message info">
+    <span class="aui-icon icon-info"></span>
+    Because the dialog2 component in AUI is still experimental, you can use the [HTML referenced on the dialog2 documentation](https://docs.atlassian.com/aui/5.3-m4/docs/dialog2.html).
 </div>
