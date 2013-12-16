@@ -32,7 +32,7 @@ public class ConfigurePageModuleBean extends ConnectPageModuleBean
      */
     public Boolean isDefault()
     {
-        return isDefault;
+        return isDefault == null ? false : isDefault;
     }
 
     public static ConfigurePageModuleBeanBuilder newConfigurePageBean()
