@@ -1,4 +1,4 @@
-# Migrating from the XML to JSON descriptors
+# Migrate to JSON module descriptors and JWT
 
 ## Resources
  * [Getting Started](getting-started.html) - the hello world tutorial has been renamed to the getting started guide and now uses the new JSON descriptor format for all examples.
@@ -22,10 +22,10 @@ The information contained in these two descriptors is identical. It shows the ne
 
 ```
 {
+    "name": "Hello World",
     "description": "Atlassian Connect add-on",
     "key": "myaddon_helloworld",
     "baseUrl": "http://localhost:8000",
-    "name": "Hello World",
     "vendor": {
         "name": "My Organization, Inc",
         "url": "https://developer.atlassian.com"
@@ -35,22 +35,24 @@ The information contained in these two descriptors is identical. It shows the ne
 ```
 
 ## Lifecycle Events
-installation, enabled, disabled and uninstalled webhooks have been replaced with life cycle events. Below is an example:
+installed, enabled, disabled and uninstalled webhooks have been replaced with life cycle events. Below is an example:
 
 ```
-    {
-        "baseUrl": "http://www.example.com",
-        "key": "my-add-on",
-        "lifecycle": {
-            "disabled": "/disabled",
-            "enabled": "/enabled",
-            "installed": "/installed",
-            "uninstalled": "/uninstalled"
-        }
+{
+    "name": "Hello World",
+    "description": "Atlassian Connect add-on",
+    "baseUrl": "http://www.example.com",
+    "key": "myaddon_helloworld",
+    "lifecycle": {
+        "disabled": "/disabled",
+        "enabled": "/enabled",
+        "installed": "/installed",
+        "uninstalled": "/uninstalled"
     }
+}
 ```
 
-The installed event is synchronous. All others are asynchronous.
+The installed event is now synchronous, this means that if your `installed` lifecycle event URL does not return a 200 or 204 response header, the add-on will fail to install. All other lifecycle events are asynchronous.
 
 ## Webhooks
 
@@ -58,6 +60,10 @@ Webhooks are available in the new JSON format by adding a `webhooks` json object
 
 ```
 {
+    "name": "Hello World",
+    "description": "Atlassian Connect add-on",
+    "baseUrl": "http://www.example.com",
+    "key": "myaddon_helloworld",
     "modules": {
         "webhooks": [
             {
@@ -75,6 +81,7 @@ Webhooks are available in the new JSON format by adding a `webhooks` json object
 ```
 
 To read more about webhooks:
+
  * [JIRA webhook module documentation](../modules/jira/webhooks.html)
  * [Confluence webhook module documentation](../modules/confluence/webhooks.html)
 
@@ -137,27 +144,12 @@ The `dialog-page` module has been removed. You can achieve the same result by de
 }
 ```
 
-## Atlassian Connect Express
-
-[atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) now contains support for JWT and the `atlassian-plugin.json`. By upgrading these framework you will benifit from the new functionality.
-### To upgrade
-
- * Change the version number of `atlassian-connect-express` in the `package.json` file to the latest version
- * npm update
- * update your atlassian-plugin.xml to atlassian-plugin.json
-
-
-## Atlassian Connect Play
-[atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
-
-By upgrading to the new version of [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java) you will gain support for JWT and the new atlassian-plugin.json descriptor format.
-
-## oAuth
+# oAuth
 <div class="aui-message warning shadowed information-macro">
     oAuth has been deprecated. Please consider migrating to [JWT](authentication.html).
 </div>
 
-If your add-on was created using the [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java) or [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) frameworks you can download the latest version for JSON descriptor and JWT support.
+If your add-on was created using the [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java) or [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) frameworks you can download the latest version for JSON descriptor and [JWT support](authentication.html).
 
 The `atlassian-plugin.json` now contains an `authentication` section that can be used to specify your oAuth credentials as follows:
 
@@ -171,13 +163,37 @@ The `atlassian-plugin.json` now contains an `authentication` section that can be
 }
 ```
 
+## Atlassian Connect Express
+
+[atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) now contains support for JWT and the `atlassian-plugin.json`. By upgrading these framework you will benifit from the new functionality.
+
+<div class="aui-message warning shadowed information-macro">
+    oAuth has been entirely removed from the latest version of ACE.
+</div>
+
+### To upgrade
+
+ * Change the version number of `atlassian-connect-express` in the `package.json` file to the latest version
+ * npm update
+ * update your atlassian-plugin.xml to atlassian-plugin.json
+
+
+## Atlassian Connect Play
+[atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
+
+By upgrading to the new version of [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java) you will gain support for JWT and the new atlassian-plugin.json descriptor format.
+
+
 
 # Licensing
 `atlassian-licensing-enabled` is now a top level boolean element.
 
 ```
 {
-    enableLicensing: true,
-    name: "My sample Add-on"
+    "name": "Hello World",
+    "description": "Atlassian Connect add-on",
+    "baseUrl": "http://www.example.com",
+    "key": "myaddon_helloworld",
+    "enableLicensing": true
 }
 ```
