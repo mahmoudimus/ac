@@ -147,10 +147,10 @@ function findConfluenceModules(schemas) {
 }
 
 function findFragmentEntities(schemas) {
-    var entities = jsonPath(schemas, "$.*.properties.modules.properties.*.items.properties.*");
+    var entities = jsonPath(schemas, "$.*.properties.modules.properties.*.items.properties..*");
     entities = _.filter(entities, function(obj) {
         // object must have an id and not be a primitive array
-        return obj.id && (obj.type !== "array" || obj.items.type === "object");
+        return obj.id && (obj.type !== "array");
     });
     entities = _.map(entities, schemaToModel);
     entities = _.zipObject(_.pluck(entities, "slug"), entities);
