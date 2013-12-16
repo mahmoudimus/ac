@@ -20,7 +20,18 @@ function collapseArrayAndObjectProperties(properties, required) {
     return _.map(properties, function(property, id) {
         if (property.type === "array") {
             property.id = id;
-            property = _.pick(property, ["id", "type", "title", "description"]);
+            property.arrayType = property.items.type;
+            if (property.arrayType === 'object') {
+                property.arrayTypeId = [];
+                if (property.items.id) {
+                    property.arrayTypeId.push(property.items.id);
+                } else if (property.items.anyOf) {
+                    _.each(property.items.anyOf, function (anyOf) {
+                        property.arrayTypeId.push(anyOf.id);
+                    });
+                }
+            }
+            property = _.pick(property, ["id", "type", "title", "description", "arrayType", "arrayTypeId"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
             property = _.pick(property, ["id", "type", "title", "description"]);
@@ -137,7 +148,10 @@ function findConfluenceModules(schemas) {
 
 function findFragmentEntities(schemas) {
     var entities = jsonPath(schemas, "$.*.properties.modules.properties.*.items.properties.*");
-    entities = _.filter(entities, function(obj) {return obj.id}); // applying [?(@.id)] to the JSONPath seems to fail - bug?
+    entities = _.filter(entities, function(obj) {
+        // object must have an id and not be a primitive array
+        return obj.id && (obj.type !== "array" || obj.items.type === "object");
+    });
     entities = _.map(entities, schemaToModel);
     entities = _.zipObject(_.pluck(entities, "slug"), entities);
     return entities;
