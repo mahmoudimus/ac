@@ -15,7 +15,7 @@ public class BeanWithParams extends BaseModuleBean
      *
      * Example:
      * @exampleJson {@see ConnectJsonExamples#PARAMS_EXAMPLE}
-     * @schemaTitle Parameters
+     * @schemaTitle Object
      */
     private Map<String, String> params;
 
