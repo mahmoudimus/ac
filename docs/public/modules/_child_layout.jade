@@ -16,7 +16,15 @@ table.aui
                     = prop.key
                 td
                     - if (prop.type === 'object')
-                        a(href = '/' + entityLinks[prop.id] + '.html')
+                        - if (entityLinks[prop.id])
+                            a(href = '/' + entityLinks[prop.id] + '.html')
+                                - if (prop.title)
+                                    span.aui-lozenge
+                                        = prop.title
+                                - else
+                                    span.aui-lozenge
+                                        = prop.id
+                        - else
                             - if (prop.title)
                                 span.aui-lozenge
                                     = prop.title
