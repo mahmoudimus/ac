@@ -106,6 +106,6 @@ URL variables are available to any of the page modules, including web panels, we
 
 For example, the following URL includes variables that are bound to the JIRA project id and current issue key at runtime:
 ```
-url="/myPage?issueKey=${issue.key}&amp;projectId=${project.id}"
+url="/myPage?issueKey=${issue.key}&projectId=${project.id}"
 ```
 If the application isn't able to bind a value to the variable at runtime for any reason, it passes an empty value instead.
