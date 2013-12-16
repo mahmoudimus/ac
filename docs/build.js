@@ -164,28 +164,6 @@ var harpGlobals = require('./globals.json');
 harpGlobals.globals.entities = entityData;
 harpGlobals.globals.schemas = {};
 
-// Sort capabilities so that they show up in alpha order
-//function sortModules(modules) {
-//    var keys = Object.keys(modules).sort();
-//    var obj = {};
-//    for(var i = 0; i < keys.length; i++) {
-//        obj[keys[i]] = modules[keys[i]];
-//    }
-//    return obj;
-//}
-//
-//function sortAndWriteOutProperties(schema, product)
-//{
-//    schema.properties.modules.properties = sortModules(schema.properties.modules.properties);
-//    harpGlobals.globals.schemas[product] = schema;
-//    for (var k in schema.properties.modules.properties) {
-//        fs.outputFileSync(genSrcPrefix + "public/modules/" + product + '/' + k +'.md', String(schema.properties.modules.properties[k].items.description).replace(/\n /g,"\n"));
-//    }
-//}
-//
-//sortAndWriteOutProperties(jiraSchema, 'jira');
-//sortAndWriteOutProperties(confluenceSchema, 'confluence');
-
 // Store schema info into Harp globals
 fs.outputFileSync(genSrcPrefix + 'harp.json', JSON.stringify(harpGlobals,null,2));
 
