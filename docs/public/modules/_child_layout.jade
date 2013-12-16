@@ -23,6 +23,9 @@ table.aui
                         span.aui-lozenge
                             = prop.type
                 td
+                    - if (prop.required)
+                        span.aui-lozenge Required
+                        &nbsp;
                     = prop.description
                     - if (prop.enum)
                         div
