@@ -2,7 +2,6 @@ package it.com.atlassian.plugin.connect.schema;
 
 import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.DescriptorValidationResult;
-
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;

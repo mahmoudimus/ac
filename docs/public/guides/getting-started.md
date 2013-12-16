@@ -47,25 +47,27 @@ In choosing a location, it's worth considering that you'll need to expose this d
  2. In your project directory, create a new file named `atlassian-plugin.json`.
  3. Add the following text to the file:
 ```
-    {
-        "modules": {
-            "generalPages": [{
+{
+    "name": "Hello World",
+    "description": "Atlassian Connect add-on",
+    "key": "myaddon_helloworld",
+    "baseUrl": "http://localhost:8000",
+    "vendor": {
+        "name": "My Organization, Inc",
+        "url": "https://developer.atlassian.com"
+    },
+    "version": "1.0",
+    "modules": {
+        "generalPages": [
+            {
                 "url": "/helloworld.html",
                 "name": {
                     "value": "Greeting"
                 }
-            }]
-        },
-        "description": "Atlassian Connect add-on",
-        "key": "myaddon_helloworld",
-        "baseUrl": "http://localhost:8000",
-        "name": "Hello World",
-        "vendor": {
-            "name": "My Organization, Inc",
-            "url": "https://developer.atlassian.com"
-        },
-        "version": "1.0"
+            }
+        ]
     }
+}
 ```
  4. Make the following changes to the file content:
     * Change the key and name attribute values for atlassian-plugin.json to anything you like. Note that the key value must be unique for all add-ons in this instance. 
@@ -131,14 +133,17 @@ If needed, change the values in the descriptor to reflect the actual location of
 
 ```
 {
+    "name": "Hello World",
     "baseUrl": "http://localhost:8000",
     "modules": {
-        "generalPages": [{
-            "url": "/helloworld.html",
-            "name": {
-                "value": "Greeting"
+        "generalPages": [
+            {
+                "url": "/helloworld.html",
+                "name": {
+                    "value": "Greeting"
+                }
             }
-        }]
+        ]
     }
 }
 ```
@@ -148,16 +153,17 @@ Installing your add-on adds it to your OnDemand application. To be more precise,
 
 You can install an add-on with the UPM as follows. Note, these instructions were written for UPM version 2.14 or later.
 
- 1. Log in to the Atlassian application interface as an admin or a system administrator. If you started the application with Atlassian's SDK, the  default username/password combination is admin/admin.
- 2. Choose <img src="../assets/images/cog.png" alt="Settings" /> > __Add-ons__ from the menu. The Administration page will display.
- 3. Choose the __Manage add-ons__ option.
- 4. Scroll to the page's bottom and click the __Settings__ link. The __Settings__ dialog will display. 
- 5. Make sure the "Private listings" option is checked and click __Apply__.
- 6. Scroll to the top of the page and click the __Upload Add-on__ link.
- 7. Enter the URL to the hosted location of your plugin descriptor. In this example, the URL is similar to the following:  http://localhost:8000/atlassian-plugin.xml. (If you are installing to an OnDemand instance, the URL must be served from the Marketplace, and will look like https://marketplace.atlassian.com/download/plugins/com.example.add-on/version/39/descriptor?access-token=9ad5037b)
+ 1. Log in to the Atlassian application interface as an admin or a system administrator. If you started the application with Atlassian's SDK, the  default username/password combination is admin/admin
+ 2. Choose <img src="../assets/images/cog.png" alt="Settings" /> > __Add-ons__ from the menu. The Administration page will display
+ 3. Choose the __Manage add-ons__ option
+ 4. Scroll to the page's bottom and click the __Settings__ link. The __Settings__ dialog will display
+ 5. Make sure the "Private listings" option is checked and click __Apply__
+ 6. Scroll to the top of the page and click the __Upload Add-on__ link
+ 7. Enter the URL to the hosted location of your plugin descriptor. In this example, the URL is similar to the following:  `http://localhost:8000/atlassian-connect.json`. (If you are installing to an OnDemand instance,
+ the URL must be served from the Marketplace, [such as this example](https://marketplace.atlassian.com/download/plugins/com.example.add-on/version/39/descriptor?access-token=9ad5037b))
  8. Press __Upload__. The system takes a moment to upload and register your plugin. It displays the __Installed and ready to go__ dialog when installation is complete. <img width="100%" src="../assets/images/installsuccess.jpeg" />
- 9. Click __Close__.
- 10. Verify that your plugin appears in the list of __User installed add-ons__. For example, if you used Hello World for your plugin name, that will appears in the list.
+ 9. Click __Close__
+ 10. Verify that your plugin appears in the list of __User installed add-ons__. For example, if you used Hello World for your plugin name, that will appears in the list
 
 ## Put your add-on to work
 That's it! You can now see your Hello World greeting in the Atlassian application.

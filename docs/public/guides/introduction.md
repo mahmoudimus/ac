@@ -15,14 +15,8 @@ Traditional Atlassian add-ons run within an Atlassian application, and were requ
 
 Add-ons can modify and extend Atlassian application in a variety of ways, depending on the purpose of the add-on. The add-on may modify and extend the Atlassian application UI or invoke processes and interact with systems external to the Atlassian application.
 
-## Supported versions of Atlassian applications
-Atlassian Connect relies on some infrastructure components to be present in the Atlassian application platform. Not all versions of the application has these. An Atlassian Connect add-on works with these versions of the product: 
-
-- Confluence 5.1 and later.
-- JIRA 6.0, and later.
-
 ## What every add-on must do
-- **Declare itself in a plugin descriptor.** The add-on descriptor is an XML file that tells the application about the add-on. Among other information, it tells the Atlassian application about the add-on's URL and the modules it wants to extend. Administrators install add-ons into Atlassian applications through a registration process. 
+- **Declare itself in a plugin descriptor.** The add-on descriptor is a JSON file that tells the application about the add-on. Among other information, it tells the Atlassian application about the add-on's URL and the modules it wants to extend. Administrators install add-ons into Atlassian applications through a registration process.
 - **Request the appropriate permissions.** Your add-on must specify what type of access it needs from its host Atlassian application. For example, can it delete an issue? Can it listen for an event? Can it access administration resources? You declare required permissions for the add-on in the add-on descriptor file. Permissions determine which REST API resources the add-on can use.
 - **Respond to the application's web hooks.** By registering a webhook, your add-on can receive a notification when certain events occur (for example, a JIRA issue changes status). The webhook payload contains information about the event, allowing your add-on to respond appropriately. Every add-on will likely need to listen for and respond to the webhook triggered when that add-on is enabled in the Atlassian application.
 - **Be listed in the Atlassian Marketplace.** Not every add-on should be publicly available on the Atlassian Marketplace, but even private add-ons need to be registered on the Marketplace in order to be installed to Atlassian OnDemand. Private listings are not publicly accessible, but allow an organization to implement and deploy add-ons to their systems only. 
@@ -69,7 +63,7 @@ Security is a important concern in a distributed component model such as Atlassi
 
 Further, the add-on's actions in the context of the application are constrained by well-defined permissions. The add-on can only perform activities it declares in its descriptor, and which are accepted by the administrator. These include, for example, permissions governing reading content, creating pages, creating issues, and more. This helps to ensure the security and stability of the OnDemand instance.  
 
-For more about security, see [jwt.html](JWT)
+For more about security, see [Authentication](authentication.html).
 
 ## About REST APIs
 Module declarations are one piece to the integration between the add-on and the Atlassian OnDemand application. But Atlassian Connect add-ons will also use the Atlassian REST APIs. Add-ons can use these APIs to access services of the Atlassian platform. The services vary between the application type, but there are some common APIs as well. 

@@ -1,15 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
@@ -21,15 +12,16 @@ import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.upm.spi.PluginInstallHandler;
 import com.atlassian.upm.spi.PluginInstallResult;
-
 import com.google.common.base.Charsets;
-import com.google.common.base.Strings;
 import com.google.common.io.Files;
-
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.File;
 
 /**
  * @since 1.0

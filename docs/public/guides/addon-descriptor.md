@@ -6,16 +6,15 @@ The descriptor serves as the glue between the remote add-on and the Atlassian ap
 
 The descriptor includes general information for the add-on (in the `modules` element). It also declares the modules that the add-on wants to use or extend, as described in the following sections.
 
-## About `modules`
 The `modules` element tells the application instance about the add-on. Among other things, the descriptor informs the instance about the name and description of the add-on and the modules it wants to implement.
 
 Let's look at an example:
 
 ```
 {
+    "name": "My Addon",
     "description": "hello world description",
     "key": "com.example.tutorial.myaddon",
-    "name": "My Addon",
     "vendor": {
         "name": "Example, Inc.",
         "url": "https://www.example.com"
@@ -55,6 +54,7 @@ For a webhook, the URL should be the address to which the Atlassian instance pos
 Here's an example of a module declaration:
 ```
 {
+    "name": "My Addon",
     "modules": {
         "webItems": [{
             "conditions": [
@@ -68,8 +68,7 @@ Here's an example of a module declaration:
                     "condition": "is_issue_unresolved"
                 }
             ],
-            location: "operations-subtasks",
-            target: "dialog",
+            "location": "operations-subtasks",
             "url": "/dialog",
             "name": {
                 "value": "Create Sub-Tasks"
@@ -106,6 +105,6 @@ URL variables are available to any of the page modules, including web panels, we
 
 For example, the following URL includes variables that are bound to the JIRA project id and current issue key at runtime:
 ```
-url="/myPage?issueKey=${issue.key}&amp;projectId=${project.id}"
+url="/myPage?issueKey=${issue.key}&projectId=${project.id}"
 ```
 If the application isn't able to bind a value to the variable at runtime for any reason, it passes an empty value instead.
