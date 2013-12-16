@@ -11,7 +11,8 @@ While some webhooks are specific to the Atlassian application, JIRA or Confluenc
 applications. This type includes, for example, the webhooks that generate notifications when the add-on is enabled.
 
 Most add-ons should implement the remote_plugin_enabled webhook. The Atlassian application uses this event to supply
-its public key to the add-on. The Authenticating with OAuth page shows an example of how to use this webhook.
+its public key to the add-on. The [Authentication](../../../guides/authentication.html) docs shows an example of
+how to use this webhook.
 
 ### Handling the webhook event
 
