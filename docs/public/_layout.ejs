@@ -62,10 +62,20 @@
                 <div class="aui-page-panel-inner">
                     <%- partial('_partials/_sidebar.ejs') %>
                     <section class="aui-page-panel-content ac-page">
-                        <% if (entities.root[current.source]) { %>
-                            <%- partial('modules/_child_layout.jade', { module: entities.root[current.source] }) %>
+                        <% if (current.path.length === 1) { %>
+                            <!-- in the root - either a static page or a root level module -->
+                            <% if (entities.root[current.source]) { %>
+                                <%- partial('modules/_child_layout.jade', { module: entities.root[current.source] }) %>
+                            <% } else { %>
+                                <% yield %>
+                            <% } %>
                         <% } else { %>
-                            <% yield %>
+                            <% var module = entities[current.path[1]][current.path[2]]; %>
+                            <% if (module) { %>
+                               <%- partial('modules/_child_layout.jade', { module: module }) %>
+                            <% } else { %>
+                                <% yield %>
+                            <% } %>
                         <% } %>
                     </section>
                 </div>
