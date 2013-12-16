@@ -58,16 +58,14 @@ In choosing a location, it's worth considering that you'll need to expose this d
     },
     "version": "1.0",
     "modules": {
-        "modules": {
-            "generalPages": [
-                {
-                    "url": "/helloworld.html",
-                    "name": {
-                        "value": "Greeting"
-                    }
+        "generalPages": [
+            {
+                "url": "/helloworld.html",
+                "name": {
+                    "value": "Greeting"
                 }
-            ]
-        }
+            }
+        ]
     }
 }
 ```
