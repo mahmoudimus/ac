@@ -15,12 +15,6 @@ Traditional Atlassian add-ons run within an Atlassian application, and were requ
 
 Add-ons can modify and extend Atlassian application in a variety of ways, depending on the purpose of the add-on. The add-on may modify and extend the Atlassian application UI or invoke processes and interact with systems external to the Atlassian application.
 
-## Supported versions of Atlassian applications
-Atlassian Connect relies on some infrastructure components to be present in the Atlassian application platform. Not all versions of the application has these. An Atlassian Connect add-on works with these versions of the product: 
-
-- Confluence 5.1 and later.
-- JIRA 6.0, and later.
-
 ## What every add-on must do
 - **Declare itself in a plugin descriptor.** The add-on descriptor is a JSON file that tells the application about the add-on. Among other information, it tells the Atlassian application about the add-on's URL and the modules it wants to extend. Administrators install add-ons into Atlassian applications through a registration process.
 - **Request the appropriate permissions.** Your add-on must specify what type of access it needs from its host Atlassian application. For example, can it delete an issue? Can it listen for an event? Can it access administration resources? You declare required permissions for the add-on in the add-on descriptor file. Permissions determine which REST API resources the add-on can use.
