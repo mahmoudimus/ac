@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.doclet.model.SchemaClassDoc;
 import com.atlassian.json.schema.doclet.model.SchemaFieldDoc;
+import com.atlassian.json.schema.util.StringUtil;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
@@ -182,7 +183,8 @@ public class JsonSchemaDoclet
                 declaredField.setAccessible(true);
             }
 
-            return (String) declaredField.get(null);
+            String example = (String) declaredField.get(null);
+            return System.getProperty("line.separator") + System.getProperty("line.separator") + StringUtil.indent(example, 4);
 
         }
         catch (Exception e)
