@@ -120,8 +120,6 @@ public class ModuleList extends BaseModuleBean
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
-        this.generalPages = newArrayList();
-        this.adminPages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
         this.jiraSearchRequestViews = newArrayList();
