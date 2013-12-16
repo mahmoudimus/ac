@@ -27,8 +27,10 @@ This can be helpful when trying to trace errors or debug the add-on javascript.
 A single add-on can generate multiple iframes in a particular page in the target application. Depending on the use case for the add-on, the iframes may need to share information between each other.
 
 The Atlassian Connect JavaScript client library, `all.js`, provides a publish/subscribe mechanism that you can use to exchange data between iframes.
-<div class="aui-message warning shadowed information-macro">
-A common scenario in which a single add-on presents multiple iframes in a page is where a web panel or other page element spawns a dialog box. However, the Dialog2 module provides its own, relatively seamless means for conveying data between a dialog iframe and its parent iframe (which itself is built upon the publish/subscribe mechanism described here). 
+
+<div class="aui-message info">
+    <span class="aui-icon icon-info"></span>
+    A common scenario in which a single add-on presents multiple iframes in a page is where a web panel or other page element spawns a dialog box. However, the Dialog2 module provides its own, relatively seamless means for conveying data between a dialog iframe and its parent iframe (which itself is built upon the publish/subscribe mechanism described here).
 </div>
 
 The only restriction on the data shared in this manner is that it must be serializable to JSON, the format in which the data is conveyed on the shared bus.
