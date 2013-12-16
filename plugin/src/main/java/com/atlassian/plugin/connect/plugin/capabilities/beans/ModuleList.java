@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
-
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseModuleBeanBuilder;
