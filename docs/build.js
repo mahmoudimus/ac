@@ -20,7 +20,18 @@ function collapseArrayAndObjectProperties(properties, required) {
     return _.map(properties, function(property, id) {
         if (property.type === "array") {
             property.id = id;
-            property = _.pick(property, ["id", "type", "title", "description"]);
+            property.arrayType = property.items.type;
+            if (property.arrayType === 'object') {
+                property.arrayTypeIds = [];
+                if (property.items.anyOf) {
+                    _.each(property.items.anyOf, function (anyOf) {
+                        property.arrayTypeIds.push(anyOf.id);
+                    });
+                } else if (property.items.id) {
+                    property.arrayTypeIds.push(property.items.id);
+                }
+            }
+            property = _.pick(property, ["id", "type", "title", "description", "arrayType", "arrayTypeIds"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
             property = _.pick(property, ["id", "type", "title", "description"]);
@@ -54,12 +65,12 @@ function schemaToModel(schemaEntity) {
     if (model.type === 'array') {
         model.arrayType = schemaEntity.items.type;
         if (model.arrayType === 'object') {
-            model.arrayTypeId = [];
+            model.arrayTypeIds = [];
             if (schemaEntity.items.id) {
-                model.arrayTypeId.push(schemaEntity.items.id);
+                model.arrayTypeIds.push(schemaEntity.items.id);
             } else if (schemaEntity.items.anyOf) {
                 _.each(schemaEntity.items.anyOf, function (anyOf) {
-                    model.arrayTypeId.push(anyOf.id);
+                    model.arrayTypeIds.push(anyOf.id);
                 });
             }
         }
@@ -136,8 +147,11 @@ function findConfluenceModules(schemas) {
 }
 
 function findFragmentEntities(schemas) {
-    var entities = jsonPath(schemas, "$.*.properties.modules.properties.*.items.properties.*");
-    entities = _.filter(entities, function(obj) {return obj.id}); // applying [?(@.id)] to the JSONPath seems to fail - bug?
+    var entities = jsonPath(schemas, "$.*.properties.modules.properties.*.items.properties..*");
+    entities = _.filter(entities, function(obj) {
+        // object must have an id and not be a primitive array
+        return obj.id && (obj.type !== "array");
+    });
     entities = _.map(entities, schemaToModel);
     entities = _.zipObject(_.pluck(entities, "slug"), entities);
     return entities;

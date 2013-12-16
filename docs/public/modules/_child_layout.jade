@@ -34,11 +34,20 @@ table.aui
                                 span.aui-lozenge
                                     = prop.id
                     - else if (prop.type === 'array')
-                        | [&nbsp;
-                        a(href = '/' + entityLinks[prop.id] + '.html')
+                        - if (prop.arrayType === 'object')
+                            | [&nbsp;
+                            prop.arrayTypeIds.length
+                            - each typeId in prop.arrayTypeIds
+                                a(href = '/' + entityLinks[typeId] + '.html')
+                                    span.aui-lozenge
+                                        = typeId
+                                | ,&nbsp;
+                            | ... ]
+                        - else
+                            | [&nbsp;
                             span.aui-lozenge
-                                = prop.id
-                        | , ... ]
+                                = prop.arrayType
+                            | , ... ]
                     - else
                         span.aui-lozenge
                             = prop.type
