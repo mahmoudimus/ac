@@ -19,19 +19,25 @@ table.aui
                         a(href = '/' + entityLinks[prop.id] + '.html')
                             span.aui-lozenge
                                 = prop.id
+                    - else if (prop.type === 'array')
+                        | [&nbsp;
+                        a(href = '/' + entityLinks[prop.id] + '.html')
+                            span.aui-lozenge
+                                = prop.id
+                        | , ... ]
                     - else
                         span.aui-lozenge
                             = prop.type
                 td
                     - if (prop.required)
                         span.aui-lozenge Required
-                        &nbsp;
+                        | &nbsp;
                     = prop.description
                     - if (prop.enum)
                         div
                             strong Valid values:
                             - each value in prop.enum
-                                &nbsp;
+                                | &nbsp;
                                 span.aui-lozenge
                                     = value
 
