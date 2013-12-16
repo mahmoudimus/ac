@@ -69,8 +69,7 @@ Here's an example of a module declaration:
                     "condition": "is_issue_unresolved"
                 }
             ],
-            location: "operations-subtasks",
-            target: "dialog",
+            "location": "operations-subtasks",
             "url": "/dialog",
             "name": {
                 "value": "Create Sub-Tasks"
