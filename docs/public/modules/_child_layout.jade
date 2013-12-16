@@ -52,7 +52,7 @@ table.aui
                                 = prop.pattern
                 td
                     div
-                        = prop.description
+                        != prop.description
                     - if (prop.required)
                         span.aui-lozenge Required
                     - if (prop.enum)
