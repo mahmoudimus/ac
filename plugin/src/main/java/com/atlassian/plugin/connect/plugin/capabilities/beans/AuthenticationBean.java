@@ -16,7 +16,7 @@ public class AuthenticationBean extends BaseModuleBean
     private AuthenticationType type;
 
     /**
-     * The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with
+     * The public key used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with
      * a shared secret.
      */
     private String publicKey;

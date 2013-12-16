@@ -12,6 +12,9 @@ var genSrcPrefix = buildDir + "/gensrc/";
 
 var srcFiles = ["public", "package.json"];
 
+var jiraSchemaPath = '../plugin/target/classes/schema/jira-schema.json';
+var confluenceSchemaPath = '../plugin/target/classes/schema/confluence-schema.json';
+
 function storeEntity(obj, key, bucket) {
     // store entities with ids if they have it, or key if they don't
     var id = obj.id || (obj.items && key);
@@ -103,12 +106,16 @@ function copySrcFiles(filenames) {
     });
 }
 
+function readJson(path) {
+    return JSON.parse(fs.readFileSync(path, 'utf8'));
+}
+
 function rebuildHarpSite() {
 
     fs.deleteSync(buildDir);
 
-    var jiraSchema = require('../plugin/target/classes/schema/jira-schema.json');
-    var confluenceSchema = require('../plugin/target/classes/schema/confluence-schema.json');
+    var jiraSchema = readJson(jiraSchemaPath);
+    var confluenceSchema = readJson(confluenceSchemaPath);
 
     var entities = {
         root: findEntities(jiraSchema.properties),
@@ -201,7 +208,9 @@ function startHarpServerAndWatchSrcFiles() {
 
     harpServer = startHarpServer();
 
-    var watcher = chokidar.watch(srcFiles, {persistent:true});
+    var watchedFiles = srcFiles.concat(jiraSchemaPath, confluenceSchemaPath);
+
+    var watcher = chokidar.watch(watchedFiles, {persistent:true});
     _.each(['add', 'addDir', 'change', 'unlink', 'unlinkDir'], function(event) {
         watcher.on(event, function(path) {
             console.log(event + " on " + path + "! Rebuilding..");
