@@ -22,16 +22,16 @@ function collapseArrayAndObjectProperties(properties, required) {
             property.id = id;
             property.arrayType = property.items.type;
             if (property.arrayType === 'object') {
-                property.arrayTypeId = [];
-                if (property.items.id) {
-                    property.arrayTypeId.push(property.items.id);
-                } else if (property.items.anyOf) {
+                property.arrayTypeIds = [];
+                if (property.items.anyOf) {
                     _.each(property.items.anyOf, function (anyOf) {
-                        property.arrayTypeId.push(anyOf.id);
+                        property.arrayTypeIds.push(anyOf.id);
                     });
+                } else if (property.items.id) {
+                    property.arrayTypeIds.push(property.items.id);
                 }
             }
-            property = _.pick(property, ["id", "type", "title", "description", "arrayType", "arrayTypeId"]);
+            property = _.pick(property, ["id", "type", "title", "description", "arrayType", "arrayTypeIds"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
             property = _.pick(property, ["id", "type", "title", "description"]);
@@ -65,12 +65,12 @@ function schemaToModel(schemaEntity) {
     if (model.type === 'array') {
         model.arrayType = schemaEntity.items.type;
         if (model.arrayType === 'object') {
-            model.arrayTypeId = [];
+            model.arrayTypeIds = [];
             if (schemaEntity.items.id) {
-                model.arrayTypeId.push(schemaEntity.items.id);
+                model.arrayTypeIds.push(schemaEntity.items.id);
             } else if (schemaEntity.items.anyOf) {
                 _.each(schemaEntity.items.anyOf, function (anyOf) {
-                    model.arrayTypeId.push(anyOf.id);
+                    model.arrayTypeIds.push(anyOf.id);
                 });
             }
         }
