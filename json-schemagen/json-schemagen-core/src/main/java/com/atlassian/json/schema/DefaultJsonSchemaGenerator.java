@@ -144,6 +144,8 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
             }
         }
 
+        addCommonAttrsForField(schema,field);
+
         return schema;
     }
 

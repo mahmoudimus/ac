@@ -32,11 +32,19 @@ table.aui
                     - else
                         span.aui-lozenge
                             = prop.type
+                        - if (prop.type === 'string' && prop.format)
+                            p
+                            span.aui-lozenge
+                                = prop.format
+                        - else if (prop.type === 'string' && prop.pattern)
+                            p
+                            span.aui-lozenge
+                                = prop.pattern
                 td
+                    div
+                        = prop.description
                     - if (prop.required)
                         span.aui-lozenge Required
-                        | &nbsp;
-                    = prop.description
                     - if (prop.enum)
                         div
                             strong Valid values:
@@ -44,6 +52,11 @@ table.aui
                                 | &nbsp;
                                 span.aui-lozenge
                                     = value
+                    - if (prop.defaultValue)
+                        div
+                            strong Default value:
+                            span &nbsp;
+                                = prop.defaultValue
 
 //- h2 JSON Schema
 //- textarea.code

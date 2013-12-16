@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
@@ -71,6 +72,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      *  This context can be either "add-on", which renders the URL relative to the add-on's base URL, or
      *  "product", which renders the URL relative to the product's base URL.
      */
+    @CommonSchemaAttributes(defaultValue = "addon")
     private AddOnUrlContext context;
 
     /**
@@ -87,6 +89,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
      * in a sensible order given existing items.
      */
+    @CommonSchemaAttributes(defaultValue = "100")
     private Integer weight;
 
     /**
