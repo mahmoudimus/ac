@@ -6,6 +6,7 @@ var util = require('util');
 var renderMarkdown = require("markdown-js").markdown;
 var fork = require("child_process").fork;
 var chokidar = require("chokidar");
+var jsonPath = require("JSONPath").eval;
 
 var buildDir = "./target";
 var genSrcPrefix = buildDir + "/gensrc/";
@@ -14,36 +15,6 @@ var srcFiles = ["public", "package.json"];
 
 var jiraSchemaPath = '../plugin/target/classes/schema/jira-schema.json';
 var confluenceSchemaPath = '../plugin/target/classes/schema/confluence-schema.json';
-
-function storeEntity(obj, key, bucket) {
-    // store entities with ids if they have it, or key if they don't
-    var id = obj.id || (obj.items && key);
-    if (id && !bucket[id]) {
-        bucket[id] = obj;
-    }
-    return bucket;
-}
-
-function findEntities(schemaProperties) {
-    var bucket = {};
-    _.forEach(schemaProperties, function(val, key) {
-        if (typeof val === "object") {
-            storeEntity(val, key, bucket);
-        }
-    });
-    return bucket;
-}
-
-function findEntitiesRecursively(json, bucket) {
-    bucket = bucket || {};
-    _.forEach(json, function(val, key) {
-        if (typeof val === "object") {
-            storeEntity(val, key, bucket);
-            findEntitiesRecursively(val, bucket);
-        }
-    });
-    return bucket;
-}
 
 function collapseArrayAndObjectProperties(properties, required) {
     return _.map(properties, function(property, id) {
@@ -69,34 +40,35 @@ function collapseArrayAndObjectProperties(properties, required) {
     });
 }
 
-function schemaToModel(schemaEntity, id) {
-    var name = schemaEntity.title || id;
+function schemaToModel(schemaEntity) {
+    var name = schemaEntity.title || schemaEntity.id;
     var description = renderMarkdown(schemaEntity.description || name);
 
     var model = {
-        id: id,
+        id: schemaEntity.id,
         name: name,
+        slug: slugify(name),
         description: description,
         type: schemaEntity.type
     };
 
     if (model.type === 'array') {
-        model.arrayType = schemaEntity.items.id;
-    } else {
+        model.arrayType = schemaEntity.items.type;
+        if (model.arrayType === 'object') {
+            model.arrayTypeId = [];
+            if (schemaEntity.items.id) {
+                model.arrayTypeId.push(schemaEntity.items.id);
+            } else if (schemaEntity.items.anyOf) {
+                _.each(schemaEntity.items.anyOf, function (anyOf) {
+                    model.arrayTypeId.push(anyOf.id);
+                });
+            }
+        }
+    } else if (model.type === 'object') {
         model.properties = collapseArrayAndObjectProperties(schemaEntity.properties, schemaEntity.required);
     }
 
     return model;
-}
-
-function uniqueArrayTypes(moduleList) {
-    return _.unique(_.pluck(moduleList, "arrayType"));
-}
-
-function findModulesWithId(entities, ids) {
-    return _.filter(entities, function (val) {
-        return ids.indexOf(val.id) > -1;
-    });
 }
 
 function copySrcFiles(filenames) {
@@ -110,57 +82,21 @@ function readJson(path) {
     return JSON.parse(fs.readFileSync(path, 'utf8'));
 }
 
-function rebuildHarpSite() {
+function slugify(string) {
+    return string
+            .toLowerCase()
+            .replace(/[^\w ]+/g,'')
+            .replace(/ +/g,'-');
+}
 
-    fs.deleteSync(buildDir);
-
-    var jiraSchema = readJson(jiraSchemaPath);
-    var confluenceSchema = readJson(confluenceSchemaPath);
-
-    var entities = {
-        root: findEntities(jiraSchema.properties),
-        jiraModuleList: findEntities(jiraSchema.properties.modules.properties),
-        confluenceModuleList: findEntities(confluenceSchema.properties.modules.properties)
-    };
-
-    var allEntities = _.extend(findEntitiesRecursively(jiraSchema), findEntitiesRecursively(confluenceSchema));
-    entities.fragment = _.omit(allEntities, _.keys(entities.root), _.keys(entities.jiraModuleList), _.keys(entities.confluenceModuleList));
-
-    entities = _.mapValues(entities, function(val) {
-        return _.map(val, schemaToModel);
-    });
-
-    var jiraTypes = uniqueArrayTypes(entities.jiraModuleList);
-    var confluenceTypes = uniqueArrayTypes(entities.confluenceModuleList);
-
-    entities.jira = findModulesWithId(entities.fragment, jiraTypes);
-    entities.confluence = findModulesWithId(entities.fragment, confluenceTypes);
-    entities.fragment = _.difference(entities.fragment, entities.jira, entities.confluence);
-
-    copySrcFiles(srcFiles);
-    copySrcFiles("node_modules");
-
-    // write out our file structure
-
-    var keyToPath = {
-        root: "modules",
-        jira: "modules/jira",
-        confluence: "modules/confluence",
-        fragment: "modules/fragment"
-    };
-
-    var entityData = {};
+function writeEntitiesToDisk(entities, pathMappings) {
     var entityLinks = {};
 
     _.each(entities, function(entitySet, parentKey) {
-        var pathMapping = keyToPath[parentKey];
+        var pathMapping = pathMappings[parentKey];
         if (pathMapping) {
-            entityData[parentKey] = {};
             _.each(entitySet, function(entity) {
-                entity = _.clone(entity);
-                entityData[parentKey][entity.id] = entity;
-                entity.selfLink = pathMapping + '/' + entity.id;
-
+                entity.selfLink = pathMapping + '/' + entity.slug;
                 entityLinks[entity.id] = entity.selfLink;
 
                 var placeholder =
@@ -176,13 +112,72 @@ function rebuildHarpSite() {
         }
     });
 
+    return entityLinks;
+}
+
+function findRootEntities(schemas) {
+    var entities = jsonPath(schemas, "$.*.*[?(@.id)]");
+    entities = _.map(entities, schemaToModel);
+    entities = _.zipObject(_.pluck(entities, "slug"), entities);
+    return entities;
+}
+
+function findJiraModules(schemas) {
+    var entities = jsonPath(schemas, "$.jira.properties.modules.properties.*[?(@.id)]");
+    entities = _.map(entities, schemaToModel);
+    entities = _.zipObject(_.pluck(entities, "slug"), entities);
+    return entities;
+}
+
+function findConfluenceModules(schemas) {
+    var entities = jsonPath(schemas, "$.confluence.properties.modules.properties.*[?(@.id)]");
+    entities = _.map(entities, schemaToModel);
+    entities = _.zipObject(_.pluck(entities, "slug"), entities);
+    return entities;
+}
+
+function findFragmentEntities(schemas) {
+    var entities = jsonPath(schemas, "$.*.properties.modules.properties.*.items.properties.*");
+    entities = _.filter(entities, function(obj) {return obj.id}); // applying [?(@.id)] to the JSONPath seems to fail - bug?
+    entities = _.map(entities, schemaToModel);
+    entities = _.zipObject(_.pluck(entities, "slug"), entities);
+    return entities;
+}
+
+function rebuildHarpSite() {
+
+    fs.deleteSync(buildDir);
+
+    var schemas = {
+        jira: readJson(jiraSchemaPath),
+        confluence: readJson(confluenceSchemaPath)
+    };
+
+    var entities = {
+        root: findRootEntities(schemas),
+        jira: findJiraModules(schemas),
+        confluence: findConfluenceModules(schemas),
+        fragment: findFragmentEntities(schemas)
+    };
+
+    copySrcFiles(srcFiles);
+    copySrcFiles("node_modules");
+
+    var entityLinks = writeEntitiesToDisk(entities, {
+        root: "modules",
+        jira: "modules/jira",
+        confluence: "modules/confluence",
+        fragment: "modules/fragment"
+    });
+
     var harpGlobals = require('./globals.json');
 
-    harpGlobals.globals.entityLinks = entityLinks;
-    harpGlobals.globals.entities = entityData;
-    harpGlobals.globals.schemas = {};
+    harpGlobals.globals = _.extend({
+        entityLinks: entityLinks,
+        entities: entities,
+        schemas: schemas
+    }, harpGlobals.globals);
 
-    // Store schema info into Harp globals
     fs.outputFileSync(genSrcPrefix + 'harp.json', JSON.stringify(harpGlobals,null,2));
 }
 
