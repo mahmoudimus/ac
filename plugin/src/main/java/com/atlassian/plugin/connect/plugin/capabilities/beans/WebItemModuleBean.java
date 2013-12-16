@@ -46,6 +46,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      *  product URL or the add-on's base URL, depending on the *context* parameter.
      */
     @StringSchemaAttributes(format = "uri")
+    @Required
     private String link;
 
     /**
