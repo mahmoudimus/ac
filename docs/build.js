@@ -83,13 +83,13 @@ function schemaToModel(schemaEntity, id) {
 }
 
 var entities = {
-    topLevel: findEntities(jiraSchema.properties),
+    root: findEntities(jiraSchema.properties),
     jiraModuleList: findEntities(jiraSchema.properties.modules.properties),
     confluenceModuleList: findEntities(confluenceSchema.properties.modules.properties)
 };
 
 var allEntities = _.extend(findEntitiesRecursively(jiraSchema), findEntitiesRecursively(confluenceSchema));
-entities.nested = _.omit(allEntities, _.keys(entities.topLevel), _.keys(entities.jiraModuleList), _.keys(entities.confluenceModuleList));
+entities.fragment = _.omit(allEntities, _.keys(entities.root), _.keys(entities.jiraModuleList), _.keys(entities.confluenceModuleList));
 
 entities = _.mapValues(entities, function(val) {
     return _.map(val, schemaToModel);
@@ -103,14 +103,14 @@ var jiraTypes = uniqueArrayTypes(entities.jiraModuleList);
 var confluenceTypes = uniqueArrayTypes(entities.confluenceModuleList);
 
 function findNestedModules(ids) {
-    return _.filter(entities.nested, function (val) {
+    return _.filter(entities.fragment, function (val) {
         return ids.indexOf(val.id) > -1;
     });
 }
 
-entities.jiraModules = findNestedModules(jiraTypes);
-entities.confluenceModules = findNestedModules(confluenceTypes);
-entities.nested = _.difference(entities.nested, entities.jiraModules, entities.confluenceModules);
+entities.jira = findNestedModules(jiraTypes);
+entities.confluence = findNestedModules(confluenceTypes);
+entities.fragment = _.difference(entities.fragment, entities.jira, entities.confluence);
 
 console.log(util.inspect(entities, {depth: 5}));
 
@@ -124,45 +124,74 @@ _.each(["public", "package.json", "node_modules"], function (requiredFile) {
 });
 
 // write out our file structure
+
+var keyToPath = {
+    root: "modules",
+    jira: "modules/jira",
+    confluence: "modules/confluence",
+    fragment: "modules/fragment"
+};
+
+var entityData = {};
+
 _.each(entities, function(entitySet, parentKey) {
-    _.each(entitySet, function(entity) {
-        fs.outputFileSync(
-            genSrcPrefix + 'public/modules2/' + parentKey + '/' + entity.id +'.md',
-            "Placeholder - this file indicates static web directory structure and is not actually used in rendering.\n\n" +
-            "Here's the model JSON for this file, y'know for debugging and stuff:\n\n" +
-            JSON.stringify(entity, null, 2)
-        );
-    });
+    var pathMapping = keyToPath[parentKey];
+    if (pathMapping) {
+        entityData[parentKey] = {};
+        _.each(entitySet, function(entity) {
+            entity = _.clone(entity);
+            entityData[parentKey][entity.id] = entity;
+            entity.selfLink = pathMapping + '/' + entity.id;
+            console.log(entity.id + " selfLink: " + entity.selfLink);
+
+            var placeholder =
+                    "Placeholder - this file indicates static web directory " +
+                    "structure and is not actually used in rendering.\n\n" +
+                    "Here's the model JSON for this file, y'know for debugging " +
+                    "and stuff:\n\n" + JSON.stringify(entity, null, 2);
+
+            var filePath = genSrcPrefix + 'public/' + entity.selfLink +'.md';
+
+            console.log("Writing to " + filePath);
+
+            fs.outputFileSync(filePath, placeholder);
+        });
+    }
 });
 
 var harpGlobals = require('./globals.json');
 
-harpGlobals.globals.entities = entities;
+harpGlobals.globals.entities = entityData;
 harpGlobals.globals.schemas = {};
 
 // Sort capabilities so that they show up in alpha order
-function sortModules(modules) {
-    var keys = Object.keys(modules).sort();
-    var obj = {};
-    for(var i = 0; i < keys.length; i++) {
-        obj[keys[i]] = modules[keys[i]];
-    }
-    return obj;
-}
-
-function sortAndWriteOutProperties(schema, product)
-{
-    schema.properties.modules.properties = sortModules(schema.properties.modules.properties);
-    harpGlobals.globals.schemas[product] = schema;
-    for (var k in schema.properties.modules.properties) {
-        fs.outputFileSync(genSrcPrefix + "public/modules/" + product + '/' + k +'.md', String(schema.properties.modules.properties[k].items.description).replace(/\n /g,"\n"));
-    }
-}
-
-sortAndWriteOutProperties(jiraSchema, 'jira');
-sortAndWriteOutProperties(confluenceSchema, 'confluence');
+//function sortModules(modules) {
+//    var keys = Object.keys(modules).sort();
+//    var obj = {};
+//    for(var i = 0; i < keys.length; i++) {
+//        obj[keys[i]] = modules[keys[i]];
+//    }
+//    return obj;
+//}
+//
+//function sortAndWriteOutProperties(schema, product)
+//{
+//    schema.properties.modules.properties = sortModules(schema.properties.modules.properties);
+//    harpGlobals.globals.schemas[product] = schema;
+//    for (var k in schema.properties.modules.properties) {
+//        fs.outputFileSync(genSrcPrefix + "public/modules/" + product + '/' + k +'.md', String(schema.properties.modules.properties[k].items.description).replace(/\n /g,"\n"));
+//    }
+//}
+//
+//sortAndWriteOutProperties(jiraSchema, 'jira');
+//sortAndWriteOutProperties(confluenceSchema, 'confluence');
 
 // Store schema info into Harp globals
 fs.outputFileSync(genSrcPrefix + 'harp.json', JSON.stringify(harpGlobals,null,2));
 
-fork('./node_modules/harp/bin/harp', ["-o", "../www", "compile"], {'cwd': genSrcPrefix});
+if (process.argv.length > 2 && process.argv[2].toLowerCase().indexOf("serve") === 0) {
+    fork('./node_modules/harp/bin/harp', ["server"], {'cwd': genSrcPrefix});
+} else {
+    fork('./node_modules/harp/bin/harp', ["-o", "../www", "compile"], {'cwd': genSrcPrefix});
+}
+

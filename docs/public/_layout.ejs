@@ -62,11 +62,7 @@
                 <div class="aui-page-panel-inner">
                     <%- partial('_partials/_sidebar.ejs') %>
                     <section class="aui-page-panel-content ac-page">
-                        <% if (/^jira$|^confluence$/.test(current.path[1])) { %>
-                            <%- partial('/modules/_child_layout.jade',{yield: yield, product: current.path[1]}) %>
-                        <% } else { %>
-                            <%- yield %>
-                        <% } %>
+                        <%= current.path.join("/") %>
                     </section>
                 </div>
             </div>
