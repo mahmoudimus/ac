@@ -19,7 +19,13 @@ table.aui
                         = prop.type
                 td
                     = prop.description
-
+                    - if (prop.enum)
+                        div
+                            strong Valid values:
+                            - each value in prop.enum
+                                &nbsp;
+                                span.aui-lozenge
+                                    = value
 
 //- h2 JSON Schema
 //- textarea.code
