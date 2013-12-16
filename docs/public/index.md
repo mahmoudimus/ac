@@ -21,7 +21,7 @@ Atlassian Connect enables building and delivering add-ons for Atlassian applicat
         <img src="./assets/images/braces.png" alt="Getting Started">
         <h2>Reference</h2>
         <p>
-            Check out Connect's full list of <a href="./capabilities/">capabilities</a> and <a href="./rest/">REST APIs</a>.
+            Check out Connect's full list of <a href="./guides/modules.html">modules</a> and <a href="./rest/">REST APIs</a>.
         </p>
     </div>
 </div>
