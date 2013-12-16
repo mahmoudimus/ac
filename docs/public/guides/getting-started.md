@@ -47,27 +47,27 @@ In choosing a location, it's worth considering that you'll need to expose this d
  2. In your project directory, create a new file named `atlassian-plugin.json`.
  3. Add the following text to the file:
 ```
-{
-    "name": "Hello World",
-    "description": "Atlassian Connect add-on",
-    "key": "myaddon_helloworld",
-    "baseUrl": "http://localhost:8000",
-    "vendor": {
-        "name": "My Organization, Inc",
-        "url": "https://developer.atlassian.com"
-    },
-    "version": "1.0",
-    "modules": {
-        "generalPages": [
-            {
-                "url": "/helloworld.html",
-                "name": {
-                    "value": "Greeting"
+    {
+        "name": "Hello World",
+        "description": "Atlassian Connect add-on",
+        "key": "myaddon_helloworld",
+        "baseUrl": "http://localhost:8000",
+        "vendor": {
+            "name": "My Organization, Inc",
+            "url": "https://developer.atlassian.com"
+        },
+        "version": "1.0",
+        "modules": {
+            "generalPages": [
+                {
+                    "url": "/helloworld.html",
+                    "name": {
+                        "value": "Greeting"
+                    }
                 }
-            }
-        ]
+            ]
+        }
     }
-}
 ```
  4. Make the following changes to the file content:
     * Change the key and name attribute values for atlassian-plugin.json to anything you like. Note that the key value must be unique for all add-ons in this instance. 
@@ -87,12 +87,12 @@ In the same folder as the descriptor file, create a new file with a name that ma
 ```
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script src="//atlassian-app-hostname:port/context/atlassian-connect/all.js" type="text/javascript"></script>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-  </body>
+    <head>
+        <script src="//atlassian-app-hostname:port/context/atlassian-connect/all.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+    </body>
 </html>
 ```
 
