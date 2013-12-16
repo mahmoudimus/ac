@@ -62,7 +62,11 @@
                 <div class="aui-page-panel-inner">
                     <%- partial('_partials/_sidebar.ejs') %>
                     <section class="aui-page-panel-content ac-page">
-                        <%= current.path.join("/") %>
+                        <% if (entities.root[current.source]) { %>
+                            <%- partial('modules/_child_layout.jade', { module: entities.root[current.source] }) %>
+                        <% } else { %>
+                            <% yield %>
+                        <% } %>
                     </section>
                 </div>
             </div>
