@@ -8,6 +8,8 @@ import com.atlassian.plugin.spring.scanner.ProductFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.List;
+
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
