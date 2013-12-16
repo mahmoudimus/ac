@@ -13,9 +13,9 @@ Let's look at an example:
 
 ```
 {
+    "name": "My Addon",
     "description": "hello world description",
     "key": "com.example.tutorial.myaddon",
-    "name": "My Addon",
     "vendor": {
         "name": "Example, Inc.",
         "url": "https://www.example.com"
@@ -55,6 +55,7 @@ For a webhook, the URL should be the address to which the Atlassian instance pos
 Here's an example of a module declaration:
 ```
 {
+    "name": "My Addon",
     "modules": {
         "webItems": [{
             "conditions": [

@@ -59,6 +59,7 @@ This registers the add-on declared by the `atlassian-plugin.json` file at the UR
 Note that you should not rely on the response returned from the POST request to confirm that the plugin has been installed. Instead, the best way to confirm that the plugin has been installed is to add a lifecycle event to your add-on descriptor that listens for the add-on installation event. The lifecycle declaration in the `atlassian-plugin.json` file would look something like this:
 ```
 {
+    "name": "My Addon",
     "lifecycle": {
         "installed" : "/your-url-here"
     }
