@@ -20,6 +20,8 @@ import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
@@ -50,14 +52,15 @@ public class JwtSigningRemotablePluginAccessorTest
     private static final String PLUGIN_KEY = "key";
     private static final String PLUGIN_NAME = "name";
     private static final String CONSUMER_KEY = "12345-abcde-09876-zyxwv";
+    private static final String USER_KEY = "MrFreeze";
     private static final String BASE_PATH = "/basepath";
     private static final String BASE_URL = "http://server:1234" + BASE_PATH;
     private static final String FULL_PATH_URL = BASE_URL + "/path";
     private static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
     private static final String INTERNAL_FULL_GET_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";
-    private static final Map<String,String> GET_HEADERS = Collections.singletonMap("header", "header value");
-    private static final Map<String,String> GET_PARAMS = Collections.singletonMap("param", "param value");
-    private static final Map<String,String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
+    private static final Map<String, String> GET_HEADERS = Collections.singletonMap("header", "header value");
+    private static final Map<String, String> GET_PARAMS = Collections.singletonMap("param", "param value");
+    private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
     private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
@@ -163,6 +166,20 @@ public class JwtSigningRemotablePluginAccessorTest
     }
 
     @Test
+    public void subjectIsClaimed()
+    {
+        createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
+        verify(jwtService).issueJwt(argThat(hasAnySubject()), any(ApplicationLink.class));
+    }
+
+    @Test
+    public void subjectClaimIsCorrect()
+    {
+        createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
+        verify(jwtService).issueJwt(argThat(hasSubject(USER_KEY)), any(ApplicationLink.class));
+    }
+
+    @Test
     public void queryHashIsClaimed()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
@@ -181,7 +198,7 @@ public class JwtSigningRemotablePluginAccessorTest
     public void thereAreNoUnexpectedClaims()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasExactlyTheseClaims("iss", "iat", "exp", JwtConstants.Claims.QUERY_HASH)), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasExactlyTheseClaims("iss", "sub", "iat", "exp", JwtConstants.Claims.QUERY_HASH)), any(ApplicationLink.class));
     }
 
     private ArgumentMatcher<String> hasExactlyTheseClaims(String... claimNames)
@@ -196,7 +213,7 @@ public class JwtSigningRemotablePluginAccessorTest
 
     private ArgumentMatcher<String> hasIssuedAtTimeCloseToNow()
     {
-        return new LongClaimMatcher("iat", System.currentTimeMillis()/1000, 3); // issued within 3 seconds of now
+        return new LongClaimMatcher("iat", System.currentTimeMillis() / 1000, 3); // issued within 3 seconds of now
     }
 
     private ArgumentMatcher<String> hasAnyExpirationTime()
@@ -206,7 +223,7 @@ public class JwtSigningRemotablePluginAccessorTest
 
     private ArgumentMatcher<String> hasExpiresAtTimeCloseToDefaultWindowFromNow()
     {
-        return new LongClaimMatcher("exp", System.currentTimeMillis()/1000 + 3 * 60, 3); // expires within 3 seconds of 3 minutes from now
+        return new LongClaimMatcher("exp", System.currentTimeMillis() / 1000 + 3 * 60, 3); // expires within 3 seconds of 3 minutes from now
     }
 
     private ArgumentMatcher<String> hasAnyQueryHash()
@@ -227,6 +244,16 @@ public class JwtSigningRemotablePluginAccessorTest
     private ArgumentMatcher<String> hasIssuer(String issuer)
     {
         return new StringClaimMatcher("iss", issuer);
+    }
+
+    private ArgumentMatcher<String> hasAnySubject()
+    {
+        return new StringClaimMatcher("sub");
+    }
+
+    private ArgumentMatcher<String> hasSubject(String sub)
+    {
+        return new StringClaimMatcher("sub", sub);
     }
 
     private static class StringClaimMatcher extends ArgumentMatcher<String>
@@ -382,7 +409,11 @@ public class JwtSigningRemotablePluginAccessorTest
                 .build();
         when(consumerService.getConsumer()).thenReturn(consumer);
 
-        return new JwtSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, jwtService, consumerService, connectApplinkManager, mockCachingHttpContentRetriever());
+        UserKey mockRemoteUserKey = new UserKey(USER_KEY);
+        UserManager userManager = mock(UserManager.class);
+        when(userManager.getRemoteUserKey()).thenReturn(mockRemoteUserKey);
+
+        return new JwtSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, jwtService, consumerService, connectApplinkManager, mockCachingHttpContentRetriever(), userManager);
     }
 
     private HttpContentRetriever mockCachingHttpContentRetriever()
