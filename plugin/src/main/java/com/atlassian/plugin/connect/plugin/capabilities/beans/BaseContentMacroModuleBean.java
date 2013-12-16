@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.DynamicContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
@@ -21,7 +20,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18n
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
 
-public class BaseContentMacroModuleBean extends NameToKeyBean
+public abstract class BaseContentMacroModuleBean extends NameToKeyBean
 {
     /**
      * The link to the add-on resource that provides the content for the iFrame.

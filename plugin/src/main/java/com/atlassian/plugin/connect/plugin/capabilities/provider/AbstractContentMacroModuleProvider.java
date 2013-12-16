@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
@@ -11,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.MacroI18nBuil
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.hostcontainer.HostContainer;
+import com.atlassian.plugin.module.PrefixDelegatingModuleFactory;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -141,11 +143,10 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         }
         catch (URISyntaxException e)
         {
-            log.error("Malformed icon url declared by '"
+            throw new PluginParseException("Malformed icon url declared by '"
                     + plugin.getName()
                     + "' (" + plugin.getKey() + "): "
-                    + url);
-            return url;
+                    + url, e);
         }
     }
 }

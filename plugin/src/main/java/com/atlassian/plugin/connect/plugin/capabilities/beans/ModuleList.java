@@ -107,6 +107,7 @@ public class ModuleList extends BaseModuleBean
     {
         this.adminPages = newArrayList();
         this.configurePages = newArrayList();
+        this.dynamicContentMacros = newArrayList();
         this.generalPages = newArrayList();
         this.jiraComponentTabPanels = newArrayList();
         this.jiraIssueTabPanels = newArrayList();
@@ -117,14 +118,10 @@ public class ModuleList extends BaseModuleBean
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.profilePages = newArrayList();
+        this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
-        this.jiraWorkflowPostFunctions = newArrayList();
-        this.webhooks = newArrayList();
-        this.jiraSearchRequestViews = newArrayList();
-        this.dynamicContentMacros = newArrayList();
-        this.staticContentMacros = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -305,7 +302,6 @@ public class ModuleList extends BaseModuleBean
         return new EqualsBuilder()
                 .append(adminPages, other.adminPages)
                 .append(dynamicContentMacros, other.dynamicContentMacros)
-                .append(staticContentMacros, other.staticContentMacros)
                 .append(configurePages, other.configurePages)
                 .append(generalPages, other.generalPages)
                 .append(jiraComponentTabPanels, other.jiraComponentTabPanels)
@@ -317,6 +313,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
                 .append(profilePages, other.profilePages)
+                .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
                 .append(webPanels, webPanels)
@@ -330,7 +327,6 @@ public class ModuleList extends BaseModuleBean
         return new HashCodeBuilder(29, 37)
                 .append(adminPages)
                 .append(dynamicContentMacros)
-                .append(staticContentMacros)
                 .append(configurePages)
                 .append(generalPages)
                 .append(jiraComponentTabPanels)
@@ -342,6 +338,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
                 .append(profilePages)
+                .append(staticContentMacros)
                 .append(webhooks)
                 .append(webItems)
                 .append(webPanels)
