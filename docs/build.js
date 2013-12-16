@@ -18,17 +18,12 @@ var confluenceSchemaPath = '../plugin/target/classes/schema/confluence-schema.js
 
 function collapseArrayAndObjectProperties(properties, required) {
     return _.map(properties, function(property, id) {
-        switch (property.type) {
-            case "array":
-                property.id = id;
-                property = _.pick(property, ["id", "type", "title"]);
-                break;
-            case "object":
-                property = _.pick(property, ["id", "type", "title"]);
-                break;
-            default:
-                // primitive
-                break;
+        if (property.type === "array") {
+            property.id = id;
+            property = _.pick(property, ["id", "type", "title"]);
+        } else if (property.type === "object" && property.id) {
+            // if there's no id, it means that any object is allowed here
+            property = _.pick(property, ["id", "type", "title"]);
         }
 
         if (required && required.indexOf(id) > -1) {
