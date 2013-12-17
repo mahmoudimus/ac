@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * @since 1.0
+ * Represents a string that can be resolved via a localization properties file.
  */
 public class I18nProperty
 {
@@ -17,7 +17,7 @@ public class I18nProperty
     private String value;
 
     /**
-     * The localisation key for the human-readable value.
+     * The localization key for the human-readable value.
      * If this key is provided, it will be looked up in an I18n properties file to get the value.
      */
     private String i18n;
