@@ -1,8 +1,7 @@
-- var capability = schemas[product].properties.modules.properties[current.source]
 h1
-    = capability.title || capability.items.title
+    = module.name
 
-!= yield
+!= module.description
 
 h2 Properties
 
@@ -12,17 +11,71 @@ table.aui
           th Name
           th Type
           th Description
-      tbody
-        - for(var prop in capability.items.properties)
+    tbody
+        - each prop in module.properties
             tr
                 td
-                    = prop
+                    = prop.key
                 td
-                    span.aui-lozenge
-                        = capability.items.properties[prop].type
+                    - if (prop.type === 'object')
+                        - if (entityLinks[prop.id])
+                            a(href = baseUrl + '/' + entityLinks[prop.id] + '.html')
+                                - if (prop.title)
+                                    span.aui-lozenge
+                                        = prop.title
+                                - else
+                                    span.aui-lozenge
+                                        = prop.id
+                        - else
+                            - if (prop.title)
+                                span.aui-lozenge
+                                    = prop.title
+                            - else
+                                span.aui-lozenge
+                                    = prop.id
+                    - else if (prop.type === 'array')
+                        - if (prop.arrayType === 'object')
+                            | [&nbsp;
+                            prop.arrayTypeIds.length
+                            - each typeId in prop.arrayTypeIds
+                                a(href = baseUrl + '/' + entityLinks[typeId] + '.html')
+                                    span.aui-lozenge
+                                        = typeId
+                                | ,&nbsp;
+                            | ... ]
+                        - else
+                            | [&nbsp;
+                            span.aui-lozenge
+                                = prop.arrayType
+                            | , ... ]
+                    - else
+                        span.aui-lozenge
+                            = prop.type
+                        - if (prop.type === 'string' && prop.format)
+                            p
+                            span.aui-lozenge
+                                = prop.format
+                        - else if (prop.type === 'string' && prop.pattern)
+                            p
+                            span.aui-lozenge
+                                = prop.pattern
                 td
-                    = capability.items.properties[prop].description
-
+                    div
+                        != prop.description
+                    - if (prop.required)
+                        span.aui-lozenge Required
+                    - if (prop.enum)
+                        div
+                            strong Valid values:
+                            - each value in prop.enum
+                                | &nbsp;
+                                span.aui-lozenge
+                                    = value
+                    - if (prop.defaultValue)
+                        div
+                            strong Default value:
+                            span &nbsp;
+                                = prop.defaultValue
 
 //- h2 JSON Schema
 //- textarea.code

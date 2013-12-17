@@ -100,10 +100,14 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule (value = DynamicContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
     private List<DynamicContentMacroModuleBean> dynamicContentMacros;
 
+    @ConnectModule (value = StaticContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
+    private List<StaticContentMacroModuleBean> staticContentMacros;
+
     public ModuleList()
     {
         this.adminPages = newArrayList();
         this.configurePages = newArrayList();
+        this.dynamicContentMacros = newArrayList();
         this.generalPages = newArrayList();
         this.jiraComponentTabPanels = newArrayList();
         this.jiraIssueTabPanels = newArrayList();
@@ -114,15 +118,10 @@ public class ModuleList extends BaseModuleBean
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.profilePages = newArrayList();
+        this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
-        this.generalPages = newArrayList();
-        this.adminPages = newArrayList();
-        this.jiraWorkflowPostFunctions = newArrayList();
-        this.webhooks = newArrayList();
-        this.jiraSearchRequestViews = newArrayList();
-        this.dynamicContentMacros = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -192,6 +191,10 @@ public class ModuleList extends BaseModuleBean
         if (null == dynamicContentMacros)
         {
             this.dynamicContentMacros = newArrayList();
+        }
+        if (null == staticContentMacros)
+        {
+            this.staticContentMacros = newArrayList();
         }
     }
 
@@ -275,6 +278,11 @@ public class ModuleList extends BaseModuleBean
         return dynamicContentMacros;
     }
 
+    public List<StaticContentMacroModuleBean> getStaticContentMacros()
+    {
+        return staticContentMacros;
+    }
+
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
@@ -305,6 +313,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
                 .append(profilePages, other.profilePages)
+                .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
                 .append(webPanels, webPanels)
@@ -329,6 +338,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
                 .append(profilePages)
+                .append(staticContentMacros)
                 .append(webhooks)
                 .append(webItems)
                 .append(webPanels)
