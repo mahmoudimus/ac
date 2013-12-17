@@ -65,8 +65,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     * Specifies the URL targeted by the page. The URL is relative to either the
-     * the add-on's base URL
+     *  Specifies the URL targeted by the page. The URL is relative to the add-on's base URL.
      */
     public String getUrl()
     {
@@ -89,9 +88,9 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     * An optional icon to display with the link text or as the link, specified by URL to its hosted location.
-     * You can specify a particular width and height for the icon. Most link icons in Atlassian applications
-     * are 16 by 16 pixels.
+     *  An optional icon to display with the link text or as the link, specified by URL to its hosted location.
+     *  You can specify a particular width and height for the icon. Most link icons in Atlassian applications
+     *  are 16 by 16 pixels.
      */
     public IconBean getIcon()
     {
