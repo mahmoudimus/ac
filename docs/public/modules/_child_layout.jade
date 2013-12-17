@@ -11,7 +11,7 @@ table.aui
           th Name
           th Type
           th Description
-      tbody
+    tbody
         - each prop in module.properties
             tr
                 td
@@ -19,7 +19,7 @@ table.aui
                 td
                     - if (prop.type === 'object')
                         - if (entityLinks[prop.id])
-                            a(href = '/' + entityLinks[prop.id] + '.html')
+                            a(href = baseUrl + '/' + entityLinks[prop.id] + '.html')
                                 - if (prop.title)
                                     span.aui-lozenge
                                         = prop.title
@@ -38,7 +38,7 @@ table.aui
                             | [&nbsp;
                             prop.arrayTypeIds.length
                             - each typeId in prop.arrayTypeIds
-                                a(href = '/' + entityLinks[typeId] + '.html')
+                                a(href = baseUrl + '/' + entityLinks[typeId] + '.html')
                                     span.aui-lozenge
                                         = typeId
                                 | ,&nbsp;

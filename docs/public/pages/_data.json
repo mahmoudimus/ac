@@ -38,5 +38,13 @@
         "development-loop.html": {
             "title": "Development Loop"
         }
+    },
+    "resources": {
+        "samples.html": {
+            "title": "Sample Add-ons"
+        },
+        "faqs.html": {
+            "title": "FAQs"
+        }
     }
 }

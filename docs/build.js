@@ -196,7 +196,8 @@ function rebuildHarpSite() {
 
     harpGlobals.globals = _.extend({
         entityLinks: entityLinks,
-        entities: entities
+        entities: entities,
+        baseUrl: ''
     }, harpGlobals.globals);
 
     fs.outputFileSync(genSrcPrefix + 'harp.json', JSON.stringify(harpGlobals,null,2));

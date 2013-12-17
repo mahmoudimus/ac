@@ -6,7 +6,7 @@
         <% var module = modules[key]; %>
         <% var selected = module.selfLink === current.path.join("/") ? "class=aui-nav-selected" : ""; %>
         <li <%= selected %>>
-            <a href="/<%= module.selfLink %>.html"><%= module.name %></a>
+            <a href="<%= baseUrl %>/<%= module.selfLink %>.html"><%= module.name %></a>
         </li>
     <% } %>
 </ul>
