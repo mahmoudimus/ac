@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 public enum AuthenticationMethod
 {
-    OAUTH1, JWT;
+    OAUTH1, JWT, NONE;
 
     public static final String PROPERTY_NAME = "atlassian.auth.method";
 

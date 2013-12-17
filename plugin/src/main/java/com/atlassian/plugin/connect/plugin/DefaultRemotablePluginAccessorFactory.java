@@ -13,6 +13,10 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -45,6 +49,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class DefaultRemotablePluginAccessorFactory implements RemotablePluginAccessorFactory, DisposableBean
 {
     private final ConnectApplinkManager connectApplinkManager;
+    private final ConnectDescriptorRegistry connectDescriptorRegistry;
     private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
     private final PluginAccessor pluginAccessor;
@@ -60,16 +65,18 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     @Autowired
     public DefaultRemotablePluginAccessorFactory(ConnectApplinkManager connectApplinkManager,
-                                                 OAuthLinkManager oAuthLinkManager,
-                                                 CachingHttpContentRetriever httpContentRetriever,
-                                                 PluginAccessor pluginAccessor,
-                                                 ApplicationProperties applicationProperties,
-                                                 EventPublisher eventPublisher,
-                                                 JwtService jwtService,
-                                                 ConsumerService consumerService,
-                                                 UserManager userManager)
+            ConnectDescriptorRegistry connectDescriptorRegistry,
+            OAuthLinkManager oAuthLinkManager,
+            CachingHttpContentRetriever httpContentRetriever,
+            PluginAccessor pluginAccessor,
+            ApplicationProperties applicationProperties,
+            EventPublisher eventPublisher,
+            JwtService jwtService,
+            ConsumerService consumerService,
+            UserManager userManager)
     {
         this.connectApplinkManager = connectApplinkManager;
+        this.connectDescriptorRegistry = connectDescriptorRegistry;
         this.oAuthLinkManager = oAuthLinkManager;
         this.httpContentRetriever = httpContentRetriever;
         this.pluginAccessor = pluginAccessor;
@@ -235,17 +242,18 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
         if (AuthenticationMethod.JWT.equals(authenticationMethod))
         {
-            return new JwtSigningRemotablePluginAccessor(plugin, displayUrl, jwtService, consumerService, 
+            return new JwtSigningRemotablePluginAccessor(plugin, displayUrl, jwtService, consumerService,
                     connectApplinkManager, httpContentRetriever, userManager);
         }
-        else if (AuthenticationMethod.OAUTH1.equals(authenticationMethod))
+        else if (AuthenticationMethod.NONE.equals(authenticationMethod))
         {
-            return new OAuthSigningRemotablePluginAccessor(plugin, displayUrl, getDummyServiceProvider(),
-                    httpContentRetriever, oAuthLinkManager);
+            return new NoAuthRemotablePluginAccessor(plugin, displayUrl, httpContentRetriever);
         }
         else
         {
-            return new NoAuthRemotablePluginAccessor(plugin, displayUrl, httpContentRetriever);
+            // default to OAuth (for backwards compatibility)
+            return new OAuthSigningRemotablePluginAccessor(plugin, displayUrl, getDummyServiceProvider(),
+                    httpContentRetriever, oAuthLinkManager);
         }
     }
 
