@@ -103,10 +103,6 @@ function copySrcFiles(filenames) {
     });
 }
 
-function readJson(path) {
-    return JSON.parse(fs.readFileSync(path, 'utf8'));
-}
-
 function slugify(string) {
     return string
             .toLowerCase()
@@ -177,8 +173,8 @@ function rebuildHarpSite() {
     fs.deleteSync(buildDir);
 
     var schemas = {
-        jira: readJson(jiraSchemaPath),
-        confluence: readJson(confluenceSchemaPath)
+        jira: fs.readJsonSync(jiraSchemaPath),
+        confluence: fs.readJsonSync(confluenceSchemaPath)
     };
 
     var entities = {
@@ -198,7 +194,7 @@ function rebuildHarpSite() {
         fragment: "modules/fragment"
     });
 
-    var harpGlobals = require('./globals.json');
+    var harpGlobals = fs.readJsonSync('./globals.json');
 
     harpGlobals.globals = _.extend({
         entityLinks: entityLinks,
@@ -208,7 +204,7 @@ function rebuildHarpSite() {
 
     console.log("Base url is: " + harpGlobals.globals.baseUrl);
 
-    fs.outputFileSync(genSrcPrefix + '/harp.json', JSON.stringify(harpGlobals,null,2));
+    fs.outputFileSync(genSrcPrefix + '/harp.json', JSON.stringify(harpGlobals, null, 2));
 }
 
 function startHarpServerAndWatchSrcFiles() {
@@ -222,23 +218,33 @@ function startHarpServerAndWatchSrcFiles() {
     function restartHarpServer() {
         if (restarting) return;
 
+        console.log("Rebuilding site and restarting harp server..");
+
         restarting = true;
         harpServer.on('exit', function() {
             rebuildHarpSite();
             harpServer = startHarpServer();
             restarting = false;
         });
+
         harpServer.kill();
     }
+
+    // debounce to ensure multiple saves don't kick off multiple rebuilds
+    restartHarpServer = _.debounce(restartHarpServer, 2000);
 
     harpServer = startHarpServer();
 
     var watchedFiles = srcFiles.concat(jiraSchemaPath, confluenceSchemaPath);
 
-    var watcher = chokidar.watch(watchedFiles, {persistent:true});
+    var watcher = chokidar.watch(watchedFiles, {
+        persistent:true,
+        ignoreInitial:true
+    });
+
     _.each(['add', 'addDir', 'change', 'unlink', 'unlinkDir'], function(event) {
         watcher.on(event, function(path) {
-            console.log(event + " on " + path + "! Rebuilding..");
+            console.log(event + " on " + path + "!");
             restartHarpServer();
         });
     });

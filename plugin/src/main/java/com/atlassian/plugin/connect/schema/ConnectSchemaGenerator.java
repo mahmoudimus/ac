@@ -11,6 +11,8 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ConnectSchemaGenerator extends DefaultJsonSchemaGenerator
 {
     private final ProductFilter product;
@@ -35,5 +37,18 @@ public class ConnectSchemaGenerator extends DefaultJsonSchemaGenerator
         }
         
         return super.generateSchemaForField(owner,field,ifaces, defaultArrayTitle);
+    }
+
+    @Override
+    protected String getFieldName(Field field)
+    {
+        String name = field.getName();
+        
+        if(field.isAnnotationPresent(SerializedName.class))
+        {
+            name = field.getAnnotation(SerializedName.class).value();
+        }
+        
+        return name;
     }
 }
