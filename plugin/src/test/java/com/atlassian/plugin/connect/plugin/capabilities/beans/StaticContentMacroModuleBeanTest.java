@@ -19,6 +19,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.Icon
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -65,6 +66,16 @@ public class StaticContentMacroModuleBeanTest
         StaticContentMacroModuleBean deserializedBean = gson.fromJson(json, StaticContentMacroModuleBean.class);
 
         assertThat(deserializedBean.getMethod(), is(MacroHttpMethod.GET));
+    }
+
+    @Test
+    public void verifyDocNotNull()
+    {
+        Gson gson = ConnectModulesGsonFactory.getGson();
+        String json = "{}";
+        StaticContentMacroModuleBean deserializedBean = gson.fromJson(json, StaticContentMacroModuleBean.class);
+
+        assertThat(deserializedBean.getDocumentation(), is(notNullValue()));
     }
 
     private static ConnectAddonBean createBean()
