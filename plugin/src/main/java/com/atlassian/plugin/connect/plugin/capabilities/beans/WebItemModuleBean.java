@@ -119,7 +119,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         this.weight = 100;
         this.target = newWebItemTargetBean().build();
         this.styleClasses = new ArrayList<String>();
-        this.tooltip = new I18nProperty("", "");
+        this.tooltip = null;
         this.icon = null;
     }
 
@@ -146,18 +146,10 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         {
             this.target = newWebItemTargetBean().build();
         }
-        
-        if (null == location)
-        {
-            this.location = "";
-        }
+
         if (null == styleClasses)
         {
             this.styleClasses = new ArrayList<String>();
-        }
-        if (null == tooltip)
-        {
-            this.tooltip = new I18nProperty("", "");
         }
     }
 
