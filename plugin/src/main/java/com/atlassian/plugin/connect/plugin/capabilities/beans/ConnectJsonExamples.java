@@ -65,7 +65,7 @@ public class ConnectJsonExamples
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .build();
 
-        return render(pageModuleBean);
+        return gson.toJson(pageModuleBean);
     }
 
 
@@ -78,7 +78,7 @@ public class ConnectJsonExamples
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .build();
 
-        return render(configurePageModuleBean);
+        return gson.toJson(configurePageModuleBean);
     }
 
 
@@ -94,7 +94,7 @@ public class ConnectJsonExamples
                 .withWeight(200)
                 .build();
 
-        return render(webItemModuleBean);
+        return gson.toJson(webItemModuleBean);
     }
 
 
@@ -108,7 +108,7 @@ public class ConnectJsonExamples
                 .withWeight(50)
                 .build();
 
-        return render(webPanelModuleBean);
+        return gson.toJson(webPanelModuleBean);
     }
 
 
@@ -126,7 +126,7 @@ public class ConnectJsonExamples
                         .build())
                 .build();
 
-        return render(addon);
+        return gson.toJson(addon);
     }
 
 
