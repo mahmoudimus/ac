@@ -44,8 +44,10 @@ That looks like a big blob of characters, so let's break it down.
 
 The following example JWT Header declares that the encoded object is a JSON Web Token (JWT) and the JWT is a JWS that is MACed using the HMAC SHA-256 algorithm:
 
-    {"typ":"JWT",
-     "alg":"HS256"}
+    {
+        "typ":"JWT",
+        "alg":"HS256"
+    }
 
 Base-64 encoding the UTF-8 representation of this header yields:
 
@@ -53,11 +55,14 @@ Base-64 encoding the UTF-8 representation of this header yields:
 
 #### Claims
 
-The following example claims set says that the issuer is "joe", the message expires at "Tue, 22 Mar 2011 18:43:00 GMT" and that the custom claim "http://example.com/is_root" has the value "true":
+The following example claims set says that the issuer is "`tenant-1314039`", on behalf of the principal "`joe`". The message expires at "`Tue, 22 Mar 2011 18:43:00 GMT`" and that the custom claim "`http://example.com/is_root`" has the value "`true`":
 
-    {"iss":"joe",
-     "exp":1300819380,
-     "http://example.com/is_root":true}
+    {
+        "iss": "tenant-1314039",
+        "sub": "joe",
+        "exp": 1300819380,
+        "http://example.com/is_root": true
+    }
 
 Base-64 encoding its UTF-8 characters yields:
 
@@ -117,7 +122,6 @@ in order to sign and verify future requests. The payload contains the following 
         "sharedSecret": "1ad6f705-fe0b-4111-9551-7ce5d81d2884",
         "baseUrl": "http://storm.dyn.syd.atlassian.com:2990/jira",
         "productType": "jira",
-        "userKey": "admin",
         "eventType": "installed"
     }
 
@@ -270,6 +274,7 @@ You may even be reading tokens issued by yourself.
 In particular:
 
 * The `iss` claim contains the unique identifier of the tenant. For Atlassian products this is the `clientKey` that you receive in the `installed` callback. You should reject unrecognised issuers.
+* The `sub` claim identifies the user key that the request has been created on behalf of. For example, this may be the user that is rendering an iFrame in the page. Note, this is a user key, and not a username which may change over time.
 * The `iat` claim contains the UTC Unix time at which this token was issued. There are no hard requirements around this claim but it does not make sense for it to be significantly in the future and significantly old issued-at times may indicate the replay of suspiciously old tokens.
 * The `exp` claim contains the UTC Unix time after which you should no longer accept this token. It should be after the issued-at and not-before times.
 * The `nbf` claim contains the UTC Unix time before which you should not accept this token. It should be at or after the issued-at time and before the expiry-time.

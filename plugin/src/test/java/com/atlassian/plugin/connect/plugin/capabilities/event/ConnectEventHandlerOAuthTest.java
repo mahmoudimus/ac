@@ -17,11 +17,16 @@ import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
+import com.google.gson.JsonParser;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -31,14 +36,19 @@ import org.osgi.framework.BundleContext;
 import java.net.URI;
 import java.util.Dictionary;
 
+import javax.ws.rs.POST;
+
+import static com.atlassian.plugin.connect.plugin.util.ConnectInstallationTestUtil.SHARED_SECRET_FIELD_NAME;
 import static com.atlassian.plugin.connect.plugin.util.ConnectInstallationTestUtil.createBean;
 import static com.atlassian.plugin.connect.plugin.util.ConnectInstallationTestUtil.hasSharedSecret;
+import static com.atlassian.plugin.connect.plugin.util.ConnectInstallationTestUtil.hasUserKey;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith (MockitoJUnitRunner.class)
 public class ConnectEventHandlerOAuthTest
 {
     private static final IsDevModeService PROD_MODE = new IsDevModeService()
@@ -79,6 +89,18 @@ public class ConnectEventHandlerOAuthTest
     }
 
     @Test
+    public void installPostContainsUserKey()
+    {
+        verify(requestBuilder).setEntity(argThat(hasUserKey()));
+    }
+
+    @Test
+    public void installPostContainsOAuthLink()
+    {
+        verify(requestBuilder).setEntity(argThat(hasValidOAuthLink()));
+    }
+
+    @Test
     public void installUrlIsPosted()
     {
         verify(requestBuilder).execute(Request.Method.POST);
@@ -87,6 +109,9 @@ public class ConnectEventHandlerOAuthTest
     @Before
     public void beforeEachTest()
     {
+        UserProfile userProfile = mock(UserProfile.class);
+        when(userProfile.getUserKey()).thenReturn(new UserKey("والحلفاء"));
+        when(userManager.getRemoteUser()).thenReturn(userProfile);
         when(httpClient.newRequest(Matchers.<URI>any())).thenReturn(requestBuilder);
         when(bundleContext.getBundle()).thenReturn(bundle);
         when(bundle.getHeaders()).thenReturn(dictionary);
@@ -98,4 +123,21 @@ public class ConnectEventHandlerOAuthTest
                 applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.OAUTH, PUBLIC_KEY, "https://server:1234/baseUrl"), null);
     }
+
+    private static ArgumentMatcher<String> hasValidOAuthLink()
+    {
+        return new ArgumentMatcher<String>()
+        {
+            @Override
+            public boolean matches(Object actual)
+            {
+                return actual instanceof String && !StringUtils.isEmpty((String) actual)
+                        && (new JsonParser().parse((String) actual).getAsJsonObject()
+                                .get("links").getAsJsonObject()
+                                .get("oauth").getAsString()).endsWith("/rest/atlassian-connect/latest/oauth");
+            }
+        };
+    }
+
+
 }

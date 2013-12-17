@@ -115,7 +115,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     {
         if (!Strings.isNullOrEmpty(addon.getLifecycle().getInstalled()))
         {
-            callSyncHandler(addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), INSTALLED, sharedSecret));
+            callSyncHandler(addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), sharedSecret, addon));
         }
     }
 
@@ -262,16 +262,16 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     @VisibleForTesting
     String createEventData(String pluginKey, String eventType)
     {
-        return createEventDataInternal(pluginKey, eventType, null);
+        return createEventDataInternal(pluginKey, eventType, null, null);
     }
 
-    String createEventDataForInstallation(String pluginKey, String eventType, String sharedSecret)
+    String createEventDataForInstallation(String pluginKey, String sharedSecret, ConnectAddonBean addon)
     {
-        return createEventDataInternal(pluginKey, eventType, sharedSecret);
+        return createEventDataInternal(pluginKey, INSTALLED, sharedSecret, addon);
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation
-    private String createEventDataInternal(String pluginKey, String eventType, String sharedSecret)
+    private String createEventDataInternal(String pluginKey, String eventType, String sharedSecret, ConnectAddonBean addon)
     {
         final Consumer consumer = checkNotNull(consumerService.getConsumer()); // checkNotNull() otherwise we NPE below
 
@@ -288,13 +288,18 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                 .withServiceEntitlementNumber(nullToEmpty(licenseRetriever.getServiceEntitlementNumber(pluginKey)))
                 .withProductType(nullToEmpty(productAccessor.getKey()))
                 .withDescription(nullToEmpty(consumer.getDescription()))
-                .withEventType(eventType)
-                .withLink("oauth", nullToEmpty(baseUrl) + "/rest/atlassian-connect/latest/oauth");
+                .withEventType(eventType);
 
-        UserProfile user = userManager.getRemoteUser();
-        if (null != user)
+        if (null != addon && null != addon.getAuthentication() && AuthenticationType.OAUTH.equals(addon.getAuthentication().getType()))
         {
-            dataBuilder.withUserKey(user.getUserKey().getStringValue());
+            // Only add user_key
+            UserProfile user = userManager.getRemoteUser();
+            if (null != user)
+            {
+                dataBuilder.withUserKey(user.getUserKey().getStringValue());
+            }
+
+            dataBuilder.withLink("oauth", nullToEmpty(baseUrl) + "/rest/atlassian-connect/latest/oauth");
         }
 
         ConnectAddonEventData data = dataBuilder.build();

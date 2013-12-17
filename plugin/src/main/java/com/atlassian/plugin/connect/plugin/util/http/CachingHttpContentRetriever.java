@@ -100,9 +100,11 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
 
         final Map<String, String> allParameters = getAllParameters(parameters, pluginKey);
 
-        final Request.Builder request = httpClient.newRequest(getFullUrl(method, url, allParameters))
-                .setAttributes(getAttributes(pluginKey))
-                .setHeaders(getAllHeaders(headers, getAuthHeaderValue(authorizationGenerator, method, url, allParameters)));
+        Request.Builder request = httpClient.newRequest(getFullUrl(method, url, allParameters));
+        request = request.setAttributes(getAttributes(pluginKey));
+        Option<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, allParameters);
+        Map<String, String> allHeaders = getAllHeaders(headers, authHeaderValue);
+        request = request.setHeaders(allHeaders);
 
         if (contains(METHODS_WITH_BODY, method))
         {
