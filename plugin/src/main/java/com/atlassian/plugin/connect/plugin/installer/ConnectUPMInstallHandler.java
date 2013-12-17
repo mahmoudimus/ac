@@ -73,6 +73,10 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
                 result = jsonDescriptorValidator.validate(json);
 
                 canInstall = result.isSuccess();
+                if (!canInstall)
+                {
+                    log.error("Could not validate add-on descriptor: " + result.getMessageReport());
+                }
             }
             catch (Exception e)
             {
