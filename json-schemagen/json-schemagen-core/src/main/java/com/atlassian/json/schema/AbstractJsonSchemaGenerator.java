@@ -87,7 +87,7 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
             if (null != fieldSchema)
             {
                 addDocsForField(fieldSchema, clazz, propField);
-                props.put(propField.getName(), fieldSchema);
+                props.put(getFieldName(propField), fieldSchema);
             }
             
             if(propField.isAnnotationPresent(Required.class))
@@ -105,6 +105,11 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
         schema.setProperties(props);
 
         return schema;
+    }
+
+    protected String getFieldName(Field field)
+    {
+        return field.getName();
     }
 
     protected void addDocsForClass(JsonSchema schema, Class<?> theClass)

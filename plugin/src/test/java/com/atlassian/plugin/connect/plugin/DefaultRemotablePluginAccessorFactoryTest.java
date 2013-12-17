@@ -12,6 +12,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
@@ -34,9 +35,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultRemotablePluginAccessorFactoryTest
@@ -46,6 +54,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     public static final String BASE_URL = "http://server:1234/contextPath";
 
     @Mock private ConnectApplinkManager connectApplinkManager;
+    @Mock private ConnectDescriptorRegistry descriptorRegistry;
     @Mock private PluginAccessor pluginAccessor;
     @Mock private ApplicationProperties applicationProperties;
     @Mock private EventPublisher eventPublisher;
@@ -67,7 +76,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
-        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager);
+        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, descriptorRegistry, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager);
     }
 
     @Test
@@ -81,6 +90,15 @@ public class DefaultRemotablePluginAccessorFactoryTest
     {
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
         assertThat(factory.create(PLUGIN_KEY, null), is(instanceOf(OAuthSigningRemotablePluginAccessor.class)));
+    }
+
+    @Test
+    public void createsNoAuthSigningPluginAccessorWhenRequired()
+    {
+        ApplicationLink applicationLink = mock(ApplicationLink.class);
+        when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(applicationLink);
+        when(applicationLink.getProperty(AuthenticationMethod.PROPERTY_NAME)).thenReturn(AuthenticationMethod.NONE.toString().toLowerCase());
+        assertThat(factory.create(PLUGIN_KEY, null), is(instanceOf(NoAuthRemotablePluginAccessor.class)));
     }
 
     @Test
