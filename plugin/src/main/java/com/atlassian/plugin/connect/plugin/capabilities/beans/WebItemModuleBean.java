@@ -29,8 +29,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarg
  * Web items are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
  * application and don't know where to start, a web item may be all you need.
  *
- * Json Example:
- * @exampleJson {@see ConnectJsonExamples#WEBITEM_EXAMPLE}
+ * @exampleJson Json Example: {@see ConnectJsonExamples#WEBITEM_EXAMPLE}
  * @schemaTitle Web Item
  * @since 1.0
  */
