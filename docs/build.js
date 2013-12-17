@@ -107,6 +107,7 @@ function entityToModel(schemaEntity) {
  * object will contain model objects, keyed by their slugified title or id.
  */
 function entitiesToModel(entities) {
+    entities = util.isArray(entities) ? entities : [entities];
     entities = _.map(entities, entityToModel);
     entities = _.zipObject(_.pluck(entities, "slug"), entities);
     return entities;
@@ -134,9 +135,9 @@ function slugify(string) {
 
 /**
  * Write the supplied entities out to the gensrc directory, using the pathMappings supplied.
- * Each entity id must match a key in pathMappings, or it will not be written out.
+ * Each key from the entities object must match a key in pathMappings, or it will not be written out.
  *
- * e.g. writeEntitiesToDisk({id: 'some_id', ..}, {some_id: 'some/path'}
+ * e.g. writeEntitiesToDisk({some_key: {..}, some_other_key: {..}}, {some_key: 'some/path', some_other_key: 'some/other/path'})
  */
 function writeEntitiesToDisk(entities, pathMappings) {
     var entityLinks = {};
@@ -165,10 +166,14 @@ function writeEntitiesToDisk(entities, pathMappings) {
 }
 
 /**
- * Find module types at the root of the descriptor (lifecycle, vendor, etc.)
+ * Find module types at the root of the descriptor (lifecycle, vendor, etc.) and the descriptor root itself.
  */
 function findRootEntities(schemas) {
-    return entitiesToModel(jsonPath(schemas, "$.*.*[?(@.id)]"));
+    // find top level modules
+    var entities = jsonPath(schemas, "$.*.*[?(@.id)]");
+    // add the descriptor root itself
+    entities.unshift(schemas.jira);
+    return entitiesToModel(entities);
 }
 
 /**
