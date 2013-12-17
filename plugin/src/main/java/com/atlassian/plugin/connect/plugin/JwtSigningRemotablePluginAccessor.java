@@ -33,6 +33,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     private final JwtService jwtService;
     private final ConsumerService consumerService;
     private final ConnectApplinkManager connectApplinkManager;
+    private final AuthorizationGenerator authorizationGenerator;
 
     private static final String JWT_EXPIRY_SECONDS_PROPERTY = "com.atlassian.connect.jwt.expiry_seconds";
     /**
@@ -40,7 +41,6 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
      */
     private static final int JWT_EXPIRY_WINDOW_SECONDS_DEFAULT = 60 * 3;
     private static final int JWT_EXPIRY_WINDOW_SECONDS = ConfigurationUtils.getIntSystemProperty(JWT_EXPIRY_SECONDS_PROPERTY, JWT_EXPIRY_WINDOW_SECONDS_DEFAULT);
-    private static final AuthorizationGenerator AUTH_GENERATOR = new JwtAuthorizationGenerator(); // it's tiny and does very little, so share this instance
 
     public JwtSigningRemotablePluginAccessor(String pluginKey,
                                              String pluginName,
@@ -54,6 +54,12 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
         this.jwtService = jwtService;
         this.consumerService = consumerService;
         this.connectApplinkManager = connectApplinkManager;
+        this.authorizationGenerator = new JwtAuthorizationGenerator(jwtService, getAppLink());
+    }
+
+    private ApplicationLink getAppLink()
+    {
+        return this.connectApplinkManager.getAppLink(getKey());
     }
 
     @Override
@@ -61,7 +67,6 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     {
         assertThatTargetPathAndParamsDoNotDuplicateParams(targetPath, params);
 
-        ApplicationLink appLink = connectApplinkManager.getAppLink(getKey());
         JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuedAt(TimeUtil.currentTimeSeconds())
                 .expirationTime(TimeUtil.currentTimePlusNSeconds(JWT_EXPIRY_WINDOW_SECONDS))
@@ -80,7 +85,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
             throw new RuntimeException(e);
         }
 
-        String encodedJwt = jwtService.issueJwt(jsonBuilder.build(), appLink);
+        String encodedJwt = jwtService.issueJwt(jsonBuilder.build(), getAppLink());
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(createGetUrl(targetPath, params))));
         uriBuilder.addQueryParameter(JwtConstants.JWT_PARAM_NAME, encodedJwt);
 
@@ -97,6 +102,6 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     @Override
     public AuthorizationGenerator getAuthorizationGenerator()
     {
-        return AUTH_GENERATOR;
+        return authorizationGenerator;
     }
 }
