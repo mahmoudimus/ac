@@ -1,23 +1,20 @@
 package com.atlassian.plugin.connect.plugin.capabilities.schema;
 
-import java.io.IOException;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.util.ProductFilterUtil;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.jsonschema.report.ListProcessingReport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
 
 @ExportAsService(ConnectDescriptorValidator.class)
 @Named

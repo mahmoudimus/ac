@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.schema;
 
-import java.io.IOException;
-
 import com.atlassian.plugin.spring.scanner.ProductFilter;
 
 public interface ConnectDescriptorValidator

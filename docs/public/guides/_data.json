@@ -17,8 +17,8 @@
         "pages.html": {
             "title": "Pages"
         },
-        "jwt.html": {
-            "title": "JWT"
+        "authentication.html": {
+            "title": "Authentication"
         },
         "scopes.html": {
             "title": "Scopes"

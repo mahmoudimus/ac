@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
-
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseModuleBeanBuilder;
@@ -99,10 +97,17 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule (value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
     private List<SearchRequestViewModuleBean> jiraSearchRequestViews;
 
+    @ConnectModule (value = DynamicContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
+    private List<DynamicContentMacroModuleBean> dynamicContentMacros;
+
+    @ConnectModule (value = StaticContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
+    private List<StaticContentMacroModuleBean> staticContentMacros;
+
     public ModuleList()
     {
         this.adminPages = newArrayList();
         this.configurePages = newArrayList();
+        this.dynamicContentMacros = newArrayList();
         this.generalPages = newArrayList();
         this.jiraComponentTabPanels = newArrayList();
         this.jiraIssueTabPanels = newArrayList();
@@ -113,14 +118,10 @@ public class ModuleList extends BaseModuleBean
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.profilePages = newArrayList();
+        this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
-        this.generalPages = newArrayList();
-        this.adminPages = newArrayList();
-        this.jiraWorkflowPostFunctions = newArrayList();
-        this.webhooks = newArrayList();
-        this.jiraSearchRequestViews = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -186,6 +187,14 @@ public class ModuleList extends BaseModuleBean
         if (null == jiraSearchRequestViews)
         {
             this.jiraSearchRequestViews = newArrayList();
+        }
+        if (null == dynamicContentMacros)
+        {
+            this.dynamicContentMacros = newArrayList();
+        }
+        if (null == staticContentMacros)
+        {
+            this.staticContentMacros = newArrayList();
         }
     }
 
@@ -264,6 +273,16 @@ public class ModuleList extends BaseModuleBean
         return jiraSearchRequestViews;
     }
 
+    public List<DynamicContentMacroModuleBean> getDynamicContentMacros()
+    {
+        return dynamicContentMacros;
+    }
+
+    public List<StaticContentMacroModuleBean> getStaticContentMacros()
+    {
+        return staticContentMacros;
+    }
+
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
@@ -282,6 +301,7 @@ public class ModuleList extends BaseModuleBean
 
         return new EqualsBuilder()
                 .append(adminPages, other.adminPages)
+                .append(dynamicContentMacros, other.dynamicContentMacros)
                 .append(configurePages, other.configurePages)
                 .append(generalPages, other.generalPages)
                 .append(jiraComponentTabPanels, other.jiraComponentTabPanels)
@@ -293,6 +313,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
                 .append(profilePages, other.profilePages)
+                .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
                 .append(webPanels, webPanels)
@@ -305,6 +326,7 @@ public class ModuleList extends BaseModuleBean
     {
         return new HashCodeBuilder(29, 37)
                 .append(adminPages)
+                .append(dynamicContentMacros)
                 .append(configurePages)
                 .append(generalPages)
                 .append(jiraComponentTabPanels)
@@ -316,6 +338,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
                 .append(profilePages)
+                .append(staticContentMacros)
                 .append(webhooks)
                 .append(webItems)
                 .append(webPanels)

@@ -10,15 +10,20 @@ Various types of modules accept conditions, including generalPage, adminPage, an
 ## Remote Conditions
 
 ```
-"generalPages": [
-    {
-        "conditions": [
+{
+    "name": "My Addon",
+    "modules": {
+        "generalPages": [
             {
-                "condition": "http://example.com/condition/onlyBettyCondition"
+                "conditions": [
+                    {
+                        "condition": "/condition/onlyBettyCondition"
+                    }
+                ]
             }
         ]
     }
-]
+}
 ```
 
 For a remote condition, the Atlassian application issues a request to the remote resource and expects in the response either a true or false value that specifies whether to show or hide the module feature. The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request authentication information passed through as a header, rather than as a query string parameter.
@@ -31,16 +36,21 @@ You specify a permission condition in the module declaration in the add-on descr
 A static condition ensures that only a logged in users can view the page specified by this module declaration.
 
 ```
-"generalPages": [
-    {
-        "conditions": [
+{
+    "name": "My Addon",
+    "modules": {
+        "generalPages": [
             {
-                "condition": "user_is_logged_in",
-                "invert": false
+                "conditions": [
+                    {
+                        "condition": "user_is_logged_in",
+                        "invert": false
+                    }
+                ],
             }
-        ],
+        ]
     }
-]
+}
 ```
 
 ### Condition parameters
@@ -56,10 +66,21 @@ You can pass parameters to conditions as follows:
 
 ```
 {
-    "condition": "has_issue_permission",
-    "invert": false,
-    "params": {
-        "permission": "resolv"
+    "name": "My Addon",
+    "modules": {
+        "generalPages": [
+            {
+                "conditions": [
+                    {
+                        "condition": "has_issue_permission",
+                        "invert": false,
+                        "params": {
+                            "permission": "resolv"
+                        }
+                    }
+                ]
+            }
+        ]
     }
 }
 ```
