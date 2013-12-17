@@ -7,6 +7,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Represents a string that can be resolved via a localization properties file.
+ * 
+ * @exampleJson ###example:### {@see ConnectJsonExamples#I18N_EXAMPLE}
  */
 public class I18nProperty
 {

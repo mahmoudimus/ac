@@ -38,7 +38,7 @@ public class ConnectJsonExamples
     public static final String WEBITEM_EXAMPLE = createWebItemExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String COMPONENT_TAB_PANEL_EXAMPLE = createComponentTabPanelExample();
-
+    public static final String I18N_EXAMPLE = createI18nExample();;
 
     public static final String PARAMS_EXAMPLE = getParamsExample();
 
@@ -135,8 +135,8 @@ public class ConnectJsonExamples
                 .withCategories("visuals")
                 .withDescription(new I18nProperty("Shows a configurable map", ""))
                 .withDocumentation(LinkBean.newLinkBean()
-                        .withUrl("http://docs.example.com/addons/maps")
-                        .build()
+                                           .withUrl("http://docs.example.com/addons/maps")
+                                           .build()
                 )
                 .withFeatured(true)
                 .withWidth(200)
@@ -156,6 +156,17 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(macroModuleBean);
+    }
+
+    private static String createI18nExample()
+    {
+        ConnectPageModuleBean pageModuleBean = newPageBean()
+                .withName(new I18nProperty("General Page", ""))
+                .withUrl("/hello-world")
+                .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
+                .build();
+
+        return gson.toJson(pageModuleBean);
     }
 
     private static String getParamsExample()
