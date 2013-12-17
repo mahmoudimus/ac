@@ -120,7 +120,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         this.target = newWebItemTargetBean().build();
         this.styleClasses = new ArrayList<String>();
         this.tooltip = new I18nProperty("", "");
-        this.icon = newIconBean().withWidth(0).withHeight(0).withUrl("").build();
+        this.icon = null;
     }
 
     public WebItemModuleBean(WebItemModuleBeanBuilder builder)
@@ -158,10 +158,6 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         if (null == tooltip)
         {
             this.tooltip = new I18nProperty("", "");
-        }
-        if (null == icon)
-        {
-            this.icon = newIconBean().withWidth(16).withHeight(16).withUrl("").build();
         }
     }
 
@@ -232,6 +228,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
                 .add("styleClasses", getStyleClasses())
                 .add("tooltip", getTooltip())
                 .add("target", getTarget())
+                .add("icon", getIcon())
                 .toString();
     }
 

@@ -34,7 +34,6 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     @CommonSchemaAttributes(defaultValue = "100")
     private Integer weight;
     
-    @Required
     private String location;
     
     private IconBean icon;
@@ -51,10 +50,6 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
         if (null == location)
         {
             this.location = "";
-        }
-        if (null == icon)
-        {
-            this.icon = IconBean.newIconBean().withWidth(16).withHeight(16).withUrl("").build();
         }
     }
 
