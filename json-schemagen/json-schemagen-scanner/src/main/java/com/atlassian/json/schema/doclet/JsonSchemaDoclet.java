@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.doclet.model.SchemaClassDoc;
 import com.atlassian.json.schema.doclet.model.SchemaFieldDoc;
+import com.atlassian.json.schema.util.StringUtil;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
@@ -42,31 +43,9 @@ public class JsonSchemaDoclet
             schemaClassDoc.setClassTitle(getTitle(classDoc));
 
             List<SchemaFieldDoc> schemaFieldDocs = new ArrayList<SchemaFieldDoc>();
-
-            for (FieldDoc fieldDoc : classDoc.fields())
-            {
-                if (!fieldDoc.isTransient() && !fieldDoc.isStatic())
-                {
-                    SchemaFieldDoc schemaFieldDoc = new SchemaFieldDoc();
-                    schemaFieldDoc.setFieldName(fieldDoc.name());
-                    schemaFieldDoc.setFieldTitle(getTitle(fieldDoc));
-
-                    if (Strings.isNullOrEmpty(fieldDoc.commentText()))
-                    {
-                        MethodDoc accessor = findFieldAccessor(classDoc, fieldDoc);
-                        if (null != accessor && !Strings.isNullOrEmpty(accessor.commentText()))
-                        {
-                            schemaFieldDoc.setFieldDocs(accessor.commentText());
-                        }
-                    }
-                    else
-                    {
-                        schemaFieldDoc.setFieldDocs(fieldDoc.commentText());
-                    }
-
-                    schemaFieldDocs.add(schemaFieldDoc);
-                }
-            }
+            
+            addFieldDocs(classDoc,schemaFieldDocs);
+            
 
             schemaClassDoc.setFieldDocs(schemaFieldDocs);
 
@@ -88,6 +67,41 @@ public class JsonSchemaDoclet
         }
 
         return true;
+    }
+
+    private static void addFieldDocs(ClassDoc classDoc, List<SchemaFieldDoc> schemaFieldDocs)
+    {
+        if(null == classDoc || Object.class.getName().equals(classDoc.qualifiedName()))
+        {
+            return;
+        }
+        
+        for (FieldDoc fieldDoc : classDoc.fields())
+        {
+            if (!fieldDoc.isTransient() && !fieldDoc.isStatic())
+            {
+                SchemaFieldDoc schemaFieldDoc = new SchemaFieldDoc();
+                schemaFieldDoc.setFieldName(fieldDoc.name());
+                schemaFieldDoc.setFieldTitle(getTitle(fieldDoc));
+                
+                Doc docForField = fieldDoc;
+                
+                if (Strings.isNullOrEmpty(fieldDoc.commentText()))
+                {
+                    MethodDoc accessor = findFieldAccessor(classDoc, fieldDoc);
+                    if (null != accessor && !Strings.isNullOrEmpty(accessor.commentText()))
+                    {
+                        docForField = accessor;
+                    }
+                }
+
+                schemaFieldDoc.setFieldDocs(getDocWithExample(docForField));
+
+                schemaFieldDocs.add(schemaFieldDoc);
+            }
+        }
+        
+        addFieldDocs(classDoc.superclass(),schemaFieldDocs);
     }
 
     private static String getDocWithExample(Doc doc)
@@ -169,7 +183,8 @@ public class JsonSchemaDoclet
                 declaredField.setAccessible(true);
             }
 
-            return (String) declaredField.get(null);
+            String example = (String) declaredField.get(null);
+            return System.getProperty("line.separator") + System.getProperty("line.separator") + StringUtil.indent(example, 4);
 
         }
         catch (Exception e)
@@ -198,12 +213,19 @@ public class JsonSchemaDoclet
         if (fieldDoc.type().simpleTypeName().equals("boolean") || fieldDoc.type().simpleTypeName().equals("Boolean"))
         {
             accessorName = "is" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
+            
+            //try to find method starting with "is". If not found, we'll fall through to finding the getter
+            for (MethodDoc methodDoc : classDoc.methods())
+            {
+                if (methodDoc.name().equals(accessorName))
+                {
+                    return methodDoc;
+                }
+            }
         }
-        else
-        {
-            accessorName = "get" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
-        }
-
+        
+        accessorName = "get" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
+        
         for (MethodDoc methodDoc : classDoc.methods())
         {
             if (methodDoc.name().equals(accessorName))

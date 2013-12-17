@@ -77,7 +77,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         {
             element.setAttribute("documentation-url", bean.getDocumentation().getUrl());
         }
-        if (bean.getIcon().hasUrl())
+        if (null != bean.getIcon())
         {
             element.setAttribute("icon", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
         }

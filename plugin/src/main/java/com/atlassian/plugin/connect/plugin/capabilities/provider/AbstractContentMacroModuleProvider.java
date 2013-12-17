@@ -69,7 +69,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, bundleContext, featuredWebItem));
 
             // Add a featured icon web resource
-            if (macroBean.getIcon().hasUrl())
+            if (null != macroBean.getIcon())
             {
                 descriptors.add(createFeaturedIconWebResource(plugin, macroBean));
             }
@@ -123,7 +123,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .withKey(bean.getKey())
                 .withLocation("system.editor.featured.macros.default");
 
-        if (bean.getIcon().hasUrl())
+        if (null != bean.getIcon())
         {
             webItemBean.withIcon(IconBean.newIconBean()
                     .withUrl(bean.getIcon().getUrl())

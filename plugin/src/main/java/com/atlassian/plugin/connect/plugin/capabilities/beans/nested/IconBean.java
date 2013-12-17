@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBuilder;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -20,10 +22,13 @@ public class IconBean
      * The height in pixels of the icon image.
      */
     private int height;
+    
     /**
      * The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the
      * URL as an absolute URL or relative to the add-on's base URL.
      */
+    @Required
+    @StringSchemaAttributes(format = "uri")
     private String url;
 
     public IconBean()
@@ -56,11 +61,6 @@ public class IconBean
     public String getUrl()
     {
         return url;
-    }
-
-    public boolean hasUrl()
-    {
-        return !Strings.isNullOrEmpty(url);
     }
 
     public static IconBeanBuilder newIconBean()

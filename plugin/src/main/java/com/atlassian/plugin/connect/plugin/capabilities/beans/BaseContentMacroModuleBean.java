@@ -112,10 +112,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
         {
             url = "";
         }
-        if (null == icon)
-        {
-            icon = newIconBean().build();
-        }
         if (null == description)
         {
             description = empty();
