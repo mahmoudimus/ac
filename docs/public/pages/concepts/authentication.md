@@ -1,7 +1,7 @@
 # Authentication
 
 Atlassian Connect employs usage of a technology called [JWT (JSON Web Token)](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token‎)
- to authenticate add-ons. There is a nicely presented copy of the specification [here](http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html).
+ to authenticate add-ons. There is a [nicely presented copy](http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html) of the specification.
 
 ## JWT
 
@@ -20,7 +20,8 @@ Headers example:
 The format of a JWT token is simple: ```<header>.<claims>.<signature>```.
 
 * Each section is separated from the others by a period character (```.```).
-* Each section is base-64 encoded, so you will need to decode each one to make them human-readable. There is a handy JWT decoder [here](https://py-jwt-decoder.appspot.com).
+* Each section is base-64 encoded, so you will need to decode each one to make them human-readable.
+There is a [handy JWT decoder](https://py-jwt-decoder.appspot.com).
 * The header specifies a very small amount of information that the receiver needs in order to parse and verify the JWT token.
  * All JWT token headers state that the type is "JWT".
  * The algorithm used to sign the JWT token is needed so that the receiver can verify the signature.
@@ -239,25 +240,25 @@ Example using symmetric signing and a shared secret:
 You may alternatively verify the token's signature using a JWT library.
 Here is an example using nimbus-jose-jwt and json-smart:
 
-    import com.nimbusds.jose.JOSEException;
-    import com.nimbusds.jose.JWSObject;
-    import com.nimbusds.jose.JWSVerifier;
-    import com.nimbusds.jwt.JWTClaimsSet;
-    import net.minidev.json.JSONObject;
+<pre><code data-lang="java">import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jwt.JWTClaimsSet;
+import net.minidev.json.JSONObject;
 
-    public JWTClaimsSet read(String jwt, JWSVerifier verifier) throws ParseException, JOSEException
+public JWTClaimsSet read(String jwt, JWSVerifier verifier) throws ParseException, JOSEException
+{
+    JWSObject jwsObject = JWSObject.parse(jwt);
+
+    if (!jwsObject.verify(verifier))
     {
-        JWSObject jwsObject = JWSObject.parse(jwt);
-
-        if (!jwsObject.verify(verifier))
-        {
-            throw new IllegalArgumentException("Fraudulent JWT token: " + jwt);
-        }
-
-        JSONObject jsonPayload = jwsObject.getPayload().toJSONObject();
-        return JWTClaimsSet.parse(jsonPayload);
+        throw new IllegalArgumentException("Fraudulent JWT token: " + jwt);
     }
 
+    JSONObject jsonPayload = jwsObject.getPayload().toJSONObject();
+    return JWTClaimsSet.parse(jsonPayload);
+}
+</code></pre>
 
 ### 3. Verify query string hash
 
@@ -335,7 +336,7 @@ Finally, concatenate the signing input, another period character and the signatu
 
 Here is an example in Java using json-smart, guava and commons-codec:
 
-    import com.google.common.collect.ImmutableMap;
+<pre><code data-lang="java">import com.google.common.collect.ImmutableMap;
     import net.minidev.json.JSONObject;
     
     import javax.crypto.Mac;
@@ -360,10 +361,11 @@ Here is an example in Java using json-smart, guava and commons-codec:
         mac.init(key);
         return encodeBase64URLSafeString(mac.doFinal(signingInput.getBytes()));
     }
+</code></pre>
 
 Here is an example in Java using nimbus-jose-jwt:
 
-    import com.nimbusds.jose.*;
+<pre><code data-lang="java">import com.nimbusds.jose.*;
     import com.nimbusds.jose.crypto.MACSigner;
 
     public String jsonToJwt(String claimsSetAsJsonString) throws JOSEException
@@ -383,6 +385,7 @@ Here is an example in Java using nimbus-jose-jwt:
         
         return jwsObject;
     }
+</code></pre>
 
 <a name='qsh'></a>
 # Creating a query string hash

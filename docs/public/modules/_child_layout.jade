@@ -1,3 +1,12 @@
+mixin auiPropertyLozenge
+    +auiLozenge(class='ac-property-type ' + attributes.class)
+        block
+
+mixin auiLozenge
+    if block
+        span.aui-lozenge.aui-lozenge-subtle(class=attributes.class)
+            block
+
 h1
     = module.name
 
@@ -11,70 +20,72 @@ table.aui
           th Name
           th Type
           th Description
-      tbody
+    tbody
         - each prop in module.properties
             tr
                 td
-                    = prop.key
+                    code
+                        = prop.key
                 td
                     - if (prop.type === 'object')
                         - if (entityLinks[prop.id])
-                            a(href = '/' + entityLinks[prop.id] + '.html')
+                            a(href = baseUrl + '/' + entityLinks[prop.id] + '.html')
                                 - if (prop.title)
-                                    span.aui-lozenge
+                                    +auiPropertyLozenge(class='aui-lozenge-complete')
                                         = prop.title
                                 - else
-                                    span.aui-lozenge
+                                    +auiPropertyLozenge(class='aui-lozenge-complete')
                                         = prop.id
                         - else
                             - if (prop.title)
-                                span.aui-lozenge
+                                +auiPropertyLozenge()
                                     = prop.title
                             - else
-                                span.aui-lozenge
+                                +auiPropertyLozenge()
                                     = prop.id
                     - else if (prop.type === 'array')
                         - if (prop.arrayType === 'object')
                             | [&nbsp;
                             prop.arrayTypeIds.length
                             - each typeId in prop.arrayTypeIds
-                                a(href = '/' + entityLinks[typeId] + '.html')
-                                    span.aui-lozenge
+                                a(href = baseUrl + '/' + entityLinks[typeId] + '.html')
+                                    +auiPropertyLozenge(class='aui-lozenge-complete')
                                         = typeId
                                 | ,&nbsp;
-                            | ... ]
+                            | &hellip; ]
                         - else
                             | [&nbsp;
-                            span.aui-lozenge
+                            +auiPropertyLozenge()
                                 = prop.arrayType
-                            | , ... ]
+                            | , &hellip; ]
                     - else
-                        span.aui-lozenge
+                        +auiPropertyLozenge()
                             = prop.type
                         - if (prop.type === 'string' && prop.format)
                             p
-                            span.aui-lozenge
+                            +auiPropertyLozenge
                                 = prop.format
                         - else if (prop.type === 'string' && prop.pattern)
                             p
-                            span.aui-lozenge
+                            +auiPropertyLozenge
                                 = prop.pattern
                 td
                     div
                         != prop.description
                     - if (prop.required)
-                        span.aui-lozenge Required
+                        +auiLozenge(class='aui-lozenge-error') Required
                     - if (prop.enum)
                         div
                             strong Valid values:
                             - each value in prop.enum
                                 | &nbsp;
-                                span.aui-lozenge
+                                +auiLozenge
                                     = value
                     - if (prop.defaultValue)
                         div
                             strong Default value:
-                            span &nbsp;
+                            | &nbsp;
+                            +auiLozenge(class='aui-lozenge-success')
                                 = prop.defaultValue
 
 //- h2 JSON Schema
