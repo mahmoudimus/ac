@@ -15,6 +15,10 @@ import com.google.gson.annotations.SerializedName;
  * If there is only one configure page specified then it will automatically be used regardless of the default field.
  *
  * If no configure page modules are specified then no configure button will be included on the install page.
+ *
+ * Json Example:
+ * @exampleJson {@see ConnectJsonExamples#CONFIGURE_PAGE_EXAMPLE}
+ * @schemaTitle Configure Page
  */
 public class ConfigurePageModuleBean extends ConnectPageModuleBean
 {
