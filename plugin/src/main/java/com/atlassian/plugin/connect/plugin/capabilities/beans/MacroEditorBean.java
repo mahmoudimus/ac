@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.MacroEditorBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.google.common.base.Strings;
@@ -11,6 +12,7 @@ import com.google.common.base.Strings;
 public class MacroEditorBean extends BaseModuleBean
 {
     @Required
+    @StringSchemaAttributes(format = "uri")
     private String url;
     private I18nProperty editTitle;
     private I18nProperty insertTitle;
@@ -55,11 +57,6 @@ public class MacroEditorBean extends BaseModuleBean
     public String getUrl()
     {
         return url;
-    }
-
-    public boolean hasUrl()
-    {
-        return !Strings.isNullOrEmpty(url);
     }
 
     public I18nProperty getEditTitle()

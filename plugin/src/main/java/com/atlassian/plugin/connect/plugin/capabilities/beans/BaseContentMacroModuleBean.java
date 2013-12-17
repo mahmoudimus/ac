@@ -124,17 +124,9 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
         {
             url = "";
         }
-        if (null == icon)
-        {
-            icon = newIconBean().build();
-        }
         if (null == description)
         {
             description = empty();
-        }
-        if (null == documentation)
-        {
-            documentation = newLinkBean().build();
         }
         if (null == categories)
         {
@@ -167,10 +159,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
         if (null == parameters)
         {
             parameters = Lists.newArrayList();
-        }
-        if (null == editor)
-        {
-            editor = newMacroEditorBean().build();
         }
     }
 
@@ -246,16 +234,16 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
 
     public boolean hasEditor()
     {
-        return editor.hasUrl();
+        return editor != null;
     }
 
     public boolean hasIcon()
     {
-        return icon.hasUrl();
+        return icon != null;
     }
 
     public boolean hasDocumentation()
     {
-        return documentation.hasUrl();
+        return documentation != null;
     }
 }

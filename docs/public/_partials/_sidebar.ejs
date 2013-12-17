@@ -2,40 +2,30 @@
     <nav class="aui-navgroup aui-navgroup-vertical">
         <div class="aui-navgroup-inner">
             <ul class="aui-nav">
-                <% for (var page in public.guides._data.guides) { %>
+                <% for (var page in public.pages._data.guides) { %>
                 <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
                 <li <%= selected %>>
-                    <a href="/guides/<%= page %>"><%= public.guides._data.guides[page].title %></a>
+                    <a href="<%= baseUrl %>/pages/guides/<%= page %>"><%= public.pages._data.guides[page].title %></a>
                 </li>
                 <% } %>
             </ul>
 
-             <div class="aui-nav-heading">
+            <div class="aui-nav-heading">
                 <strong>Core Concepts</strong>
             </div>
             <ul class="aui-nav">
-            <% for(var concept in public.guides._data.concepts){ %>
-            <li>
-                <a href="/guides/<%= concept %>"><%= public.guides._data.concepts[concept].title %></a>
+            <% for(var concept in public.pages._data.concepts) { %>
+            <% var selected = concept.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
+            <li <%= selected %>>
+                <a href="<%= baseUrl %>/pages/concepts/<%= concept %>"><%= public.pages._data.concepts[concept].title %></a>
             </li>
             <% } %>
-<!--
-            <div class="aui-nav-heading">
-                <strong>Add-on Descriptor</strong>
-            </div>
-            <ul class="aui-nav">
-                <% for (var page in public.modules._data) { %>
-                <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
-                <li <%= selected %>>
-                    <a href="/modules/<%= page %>"><%= public.modules._data[page].title %></a>
-                </li>
-                <% } %>
             </ul>
- -->
-            <%- partial('_module_list.ejs',{product: { title: "JIRA", key: "jira"}}) %>
 
-            <%- partial('_module_list.ejs',{product: { title: "Confluence", key: "confluence"}}) %>
-
+            <%- partial('_module_list.ejs', { title: "Root Modules", modules: entities.root }) %>
+            <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira }) %>
+            <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence }) %>
+            <%- partial('_module_list.ejs', { title: "Module Fragments", modules: entities.fragment }) %>
 
             <div class="aui-nav-heading">
                 <strong>REST API Browser</strong>
@@ -53,12 +43,12 @@
                 <strong>Resources</strong>
             </div>
             <ul class="aui-nav">
-                <li>
-                    <a href="/samples.html">Sample Add-ons</a>
+                <% for(var resource in public.pages._data.resources) { %>
+                <% var selected = resource.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
+                <li <%= selected %>>
+                    <a href="<%= baseUrl %>/pages/resources/<%= resource %>"><%= public.pages._data.resources[resource].title %></a>
                 </li>
-                <li>
-                    <a href="/faqs.html">FAQs</a>
-                </li>
+                <% } %>
                 <li>
                     <a href="https://groups.google.com/forum/?fromgroups=#%21forum/atlassian-connect-dev">Mailing List</a>
                 </li>

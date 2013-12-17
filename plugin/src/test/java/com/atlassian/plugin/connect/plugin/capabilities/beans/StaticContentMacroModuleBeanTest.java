@@ -69,16 +69,6 @@ public class StaticContentMacroModuleBeanTest
         assertThat(deserializedBean.getMethod(), is(MacroHttpMethod.GET));
     }
 
-    @Test
-    public void verifyDocNotNull()
-    {
-        Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = "{}";
-        StaticContentMacroModuleBean deserializedBean = gson.fromJson(json, StaticContentMacroModuleBean.class);
-
-        assertThat(deserializedBean.getDocumentation(), is(notNullValue()));
-    }
-
     private static ConnectAddonBean createBean()
     {
         return newConnectAddonBean()

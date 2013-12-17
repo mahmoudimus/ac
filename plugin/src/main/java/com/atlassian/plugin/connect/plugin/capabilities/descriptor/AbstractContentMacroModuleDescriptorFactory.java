@@ -70,11 +70,11 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         {
             element.setAttribute("height", bean.getHeight());
         }
-        if (bean.getDocumentation().hasUrl())
+        if (bean.hasDocumentation())
         {
             element.setAttribute("documentation-url", bean.getDocumentation().getUrl());
         }
-        if (bean.getIcon().hasUrl())
+        if (bean.hasIcon())
         {
             element.setAttribute("icon", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
         }
@@ -157,12 +157,12 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
 
     private LinkBean makeAbsolute(Plugin plugin, LinkBean documentation)
     {
-        if (documentation.hasUrl())
+        if (null != documentation)
         {
             String absoluteUrl = getAbsoluteUrl(plugin, documentation.getUrl());
             return newLinkBean(documentation).withUrl(absoluteUrl).build();
         }
-        return documentation;
+        return null;
     }
 
     private String getAbsoluteUrl(Plugin plugin, String url)

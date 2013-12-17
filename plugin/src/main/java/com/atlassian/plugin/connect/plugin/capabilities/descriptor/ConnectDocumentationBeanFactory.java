@@ -21,19 +21,19 @@ public class ConnectDocumentationBeanFactory implements DocumentationBeanFactory
             @Override
             public String getLink(String docLink)
             {
-                return linkBean.getUrl();
+                return exists(docLink) ? linkBean.getUrl() : "";
             }
 
             @Override
             public String getTitle(String docLink)
             {
-                return linkBean.getTitle();
+                return exists(docLink) ? linkBean.getTitle() : "";
             }
 
             @Override
             public String getAlt(String docLink)
             {
-                return linkBean.getAltText();
+                return exists(docLink) ? linkBean.getAltText() : "";
             }
 
             @Override
@@ -46,7 +46,7 @@ public class ConnectDocumentationBeanFactory implements DocumentationBeanFactory
             @Override
             public boolean exists(String docLink)
             {
-                return linkBean.hasUrl();
+                return linkBean != null;
             }
         };
     }

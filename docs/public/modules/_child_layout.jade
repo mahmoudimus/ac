@@ -1,8 +1,16 @@
-- var capability = schemas[product].properties.modules.properties[current.source]
-h1
-    = capability.title || capability.items.title
+mixin auiPropertyLozenge
+    +auiLozenge(class='ac-property-type ' + attributes.class)
+        block
 
-!= yield
+mixin auiLozenge
+    if block
+        span.aui-lozenge.aui-lozenge-subtle(class=attributes.class)
+            block
+
+h1
+    = module.name
+
+!= module.description
 
 h2 Properties
 
@@ -12,17 +20,73 @@ table.aui
           th Name
           th Type
           th Description
-      tbody
-        - for(var prop in capability.items.properties)
+    tbody
+        - each prop in module.properties
             tr
                 td
-                    = prop
+                    code
+                        = prop.key
                 td
-                    span.aui-lozenge
-                        = capability.items.properties[prop].type
+                    - if (prop.type === 'object')
+                        - if (entityLinks[prop.id])
+                            a(href = baseUrl + '/' + entityLinks[prop.id] + '.html')
+                                - if (prop.title)
+                                    +auiPropertyLozenge(class='aui-lozenge-complete')
+                                        = prop.title
+                                - else
+                                    +auiPropertyLozenge(class='aui-lozenge-complete')
+                                        = prop.id
+                        - else
+                            - if (prop.title)
+                                +auiPropertyLozenge()
+                                    = prop.title
+                            - else
+                                +auiPropertyLozenge()
+                                    = prop.id
+                    - else if (prop.type === 'array')
+                        - if (prop.arrayType === 'object')
+                            | [&nbsp;
+                            prop.arrayTypeIds.length
+                            - each typeId in prop.arrayTypeIds
+                                a(href = baseUrl + '/' + entityLinks[typeId] + '.html')
+                                    +auiPropertyLozenge(class='aui-lozenge-complete')
+                                        = typeId
+                                | ,&nbsp;
+                            | &hellip; ]
+                        - else
+                            | [&nbsp;
+                            +auiPropertyLozenge()
+                                = prop.arrayType
+                            | , &hellip; ]
+                    - else
+                        +auiPropertyLozenge()
+                            = prop.type
+                        - if (prop.type === 'string' && prop.format)
+                            p
+                            +auiPropertyLozenge
+                                = prop.format
+                        - else if (prop.type === 'string' && prop.pattern)
+                            p
+                            +auiPropertyLozenge
+                                = prop.pattern
                 td
-                    = capability.items.properties[prop].description
-
+                    div
+                        != prop.description
+                    - if (prop.required)
+                        +auiLozenge(class='aui-lozenge-error') Required
+                    - if (prop.enum)
+                        div
+                            strong Valid values:
+                            - each value in prop.enum
+                                | &nbsp;
+                                +auiLozenge
+                                    = value
+                    - if (prop.defaultValue)
+                        div
+                            strong Default value:
+                            | &nbsp;
+                            +auiLozenge(class='aui-lozenge-success')
+                                = prop.defaultValue
 
 //- h2 JSON Schema
 //- textarea.code

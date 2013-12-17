@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConfigurePageModuleBeanBuilder;
 
 /**
@@ -15,6 +16,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConfigureP
  */
 public class ConfigurePageModuleBean extends ConnectPageModuleBean
 {
+    @CommonSchemaAttributes(defaultValue = "false")
     private Boolean isDefault; // TODO: ask JD if I can use lil boolean
 
     public ConfigurePageModuleBean(ConfigurePageModuleBeanBuilder builder)

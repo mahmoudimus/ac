@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -24,19 +27,55 @@ public class ConnectAddonBean extends BaseModuleBean
     public static final int DEFAULT_WEIGHT = 100;
 
     /**
-     * The plugin key for the add on
+     * A unique key to identify the add on
      */
+    @Required
     private String key;
+
+    /**
+     * The human-readable name of the add on
+     */
     private String name;
+    
     private String version;
+
+    /**
+     * A human readable description of what the add on does
+     */
     private String description;
+
+    /**
+     * The vendor who is offering the add on
+     */
     private VendorBean vendor;
     private Map<String,String> links;
+
+    /**
+     * Allows the add on to register for plugin lifecycle notifications
+     */
     private LifecycleBean lifecycle;
+
+    /**
+     * The base url of the remote add on
+     */
+    @Required
+    @StringSchemaAttributes(format = "uri")
     private String baseUrl;
+
+    /**
+     * Defines the authentication type to use when signing requests between the host application and the connect add on.
+     */
     private AuthenticationBean authentication;
+
+    /**
+     * Whether or not to enable licensing options in the UPM.Marketplace for this add on
+     */
+    @CommonSchemaAttributes(defaultValue = "false")
     private Boolean enableLicensing;
-    
+
+    /**
+     * The list of modules this add on provides
+     */
     private ModuleList modules;
     
     public ConnectAddonBean()

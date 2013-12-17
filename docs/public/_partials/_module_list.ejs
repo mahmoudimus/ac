@@ -1,22 +1,12 @@
 <div class="aui-nav-heading">
-    <strong><%= product.title %> Modules</strong>
+    <strong><%= title %></strong>
 </div>
 <ul class="aui-nav">
-    <% for (var key in schemas[product.key].properties.modules.properties) { %>
-        <% var module = schemas[product.key].properties.modules.properties[key]; %>
-        <% var selected = key === current.source && current.path[1] === [product.key] ? "class=aui-nav-selected" : ""; %>
+    <% for (var key in modules) { %>
+        <% var module = modules[key]; %>
+        <% var selected = module.selfLink === current.path.join("/") ? "class=aui-nav-selected" : ""; %>
         <li <%= selected %>>
-            <%
-                var title = "";
-                if(typeof module.title !== 'undefined') {
-                    title = module.title;
-                } else if(typeof module.items.title !== 'undefined') {
-                    title = module.items.title;
-                } else {
-                    title = key;
-                }
-            %>
-            <a href="/modules/<%= product.key %>/<%= key %>.html"><%= title %></a>
+            <a href="<%= baseUrl %>/<%= module.selfLink %>.html"><%= module.name %></a>
         </li>
     <% } %>
 </ul>

@@ -1,14 +1,25 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
+import com.atlassian.json.schema.annotation.Required;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * @since 1.0
+ * Represents a string that can be resolved via a localization properties file.
  */
 public class I18nProperty
 {
+    /**
+     * The human-readable value
+     */
+    @Required
     private String value;
+
+    /**
+     * The localization key for the human-readable value.
+     * If this key is provided, it will be looked up in an I18n properties file to get the value.
+     */
     private String i18n;
 
     public I18nProperty(String defaultValue,String i18n)
