@@ -9,6 +9,7 @@ var renderMarkdown = require("markdown-js").markdown;
 var fork = require("child_process").fork;
 var chokidar = require("chokidar");
 var jsonPath = require("JSONPath").eval;
+var program = require("commander");
 
 var buildDir = "./target";
 var genSrcPrefix = buildDir + "/gensrc";
@@ -17,6 +18,11 @@ var srcFiles = ["public", "package.json"];
 
 var jiraSchemaPath = '../plugin/target/classes/schema/jira-schema.json';
 var confluenceSchemaPath = '../plugin/target/classes/schema/confluence-schema.json';
+
+program
+  .option('-s, --serve', 'Serve and automatically watch for changes')
+  .option('-b, --baseUrl [url]', 'Set the base url for rendered links')
+  .parse(process.argv);
 
 function collapseArrayAndObjectProperties(properties, required, parentId) {
     return _.map(properties, function(property, id) {
@@ -197,8 +203,10 @@ function rebuildHarpSite() {
     harpGlobals.globals = _.extend({
         entityLinks: entityLinks,
         entities: entities,
-        baseUrl: ''
+        baseUrl: program.baseUrl || ''
     }, harpGlobals.globals);
+
+    console.log("Base url is: " + harpGlobals.globals.baseUrl);
 
     fs.outputFileSync(genSrcPrefix + '/harp.json', JSON.stringify(harpGlobals,null,2));
 }
@@ -242,9 +250,8 @@ function compileHarpSources() {
 
 rebuildHarpSite();
 
-if (process.argv.length > 2 && process.argv[2].toLowerCase().indexOf("serve") === 0) {
+if (program.serve) {
     startHarpServerAndWatchSrcFiles()
 } else {
     compileHarpSources();
 }
-
