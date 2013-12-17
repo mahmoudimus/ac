@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -58,10 +59,7 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
     @Override
     public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, List<String>> parameters)
     {
-        if (null == parameters)
-        {
-            throw new IllegalArgumentException("Parameters Map argument cannot be null");
-        }
+        checkArgument(null != parameters, "Parameters Map argument cannot be null");
 
         Map<String, String[]> paramsAsArrays = Maps.transformValues(parameters, new Function<List<String>, String[]>()
         {
@@ -76,15 +74,8 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
 
     static String encodeJwt(HttpMethod httpMethod, URI targetPath, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, ApplicationLink appLink)
     {
-        if (null == httpMethod)
-        {
-            throw new IllegalArgumentException("HttpMethod argument cannot be null");
-        }
-
-        if (null == targetPath)
-        {
-            throw new IllegalArgumentException("URI argument cannot be null");
-        }
+        checkArgument(null != httpMethod, "HttpMethod argument cannot be null");
+        checkArgument(null != targetPath, "URI argument cannot be null");
 
         JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuedAt(TimeUtil.currentTimeSeconds())
