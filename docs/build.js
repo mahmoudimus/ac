@@ -11,7 +11,7 @@ var chokidar = require("chokidar");
 var jsonPath = require("JSONPath").eval;
 
 var buildDir = "./target";
-var genSrcPrefix = buildDir + "/gensrc/";
+var genSrcPrefix = buildDir + "/gensrc";
 
 var srcFiles = ["public", "package.json"];
 
@@ -93,7 +93,7 @@ function schemaToModel(schemaEntity) {
 function copySrcFiles(filenames) {
     if (typeof filenames === "string") filenames = [filenames];
     _.each(filenames, function (filename) {
-        fs.copySync(filename, genSrcPrefix + filename);
+        fs.copySync(filename, genSrcPrefix + '/' + filename);
     });
 }
 
@@ -124,7 +124,7 @@ function writeEntitiesToDisk(entities, pathMappings) {
                         "Here's the model JSON for this file, y'know for debugging " +
                         "and stuff:\n\n" + JSON.stringify(entity, null, 2);
 
-                var filePath = genSrcPrefix + 'public/' + entity.selfLink +'.md';
+                var filePath = genSrcPrefix + '/public/' + entity.selfLink +'.md';
 
                 fs.outputFileSync(filePath, placeholder);
             });
@@ -200,7 +200,7 @@ function rebuildHarpSite() {
         baseUrl: ''
     }, harpGlobals.globals);
 
-    fs.outputFileSync(genSrcPrefix + 'harp.json', JSON.stringify(harpGlobals,null,2));
+    fs.outputFileSync(genSrcPrefix + '/harp.json', JSON.stringify(harpGlobals,null,2));
 }
 
 function startHarpServerAndWatchSrcFiles() {

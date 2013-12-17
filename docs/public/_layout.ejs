@@ -22,6 +22,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/javascript/javascript.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/clike/clike.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
 
     <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui-ie.js"></script><![endif]-->
@@ -96,7 +97,7 @@
         $(".diagram").sequenceDiagram({theme: 'simple'});
 
         var codeDefaults = {
-            mode: "javascript",
+            mode: "clike",
             theme: "neat",
             lineNumbers:true,
             gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
@@ -115,18 +116,24 @@
         });
 
         function cmIfyPreCodeBlocks(block) {
-            var sample = block;
-            var text = sample.textContent || sample.innerText;
-            var newOpts = $.extend({}, codeDefaults);
+            var $sample = $(block),
+                lang = $sample.data('lang'),
+                text = $sample.text(),
+                newOpts = $.extend({}, codeDefaults);
 
             if (text.split("\n").length <= 1) {
                 newOpts.lineNumbers = false;
                 newOpts.gutters = [];
             }
             newOpts.value = text;
+
+            if (lang) {
+                newOpts.mode = (lang == 'java' ? 'text/x-java' : lang);
+            }
+
             var cm = CodeMirror(
                 function(node){
-                    sample.parentNode.replaceChild(node, sample)
+                    block.parentNode.replaceChild(node, block)
                 }, newOpts
             );
         }
