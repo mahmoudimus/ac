@@ -16,6 +16,41 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
  * The page module takes care of integrating the add-on content into the application for you. The add-on content
  * automatically gets the page styles and decorators from the host application.
  *
+ * ## Descriptor Example
+ * ```
+ * {
+ *     "name": "Hello World",
+ *     "description": "Atlassian Connect add-on",
+ *     "key": "myaddon_helloworld",
+ *     "baseUrl": "http://localhost:8000",
+ *     "vendor": {
+ *         "name": "My Organization, Inc",
+ *         "url": "https://developer.atlassian.com"
+ *     },
+ *     "version": "1.0",
+ *     "modules": {
+ *         "generalPages": [
+ *             {
+ *                 "url": "/helloworld.html",
+ *                 "name": {
+ *                     "value": "Greeting"
+ *                 }
+ *             }
+ *         ],
+ *         "adminPages": [
+ *             {
+ *                 "url": "/helloworld-adminpage.html",
+ *                 "name": {
+ *                     "value": "Greeting admin page"
+ *                 }
+ *             }
+ *         ]
+ *     }
+ * }
+ * ```
+ * ### General Page
+ * *The example also displays a link in the top navigation menu called "Greeting"*
+ * <img src="../../assets/images/generalPage-jira.png" />
  * @since 1.0
  */
 public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
