@@ -23,6 +23,7 @@ import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Supplier;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +56,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     @Mock private PluginRetrievalService pluginRetrievalService;
     @Mock private JwtService jwtService;
     @Mock private ConsumerService consumerService;
+    @Mock private UserManager userManager;
 
     private DefaultRemotablePluginAccessorFactory factory;
 
@@ -65,7 +67,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
-        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService);
+        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager);
     }
 
     @Test

@@ -7,13 +7,6 @@ Just to give you an idea of how you can use them in add-ons, here are a few samp
 * When an issue is created or closed in JIRA
 * When a page is created or updated in Confluence
 
-While some webhooks are specific to the Atlassian application, JIRA or Confluence, others are common to all
-applications. This type includes, for example, the webhooks that generate notifications when the add-on is enabled.
-
-Most add-ons should implement the remote_plugin_enabled webhook. The Atlassian application uses this event to supply
-its public key to the add-on. The [Authentication](../../../guides/authentication.html) docs shows an example of
-how to use this webhook.
-
 ### Handling the webhook event
 
 To receive webhook events, your add-on needs to include the webhook module declaration in its JSON descriptor. The
@@ -51,8 +44,8 @@ Each type of webhook event includes information specific to that event in the bo
 add-on resource that listens for webhook posts should receive and process the content as appropriate for the add-on.
 To understand what type of content each webhook generates, you can use the webhook inspector tool.
 
-The <a href="https://bitbucket.org/atlassianlabs/webhook-inspector">Webhook Inspector</a> is a
-<a href="https://bitbucket.org/atlassian/atlassian-connect-express">atlassian-connect-express</a> Connect add-on
+The [Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) is a
+[atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) Connect add-on
 that you can install in your development environment to inspect the content of event messages. The Webhook Inspector
 subscribes and generates each webhook event type available on the running instance of the Atlassian application,
 and prints the body posted by the instance to the console screen.
