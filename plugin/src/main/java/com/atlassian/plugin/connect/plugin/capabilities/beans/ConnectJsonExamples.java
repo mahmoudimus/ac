@@ -88,7 +88,7 @@ public class ConnectJsonExamples
                 .withName(new I18nProperty("My Web Item", ""))
                 .withLink("/my-web-item")
                 .withLocation("system.preset.filters")
-                .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
+                .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(16).withWidth(16).build())
                 .withStyleClasses("webitem", "system-present-webitem")
                 .withTooltip(new I18nProperty("Example tooltip", ""))
                 .withWeight(200)
@@ -114,19 +114,13 @@ public class ConnectJsonExamples
 
     public static String createComponentTabPanelExample()
     {
-        ConnectAddonBean addon = newConnectAddonBean()
-                .withName("My Plugin")
-                .withKey("my-plugin")
-                .withBaseurl("http://www.example.com")
-                .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModule(ConnectTabPanelModuleProvider.COMPONENT_TAB_PANELS, newTabPanelBean()
+        ConnectTabPanelModuleBean bean = newTabPanelBean()
                         .withName(new I18nProperty("My Component Tab Page", ""))
                         .withUrl("/my-component-tab")
                         .withWeight(100)
-                        .build())
-                .build();
+                        .build();
 
-        return gson.toJson(addon);
+        return gson.toJson(bean);
     }
 
 
