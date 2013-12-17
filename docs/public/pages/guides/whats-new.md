@@ -5,8 +5,8 @@ Atlassian Connect `1.0-m25` introduces a number of changes to how you will build
 ### New Documentation Portal
 
 The Atlassian Connect dev team is pleased to preview our new documentation portal, which you're looking at right now! We
-have spent considerable time responding to your feedback and have built these docs from the ground up to help you find
-the information you're looking for.
+have responded to your feedback and have built these docs from the ground up to help you find the information you're
+looking for.
 
 ### JSON Descriptor
 
@@ -53,7 +53,7 @@ solutions.
 </div>
 
 Read about JWT and how to implement it in our [authentication](../concepts/authentication.html) docs. We think JWT is
-significantly more straight forward than OAuth 1.0!
+significantly more straight forward to understand and implement than OAuth 1.0!
 
 [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express/) version `0.9.0` comes with
 support for JWT out of the box.

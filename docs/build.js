@@ -248,8 +248,6 @@ function compileHarpSources() {
 
 rebuildHarpSite();
 
-console.log("Generating docs with base URL: '" + harpGlobals.globals.baseUrl + "'");
-
 if (program.serve) {
     startHarpServerAndWatchSrcFiles()
 } else {
