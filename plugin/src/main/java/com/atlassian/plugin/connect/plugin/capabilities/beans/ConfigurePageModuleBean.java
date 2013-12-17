@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConfigurePageModuleBeanBuilder;
 import com.google.common.base.Objects;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class ConfigurePageModuleBean extends ConnectPageModuleBean
 {
+    @CommonSchemaAttributes(defaultValue = "false")
     private Boolean isDefault;
 
     public ConfigurePageModuleBean()

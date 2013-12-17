@@ -7,6 +7,10 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutput
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -14,10 +18,15 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.Icon
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 
+@SuppressWarnings ("UnusedDeclaration")
 public class ConnectJsonExamples
 {
+    private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
+
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
+
+    public static final String PARAMS_EXAMPLE = getParamsExample();
 
     private static String createAddonExample()
     {
@@ -30,12 +39,11 @@ public class ConnectJsonExamples
                 .withLinks(ImmutableMap.builder().put("self", "http://www.example.com/connect/jira").build())
                 .build();
 
-        return render(addonBean);
+        return gson.toJson(addonBean);
     }
 
     private static String createDynamicMacroExample()
     {
-
         DynamicContentMacroModuleBean macroModuleBean = newDynamicContentMacroModuleBean()
                 .withName(new I18nProperty("Maps", ""))
                 .withUrl("/render-map")
@@ -65,13 +73,18 @@ public class ConnectJsonExamples
                 )
                 .build();
 
-        return render(macroModuleBean);
+        return gson.toJson(macroModuleBean);
     }
 
-    private static String render(ModuleBean bean)
+    private static String getParamsExample()
     {
-        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(bean);
-    }
+        Map<String, String> params = new HashMap<String, String>(2);
+        params.put("myCustomProperty", "myValue");
+        params.put("someOtherProperty", "someValue");
 
+        JsonObject obj = new JsonObject();
+        obj.add("params", gson.toJsonTree(params));
+
+        return gson.toJson(obj);
+    }
 }

@@ -5,13 +5,16 @@
   "dependencies": {
     "harp": "*",
     "lodash": "*",
-    "fs-extra": "*"
+    "fs-extra": "*",
+    "markdown-js": "*",
+    "chokidar": "*",
+    "JSONPath": "*"
   },
   "scripts": {
-    "start": "./build.js && ./node_modules/.bin/harp server",
+    "start": "./build.js serve",
     "update": "./build.js",
-    "build": "rm -rf www && ./build.js && ./node_modules/.bin/harp compile",
-    "clean": "rm -rf www"
+    "build": "./build.js",
+    "clean": "rm -rf target"
   },
   "author": "ac-dev@atlassian.com"
 }

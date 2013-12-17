@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
+ * @schemaTitle Web Item Target
  * @since 1.0
  */
 public class WebItemTargetBean extends BeanWithParams

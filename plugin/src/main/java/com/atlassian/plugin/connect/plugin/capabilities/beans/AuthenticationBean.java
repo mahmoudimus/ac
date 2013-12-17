@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.AuthenticationBeanBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -7,16 +8,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Defines the authentication type to use when signing requests between the host application and the connect add on.
  * The authentication type can be either jwt or oauth. If the type is not supplied it will default to jwt.
+ * 
+ * @schemaTitle Athentication
  */
 public class AuthenticationBean extends BaseModuleBean
 {
     /**
-     * The type of authentication to use. Defaults to jwt.
+     * The type of authentication to use.
      */
+    @CommonSchemaAttributes(defaultValue = "jwt")
     private AuthenticationType type;
 
     /**
-     * The publicKey used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with
+     * The public key used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with
      * a shared secret.
      */
     private String publicKey;

@@ -30,7 +30,7 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addModule(ConnectTabPanelModuleProvider.PROFILE_TAB_PANELS,
+                .addModule("jiraProfileTabPanels",
                         newTabPanelBean()
                                 .withName(new I18nProperty("Profile Tab Panel", null))
                                 .withUrl("/myProfileAddon")
