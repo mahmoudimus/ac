@@ -11,8 +11,11 @@ import static com.google.common.collect.Maps.newHashMap;
 public class BeanWithKeyAndParams extends NameToKeyBean
 {
     /**
-     * Extra params
-     * @schemaTitle parameters
+     * This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.
+     * 
+     * Example:
+     * @exampleJson {@see ConnectJsonExamples#PARAMS_EXAMPLE}
+     * @schemaTitle Object
      */
     private Map<String, String> params;
 

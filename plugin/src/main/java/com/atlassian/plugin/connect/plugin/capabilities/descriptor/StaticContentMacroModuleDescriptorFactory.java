@@ -3,23 +3,17 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
-import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
+import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.plugin.module.confluence.RemoteMacroInfo;
-import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.connect.plugin.module.confluence.StorageFormatMacro;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.plugin.connect.spi.module.IFrameParams;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.Sets;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,27 +21,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.net.URISyntaxException;
 
 @ConfluenceComponent
-public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<DynamicContentMacroModuleBean>
+public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<StaticContentMacroModuleBean>
 {
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final IFrameRenderer iFrameRenderer;
-    private final UserManager userManager;
+    private final MacroContentManager macroContentManager;
 
     @Autowired
-    public DynamicContentMacroModuleDescriptorFactory(
+    public StaticContentMacroModuleDescriptorFactory(
             RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            IFrameRenderer iFrameRenderer,
-            UserManager userManager,
+            MacroContentManager macroContentManager,
             AbsoluteAddOnUrlConverter urlConverter,
             I18nPropertiesPluginManager i18nPropertiesPluginManager)
     {
         super(urlConverter, i18nPropertiesPluginManager);
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-        this.iFrameRenderer = iFrameRenderer;
-        this.userManager = userManager;
+        this.macroContentManager = macroContentManager;
     }
 
-    protected ModuleFactory createModuleFactory(final Plugin plugin, final DOMElement element, final DynamicContentMacroModuleBean bean)
+    protected ModuleFactory createModuleFactory(final Plugin plugin, final DOMElement element, final StaticContentMacroModuleBean bean)
     {
         return new ModuleFactory()
         {
@@ -62,16 +53,8 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
                             MacroEnumMapper.map(bean.getBodyType()),
                             MacroEnumMapper.map(bean.getOutputType()),
                             requestContextParameterFactory,
-                            bean.createUri(), HttpMethod.GET);
-
-                    IFrameParams params = new IFrameParamsImpl(element);
-                    IFrameContext iFrameContext = new IFrameContextImpl(
-                            plugin.getKey(),
-                            macroInfo.getUrl(),
-                            bean.getKey(),
-                            params
-                    );
-                    return (T) new PageMacro(macroInfo, userManager, iFrameRenderer, iFrameContext, remotablePluginAccessorFactory);
+                            bean.createUri(), bean.getMethod().getMethod());
+                    return (T) new StorageFormatMacro(macroInfo, macroContentManager, remotablePluginAccessorFactory);
                 }
                 catch (URISyntaxException e)
                 {
@@ -81,3 +64,4 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
         };
     }
 }
+

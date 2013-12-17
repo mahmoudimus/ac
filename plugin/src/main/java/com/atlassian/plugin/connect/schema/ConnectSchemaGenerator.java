@@ -22,7 +22,7 @@ public class ConnectSchemaGenerator extends DefaultJsonSchemaGenerator
     }
 
     @Override
-    protected JsonSchema generateSchemaForField(Class<?> owner, Field field, Class<?>[] ifaces)
+    protected JsonSchema generateSchemaForField(Class<?> owner, Field field, Class<?>[] ifaces, String defaultArrayTitle)
     {
         if(field.isAnnotationPresent(ConnectModule.class))
         {
@@ -34,6 +34,6 @@ public class ConnectSchemaGenerator extends DefaultJsonSchemaGenerator
             }
         }
         
-        return super.generateSchemaForField(owner,field,ifaces);
+        return super.generateSchemaForField(owner,field,ifaces, defaultArrayTitle);
     }
 }

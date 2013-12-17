@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
+import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
@@ -11,27 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
 
 /**
  * Adds a web item to a specified location in the application interface. A web item is a hyperlink
  * that’s inserted into some standard place in the Atlassian application interface, such as the
  * administration menu.
  *
- * <p/>
- *
  * The form that the link takes can vary depending on the location. For instance, a web item in the header bar
- * (with a location section of system.top.navigation.bar) adds a link to the navigation bar across the top of the
- * interface. On the other hand, a web item in the opsbar-operation location section in JIRA adds an item to the issue
- * operation buttons.
- *
- * <p/>
+ * (with a location section of `system.top.navigation.bar`) adds a link to the navigation bar across the top of the
+ * interface. On the other hand, a web item in the `opsbar-operation` location section in JIRA adds an item to the
+ * issue operation buttons.
  *
  * A web item link can open a new page in the application or a dialog, depending on your configuration.
  *
- * <p/>
- *
- * Web links are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
+ * Web items are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
  * application and don't know where to start, a web item may be all you need.
  *
  * @schemaTitle Web Item
@@ -41,8 +36,9 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
      *  Specifies the URL targeted by the link. The URL can be absolute or relative to either the
-     *  product URL or the add-on's base URL, depending on the {@link AddOnUrlContext} parameter.
+     *  product URL or the add-on's base URL, depending on the _context_ parameter.
      */
+    @Required
     private String link;
 
     /**
@@ -50,38 +46,33 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or
      * navigation list in the UI.
      *
-     * <p/>
-     *
-     * Places in the Atlassian UI are identified by what are known as "well-known locations."
-     * For example, the "system.admin/globalsettings" location is in the administrative
+     * Places in the Atlassian UI are identified by what are known as "well-known locations".
+     * For example, the `system.admin/globalsettings` location is in the administrative
      * menu link on the left side of the Administration Console.
      */
+    @Required
     private String location;
 
     /**
      *  The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.
      *
-     * <p/>
-     *
-     *  This context can be either "add-on", which renders the URL relative to the add-on's base URL, or
-     *  "product", which renders the URL relative to the product's base URL.
+     *  This context can be either `addon`, which renders the URL relative to the add-on's base URL, or
+     *  `product`, which renders the URL relative to the product's base URL.
      */
+    @CommonSchemaAttributes(defaultValue = "addon")
     private AddOnUrlContext context;
 
     /**
      * Determines the order in which the web item appears in the menu or list.
      *
-     * <p/>
-     *
      * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
      * while the "heaviest" weights sink to the bottom of the menu or list.
-     *
-     * <p/>
      *
      * Built-in web items have weights that are incremented by numbers that leave room for additional
      * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
      * in a sensible order given existing items.
      */
+    @CommonSchemaAttributes(defaultValue = "100")
     private Integer weight;
 
     /**
@@ -116,8 +107,8 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         this.weight = 100;
         this.target = newWebItemTargetBean().build();
         this.styleClasses = new ArrayList<String>();
-        this.tooltip = new I18nProperty("", "");
-        this.icon = newIconBean().withWidth(0).withHeight(0).withUrl("").build();
+        this.tooltip = null;
+        this.icon = null;
     }
 
     public WebItemModuleBean(WebItemModuleBeanBuilder builder)
@@ -143,22 +134,10 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         {
             this.target = newWebItemTargetBean().build();
         }
-        
-        if (null == location)
-        {
-            this.location = "";
-        }
+
         if (null == styleClasses)
         {
             this.styleClasses = new ArrayList<String>();
-        }
-        if (null == tooltip)
-        {
-            this.tooltip = new I18nProperty("", "");
-        }
-        if (null == icon)
-        {
-            this.icon = newIconBean().withWidth(16).withHeight(16).withUrl("").build();
         }
     }
 
@@ -229,6 +208,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
                 .add("styleClasses", getStyleClasses())
                 .add("tooltip", getTooltip())
                 .add("target", getTarget())
+                .add("icon", getIcon())
                 .toString();
     }
 

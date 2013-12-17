@@ -14,7 +14,7 @@ import java.util.List;
 public class CompositeConditionBean extends BaseModuleBean implements ConditionalBean
 {
     private List<ConditionalBean> conditions;
-    transient private CompositeConditionType type;
+    private CompositeConditionType type;
 
     public CompositeConditionBean()
     {
