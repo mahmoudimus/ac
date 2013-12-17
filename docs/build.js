@@ -24,6 +24,9 @@ program
   .option('-b, --baseUrl [url]', 'Set the base url for rendered links')
   .parse(process.argv);
 
+/**
+ * Transform the schema properties entry for a schema entity into a shallow list of primitives and references.
+ */
 function collapseArrayAndObjectProperties(properties, required, parentId) {
     return _.map(properties, function(property, id) {
         if (property.type === "array") {
@@ -65,7 +68,10 @@ function collapseArrayAndObjectProperties(properties, required, parentId) {
     });
 }
 
-function schemaToModel(schemaEntity) {
+/**
+ * Transform a schema entity root into a model object, suitable for rendering.
+ */
+function entityToModel(schemaEntity) {
     var name = schemaEntity.title || schemaEntity.id;
     var description = renderMarkdown(schemaEntity.description || name);
 
@@ -96,13 +102,29 @@ function schemaToModel(schemaEntity) {
     return model;
 }
 
-function copySrcFiles(filenames) {
+/**
+ * Transform a collection of schema entities into model objects, suitable for rendering. The returned
+ * object will contain model objects, keyed by their slugified title or id.
+ */
+function entitiesToModel(entities) {
+    entities = _.map(entities, entityToModel);
+    entities = _.zipObject(_.pluck(entities, "slug"), entities);
+    return entities;
+}
+
+/**
+ * Copy the supplied files to the gensrc directory.
+ */
+function copyToGenSrc(filenames) {
     if (typeof filenames === "string") filenames = [filenames];
     _.each(filenames, function (filename) {
         fs.copySync(filename, genSrcPrefix + '/' + filename);
     });
 }
 
+/**
+ * Convert the supplied string into a string suitable for use in a filename or url.
+ */
 function slugify(string) {
     return string
             .toLowerCase()
@@ -110,6 +132,12 @@ function slugify(string) {
             .replace(/ +/g,'-');
 }
 
+/**
+ * Write the supplied entities out to the gensrc directory, using the pathMappings supplied.
+ * Each entity id must match a key in pathMappings, or it will not be written out.
+ *
+ * e.g. writeEntitiesToDisk({id: 'some_id', ..}, {some_id: 'some/path'}
+ */
 function writeEntitiesToDisk(entities, pathMappings) {
     var entityLinks = {};
 
@@ -136,38 +164,42 @@ function writeEntitiesToDisk(entities, pathMappings) {
     return entityLinks;
 }
 
+/**
+ * Find module types at the root of the descriptor (lifecycle, vendor, etc.)
+ */
 function findRootEntities(schemas) {
-    var entities = jsonPath(schemas, "$.*.*[?(@.id)]");
-    entities = _.map(entities, schemaToModel);
-    entities = _.zipObject(_.pluck(entities, "slug"), entities);
-    return entities;
+    return entitiesToModel(jsonPath(schemas, "$.*.*[?(@.id)]"));
 }
 
+/**
+ * Find module types supported by JIRA (webItemModuleBean, searchRequestViewModuleBean, etc.)
+ */
 function findJiraModules(schemas) {
-    var entities = jsonPath(schemas, "$.jira.properties.modules.properties.*[?(@.id)]");
-    entities = _.map(entities, schemaToModel);
-    entities = _.zipObject(_.pluck(entities, "slug"), entities);
-    return entities;
+    return entitiesToModel(jsonPath(schemas, "$.jira.properties.modules.properties.*[?(@.id)]"));
 }
 
+/**
+ * Find module types supported by Confluence (webItemModuleBean, staticContentMacroModuleBean, etc.)
+ */
 function findConfluenceModules(schemas) {
-    var entities = jsonPath(schemas, "$.confluence.properties.modules.properties.*[?(@.id)]");
-    entities = _.map(entities, schemaToModel);
-    entities = _.zipObject(_.pluck(entities, "slug"), entities);
-    return entities;
+    return entitiesToModel(jsonPath(schemas, "$.confluence.properties.modules.properties.*[?(@.id)]"));
 }
 
+/**
+ * Find JSON fragments that only exist nested inside other module types.
+ */
 function findFragmentEntities(schemas) {
     var entities = jsonPath(schemas, "$.*.properties.modules.properties.*.items.properties..*");
     entities = _.filter(entities, function(obj) {
         // object must have an id and not be a primitive array
         return obj.id && (obj.type !== "array");
     });
-    entities = _.map(entities, schemaToModel);
-    entities = _.zipObject(_.pluck(entities, "slug"), entities);
-    return entities;
+    return entitiesToModel(entities);
 }
 
+/**
+ * Delete the build dir, regenerate the model from the schema and rebuild the documentation.
+ */
 function rebuildHarpSite() {
 
     fs.deleteSync(buildDir);
@@ -184,8 +216,8 @@ function rebuildHarpSite() {
         fragment: findFragmentEntities(schemas)
     };
 
-    copySrcFiles(srcFiles);
-    copySrcFiles("node_modules");
+    copyToGenSrc(srcFiles);
+    copyToGenSrc("node_modules");
 
     var entityLinks = writeEntitiesToDisk(entities, {
         root: "modules",
@@ -207,6 +239,10 @@ function rebuildHarpSite() {
     fs.outputFileSync(genSrcPrefix + '/harp.json', JSON.stringify(harpGlobals, null, 2));
 }
 
+/**
+ * Start the Harp server. Also sets up watches for all files used as inputs to the documentation and
+ * triggers a rebuild if they change.
+ */
 function startHarpServerAndWatchSrcFiles() {
     var harpServer;
     var restarting = false;
@@ -250,6 +286,9 @@ function startHarpServerAndWatchSrcFiles() {
     });
 }
 
+/**
+ * Statically compile the documentation into build /www directory.
+ */
 function compileHarpSources() {
     fork('./node_modules/harp/bin/harp', ["-o", "../www", "compile"], {'cwd': genSrcPrefix});
 }
