@@ -13,10 +13,9 @@ features to Atlassian's world class development tools with Atlassian Connect.
     Submit new feature requests, bugs, and feature votes in the
     [Atlassian Connect JIRA project](https://ecosystem.atlassian.net/browse/AC).
     <p>
-    __IMPORTANT:__ If you are building an add-on with Atlassian Connect, please subscribe to the
+    If you are building an add-on with Atlassian Connect, please subscribe to the
     [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev). Updates and changes to
-    the framework will be posted there. You can ask questions on [Atlassian Answers](http://answers.atlassian.com) by
-    tagging your post `atlassian-connect`
+    the framework will be posted there.
 
 </div>
 
