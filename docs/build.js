@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// TODO this file should be refactored out into a couple of libraries to separate the concerns of schema munging, static directory construction and harp server lifecycle
+
 var _ = require('lodash');
 var fs = require('fs-extra');
 var util = require('util');
