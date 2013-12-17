@@ -82,6 +82,7 @@ public class ConfigurePageModuleBean extends ConnectPageModuleBean
     public int hashCode()
     {
         return new HashCodeBuilder(73, 57)
+                .append(super.hashCode())
                 .append(isDefault())
                 .build();
     }
