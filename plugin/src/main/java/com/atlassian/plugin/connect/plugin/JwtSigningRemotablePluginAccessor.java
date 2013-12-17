@@ -14,6 +14,8 @@ import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Supplier;
@@ -33,6 +35,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     private final JwtService jwtService;
     private final ConsumerService consumerService;
     private final ConnectApplinkManager connectApplinkManager;
+    private final UserManager userManager;
     private final AuthorizationGenerator authorizationGenerator;
 
     private static final String JWT_EXPIRY_SECONDS_PROPERTY = "com.atlassian.connect.jwt.expiry_seconds";
@@ -48,12 +51,14 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
                                              JwtService jwtService,
                                              ConsumerService consumerService,
                                              ConnectApplinkManager connectApplinkManager,
-                                             HttpContentRetriever httpContentRetriever)
+                                             HttpContentRetriever httpContentRetriever,
+                                             UserManager userManager)
     {
         super(pluginKey, pluginName, baseUrlSupplier, httpContentRetriever);
         this.jwtService = jwtService;
         this.consumerService = consumerService;
         this.connectApplinkManager = connectApplinkManager;
+        this.userManager = userManager;
         this.authorizationGenerator = new JwtAuthorizationGenerator(jwtService, getAppLink());
     }
 
@@ -67,9 +72,12 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     {
         assertThatTargetPathAndParamsDoNotDuplicateParams(targetPath, params);
 
+        UserKey userKey = userManager.getRemoteUserKey();
+        String userKeyValue = userKey == null ? "" : userKey.getStringValue();
         JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuedAt(TimeUtil.currentTimeSeconds())
                 .expirationTime(TimeUtil.currentTimePlusNSeconds(JWT_EXPIRY_WINDOW_SECONDS))
+                .subject(userKeyValue)
                 .issuer(consumerService.getConsumer().getKey());
 
         try

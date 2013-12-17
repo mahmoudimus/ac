@@ -20,9 +20,10 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.3.0/lodash.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/javascript/javascript.min.js"></script>
-    <script src="/assets/js/sequence-diagram-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
+
     <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui-ie.js"></script><![endif]-->
 </head>
 
@@ -87,9 +88,8 @@
     </div>
     <!-- #page -->
     <script>
-    $(".diagram").sequenceDiagram({theme: 'simple'});
-    </script>
-    <script>
+        $(".diagram").sequenceDiagram({theme: 'simple'});
+
         var codeDefaults = {
             mode: "javascript",
             theme: "neat",
@@ -104,11 +104,12 @@
             lineWrapping: true,
             readOnly:true
         };
+
         $('.code').each(function(){
             CodeMirror.fromTextArea(this, codeDefaults);
         });
 
-        function cmIfyPreCodeBlocks(block){
+        function cmIfyPreCodeBlocks(block) {
             var sample = block;
             var text = sample.textContent || sample.innerText;
             var newOpts = $.extend({}, codeDefaults);
@@ -117,7 +118,6 @@
                 newOpts.lineNumbers = false;
                 newOpts.gutters = [];
             }
-
             newOpts.value = text;
             var cm = CodeMirror(
                 function(node){

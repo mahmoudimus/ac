@@ -10,6 +10,7 @@ import org.mockito.ArgumentMatcher;
 public class ConnectInstallationTestUtil
 {
     public static final String SHARED_SECRET_FIELD_NAME = "sharedSecret";
+    public static final String USER_KEY_FIELD_NAME = "userKey";
 
     public static ConnectAddonBean createBean(AuthenticationType authenticationType, String publicKey, String baseUrl)
     {
@@ -55,6 +56,23 @@ public class ConnectInstallationTestUtil
                 return actual instanceof String
                         && !StringUtils.isEmpty((String) actual)
                         && new JsonParser().parse((String)actual).getAsJsonObject().has(SHARED_SECRET_FIELD_NAME);
+            }
+        };
+    }
+
+    /**
+     * @return a Mockito matcher that parses a JSON string for a non-null {@link #USER_KEY_FIELD_NAME} field
+     */
+    public static ArgumentMatcher<String> hasUserKey()
+    {
+        return new ArgumentMatcher<String>()
+        {
+            @Override
+            public boolean matches(Object actual)
+            {
+                return actual instanceof String
+                        && !StringUtils.isEmpty((String) actual)
+                        && new JsonParser().parse((String)actual).getAsJsonObject().has(USER_KEY_FIELD_NAME);
             }
         };
     }

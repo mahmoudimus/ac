@@ -18,7 +18,9 @@ import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 import com.google.gson.JsonParser;
@@ -37,7 +39,9 @@ import java.net.URI;
 import java.util.Dictionary;
 
 import static com.atlassian.plugin.connect.plugin.util.ConnectInstallationTestUtil.*;
+import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -100,6 +104,12 @@ public class ConnectEventHandlerJwtTest
     }
 
     @Test
+    public void installPostContainsNoUserKey()
+    {
+        verify(requestBuilder).setEntity(not(argThat(hasUserKey())));
+    }
+
+    @Test
     public void installUrlIsPosted()
     {
         verify(requestBuilder).execute(Request.Method.POST);
@@ -141,6 +151,8 @@ public class ConnectEventHandlerJwtTest
     @Before
     public void beforeEachTest()
     {
+        UserProfile userProfile = mock(UserProfile.class);
+        when(userProfile.getUserKey()).thenReturn(new UserKey("δελισαθισιμι"));
         when(httpClient.newRequest(Matchers.<URI>any())).thenReturn(requestBuilder);
         when(bundleContext.getBundle()).thenReturn(bundle);
         when(bundle.getHeaders()).thenReturn(dictionary);

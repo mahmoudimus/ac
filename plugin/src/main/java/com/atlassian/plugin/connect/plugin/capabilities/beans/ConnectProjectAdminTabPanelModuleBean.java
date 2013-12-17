@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPro
  *     "i18n": "my.tab"
  *   },
  *   "url": "/my-general-page",
- *   "weight": 100
+ *   "weight": 100,
  *   "location" : "projectgroup4"
  * }]
  * </pre>
