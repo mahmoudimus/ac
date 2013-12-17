@@ -52,7 +52,6 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
 {
     private static final String CONSUMER_KEY = "12345-abcde-09876-zyxwv";
     private static final String USER_KEY = "MrFreeze";
-    private static final String BASE_PATH = "/basepath";
     private static final Map<String, String> GET_PARAMS = Collections.singletonMap("param", "param value");
     private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[] { "param value" });
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
@@ -183,7 +182,10 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     public void queryHashClaimIsCorrect() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(HttpMethod.GET.toString(), URI.create(OUTGOING_FULL_GET_URL).getPath(), BASE_PATH, GET_PARAMS_STRING_ARRAY));
+
+        CanonicalHttpUriRequest request = new CanonicalHttpUriRequest(HttpMethod.GET.toString(), URI.create(OUTGOING_FULL_GET_URL).getPath(), CONTEXT_PATH, GET_PARAMS_STRING_ARRAY);
+        String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(request);
+
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), any(ApplicationLink.class));
     }
 

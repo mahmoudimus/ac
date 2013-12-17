@@ -31,7 +31,8 @@ public class BaseSigningRemotablePluginAccessorTest
 {
     protected static final String PLUGIN_KEY = "key";
     protected static final String PLUGIN_NAME = "name";
-    protected static final String BASE_URL = "http://server:1234/contextPath";
+    protected static final String CONTEXT_PATH = "/contextPath";
+    protected static final String BASE_URL = "http://server:1234" + CONTEXT_PATH;
     protected static final String FULL_PATH_URL = BASE_URL + "/path";
     protected static final Map<String, String> GET_HEADERS = Collections.singletonMap("header", "header value");
     protected static final String EXPECTED_GET_RESPONSE = "expected";
