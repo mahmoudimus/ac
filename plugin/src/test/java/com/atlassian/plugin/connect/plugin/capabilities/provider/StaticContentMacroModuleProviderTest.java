@@ -3,21 +3,20 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DynamicContentMacroModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.StaticContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
-import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +27,7 @@ import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,12 +37,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DynamicContentMacroModuleProviderTest
+public class StaticContentMacroModuleProviderTest
 {
     @Mock
-    private IFrameRenderer iFrameRenderer;
-    @Mock
-    private UserManager userManager;
+    private MacroContentManager macroContentManager;
     @Mock
     private WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     @Mock
@@ -54,7 +51,7 @@ public class DynamicContentMacroModuleProviderTest
     private I18nPropertiesPluginManager i18nPropertiesPluginManager;
 
     private Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
-    private DynamicContentMacroModuleProvider moduleProvider;
+    private StaticContentMacroModuleProvider moduleProvider;
 
     @Before
     public void beforeEachTest() throws Exception
@@ -65,20 +62,19 @@ public class DynamicContentMacroModuleProviderTest
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
         AbsoluteAddOnUrlConverter urlConverter = new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests);
 
-        DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new DynamicContentMacroModuleDescriptorFactory(
+        StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new StaticContentMacroModuleDescriptorFactory(
                 remotablePluginAccessorFactoryForTests,
-                iFrameRenderer,
-                userManager,
+                macroContentManager,
                 urlConverter,
                 i18nPropertiesPluginManager);
 
-        moduleProvider = new DynamicContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory, hostContainer, urlConverter);
+        moduleProvider = new StaticContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory, hostContainer, urlConverter);
     }
 
     @Test
     public void testSimpleMacro() throws Exception
     {
-        DynamicContentMacroModuleBean bean = newDynamicContentMacroModuleBean()
+        StaticContentMacroModuleBean bean = newStaticContentMacroModuleBean()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
                 .withUrl("/my-macro")
                 .build();
@@ -89,7 +85,7 @@ public class DynamicContentMacroModuleProviderTest
     @Test
     public void testFeaturedMacro() throws Exception
     {
-        DynamicContentMacroModuleBean bean = newDynamicContentMacroModuleBean()
+        StaticContentMacroModuleBean bean = newStaticContentMacroModuleBean()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
                 .withUrl("/my-macro")
                 .withFeatured(true)
@@ -104,7 +100,7 @@ public class DynamicContentMacroModuleProviderTest
     @Test
     public void testFeaturedMacroWithIcon() throws Exception
     {
-        DynamicContentMacroModuleBean bean = newDynamicContentMacroModuleBean()
+        StaticContentMacroModuleBean bean = newStaticContentMacroModuleBean()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
                 .withUrl("/my-macro")
                 .withFeatured(true)
