@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.MacroI18nBuil
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.hostcontainer.HostContainer;
-import com.atlassian.plugin.module.PrefixDelegatingModuleFactory;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

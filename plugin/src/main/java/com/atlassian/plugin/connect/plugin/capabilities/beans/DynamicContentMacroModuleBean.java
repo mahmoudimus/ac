@@ -1,24 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.DynamicContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Set;
-
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty.empty;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
 
 /**
  * A Confluence macro that loads the remote content as an IFrame.
