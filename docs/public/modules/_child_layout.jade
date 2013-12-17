@@ -37,12 +37,8 @@ table.aui
                                     +auiPropertyLozenge(class='aui-lozenge-complete')
                                         = prop.id
                         - else
-                            - if (prop.title)
-                                +auiPropertyLozenge()
-                                    = prop.title
-                            - else
-                                +auiPropertyLozenge()
-                                    = prop.id
+                            +auiPropertyLozenge()
+                                = prop.type
                     - else if (prop.type === 'array')
                         - if (prop.arrayType === 'object')
                             | [&nbsp;

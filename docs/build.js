@@ -52,7 +52,6 @@ function collapseArrayAndObjectProperties(properties, required, parentId) {
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
             property = _.pick(property, ["id", "type", "title", "description"]);
-            // if there's no id, it means that any object is allowed here
         }
 
         if (required && required.indexOf(id) > -1) {
