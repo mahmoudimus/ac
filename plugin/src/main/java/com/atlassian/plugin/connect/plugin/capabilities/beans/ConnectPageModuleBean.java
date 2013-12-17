@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
-import com.google.common.base.Objects;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Page modules are UI extension points that add-ons can use to insert content into various areas of the host
@@ -23,9 +23,18 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
 {
+    /**
+     * The url to retrieve the content from.
+     * This can be absolute or relative to the addon's baseUrl
+     */
+    @Required
     private String url;
+    
+    @CommonSchemaAttributes(defaultValue = "100")
     private Integer weight;
+    
     private String location;
+    
     private IconBean icon;
 
     public ConnectPageModuleBean()
@@ -49,10 +58,6 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
         if (null == location)
         {
             this.location = "";
-        }
-        if (null == icon)
-        {
-            this.icon = IconBean.newIconBean().withWidth(16).withHeight(16).withUrl("").build();
         }
     }
 
@@ -80,9 +85,9 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     * An optional icon to display with the link text or as the link, specified by URL to its hosted location.
-     * You can specify a particular width and height for the icon. Most link icons in Atlassian applications
-     * are 16 by 16 pixels.
+     *  An optional icon to display with the link text or as the link, specified by URL to its hosted location.
+     *  You can specify a particular width and height for the icon. Most link icons in Atlassian applications
+     *  are 16 by 16 pixels.
      */
     public IconBean getIcon()
     {

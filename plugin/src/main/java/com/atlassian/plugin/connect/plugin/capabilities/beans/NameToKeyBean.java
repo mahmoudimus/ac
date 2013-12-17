@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
+import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.NameToKeyBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.google.common.base.Strings;
@@ -15,6 +17,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class NameToKeyBean extends BaseModuleBean
 {
     private transient String key;
+
+    /**
+     * A human-readble name
+     */
+    @Required
     private I18nProperty name;
 
     public NameToKeyBean()
