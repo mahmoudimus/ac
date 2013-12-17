@@ -1,11 +1,19 @@
 # Introduction to Atlassian Connect
-Atlassian Connect is a new development model for building and delivering add-ons for Atlassian applications. Atlassian Connect add-ons work using standard web protocols and APIs (such as HTTP and REST). As such, Atlassian Connect add-ons can extend Atlassian applications whether running in OnDemand application or installed behind-the-firewall.
+Build, install and sell add-ons in Atlassian OnDemand. Integrate your service, use Atlassian's REST APIs, or add new features to Atlassian's world class development tools with Atlassian Connect.
 
-<div class="aui-message hint shadowed information-macro">
-	<span class="aui-icon icon-hint">Icon</span>
-	<div class="message-content">
-    	<p>Atlassian Connect is new and in active development for now, but it's growing all the time. If there's a feature you'd like to see added to Atlassian Connect—say a new extension point or a REST resource—please let us know.</p><p>Submit new feature requests, bugs, and feature votes in the <a href="https://ecosystem.atlassian.net/browse/AC" class="external-link" rel="nofollow">Atlassian Connect JIRA project</a>.</p><p><strong>IMPORTANT:</strong> If you are building an add-on with Atlassian Connect, please subscribe to the <a href="https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev" class="external-link" rel="nofollow">mailing list</a>. Updates and changes to the framework will be posted there. You can ask questions on <a href="http://answers.atlassian.com" class="external-link" rel="nofollow">Atlassian Answers</a> by tagging your post "atlassian-connect".</p>
-	</div>
+<div class="aui-message warning">
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Important</strong>
+    </p>
+    Atlassian Connect is new and in active development for now, but it's growing all the time. If there's a feature you'd like to see added to Atlassian Connect, for example a new extension point or a REST resource, please let us know.
+    <p>
+    Submit new feature requests, bugs, and feature votes in the
+    [Atlassian Connect JIRA project](https://ecosystem.atlassian.net/browse/AC).
+    <p>
+    __IMPORTANT:__ If you are building an add-on with Atlassian Connect, please subscribe to the
+    [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev). Updates and changes to the framework will be posted there. You can ask questions on [Atlassian Answers](http://answers.atlassian.com) by tagging your post `atlassian-connect`
+
 </div>
 
 ## What is an Atlassian Connect add-on?
