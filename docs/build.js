@@ -16,25 +16,37 @@ var srcFiles = ["public", "package.json"];
 var jiraSchemaPath = '../plugin/target/classes/schema/jira-schema.json';
 var confluenceSchemaPath = '../plugin/target/classes/schema/confluence-schema.json';
 
-function collapseArrayAndObjectProperties(properties, required) {
+function collapseArrayAndObjectProperties(properties, required, parentId) {
     return _.map(properties, function(property, id) {
         if (property.type === "array") {
             property.id = id;
-            property.arrayType = property.items.type;
-            if (property.arrayType === 'object') {
-                property.arrayTypeIds = [];
-                if (property.items.anyOf) {
-                    _.each(property.items.anyOf, function (anyOf) {
-                        property.arrayTypeIds.push(anyOf.id);
-                    });
-                } else if (property.items.id) {
-                    property.arrayTypeIds.push(property.items.id);
+            if (property.items && property.items["$ref"] === "#") {
+                // self reference
+                property.arrayType = 'object';
+                property.arrayTypeIds = [parentId];
+            } else {
+                property.arrayType = property.items.type;
+                if (property.arrayType === 'object') {
+                    property.arrayTypeIds = [];
+                    if (property.items.anyOf) {
+                        _.each(property.items.anyOf, function (child) {
+                            if (child.items && child.items["$ref"] === "#") {
+                                // self reference
+                                property.arrayTypeIds.push(property.id);
+                            } else {
+                                property.arrayTypeIds.push(child.id);
+                            }
+                        });
+                    } else if (property.items.id) {
+                        property.arrayTypeIds.push(property.items.id);
+                    }
                 }
             }
             property = _.pick(property, ["id", "type", "title", "description", "arrayType", "arrayTypeIds"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
             property = _.pick(property, ["id", "type", "title", "description"]);
+            // if there's no id, it means that any object is allowed here
         }
 
         if (required && required.indexOf(id) > -1) {
@@ -66,16 +78,21 @@ function schemaToModel(schemaEntity) {
         model.arrayType = schemaEntity.items.type;
         if (model.arrayType === 'object') {
             model.arrayTypeIds = [];
-            if (schemaEntity.items.id) {
-                model.arrayTypeIds.push(schemaEntity.items.id);
-            } else if (schemaEntity.items.anyOf) {
-                _.each(schemaEntity.items.anyOf, function (anyOf) {
-                    model.arrayTypeIds.push(anyOf.id);
+            if (schemaEntity.items.anyOf) {
+                _.each(schemaEntity.items.anyOf, function (child) {
+                    if (child.items && child.items["$ref"] === "#") {
+                        // self reference
+                        model.arrayTypeIds.push(property.id);
+                    } else {
+                        model.arrayTypeIds.push(child.id);
+                    }
                 });
+            } else if (schemaEntity.items.id) {
+                model.arrayTypeIds.push(schemaEntity.items.id);
             }
         }
     } else if (model.type === 'object') {
-        model.properties = collapseArrayAndObjectProperties(schemaEntity.properties, schemaEntity.required);
+        model.properties = collapseArrayAndObjectProperties(schemaEntity.properties, schemaEntity.required, schemaEntity.id);
     }
 
     return model;
@@ -187,8 +204,7 @@ function rebuildHarpSite() {
 
     harpGlobals.globals = _.extend({
         entityLinks: entityLinks,
-        entities: entities,
-        schemas: schemas
+        entities: entities
     }, harpGlobals.globals);
 
     fs.outputFileSync(genSrcPrefix + 'harp.json', JSON.stringify(harpGlobals,null,2));
