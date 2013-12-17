@@ -2,6 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Page modules are UI extension points that add-ons can use to insert content into various areas of the host
@@ -25,10 +28,19 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     private String location;
     private IconBean icon;
 
+    public ConnectPageModuleBean()
+    {
+        init();
+    }
+
     public ConnectPageModuleBean(ConnectPageModuleBeanBuilder builder)
     {
         super(builder);
+        init();
+    }
 
+    private void init()
+    {
         // Note: weight is not defaulted here. Defaulting is done later by delegating to the product accessor
         if (null == url)
         {
@@ -45,8 +57,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     *  Specifies the URL targeted by the page. The URL is relative to either the
-     *  the add-on's base URL
+     *  Specifies the URL targeted by the page. The URL is relative to the add-on's base URL.
      */
     public String getUrl()
     {
@@ -69,9 +80,9 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     *  An optional icon to display with the link text or as the link, specified by URL to its hosted location.
-     *  You can specify a particular width and height for the icon. Most link icons in Atlassian applications
-     *  are 16 by 16 pixels.
+     * An optional icon to display with the link text or as the link, specified by URL to its hosted location.
+     * You can specify a particular width and height for the icon. Most link icons in Atlassian applications
+     * are 16 by 16 pixels.
      */
     public IconBean getIcon()
     {
@@ -91,6 +102,60 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         return location;
     }
+
+    @Override
+    public String toString()
+    {
+        Objects.ToStringHelper toStringHelper = Objects.toStringHelper(this);
+        appendToStringFields(toStringHelper);
+        return toStringHelper.toString();
+    }
+
+    protected void appendToStringFields(Objects.ToStringHelper toStringHelper)
+    {
+        toStringHelper
+                .add("name", getName())
+                .add("key", getKey())
+                .add("url", getUrl())
+                .add("weight", getWeight())
+                .add("icon", getIcon())
+                .add("location", getLocation());
+    }
+
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof ConnectPageModuleBean && super.equals(otherObj)))
+        {
+            return false;
+        }
+
+        ConnectPageModuleBean other = (ConnectPageModuleBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(url, other.url)
+                .append(weight, other.weight)
+                .append(icon, other.icon)
+                .append(location, other.location)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(11, 23)
+                .append(url)
+                .append(weight)
+                .append(icon)
+                .append(location)
+                .build();
+    }
+
 
     public static ConnectPageModuleBeanBuilder newPageBean()
     {
