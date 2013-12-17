@@ -21,8 +21,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 
 @Component
-public class WebItemModuleDescriptorFactory
-        implements ConnectModuleDescriptorFactory<WebItemModuleBean, WebItemModuleDescriptor>
+public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebItemModuleBean, WebItemModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(WebItemModuleDescriptorFactory.class);
 

@@ -27,7 +27,6 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * The url to retrieve the content from.
      * This can be absolute or relative to the addon's baseUrl
      */
-    @StringSchemaAttributes(format = "uri")
     @Required
     private String url;
     
