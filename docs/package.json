@@ -9,6 +9,7 @@
     "markdown-js": "*",
     "chokidar": "*",
     "JSONPath": "*",
+    "link-checker": "*",
     "commander": "*"
   },
   "scripts": {

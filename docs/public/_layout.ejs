@@ -118,7 +118,7 @@
         function cmIfyPreCodeBlocks(block) {
             var $sample = $(block),
                 lang = $sample.data('lang'),
-                text = $sample.text(),
+                text = $sample.text().trim(),
                 newOpts = $.extend({}, codeDefaults);
 
             if (text.split("\n").length <= 1) {
