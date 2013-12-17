@@ -7,6 +7,7 @@ import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
+import com.atlassian.jwt.core.JwtUtil;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
@@ -25,6 +26,7 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
@@ -49,6 +51,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class JwtSigningRemotablePluginAccessorTest
 {
+    private static final String MOCK_JWT = "just.an.example";
     private static final String PLUGIN_KEY = "key";
     private static final String PLUGIN_NAME = "name";
     private static final String CONSUMER_KEY = "12345-abcde-09876-zyxwv";
@@ -58,14 +61,14 @@ public class JwtSigningRemotablePluginAccessorTest
     private static final String FULL_PATH_URL = BASE_URL + "/path";
     private static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
     private static final String INTERNAL_FULL_GET_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";
-    private static final Map<String, String> GET_HEADERS = Collections.singletonMap("header", "header value");
+    private static final Map<String, String> UN_AUTHED_GET_HEADERS = Collections.singletonMap("header", "header value");
+    private static final Map<String, String> AUTHED_GET_HEADERS = ImmutableMap.of("header", "header value", JwtUtil.AUTHORIZATION_HEADER, JwtUtil.JWT_AUTH_HEADER_PREFIX + MOCK_JWT);
     private static final Map<String, String> GET_PARAMS = Collections.singletonMap("param", "param value");
     private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
     private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
     private static final String EXPECTED_GET_RESPONSE = "expected";
-    private static final String MOCK_JWT = "just.an.example";
     private @Mock JwtService jwtService;
     private @Mock ApplicationLink applicationLink;
 
@@ -84,7 +87,7 @@ public class JwtSigningRemotablePluginAccessorTest
     @Test
     public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever() throws ExecutionException, InterruptedException
     {
-        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS, GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
+        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS, UN_AUTHED_GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
     }
 
     @Test
@@ -443,7 +446,7 @@ public class JwtSigningRemotablePluginAccessorTest
     {
         Request.Builder requestBuilder = mock(Request.Builder.class);
         {
-            when(requestBuilder.setHeaders(GET_HEADERS)).thenReturn(requestBuilder);
+            when(requestBuilder.setHeaders(AUTHED_GET_HEADERS)).thenReturn(requestBuilder);
             when(requestBuilder.setAttributes(any(Map.class))).thenReturn(requestBuilder);
             {
                 ResponsePromise responsePromise = mock(ResponsePromise.class);
