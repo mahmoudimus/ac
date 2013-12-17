@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.MacroEditorBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;

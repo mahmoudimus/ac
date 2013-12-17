@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.MacroEditorBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 
 public class MacroEditorBeanBuilder extends BaseModuleBeanBuilder<MacroEditorBeanBuilder, MacroEditorBean>

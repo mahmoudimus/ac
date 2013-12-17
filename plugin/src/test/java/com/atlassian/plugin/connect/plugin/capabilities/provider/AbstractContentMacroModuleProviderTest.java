@@ -31,7 +31,7 @@ import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.MacroEditorBean.newMacroEditorBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

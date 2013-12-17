@@ -1,22 +1,50 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans;
+package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.MacroEditorBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.google.common.base.Strings;
 
 /**
- * TODO
+ * Macro Parameters go a long way when it comes to macro configuration, but there are cases
+ * when a macro add-on needs more control over the UI.
+ *
+ * Defining a Macro Editor allows you to implement a custom UI for the macro, by specifying a
+ * URL to a page in your add-on which will be shown in the dialog iframe.
+ *
+ * JSON Example:
+ * @exampleJson {@see ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}
+ * @schemaTitle Macro Editor
+ * @since 1.0
  */
 public class MacroEditorBean extends BaseModuleBean
 {
+    /**
+     * The URL to the macro configuration page in the add-on.
+     */
     @Required
     @StringSchemaAttributes(format = "uri")
     private String url;
+
+    /**
+     * An optional title that will be shown in the edit dialog header for an existing macro.
+     */
     private I18nProperty editTitle;
+
+    /**
+     * An optional title that will be shown in the edit dialog header for a new macro.
+     */
     private I18nProperty insertTitle;
+
+    /**
+     * The preferred width of the edit dialog.
+     */
     private String width;
+
+    /**
+     * The preferred height of the edit dialog.
+     */
     private String height;
 
     public MacroEditorBean()

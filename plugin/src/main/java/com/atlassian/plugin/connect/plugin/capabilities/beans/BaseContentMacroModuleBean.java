@@ -1,11 +1,14 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.google.common.collect.ImmutableSet;
@@ -16,10 +19,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty.empty;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
 
 public abstract class BaseContentMacroModuleBean extends NameToKeyBean
 {
@@ -28,6 +28,7 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      * This URL has to be relative to the add-on base URL.
      */
     @Required
+    @StringSchemaAttributes(format = "uri")
     private String url;
 
     /**
@@ -51,28 +52,30 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      *
      * Currently, the following categories are supported by Confluence:
      *
-     * * __admin__: Administration
-     * * __communication__: Communication
-     * * __confluence-content__: Confluence Content
-     * * __development__: Development
-     * * __external-content__: External Content
-     * * __formatting__: Formatting
-     * * __hidden-macros__: Hidden
-     * * __media__: Media
-     * * __navigation__: Navigation
-     * * __reporting__: Reporting
-     * * __visuals__: Visuals & Images
+     * * ``admin``: Administration
+     * * ``communication``: Communication
+     * * ``confluence-content``: Confluence Content
+     * * ``development``: Development
+     * * ``external-content``: External Content
+     * * ``formatting``: Formatting
+     * * ``hidden-macros``: Hidden
+     * * ``media``: Media
+     * * ``navigation``: Navigation
+     * * ``reporting``: Reporting
+     * * ``visuals``: Visuals & Images
      */
     private Set<String> categories;
 
     /**
      * How this macro should be placed along side other page content.
      */
+    @CommonSchemaAttributes(defaultValue = "block")
     private MacroOutputType outputType;
 
     /**
      * The type of body content, if any, for this macro.
      */
+    @CommonSchemaAttributes(defaultValue = "none")
     private MacroBodyType bodyType;
 
     /**
@@ -83,6 +86,7 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     /**
      * Whether the macro should be "featured", meaning having an additional link in the "Insert More Content" menu in the editor toolbar
      */
+    @CommonSchemaAttributes(defaultValue = "false")
     private Boolean featured;
 
     /**
@@ -134,7 +138,7 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
         }
         if (null == outputType)
         {
-            outputType = MacroOutputType.INLINE;
+            outputType = MacroOutputType.BLOCK;
         }
         if (null == bodyType)
         {

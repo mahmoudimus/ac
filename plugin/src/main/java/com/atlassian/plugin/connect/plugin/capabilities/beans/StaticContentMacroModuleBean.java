@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.StaticContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroHttpMethod;
 
@@ -20,6 +21,7 @@ public class StaticContentMacroModuleBean extends BaseContentMacroModuleBean
     /**
      * The HTTP method to use when calling the macro. The default value is GET.
      */
+    @CommonSchemaAttributes(defaultValue = "get")
     private MacroHttpMethod method;
 
     public StaticContentMacroModuleBean()

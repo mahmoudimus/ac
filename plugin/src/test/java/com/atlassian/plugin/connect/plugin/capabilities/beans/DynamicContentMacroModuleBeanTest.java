@@ -13,7 +13,7 @@ import java.io.IOException;
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.MacroEditorBean.newMacroEditorBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;

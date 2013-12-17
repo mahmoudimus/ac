@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.MacroParameterBeanBuilder;
 import com.google.common.base.Strings;
@@ -11,7 +13,7 @@ import java.util.List;
 /**
  * Describes a parameter input field for a macro.
  *
- * Json Example:
+ * JSON Example:
  * @exampleJson {@see ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
  * @schemaTitle Macro Input Parameter
  * @since 1.0
@@ -23,11 +25,13 @@ public class MacroParameterBean extends BaseModuleBean
      * be used in the query parameters of the add-on URL.
      */
     @Required
+    @StringSchemaAttributes(pattern = "[-_a-z0-9\\.]+")
     private String identifier;
 
     /**
      * The human readable name of the parameter which will be displayed in the UI.
      */
+    @Required
     private I18nProperty name;
 
     /**
@@ -40,26 +44,28 @@ public class MacroParameterBean extends BaseModuleBean
      *
      * Currently the following parameter types are supported in the macro browser's UI:
      *
-     * * __attachment__: displays an autocomplete field for search on attachment filenames.
-     * * __boolean__: displays a check box.
-     * * __confluence-content__: displays an autocomplete field for search on page and blog titles.
-     * * __enum__: displays a select field.
-     * * __spacekey__: displays an autocomplete field for search on space names.
-     * * __string__: displays an input field (this is the default if unknown type).
-     * * __username__: displays an autocomplete field for search on username and full name.
+     * * ``attachment``: displays an autocomplete field for search on attachment filenames.
+     * * ``boolean``: displays a check box.
+     * * ``confluence-content``: displays an autocomplete field for search on page and blog titles.
+     * * ``enum``: displays a select field.
+     * * ``spacekey``: displays an autocomplete field for search on space names.
+     * * ``string``: displays an input field (this is the default if unknown type).
+     * * ``username``: displays an autocomplete field for search on username and full name.
      *
      */
     @Required
     private String type;
 
     /**
-     * Whether it is a required parameter, defaults to 'false'.
+     * Whether it is a required parameter.
      */
+    @CommonSchemaAttributes(defaultValue = "false")
     private Boolean required;
 
     /**
-     * Whether it takes multiple values, defaults to 'false'.
+     * Whether it takes multiple values.
      */
+    @CommonSchemaAttributes(defaultValue = "false")
     private Boolean multiple;
 
     /**
@@ -68,7 +74,7 @@ public class MacroParameterBean extends BaseModuleBean
     private String defaultValue;
 
     /**
-     * Describes the 'enum' values - only applicable for enum typed parameters.
+     * Describes the ``enum`` values - only applicable for enum typed parameters.
      */
     private List<String> values;
 

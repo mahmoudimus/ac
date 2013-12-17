@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
@@ -15,6 +16,7 @@ import java.util.Map;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 
@@ -25,8 +27,8 @@ public class ConnectJsonExamples
 
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
-
-    public static final String PARAMS_EXAMPLE = getParamsExample();
+    public static final String PARAMS_EXAMPLE = createParamsExample();
+    public static final String MACRO_EDITOR_EXAMPLE = createMacroEditorExample();
 
     private static String createAddonExample()
     {
@@ -76,7 +78,7 @@ public class ConnectJsonExamples
         return gson.toJson(macroModuleBean);
     }
 
-    private static String getParamsExample()
+    private static String createParamsExample()
     {
         Map<String, String> params = new HashMap<String, String>(2);
         params.put("myCustomProperty", "myValue");
@@ -86,5 +88,18 @@ public class ConnectJsonExamples
         obj.add("params", gson.toJsonTree(params));
 
         return gson.toJson(obj);
+    }
+
+    private static String createMacroEditorExample()
+    {
+        MacroEditorBean macroEditorBean = newMacroEditorBean()
+                .withUrl("/generate_md")
+                .withInsertTitle(new I18nProperty("Insert MarkDown", "macro.md.insert"))
+                .withEditTitle(new I18nProperty("Edit MarkDown", "macro.md.edit"))
+                .withHeight("300px")
+                .withWidth("400px")
+                .build();
+
+        return gson.toJson(macroEditorBean);
     }
 }

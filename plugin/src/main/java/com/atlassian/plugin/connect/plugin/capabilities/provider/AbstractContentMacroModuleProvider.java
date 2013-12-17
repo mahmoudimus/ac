@@ -5,7 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.MacroEditorBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
