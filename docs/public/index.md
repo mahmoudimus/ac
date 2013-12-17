@@ -12,7 +12,7 @@ HTTP and REST APIs.
     best documentation and clearest set of guidelines we can, and as such make these pre-release notes avaiable to you
     for consideration and feedback.
     <p>
-    Please see the [What's New]('./pages/guides/whats-new.html') guide for a summary of recent changes.
+    Please see the [What's New](./pages/guides/whats-new.html) guide for a summary of recent changes.
 </div>
 
 <div class="aui-group ac-intro-circles">
