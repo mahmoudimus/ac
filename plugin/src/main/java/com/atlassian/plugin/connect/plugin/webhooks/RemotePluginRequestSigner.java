@@ -6,6 +6,7 @@ import com.atlassian.jwt.core.JwtUtil;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -27,8 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class RemotePluginRequestSigner implements RequestSigner
 {
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
-    private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
+    private final ConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
+    private final ConnectAddOnIdentifierService legacyAddOnIdentifierService;
 
     @Inject
     public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, LegacyAddOnIdentifierService legacyAddOnIdentifierService)
