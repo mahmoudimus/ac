@@ -9,6 +9,7 @@ import com.atlassian.jwt.core.writer.JwtClaimsBuilder;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
@@ -45,8 +46,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     private static final int JWT_EXPIRY_WINDOW_SECONDS = ConfigurationUtils.getIntSystemProperty(JWT_EXPIRY_SECONDS_PROPERTY, JWT_EXPIRY_WINDOW_SECONDS_DEFAULT);
     private static final AuthorizationGenerator AUTH_GENERATOR = new JwtAuthorizationGenerator(); // it's tiny and does very little, so share this instance
 
-    public JwtSigningRemotablePluginAccessor(String pluginKey,
-                                             String pluginName,
+    public JwtSigningRemotablePluginAccessor(Plugin plugin,
                                              Supplier<URI> baseUrlSupplier,
                                              JwtService jwtService,
                                              ConsumerService consumerService,
@@ -54,7 +54,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
                                              HttpContentRetriever httpContentRetriever,
                                              UserManager userManager)
     {
-        super(pluginKey, pluginName, baseUrlSupplier, httpContentRetriever);
+        super(plugin, baseUrlSupplier, httpContentRetriever);
         this.jwtService = jwtService;
         this.consumerService = consumerService;
         this.connectApplinkManager = connectApplinkManager;
