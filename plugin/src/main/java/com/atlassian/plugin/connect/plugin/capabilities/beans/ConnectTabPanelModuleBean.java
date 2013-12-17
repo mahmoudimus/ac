@@ -5,6 +5,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectTab
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * Json Example:
+ * @exampleJson {@see ConnectJsonExamples#COMPONENT_TAB_PANEL_EXAMPLE}
  * @since 1.0
  */
 public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions

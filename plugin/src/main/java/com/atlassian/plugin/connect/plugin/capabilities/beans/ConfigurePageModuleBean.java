@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConfigurePageModuleBeanBuilder;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * A configure page module is a page module used to configure the addon itself.
  * Other than that it is the same as other pages.
@@ -13,11 +15,16 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConfigureP
  * If there is only one configure page specified then it will automatically be used regardless of the default field.
  *
  * If no configure page modules are specified then no configure button will be included on the install page.
+ *
+ * Json Example:
+ * @exampleJson {@see ConnectJsonExamples#CONFIGURE_PAGE_EXAMPLE}
+ * @schemaTitle Configure Page
  */
 public class ConfigurePageModuleBean extends ConnectPageModuleBean
 {
     @CommonSchemaAttributes(defaultValue = "false")
-    private Boolean isDefault; // TODO: ask JD if I can use lil boolean
+    @SerializedName("default")
+    private Boolean isDefault;
 
     public ConfigurePageModuleBean(ConfigurePageModuleBeanBuilder builder)
     {
