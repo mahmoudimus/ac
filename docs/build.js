@@ -30,12 +30,7 @@ function collapseArrayAndObjectProperties(properties, required, parentId) {
                     property.arrayTypeIds = [];
                     if (property.items.anyOf) {
                         _.each(property.items.anyOf, function (child) {
-                            if (child.items && child.items["$ref"] === "#") {
-                                // self reference
-                                property.arrayTypeIds.push(property.id);
-                            } else {
-                                property.arrayTypeIds.push(child.id);
-                            }
+                            property.arrayTypeIds.push(child.id);
                         });
                     } else if (property.items.id) {
                         property.arrayTypeIds.push(property.items.id);
@@ -80,12 +75,7 @@ function schemaToModel(schemaEntity) {
             model.arrayTypeIds = [];
             if (schemaEntity.items.anyOf) {
                 _.each(schemaEntity.items.anyOf, function (child) {
-                    if (child.items && child.items["$ref"] === "#") {
-                        // self reference
-                        model.arrayTypeIds.push(property.id);
-                    } else {
-                        model.arrayTypeIds.push(child.id);
-                    }
+                    model.arrayTypeIds.push(child.id);
                 });
             } else if (schemaEntity.items.id) {
                 model.arrayTypeIds.push(schemaEntity.items.id);
