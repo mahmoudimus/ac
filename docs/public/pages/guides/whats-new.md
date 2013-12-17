@@ -7,4 +7,4 @@ a more modern JSON descriptor.
 
 Resources:
 
-* [Migrating to the JSON descriptor](guides/migrating-from-xml-to-json-descriptor.html)
+* [Migrating to the JSON descriptor](./migrating-from-xml-to-json-descriptor.html)
