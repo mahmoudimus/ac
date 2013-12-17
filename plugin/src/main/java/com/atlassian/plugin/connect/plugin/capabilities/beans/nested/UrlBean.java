@@ -3,8 +3,13 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
+
 public class UrlBean
 {
+    @StringSchemaAttributes(format = "uri")
+    @Required
     private String url;
 
     public UrlBean(String url)

@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeCo
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
 
 /**
- * @since 1.0
+ * A condition
  */
 public interface ConditionalBean
 {

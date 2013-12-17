@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.LifecycleBeanBuilder;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -7,13 +8,41 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Allows an addon to register callbacks for plugin lifecycle events.
+ * Each property in this object is a url that can be absolute or relative to the addon's baseUrl.
+ * When a lifecycle event is fired, it will POST to the appropriate url registered for the event.
+ * 
+ * payload:
+ * @exampleJson {@see ConnectJsonExamples#PARAMS_EXAMPLE}
+ * 
+ * example:
+ * @exampleJson {@see ConnectJsonExamples#PARAMS_EXAMPLE}
+ * 
  * @schemaTitle Lifecycle
  */
 public class LifecycleBean extends BaseModuleBean
 {
+    /**
+     * Fires when an add on has been successfully installed
+     */
+    @StringSchemaAttributes(format = "uri")
     private String installed;
+
+    /**
+     * Fires when an add on has been successfully un-installed
+     */
+    @StringSchemaAttributes(format = "uri")
     private String uninstalled;
+
+    /**
+     * Fires when an add on has been successfully enabled
+     */
+    @StringSchemaAttributes(format = "uri")
     private String enabled;
+
+    /**
+     * Fires when an add on has been successfully disabled
+     */
+    @StringSchemaAttributes(format = "uri")
     private String disabled;
 
     public LifecycleBean()
