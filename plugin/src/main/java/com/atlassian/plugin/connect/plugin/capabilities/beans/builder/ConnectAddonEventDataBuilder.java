@@ -114,6 +114,7 @@ public class ConnectAddonEventDataBuilder extends BaseModuleBeanBuilder<ConnectA
         return this;
     }
 
+    @Deprecated // Not to be used with JWT
     public ConnectAddonEventDataBuilder withUserKey(String key)
     {
         this.userKey = key;

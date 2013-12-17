@@ -22,7 +22,7 @@ public class ConnectAddonEventData extends BaseModuleBean
     private String baseUrl;
     private String productType;
     private String description;
-    private String userKey;
+    @Deprecated private String userKey; // Not to be used with JWT (should be in the token)
     private String serviceEntitlementNumber;
     private String eventType;
     
@@ -153,6 +153,7 @@ public class ConnectAddonEventData extends BaseModuleBean
         return description;
     }
 
+    @Deprecated // Not to be used with JWT
     public String getUserKey()
     {
         return userKey;

@@ -25,6 +25,7 @@ import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
 import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -51,6 +52,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     private final EventPublisher eventPublisher;
     private final JwtService jwtService;
     private final ConsumerService consumerService;
+    private final UserManager userManager;
 
     private final Map<String, RemotablePluginAccessor> accessors;
 
@@ -64,7 +66,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
                                                  ApplicationProperties applicationProperties,
                                                  EventPublisher eventPublisher,
                                                  JwtService jwtService,
-                                                 ConsumerService consumerService)
+                                                 ConsumerService consumerService,
+                                                 UserManager userManager)
     {
         this.connectApplinkManager = connectApplinkManager;
         this.oAuthLinkManager = oAuthLinkManager;
@@ -73,6 +76,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         this.applicationProperties = applicationProperties;
         this.eventPublisher = eventPublisher;
         this.consumerService = consumerService;
+        this.userManager = userManager;
         this.eventPublisher.register(this);
         this.jwtService = jwtService;
 
@@ -216,7 +220,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
         return signsWithJwt(pluginKey)
                 // don't need to get the actual provider as it doesn't really matter
-                ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, consumerService, connectApplinkManager, httpContentRetriever)
+                ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, consumerService, connectApplinkManager, httpContentRetriever, userManager)
                 : new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider(), httpContentRetriever, oAuthLinkManager);
     }
 
