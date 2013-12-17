@@ -63,11 +63,6 @@ public class IconBean
         return url;
     }
 
-    public boolean hasUrl()
-    {
-        return !Strings.isNullOrEmpty(url);
-    }
-
     public static IconBeanBuilder newIconBean()
     {
         return new IconBeanBuilder();

@@ -58,7 +58,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
 
         List<String> styles = newArrayList(bean.getStyleClasses());
         
-        if(null != bean.getIcon() && !Strings.isNullOrEmpty(bean.getIcon().getUrl()))
+        if(null != bean.getIcon())
         {
             webItemElement.add(iconModuleFragmentFactory.createFragment(plugin.getKey(), bean.getIcon()));
         }
