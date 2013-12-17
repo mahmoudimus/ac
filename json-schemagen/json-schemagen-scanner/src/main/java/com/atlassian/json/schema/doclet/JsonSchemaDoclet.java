@@ -23,6 +23,7 @@ public class JsonSchemaDoclet
 {
     private static final Logger log = Logger.getLogger(JsonSchemaDoclet.class.getName());
     
+    private static final String LS = System.getProperty("line.separator");
     private static final String OPTION_OUTPUT = "-output";
     private static final String TITLE_TAG = "schemaTitle";
     private static final String EXAMPLE_TAG = "exampleJson";
@@ -110,10 +111,10 @@ public class JsonSchemaDoclet
 
         if (!Strings.isNullOrEmpty(doc.commentText()))
         {
-            sb.append(doc.commentText()).append("\n");
+            sb.append(doc.commentText()).append(LS).append(LS);
         }
 
-        String example = getExample(doc);
+        String example = getExamples(doc);
 
         if (!Strings.isNullOrEmpty(example))
         {
@@ -123,39 +124,37 @@ public class JsonSchemaDoclet
         return sb.toString();
     }
 
-    private static String getExample(Doc doc)
+    private static String getExamples(Doc doc)
     {
-        Tag exampleTag = getSingleTagOrNull(doc, EXAMPLE_TAG);
-
-        if (null != exampleTag)
+        Tag[] exampleTags = getTagsOrNull(doc, EXAMPLE_TAG);
+        StringBuilder sb = new StringBuilder("");
+        
+        if (null != exampleTags)
         {
-            final Tag[] inlineTags = exampleTag.inlineTags();
+            for(Tag exampleTag : exampleTags)
+            {
+                final Tag[] inlineTags = exampleTag.inlineTags();
 
-            if (null != inlineTags && inlineTags.length > 0)
-            {
-                for (Tag inlineTag : inlineTags)
+                if (null != inlineTags && inlineTags.length > 0)
                 {
-                    if (SEE_TAG.equals(inlineTag.name()))
+                    for (Tag inlineTag : inlineTags)
                     {
-                        final SeeTag linkTag = (SeeTag) inlineTag;
-                        return getExampleFromLink(linkTag);
+                        if (SEE_TAG.equals(inlineTag.name()))
+                        {
+                            final SeeTag linkTag = (SeeTag) inlineTag;
+                            sb.append(getExampleFromLink(linkTag));
+                        }
+                        else if (!Strings.isNullOrEmpty(inlineTag.text()))
+                        {
+                            sb.append(inlineTag.text());
+                        }
+                        sb.append(LS);
                     }
-                    else if (!Strings.isNullOrEmpty(inlineTag.text()))
-                    {
-                        return inlineTag.text();
-                    }
-                }
-            }
-            else
-            {
-                if (!Strings.isNullOrEmpty(exampleTag.text()))
-                {
-                    return exampleTag.text();
                 }
             }
         }
 
-        return "";
+        return sb.toString();
     }
 
     private static String getExampleFromLink(SeeTag linkTag)
@@ -184,7 +183,7 @@ public class JsonSchemaDoclet
             }
 
             String example = (String) declaredField.get(null);
-            return System.getProperty("line.separator") + System.getProperty("line.separator") + StringUtil.indent(example, 4);
+            return LS + LS + StringUtil.indent(example, 4);
 
         }
         catch (Exception e)
@@ -287,6 +286,18 @@ public class JsonSchemaDoclet
         if (tags != null && tags.length > 0)
         {
             return tags[0];
+        }
+
+        return null;
+    }
+
+    private static Tag[] getTagsOrNull(Doc taggedDoc, String tagName)
+    {
+        final Tag[] tags = taggedDoc.tags(tagName);
+
+        if (tags != null && tags.length > 0)
+        {
+            return tags;
         }
 
         return null;
