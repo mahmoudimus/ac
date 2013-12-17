@@ -8,8 +8,10 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DynamicContentMacroModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
@@ -47,6 +49,8 @@ public class DynamicContentMacroModuleProviderTest
     @Mock
     private WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     @Mock
+    private IFramePageServletDescriptorFactory servletDescriptorFactory;
+    @Mock
     private BundleContext bundleContext;
     @Mock
     private HostContainer hostContainer;
@@ -63,16 +67,18 @@ public class DynamicContentMacroModuleProviderTest
                 .thenReturn(mock(WebItemModuleDescriptor.class));
 
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
-        AbsoluteAddOnUrlConverter urlConverter = new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests);
+        AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter = new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests);
+        RelativeAddOnUrlConverter relativeAddOnUrlConverter = new RelativeAddOnUrlConverter();
 
         DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new DynamicContentMacroModuleDescriptorFactory(
                 remotablePluginAccessorFactoryForTests,
                 iFrameRenderer,
                 userManager,
-                urlConverter,
+                absoluteAddOnUrlConverter,
                 i18nPropertiesPluginManager);
 
-        moduleProvider = new DynamicContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory, hostContainer, urlConverter);
+        moduleProvider = new DynamicContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory,
+                servletDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, relativeAddOnUrlConverter);
     }
 
     @Test

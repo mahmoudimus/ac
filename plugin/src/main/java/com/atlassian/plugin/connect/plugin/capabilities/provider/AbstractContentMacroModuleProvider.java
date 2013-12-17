@@ -3,24 +3,33 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.MacroEditorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.MacroI18nBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.hostcontainer.HostContainer;
-import com.atlassian.plugin.module.PrefixDelegatingModuleFactory;
+import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
+import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -29,17 +38,22 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModu
 
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean> implements ConnectModuleProvider<T>
 {
-    private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleProvider.class);
-
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
+    private final IFramePageServletDescriptorFactory servletDescriptorFactory;
     private final HostContainer hostContainer;
-    private final AbsoluteAddOnUrlConverter urlConverter;
+    private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
+    private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
 
-    public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory, HostContainer hostContainer, AbsoluteAddOnUrlConverter urlConverter)
+    public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                              IFramePageServletDescriptorFactory servletDescriptorFactory,
+                                              HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
+                                              RelativeAddOnUrlConverter relativeAddOnUrlConverter)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
+        this.servletDescriptorFactory = servletDescriptorFactory;
         this.hostContainer = hostContainer;
-        this.urlConverter = urlConverter;
+        this.absoluteAddOnUrlConverter = absoluteAddOnUrlConverter;
+        this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
     }
 
     protected abstract ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, BundleContext bundleContext, T macroBean);
@@ -70,20 +84,47 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, bundleContext, featuredWebItem));
 
             // Add a featured icon web resource
-            if (macroBean.getIcon().hasUrl())
+            if (macroBean.hasIcon())
             {
                 descriptors.add(createFeaturedIconWebResource(plugin, macroBean));
             }
         }
 
+        if (macroBean.hasEditor())
+        {
+            IFrameServletBean servletBean = createServletBean(plugin, macroBean);
+            ServletModuleDescriptor servletDescriptor = servletDescriptorFactory.createIFrameServletDescriptor(plugin, servletBean);
+            descriptors.add(servletDescriptor);
+            descriptors.add(createEditorWebResource(plugin, macroBean));
+        }
+
         // TODO: Add Image Placeholder --> ACDEV-678
-        // TODO: Add Editor --> ACDEV-676
 
         return ImmutableList.copyOf(descriptors);
     }
 
+
+    private WebItemModuleBean createFeaturedWebItem(Plugin plugin, T bean)
+    {
+        WebItemModuleBeanBuilder webItemBean = newWebItemBean()
+                .withName(new I18nProperty(bean.getName().getValue(),
+                        MacroI18nBuilder.getMacroI18nKey(plugin.getKey(), bean.getKey())))
+                .withKey(bean.getKey())
+                .withLocation("system.editor.featured.macros.default");
+
+        if (bean.hasIcon())
+        {
+            webItemBean.withIcon(IconBean.newIconBean()
+                    .withUrl(bean.getIcon().getUrl())
+                    .withWidth(16)
+                    .withHeight(16)
+                    .build());
+        }
+        return webItemBean.build();
+    }
+
     // No web-resource beans/builders/descriptors/providers, so falling back to XML
-    public ModuleDescriptor createFeaturedIconWebResource(Plugin plugin, T bean)
+    private ModuleDescriptor createFeaturedIconWebResource(Plugin plugin, T bean)
     {
         String macroKey = bean.getKey();
 
@@ -116,30 +157,82 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         return jsDescriptor;
     }
 
-    private WebItemModuleBean createFeaturedWebItem(Plugin plugin, T bean)
+    private IFrameServletBean createServletBean(Plugin plugin, T macroBean)
     {
-        WebItemModuleBeanBuilder webItemBean = newWebItemBean()
-                .withName(new I18nProperty(bean.getName().getValue(),
-                        MacroI18nBuilder.getMacroI18nKey(plugin.getKey(), bean.getKey())))
-                .withKey(bean.getKey())
-                .withLocation("system.editor.featured.macros.default");
+        MacroEditorBean editor = macroBean.getEditor();
+        AddonUrlTemplatePair urlTemplatePair = new AddonUrlTemplatePair(editor.getUrl(), plugin.getKey());
+        PageInfo pageInfo = new PageInfo("", "-dialog", macroBean.getKey(), new AlwaysDisplayCondition(), ImmutableMap.<String, String>of());
 
-        if (bean.getIcon().hasUrl())
-        {
-            webItemBean.withIcon(IconBean.newIconBean()
-                    .withUrl(bean.getIcon().getUrl())
-                    .withWidth(16)
-                    .withHeight(16)
-                    .build());
-        }
-        return webItemBean.build();
+        IFrameParamsImpl iFrameParams = new IFrameParamsImpl();
+        iFrameParams.setParam("width", editor.getWidth());
+        iFrameParams.setParam("height", editor.getHeight());
+
+        return new IFrameServletBean(macroBean, urlTemplatePair, pageInfo, iFrameParams);
+    }
+
+    private ModuleDescriptor createEditorWebResource(Plugin plugin, T macroBean)
+    {
+        MacroEditorBean editor = macroBean.getEditor();
+
+        String macroKey = macroBean.getKey();
+        String editTitle = editor.hasEditTitle() ? editor.getEditTitle().getValue() : macroBean.getDisplayName();
+        String insertTitle = editor.hasInsertTitle() ? editor.getInsertTitle().getValue() : macroBean.getDisplayName();
+
+        RelativeAddOnUrl relativeUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), editor.getUrl());
+
+        Element webResource = new DOMElement("web-resource")
+                .addElement("web-resource")
+                .addAttribute("key", macroKey + "-macro-editor-resources");
+
+        webResource.addElement("resource")
+                .addAttribute("type", "download")
+                .addAttribute("name", "override.js")
+                .addAttribute("location", "js/confluence/macro/override.js");
+
+        webResource.addElement("dependency")
+                .setText(ConnectPluginInfo.getPluginKey() + ":ap-amd");
+
+        webResource.addElement("context")
+                .setText("editor");
+
+        Element transformation = webResource.addElement("transformation")
+                .addAttribute("extension", "js");
+
+        transformation
+                .addElement("transformer")
+                .addAttribute("key", "confluence-macroVariableTransformer")
+                .addElement("var")
+                .addAttribute("name", "MACRONAME")
+                .addAttribute("value", macroKey).getParent()
+                .addElement("var")
+                .addAttribute("name", "URL")
+                .addAttribute("value", "/plugins/servlet" + relativeUrl.getServletDescriptorUrl()).getParent()
+                .addElement("var")
+                .addAttribute("name", "WIDTH")
+                .addAttribute("value", editor.getWidth()).getParent()
+                .addElement("var")
+                .addAttribute("name", "HEIGHT")
+                .addAttribute("value", editor.getHeight()).getParent()
+                .addElement("var")
+                .addAttribute("name", "EDIT_TITLE")
+                .addAttribute("value", editTitle)
+                .addAttribute("i18n-key", "macro.browser.edit.macro.title").getParent()
+                .addElement("var")
+                .addAttribute("name", "INSERT_TITLE")
+                .addAttribute("value", insertTitle)
+                .addAttribute("i18n-key", "macro.browser.insert.macro.title").getParent();
+
+        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
+        jsDescriptor.init(plugin, webResource);
+
+        return jsDescriptor;
     }
 
     private String getAbsoluteUrl(Plugin plugin, String url)
     {
         try
         {
-            return urlConverter.getAbsoluteUrl(plugin.getKey(), url);
+            return absoluteAddOnUrlConverter.getAbsoluteUrl(plugin.getKey(), url);
         }
         catch (URISyntaxException e)
         {

@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty.empty;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
@@ -41,7 +42,7 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     private IconBean icon;
 
     /**
-     *  A link to the documentation for the macro.
+     * A link to the documentation for the macro.
      */
     private LinkBean documentation;
 
@@ -61,7 +62,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      * * __navigation__: Navigation
      * * __reporting__: Reporting
      * * __visuals__: Visuals & Images
-     *
      */
     private Set<String> categories;
 
@@ -88,17 +88,24 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     /**
      * The preferred width of the macro content.
      */
-    private Integer width;
+    private String width;
 
     /**
      * The preferred height of the macro content.
      */
-    private Integer height;
+    private String height;
 
     /**
      * The list of parameter input fields that will be displayed.
      */
     private List<MacroParameterBean> parameters;
+
+    /**
+     * The configuration of a custom macro editor. This is useful if the parameter input field types are
+     * not sufficient to configure the macro.
+     */
+    private MacroEditorBean editor;
+
 
     public BaseContentMacroModuleBean()
     {
@@ -151,15 +158,19 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
         }
         if (null == width)
         {
-            width = 0;
+            width = "";
         }
         if (null == height)
         {
-            height = 0;
+            height = "";
         }
         if (null == parameters)
         {
             parameters = Lists.newArrayList();
+        }
+        if (null == editor)
+        {
+            editor = newMacroEditorBean().build();
         }
     }
 
@@ -213,12 +224,12 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
         return featured;
     }
 
-    public Integer getWidth()
+    public String getWidth()
     {
         return width;
     }
 
-    public Integer getHeight()
+    public String getHeight()
     {
         return height;
     }
@@ -226,5 +237,25 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     public List<MacroParameterBean> getParameters()
     {
         return parameters;
+    }
+
+    public MacroEditorBean getEditor()
+    {
+        return editor;
+    }
+
+    public boolean hasEditor()
+    {
+        return editor.hasUrl();
+    }
+
+    public boolean hasIcon()
+    {
+        return icon.hasUrl();
+    }
+
+    public boolean hasDocumentation()
+    {
+        return documentation.hasUrl();
     }
 }

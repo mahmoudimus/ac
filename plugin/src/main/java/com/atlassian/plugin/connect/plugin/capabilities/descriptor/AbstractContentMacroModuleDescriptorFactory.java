@@ -11,11 +11,10 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPlu
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.upm.spi.PluginInstallException;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URISyntaxException;
 
@@ -23,8 +22,6 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.Link
 
 public abstract class AbstractContentMacroModuleDescriptorFactory<B extends BaseContentMacroModuleBean> implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor>
 {
-    private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleDescriptorFactory.class);
-
     private final AbsoluteAddOnUrlConverter urlConverter;
     private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
 
@@ -67,11 +64,11 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
 
         if (null != bean.getWidth())
         {
-            element.setAttribute("width", bean.getWidth().toString());
+            element.setAttribute("width", bean.getWidth());
         }
         if (null != bean.getHeight())
         {
-            element.setAttribute("height", bean.getHeight().toString());
+            element.setAttribute("height", bean.getHeight());
         }
         if (bean.getDocumentation().hasUrl())
         {
@@ -127,7 +124,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         {
             Element parameter = parameters.addElement("parameter")
                     .addAttribute("name", parameterBean.getIdentifier())
-                    .addAttribute("type", parameterBean.getType().toString());
+                    .addAttribute("type", parameterBean.getType());
 
             if (parameterBean.isRequired())
             {
@@ -177,11 +174,10 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         catch (URISyntaxException e)
         {
             // help vendors find errors in their descriptors
-            log.error("Malformed documentation link declared by '"
+            throw new PluginInstallException("Malformed documentation link declared by '"
                     + plugin.getName()
                     + "' (" + plugin.getKey() + "): "
-                    + url);
-            return url;
+                    + url, e);
         }
     }
 }
