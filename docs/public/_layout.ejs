@@ -103,6 +103,38 @@
     <script>
     $(".diagram").sequenceDiagram({theme: 'simple'});
     </script>
+    <script>
+        var cmOpts = {
+            mode: "javascript",
+            theme: "neat",
+            lineNumbers:true,
+            gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+            indentWithTabs:false,
+            electricChars:true,
+            matchBrackets:true,
+            autoCloseBrackets:true,
+            highlightSelectionMatches:true,
+            indentUnit:2,
+            lineWrapping: true,
+            readOnly:true
+        };
+        $('.code').each(function(){
+            CodeMirror.fromTextArea(this, cmOpts);
+        });
+
+        function cmIfyPreCodeBlocks(block){
+            var sample = block;
+            var text = sample.textContent || sample.innerText;
+            var newOpts = cmOpts;
+            newOpts.value = text;
+            CodeMirror(
+                function(node){
+                    sample.parentNode.replaceChild(node, sample)
+                }, newOpts
+            );
+        }
+        $('pre code').each(function(){cmIfyPreCodeBlocks(this)});
+    </script>
 </body>
 
 </html>

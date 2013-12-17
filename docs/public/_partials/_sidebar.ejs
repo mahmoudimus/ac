@@ -2,12 +2,23 @@
     <nav class="aui-navgroup aui-navgroup-vertical">
         <div class="aui-navgroup-inner">
             <ul class="aui-nav">
-                <% for (var page in public.guides._data) { %>
+                <% for (var page in public.guides._data.guides) { %>
                 <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
                 <li <%= selected %>>
-                    <a href="/guides/<%= page %>"><%= public.guides._data[page].title %></a>
+                    <a href="/guides/<%= page %>"><%= public.guides._data.guides[page].title %></a>
                 </li>
                 <% } %>
+            </ul>
+
+            <div class="aui-nav-heading">
+                <strong>Core Concepts</strong>
+            </div>
+            <ul class="aui-nav">
+            <% for(var concept in public.guides._data.concepts) { %>
+            <li>
+                <a href="/guides/<%= concept %>"><%= public.guides._data.concepts[concept].title %></a>
+            </li>
+            <% } %>
             </ul>
 
             <%- partial('_module_list.ejs', { title: "Root Modules", modules: entities.root }) %>
@@ -20,25 +31,31 @@
             </div>
             <ul class="aui-nav">
                 <li>
-                    <a href="#">JIRA</a>
+                    <a href="https://jira.atlassian.com/plugins/servlet/restbrowser#/">JIRA</a>
                 </li>
                 <li>
-                    <a href="#">Confluence</a>
+                    <a href="https://confluence.atlassian.com/plugins/servlet/restbrowser#/">Confluence</a>
                 </li>
             </ul>
 
             <div class="aui-nav-heading">
-                <strong>Help and Support</strong>
+                <strong>Resources</strong>
             </div>
             <ul class="aui-nav">
+                <li>
+                    <a href="/samples.html">Sample Add-ons</a>
+                </li>
                 <li>
                     <a href="/faqs.html">FAQs</a>
                 </li>
                 <li>
-                    <a href="/contact-us.html">Contact Us</a>
+                    <a href="https://groups.google.com/forum/?fromgroups=#%21forum/atlassian-connect-dev">Mailing List</a>
                 </li>
                 <li>
                     <a href="https://answers.atlassian.com/tags/atlassian-connect">Atlassian Answers</a>
+                </li>
+                <li>
+                    <a href="https://ecosystem.atlassian.net/browse/AC">JIRA Project</a>
                 </li>
             </ul>
 

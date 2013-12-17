@@ -1,8 +1,42 @@
 {
-    "introduction.html": {
-        "title": "Introduction"
+    "guides": {
+        "introduction.html": {
+            "title": "Introduction"
+        },
+        "getting-started.html": {
+            "title": "Getting Started"
+        }
     },
-    "getting-started.html": {
-        "title": "Getting Started"
+    "concepts": {
+        "addon-descriptor.html": {
+            "title": "Descriptors"
+        },
+        "modules.html": {
+            "title": "Modules"
+        },
+        "pages.html": {
+            "title": "Pages"
+        },
+        "jwt.html": {
+            "title": "JWT"
+        },
+        "scopes.html": {
+            "title": "Scopes"
+        },
+        "conditions.html": {
+            "title": "Conditions"
+        },
+        "javascript-api.html": {
+            "title": "Javascript API"
+        },
+        "styling-with-aui.html": {
+            "title": "Styling Add-ons with AUI"
+        },
+        "addon-installation-full.html": {
+            "title": "Installing an Add-on"
+        },
+        "development-loop.html": {
+            "title": "Development Loop"
+        }
     }
 }

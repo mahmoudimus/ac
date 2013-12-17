@@ -10,6 +10,7 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.ServiceProvider;
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
@@ -52,6 +53,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     private final ApplicationProperties applicationProperties;
     private final EventPublisher eventPublisher;
     private final JwtService jwtService;
+    private final ConsumerService consumerService;
 
     private final Map<String, RemotablePluginAccessor> accessors;
 
@@ -59,12 +61,13 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     @Autowired
     public DefaultRemotablePluginAccessorFactory(ConnectApplinkManager connectApplinkManager,
-            OAuthLinkManager oAuthLinkManager,
-            CachingHttpContentRetriever httpContentRetriever,
-            PluginAccessor pluginAccessor,
-            ApplicationProperties applicationProperties,
-            EventPublisher eventPublisher,
-            JwtService jwtService)
+                                                 OAuthLinkManager oAuthLinkManager,
+                                                 CachingHttpContentRetriever httpContentRetriever,
+                                                 PluginAccessor pluginAccessor,
+                                                 ApplicationProperties applicationProperties,
+                                                 EventPublisher eventPublisher,
+                                                 JwtService jwtService,
+                                                 ConsumerService consumerService)
     {
         this.connectApplinkManager = connectApplinkManager;
         this.oAuthLinkManager = oAuthLinkManager;
@@ -72,6 +75,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         this.pluginAccessor = pluginAccessor;
         this.applicationProperties = applicationProperties;
         this.eventPublisher = eventPublisher;
+        this.consumerService = consumerService;
         this.eventPublisher.register(this);
         this.jwtService = jwtService;
 
@@ -215,7 +219,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
         return signsWithJwt(pluginKey)
                 // don't need to get the actual provider as it doesn't really matter
-                ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, connectApplinkManager, httpContentRetriever)
+                ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, consumerService, connectApplinkManager, httpContentRetriever)
                 : new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider(), httpContentRetriever, oAuthLinkManager);
     }
 
