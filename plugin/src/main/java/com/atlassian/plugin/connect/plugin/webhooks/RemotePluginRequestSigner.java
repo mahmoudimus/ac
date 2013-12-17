@@ -62,7 +62,8 @@ public class RemotePluginRequestSigner implements RequestSigner
         return remotablePluginAccessorFactory.get(pluginKey).getAuthorizationGenerator();
     }
 
-    public boolean canSign(final String pluginKey)
+    // return true if this is a Connect add-on
+    private boolean canSign(final String pluginKey)
     {
         return jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey) || legacyAddOnIdentifierService.isConnectAddOn(pluginKey);
     }
