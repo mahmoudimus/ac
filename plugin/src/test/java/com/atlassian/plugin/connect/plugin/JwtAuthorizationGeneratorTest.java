@@ -3,15 +3,20 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.JwtUtil;
+import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +24,9 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -34,8 +41,8 @@ import static org.mockito.Mockito.when;
 public class JwtAuthorizationGeneratorTest
 {
     private static final String A_MOCK_JWT = "a.mock.jwt";
-    private static final Map<String,List<String>> PARAMS = ImmutableMap.of("name", asList("value"));
-    private static final URI A_URI = URI.create("http://any.url/path");
+    private static final Map<String,List<String>> PARAMS = ImmutableMap.of("a_param", asList("a_value"));
+    private static final URI A_URI = URI.create("http://any.url/path?b_param=b_value");
 
     @Mock private JwtService jwtService;
     @Mock private ApplicationLink applicationLink;
@@ -73,6 +80,19 @@ public class JwtAuthorizationGeneratorTest
         verify(jwtService).issueJwt(argThat(hasNoSuchClaim("sub")), eq(applicationLink));
     }
 
+    @Test
+    public void hasQueryHashClaim()
+    {
+        verify(jwtService).issueJwt(argThat(hasClaim(JwtConstants.Claims.QUERY_HASH)), eq(applicationLink));
+    }
+
+    @Test
+    public void hasQueryHashClaimWithCorrectValue() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(HttpMethod.POST.toString(), A_URI.getPath(), "", ImmutableMap.of("a_param", new String[]{"a_value"}, "b_param", new String[]{"b_value"})));
+        verify(jwtService).issueJwt(argThat(hasClaim(JwtConstants.Claims.QUERY_HASH, expectedQueryHash, true)), eq(applicationLink));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void nullHttpMethodResultsInException()
     {
@@ -107,14 +127,39 @@ public class JwtAuthorizationGeneratorTest
 
     private static ArgumentMatcher<String> hasClaim(final String claimName)
     {
+        return hasClaim(claimName, null, false);
+    }
+
+    private static ArgumentMatcher<String> hasClaim(final String claimName, final String expectedValue, final boolean checkValue)
+    {
         return new ArgumentMatcher<String>()
         {
             @Override
             public boolean matches(Object actual)
             {
-                return actual instanceof String
+                JsonObject json = new JsonParser().parse((String) actual).getAsJsonObject();
+                boolean matches = actual instanceof String
                         && !StringUtils.isEmpty((String) actual)
-                        && new JsonParser().parse((String)actual).getAsJsonObject().has(claimName);
+                        && json.has(claimName);
+
+                if (matches && checkValue)
+                {
+                    String actualClaimValue = json.get(claimName).getAsString();
+                    matches = null == actualClaimValue ? null == expectedValue : actualClaimValue.equals(expectedValue);
+                }
+
+                return matches;
+            }
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("JSON encoded string with claim ").appendValue(claimName);
+
+                if (checkValue)
+                {
+                    description.appendText(" having value ").appendValue(expectedValue);
+                }
             }
         };
     }
@@ -127,6 +172,13 @@ public class JwtAuthorizationGeneratorTest
             public boolean matches(Object argument)
             {
                 return !hasClaim(claimName).matches(argument);
+            }
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("not ");
+                hasClaim(claimName).describeTo(description);
             }
         };
     }

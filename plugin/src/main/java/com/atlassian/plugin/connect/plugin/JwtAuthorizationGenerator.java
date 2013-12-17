@@ -13,11 +13,19 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.base.Function;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -88,9 +96,17 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
             jsonBuilder = jsonBuilder.subject(userKeyValue);
         }
 
+        Map<String, String[]> completeParams = params;
+
+        if (!StringUtils.isEmpty(targetPath.getQuery()))
+        {
+            completeParams = new HashMap<String, String[]>(params);
+            completeParams.putAll(constructParameterMap(targetPath));
+        }
+
         try
         {
-            JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, new CanonicalHttpUriRequest(httpMethod.toString(), targetPath.getPath(), "", params));
+            JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, new CanonicalHttpUriRequest(httpMethod.toString(), targetPath.getPath(), "", completeParams));
         }
         catch (UnsupportedEncodingException e)
         {
@@ -103,4 +119,25 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
 
         return jwtService.issueJwt(jsonBuilder.build(), appLink);
     }
-}
+
+    private static Map<String, String[]> constructParameterMap(URI uri)
+    {
+        List<NameValuePair> queryParams = URLEncodedUtils.parse(uri.getQuery(), Charset.forName("UTF-8"));
+
+        Multimap<String, String> queryParamsMapIntermediate = HashMultimap.create(queryParams.size(), 1); // 1 value per key is close to the truth in most cases
+        // efficiently collect { name1 -> { value1, value2, ... }, name2 -> { ... }, ... }
+        for (NameValuePair nameValuePair : queryParams)
+        {
+            queryParamsMapIntermediate.put(nameValuePair.getName(), nameValuePair.getValue());
+        }
+
+        Map<String, String[]> queryParamsMap = new HashMap<String, String[]>(queryParamsMapIntermediate.size());
+
+        // convert String -> Collection<String> to String -> String[]
+        for (Map.Entry<String, Collection<String>> entry : queryParamsMapIntermediate.asMap().entrySet())
+        {
+            queryParamsMap.put(entry.getKey(), entry.getValue().toArray(new String[entry.getValue().size()]));
+        }
+
+        return queryParamsMap;
+    }}
