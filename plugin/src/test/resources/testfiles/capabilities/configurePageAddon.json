@@ -13,7 +13,7 @@
     "modules": {
         "configurePages": [
             {
-                "isDefault": false,
+                "default": false,
                 "url": "/my-page",
                 "icon": {
                     "width": 80,
@@ -26,7 +26,7 @@
                 }
             },
             {
-                "isDefault": true,
+                "default": true,
                 "url": "/my-page2",
                 "icon": {
                     "width": 80,
