@@ -23,10 +23,26 @@
 
     }
 
-  span.aui-lozenge.ac-property-type {
-      text-transform: none;
-      font-family: monospace;
-      font-size: 12px;
+  .ac-properties {
+      h3 {
+          &:first-child {
+              border-top: none;
+          }
+          margin-top: 15px;
+          padding-top: 15px;
+          border-top: 1px solid #e9e9e9;
+      }
+      .aui-group .aui-item {
+          &.ac-property-key {
+              width: 150px;
+              text-align: right;
+
+              > h5 {
+                  margin-top: 0;
+                  font-weight: normal;
+              }
+          }
+      }
   }
 }
 
