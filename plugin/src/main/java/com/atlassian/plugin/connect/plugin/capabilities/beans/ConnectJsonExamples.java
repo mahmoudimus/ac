@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SingleConditionBeanBuilder;
@@ -23,6 +24,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModu
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 
@@ -33,14 +35,13 @@ public class ConnectJsonExamples
 
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
+    public static final String PARAMS_EXAMPLE = createParamsExample();
+    public static final String MACRO_EDITOR_EXAMPLE = createMacroEditorExample();
     public static final String PAGE_EXAMPLE = createPageExample();
     public static final String CONFIGURE_PAGE_EXAMPLE = createConfigurePageExample();
     public static final String WEBITEM_EXAMPLE = createWebItemExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String COMPONENT_TAB_PANEL_EXAMPLE = createComponentTabPanelExample();
-
-
-    public static final String PARAMS_EXAMPLE = getParamsExample();
 
     private static String createAddonExample()
     {
@@ -139,8 +140,8 @@ public class ConnectJsonExamples
                         .build()
                 )
                 .withFeatured(true)
-                .withWidth(200)
-                .withHeight(200)
+                .withWidth("200px")
+                .withHeight("200px")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .withParameters(newMacroParameterBean()
                         .withIdentifier("view")
@@ -158,7 +159,7 @@ public class ConnectJsonExamples
         return gson.toJson(macroModuleBean);
     }
 
-    private static String getParamsExample()
+    private static String createParamsExample()
     {
         Map<String, String> params = new HashMap<String, String>(2);
         params.put("myCustomProperty", "myValue");
@@ -168,5 +169,18 @@ public class ConnectJsonExamples
         obj.add("params", gson.toJsonTree(params));
 
         return gson.toJson(obj);
+    }
+
+    private static String createMacroEditorExample()
+    {
+        MacroEditorBean macroEditorBean = newMacroEditorBean()
+                .withUrl("/generate_md")
+                .withInsertTitle(new I18nProperty("Insert MarkDown", "macro.md.insert"))
+                .withEditTitle(new I18nProperty("Edit MarkDown", "macro.md.edit"))
+                .withHeight("300px")
+                .withWidth("400px")
+                .build();
+
+        return gson.toJson(macroEditorBean);
     }
 }

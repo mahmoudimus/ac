@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.LinkBeanBuilder;
 import com.google.common.base.Strings;
 
@@ -18,6 +19,7 @@ public class LinkBean
      *  The URL of the link. It can be absolute, or relative to the Add-On base URL.
      */
     @Required
+    @StringSchemaAttributes(format = "uri")
     private String url;
 
     /**
@@ -51,11 +53,6 @@ public class LinkBean
     public String getUrl()
     {
         return url;
-    }
-
-    public boolean hasUrl()
-    {
-        return !Strings.isNullOrEmpty(url);
     }
 
     public String getTitle()

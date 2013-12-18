@@ -16,10 +16,10 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddo
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -68,16 +68,6 @@ public class StaticContentMacroModuleBeanTest
         assertThat(deserializedBean.getMethod(), is(MacroHttpMethod.GET));
     }
 
-    @Test
-    public void verifyDocNotNull()
-    {
-        Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = "{}";
-        StaticContentMacroModuleBean deserializedBean = gson.fromJson(json, StaticContentMacroModuleBean.class);
-
-        assertThat(deserializedBean.getDocumentation(), is(notNullValue()));
-    }
-
     private static ConnectAddonBean createBean()
     {
         return newConnectAddonBean()
@@ -103,8 +93,8 @@ public class StaticContentMacroModuleBeanTest
                                 .build()
                         )
                         .withFeatured(true)
-                        .withWidth(100)
-                        .withHeight(50)
+                        .withWidth("100px")
+                        .withHeight("50px")
                         .withIcon(newIconBean().withUrl("/mymacro/icon.png").withHeight(80).withWidth(80).build())
                         .withParameters(newMacroParameterBean()
                                 .withIdentifier("myparam")
@@ -116,6 +106,14 @@ public class StaticContentMacroModuleBeanTest
                                 .withRequired(true)
                                 .withValues("paramValue1", "paramValue2")
                                 .withAliases("paramAlias1")
+                                .build()
+                        )
+                        .withEditor(newMacroEditorBean()
+                                .withUrl("/my-macro-editor")
+                                .withEditTitle(new I18nProperty("Edit Title", "edit.title.key"))
+                                .withInsertTitle(new I18nProperty("Insert Title", "insert.title.key"))
+                                .withHeight("100px")
+                                .withWidth("200px")
                                 .build()
                         )
                         .build()

@@ -23,8 +23,21 @@
           "title": "Doc Title",
           "url": "http://docs.example.com/macro"
         },
+        "editor": {
+          "editTitle": {
+            "i18n": "edit.title.key",
+            "value": "Edit Title"
+          },
+          "height": "100px",
+          "insertTitle": {
+            "i18n": "insert.title.key",
+            "value": "Insert Title"
+          },
+          "url": "/my-macro-editor",
+          "width": "200px"
+        },
         "featured": true,
-        "height": 50,
+        "height": "50px",
         "icon": {
           "height": 80,
           "url": "/mymacro/icon.png",
@@ -61,7 +74,7 @@
           }
         ],
         "url": "/my-macro",
-        "width": 100
+        "width": "100px"
       }
     ]
   },
