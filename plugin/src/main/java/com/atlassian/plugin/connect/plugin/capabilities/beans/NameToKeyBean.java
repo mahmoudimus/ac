@@ -19,7 +19,7 @@ public class NameToKeyBean extends BaseModuleBean
     private transient String key;
 
     /**
-     * A human-readble name
+     * A human-readable name
      */
     @Required
     private I18nProperty name;

@@ -9,6 +9,8 @@ public class AbstractSchema implements JsonSchema
     private String type;
     private String title;
     private String description;
+    private String fieldTitle;
+    private String fieldDescription;
     private Set<ObjectSchema> allOf;
     private Set<ObjectSchema> anyOf;
     private Set<ObjectSchema> oneOf;
@@ -71,6 +73,30 @@ public class AbstractSchema implements JsonSchema
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+    @Override
+    public String getFieldTitle()
+    {
+        return fieldTitle;
+    }
+
+    @Override
+    public String getFieldDescription()
+    {
+        return fieldDescription;
+    }
+
+    @Override
+    public void setFieldTitle(String title)
+    {
+        this.fieldTitle = title;
+    }
+
+    @Override
+    public void setFieldDescription(String description)
+    {
+        this.fieldDescription = description;
     }
 
     @Override

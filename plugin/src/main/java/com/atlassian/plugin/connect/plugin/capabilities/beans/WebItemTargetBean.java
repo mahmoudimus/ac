@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBITEM_TARGET_EXAMPLE}
  * @schemaTitle Web Item Target
  * @since 1.0
  */

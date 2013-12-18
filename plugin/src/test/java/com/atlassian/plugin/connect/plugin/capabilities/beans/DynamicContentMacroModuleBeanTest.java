@@ -13,6 +13,7 @@ import java.io.IOException;
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;
@@ -80,8 +81,8 @@ public class DynamicContentMacroModuleBeanTest
                                 .build()
                         )
                         .withFeatured(true)
-                        .withWidth(100)
-                        .withHeight(50)
+                        .withWidth("100px")
+                        .withHeight("50px")
                         .withIcon(newIconBean().withUrl("/mymacro/icon.png").withHeight(80).withWidth(80).build())
                         .withParameters(newMacroParameterBean()
                                 .withIdentifier("myparam")
@@ -93,6 +94,14 @@ public class DynamicContentMacroModuleBeanTest
                                 .withRequired(true)
                                 .withValues("paramValue1", "paramValue2")
                                 .withAliases("paramAlias1")
+                                .build()
+                        )
+                        .withEditor(newMacroEditorBean()
+                                .withUrl("/my-macro-editor")
+                                .withEditTitle(new I18nProperty("Edit Title", "edit.title.key"))
+                                .withInsertTitle(new I18nProperty("Insert Title", "insert.title.key"))
+                                .withHeight("100px")
+                                .withWidth("200px")
                                 .build()
                         )
                         .build()

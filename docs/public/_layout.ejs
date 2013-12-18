@@ -140,6 +140,13 @@
         $('pre code').each(function(){
             cmIfyPreCodeBlocks(this)
         });
+        
+        $(".expandNextPre").each(
+            function(index)
+            {
+                $(this).nextAll("pre").first().addClass("aui-expander-content");
+            }
+        );
     </script>
 </body>
 

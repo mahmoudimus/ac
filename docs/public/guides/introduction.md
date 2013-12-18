@@ -109,7 +109,7 @@ single Atlassian Connect application must take into account multiple subscribing
 will maintain subscriber-specific data and configuration. For more about multi-tenancy design considerations, see
 [Add-on Design Considerations](https://developer.atlassian.com/display/AC/Add-on+Design+Considerations).
 
-<img src="../../assets/images/DocDiagram.png" alt="Deployment architecture" />
+<img src="../assets/images/DocDiagram.png" alt="Deployment architecture" />
 
 Security is a important concern in a distributed component model such as Atlassian Connect. Atlassian Connect relies on
 HTTPS and OAuth authentication to secure communication between the add-on, the Atlassian product instance and the

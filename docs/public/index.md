@@ -12,7 +12,7 @@ HTTP and REST APIs.
     best documentation and clearest set of guidelines we can, and as such make these pre-release notes avaiable to you
     for consideration and feedback.
     <p>
-    Please see the [What's New](./pages/guides/whats-new.html) guide for a summary of recent changes.
+    Please see the [What's New](./guides/whats-new.html) guide for a summary of recent changes.
 </div>
 
 <div class="aui-group ac-intro-circles">
@@ -20,7 +20,7 @@ HTTP and REST APIs.
         <img src="./assets/images/rocket.png" alt="Getting Started">
         <h2>Getting Started</h2>
         <p>
-            [Get to know Atlassian Connect](./pages/guides/introduction.html) and learn about the powerful ways you
+            [Get to know Atlassian Connect](./guides/introduction.html) and learn about the powerful ways you
             can enhance JIRA, Confluence, and more.
         </p>
     </div>
@@ -28,14 +28,14 @@ HTTP and REST APIs.
         <img src="./assets/images/clipboard.png" alt="Getting Started">
         <h2>Tutorials</h2>
         <p>
-            Quickly get started building an add-on using this [quickstart](./pages/guides/getting-started.html).
+            Quickly get started building an add-on using this [quickstart](./guides/getting-started.html).
         </p>
     </div>
     <div class="aui-item">
         <img src="./assets/images/braces.png" alt="Getting Started">
         <h2>Reference</h2>
         <p>
-            Check out Connect's full list of [modules](./pages/concepts/modules.html).
+            Check out Connect's full list of [modules](./concepts/modules.html).
         </p>
     </div>
 </div>

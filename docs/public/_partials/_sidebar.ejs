@@ -2,10 +2,10 @@
     <nav class="aui-navgroup aui-navgroup-vertical">
         <div class="aui-navgroup-inner">
             <ul class="aui-nav">
-                <% for (var page in public.pages._data.guides) { %>
+                <% for (var page in public._data.guides) { %>
                 <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
                 <li <%= selected %>>
-                    <a href="<%= baseUrl %>/pages/guides/<%= page %>"><%= public.pages._data.guides[page].title %></a>
+                    <a href="<%= baseUrl %>/guides/<%= page %>"><%= public._data.guides[page].title %></a>
                 </li>
                 <% } %>
             </ul>
@@ -14,10 +14,10 @@
                 <strong>Core Concepts</strong>
             </div>
             <ul class="aui-nav">
-            <% for(var concept in public.pages._data.concepts) { %>
+            <% for(var concept in public._data.concepts) { %>
             <% var selected = concept.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
             <li <%= selected %>>
-                <a href="<%= baseUrl %>/pages/concepts/<%= concept %>"><%= public.pages._data.concepts[concept].title %></a>
+                <a href="<%= baseUrl %>/concepts/<%= concept %>"><%= public._data.concepts[concept].title %></a>
             </li>
             <% } %>
             </ul>
@@ -42,10 +42,10 @@
                 <strong>Resources</strong>
             </div>
             <ul class="aui-nav">
-                <% for(var resource in public.pages._data.resources) { %>
+                <% for(var resource in public._data.resources) { %>
                 <% var selected = resource.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
                 <li <%= selected %>>
-                    <a href="<%= baseUrl %>/pages/resources/<%= resource %>"><%= public.pages._data.resources[resource].title %></a>
+                    <a href="<%= baseUrl %>/resources/<%= resource %>"><%= public._data.resources[resource].title %></a>
                 </li>
                 <% } %>
                 <li>

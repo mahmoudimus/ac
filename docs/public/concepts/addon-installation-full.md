@@ -17,13 +17,13 @@ Installing your add-on adds it to your OnDemand application. To be more precise,
 You can install an add-on with the UPM as follows. Note, these instructions were written for UPM version 2.14 or later.
 
  1. Log in to the Atlassian application interface as an admin or a system administrator. If you started the application with Atlassian's SDK, the  default username/password combination is admin/admin.
- 2. Choose <img src="../../assets/images/cog.png" alt="Settings" /> > __Add-ons__ from the menu. The Administration page will display.
+ 2. Choose <img src="../assets/images/cog.png" alt="Settings" /> > __Add-ons__ from the menu. The Administration page will display.
  3. Choose the __Manage add-ons__ option.
  4. Scroll to the page's bottom and click the __Settings__ link. The __Settings__ dialog will display. 
  5. Make sure the "Private listings" option is checked and click __Apply__.
  6. Scroll to the top of the page and click the __Upload Add-on__ link.
  7. Enter the URL to the hosted location of your plugin descriptor. In this example, the URL is similar to the following:  `http://localhost:8000/atlassian-connect.json`. (If you are installing to an OnDemand instance, the URL must be served from the Marketplace, and will look like `https://marketplace.atlassian.com/download/plugins/com.example.add-on/version/39/descriptor?access-token=9ad5037b`)
- 8. Press __Upload__. The system takes a moment to upload and register your plugin. It displays the __Installed and ready to go__ dialog when installation is complete. <img width="100%" src="../../assets/images/installsuccess.jpeg" />
+ 8. Press __Upload__. The system takes a moment to upload and register your plugin. It displays the __Installed and ready to go__ dialog when installation is complete. <img width="100%" src="../assets/images/installsuccess.jpeg" />
  9. Click __Close__.
  10. Verify that your plugin appears in the list of __User installed add-ons__. For example, if you used Hello World for your plugin name, that will appears in the list.
 
