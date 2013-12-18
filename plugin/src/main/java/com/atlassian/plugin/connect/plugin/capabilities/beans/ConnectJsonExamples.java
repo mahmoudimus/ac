@@ -148,13 +148,13 @@ public class ConnectJsonExamples
 
     private static String createConfigurePageExample()
     {
-        ConnectPageModuleBean ConnectPageModuleBean = newPageBean()
+        ConnectPageModuleBean connectPageModuleBean = newPageBean()
                 .withName(new I18nProperty("Configure Page", ""))
                 .withUrl("/configure-world")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .build();
 
-        return gson.toJson(ConnectPageModuleBean);
+        return gson.toJson(connectPageModuleBean);
     }
 
     private static String createWebhookExample()

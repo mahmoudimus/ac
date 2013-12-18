@@ -26,7 +26,6 @@ public class ConfigurePageModuleBeanTest
         ConnectAddonBean bean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(bean, ConnectAddonBean.class);
-        System.out.println(json);
         String expectedJson = readTestFile();
 
         assertThat(json, is(sameJSONAs(expectedJson)));
@@ -39,9 +38,6 @@ public class ConfigurePageModuleBeanTest
         Gson gson = ConnectModulesGsonFactory.getGson();
         ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
         ConnectAddonBean bean = createBean();
-
-        System.out.println(bean.getModules().getConfigurePage());
-        System.out.println(deserializedBean.getModules().getConfigurePage());
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(bean));
     }
