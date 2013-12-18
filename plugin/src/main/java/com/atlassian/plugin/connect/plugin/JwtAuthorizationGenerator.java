@@ -15,7 +15,6 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
 import org.apache.http.message.ParserCursor;
@@ -149,6 +148,6 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
 
     private static String urlDecode(final String content) throws UnsupportedEncodingException
     {
-        return URLDecoder.decode(content, Consts.UTF_8.displayName());
+        return URLDecoder.decode(content, "UTF-8");
     }
 }
