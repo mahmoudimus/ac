@@ -27,28 +27,36 @@ public class ConnectAddonBean extends BaseModuleBean
     public static final int DEFAULT_WEIGHT = 100;
 
     /**
-     * A unique key to identify the add on
+     * A unique key to identify the add-on
      */
     @Required
     private String key;
 
     /**
-     * The human-readable name of the add on
+     * The human-readable name of the add-on
      */
     private String name;
-    
+
+    /**
+     * The version of the add-on
+     */
     private String version;
 
     /**
-     * A human readable description of what the add on does
+     * A human readable description of what the add-on does
      */
     private String description;
 
     /**
-     * The vendor who is offering the add on
+     * The vendor who is offering the add-on
      */
     private VendorBean vendor;
-    private Map<String,String> links;
+
+    /**
+     * A set of links that the add-on wishes to publish
+     * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#LINKS_EXAMPLE}
+     */
+    private Map<String, String> links;
 
     /**
      * Allows the add on to register for plugin lifecycle notifications
@@ -151,10 +159,6 @@ public class ConnectAddonBean extends BaseModuleBean
         return key;
     }
 
-    /**
-     * the name of the addon
-     * @return
-     */
     public String getName()
     {
         return name;

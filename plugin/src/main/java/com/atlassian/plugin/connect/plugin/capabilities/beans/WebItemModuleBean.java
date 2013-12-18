@@ -55,10 +55,10 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     private String location;
 
     /**
-     *  The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.
+     * The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.
      *
-     *  This context can be either `addon`, which renders the URL relative to the add-on's base URL, or
-     *  `product`, which renders the URL relative to the product's base URL.
+     * This context can be either `addon`, which renders the URL relative to the add-on's base URL, or
+     * `product`, which renders the URL relative to the product's base URL.
      */
     @CommonSchemaAttributes(defaultValue = "addon")
     private AddOnUrlContext context;
@@ -77,8 +77,10 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     private Integer weight;
 
     /**
-     *  Defines the way the link is opened in the browser, such as in a modal or inline dialog.
-     *  If omitted, the link behaves as a regular hyperlink.
+     * Defines the way the link is opened in the browser, such as in a modal or inline dialog.
+     * If omitted, the link behaves as a regular hyperlink.
+     *
+     * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBITEM_TARGET_EXAMPLE}
      */
     private WebItemTargetBean target;
 
@@ -94,9 +96,9 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     private I18nProperty tooltip;
 
     /**
-     *  An optional icon to display with the link text or as the link, specified by URL to its hosted location.
-     *  You can specify a particular width and height for the icon. Most link icons in Atlassian applications
-     *  are 16 by 16 pixels.
+     * An optional icon to display with the link text or as the link, specified by URL to its hosted location.
+     * You can specify a particular width and height for the icon. Most link icons in Atlassian applications
+     * are 16 by 16 pixels.
      */
     private IconBean icon;
 
