@@ -112,11 +112,7 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
 
     private static Map<String, String[]> constructParameterMap(URI uri) throws UnsupportedEncodingException
     {
-        return parseQueryStringParameters(uri.getQuery());
-    }
-
-    private static Map<String, String[]> parseQueryStringParameters(final String query) throws UnsupportedEncodingException
-    {
+        final String query = uri.getQuery();
         if (query == null)
         {
             return Collections.emptyMap();
