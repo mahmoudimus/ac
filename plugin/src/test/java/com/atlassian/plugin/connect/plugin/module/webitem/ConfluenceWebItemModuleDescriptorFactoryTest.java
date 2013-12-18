@@ -24,6 +24,7 @@ import org.mockito.stubbing.Answer;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
@@ -73,7 +74,7 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
 
         descriptor = webItemFactory.createWebItemModuleDescriptor(
                 "/myplugin?my_project_id=${project.id}&my_project_key=${project.key}",
-                "myLinkId", false);
+                "myLinkId", false, addon);
         descriptor.init(plugin, createElement());
         descriptor.enabled();
     }

@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescriptor;
 import com.atlassian.jira.plugin.webfragment.model.JiraWebLink;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -13,6 +14,7 @@ import com.atlassian.plugin.web.model.WebLink;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -44,9 +46,10 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute, AddOnUrlContext addOnUrlContext)
     {
-        return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, linkId, absolute);
+        return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
+                urlVariableSubstitutor, contextMapURLSerializer, url, linkId, absolute, addOnUrlContext);
     }
 
     private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor
@@ -57,6 +60,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         private final String url;
         private final String linkId;
         private boolean absolute;
+        private final AddOnUrlContext addOnUrlContext;
 
         public RemoteJiraWebItemModuleDescriptor(
                 JiraAuthenticationContext jiraAuthenticationContext,
@@ -66,7 +70,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
                 ContextMapURLSerializer contextMapURLSerializer,
                 String url,
                 String linkId,
-                boolean absolute)
+                boolean absolute, AddOnUrlContext addOnUrlContext)
         {
             super(jiraAuthenticationContext, webInterfaceManager);
             this.webFragmentHelper = webFragmentHelper;
@@ -75,11 +79,13 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
             this.url = url;
             this.linkId = linkId;
             this.absolute = absolute;
+            this.addOnUrlContext = addOnUrlContext;
         }
         @Override
         public WebLink getLink()
         {
-            return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, linkId, absolute), authenticationContext);
+            return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer,
+                    url, linkId, absolute, addOnUrlContext), authenticationContext);
         }
 
         @Override

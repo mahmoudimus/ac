@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.webitem;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -9,6 +10,8 @@ import com.atlassian.plugin.web.model.WebLink;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Link which points to the dialog, inline-dialog or general page coming from the add-on.
@@ -20,6 +23,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     private final String url;
     private final String id;
     private final boolean absolute;
+    private final AddOnUrlContext addOnUrlContext;
 
     public RemoteWebLink(
             WebFragmentModuleDescriptor webFragmentModuleDescriptor,
@@ -28,7 +32,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             ContextMapURLSerializer urlParametersSerializer,
             String url,
             String id,
-            boolean absolute)
+            boolean absolute, AddOnUrlContext addOnUrlContext)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
         this.urlVariableSubstitutor = urlVariableSubstitutor;
@@ -36,6 +40,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         this.url = url;
         this.id = id;
         this.absolute = absolute;
+        this.addOnUrlContext = checkNotNull(addOnUrlContext);
     }
 
     @Override
