@@ -18,6 +18,7 @@ import java.util.List;
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#COMPOSITE_CONDITION_EXAMPLE}
  * @schemaTitle Composite Condition
  * @since 1.0
+ * @schemaTitle Composite Condition
  */
 public class CompositeConditionBean extends BaseModuleBean implements ConditionalBean
 {

@@ -49,55 +49,42 @@ import static com.google.common.collect.Lists.newArrayList;
 @ObjectSchemaAttributes(additionalProperties = false)
 public class ModuleList extends BaseModuleBean
 {
+    /////////////////////////////////////////////////////
+    ///////    COMMON MODULES
+    /////////////////////////////////////////////////////
+
+    /**
+     * The Web Item module allows you to define new links in application menus.
+     * @schemaTitle Web Item
+     */
     @ConnectModule(WebItemModuleProvider.class)
     private List<WebItemModuleBean> webItems;
 
     /**
-     * @schemaTitle Component Tab Panel
+     * The Web Panel module allows you  to define panels, or sections, on an HTML page.
+     * A panel is an iFrame that will be inserted into a page.
+     * @schemaTitle Web Panel
      */
-    @ConnectModule (value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraComponentTabPanels;
-
-    /**
-     * @schemaTitle Issue Tab Panel
-     */
-    @ConnectModule (value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraIssueTabPanels;
-
-    @ConnectModule (value = ConnectProjectAdminTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectProjectAdminTabPanelModuleBean> jiraProjectAdminTabPanels;
-
-    /**
-     * @schemaTitle Project Tab Panel
-     */
-    @ConnectModule (value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraProjectTabPanels;
-
-    /**
-     * @schemaTitle Version Tab Panel
-     */
-    @ConnectModule (value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraVersionTabPanels;
-
-    /**
-     * @schemaTitle User Profile Tab Panel
-     */
-    @ConnectModule(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraProfileTabPanels;
-
-    @ConnectModule(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
-    
     @ConnectModule (WebPanelModuleProvider.class)
     private List<WebPanelModuleBean> webPanels;
 
     /**
+     * The Web Hook module allows you be notified of key events that occur in the host product
+     * @schemaTitle Webhook
+     */
+    @ConnectModule(WebHookModuleProvider.class)
+    private List<WebHookModuleBean> webhooks;
+
+    /**
+     * A general page module is used to provide a generic chrome for add-on content in the product.
      * @schemaTitle General Page
      */
     @ConnectModule (GeneralPageModuleProvider.class)
     private List<ConnectPageModuleBean> generalPages;
 
     /**
+     * An admin page module is used to provide an administration chrome for add-on content.
+     *
      * @schemaTitle Admin Page
      */
     @ConnectModule (AdminPageModuleProvider.class)
@@ -105,13 +92,85 @@ public class ModuleList extends BaseModuleBean
 
     /**
      * A configure page module is a page module used to configure the addon itself.
-     * Other than that it is the same as other pages.
+     * It's link will appear in the add-ons entry in 'Manage Add-ons'.
      *
-     * @exampleJson {@see ConnectJsonExamples#CONFIGURE_PAGE_EXAMPLE}
-=    * @schemaTitle Configure Page
+     * @schemaTitle Configure Page
      */
     @ConnectModule (ConfigurePageModuleProvider.class)
     private ConnectPageModuleBean configurePage;
+
+
+    /////////////////////////////////////////////////////
+    ///////    JIRA MODULES
+    /////////////////////////////////////////////////////
+
+    /**
+     * The Component Tab Panel module allows you to add new tabs to the 'Browse Component' page.
+     * @schemaTitle Component Tab Panel
+     */
+    @ConnectModule (value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectTabPanelModuleBean> jiraComponentTabPanels;
+
+    /**
+     * The Issue Tab Panel module allows you to add new tabs to the 'Browse Component' page.
+     * @schemaTitle Issue Tab Panel
+     */
+    @ConnectModule (value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectTabPanelModuleBean> jiraIssueTabPanels;
+
+    /**
+     * The Project Admin Tab Panel module allows you to add new panels to the 'Project Admin' page.
+     * @schemaTitle Issue Tab Panel
+     */
+    @ConnectModule (value = ConnectProjectAdminTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectProjectAdminTabPanelModuleBean> jiraProjectAdminTabPanels;
+
+    /**
+     * The Project Tab Panel module allows you to add new panels to the 'Project' page.
+     * @schemaTitle Project Tab Panel
+     */
+    @ConnectModule (value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectTabPanelModuleBean> jiraProjectTabPanels;
+
+    /**
+     * The Version Tab Panel module allows you to add new panels to the 'Browse Version' page.
+     * @schemaTitle Version Tab Panel
+     */
+    @ConnectModule (value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectTabPanelModuleBean> jiraVersionTabPanels;
+
+    /**
+     * The User Profile Tab Panel module allows you to add new tabs to the 'Browse Component' page.
+     * @schemaTitle User Profile Tab Panel
+     */
+    @ConnectModule(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectTabPanelModuleBean> jiraProfileTabPanels;
+
+    /**
+     * The Search Request View is used to display different representations of search results in the issue navigator.
+     * They will be displayed as a link in the `Export` toolbar menu.
+     * @schemaTitle Search Request View
+     */
+    @ConnectModule (value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<SearchRequestViewModuleBean> jiraSearchRequestViews;
+
+    /**
+     * Workflow post functions execute after the workflow transition is executed
+     * @schemaTitle Workflow Post Function
+     */
+    @ConnectModule(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
+
+    /////////////////////////////////////////////////////
+    ///////    CONFLUENCE MODULES
+    /////////////////////////////////////////////////////
+
+    /**
+     * Dynamic content macros allow you to add a macro into a Confluence page which is rendered as an iframe.
+     * @schemaTitle Dynamic Content Macro
+     */
+    @ConnectModule (value = DynamicContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
+    private List<DynamicContentMacroModuleBean> dynamicContentMacros;
 
     /**
      * @schemaTitle User Profile Page
@@ -119,15 +178,12 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = ProfilePageModuleProvider.class, products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
     private List<ConnectPageModuleBean> profilePages;
 
-    @ConnectModule(WebHookModuleProvider.class)
-    private List<WebHookModuleBean> webhooks;
-
-    @ConnectModule (value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<SearchRequestViewModuleBean> jiraSearchRequestViews;
-
-    @ConnectModule (value = DynamicContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
-    private List<DynamicContentMacroModuleBean> dynamicContentMacros;
-
+    /**
+     * Static content macros allow you to add a macro into a Confluence page which is stored with the Confluence page
+     * itself. The add-on is responsible for generating the rendered XHTML in
+     * [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
+     * @schemaTitle Dynamic Content Macro
+     */
     @ConnectModule (value = StaticContentMacroModuleProvider.class, products = {ProductFilter.CONFLUENCE})
     private List<StaticContentMacroModuleBean> staticContentMacros;
 

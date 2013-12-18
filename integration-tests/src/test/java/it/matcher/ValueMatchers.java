@@ -22,9 +22,9 @@ public class ValueMatchers
 
     private static class ArrayValueMatcher extends BaseValueMatcher
     {
-        private final Matcher<Iterable<Value>> matcher;
+        private final Matcher<Iterable<? extends Value>> matcher;
 
-        protected ArrayValueMatcher(Matcher<Iterable<Value>> matcher)
+        protected ArrayValueMatcher(Matcher<Iterable<? extends Value>> matcher)
         {
             this.matcher = matcher;
         }
@@ -99,7 +99,7 @@ public class ValueMatchers
         }
     }
 
-    public static Matcher<Value> isArrayMatching(Matcher<Iterable<Value>> matcher)
+    public static Matcher<Value> isArrayMatching(Matcher<Iterable<? extends Value>> matcher)
     {
         return new ArrayValueMatcher(matcher);
     }

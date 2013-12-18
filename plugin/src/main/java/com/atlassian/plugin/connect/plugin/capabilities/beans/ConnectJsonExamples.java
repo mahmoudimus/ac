@@ -51,11 +51,11 @@ public class ConnectJsonExamples
     public static final String ADDON_COMPLETE_EXAMPLE = createAddonCompleteExample();
     public static final String AUTHENTICATION_EXAMPLE = createAuthenticationExample();
     public static final String COMPONENT_TAB_PANEL_EXAMPLE = createComponentTabPanelExample();
-    public static final String CONFIGURE_PAGE_EXAMPLE = createConfigurePageExample();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
     public static final String I18N_EXAMPLE = createI18nExample();
     public static final String ICON_EXAMPLE = createIconExample();
     public static final String LINK_EXAMPLE = createLinkExample();
+    public static final String LINKS_EXAMPLE = createLinksExample();
     public static final String MACRO_EDITOR_EXAMPLE = createMacroEditorExample();
     public static final String PAGE_EXAMPLE = createPageExample();
     public static final String PANEL_LAYOUT_EXAMPLE = createPanelLayoutExample();
@@ -86,7 +86,7 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withModules("webItems", newWebItemBean().withLink("/my-web-item").withLocation("system.preset.filters").build())
+                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withLink("/my-web-item").withLocation("system.preset.filters").build())
                 .build();
 
         return gson.toJson(addonBean);
@@ -104,26 +104,31 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withModules("webItems",newWebItemBean().withLink("/my-web-item").withLocation("system.preset.filters").build())
-                .withModules("webPanels",newWebPanelBean().withLocation("com.atlassian.jira.plugin.headernav.left.context").withUrl("/my-web-panel").build())
-                .withModules("generalPages",newPageBean().withUrl("my-general-page").build())
-                .withModules("adminPages",newPageBean().withUrl("my-admin-page").build())
-                .withModules("configurePage", newPageBean().withUrl("my-configure-page").build())
+                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withLink("/my-web-item").withLocation("system.preset.filters").build())
+                .withModules("webPanels", newWebPanelBean().withName(i18nProperty("Web Panel")).withLocation("com.atlassian.jira.plugin.headernav.left.context").withUrl("/my-web-panel").build())
+                .withModules("generalPages", newPageBean().withName(i18nProperty("General Page")).withUrl("my-general-page").build())
+                .withModules("adminPages", newPageBean().withName(i18nProperty("Admin Page")).withUrl("my-admin-page").build())
+                .withModules("configurePage", newPageBean().withName(i18nProperty("Config Page")).withUrl("my-configure-page").build())
                 .withModules("webhooks", newWebHookBean().withEvent("jira:issue_created").withUrl("/issue-created").build())
-                .withModules("jiraComponentTabPanels", newTabPanelBean().withUrl("my-component-tab-panel").build())
-                .withModules("jiraIssueTabPanels",newTabPanelBean().withUrl("my-issue-tab-panel").build())
-                .withModules("jiraProjectAdminTabPanels",newTabPanelBean().withUrl("my-admin-tab-panel").build())
-                .withModules("jiraProjectTabPanels",newTabPanelBean().withUrl("my-project-tab-panel").build())
-                .withModules("jiraVersionTabPanels",newTabPanelBean().withUrl("my-version-tab-panel").build())
-                .withModules("jiraProfileTabPanels",newTabPanelBean().withUrl("my-profile-tab-panel").build())
-                .withModules("jiraWorkflowPostFunctions", newWorkflowPostFunctionBean().withCreate(new UrlBean("/create")).build())
-                .withModules("jiraSearchRequestViews", newSearchRequestViewModuleBean().withUrl("/searchRequest").build())
-                .withModules("profilePages", newPageBean().withUrl("my-confluence-profile-page").build())
-                .withModules("dynamicContentMacros", newDynamicContentMacroModuleBean().withUrl("/dynamic-macro").build())
-                .withModules("staticContentMacros", newStaticContentMacroModuleBean().withUrl("/static-macro").build())
+                .withModules("jiraComponentTabPanels", newTabPanelBean().withName(i18nProperty("Component Tab")).withUrl("my-component-tab-panel").build())
+                .withModules("jiraIssueTabPanels", newTabPanelBean().withName(i18nProperty("Issue Tab")).withUrl("my-issue-tab-panel").build())
+                .withModules("jiraProjectAdminTabPanels", newTabPanelBean().withUrl("my-admin-tab-panel").build())
+                .withModules("jiraProjectTabPanels", newTabPanelBean().withName(i18nProperty("Project Tab")).withUrl("my-project-tab-panel").build())
+                .withModules("jiraVersionTabPanels", newTabPanelBean().withName(i18nProperty("Version Tab")).withUrl("my-version-tab-panel").build())
+                .withModules("jiraProfileTabPanels", newTabPanelBean().withName(i18nProperty("Profile Tab")).withUrl("my-profile-tab-panel").build())
+                .withModules("jiraWorkflowPostFunctions", newWorkflowPostFunctionBean().withName(i18nProperty("Workflow Function")).withCreate(new UrlBean("/create")).build())
+                .withModules("jiraSearchRequestViews", newSearchRequestViewModuleBean().withName(i18nProperty("Search View")).withUrl("/searchRequest").build())
+                .withModules("profilePages", newPageBean().withName(i18nProperty("Profile Page")).withUrl("my-confluence-profile-page").build())
+                .withModules("dynamicContentMacros", newDynamicContentMacroModuleBean().withName(i18nProperty("Dynamic Macro")).withUrl("/dynamic-macro").build())
+                .withModules("staticContentMacros", newStaticContentMacroModuleBean().withName(i18nProperty("Static Macro")).withUrl("/static-macro").build())
                 .build();
 
         return gson.toJson(addonBean);
+    }
+
+    private static I18nProperty i18nProperty(String name)
+    {
+        return new I18nProperty(name, null);
     }
 
     private static String createPageExample()
@@ -134,7 +139,7 @@ public class ConnectJsonExamples
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .build();
 
-        return gson.toJson(createModuleArray("generalPages",pageModuleBean));
+        return gson.toJson(createModuleArray("generalPages", pageModuleBean));
     }
 
     private static String createProjectAdminPageExample()
@@ -145,18 +150,7 @@ public class ConnectJsonExamples
                 .withLocation("projectgroup4")
                 .build();
 
-        return gson.toJson(createModuleArray("jiraProjectAdminTabPanels",pageModuleBean));
-    }
-
-    private static String createConfigurePageExample()
-    {
-        ConnectPageModuleBean connectPageModuleBean = newPageBean()
-                .withName(new I18nProperty("Configure Page", ""))
-                .withUrl("/configure-world")
-                .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
-                .build();
-
-        return gson.toJson(connectPageModuleBean);
+        return gson.toJson(createModuleArray("jiraProjectAdminTabPanels", pageModuleBean));
     }
 
     private static String createWebhookExample()
@@ -166,9 +160,9 @@ public class ConnectJsonExamples
                 .withUrl("/issue-created")
                 .build();
 
-        return gson.toJson(createModuleArray("webhooks",bean));
+        return gson.toJson(createModuleArray("webhooks", bean));
     }
-    
+
     private static String createWebItemExample()
     {
         WebItemModuleBean webItemModuleBean = newWebItemBean()
@@ -181,7 +175,7 @@ public class ConnectJsonExamples
                 .withWeight(200)
                 .build();
 
-        return gson.toJson(createModuleArray("webItems",webItemModuleBean));
+        return gson.toJson(createModuleArray("webItems", webItemModuleBean));
     }
 
     private static String createPostFunctionExample()
@@ -195,9 +189,8 @@ public class ConnectJsonExamples
                 .withView(new UrlBean("/view"))
                 .build();
 
-        return gson.toJson(createModuleArray("jiraWorkflowPostFunctions",bean));
+        return gson.toJson(createModuleArray("jiraWorkflowPostFunctions", bean));
     }
-
 
     private static String createWebPanelExample()
     {
@@ -209,19 +202,18 @@ public class ConnectJsonExamples
                 .withWeight(50)
                 .build();
 
-        return gson.toJson(createModuleArray("webPanels",webPanelModuleBean));
+        return gson.toJson(createModuleArray("webPanels", webPanelModuleBean));
     }
-
 
     public static String createComponentTabPanelExample()
     {
         ConnectTabPanelModuleBean bean = newTabPanelBean()
-                        .withName(new I18nProperty("My Component Tab Page", ""))
-                        .withUrl("/my-component-tab")
-                        .withWeight(100)
-                        .build();
+                .withName(new I18nProperty("My Component Tab Page", ""))
+                .withUrl("/my-component-tab")
+                .withWeight(100)
+                .build();
 
-        return gson.toJson(createModuleArray("jiraComponentTabPanels",bean));
+        return gson.toJson(createModuleArray("jiraComponentTabPanels", bean));
     }
 
     public static String createSearchViewExample()
@@ -232,7 +224,7 @@ public class ConnectJsonExamples
                 .withWeight(100)
                 .build();
 
-        return gson.toJson(createModuleArray("jiraSearchRequestViews",bean));
+        return gson.toJson(createModuleArray("jiraSearchRequestViews", bean));
     }
 
     private static String createDynamicMacroExample()
@@ -266,7 +258,7 @@ public class ConnectJsonExamples
                 )
                 .build();
 
-        return gson.toJson(createModuleArray("dynamicContentMacros",macroModuleBean));
+        return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
     }
 
     private static String createStaticMacroExample()
@@ -305,34 +297,34 @@ public class ConnectJsonExamples
 
     private static String createI18nExample()
     {
-        I18nProperty bean = new I18nProperty("jim","my.name.is.jim");
-        return gson.toJson(createModuleObject("name",bean));
+        I18nProperty bean = new I18nProperty("jim", "my.name.is.jim");
+        return gson.toJson(createModuleObject("name", bean));
     }
 
     private static String createIconExample()
     {
         IconBean bean = newIconBean().withUrl("/my-icon.png").withWidth(16).withHeight(16).build();
-        return gson.toJson(createModuleObject("icon",bean));
+        return gson.toJson(createModuleObject("icon", bean));
     }
 
     private static String createWebitemTargetExample()
     {
         WebItemTargetBean bean = newWebItemTargetBean()
                 .withType(WebItemTargetType.page).build();
-        
-        return gson.toJson(createModuleObject("target",bean));
+
+        return gson.toJson(createModuleObject("target", bean));
     }
 
     private static String createLinkExample()
     {
         LinkBean bean = newLinkBean().withUrl("/go-somewhere").withAltText("somewhere").withTitle("Go Somewhere").build();
-        return gson.toJson(createModuleObject("link",bean));
+        return gson.toJson(createModuleObject("link", bean));
     }
 
     private static String createSingleConditionExample()
     {
         SingleConditionBean bean = newSingleConditionBean().withCondition("user_is_logged_in").build();
-        return gson.toJson(createModuleObject("condition",bean));
+        return gson.toJson(createModuleObject("condition", bean));
     }
 
     private static String createCompositeConditionExample()
@@ -355,25 +347,25 @@ public class ConnectJsonExamples
     private static String createUrlExample()
     {
         UrlBean bean = new UrlBean("/my-url");
-        return gson.toJson(createModuleObject("url",bean));
+        return gson.toJson(createModuleObject("url", bean));
     }
 
     private static String createVendorExample()
     {
         VendorBean bean = newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build();
-        return gson.toJson(createModuleObject("vendor",bean));
+        return gson.toJson(createModuleObject("vendor", bean));
     }
 
     private static String createPanelLayoutExample()
     {
-        WebPanelLayout bean = new WebPanelLayout("100","200");
+        WebPanelLayout bean = new WebPanelLayout("100", "200");
         return gson.toJson(createModuleObject("layout", bean));
     }
 
     private static String createAuthenticationExample()
     {
         AuthenticationBean bean = newAuthenticationBean().withType(AuthenticationType.JWT).build();
-        return gson.toJson(createModuleObject("authentication",bean));
+        return gson.toJson(createModuleObject("authentication", bean));
     }
 
     private static String createParamsExample()
@@ -387,14 +379,26 @@ public class ConnectJsonExamples
 
         return gson.toJson(obj);
     }
-    
+
+    private static String createLinksExample()
+    {
+        Map<String, String> links = new HashMap<String, String>(2);
+        links.put("self", "https://addon.domain.com/atlassian-connect.json");
+        links.put("documentation", "https://addon.domain.com/docs");
+
+        JsonObject obj = new JsonObject();
+        obj.add("links", gson.toJsonTree(links));
+
+        return gson.toJson(obj);
+    }
+
     private static JsonObject createModuleArray(String name, ModuleBean bean)
     {
         JsonObject obj = new JsonObject();
         JsonArray arr = new JsonArray();
         arr.add(gson.toJsonTree(bean));
         obj.add("generalPages", arr);
-        
+
         return obj;
     }
 

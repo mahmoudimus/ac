@@ -10,34 +10,32 @@
     Please see the [What's New](./guides/whats-new.html) guide for a summary of recent changes to the Atlassian Connect framework.
 </div>
 
-# Atlassian Connect
 
-Build, install and sell add-ons in Atlassian OnDemand. Integrate your service, use Atlassian's REST API, or add new features to Atlassian's world class development tools with Atlassian Connect.
+<img id="indexlogo" src="./assets/images/ac_logo.png" width="720">
 
-<div class="aui-group ac-intro-circles">
+# Build, install and sell add-ons in Atlassian OnDemand.
+
+<div class="aui-group">
     <div class="aui-item">
-        <img src="./assets/images/rocket.png" alt="Getting Started">
-        <h2>Getting Started</h2>
-        <p>
-            [Get to know Atlassian Connect](./guides/introduction.html) and learn about the powerful ways you
-            can enhance JIRA, Confluence, and more.
-        </p>
+        <div class="indexboxes">
+            <img src="./assets/images/gears.png" width="100">
+            <h2>Customize your product</h2>
+            <p>Build an add-on to enhance, extend or integrate your Atlassian product.</p>
+        </div>
     </div>
     <div class="aui-item">
-        <img src="./assets/images/clipboard.png" alt="Getting Started">
-        <h2>Tutorials</h2>
-        <p>
-            Quickly get started building an add-on using this [quickstart](./guides/getting-started.html).
-        </p>
-    </div>
-    <div class="aui-item">
-        <img src="./assets/images/braces.png" alt="Getting Started">
-        <h2>Reference</h2>
-        <p>
-            Check out Connect's full list of [modules](./concepts/modules.html).
-        </p>
+        <div class="indexboxes">
+            <img src="./assets/images/globe.png" width="100">
+            <h2>Share with the world</h2>
+            <p>Share your add-on with millions of developers on the Atlassian Marketplace.</p>
+        </div>
     </div>
 </div>
+
+## Get Started
+
+Start with our [Introduction to Atlassian Connect](./guides/introduction.html) and learn about the powerful ways you can
+enhance your Atlassian application.
 
 ## Need help?
 
