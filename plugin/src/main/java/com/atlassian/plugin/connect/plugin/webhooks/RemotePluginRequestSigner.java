@@ -1,24 +1,24 @@
 package com.atlassian.plugin.connect.plugin.webhooks;
 
-import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
-import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.jwt.core.JwtUtil;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
-import com.google.common.base.Predicate;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Named;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Signs outgoing webhooks with oauth credentials
@@ -28,13 +28,15 @@ import javax.inject.Named;
 public class RemotePluginRequestSigner implements RequestSigner
 {
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final PluginAccessor pluginAccessor;
+    private final ConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
+    private final ConnectAddOnIdentifierService legacyAddOnIdentifierService;
 
     @Inject
-    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, PluginAccessor pluginAccessor)
+    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, LegacyAddOnIdentifierService legacyAddOnIdentifierService)
     {
-        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-        this.pluginAccessor = pluginAccessor;
+        this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
+        this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
+        this.legacyAddOnIdentifierService = checkNotNull(legacyAddOnIdentifierService);
     }
 
     @Override
@@ -45,7 +47,7 @@ public class RemotePluginRequestSigner implements RequestSigner
             final Option<String> authValue = getAuthHeader(uri, pluginKey);
             if (authValue.isDefined())
             {
-                request.setHeader("Authorization", authValue.get());
+                request.setHeader(JwtUtil.AUTHORIZATION_HEADER, authValue.get());
             }
         }
     }
@@ -60,15 +62,9 @@ public class RemotePluginRequestSigner implements RequestSigner
         return remotablePluginAccessorFactory.get(pluginKey).getAuthorizationGenerator();
     }
 
-    public boolean canSign(final String pluginKey)
+    // return true if this is a Connect add-on
+    private boolean canSign(final String pluginKey)
     {
-        return !Iterables.findFirst(pluginAccessor.getPlugin(pluginKey).getModuleDescriptors(), new Predicate<ModuleDescriptor<?>>()
-        {
-            @Override
-            public boolean apply(@Nullable ModuleDescriptor<?> input)
-            {
-                return input instanceof RemotePluginContainerModuleDescriptor;
-            }
-        }).isEmpty();
+        return jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey) || legacyAddOnIdentifierService.isConnectAddOn(pluginKey);
     }
 }

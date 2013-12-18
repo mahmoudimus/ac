@@ -3,10 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConfigurePageModuleBeanBuilder;
 import com.google.common.base.Objects;
+import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import com.google.gson.annotations.SerializedName;
 
 /**
  * A configure page module is a page module used to configure the addon itself.

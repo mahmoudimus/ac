@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
