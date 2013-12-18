@@ -172,7 +172,7 @@ public class JsonSchemaDoclet
     {
         final MemberDoc fieldDoc = linkTag.referencedMember();
 
-        if (null == fieldDoc || !fieldDoc.isStatic())
+        if (null == fieldDoc || !fieldDoc.isStatic() || !fieldDoc.isField())
         {
             return "";
         }

@@ -48,36 +48,10 @@ public class GenerateSupportDocsMojo extends AbstractSchemaGenMojo
 
     private void runJavadoc() throws MojoExecutionException
     {
-        Set<String> docletPaths = new HashSet<String>();
-        StringBuffer docletPath = new StringBuffer(File.pathSeparator + project.getBuild().getOutputDirectory());
-
-        try
-        {
-            docletPaths.addAll(project.getCompileClasspathElements());
-            docletPaths.addAll(project.getRuntimeClasspathElements());
-            docletPaths.addAll(project.getSystemClasspathElements());
-
-            URL[] pluginUrls = ((URLClassLoader)Thread.currentThread().getContextClassLoader()).getURLs();
-            for(URL pluginUrl : pluginUrls)
-            {
-                docletPaths.add(new File(pluginUrl.getFile()).getPath());
-            }
-            
-            for(String path : docletPaths) {
-                docletPath.append(File.pathSeparator);
-                docletPath.append(path);
-            }
-        }
-        catch (DependencyResolutionRequiredException e)
-        {
-            throw new MojoExecutionException("Dependencies must be resolved", e);
-        }
-        
-        
-        
         String resourcedocPath = getDefaultDocsFile();
         
         String packagePath = "**" + File.separator + basePackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator)) + File.separator + "**" + File.separator + "*.java";
+
         executeMojo(
                 plugin(
                         groupId("org.apache.maven.plugins"),

@@ -34,6 +34,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModu
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
@@ -63,6 +64,7 @@ public class ConnectJsonExamples
     public static final String PRJ_ADMIN_PAGE_EXAMPLE = createProjectAdminPageExample();
     public static final String SEARCH_VIEW_EXAMPLE = createSearchViewExample();
     public static final String SINGLE_CONDITION_EXAMPLE = createSingleConditionExample();
+    public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
     public static final String STATIC_MACRO_EXAMPLE = createStaticMacroExample();
     public static final String URL_EXAMPLE = createUrlExample();
     public static final String VENDOR_EXAMPLE = createVendorExample();
@@ -186,7 +188,7 @@ public class ConnectJsonExamples
     {
         WorkflowPostFunctionModuleBean bean = newWorkflowPostFunctionBean()
                 .withName(new I18nProperty("My Function", "my.function.name"))
-                .withDescription(new I18nProperty("My Description","my.function.desc"))
+                .withDescription(new I18nProperty("My Description", "my.function.desc"))
                 .withTriggered(new UrlBean("/triggered"))
                 .withCreate(new UrlBean("/create"))
                 .withEdit(new UrlBean("/edit"))
@@ -298,7 +300,7 @@ public class ConnectJsonExamples
                 )
                 .build();
 
-        return gson.toJson(createModuleArray("staticContentMacros",macroModuleBean));
+        return gson.toJson(createModuleArray("staticContentMacros", macroModuleBean));
     }
 
     private static String createI18nExample()
@@ -331,6 +333,23 @@ public class ConnectJsonExamples
     {
         SingleConditionBean bean = newSingleConditionBean().withCondition("user_is_logged_in").build();
         return gson.toJson(createModuleObject("condition",bean));
+    }
+
+    private static String createCompositeConditionExample()
+    {
+        CompositeConditionBean bean = newCompositeConditionBean()
+                .withType(CompositeConditionType.AND)
+                .withConditions(
+                        newCompositeConditionBean()
+                        .withType(CompositeConditionType.OR)
+                        .withConditions(
+                                newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_FILE_TO_ISSUE).build()
+                                ,newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_SCREENSHOT_TO_ISSUE).build()
+                        ).build()
+                        ,newSingleConditionBean().withCondition(JiraConditions.USER_IS_LOGGED_IN).build()
+                ).build();
+
+        return gson.toJson(createModuleObject("conditions",bean));
     }
 
     private static String createUrlExample()
