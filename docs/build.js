@@ -21,14 +21,24 @@ var confluenceSchemaPath = '../plugin/target/classes/schema/confluence-schema.js
 
 program
   .option('-s, --serve', 'Serve and automatically watch for changes')
+  .option('-d, --debug', 'Output debug information')
   .option('-b, --baseUrl [url]', 'Set the base url for rendered links')
   .parse(process.argv);
+
+var debug = program.debug ? console.log : function() {/* no-op */};
 
 /**
  * Transform the schema properties entry for a schema entity into a shallow list of primitives and references.
  */
 function collapseArrayAndObjectProperties(properties, required, parent) {
     return _.map(properties, function(property, id) {
+        debug("\n\nCollapsed:\n", util.inspect(property, {depth: 3}));
+
+        // prefer fieldTitle if present (provides better context)
+        if (property.fieldTitle) {
+            property.title = property.fieldTitle;
+        }
+
         if (property.type === "array") {
             property.id = id;
             if (property.items && property.items["$ref"] === "#") {
@@ -72,6 +82,8 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
         if (property.fieldDescription) {
             property.fieldDescription = renderMarkdown(property.fieldDescription);
         }
+
+        debug("into:\n", util.inspect(property, {depth: 3}));
 
         return property;
     });
@@ -290,7 +302,7 @@ function startHarpServerAndWatchSrcFiles() {
         harpServer.kill();
     }
 
-    // debounce to ensure multiple saves don't kick off multiple rebuilds
+    // debounce to prevent multiple rapid saves from kicking off multiple rebuilds
     restartHarpServer = _.debounce(restartHarpServer, 2000);
 
     harpServer = startHarpServer();

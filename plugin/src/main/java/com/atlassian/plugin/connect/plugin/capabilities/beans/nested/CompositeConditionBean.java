@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * @since 1.0
+ * @schemaTitle Composite Condition
  */
 public class CompositeConditionBean extends BaseModuleBean implements ConditionalBean
 {

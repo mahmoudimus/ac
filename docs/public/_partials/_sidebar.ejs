@@ -33,9 +33,12 @@
                 <strong>Product APIs</strong>
             </div>
             <ul class="aui-nav">
-                <li>
-                     <a href="<%= baseUrl %>/rest-api/product-api-browser">Product API Browser</a>
+                <% for(var resource in public._data["rest-apis"]) { %>
+                <% var selected = resource.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
+                <li <%= selected %>>
+                    <a href="<%= baseUrl %>/rest-apis/<%= resource %>"><%= public._data["rest-apis"][resource].title %></a>
                 </li>
+                <% } %>
             </ul>
 
             <div class="aui-nav-heading">

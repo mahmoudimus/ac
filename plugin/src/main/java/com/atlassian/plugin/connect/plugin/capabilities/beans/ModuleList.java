@@ -19,9 +19,33 @@ import static com.google.common.collect.Lists.newArrayList;
  * The field name will be what appears in the json.
  * 
  * Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder
- * that will handle adding beans to the proper fields in this class by name and type.
- * You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.
+ * that will handle adding beans to the proper fields in this class by name and type. You can buy me a beer later for
+ * that little trick when you realize you don't need to keep updating a builder every time you add a new type here.
+ *
+ * Below is the public documentation
+ *
+ *            ;;;;;
+ *            ;;;;;
+ *            ;;;;;
+ *            ;;;;;
+ *          ..;;;;;..
+ *           ':::::'
+ *             ':`
  */
+
+/**
+ * Modules are UI extension points that add-ons can use to insert content into various areas of the host application's
+ * interface. You implement a page module (along with others type of module you can use with Atlassian Connect, like
+ * webhooks) by declaring it in the add-on descriptor and implementing the add-on code that composes it.
+ *
+ * Each application has module types that are specific for it, but there are some common types as well. For instance,
+ * both JIRA and Confluence support the `generalPages` module, but only Confluence has `profilePage`. An add-on can
+ * implement as many modules as needed. For example, a typical add-on would likely provide modules for at least one
+ * lifecycle element, a configuration page, and possibly multiple general pages. All modules declarations must have a
+ * `url` attribute. The url attribute identifies the path on the add-on host to the resource that implements the module.
+ * The URL value must be valid relative to the `baseUrl` value in the add-on descriptor.
+ */
+@SuppressWarnings ("UnusedDeclaration")
 @ObjectSchemaAttributes(additionalProperties = false)
 public class ModuleList extends BaseModuleBean
 {
@@ -84,7 +108,7 @@ public class ModuleList extends BaseModuleBean
      * Other than that it is the same as other pages.
      *
      * @exampleJson {@see ConnectJsonExamples#CONFIGURE_PAGE_EXAMPLE}
-=    * @schemaTitle Configure Page
+     * @schemaTitle Configure Page
      */
     @ConnectModule (ConfigurePageModuleProvider.class)
     private ConnectPageModuleBean configurePage;
