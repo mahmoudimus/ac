@@ -19,7 +19,7 @@ import static com.google.common.collect.Maps.newHashMap;
  *
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_EXAMPLE}
  * @exampleJson Kitchen Sink: <p class="expandNextPre"></p>{@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_COMPLETE_EXAMPLE}
- * @schemaTitle Connect Addon Root Descriptor
+ * @schemaTitle Addon Descriptor
  * @since 1.0
  */
 public class ConnectAddonBean extends BaseModuleBean
