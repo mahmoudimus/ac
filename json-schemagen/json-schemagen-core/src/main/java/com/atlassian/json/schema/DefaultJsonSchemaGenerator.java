@@ -89,6 +89,44 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
     }
 
     @Override
+    protected JsonSchema generateInterfaceSchemaWithSelfRef(Class<?> clazz, Field field, Class<?> self)
+    {
+        if(!interfaceList.getImplementors(clazz).isEmpty())
+        {
+            InterfaceSchema schema = new InterfaceSchema();
+            Set<ObjectSchema> anyOf = new HashSet<ObjectSchema>();
+
+            for(String impl : interfaceList.getImplementors(clazz))
+            {
+                try
+                {
+                    if(self.getName().equals(impl))
+                    {
+                        anyOf.add((ObjectSchema) generateSelfRef());
+                    }
+                    else
+                    {
+                        Class<?> implClass = Thread.currentThread().getContextClassLoader().loadClass(impl);
+                        anyOf.add((ObjectSchema) generateObjectSchema(implClass,null,clazz));
+                    }
+                }
+                catch (ClassNotFoundException e)
+                {
+                    //TODO: should we throw or ignore?
+                    e.printStackTrace();
+                }
+            }
+            schema.setAnyOf(anyOf);
+
+            return schema;
+        }
+        else
+        {
+            return generateObjectSchema(clazz,field);
+        }
+    }
+
+    @Override
     protected <T> JsonSchema generateEnumSchema(Class<T> clazz, Field field)
     {
         String value = clazz.getEnumConstants()[0].toString();
@@ -151,7 +189,7 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
     }
 
     @Override
-    protected JsonSchema generateArraySchema(Field field, String defaultArrayTitle, Class... ifaces)
+    protected JsonSchema generateArraySchema(Class<?> owner, Field field, String defaultArrayTitle, Class... ifaces)
     {
         ArrayTypeSchema schema = new ArrayTypeSchema();
         
@@ -167,7 +205,7 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
                 
                 if(listType.isInterface() && Arrays.asList(ifaces).contains(listType))
                 {
-                    schema.setItems(generateSelfRef());
+                    schema.setItems(generateInterfaceSchemaWithSelfRef(listType,null,owner));
                 }
                 else
                 {
@@ -189,7 +227,7 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
     {
         if (Collection.class.isAssignableFrom(field.getType()))
         {
-            return generateArraySchema(field, defaultArrayTitle, ifaces);
+            return generateArraySchema(owner, field, defaultArrayTitle, ifaces);
         }
         else if(Arrays.asList(ifaces).contains(field.getType()))
         {
@@ -203,7 +241,7 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
 
     public JsonSchema generateSelfRef()
     {
-        BasicSchema refSchema = new BasicSchema();
+        ObjectSchema refSchema = new ObjectSchema();
         refSchema.setRef("#");
         
         return refSchema;
