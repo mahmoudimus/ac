@@ -133,7 +133,7 @@ view of the REST API in a specific Atlassian application instance.
 
 To learn more about the RAB, see the REST API Browser section of this documentation. Or view the current versions online:
 
- * [Rest API for Jira](https://jira.atlassian.com/plugins/servlet/restbrowser#/)
+ * [Rest API for JIRA](https://jira.atlassian.com/plugins/servlet/restbrowser#/)
  * [Rest API for Confluence](https://confluence.atlassian.com/plugins/servlet/restbrowser#/)
 
 ## About this guide
@@ -144,7 +144,7 @@ To get the most out of this information, you should be familiar with:
 
 - Using and administering Atlassian applications
 - Web programming, whether using Java or another language
-- Web server concepts and administration.
-- Web security standards, such as JWT.
+- Web server concepts and administration
+- Web security standards, such as JWT
 - Interacting with REST APIs
 

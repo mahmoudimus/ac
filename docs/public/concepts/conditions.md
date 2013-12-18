@@ -1,6 +1,6 @@
 # Conditions
 
- * [Jira Conditions](#jiraconditions)
+ * [JIRA Conditions](#jiraconditions)
  * [Confluence Conditions](#confluenceconditions)
 
 A condition specifies requirements that must be met for a user to access the features or UI exposed by a module. For
@@ -151,7 +151,7 @@ The following table shows the condition parameters available for `has_issue_perm
 
 
 <a name="jiraconditions" id="jiraconditions"></a>
-# Jira conditions
+# JIRA conditions
  * browse_users_permission
  * can_attach_file_to_issue
  * can_attach_screenshot_to_issue
