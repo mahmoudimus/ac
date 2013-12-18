@@ -10,6 +10,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleBeanUtils.copyFieldsByNameAndType;
 
 /**
+ * Defines an icon to display
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ICON_EXAMPLE}
  * @since 1.0
  */
 public class IconBean

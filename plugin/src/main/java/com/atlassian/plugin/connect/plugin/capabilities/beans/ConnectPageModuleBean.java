@@ -22,8 +22,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * The page module takes care of integrating the add-on content into the application for you. The add-on content
  * automatically gets the page styles and decorators from the host application.
  *
- * Json Example:
- * @exampleJson {@see ConnectJsonExamples#PAGE_EXAMPLE}
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PAGE_EXAMPLE}
  * @since 1.0
  */
 public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions

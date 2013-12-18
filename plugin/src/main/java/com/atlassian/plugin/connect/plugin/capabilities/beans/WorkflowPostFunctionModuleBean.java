@@ -25,32 +25,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
  *
  * All URLs are relative to the base URL that is declared in the connect-container element of the descriptor.
  *
- * Example workflow post function descriptor block
- *
- *     "jiraWorkflowPostFunctions": [
- * 	   {
- *         "name": {
- *             "i18n": "my.function",
- *             "value": "My  function"
- *         },
- *         "description": {
- *             "i18n": "my.function.desc",
- *             "value": "My function description"
- *         },
- *         "triggered": {
- *             "url": "/triggered"
- *         },
- *         "create": {
- *             "url": "/create"
- *         },
- *         "edit": {
- *             "url": "/edit"
- *         },
- *         "view": {
- *             "url": "/view"
- *         }
- *     }]
- *
  * ## Contents of the HTTP POST
  *
  * To understand the type of content that is sent to the add-on after a state transition, you can use the webhook
@@ -175,6 +149,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
  *          }
  *      }
  *
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#POST_FUNCTION_EXAMPLE}
  *  @schemaTitle Workflow Post Function
  *  @since 1.0
  */

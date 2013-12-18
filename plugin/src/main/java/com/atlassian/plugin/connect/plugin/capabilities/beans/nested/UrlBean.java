@@ -6,6 +6,9 @@ import java.net.URISyntaxException;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 
+/**
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#URL_EXAMPLE}
+ */
 public class UrlBean
 {
     @StringSchemaAttributes(format = "uri")
