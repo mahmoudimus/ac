@@ -10,6 +10,7 @@ import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
@@ -47,24 +48,15 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JwtSigningRemotablePluginAccessorTest
+public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
 {
-    private static final String PLUGIN_KEY = "key";
-    private static final String PLUGIN_NAME = "name";
     private static final String CONSUMER_KEY = "12345-abcde-09876-zyxwv";
     private static final String USER_KEY = "MrFreeze";
-    private static final String BASE_PATH = "/basepath";
-    private static final String BASE_URL = "http://server:1234" + BASE_PATH;
-    private static final String FULL_PATH_URL = BASE_URL + "/path";
-    private static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
-    private static final String INTERNAL_FULL_GET_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";
-    private static final Map<String, String> GET_HEADERS = Collections.singletonMap("header", "header value");
     private static final Map<String, String> GET_PARAMS = Collections.singletonMap("param", "param value");
-    private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
+    private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[] { "param value" });
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
     private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
-    private static final String EXPECTED_GET_RESPONSE = "expected";
     private static final String MOCK_JWT = "just.an.example";
     private @Mock JwtService jwtService;
     private @Mock ApplicationLink applicationLink;
@@ -190,7 +182,10 @@ public class JwtSigningRemotablePluginAccessorTest
     public void queryHashClaimIsCorrect() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(HttpMethod.GET.toString(), URI.create(OUTGOING_FULL_GET_URL).getPath(), BASE_PATH, GET_PARAMS_STRING_ARRAY));
+
+        CanonicalHttpUriRequest request = new CanonicalHttpUriRequest(HttpMethod.GET.toString(), URI.create(OUTGOING_FULL_GET_URL).getPath(), CONTEXT_PATH, GET_PARAMS_STRING_ARRAY);
+        String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(request);
+
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), any(ApplicationLink.class));
     }
 
@@ -413,64 +408,7 @@ public class JwtSigningRemotablePluginAccessorTest
         UserManager userManager = mock(UserManager.class);
         when(userManager.getRemoteUserKey()).thenReturn(mockRemoteUserKey);
 
-        return new JwtSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, jwtService, consumerService, connectApplinkManager, mockCachingHttpContentRetriever(), userManager);
-    }
-
-    private HttpContentRetriever mockCachingHttpContentRetriever()
-    {
-        LicenseRetriever licenseRetriever = mock(LicenseRetriever.class);
-        when(licenseRetriever.getLicenseStatus(PLUGIN_KEY)).thenReturn(LicenseStatus.ACTIVE);
-
-        LocaleHelper localeHelper = mock(LocaleHelper.class);
-        when(localeHelper.getLocaleTag()).thenReturn("whatever");
-
-        HttpClientFactory httpClientFactory = mock(HttpClientFactory.class);
-        HttpClient httpClient = mockHttpClient(mockRequest(EXPECTED_GET_RESPONSE));
-        when(httpClientFactory.create(any(HttpClientOptions.class))).thenReturn(httpClient);
-
-        return new CachingHttpContentRetriever(licenseRetriever, localeHelper, httpClientFactory, mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
-    }
-
-    private HttpClient mockHttpClient(Request.Builder request)
-    {
-        HttpClient httpClient = mock(HttpClient.class, RETURNS_DEEP_STUBS);
-        when(httpClient.newRequest(INTERNAL_FULL_GET_URL)).thenReturn(request);
-        when(httpClient.transformation()).thenReturn(DefaultResponseTransformation.builder());
-        return httpClient;
-    }
-
-    private Request.Builder mockRequest(String promisedHttpResponse)
-    {
-        Request.Builder requestBuilder = mock(Request.Builder.class);
-        {
-            when(requestBuilder.setHeaders(GET_HEADERS)).thenReturn(requestBuilder);
-            when(requestBuilder.setAttributes(any(Map.class))).thenReturn(requestBuilder);
-            {
-                ResponsePromise responsePromise = mock(ResponsePromise.class);
-                when(requestBuilder.execute(any(Request.Method.class))).thenReturn(responsePromise);
-
-                Promise<String> promise = mockPromise(promisedHttpResponse);
-                when(responsePromise.transform(any(ResponseTransformation.class))).thenReturn(promise);
-            }
-        }
-        return requestBuilder;
-    }
-
-    private Promise<String> mockPromise(String promisedHttpResponse)
-    {
-        Promise<String> promise = mock(Promise.class);
-        try
-        {
-            when(promise.get()).thenReturn(promisedHttpResponse);
-        }
-        catch (InterruptedException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (ExecutionException e)
-        {
-            throw new RuntimeException(e);
-        }
-        return promise;
+        return new JwtSigningRemotablePluginAccessor(mockPlugin(), baseUrlSupplier, jwtService, consumerService,
+                connectApplinkManager, mockCachingHttpContentRetriever(), userManager);
     }
 }

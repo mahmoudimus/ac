@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin;
 
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.util.MapFunctions;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -33,10 +34,10 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     private static final Logger log = LoggerFactory.getLogger(DefaultRemotablePluginAccessorBase.class);
     private static final char QUERY_PARAM_SEPARATOR = '&';
 
-    protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
+    protected DefaultRemotablePluginAccessorBase(Plugin plugin, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
     {
-        this.pluginKey = pluginKey;
-        this.pluginName = pluginName;
+        this.pluginKey = plugin.getKey();
+        this.pluginName = plugin.getName();
         this.baseUrlSupplier = baseUrlSupplier;
         this.httpContentRetriever = httpContentRetriever;
     }

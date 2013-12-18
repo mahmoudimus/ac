@@ -1,52 +1,43 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
-import com.atlassian.httpclient.api.*;
-import com.atlassian.httpclient.api.factory.HttpClientFactory;
-import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
-import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
-import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
-import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
 
-public class OAuthSigningRemotablePluginAccessorTest
+@RunWith (MockitoJUnitRunner.class)
+public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
 {
-    private static final String PLUGIN_KEY = "key";
-    private static final String PLUGIN_NAME = "name";
-    private static final String BASE_URL = "http://server:1234/contextPath";
-    private static final String FULL_PATH_URL = BASE_URL + "/path";
-    private static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
-    private static final String GET_FULL_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";
-    private static final Map<String,String> GET_HEADERS = Collections.singletonMap("header", "header value");
     private static final Map<String,String> GET_PARAMS = Collections.singletonMap("param", "param value");
     private static final Map<String,String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
     private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
-    private static final String EXPECTED_GET_RESPONSE = "expected";
 
     @Test
     public void createdRemotePluginAccessorHasCorrectPluginKey() throws ExecutionException, InterruptedException
@@ -115,54 +106,8 @@ public class OAuthSigningRemotablePluginAccessorTest
             }
         };
         OAuthLinkManager oAuthLinkManager = new MockOAuthLinkManager(mock(ServiceProviderConsumerStore.class), mock(AuthenticationConfigurationManager.class), mock(ConsumerService.class, RETURNS_DEEP_STUBS));
-        return new OAuthSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, createDummyServiceProvider(), mockCachingHttpContentRetriever(), oAuthLinkManager);
-    }
-
-    private ServiceProvider createDummyServiceProvider()
-    {
-        URI dummyUri = URI.create("http://localhost");
-        return new ServiceProvider(dummyUri, dummyUri, dummyUri);
-    }
-
-    private HttpContentRetriever mockCachingHttpContentRetriever() throws ExecutionException, InterruptedException
-    {
-        LicenseRetriever licenseRetriever = mock(LicenseRetriever.class);
-        when(licenseRetriever.getLicenseStatus(PLUGIN_KEY)).thenReturn(LicenseStatus.ACTIVE);
-
-        LocaleHelper localeHelper = mock(LocaleHelper.class);
-        when(localeHelper.getLocaleTag()).thenReturn("whatever");
-
-        HttpClientFactory httpClientFactory = mock(HttpClientFactory.class);
-        HttpClient httpClient = mockHttpClient(mockRequest(EXPECTED_GET_RESPONSE));
-        when(httpClientFactory.create(any(HttpClientOptions.class))).thenReturn(httpClient);
-
-        return new CachingHttpContentRetriever(licenseRetriever, localeHelper, httpClientFactory, mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
-    }
-
-    private HttpClient mockHttpClient(Request.Builder request)
-    {
-        HttpClient httpClient = mock(HttpClient.class, RETURNS_DEEP_STUBS);
-        when(httpClient.newRequest(GET_FULL_URL)).thenReturn(request);
-        when(httpClient.transformation()).thenReturn(DefaultResponseTransformation.builder());
-        return httpClient;
-    }
-
-    private Request.Builder mockRequest(String promisedHttpResponse) throws InterruptedException, ExecutionException
-    {
-        Request.Builder requestBuilder = mock(Request.Builder.class);
-        {
-            when(requestBuilder.setHeaders(GET_HEADERS)).thenReturn(requestBuilder);
-            when(requestBuilder.setAttributes(any(Map.class))).thenReturn(requestBuilder);
-            {
-                ResponsePromise responsePromise = mock(ResponsePromise.class);
-                when(requestBuilder.execute(any(Request.Method.class))).thenReturn(responsePromise);
-
-                Promise<String> promise = mock(Promise.class);
-                when(promise.get()).thenReturn(promisedHttpResponse);
-                when(responsePromise.transform(any(ResponseTransformation.class))).thenReturn(promise);
-            }
-        }
-        return requestBuilder;
+        return new OAuthSigningRemotablePluginAccessor(mockPlugin(), baseUrlSupplier, createDummyServiceProvider(),
+                mockCachingHttpContentRetriever(), oAuthLinkManager);
     }
 
     private static class MockOAuthLinkManager extends OAuthLinkManager
