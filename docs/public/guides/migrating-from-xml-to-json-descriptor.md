@@ -1,8 +1,8 @@
 # Migrate to JSON module descriptors and JWT
 
 ## Resources
- * [Getting Started](getting-started.html) - the hello world tutorial has been renamed to the getting started guide and now uses the new JSON descriptor format for all examples.
- * [Modules](#modules) - You can view all available modules and their respective documentation under the "JIRA Modules" and "Confluence Modules" sections of the navigation menu.
+ * [Getting Started](./getting-started.html) - the hello world tutorial has been renamed to the getting started guide and now uses the new JSON descriptor format for all examples.
+ * [Modules](../concepts/modules) - You can view all available modules and their respective documentation under the "JIRA Modules" and "Confluence Modules" sections of the navigation menu.
 
 ## Basic Add-on information
 
@@ -148,8 +148,8 @@ The `dialog-page` module has been removed. You can achieve the same result by de
 
 ### Confluence Macros
 
-* The `<remote-macro>` XML element is replaced by the [`"staticContentMacros"`](../../modules/confluence/static-content-macro.html) module
-* The `<macro-page>` XML element is replaced by the [`"dynamicContentMacros"`](../../modules/confluence/dynamic-content-macro.html) module
+* The `<remote-macro>` XML element is replaced by the [`"staticContentMacros"`](../modules/confluence/static-content-macro.html) module
+* The `<macro-page>` XML element is replaced by the [`"dynamicContentMacros"`](../modules/confluence/dynamic-content-macro.html) module
 
 # OAuth
 <div class="aui-message warning">
