@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -94,15 +95,16 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
             log.debug("Created web item: " + printNode(webItemElement));
         }
 
-        return createWebItemDescriptor(plugin, webItemElement, webItemKey, bean.getLink(), bean.isAbsolute());
+        return createWebItemDescriptor(plugin, webItemElement, webItemKey, bean.getLink(), bean.isAbsolute(), bean.getContext());
     }
 
-    private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String key, String url, boolean absolute)
+    private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String key, String url,
+                                                            boolean absolute, AddOnUrlContext urlContext)
     {
         webItemElement.addAttribute("system", "true");
 
         final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(url, key,
-                absolute, addon);
+                absolute, urlContext);
 
         descriptor.init(plugin, webItemElement);
 
