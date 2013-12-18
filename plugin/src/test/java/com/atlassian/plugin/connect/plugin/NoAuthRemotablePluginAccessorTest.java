@@ -15,9 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
@@ -25,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class NoAuthRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
 {
     private static final URI PATH_URI = URI.create("/path");
-    private static final URI FULL_PATH_URI = URI.create("/path");
     private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[] { "param value" });
 
     @Test
@@ -82,5 +79,11 @@ public class NoAuthRemotablePluginAccessorTest extends BaseSigningRemotablePlugi
         };
 
         return new NoAuthRemotablePluginAccessor(mockPlugin(), baseUrlSupplier, mockCachingHttpContentRetriever());
+    }
+
+    @Override
+    protected Map<String, String> getPostSigningHeaders(Map<String, String> preSigningHeaders)
+    {
+        return preSigningHeaders;
     }
 }

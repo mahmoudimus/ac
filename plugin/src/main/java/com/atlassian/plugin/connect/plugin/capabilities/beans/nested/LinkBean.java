@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.LinkBeanBuilder;
-import com.google.common.base.Strings;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleBeanUtils.copyFieldsByNameAndType;
 

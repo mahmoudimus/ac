@@ -19,6 +19,7 @@ table.aui
         tr
           th Name
           th Type
+          th
           th Description
     tbody
         - each prop in module.properties
@@ -76,26 +77,28 @@ table.aui
                             +auiPropertyLozenge
                                 = prop.pattern
                 td
+                    - if (prop.required)
+                        +auiLozenge(class='aui-lozenge-error') Required
+                    - if (prop.defaultValue)
+                        div
+                            | defaults to&nbsp;
+                            code
+                                = prop.defaultValue
+                td
                     div
                         - if (prop.fieldDescription)
                             != prop.fieldDescription
                         - else
                             != prop.description
-                    - if (prop.required)
-                        +auiLozenge(class='aui-lozenge-error') Required
-                    - if (prop.enum)
-                        div
-                            strong Valid values:
-                            - each value in prop.enum
-                                | &nbsp;
-                                +auiLozenge
-                                    = value
-                    - if (prop.defaultValue)
-                        div
-                            strong Default value:
-                            | &nbsp;
-                            +auiLozenge(class='aui-lozenge-success')
-                                = prop.defaultValue
+
+                        - if (prop.enum)
+                            p
+                                | Allowed values:
+                                ul
+                                - each value in prop.enum
+                                    li
+                                        code
+                                            = value
 
 //- h2 JSON Schema
 //- textarea.code

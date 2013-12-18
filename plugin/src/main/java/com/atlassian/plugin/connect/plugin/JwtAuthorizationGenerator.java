@@ -1,17 +1,149 @@
 package com.atlassian.plugin.connect.plugin;
 
+import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Option;
+import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.core.JwtUtil;
+import com.atlassian.jwt.core.TimeUtil;
+import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
+import com.atlassian.jwt.core.writer.JwtClaimsBuilder;
+import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import com.atlassian.jwt.writer.JwtJsonBuilder;
+import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicHeaderValueParser;
+import org.apache.http.message.ParserCursor;
+import org.apache.http.util.CharArrayBuffer;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
+import java.net.URLDecoder;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+  * Set the system property {@link JwtAuthorizationGenerator#JWT_EXPIRY_SECONDS_PROPERTY} with an integer value to control the size of the expiry window
+  * (default is {@link JwtAuthorizationGenerator#JWT_EXPIRY_WINDOW_SECONDS_DEFAULT}).
+ */
 public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
 {
-    @Override
-    public Option<String> generate(HttpMethod method, URI url, Map<String, List<String>> parameters)
+    private static final char[] QUERY_DELIMITERS = new char[] { '&' };
+
+    private static final String JWT_EXPIRY_SECONDS_PROPERTY = "com.atlassian.connect.jwt.expiry_seconds";
+    /**
+     * Default of 3 minutes.
+     */
+    private static final int JWT_EXPIRY_WINDOW_SECONDS_DEFAULT = 60 * 3;
+    private static final int JWT_EXPIRY_WINDOW_SECONDS = ConfigurationUtils.getIntSystemProperty(JWT_EXPIRY_SECONDS_PROPERTY, JWT_EXPIRY_WINDOW_SECONDS_DEFAULT);
+
+    private final JwtService jwtService;
+    private final ApplicationLink applicationLink;
+    private final ConsumerService consumerService;
+
+    public JwtAuthorizationGenerator(JwtService jwtService, ApplicationLink applicationLink, ConsumerService consumerService)
     {
-        return Option.none(String.class); // this appears to be needed only for adding an OAuth1 WWW-Authenticate or Authentication header
+        this.jwtService = checkNotNull(jwtService);
+        this.applicationLink = checkNotNull(applicationLink);
+        this.consumerService = checkNotNull(consumerService);
+    }
+
+    @Override
+    public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, List<String>> parameters)
+    {
+        checkArgument(null != parameters, "Parameters Map argument cannot be null");
+
+        Map<String, String[]> paramsAsArrays = Maps.transformValues(parameters, new Function<List<String>, String[]>()
+        {
+            @Override
+            public String[] apply(List<String> input)
+            {
+                return checkNotNull(input).toArray(new String[input.size()]);
+            }
+        });
+        return Option.some(JwtUtil.JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, paramsAsArrays, null, consumerService.getConsumer().getKey(), jwtService, applicationLink));
+    }
+
+    static String encodeJwt(HttpMethod httpMethod, URI targetPath, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, ApplicationLink appLink)
+    {
+        checkArgument(null != httpMethod, "HttpMethod argument cannot be null");
+        checkArgument(null != targetPath, "URI argument cannot be null");
+
+        JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
+                .issuedAt(TimeUtil.currentTimeSeconds())
+                .expirationTime(TimeUtil.currentTimePlusNSeconds(JWT_EXPIRY_WINDOW_SECONDS))
+                .issuer(issuerId);
+
+        if (null != userKeyValue)
+        {
+            jsonBuilder = jsonBuilder.subject(userKeyValue);
+        }
+
+        Map<String, String[]> completeParams = params;
+
+        try
+        {
+            if (!StringUtils.isEmpty(targetPath.getQuery()))
+            {
+                completeParams = new HashMap<String, String[]>(params);
+                completeParams.putAll(constructParameterMap(targetPath));
+            }
+
+            JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, new CanonicalHttpUriRequest(httpMethod.toString(), targetPath.getPath(), "", completeParams));
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return jwtService.issueJwt(jsonBuilder.build(), appLink);
+    }
+
+    private static Map<String, String[]> constructParameterMap(URI uri) throws UnsupportedEncodingException
+    {
+        final String query = uri.getQuery();
+        if (query == null)
+        {
+            return Collections.emptyMap();
+        }
+
+        Map<String, String[]> queryParams = new HashMap<String, String[]>();
+
+        CharArrayBuffer buffer = new CharArrayBuffer(query.length());
+        buffer.append(query);
+        ParserCursor cursor = new ParserCursor(0, buffer.length());
+
+        while (!cursor.atEnd())
+        {
+            NameValuePair nameValuePair = BasicHeaderValueParser.DEFAULT.parseNameValuePair(buffer, cursor, QUERY_DELIMITERS);
+
+            if (!StringUtils.isEmpty(nameValuePair.getName()))
+            {
+                String decodedName = urlDecode(nameValuePair.getName());
+                String decodedValue = urlDecode(nameValuePair.getValue());
+                String[] oldValues = queryParams.get(decodedName);
+                String[] newValues = null == oldValues ? new String[1] : Arrays.copyOf(oldValues, oldValues.length + 1);
+                newValues[newValues.length - 1] = decodedValue;
+                queryParams.put(decodedName, newValues);
+            }
+        }
+
+        return queryParams;
+    }
+
+    private static String urlDecode(final String content) throws UnsupportedEncodingException
+    {
+        return null == content ? null : URLDecoder.decode(content, "UTF-8");
     }
 }

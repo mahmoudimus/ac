@@ -1,10 +1,6 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.httpclient.api.DefaultResponseTransformation;
-import com.atlassian.httpclient.api.HttpClient;
-import com.atlassian.httpclient.api.Request;
-import com.atlassian.httpclient.api.ResponsePromise;
-import com.atlassian.httpclient.api.ResponseTransformation;
+import com.atlassian.httpclient.api.*;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.oauth.ServiceProvider;
@@ -23,21 +19,21 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-public class BaseSigningRemotablePluginAccessorTest
+public abstract class BaseSigningRemotablePluginAccessorTest
 {
     protected static final String PLUGIN_KEY = "key";
     protected static final String PLUGIN_NAME = "name";
     protected static final String CONTEXT_PATH = "/contextPath";
     protected static final String BASE_URL = "http://server:1234" + CONTEXT_PATH;
     protected static final String FULL_PATH_URL = BASE_URL + "/path";
-    protected static final Map<String, String> GET_HEADERS = Collections.singletonMap("header", "header value");
+    protected static final Map<String, String> UNAUTHED_GET_HEADERS = Collections.singletonMap("header", "header value");
     protected static final String EXPECTED_GET_RESPONSE = "expected";
     protected static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
     protected static final String GET_FULL_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";
+
+    protected abstract Map<String, String> getPostSigningHeaders(Map<String,String> preSigningHeaders);
 
     protected ServiceProvider createDummyServiceProvider()
     {
@@ -81,7 +77,7 @@ public class BaseSigningRemotablePluginAccessorTest
     {
         Request.Builder requestBuilder = mock(Request.Builder.class);
         {
-            when(requestBuilder.setHeaders(GET_HEADERS)).thenReturn(requestBuilder);
+            when(requestBuilder.setHeaders(getPostSigningHeaders(UNAUTHED_GET_HEADERS))).thenReturn(requestBuilder);
             when(requestBuilder.setAttributes(any(Map.class))).thenReturn(requestBuilder);
             {
                 ResponsePromise responsePromise = mock(ResponsePromise.class);

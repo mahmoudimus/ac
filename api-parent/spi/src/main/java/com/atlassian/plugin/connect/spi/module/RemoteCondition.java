@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.spi.module;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -13,15 +9,16 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.base.Function;
-
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
