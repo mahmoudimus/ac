@@ -15,17 +15,11 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -54,7 +48,7 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
     @Test
     public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever() throws ExecutionException, InterruptedException
     {
-        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS, GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
+        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS, UNAUTHED_GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
     }
 
     @Test
@@ -108,6 +102,12 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
         OAuthLinkManager oAuthLinkManager = new MockOAuthLinkManager(mock(ServiceProviderConsumerStore.class), mock(AuthenticationConfigurationManager.class), mock(ConsumerService.class, RETURNS_DEEP_STUBS));
         return new OAuthSigningRemotablePluginAccessor(mockPlugin(), baseUrlSupplier, createDummyServiceProvider(),
                 mockCachingHttpContentRetriever(), oAuthLinkManager);
+    }
+
+    @Override
+    protected Map<String, String> getPostSigningHeaders(Map<String, String> preSigningHeaders)
+    {
+        return preSigningHeaders;
     }
 
     private static class MockOAuthLinkManager extends OAuthLinkManager

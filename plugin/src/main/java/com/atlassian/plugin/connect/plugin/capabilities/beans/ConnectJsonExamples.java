@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleCondi
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.*;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;

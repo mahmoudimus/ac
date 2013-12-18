@@ -4,13 +4,7 @@ import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.*;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 

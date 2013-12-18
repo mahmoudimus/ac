@@ -94,6 +94,20 @@ function entityToModel(schemaEntity) {
 
     if (model.type === 'object') {
         model.properties = collapseArrayAndObjectProperties(schemaEntity.properties, schemaEntity.required, model);
+        model.properties.sort(function(a, b) {
+            // required then alpha
+            if (a.required && !b.required) {
+                return -1;
+            }
+            if (b.required && !a.required) {
+                return 1;
+            }
+            a = (a.title || a.key).toLowerCase();
+            b = (a.title || b.key).toLowerCase();
+            if (a < b) return -1;
+            if (a > b) return 1;
+            return 0;
+        });
     }
 
     return model;
@@ -106,7 +120,11 @@ function entityToModel(schemaEntity) {
 function entitiesToModel(entities) {
     entities = util.isArray(entities) ? entities : [entities];
     entities = _.map(entities, entityToModel);
-    entities.sort(function(a, b) { return a.name > b.name; });
+    entities.sort(function(a, b) {
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
+        return 0;
+    });
     entities = _.zipObject(_.pluck(entities, "slug"), entities);
     return entities;
 }

@@ -1,10 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroHttpMethod;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.*;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
