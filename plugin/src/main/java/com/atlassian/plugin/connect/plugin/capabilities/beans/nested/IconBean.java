@@ -35,9 +35,9 @@ public class IconBean
 
     public IconBean()
     {
-        this.width = width;
-        this.height = height;
-        this.url = url;
+        this.width = 16;
+        this.height = 16;
+        this.url = "";
     }
 
     public IconBean(IconBeanBuilder builder)
