@@ -7,6 +7,7 @@ import javax.inject.Named;
 
 import com.atlassian.jira.plugin.webfragment.conditions.CanConvertToIssueCondition;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.ViewingOwnProfileCondition;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
 
 import com.google.common.collect.ImmutableMap;
@@ -18,7 +19,7 @@ import static com.google.common.collect.Maps.newHashMap;
 /*
  * NOTE: this class must be under the beans package (or a sub package) so our doclet can pick it up
  */
-@Named
+@JiraComponent
 public class JiraConditions extends ConditionsProvider
 {
     public static final String CONDITION_LIST = getConditionListAsMarkdown(getConditionMap());

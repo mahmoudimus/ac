@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.inject.Named;
 
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.Condition;
 
 import com.google.common.collect.ImmutableMap;
@@ -15,7 +16,7 @@ import static com.google.common.collect.Maps.newHashMap;
 /*
  * NOTE: this class must be under the beans package (or a sub package) so our doclet can pick it up
  */
-@Named
+@ConfluenceComponent
 public class ConfluenceConditions extends ConditionsProvider
 {
     
