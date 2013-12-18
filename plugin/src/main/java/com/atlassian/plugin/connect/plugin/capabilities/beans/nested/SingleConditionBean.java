@@ -3,10 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BeanWithParams;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SingleConditionBeanBuilder;
-
 import com.google.common.base.Objects;
-
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#SINGLE_CONDITION_EXAMPLE}

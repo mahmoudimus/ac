@@ -1,15 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.*;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
