@@ -27,28 +27,34 @@ program
 /**
  * Transform the schema properties entry for a schema entity into a shallow list of primitives and references.
  */
-function collapseArrayAndObjectProperties(properties, required, parentId) {
+function collapseArrayAndObjectProperties(properties, required, parent) {
     return _.map(properties, function(property, id) {
         if (property.type === "array") {
             property.id = id;
             if (property.items && property.items["$ref"] === "#") {
                 // self reference
                 property.arrayType = 'object';
-                property.arrayTypeIds = [parentId];
+                property.arrayTypes = [{id: parent.id, title: parent.name}];
             } else {
                 property.arrayType = property.items.type;
                 if (property.arrayType === 'object') {
-                    property.arrayTypeIds = [];
+                    property.arrayTypes = [];
                     if (property.items.anyOf) {
                         _.each(property.items.anyOf, function (child) {
-                            property.arrayTypeIds.push(child.id);
+                            property.arrayTypes.push({
+                                id: child.id,
+                                title: child.title || child.id
+                            });
                         });
                     } else if (property.items.id) {
-                        property.arrayTypeIds.push(property.items.id);
+                        property.arrayTypes.push({
+                            id: property.items.id,
+                            title: property.items.title || property.items.id
+                        });
                     }
                 }
             }
-            property = _.pick(property, ["id", "type", "title", "description", "arrayType", "arrayTypeIds"]);
+            property = _.pick(property, ["id", "type", "title", "description", "arrayType", "arrayTypes"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
             property = _.pick(property, ["id", "type", "title", "description"]);
@@ -82,20 +88,8 @@ function entityToModel(schemaEntity) {
         type: schemaEntity.type
     };
 
-    if (model.type === 'array') {
-        model.arrayType = schemaEntity.items.type;
-        if (model.arrayType === 'object') {
-            model.arrayTypeIds = [];
-            if (schemaEntity.items.anyOf) {
-                _.each(schemaEntity.items.anyOf, function (child) {
-                    model.arrayTypeIds.push(child.id);
-                });
-            } else if (schemaEntity.items.id) {
-                model.arrayTypeIds.push(schemaEntity.items.id);
-            }
-        }
-    } else if (model.type === 'object') {
-        model.properties = collapseArrayAndObjectProperties(schemaEntity.properties, schemaEntity.required, schemaEntity.id);
+    if (model.type === 'object') {
+        model.properties = collapseArrayAndObjectProperties(schemaEntity.properties, schemaEntity.required, model);
     }
 
     return model;
@@ -200,7 +194,7 @@ function findFragmentEntities(schemas) {
     var entities = jsonPath(schemas, "$.*.properties.modules.properties.*.items.properties..*");
     entities = _.filter(entities, function(obj) {
         // object must have an id and not be a primitive array
-        return obj.id && (obj.type !== "array");
+        return obj && typeof obj === "object" && obj.id && obj.type === "object";
     });
     return entitiesToModel(entities);
 }

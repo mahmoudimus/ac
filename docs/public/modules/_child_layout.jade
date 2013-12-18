@@ -53,11 +53,10 @@ table.aui
                     - else if (prop.type === 'array')
                         - if (prop.arrayType === 'object')
                             | [&nbsp;
-                            prop.arrayTypeIds.length
-                            - each typeId in prop.arrayTypeIds
-                                a(href = baseUrl + '/' + entityLinks[typeId] + '.html')
+                            - each type in prop.arrayTypes
+                                a(href = baseUrl + '/' + entityLinks[type.id] + '.html')
                                     +auiPropertyLozenge(class='aui-lozenge-complete')
-                                        = typeId
+                                        = type.title
                                 | ,&nbsp;
                             | &hellip; ]
                         - else
