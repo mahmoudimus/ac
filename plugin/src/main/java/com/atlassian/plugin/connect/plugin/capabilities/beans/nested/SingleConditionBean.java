@@ -8,6 +8,7 @@ import com.google.common.base.Objects;
 /**
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#SINGLE_CONDITION_EXAMPLE}
  * @since 1.0
+ * @schemaTitle Single Condition
  */
 public class SingleConditionBean extends BeanWithParams implements ConditionalBean
 {

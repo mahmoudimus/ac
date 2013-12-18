@@ -12,6 +12,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleBeanUt
  * Defines an icon to display
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ICON_EXAMPLE}
  * @since 1.0
+ * @schemaTitle Icon
  */
 public class IconBean
 {
