@@ -18,12 +18,12 @@ import com.google.common.base.Objects;
  * 
  * The valid condition names are as follows:
  * 
- *: **JIRA**
+ *#### JIRA
  * {@see com.atlassian.plugin.connect.plugin.capabilities.beans.JiraConditions#CONDITION_LIST}
  * 
  * 
  * 
- *: **CONFLUENCE**
+ *#### CONFLUENCE
  * {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConfluenceConditions#CONDITION_LIST}
  * 
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#SINGLE_CONDITION_EXAMPLE}

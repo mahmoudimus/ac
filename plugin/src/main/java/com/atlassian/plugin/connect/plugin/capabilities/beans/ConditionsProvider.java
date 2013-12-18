@@ -33,6 +33,6 @@ public abstract class ConditionsProvider
 
     private static String escapeUnderscores(String input)
     {
-        return StringUtils.replace(input, "_", "\\_");
+        return "`" + input + "`";
     }
 }

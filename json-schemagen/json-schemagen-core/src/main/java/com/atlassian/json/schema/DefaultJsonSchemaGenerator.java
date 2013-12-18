@@ -74,8 +74,7 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
                 }
                 catch (ClassNotFoundException e)
                 {
-                    //TODO: should we throw or ignore?
-                    e.printStackTrace();
+                    throw new RuntimeException("Unable to find class for interface", e);
                 }
             }
             schema.setAnyOf(anyOf);
@@ -112,8 +111,7 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
                 }
                 catch (ClassNotFoundException e)
                 {
-                    //TODO: should we throw or ignore?
-                    e.printStackTrace();
+                    throw new RuntimeException("Unable to find class for interface", e);
                 }
             }
             schema.setAnyOf(anyOf);
