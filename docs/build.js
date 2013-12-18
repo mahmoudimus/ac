@@ -77,7 +77,7 @@ function entityToModel(schemaEntity) {
     var model = {
         id: schemaEntity.id,
         name: name,
-        slug: slugify(name),
+        slug: slugify(schemaEntity.pageName || name),
         description: description,
         type: schemaEntity.type
     };
@@ -170,23 +170,27 @@ function writeEntitiesToDisk(entities, pathMappings) {
 function findRootEntities(schemas) {
     // find top level modules
     var entities = jsonPath(schemas, "$.*.*[?(@.id)]");
+    // exclude the module lists, they're rendered separately in findJiraModules etc.
+    entities = _.filter(entities, function(entity) {return entity.id !== "moduleList";});
     // add the descriptor root itself
     entities.unshift(schemas.jira);
     return entitiesToModel(entities);
 }
 
 /**
- * Find module types supported by JIRA (webItemModuleBean, searchRequestViewModuleBean, etc.)
+ * Find module types supported by a particular product (webItemModuleBean, staticContentMacroModuleBean, etc.)
  */
-function findJiraModules(schemas) {
-    return entitiesToModel(jsonPath(schemas, "$.jira.properties.modules.properties.*[?(@.id)]"));
-}
+function findProductModules(schemas, productId, productDisplayName) {
+    // find product modules
+    var productModules = jsonPath(schemas, "$." + productId + ".properties.modules.properties.*[?(@.id)]");
 
-/**
- * Find module types supported by Confluence (webItemModuleBean, staticContentMacroModuleBean, etc.)
- */
-function findConfluenceModules(schemas) {
-    return entitiesToModel(jsonPath(schemas, "$.confluence.properties.modules.properties.*[?(@.id)]"));
+    var moduleList = schemas[productId].properties.modules;
+    // the module list serves as our landing page for each product's modules
+    moduleList.pageName = "index";
+    moduleList.title = productDisplayName + " Module List";
+    // make the module list the first entry
+    productModules.unshift(moduleList);
+    return entitiesToModel(productModules);
 }
 
 /**
@@ -215,8 +219,8 @@ function rebuildHarpSite() {
 
     var entities = {
         root: findRootEntities(schemas),
-        jira: findJiraModules(schemas),
-        confluence: findConfluenceModules(schemas),
+        jira: findProductModules(schemas, "jira", "JIRA"),
+        confluence: findProductModules(schemas, "confluence", "Confluence"),
         fragment: findFragmentEntities(schemas)
     };
 

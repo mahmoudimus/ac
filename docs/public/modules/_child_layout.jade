@@ -28,11 +28,22 @@ table.aui
                         = prop.key
                 td
                     - if (prop.type === 'object')
-                        - if (entityLinks[prop.id])
+                        - if (prop.id === 'moduleList')
+                            a(href = baseUrl + '/modules/jira/')
+                                +auiPropertyLozenge(class='aui-lozenge-complete')
+                                    | JIRA Modules
+                            | &nbsp;or&nbsp;
+                            a(href = baseUrl + '/modules/confluence/')
+                                +auiPropertyLozenge(class='aui-lozenge-complete')
+                                    | Confluence Modules
+                        - else if (entityLinks[prop.id])
                             a(href = baseUrl + '/' + entityLinks[prop.id] + '.html')
                                 - if (prop.title)
                                     +auiPropertyLozenge(class='aui-lozenge-complete')
                                         = prop.title
+                                - else if (prop.name)
+                                    +auiPropertyLozenge(class='aui-lozenge-complete')
+                                        = prop.name
                                 - else
                                     +auiPropertyLozenge(class='aui-lozenge-complete')
                                         = prop.id

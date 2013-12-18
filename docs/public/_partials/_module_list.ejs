@@ -1,8 +1,13 @@
 <div class="aui-nav-heading">
-    <strong><%= title %></strong>
+    <% if (modules.index) { %>
+        <a href="<%= baseUrl %>/<%= modules.index.selfLink %>.html"><%= modules.index.name %></a>
+    <% } else { %>
+        <strong><%= title %></strong>
+    <% } %>
 </div>
 <ul class="aui-nav">
     <% for (var key in modules) { %>
+        <% if (key === "index") continue; %>
         <% var module = modules[key]; %>
         <% var selected = module.selfLink === current.path.join("/") ? "class=aui-nav-selected" : ""; %>
         <li <%= selected %>>
