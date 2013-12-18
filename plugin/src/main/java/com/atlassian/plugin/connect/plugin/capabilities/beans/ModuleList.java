@@ -108,7 +108,7 @@ public class ModuleList extends BaseModuleBean
      * Other than that it is the same as other pages.
      *
      * @exampleJson {@see ConnectJsonExamples#CONFIGURE_PAGE_EXAMPLE}
-=    * @schemaTitle Configure Page
+     * @schemaTitle Configure Page
      */
     @ConnectModule (ConfigurePageModuleProvider.class)
     private ConnectPageModuleBean configurePage;
