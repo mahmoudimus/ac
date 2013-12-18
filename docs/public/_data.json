@@ -32,9 +32,6 @@
         "javascript-api.html": {
             "title": "Javascript API"
         },
-        "licensing.html": {
-            "title": "Licensing"
-        },
         "styling-with-aui.html": {
             "title": "Styling Add-ons with AUI"
         },
@@ -43,6 +40,9 @@
         },
         "development-loop.html": {
             "title": "Development Loop"
+        },
+        "licensing.html": {
+            "title": "Licensing"
         }
     },
     "resources": {
