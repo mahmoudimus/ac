@@ -45,10 +45,10 @@ function collapseArrayAndObjectProperties(properties, required, parentId) {
                     }
                 }
             }
-            property = _.pick(property, ["id", "type", "title", "description", "arrayType", "arrayTypeIds"]);
+            property = _.pick(property, ["id", "type", "title", "description","fieldDescription", "arrayType", "arrayTypeIds"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
-            property = _.pick(property, ["id", "type", "title", "description"]);
+            property = _.pick(property, ["id", "type", "title", "description","fieldDescription"]);
             // if there's no id, it means that any object is allowed here
         }
 
@@ -61,6 +61,10 @@ function collapseArrayAndObjectProperties(properties, required, parentId) {
             property.description = renderMarkdown(property.description);
         }
 
+        if (property.fieldDescription) {
+            property.fieldDescription = renderMarkdown(property.fieldDescription);
+        }
+
         return property;
     });
 }
@@ -68,7 +72,6 @@ function collapseArrayAndObjectProperties(properties, required, parentId) {
 function schemaToModel(schemaEntity) {
     var name = schemaEntity.title || schemaEntity.id;
     var description = renderMarkdown(schemaEntity.description || name);
-
     var model = {
         id: schemaEntity.id,
         name: name,

@@ -9,6 +9,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleBeanUt
 /**
  * Represents a link, its optional title and alternative text
  *
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#LINK_EXAMPLE}
  * @schemaTitle Link
  * @since 1.0
  */

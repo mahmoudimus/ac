@@ -25,8 +25,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.Link
  * Dynamic Content Macros render content on every page request and are suitable for add-ons that need to display content
  * that changes over time, or content that is specific to the authenticated user.
  *
- * Json Example:
- * @exampleJson {@see ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
  * @schemaTitle Dynamic Content Macro
  * @since 1.0
  */

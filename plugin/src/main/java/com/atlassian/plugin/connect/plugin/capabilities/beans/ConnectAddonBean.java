@@ -17,8 +17,8 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  * The root descriptor for an Atlassian Connect add on
  *
- * @exampleJson Json Example: {@see ConnectJsonExamples#ADDON_EXAMPLE}
- * @exampleJson Kitchen Sink: <p class="expandNextPre"></p>{@see ConnectJsonExamples#KITCHEN_SINK_EXAMPLE}
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_EXAMPLE}
+ * @exampleJson Kitchen Sink: <p class="expandNextPre"></p>{@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#KITCHEN_SINK_EXAMPLE}
  * @schemaTitle Connect Addon Root Descriptor
  * @since 1.0
  */

@@ -71,7 +71,10 @@ table.aui
                                 = prop.pattern
                 td
                     div
-                        != prop.description
+                        - if (prop.fieldDescription)
+                            != prop.fieldDescription
+                        - else
+                            != prop.description
                     - if (prop.required)
                         +auiLozenge(class='aui-lozenge-error') Required
                     - if (prop.enum)

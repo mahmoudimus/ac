@@ -16,8 +16,7 @@ import com.google.gson.annotations.SerializedName;
  *
  * If no configure page modules are specified then no configure button will be included on the install page.
  *
- * Json Example:
- * @exampleJson {@see ConnectJsonExamples#CONFIGURE_PAGE_EXAMPLE}
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#CONFIGURE_PAGE_EXAMPLE}
  * @schemaTitle Configure Page
  * @since 1.0
  */

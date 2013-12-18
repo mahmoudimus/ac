@@ -11,11 +11,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Each property in this object is a url that can be absolute or relative to the addon's baseUrl.
  * When a lifecycle event is fired, it will POST to the appropriate url registered for the event.
  * 
- * payload:
- * @exampleJson {@see ConnectJsonExamples#PARAMS_EXAMPLE}
+ * @exampleJson payload: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PARAMS_EXAMPLE}
  * 
- * example:
- * @exampleJson {@see ConnectJsonExamples#PARAMS_EXAMPLE}
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PARAMS_EXAMPLE}
  * 
  * @schemaTitle Lifecycle
  */
