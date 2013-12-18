@@ -143,18 +143,17 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
 
         Multimap<String, String> queryParams = HashMultimap.create();
 
-        BasicHeaderValueParser parser = BasicHeaderValueParser.DEFAULT;
         CharArrayBuffer buffer = new CharArrayBuffer(query.length());
         buffer.append(query);
         ParserCursor cursor = new ParserCursor(0, buffer.length());
 
         while (!cursor.atEnd())
         {
-            NameValuePair nvp = parser.parseNameValuePair(buffer, cursor, QUERY_DELIMITERS);
+            NameValuePair nameValuePair = BasicHeaderValueParser.DEFAULT.parseNameValuePair(buffer, cursor, QUERY_DELIMITERS);
 
-            if (nvp.getName().length() > 0)
+            if (nameValuePair.getName().length() > 0)
             {
-                queryParams.put(urlDecode(nvp.getName()), urlDecode(nvp.getValue()));
+                queryParams.put(urlDecode(nameValuePair.getName()), urlDecode(nameValuePair.getValue()));
             }
         }
 
