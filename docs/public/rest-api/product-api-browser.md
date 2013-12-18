@@ -1,4 +1,4 @@
-# REST API Browser
+# Product API Browser
 
 Atlassian products have a rich set of REST APIs for you to use. These APIs are the way that you interact with the Atlassian application's features and data. The REST API Browser will help you get acquainted with the available APIs.
 
