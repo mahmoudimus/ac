@@ -36,13 +36,12 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
     @Override
     public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute)
     {
-        return new RemoteConfluenceWebItemModuleDescriptor(urlVariableSubstitutor, contextMapURLSerializer, contextMapURLSerializer, webFragmentHelper, url, linkId, absolute);
+        return new RemoteConfluenceWebItemModuleDescriptor(urlVariableSubstitutor, contextMapURLSerializer, webFragmentHelper, url, linkId, absolute);
     }
 
     private static final class RemoteConfluenceWebItemModuleDescriptor extends ConfluenceWebItemModuleDescriptor
     {
         private final UrlVariableSubstitutor urlVariableSubstitutor;
-        private final ContextMapURLSerializer urlParametersSerializer;
         private final ContextMapURLSerializer contextMapURLSerializer;
         private final WebFragmentHelper webFragmentHelper;
         private final String url;
@@ -51,7 +50,6 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
 
         private RemoteConfluenceWebItemModuleDescriptor(
                 UrlVariableSubstitutor urlVariableSubstitutor,
-                ContextMapURLSerializer urlParametersSerializer,
                 ContextMapURLSerializer contextMapURLSerializer,
                 WebFragmentHelper webFragmentHelper,
                 String url,
@@ -59,7 +57,6 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
                 boolean absolute)
         {
             this.urlVariableSubstitutor = urlVariableSubstitutor;
-            this.urlParametersSerializer = urlParametersSerializer;
             this.contextMapURLSerializer = contextMapURLSerializer;
             this.webFragmentHelper = webFragmentHelper;
             this.url = url;
