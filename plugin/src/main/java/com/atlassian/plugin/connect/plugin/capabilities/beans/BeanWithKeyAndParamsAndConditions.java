@@ -12,7 +12,6 @@ public class BeanWithKeyAndParamsAndConditions extends BeanWithKeyAndParams
 {
     /**
      * Conditions can be added to display only when all the given conditions are true.
-     *
      */
     private List<ConditionalBean> conditions;
 

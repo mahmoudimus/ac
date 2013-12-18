@@ -96,43 +96,12 @@ div.ac-properties
                         li
                             code
                                 = value
-        div.aui-group
-            div.aui-item.ac-property-key
-                h5 Description
-            div.aui-item
-                - if (prop.fieldDescription)
-                    != prop.fieldDescription
-                - else
-                    != prop.description
-
-script.
-    var cmOpts = {
-        mode: "javascript",
-        theme: "neat",
-        lineNumbers:true,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-        indentWithTabs:false,
-        electricChars:true,
-        matchBrackets:true,
-        autoCloseBrackets:true,
-        highlightSelectionMatches:true,
-        indentUnit:2,
-        lineWrapping: true,
-        readOnly:true
-    };
-    $('.code').each(function(){
-        CodeMirror.fromTextArea(this, cmOpts);
-    });
-
-    function cmIfyPreCodeBlocks(block){
-        var sample = block;
-        var text = sample.textContent || sample.innerText;
-        var newOpts = cmOpts;
-        newOpts.value = text;
-        CodeMirror(
-            function(node){
-                sample.parentNode.replaceChild(node, sample)
-            }, newOpts
-        );
-    }
-    $('pre code').each(function(){cmIfyPreCodeBlocks(this)});
+        - if (prop.fieldDescription || prop.description)
+            div.aui-group
+                div.aui-item.ac-property-key
+                    h5 Description
+                div.aui-item
+                    - if (prop.fieldDescription)
+                        != prop.fieldDescription
+                    - else
+                        != prop.description
