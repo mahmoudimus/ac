@@ -61,7 +61,6 @@ public class JiraConditions extends ConditionsProvider
     public static final String HAS_ISSUE_PERMISSION = "has_issue_permission";
     public static final String HAS_PROJECT_PERMISSION = "has_project_permission";
 
-    @Inject
     public JiraConditions()
     {
         this.conditions = getConditionMap();
