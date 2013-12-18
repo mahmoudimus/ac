@@ -144,6 +144,6 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
 
     private static String urlDecode(final String content) throws UnsupportedEncodingException
     {
-        return URLDecoder.decode(content, "UTF-8");
+        return null == content ? null : URLDecoder.decode(content, "UTF-8");
     }
 }
