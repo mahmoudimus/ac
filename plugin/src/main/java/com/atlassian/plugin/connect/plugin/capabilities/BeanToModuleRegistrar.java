@@ -23,6 +23,7 @@ import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.osgi.framework.BundleContext;
@@ -128,7 +129,8 @@ public class BeanToModuleRegistrar
                     }
                     else
                     {
-                        beanList = (List<? extends ModuleBean>) newArrayList((ModuleBean) field.get(moduleList));
+                        ModuleBean moduleBean = (ModuleBean) field.get(moduleList);
+                        beanList = moduleBean == null ? ImmutableList.<ModuleBean>of() : newArrayList(moduleBean);
                     }
 
                     descriptorsToRegister.addAll(getDescriptors(ctx, field.getName(), anno, beanList));
