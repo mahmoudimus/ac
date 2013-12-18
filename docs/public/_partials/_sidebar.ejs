@@ -22,7 +22,10 @@
             <% } %>
             </ul>
 
-            <%- partial('_module_list.ejs', { title: "Root Modules", modules: entities.root }) %>
+            <div class="aui-nav-heading">
+                <a href="<%= baseUrl %>/modules/">AddOn Descriptor</a>
+            </div>
+
             <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira }) %>
             <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence }) %>
 
