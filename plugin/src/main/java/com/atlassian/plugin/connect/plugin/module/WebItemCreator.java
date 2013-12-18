@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
@@ -20,7 +21,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
 import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
@@ -40,14 +40,17 @@ public final class WebItemCreator
 {
     private final ConditionProcessor conditionProcessor;
     private final ProductSpecificWebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
+    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
     private static final Logger log = LoggerFactory.getLogger(WebItemCreator.class);
 
     @Autowired
-    public WebItemCreator(ConditionProcessor conditionProcessor, ProductSpecificWebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
+    public WebItemCreator(ConditionProcessor conditionProcessor, ProductSpecificWebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                          RemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         this.conditionProcessor = conditionProcessor;
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
+        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
     }
 
     public Builder newBuilder()
@@ -157,7 +160,7 @@ public final class WebItemCreator
         {
             config.addAttribute("system", "true");
             final WebItemModuleDescriptor descriptor = webItemModuleDescriptorFactory.createWebItemModuleDescriptor(url, linkId,
-                    absolute, product);
+                    absolute, product, remotablePluginAccessorFactory.get(plugin.getKey()));
             descriptor.init(plugin, config);
             return descriptor;
         }

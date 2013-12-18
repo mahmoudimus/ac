@@ -22,23 +22,21 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final ContextMapURLSerializer contextMapURLSerializer;
     private final WebFragmentHelper webFragmentHelper;
-    private final RemotablePluginAccessor remotablePluginAccessor;
 
     @Autowired
     public ConfluenceWebItemModuleDescriptorFactory(
             UrlVariableSubstitutor urlVariableSubstitutor,
             ContextMapURLSerializer contextMapURLSerializer,
-            WebFragmentHelper webFragmentHelper,
-            RemotablePluginAccessor remotablePluginAccessor)
+            WebFragmentHelper webFragmentHelper)
     {
         this.webFragmentHelper = checkNotNull(webFragmentHelper);
         this.contextMapURLSerializer = checkNotNull(contextMapURLSerializer);
         this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
-        this.remotablePluginAccessor = checkNotNull(remotablePluginAccessor);
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute, AddOnUrlContext addOnUrlContext)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute, AddOnUrlContext addOnUrlContext,
+                                                                 RemotablePluginAccessor remotablePluginAccessor)
     {
         return new RemoteConfluenceWebItemModuleDescriptor(urlVariableSubstitutor, contextMapURLSerializer, webFragmentHelper,
                 remotablePluginAccessor, url, linkId, absolute, addOnUrlContext);
@@ -79,6 +77,12 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         {
             return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer,
                     remotablePluginAccessor, url, linkId, absolute, addOnUrlContext));
+        }
+
+        @Override
+        public void destroy()
+        {
+
         }
     }
 }

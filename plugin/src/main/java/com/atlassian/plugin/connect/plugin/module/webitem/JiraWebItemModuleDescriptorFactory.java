@@ -27,7 +27,6 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final ContextMapURLSerializer contextMapURLSerializer;
     private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final RemotablePluginAccessor remotablePluginAccessor;
 
     @Autowired
     public JiraWebItemModuleDescriptorFactory(
@@ -35,19 +34,19 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
             WebInterfaceManager webInterfaceManager,
             UrlVariableSubstitutor urlVariableSubstitutor,
             ContextMapURLSerializer contextMapURLSerializer,
-            JiraAuthenticationContext jiraAuthenticationContext,
-            RemotablePluginAccessor remotablePluginAccessor)
+            JiraAuthenticationContext jiraAuthenticationContext)
     {
         this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
         this.contextMapURLSerializer = checkNotNull(contextMapURLSerializer);
         this.webInterfaceManager = checkNotNull(webInterfaceManager);
         this.webFragmentHelper = checkNotNull(webFragmentHelper);
         this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
-        this.remotablePluginAccessor = checkNotNull(remotablePluginAccessor);
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute, AddOnUrlContext addOnUrlContext)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute,
+                                                                 AddOnUrlContext addOnUrlContext,
+                                                                 RemotablePluginAccessor remotablePluginAccessor)
     {
         return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
                 urlVariableSubstitutor, contextMapURLSerializer, remotablePluginAccessor, url, linkId, absolute, addOnUrlContext);

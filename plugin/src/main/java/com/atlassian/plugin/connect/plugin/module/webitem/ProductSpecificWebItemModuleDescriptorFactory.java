@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.webitem;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
 /**
@@ -9,5 +10,5 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 public interface ProductSpecificWebItemModuleDescriptorFactory
 {
     WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute,
-                                                          AddOnUrlContext addOnUrlContext);
+                                                          AddOnUrlContext addOnUrlContext, RemotablePluginAccessor remotablePluginAccessor);
 }
