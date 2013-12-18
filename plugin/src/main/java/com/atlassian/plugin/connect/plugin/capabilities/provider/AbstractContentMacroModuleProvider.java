@@ -206,7 +206,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                 .addAttribute("name", "URL")
-                .addAttribute("value", "/plugins/servlet" + relativeUrl.getServletDescriptorUrl()).getParent()
+                .addAttribute("value", relativeUrl.getRelativeUri()).getParent()
                 .addElement("var")
                 .addAttribute("name", "WIDTH")
                 .addAttribute("value", editor.getWidth()).getParent()

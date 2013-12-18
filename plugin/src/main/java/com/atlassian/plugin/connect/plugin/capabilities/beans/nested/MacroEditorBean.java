@@ -4,7 +4,6 @@ import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.MacroEditorBeanBuilder;
-import com.google.common.base.Strings;
 
 /**
  * Macro Parameters go a long way when it comes to macro configuration, but there are cases
@@ -64,14 +63,6 @@ public class MacroEditorBean extends BaseModuleBean
         {
             url = "";
         }
-        if (null == editTitle)
-        {
-            this.editTitle = I18nProperty.empty();
-        }
-        if (null == insertTitle)
-        {
-            this.insertTitle = I18nProperty.empty();
-        }
         if (null == width)
         {
             width = "";
@@ -94,7 +85,7 @@ public class MacroEditorBean extends BaseModuleBean
 
     public boolean hasEditTitle()
     {
-        return !Strings.isNullOrEmpty(editTitle.getValue());
+        return null != editTitle;
     }
 
     public I18nProperty getInsertTitle()
@@ -104,7 +95,7 @@ public class MacroEditorBean extends BaseModuleBean
 
     public boolean hasInsertTitle()
     {
-        return !Strings.isNullOrEmpty(insertTitle.getValue());
+        return null != editTitle;
     }
 
     public String getWidth()

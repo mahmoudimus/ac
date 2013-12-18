@@ -152,14 +152,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
         {
             featured = false;
         }
-        if (null == width)
-        {
-            width = "";
-        }
-        if (null == height)
-        {
-            height = "";
-        }
         if (null == parameters)
         {
             parameters = Lists.newArrayList();
