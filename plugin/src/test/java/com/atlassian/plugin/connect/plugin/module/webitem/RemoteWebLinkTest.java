@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -30,6 +31,9 @@ public class RemoteWebLinkTest
     private static final String URL = "/foo?bar=${project.id}";
     private static final String SUBSTITUTED_URL = "/foo?bar=" + MY_PROJECT;
     private static final String HOST_CONTEXT = "hostContext";
+    private static final String ADDON_BASEURL = "http://myaddon.com";
+    private static final String SIGNED_ADDON_URL = ADDON_BASEURL + SUBSTITUTED_URL + "&signOnTheDottedLine";
+
 
     @Mock
     private WebFragmentModuleDescriptor webFragmentModuleDescriptor;
@@ -62,11 +66,19 @@ public class RemoteWebLinkTest
     public void absoluteUrlsUnmolested()
     {
         assertThat(getDisplayableUrl(product, true), equalTo(SUBSTITUTED_URL));
+        assertThat(getDisplayableUrl(addon, true), equalTo(SUBSTITUTED_URL));
+        assertThat(getDisplayableUrl(null, true), equalTo(SUBSTITUTED_URL));
+    }
+
+    @Test
+    public void addonUrlsSignedAndRelativeToAddonServer()
+    {
+        assertThat(getDisplayableUrl(addon, false), equalTo(SIGNED_ADDON_URL));
     }
 
     private String getDisplayableUrl(AddOnUrlContext urlContext, boolean absolute)
     {
-        return new RemoteWebLink(webFragmentModuleDescriptor, webFragmentHelper, urlVariableSubstitutor, urlParametersSerializer,
+        return new RemoteWebLink(webFragmentModuleDescriptor, webFragmentHelper, urlVariableSubstitutor, urlParametersSerializer, ,
                 URL, MY_KEY, absolute, urlContext).getDisplayableUrl(servletRequest, CONTEXT);
     }
 }

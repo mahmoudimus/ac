@@ -11,7 +11,6 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -72,7 +71,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         @Override
         public ConfluenceWebLink getLink()
         {
-            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer,
+            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, ,
                     url, linkId, absolute, addOnUrlContext));
         }
     }

@@ -3,14 +3,18 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebItem;
 import com.atlassian.plugin.web.model.WebLink;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -20,6 +24,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final ContextMapURLSerializer urlParametersSerializer;
+    private final RemotablePluginAccessor remotablePluginAccessor;
     private final String url;
     private final String id;
     private final boolean absolute;
@@ -30,6 +35,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             WebFragmentHelper webFragmentHelper,
             UrlVariableSubstitutor urlVariableSubstitutor,
             ContextMapURLSerializer urlParametersSerializer,
+            RemotablePluginAccessor remotablePluginAccessor,
             String url,
             String id,
             boolean absolute, AddOnUrlContext addOnUrlContext)
@@ -37,10 +43,11 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.urlParametersSerializer = urlParametersSerializer;
+        this.remotablePluginAccessor = checkNotNull(remotablePluginAccessor);
         this.url = url;
         this.id = id;
-        this.absolute = absolute;
-        this.addOnUrlContext = checkNotNull(addOnUrlContext);
+        this.absolute = absolute; // TODO: we could add absolute as another literal in the AddOnUrlContext enum
+        this.addOnUrlContext = addOnUrlContext;
     }
 
     @Override
@@ -60,6 +67,18 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         else
         {
             String renderedUrl = getRenderedUrl(context);
+            if (addOnUrlContext == addon)
+            {
+                try
+                {
+                    return remotablePluginAccessor.signGetUrl(new URI(url), context);
+                }
+                catch (URISyntaxException e)
+                {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+
             return req.getContextPath() + renderedUrl;
         }
     }

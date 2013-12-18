@@ -14,7 +14,6 @@ import com.atlassian.plugin.web.model.WebLink;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -84,7 +83,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         @Override
         public WebLink getLink()
         {
-            return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer,
+            return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, ,
                     url, linkId, absolute, addOnUrlContext), authenticationContext);
         }
 
