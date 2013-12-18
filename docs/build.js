@@ -205,8 +205,6 @@ function rebuildHarpSite() {
         baseUrl: program.baseUrl || ''
     }, harpGlobals.globals);
 
-    console.log("Base url is: " + harpGlobals.globals.baseUrl);
-
     fs.outputFileSync(genSrcPrefix + '/harp.json', JSON.stringify(harpGlobals, null, 2));
 }
 

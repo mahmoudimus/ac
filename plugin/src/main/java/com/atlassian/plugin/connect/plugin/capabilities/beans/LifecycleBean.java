@@ -20,25 +20,27 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class LifecycleBean extends BaseModuleBean
 {
     /**
-     * Fires when an add on has been successfully installed
+     * When a Connect add-on is installed, a synchronous request is fired to this URL to initiate the installation
+     * handshake. In order to successfully complete installation, the add-on must respond with either a `200 OK` or
+     * `204 No Content` status.
      */
     @StringSchemaAttributes(format = "uri")
     private String installed;
 
     /**
-     * Fires when an add on has been successfully un-installed
+     * Fires when an add on has been successfully un-installed. This is an asynchronous notification event.
      */
     @StringSchemaAttributes(format = "uri")
     private String uninstalled;
 
     /**
-     * Fires when an add on has been successfully enabled
+     * Fires when an add on has been successfully enabled. This is an asynchronous notification event.
      */
     @StringSchemaAttributes(format = "uri")
     private String enabled;
 
     /**
-     * Fires when an add on has been successfully disabled
+     * Fires when an add on has been successfully disabled. This is an asynchronous notification event.
      */
     @StringSchemaAttributes(format = "uri")
     private String disabled;

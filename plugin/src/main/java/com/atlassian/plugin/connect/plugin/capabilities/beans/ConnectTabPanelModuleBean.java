@@ -5,6 +5,11 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectTab
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * Tab panel modules allow add-ons to insert new tabs into various parts of the host applications user interface.
+ *
+ * The tab panel module takes care of integrating the add-on content into the application for you. The add-on content
+ * automatically gets the tab panel styles and decorators from the host application.
+ *
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#COMPONENT_TAB_PANEL_EXAMPLE}
  * @since 1.0
  */
@@ -37,11 +42,24 @@ public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
         }
     }
 
+    /**
+     *  Specifies the URL targeted by the tab panel. The URL is relative to the add-on's base URL.
+     */
     public String getUrl()
     {
         return url;
     }
 
+    /**
+     * Determines the order in which the tab panel's link appears in the menu or list.
+     *
+     * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
+     * while the "heaviest" weights sink to the bottom of the menu or list.
+     *
+     * Built-in web items have weights that are incremented by numbers that leave room for additional
+     * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
+     * in a sensible order given existing items.
+     */
     public int getWeight()
     {
         return weight;
