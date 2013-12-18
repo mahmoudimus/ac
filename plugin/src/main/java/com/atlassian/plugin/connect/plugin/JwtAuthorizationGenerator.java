@@ -13,9 +13,7 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.base.Function;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
@@ -27,10 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -118,30 +113,17 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
 
     private static Map<String, String[]> constructParameterMap(URI uri) throws UnsupportedEncodingException
     {
-        return transformParamsMultiMapIntoStringToArrayMap(parseQueryStringParameters(uri.getQuery()));
+        return parseQueryStringParameters(uri.getQuery());
     }
 
-    private static Map<String, String[]> transformParamsMultiMapIntoStringToArrayMap(Multimap<String, String> queryParams)
-    {
-        Map<String, String[]> queryParamsMap = new HashMap<String, String[]>(queryParams.size());
-
-        // convert String -> Collection<String> to String -> String[]
-        for (Map.Entry<String, Collection<String>> entry : queryParams.asMap().entrySet())
-        {
-            queryParamsMap.put(entry.getKey(), entry.getValue().toArray(new String[entry.getValue().size()]));
-        }
-
-        return queryParamsMap;
-    }
-
-    private static Multimap<String, String> parseQueryStringParameters(final String query) throws UnsupportedEncodingException
+    private static Map<String, String[]> parseQueryStringParameters(final String query) throws UnsupportedEncodingException
     {
         if (query == null)
         {
-            return HashMultimap.create(0, 0);
+            return Collections.emptyMap();
         }
 
-        Multimap<String, String> queryParams = HashMultimap.create();
+        Map<String, String[]> queryParams = new HashMap<String, String[]>();
 
         CharArrayBuffer buffer = new CharArrayBuffer(query.length());
         buffer.append(query);
@@ -151,9 +133,14 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
         {
             NameValuePair nameValuePair = BasicHeaderValueParser.DEFAULT.parseNameValuePair(buffer, cursor, QUERY_DELIMITERS);
 
-            if (nameValuePair.getName().length() > 0)
+            if (!StringUtils.isEmpty(nameValuePair.getName()))
             {
-                queryParams.put(urlDecode(nameValuePair.getName()), urlDecode(nameValuePair.getValue()));
+                String decodedName = urlDecode(nameValuePair.getName());
+                String decodedValue = urlDecode(nameValuePair.getValue());
+                String[] oldValues = queryParams.get(decodedName);
+                String[] newValues = null == oldValues ? new String[1] : Arrays.copyOf(oldValues, oldValues.length + 1);
+                newValues[newValues.length - 1] = decodedValue;
+                queryParams.put(decodedName, newValues);
             }
         }
 
