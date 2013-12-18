@@ -106,6 +106,7 @@ function entityToModel(schemaEntity) {
 function entitiesToModel(entities) {
     entities = util.isArray(entities) ? entities : [entities];
     entities = _.map(entities, entityToModel);
+    entities.sort(function(a, b) { return a.name > b.name; });
     entities = _.zipObject(_.pluck(entities, "slug"), entities);
     return entities;
 }
@@ -170,7 +171,8 @@ function findRootEntities(schemas) {
     var entities = jsonPath(schemas, "$.*.*[?(@.id)]");
     // exclude the module lists, they're rendered separately in findJiraModules etc.
     entities = _.filter(entities, function(entity) {return entity.id !== "moduleList";});
-    // add the descriptor root itself
+    // add the descriptor root itself (and make it the index.html for modules)
+    schemas.jira.pageName = "index";
     entities.unshift(schemas.jira);
     return entitiesToModel(entities);
 }
