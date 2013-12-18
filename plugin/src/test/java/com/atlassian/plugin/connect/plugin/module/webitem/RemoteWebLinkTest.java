@@ -55,12 +55,18 @@ public class RemoteWebLinkTest
     @Test
     public void productUrlsRelativeToHost()
     {
-        assertThat(getDisplayableUrl(product), equalTo(HOST_CONTEXT + SUBSTITUTED_URL));
+        assertThat(getDisplayableUrl(product, false), equalTo(HOST_CONTEXT + SUBSTITUTED_URL));
     }
 
-    private String getDisplayableUrl(AddOnUrlContext urlContext)
+    @Test
+    public void absoluteUrlsUnmolested()
+    {
+        assertThat(getDisplayableUrl(product, true), equalTo(SUBSTITUTED_URL));
+    }
+
+    private String getDisplayableUrl(AddOnUrlContext urlContext, boolean absolute)
     {
         return new RemoteWebLink(webFragmentModuleDescriptor, webFragmentHelper, urlVariableSubstitutor, urlParametersSerializer,
-                URL, MY_KEY, false, urlContext).getDisplayableUrl(servletRequest, CONTEXT);
+                URL, MY_KEY, absolute, urlContext).getDisplayableUrl(servletRequest, CONTEXT);
     }
 }
