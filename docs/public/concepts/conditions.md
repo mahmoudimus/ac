@@ -8,27 +8,25 @@ instance, the condition can require a user to be an administrator, have edit per
 for access. If the condition is not met, the panel, page, or other UI element exposed by the add-on does not appear on
 the page.
 
-Various types of modules accept conditions, including generalPage, adminPage, and webItems. To see whether a certain
+Various types of modules accept conditions, including `generalPages`, `adminPages`, and `webItems`. To see whether a certain
 module accepts conditions, see their specific module documentation page.
 
 ## Remote Conditions
 
-```
-{
-    "name": "My Addon",
-    "modules": {
-        "generalPages": [
-            {
-                "conditions": [
-                    {
-                        "condition": "/condition/onlyBettyCondition"
-                    }
-                ]
-            }
-        ]
+    {
+        "name": "My Addon",
+        "modules": {
+            "generalPages": [
+                {
+                    "conditions": [
+                        {
+                            "condition": "/condition/onlyBettyCondition"
+                        }
+                    ]
+                }
+            ]
+        }
     }
-}
-```
 
 For a remote condition, the Atlassian application issues a request to the remote resource and expects a response which
 specifies whether to show or hide the module feature.
@@ -43,9 +41,10 @@ authentication information passed through as a header, rather than as a query st
 
 ## Static conditions
 
-You specify a permission condition in the module declaration in the add-on descriptor as follows:
+A static condition is a condition which is exposed from the host Atlassian application.
 
-A static condition ensures that only a logged in users can view the page specified by this module declaration.
+For example, a condition that will evaluate when only anonymous users view the page is specified by the following
+module declaration:
 
 ```
 {
@@ -56,9 +55,9 @@ A static condition ensures that only a logged in users can view the page specifi
                 "conditions": [
                     {
                         "condition": "user_is_logged_in",
-                        "invert": false
+                        "invert": true
                     }
-                ],
+                ]
             }
         ]
     }

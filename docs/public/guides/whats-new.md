@@ -19,9 +19,9 @@ of the box.
 
 We have also updated several of the example add-ons:
 
-* [webhook-inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) (todo)
-* [atlassian-connect-jira-example](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-example) (todo)
-* [atlassian-connect-confluence-example](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-example) (todo)
+* [webhook-inspector](https://bitbucket.org/atlassianlabs/webhook-inspector)
+* [atlassian-connect-jira-example](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-example)
+* [atlassian-connect-confluence-example](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-example)
 
 More docs are coming soon:
 

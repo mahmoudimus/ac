@@ -1,5 +1,18 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.*;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
@@ -7,11 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConfigurePageModuleBean.newConfigurePageBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
@@ -97,7 +106,7 @@ public class ConnectJsonExamples
                 .withModules("webPanels",newWebPanelBean().withLocation("com.atlassian.jira.plugin.headernav.left.context").withUrl("/my-web-panel").build())
                 .withModules("generalPages",newPageBean().withUrl("my-general-page").build())
                 .withModules("adminPages",newPageBean().withUrl("my-admin-page").build())
-                .withModules("configurePages", newConfigurePageBean().withUrl("my-configure-page").build())
+                .withModules("configurePage", newPageBean().withUrl("my-configure-page").build())
                 .withModules("webhooks", newWebHookBean().withEvent("jira:issue_created").withUrl("/issue-created").build())
                 .withModules("jiraComponentTabPanels", newTabPanelBean().withUrl("my-component-tab-panel").build())
                 .withModules("jiraIssueTabPanels",newTabPanelBean().withUrl("my-issue-tab-panel").build())
@@ -139,14 +148,13 @@ public class ConnectJsonExamples
 
     private static String createConfigurePageExample()
     {
-        ConfigurePageModuleBean configurePageModuleBean = newConfigurePageBean()
+        ConnectPageModuleBean connectPageModuleBean = newPageBean()
                 .withName(new I18nProperty("Configure Page", ""))
                 .withUrl("/configure-world")
-                .setAsDefault()
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .build();
 
-        return gson.toJson(configurePageModuleBean);
+        return gson.toJson(connectPageModuleBean);
     }
 
     private static String createWebhookExample()

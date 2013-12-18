@@ -30,14 +30,11 @@
             <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence }) %>
 
             <div class="aui-nav-heading">
-                <strong>REST API Browser</strong>
+                <strong>Product APIs</strong>
             </div>
             <ul class="aui-nav">
                 <li>
-                    <a href="https://jira.atlassian.com/plugins/servlet/restbrowser#/">JIRA</a>
-                </li>
-                <li>
-                    <a href="https://confluence.atlassian.com/plugins/servlet/restbrowser#/">Confluence</a>
+                     <a href="<%= baseUrl %>/rest-api/product-api-browser">Product API Browser</a>
                 </li>
             </ul>
 
@@ -51,15 +48,6 @@
                     <a href="<%= baseUrl %>/resources/<%= resource %>"><%= public._data.resources[resource].title %></a>
                 </li>
                 <% } %>
-                <li>
-                    <a href="https://groups.google.com/forum/?fromgroups=#%21forum/atlassian-connect-dev">Mailing List</a>
-                </li>
-                <li>
-                    <a href="https://answers.atlassian.com/tags/atlassian-connect">Atlassian Answers</a>
-                </li>
-                <li>
-                    <a href="https://ecosystem.atlassian.net/browse/AC">JIRA Project</a>
-                </li>
             </ul>
 
         </div>

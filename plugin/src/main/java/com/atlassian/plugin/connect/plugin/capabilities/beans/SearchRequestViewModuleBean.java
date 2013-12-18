@@ -22,13 +22,13 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18n
  *
  * Your service will be invoked with these parameters:
  *
- * * __issues__: A comma-separated list of issue keys
- * * __link__: A link back to the JIRA Issue Navigator where the action was invoked
- * * __startIssue__: The index of the first passed issue key in the list of all issues
- * * __endIssue__: The index of the last passed issue key in the list of all issues
- * * __totalIssues__: The number of issues in the entire search result
+ * * `__issues__`: A comma-separated list of issue keys
+ * * `__link__`: A link back to the JIRA Issue Navigator where the action was invoked
+ * * `__startIssue__`: The index of the first passed issue key in the list of all issues
+ * * `__endIssue__`: The index of the last passed issue key in the list of all issues
+ * * `__totalIssues__`: The number of issues in the entire search result
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#SEARCH_VIEW_EXAMPLE}
+ * @exampleJson Example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#SEARCH_VIEW_EXAMPLE}
  * @schemaTitle Search Request View
  * @since 1.0
  */

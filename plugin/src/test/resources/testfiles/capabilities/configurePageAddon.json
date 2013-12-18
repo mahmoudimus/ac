@@ -11,32 +11,16 @@
         "type": "jwt"
     },
     "modules": {
-        "configurePages": [
-            {
-                "default": false,
-                "url": "/my-page",
-                "icon": {
-                    "width": 80,
-                    "height": 80,
-                    "url": "/mypage/icon.png"
-                },
-                "name": {
-                    "value": "Some page",
-                    "i18n": "some.page.name"
-                }
+        "configurePage": {
+            "url": "/my-page",
+            "icon": {
+                "width": 80,
+                "height": 80,
+                "url": "/mypage/icon.png"
             },
-            {
-                "default": true,
-                "url": "/my-page2",
-                "icon": {
-                    "width": 80,
-                    "height": 80,
-                    "url": "/mypage2/icon.png"
-                },
-                "name": {
-                    "value": "Some otro page",
-                    "i18n": "some.page2.name"
-                }
+            "name": {
+                "value": "Some page",
+                "i18n": "some.page.name"
             }
-        ]
+        }
     }}
