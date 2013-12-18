@@ -1,9 +1,6 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.httpclient.api.*;
-import com.atlassian.httpclient.api.factory.HttpClientFactory;
-import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
@@ -11,23 +8,14 @@ import com.atlassian.jwt.core.JwtUtil;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
-import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
-import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
-import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
@@ -52,24 +40,15 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
 {
-    private static final String MOCK_JWT = "just.an.example";
-    private static final String PLUGIN_KEY = "key";
-    private static final String PLUGIN_NAME = "name";
+    protected static final String MOCK_JWT = "just.an.example";
     private static final String CONSUMER_KEY = "12345-abcde-09876-zyxwv";
     private static final String USER_KEY = "MrFreeze";
-    private static final String BASE_PATH = "/basepath";
-    private static final String BASE_URL = "http://server:1234" + BASE_PATH;
-    private static final String FULL_PATH_URL = BASE_URL + "/path";
-    private static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
-    private static final String INTERNAL_FULL_GET_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";
-    private static final Map<String, String> UN_AUTHED_GET_HEADERS = Collections.singletonMap("header", "header value");
-    private static final Map<String, String> AUTHED_GET_HEADERS = ImmutableMap.of("header", "header value", JwtUtil.AUTHORIZATION_HEADER, JwtUtil.JWT_AUTH_HEADER_PREFIX + MOCK_JWT);
     private static final Map<String, String> GET_PARAMS = Collections.singletonMap("param", "param value");
-    private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[] { "param value" });
+    private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
     private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
-    private static final String EXPECTED_GET_RESPONSE = "expected";
+
     private @Mock JwtService jwtService;
     private @Mock ApplicationLink applicationLink;
 
@@ -88,7 +67,7 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     @Test
     public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever() throws ExecutionException, InterruptedException
     {
-        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS, UN_AUTHED_GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
+        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS, UNAUTHED_GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
     }
 
     @Test
@@ -206,6 +185,14 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
         verify(jwtService).issueJwt(argThat(hasExactlyTheseClaims("iss", "sub", "iat", "exp", JwtConstants.Claims.QUERY_HASH)), any(ApplicationLink.class));
+    }
+
+    @Override
+    protected Map<String, String> getPostSigningHeaders(Map<String, String> preSigningHeaders)
+    {
+        Map<String, String> headers = new HashMap<String, String>(preSigningHeaders);
+        headers.put(JwtUtil.AUTHORIZATION_HEADER, JwtUtil.JWT_AUTH_HEADER_PREFIX + MOCK_JWT);
+        return headers;
     }
 
     private ArgumentMatcher<String> hasExactlyTheseClaims(String... claimNames)

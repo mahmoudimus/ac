@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBuilder;
-import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

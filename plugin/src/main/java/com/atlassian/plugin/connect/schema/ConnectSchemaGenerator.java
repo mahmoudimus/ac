@@ -6,12 +6,11 @@ import com.atlassian.json.schema.model.JsonSchema;
 import com.atlassian.json.schema.scanner.model.InterfaceList;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
 import com.atlassian.plugin.spring.scanner.ProductFilter;
+import com.google.gson.annotations.SerializedName;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-
-import com.google.gson.annotations.SerializedName;
 
 public class ConnectSchemaGenerator extends DefaultJsonSchemaGenerator
 {

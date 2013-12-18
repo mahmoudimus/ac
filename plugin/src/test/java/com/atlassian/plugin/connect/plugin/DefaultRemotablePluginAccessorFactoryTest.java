@@ -35,16 +35,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultRemotablePluginAccessorFactoryTest
@@ -222,6 +215,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     private Plugin mockPlugin()
     {
         Plugin plugin = mock(Plugin.class);
+        when(plugin.getKey()).thenReturn(PLUGIN_KEY);
         when(plugin.getName()).thenReturn(PLUGIN_NAME);
         return plugin;
     }
