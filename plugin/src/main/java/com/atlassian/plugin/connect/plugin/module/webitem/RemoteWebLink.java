@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.plugin.module.webitem;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.InvalidAddonConfigurationException;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.webfragment.HideousParameterContextThingy;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -71,15 +73,17 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             {
                 try
                 {
-                    return remotablePluginAccessor.signGetUrl(new URI(url), context);
+                    return remotablePluginAccessor.signGetUrl(new URI(renderedUrl), HideousParameterContextThingy.transformToPathForm(context));
                 }
                 catch (URISyntaxException e)
                 {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    throw new InvalidAddonConfigurationException("invalid addon url " + url, e);
                 }
             }
-
-            return req.getContextPath() + renderedUrl;
+            else
+            {
+                return req.getContextPath() + renderedUrl;
+            }
         }
     }
 

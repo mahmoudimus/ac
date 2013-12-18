@@ -5,6 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
@@ -44,6 +46,9 @@ public class JiraWebItemModuleDescriptorFactoryTest
     @Mock
     private HttpServletRequest servletRequest;
 
+    @Mock
+    private RemotablePluginAccessor remotablePluginAccessor;
+
     private WebItemModuleDescriptor descriptor;
 
     @Before
@@ -53,13 +58,13 @@ public class JiraWebItemModuleDescriptorFactoryTest
 
         JiraWebItemModuleDescriptorFactory webItemFactory = new JiraWebItemModuleDescriptorFactory(
                 webFragmentHelper, webInterfaceManager, new UrlVariableSubstitutor(), contextMapURLSerializer,
-                jiraAuthenticationContext);
+                jiraAuthenticationContext, remotablePluginAccessor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 
         descriptor = webItemFactory.createWebItemModuleDescriptor(
                 "/myplugin?my_project_id=${project.id}&my_project_key=${project.key}",
-                "myLinkId", false, addon);
+                "myLinkId", false, product);
         descriptor.init(plugin, createElement());
         descriptor.enabled();
     }

@@ -4,6 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
@@ -49,6 +51,9 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
     @Mock
     private ContainerContext containerContext;
 
+    @Mock
+    private RemotablePluginAccessor remotablePluginAccessor;
+
     private WebItemModuleDescriptor descriptor;
 
     @Before
@@ -57,7 +62,7 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
         Plugin plugin = new PluginForTests("my-key", "My Plugin");
 
         ConfluenceWebItemModuleDescriptorFactory webItemFactory = new ConfluenceWebItemModuleDescriptorFactory(
-                new UrlVariableSubstitutor(), contextMapURLSerializer, webFragmentHelper);
+                new UrlVariableSubstitutor(), contextMapURLSerializer, webFragmentHelper, remotablePluginAccessor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 
@@ -74,7 +79,7 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
 
         descriptor = webItemFactory.createWebItemModuleDescriptor(
                 "/myplugin?my_project_id=${project.id}&my_project_key=${project.key}",
-                "myLinkId", false, addon);
+                "myLinkId", false, product);
         descriptor.init(plugin, createElement());
         descriptor.enabled();
     }

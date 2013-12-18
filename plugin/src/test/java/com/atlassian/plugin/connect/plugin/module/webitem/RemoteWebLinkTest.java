@@ -2,9 +2,12 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.net.URI;
+
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.google.common.collect.ImmutableMap;
@@ -16,8 +19,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -45,6 +50,8 @@ public class RemoteWebLinkTest
     private ContextMapURLSerializer urlParametersSerializer;
     @Mock
     private HttpServletRequest servletRequest;
+    @Mock
+    private RemotablePluginAccessor remotablePluginAccessor;
 
     @Before
     public void init()
@@ -52,7 +59,7 @@ public class RemoteWebLinkTest
         when(urlParametersSerializer.getExtractedWebPanelParameters(anyMap())).thenReturn(CONTEXT);
         when(urlVariableSubstitutor.replace(anyString(), anyMap())).thenReturn(SUBSTITUTED_URL);
         when(servletRequest.getContextPath()).thenReturn(HOST_CONTEXT);
-
+        when(remotablePluginAccessor.signGetUrl(any(URI.class), anyMap())).thenReturn(SIGNED_ADDON_URL);
     }
 
 
@@ -78,7 +85,7 @@ public class RemoteWebLinkTest
 
     private String getDisplayableUrl(AddOnUrlContext urlContext, boolean absolute)
     {
-        return new RemoteWebLink(webFragmentModuleDescriptor, webFragmentHelper, urlVariableSubstitutor, urlParametersSerializer, ,
-                URL, MY_KEY, absolute, urlContext).getDisplayableUrl(servletRequest, CONTEXT);
+        return new RemoteWebLink(webFragmentModuleDescriptor, webFragmentHelper, urlVariableSubstitutor, urlParametersSerializer,
+                remotablePluginAccessor, URL, MY_KEY, absolute, urlContext).getDisplayableUrl(servletRequest, CONTEXT);
     }
 }
