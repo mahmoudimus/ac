@@ -8,6 +8,9 @@ An add-on can implement as many modules as needed. For example, a typical add-on
 
 All modules declarations must have a `url` attribute. The url attribute identifies the path on the add-on host to the resource that implements the module. The URL value must be valid relative to the `baseUrl` value in the add-on descriptor. 
 
+ * [JIRA modules](../modules/jira)
+ * [Confluence modules](../modules/confluence)
+
 <div class="aui-message info">
     <span class="aui-icon icon-info"></span>
     You can add variables to URL attributes to receive context information from the Atlassian application, such as the current JIRA issue or Confluence page ID. For more information, see the following section.
