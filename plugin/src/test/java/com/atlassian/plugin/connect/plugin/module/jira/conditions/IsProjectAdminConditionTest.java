@@ -78,6 +78,18 @@ public class IsProjectAdminConditionTest
     }
 
     @Test
+    public void shouldNotDisplayWithAValidUserWhenTheProjectServiceReturnsNull()
+    {
+        when(project.getKey()).thenReturn("key");
+        when(jiraAuthenticationContext.getUser()).thenReturn(user);
+        when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(null);
+        when(getProjectResult.isValid()).thenReturn(true);
+        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext);
+        condition.setProject(project);
+        assertThat(condition.shouldDisplay(CONTEXT), is(false));
+    }
+
+    @Test
     public void shouldNotDisplayWithAValidProjectButNoUser()
     {
         when(project.getKey()).thenReturn("key");
