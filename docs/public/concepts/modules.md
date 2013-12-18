@@ -6,7 +6,7 @@ Each application has module types that are specific for it, but there are some c
 
 An add-on can implement as many modules as needed. For example, a typical add-on would likely provide modules for at least one lifecycle element, a configuration page, and possibly multiple general pages.
 
-All modules declarations must have a `url` attribute. The url attribute identifies the path on the add-on host to the resource that implements the module. The URL value must be valid relative to the `baseUrl` value in the add-on descriptor. 
+All modules declarations must have a `url` attribute. The url attribute identifies the path on the add-on host to the resource that implements the module. The URL value must be valid relative to the `baseUrl` value in the add-on descriptor.
 
  * [JIRA modules](../modules/jira)
  * [Confluence modules](../modules/confluence)
