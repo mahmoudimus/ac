@@ -32,6 +32,9 @@
         "javascript-api.html": {
             "title": "Javascript API"
         },
+        "licensing.html": {
+            "title": "Licensing"
+        },
         "styling-with-aui.html": {
             "title": "Styling Add-ons with AUI"
         },
