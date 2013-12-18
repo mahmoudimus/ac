@@ -20,7 +20,7 @@ Submit new feature requests, bugs, and feature votes for the Connect add-on fram
 ## [Help with the Atlassian Marketplace](https://marketplace.atlassian.com/)
 
 If you have questions or need help listing your new Atlassian Connect add-on for sale on the Atlassian Marketplace, you
-can ask quetions on the [Atlassian Marketplace mailing list](https://groups.google.com/forum/#!forum/atlassian-marketplace)
+can ask questions on the [Atlassian Marketplace mailing list](https://groups.google.com/forum/#!forum/atlassian-marketplace)
 or file issues in the [Atlassian Marketplace Issue tracker](https://ecosystem.atlassian.net/browse/AMKT/)
 
 
