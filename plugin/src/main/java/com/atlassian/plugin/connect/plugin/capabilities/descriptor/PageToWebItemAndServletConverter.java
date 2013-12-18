@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
@@ -13,6 +14,7 @@ import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 
 import java.util.Map;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -55,6 +57,7 @@ public class PageToWebItemAndServletConverter
         return newWebItemBean()
                 .withName(bean.getName())
                 .withKey(bean.getKey())
+                .withContext(product)
                 .withLink(hostUrlTemplate.getTemplateString())
                 .withLocation(location)
                 .withWeight(weight)
