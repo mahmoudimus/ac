@@ -24,7 +24,7 @@ public class I18nProperty
      */
     private String i18n;
 
-    public I18nProperty(String defaultValue,String i18n)
+    public I18nProperty(String defaultValue, String i18n)
     {
         this.i18n = i18n;
         this.value = defaultValue;

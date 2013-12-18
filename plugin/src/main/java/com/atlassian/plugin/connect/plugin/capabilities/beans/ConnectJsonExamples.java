@@ -84,7 +84,7 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withModules("webItems", newWebItemBean().withLink("/my-web-item").withLocation("system.preset.filters").build())
+                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withLink("/my-web-item").withLocation("system.preset.filters").build())
                 .build();
 
         return gson.toJson(addonBean);
@@ -102,26 +102,31 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withModules("webItems", newWebItemBean().withLink("/my-web-item").withLocation("system.preset.filters").build())
-                .withModules("webPanels", newWebPanelBean().withLocation("com.atlassian.jira.plugin.headernav.left.context").withUrl("/my-web-panel").build())
-                .withModules("generalPages", newPageBean().withUrl("my-general-page").build())
-                .withModules("adminPages", newPageBean().withUrl("my-admin-page").build())
-                .withModules("configurePage", newPageBean().withUrl("my-configure-page").build())
+                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withLink("/my-web-item").withLocation("system.preset.filters").build())
+                .withModules("webPanels", newWebPanelBean().withName(i18nProperty("Web Panel")).withLocation("com.atlassian.jira.plugin.headernav.left.context").withUrl("/my-web-panel").build())
+                .withModules("generalPages", newPageBean().withName(i18nProperty("General Page")).withUrl("my-general-page").build())
+                .withModules("adminPages", newPageBean().withName(i18nProperty("Admin Page")).withUrl("my-admin-page").build())
+                .withModules("configurePage", newPageBean().withName(i18nProperty("Config Page")).withUrl("my-configure-page").build())
                 .withModules("webhooks", newWebHookBean().withEvent("jira:issue_created").withUrl("/issue-created").build())
-                .withModules("jiraComponentTabPanels", newTabPanelBean().withUrl("my-component-tab-panel").build())
-                .withModules("jiraIssueTabPanels", newTabPanelBean().withUrl("my-issue-tab-panel").build())
+                .withModules("jiraComponentTabPanels", newTabPanelBean().withName(i18nProperty("Component Tab")).withUrl("my-component-tab-panel").build())
+                .withModules("jiraIssueTabPanels", newTabPanelBean().withName(i18nProperty("Issue Tab")).withUrl("my-issue-tab-panel").build())
                 .withModules("jiraProjectAdminTabPanels", newTabPanelBean().withUrl("my-admin-tab-panel").build())
-                .withModules("jiraProjectTabPanels", newTabPanelBean().withUrl("my-project-tab-panel").build())
-                .withModules("jiraVersionTabPanels", newTabPanelBean().withUrl("my-version-tab-panel").build())
-                .withModules("jiraProfileTabPanels", newTabPanelBean().withUrl("my-profile-tab-panel").build())
-                .withModules("jiraWorkflowPostFunctions", newWorkflowPostFunctionBean().withCreate(new UrlBean("/create")).build())
-                .withModules("jiraSearchRequestViews", newSearchRequestViewModuleBean().withUrl("/searchRequest").build())
-                .withModules("profilePages", newPageBean().withUrl("my-confluence-profile-page").build())
-                .withModules("dynamicContentMacros", newDynamicContentMacroModuleBean().withUrl("/dynamic-macro").build())
-                .withModules("staticContentMacros", newStaticContentMacroModuleBean().withUrl("/static-macro").build())
+                .withModules("jiraProjectTabPanels", newTabPanelBean().withName(i18nProperty("Project Tab")).withUrl("my-project-tab-panel").build())
+                .withModules("jiraVersionTabPanels", newTabPanelBean().withName(i18nProperty("Version Tab")).withUrl("my-version-tab-panel").build())
+                .withModules("jiraProfileTabPanels", newTabPanelBean().withName(i18nProperty("Profile Tab")).withUrl("my-profile-tab-panel").build())
+                .withModules("jiraWorkflowPostFunctions", newWorkflowPostFunctionBean().withName(i18nProperty("Workflow Function")).withCreate(new UrlBean("/create")).build())
+                .withModules("jiraSearchRequestViews", newSearchRequestViewModuleBean().withName(i18nProperty("Search View")).withUrl("/searchRequest").build())
+                .withModules("profilePages", newPageBean().withName(i18nProperty("Profile Page")).withUrl("my-confluence-profile-page").build())
+                .withModules("dynamicContentMacros", newDynamicContentMacroModuleBean().withName(i18nProperty("Dynamic Macro")).withUrl("/dynamic-macro").build())
+                .withModules("staticContentMacros", newStaticContentMacroModuleBean().withName(i18nProperty("Static Macro")).withUrl("/static-macro").build())
                 .build();
 
         return gson.toJson(addonBean);
+    }
+
+    private static I18nProperty i18nProperty(String name)
+    {
+        return new I18nProperty(name, null);
     }
 
     private static String createPageExample()
