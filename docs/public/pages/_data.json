@@ -48,6 +48,9 @@
         },
         "faqs.html": {
             "title": "FAQs"
+        },
+        "getting-help.html": {
+            "title": "Getting Help"
         }
     }
 }
