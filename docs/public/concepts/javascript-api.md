@@ -230,7 +230,10 @@ The following section provides more usage information on an AP object helper.
 ## Dialog
 You use the AP helper Dialog to launch a dialog box from a parent iframe.
 
-By default, the dialog is undecorated. In other words, it does not contain any title, content or buttons. It only contains an iframe pointing to a URL that you provide. The resource at the URL should present both the style and content for the dialog. A basic dialog looks like this: 
+By default, the dialog is undecorated. In other words, it does not contain any title, content or buttons.
+It only contains an iframe pointing to a URL that you provide. The resource at the URL should present both the style and
+content for the dialog. A basic dialog looks like this:
+
 <img src="../assets/images/connectdialog2example.jpeg" width="100%" />
 
 Notice that the sample shown contains a submit button, but this is provided by the sample resource referenced by the dialog URL. There is no built-in "submit" or "cancel" button in the dialog helper.

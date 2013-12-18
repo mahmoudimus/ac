@@ -1,6 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -20,9 +27,10 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     private MacroBodyType bodyType;
     private Set<String> aliases;
     private Boolean featured;
-    private Integer width;
-    private Integer height;
+    private String width;
+    private String height;
     private List<MacroParameterBean> parameters;
+    private MacroEditorBean editor;
 
     public BaseContentMacroModuleBeanBuilder()
     {
@@ -42,6 +50,7 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
         this.width = defaultBean.getWidth();
         this.height = defaultBean.getHeight();
         this.parameters = defaultBean.getParameters();
+        this.editor = defaultBean.getEditor();
     }
 
     public T withUrl(String url)
@@ -98,13 +107,13 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
         return (T) this;
     }
 
-    public T withWidth(Integer width)
+    public T withWidth(String width)
     {
         this.width = width;
         return (T) this;
     }
 
-    public T withHeight(Integer height)
+    public T withHeight(String height)
     {
         this.height = height;
         return (T) this;
@@ -119,6 +128,12 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     public T withParameters(Collection<? extends MacroParameterBean> parameters)
     {
         this.parameters = ImmutableList.copyOf(parameters);
+        return (T) this;
+    }
+
+    public T withEditor(MacroEditorBean editor)
+    {
+        this.editor = editor;
         return (T) this;
     }
 }

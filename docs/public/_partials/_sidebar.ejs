@@ -2,10 +2,10 @@
     <nav class="aui-navgroup aui-navgroup-vertical">
         <div class="aui-navgroup-inner">
             <ul class="aui-nav">
-                <% for (var page in public.guides._data.guides) { %>
+                <% for (var page in public._data.guides) { %>
                 <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
                 <li <%= selected %>>
-                    <a href="/guides/<%= page %>"><%= public.guides._data.guides[page].title %></a>
+                    <a href="<%= baseUrl %>/guides/<%= page %>"><%= public._data.guides[page].title %></a>
                 </li>
                 <% } %>
             </ul>
@@ -14,17 +14,20 @@
                 <strong>Core Concepts</strong>
             </div>
             <ul class="aui-nav">
-            <% for(var concept in public.guides._data.concepts) { %>
-            <li>
-                <a href="/guides/<%= concept %>"><%= public.guides._data.concepts[concept].title %></a>
+            <% for(var concept in public._data.concepts) { %>
+            <% var selected = concept.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
+            <li <%= selected %>>
+                <a href="<%= baseUrl %>/concepts/<%= concept %>"><%= public._data.concepts[concept].title %></a>
             </li>
             <% } %>
             </ul>
 
-            <%- partial('_module_list.ejs', { title: "Root Modules", modules: entities.root }) %>
+            <div class="aui-nav-heading">
+                <a href="<%= baseUrl %>/modules/">AddOn Descriptor</a>
+            </div>
+
             <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira }) %>
             <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence }) %>
-            <%- partial('_module_list.ejs', { title: "Module Fragments", modules: entities.fragment }) %>
 
             <div class="aui-nav-heading">
                 <strong>REST API Browser</strong>
@@ -42,12 +45,12 @@
                 <strong>Resources</strong>
             </div>
             <ul class="aui-nav">
-                <li>
-                    <a href="/samples.html">Sample Add-ons</a>
+                <% for(var resource in public._data.resources) { %>
+                <% var selected = resource.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
+                <li <%= selected %>>
+                    <a href="<%= baseUrl %>/resources/<%= resource %>"><%= public._data.resources[resource].title %></a>
                 </li>
-                <li>
-                    <a href="/faqs.html">FAQs</a>
-                </li>
+                <% } %>
                 <li>
                     <a href="https://groups.google.com/forum/?fromgroups=#%21forum/atlassian-connect-dev">Mailing List</a>
                 </li>

@@ -5,6 +5,9 @@
         },
         "getting-started.html": {
             "title": "Getting Started"
+        },
+        "whats-new.html": {
+            "title": "What's New"
         }
     },
     "concepts": {
@@ -37,6 +40,14 @@
         },
         "development-loop.html": {
             "title": "Development Loop"
+        }
+    },
+    "resources": {
+        "samples.html": {
+            "title": "Sample Add-ons"
+        },
+        "faqs.html": {
+            "title": "FAQs"
         }
     }
 }

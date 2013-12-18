@@ -104,6 +104,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                             oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
                             registerOAuth(link, plugin, publicKey);
                             break;
+                        case NONE:
+                            link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
+                            break;
                         default:
                             log.warn("Unknown authType encountered: " + authType.name());
                     }

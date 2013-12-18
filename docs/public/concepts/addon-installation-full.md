@@ -22,7 +22,7 @@ You can install an add-on with the UPM as follows. Note, these instructions were
  4. Scroll to the page's bottom and click the __Settings__ link. The __Settings__ dialog will display. 
  5. Make sure the "Private listings" option is checked and click __Apply__.
  6. Scroll to the top of the page and click the __Upload Add-on__ link.
- 7. Enter the URL to the hosted location of your plugin descriptor. In this example, the URL is similar to the following:  http://localhost:8000/atlassian-plugin.xml. (If you are installing to an OnDemand instance, the URL must be served from the Marketplace, and will look like https://marketplace.atlassian.com/download/plugins/com.example.add-on/version/39/descriptor?access-token=9ad5037b)
+ 7. Enter the URL to the hosted location of your plugin descriptor. In this example, the URL is similar to the following:  `http://localhost:8000/atlassian-connect.json`. (If you are installing to an OnDemand instance, the URL must be served from the Marketplace, and will look like `https://marketplace.atlassian.com/download/plugins/com.example.add-on/version/39/descriptor?access-token=9ad5037b`)
  8. Press __Upload__. The system takes a moment to upload and register your plugin. It displays the __Installed and ready to go__ dialog when installation is complete. <img width="100%" src="../assets/images/installsuccess.jpeg" />
  9. Click __Close__.
  10. Verify that your plugin appears in the list of __User installed add-ons__. For example, if you used Hello World for your plugin name, that will appears in the list.
@@ -54,7 +54,7 @@ In your request:
  4. Set the Content-Type for the data to: "`application/vnd.atl.plugins.install.uri+json`"
  5. In the body of the POST, include the following JSON data:
 
-This registers the add-on declared by the `atlassian-plugin.json` file at the URL.
+This registers the add-on declared by the `atlassian-connect.json` file at the URL.
 
 Note that you should not rely on the response returned from the POST request to confirm that the plugin has been installed. Instead, the best way to confirm that the plugin has been installed is to add a lifecycle event to your add-on descriptor that listens for the add-on installation event. The lifecycle declaration in the `atlassian-plugin.json` file would look something like this:
 ```

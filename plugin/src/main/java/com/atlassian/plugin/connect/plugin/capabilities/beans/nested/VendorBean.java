@@ -7,6 +7,7 @@ import com.google.common.base.Objects;
 
 /**
  * Gives basic information about the plugin vendor
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#VENDOR_EXAMPLE}
  * @schemaTitle Plugin Vendor
  */
 public class VendorBean extends BaseModuleBean

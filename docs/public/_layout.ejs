@@ -15,34 +15,33 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui.css" media="all">
     <!--[if lt IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie.css" media="all"><![endif]-->
     <!--[if IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie9.css" media="all"><![endif]-->
-    <link rel="stylesheet" href="/assets/css/styles.css" media="all">
+    <link rel="stylesheet" href="<%= baseUrl %>/assets/css/styles.css" media="all">
     <script src="//code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.3.0/lodash.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/javascript/javascript.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/clike/clike.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
 
     <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui-ie.js"></script><![endif]-->
 </head>
 
-<body id="ac" class="aui-layout aui-theme-default aui-page-fixed">
+<body id="ac" class="aui-layout aui-theme-default">
     <div id="page">
         <header id="header" role="banner">
             <nav class="aui-header aui-dropdown2-trigger-group" role="navigation">
                 <div class="aui-header-inner">
                     <div class="aui-header-primary">
                         <h1 id="logo" class="aui-header-logo aui-header-logo-ac">
-                            <a href="../index.html">
+                            <a href="<%= baseUrl %>/index.html">
                                 <span class="aui-header-logo-device">Atlassian Connect</span>
                             </a>
                         </h1>
                     </div>
                 </div>
-                <!-- .aui-header-inner-->
             </nav>
-            <!-- .aui-header -->
         </header>
         <!-- #header -->
         <section id="content" role="main">
@@ -53,11 +52,8 @@
                             <%= subtitle %>
                         </h1>
                     </div>
-                    <!-- .aui-page-header-main -->
                 </div>
-                <!-- .aui-page-header-inner -->
             </header>
-            <!-- .aui-page-header -->
 
             <div class="aui-page-panel">
                 <div class="aui-page-panel-inner">
@@ -85,27 +81,23 @@
                     </section>
                 </div>
             </div>
-            <!-- .aui-page-panel -->
         </section>
-        <!-- #content -->
         <footer id="footer" role="contentinfo">
             <section class="footer-body">
                 <ul id="aui-footer-list">
-                    <li>Copyright &copy; 2009-2013 Atlassian</li>
+                    <li>Copyright &copy; 2009-2014 Atlassian</li>
                 </ul>
                 <div id="footer-logo">
                     <a href="http://www.atlassian.com/">Atlassian</a>
                 </div>
             </section>
         </footer>
-        <!-- #footer -->
     </div>
-    <!-- #page -->
     <script>
         $(".diagram").sequenceDiagram({theme: 'simple'});
 
         var codeDefaults = {
-            mode: "javascript",
+            mode: "clike",
             theme: "neat",
             lineNumbers:true,
             gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
@@ -124,24 +116,37 @@
         });
 
         function cmIfyPreCodeBlocks(block) {
-            var sample = block;
-            var text = sample.textContent || sample.innerText;
-            var newOpts = $.extend({}, codeDefaults);
+            var $sample = $(block),
+                lang = $sample.data('lang'),
+                text = $sample.text().trim(),
+                newOpts = $.extend({}, codeDefaults);
 
             if (text.split("\n").length <= 1) {
                 newOpts.lineNumbers = false;
                 newOpts.gutters = [];
             }
             newOpts.value = text;
+
+            if (lang) {
+                newOpts.mode = (lang == 'java' ? 'text/x-java' : lang);
+            }
+
             var cm = CodeMirror(
                 function(node){
-                    sample.parentNode.replaceChild(node, sample)
+                    block.parentNode.replaceChild(node, block)
                 }, newOpts
             );
         }
         $('pre code').each(function(){
             cmIfyPreCodeBlocks(this)
         });
+        
+        $(".expandNextPre").each(
+            function(index)
+            {
+                $(this).nextAll("pre").first().addClass("aui-expander-content");
+            }
+        );
     </script>
 </body>
 

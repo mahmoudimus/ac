@@ -4,6 +4,7 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
@@ -29,8 +30,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     private final UserManager userManager;
     private final AuthorizationGenerator authorizationGenerator;
 
-    public JwtSigningRemotablePluginAccessor(String pluginKey,
-                                             String pluginName,
+    public JwtSigningRemotablePluginAccessor(Plugin plugin,
                                              Supplier<URI> baseUrlSupplier,
                                              JwtService jwtService,
                                              ConsumerService consumerService,
@@ -38,7 +38,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
                                              HttpContentRetriever httpContentRetriever,
                                              UserManager userManager)
     {
-        super(pluginKey, pluginName, baseUrlSupplier, httpContentRetriever);
+        super(plugin, baseUrlSupplier, httpContentRetriever);
         this.jwtService = jwtService;
         this.consumerService = consumerService;
         this.connectApplinkManager = connectApplinkManager;

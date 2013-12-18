@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.StaticContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroHttpMethod;
 
@@ -11,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroHttpMe
  * Please consult [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
  * for additional information.
  *
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#STATIC_MACRO_EXAMPLE}
  * @schemaTitle Static Content Macro
  * @since 1.0
  */
@@ -20,6 +22,7 @@ public class StaticContentMacroModuleBean extends BaseContentMacroModuleBean
     /**
      * The HTTP method to use when calling the macro. The default value is GET.
      */
+    @CommonSchemaAttributes(defaultValue = "get")
     private MacroHttpMethod method;
 
     public StaticContentMacroModuleBean()

@@ -8,12 +8,14 @@
     "fs-extra": "*",
     "markdown-js": "*",
     "chokidar": "*",
-    "JSONPath": "*"
+    "JSONPath": "*",
+    "commander": "*"
   },
   "scripts": {
-    "start": "./build.js serve",
+    "start": "./build.js --serve",
     "update": "./build.js",
     "build": "./build.js",
+    "release:prepare": "./build.js --baseUrl 'https://developer.atlassian.com/static/connect/docs'",
     "clean": "rm -rf target"
   },
   "author": "ac-dev@atlassian.com"
