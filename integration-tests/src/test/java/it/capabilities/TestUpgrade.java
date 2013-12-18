@@ -4,8 +4,12 @@ import cc.plural.jsonij.JSON;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.collect.Lists;
+
+import cc.plural.jsonij.Value;
 import it.AbstractBrowserlessTest;
 import it.servlet.ConnectAppServlets;
+
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Test;
 
@@ -55,10 +59,11 @@ public class TestUpgrade extends AbstractBrowserlessTest
 
         // check that the plugin only has two modules: a web item and servlet corresponding to the "Page Two" generalPage
         JSON pluginJson = JSON.parse(plugin1.getUpmPluginJson());
-        assertThat(pluginJson.get("modules"), isArrayMatching(
-                containsInAnyOrder(
-                        hasProperty("key", "page-two"),
-                        hasProperty("key", "servlet-page-two"))));
+        Matcher<Iterable<? extends Value>> valMatcher = containsInAnyOrder(
+                hasProperty("key", "page-two"),
+                hasProperty("key", "servlet-page-two"));
+        
+        assertThat(pluginJson.get("modules"), isArrayMatching(valMatcher));
 
         plugin1.stopAndUninstall();
         plugin1 = null;

@@ -10,6 +10,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.JiraConditions;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
@@ -70,7 +71,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
 
         ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(hostContainer);
         ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(
-                new JiraProductAccessor(userManager, mailQueue), new ParamsModuleFragmentFactory());
+                new JiraProductAccessor(userManager, mailQueue, new JiraConditions()), new ParamsModuleFragmentFactory());
         when(hostContainer.create(UserLoggedInCondition.class)).thenReturn(new UserLoggedInCondition());
 
         when(componentAccessor.getComponent(SearchRequestURLHandler.class)).thenReturn(urlHandler);
