@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookMod
  * * When a page is created or updated in Confluence
  *
  *
- * ### Handling the webhook event
+ *### Handling the webhook event
  *
  * To receive webhook events, your add-on needs to include the webhook module declaration in its JSON descriptor. The
  * declaration indicates the relative URL of the local resource at which it will receive the notification. In other
@@ -22,11 +22,11 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookMod
  * Each webhook POST sent to the add-on will also include the authentication headers that allow the add-on to
  * validate the authenticity of that request.
  *
- * ### Webhook event types
+ *### Webhook event types
  *
  * Below is a list of all available webhook events.
  *
- * #### Jira Webhook events
+ *#### Jira Webhook events
  *
  * * `connect_addon_disabled`
  * * `connect_addon_enabled`
@@ -44,7 +44,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookMod
  * * `remote_workflow_post_function`
  * * `server_upgraded`
  *
- * #### Confluence Webhook events
+ *#### Confluence Webhook events
  *
  * * `attachment_created`
  * * `attachment_removed`
@@ -100,7 +100,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookMod
  * * `user_reactivated`
  * * `user_removed`
  *
- * ### Inspecting webhook contents
+ *### Inspecting webhook contents
  *
  * Each type of webhook event includes information specific to that event in the body content of the POST message. The
  * add-on resource that listens for webhook posts should receive and process the content as appropriate for the add-on.

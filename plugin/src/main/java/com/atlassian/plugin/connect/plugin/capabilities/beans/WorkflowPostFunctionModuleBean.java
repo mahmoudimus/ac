@@ -10,11 +10,11 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
  * * updating an issue's fields
  * * adding a comment to an issue
  *
- * Your add-on needs to declare the URL that JIRA will invoke with an HTTP POST after the transition is completed.
+ *Your add-on needs to declare the URL that JIRA will invoke with an HTTP POST after the transition is completed.
  * Each POST will include the issue and transition details and the configuration of the workflow function. It
  * will also include the authentication headers that allow the add-on to validate the authenticity of that request.
  *
- * Often, the workflow post function will allow some degree of configuration of its behavior. As an example:
+ *Often, the workflow post function will allow some degree of configuration of its behavior. As an example:
  * You may want to react to a state transition only if the issue has a particular label, and you want the project
  * administrator to configure that label. For this purpose, three additional (optional) URLs in the descriptor
  * allow you to declare the pages that will show:
@@ -23,15 +23,16 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
  * * The form that is shown when a workflow post function is first created
  * * The form that is shown when a workflow post function is edited
  *
- * All URLs are relative to the base URL that is declared in the connect-container element of the descriptor.
+ *All URLs are relative to the base URL that is declared in the connect-container element of the descriptor.
  *
- * ## Contents of the HTTP POST
+ *## Contents of the HTTP POST
  *
- * To understand the type of content that is sent to the add-on after a state transition, you can use the webhook
+ *To understand the type of content that is sent to the add-on after a state transition, you can use the webhook
  * inspector tool. The [Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) is a Connect add-on
  * that you can install in your development environment to inspect the content of event messages.
  *
- * Here is an example POST body:
+ *Here is an example POST body:
+ *
  *
  *      {
  *          "configuration": {
@@ -150,8 +151,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
  *      }
  *
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#POST_FUNCTION_EXAMPLE}
- *  @schemaTitle Workflow Post Function
- *  @since 1.0
+ * @schemaTitle Workflow Post Function
+ * @since 1.0
  */
 
 public class WorkflowPostFunctionModuleBean extends NameToKeyBean
