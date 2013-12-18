@@ -13,6 +13,10 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -45,6 +49,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class DefaultRemotablePluginAccessorFactory implements RemotablePluginAccessorFactory, DisposableBean
 {
     private final ConnectApplinkManager connectApplinkManager;
+    private final ConnectDescriptorRegistry connectDescriptorRegistry;
     private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
     private final PluginAccessor pluginAccessor;
@@ -60,16 +65,18 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     @Autowired
     public DefaultRemotablePluginAccessorFactory(ConnectApplinkManager connectApplinkManager,
-                                                 OAuthLinkManager oAuthLinkManager,
-                                                 CachingHttpContentRetriever httpContentRetriever,
-                                                 PluginAccessor pluginAccessor,
-                                                 ApplicationProperties applicationProperties,
-                                                 EventPublisher eventPublisher,
-                                                 JwtService jwtService,
-                                                 ConsumerService consumerService,
-                                                 UserManager userManager)
+            ConnectDescriptorRegistry connectDescriptorRegistry,
+            OAuthLinkManager oAuthLinkManager,
+            CachingHttpContentRetriever httpContentRetriever,
+            PluginAccessor pluginAccessor,
+            ApplicationProperties applicationProperties,
+            EventPublisher eventPublisher,
+            JwtService jwtService,
+            ConsumerService consumerService,
+            UserManager userManager)
     {
         this.connectApplinkManager = connectApplinkManager;
+        this.connectDescriptorRegistry = connectDescriptorRegistry;
         this.oAuthLinkManager = oAuthLinkManager;
         this.httpContentRetriever = httpContentRetriever;
         this.pluginAccessor = pluginAccessor;
@@ -218,28 +225,36 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
         checkNotNull(plugin, "Plugin not found: '%s'", pluginKey);
 
-        return signsWithJwt(pluginKey)
-                // don't need to get the actual provider as it doesn't really matter
-                ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, consumerService, connectApplinkManager, httpContentRetriever, userManager)
-                : new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider(), httpContentRetriever, oAuthLinkManager);
-    }
-
-    private boolean signsWithJwt(String pluginKey)
-    {
         ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
-        Object authTypeProperty = null;
-
+        AuthenticationMethod authenticationMethod = null;
         if (null == appLink)
         {
             log.error("Found no app link by plugin key '{}'!", pluginKey);
         }
         else
         {
-            authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
+            Object authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
+            if (authTypeProperty != null)
+            {
+                authenticationMethod = AuthenticationMethod.forName(authTypeProperty.toString());
+            }
         }
 
-        // for backwards compatibility default to "not JWT" if the property does not exist
-        return null != authTypeProperty && AuthenticationMethod.JWT.equals(AuthenticationMethod.forName(authTypeProperty.toString()));
+        if (AuthenticationMethod.JWT.equals(authenticationMethod))
+        {
+            return new JwtSigningRemotablePluginAccessor(plugin, displayUrl, jwtService, consumerService,
+                    connectApplinkManager, httpContentRetriever, userManager);
+        }
+        else if (AuthenticationMethod.NONE.equals(authenticationMethod))
+        {
+            return new NoAuthRemotablePluginAccessor(plugin, displayUrl, httpContentRetriever);
+        }
+        else
+        {
+            // default to OAuth (for backwards compatibility)
+            return new OAuthSigningRemotablePluginAccessor(plugin, displayUrl, getDummyServiceProvider(),
+                    httpContentRetriever, oAuthLinkManager);
+        }
     }
 
     private ServiceProvider getDummyServiceProvider()

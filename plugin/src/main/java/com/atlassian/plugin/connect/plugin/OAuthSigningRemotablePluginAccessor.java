@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.oauth.ServiceProvider;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
@@ -27,14 +28,13 @@ public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginA
     private final ServiceProvider serviceProvider;
     private final OAuthLinkManager oAuthLinkManager;
 
-    public OAuthSigningRemotablePluginAccessor(String pluginKey,
-                                                String pluginName,
+    public OAuthSigningRemotablePluginAccessor(Plugin plugin,
                                                 Supplier<URI> baseUrl,
                                                 ServiceProvider serviceProvider,
                                                 HttpContentRetriever httpContentRetriever,
                                                 OAuthLinkManager oAuthLinkManager)
     {
-        super(pluginKey, pluginName, baseUrl, httpContentRetriever);
+        super(plugin, baseUrl, httpContentRetriever);
         this.serviceProvider = serviceProvider;
         this.oAuthLinkManager = oAuthLinkManager;
     }
