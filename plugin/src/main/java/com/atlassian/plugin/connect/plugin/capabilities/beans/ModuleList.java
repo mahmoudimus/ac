@@ -80,10 +80,14 @@ public class ModuleList extends BaseModuleBean
     private List<ConnectPageModuleBean> adminPages;
 
     /**
-     * @schemaTitle Configure Page
+     * A configure page module is a page module used to configure the addon itself.
+     * Other than that it is the same as other pages.
+     *
+     * @exampleJson {@see ConnectJsonExamples#CONFIGURE_PAGE_EXAMPLE}
+=    * @schemaTitle Configure Page
      */
     @ConnectModule (ConfigurePageModuleProvider.class)
-    private List<ConfigurePageModuleBean> configurePages;
+    private ConnectPageModuleBean configurePage;
 
     /**
      * @schemaTitle User Profile Page
@@ -106,7 +110,6 @@ public class ModuleList extends BaseModuleBean
     public ModuleList()
     {
         this.adminPages = newArrayList();
-        this.configurePages = newArrayList();
         this.dynamicContentMacros = newArrayList();
         this.generalPages = newArrayList();
         this.jiraComponentTabPanels = newArrayList();
@@ -167,10 +170,6 @@ public class ModuleList extends BaseModuleBean
         if (null == adminPages)
         {
             this.adminPages = newArrayList();
-        }
-        if (null == configurePages)
-        {
-            this.configurePages = newArrayList();
         }
         if (null == profilePages)
         {
@@ -253,9 +252,9 @@ public class ModuleList extends BaseModuleBean
         return adminPages;
     }
 
-    public List<ConfigurePageModuleBean> getConfigurePages()
+    public ConnectPageModuleBean getConfigurePage()
     {
-        return configurePages;
+        return configurePage;
     }
 
     public List<ConnectPageModuleBean> getProfilePages()
@@ -302,7 +301,7 @@ public class ModuleList extends BaseModuleBean
         return new EqualsBuilder()
                 .append(adminPages, other.adminPages)
                 .append(dynamicContentMacros, other.dynamicContentMacros)
-                .append(configurePages, other.configurePages)
+                .append(configurePage, other.configurePage)
                 .append(generalPages, other.generalPages)
                 .append(jiraComponentTabPanels, other.jiraComponentTabPanels)
                 .append(jiraIssueTabPanels, other.jiraIssueTabPanels)
@@ -327,7 +326,7 @@ public class ModuleList extends BaseModuleBean
         return new HashCodeBuilder(29, 37)
                 .append(adminPages)
                 .append(dynamicContentMacros)
-                .append(configurePages)
+                .append(configurePage)
                 .append(generalPages)
                 .append(jiraComponentTabPanels)
                 .append(jiraIssueTabPanels)
