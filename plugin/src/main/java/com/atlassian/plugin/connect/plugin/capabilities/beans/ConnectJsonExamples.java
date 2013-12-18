@@ -84,7 +84,7 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withModules("webItems", newWebItemBean().build())
+                .withModules("webItems", newWebItemBean().withLink("/my-web-item").withLocation("system.preset.filters").build())
                 .build();
 
         return gson.toJson(addonBean);
