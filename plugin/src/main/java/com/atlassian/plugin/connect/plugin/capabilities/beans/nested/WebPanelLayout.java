@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
+/**
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PANEL_LAYOUT_EXAMPLE}
+ */
 public class WebPanelLayout
 {
     private final String width;

@@ -142,12 +142,12 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
             {
                 if (isNotBlank(fieldDoc.getFieldTitle()))
                 {
-                    schema.setTitle(fieldDoc.getFieldTitle());
+                    schema.setFieldTitle(fieldDoc.getFieldTitle());
                 }
 
                 if (isNotBlank(fieldDoc.getFieldDocs()))
                 {
-                    schema.setDescription(fieldDoc.getFieldDocs());
+                    schema.setFieldDescription(fieldDoc.getFieldDocs());
                 }
             }
         }

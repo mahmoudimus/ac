@@ -14,7 +14,7 @@ public class BeanWithParams extends BaseModuleBean
      * This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.
      *
      * Example:
-     * @exampleJson {@see ConnectJsonExamples#PARAMS_EXAMPLE}
+     * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PARAMS_EXAMPLE}
      * @schemaTitle Object
      */
     private Map<String, String> params;

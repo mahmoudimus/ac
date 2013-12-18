@@ -22,22 +22,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookMod
  * Each webhook POST sent to the add-on will also include the authentication headers that allow the add-on to
  * validate the authenticity of that request.
  *
- * #### Sample webhooks JSON block
- *
- *     {
- *         "webhooks": [
- *             {
- *                 "event": "jira:issue_created",
- *                 "url": "/issue-created"
- *             },
- *             ...
- *             {
- *                 "event": "jira:issue_updated",
- *                 "url": "/issue-updated"
- *             }
- *         ]
- *     }
- *
  * ### Webhook event types
  *
  * Below is a list of all available webhook events.
@@ -128,6 +112,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookMod
  * subscribes and generates each webhook event type available on the running instance of the Atlassian application,
  * and prints the body posted by the instance to the console screen.
  *
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
  * @schemaTitle Webhooks
  * @since 1.0
  */

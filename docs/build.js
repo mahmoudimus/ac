@@ -54,10 +54,10 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
                     }
                 }
             }
-            property = _.pick(property, ["id", "type", "title", "description", "arrayType", "arrayTypes"]);
+            property = _.pick(property, ["id", "type", "title", "description", "fieldDescription", "arrayType", "arrayTypes"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
-            property = _.pick(property, ["id", "type", "title", "description"]);
+            property = _.pick(property, ["id", "type", "title", "description", "fieldDescription"]);
         }
 
         if (required && required.indexOf(id) > -1) {
@@ -65,8 +65,12 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
         }
         property.key = id;
 
+        // render description fields, if present
         if (property.description) {
             property.description = renderMarkdown(property.description);
+        }
+        if (property.fieldDescription) {
+            property.fieldDescription = renderMarkdown(property.fieldDescription);
         }
 
         return property;
