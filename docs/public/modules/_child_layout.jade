@@ -28,29 +28,35 @@ table.aui
                         = prop.key
                 td
                     - if (prop.type === 'object')
-                        - if (entityLinks[prop.id])
+                        - if (prop.id === 'moduleList')
+                            a(href = baseUrl + '/modules/jira/')
+                                +auiPropertyLozenge(class='aui-lozenge-complete')
+                                    | JIRA Modules
+                            | &nbsp;or&nbsp;
+                            a(href = baseUrl + '/modules/confluence/')
+                                +auiPropertyLozenge(class='aui-lozenge-complete')
+                                    | Confluence Modules
+                        - else if (entityLinks[prop.id])
                             a(href = baseUrl + '/' + entityLinks[prop.id] + '.html')
                                 - if (prop.title)
                                     +auiPropertyLozenge(class='aui-lozenge-complete')
                                         = prop.title
+                                - else if (prop.name)
+                                    +auiPropertyLozenge(class='aui-lozenge-complete')
+                                        = prop.name
                                 - else
                                     +auiPropertyLozenge(class='aui-lozenge-complete')
                                         = prop.id
                         - else
-                            - if (prop.title)
-                                +auiPropertyLozenge()
-                                    = prop.title
-                            - else
-                                +auiPropertyLozenge()
-                                    = prop.id
+                            +auiPropertyLozenge()
+                                = prop.type
                     - else if (prop.type === 'array')
                         - if (prop.arrayType === 'object')
                             | [&nbsp;
-                            prop.arrayTypeIds.length
-                            - each typeId in prop.arrayTypeIds
-                                a(href = baseUrl + '/' + entityLinks[typeId] + '.html')
+                            - each type in prop.arrayTypes
+                                a(href = baseUrl + '/' + entityLinks[type.id] + '.html')
                                     +auiPropertyLozenge(class='aui-lozenge-complete')
-                                        = typeId
+                                        = type.title
                                 | ,&nbsp;
                             | &hellip; ]
                         - else
