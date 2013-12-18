@@ -9,7 +9,7 @@
 The information contained in these two descriptors is identical. It shows the new format for the basic information about your addon.
 ```
 <?xml version="1.0" ?>
-<atlassian-plugin key="myaddon_helloworld" name="Hello World" plugins-version="2">
+<atlassian-plugin key="hello-world" name="Hello World" plugins-version="2">
     <plugin-info>
         <description>Atlassian Connect add-on</description>
         <version>1</version>
@@ -24,7 +24,7 @@ The information contained in these two descriptors is identical. It shows the ne
 {
     "name": "Hello World",
     "description": "Atlassian Connect add-on",
-    "key": "myaddon_helloworld",
+    "key": "hello-world",
     "baseUrl": "http://localhost:8000",
     "vendor": {
         "name": "My Organization, Inc",
@@ -52,7 +52,8 @@ installed, enabled, disabled and uninstalled webhooks have been replaced with li
 }
 ```
 
-The installed event is now synchronous, this means that if your `installed` lifecycle event URL does not return a 200 or 204 response header, the add-on will fail to install. All other lifecycle events are asynchronous.
+The installed event is now synchronous, this means that if your `installed` lifecycle event URL does not return a 200 or
+ 204 response header, the add-on will fail to install. All other lifecycle events are asynchronous.
 
 ## Webhooks
 
@@ -117,12 +118,13 @@ Remote conditions can be migrated as follows:
 ]
 ```
 
-See the [Conditions documentation](conditions.html) for more details.
+See the [Conditions documentation](../concepts/conditions.html) for more details.
 
 
 ## Modules
-Not all modules have been directly mapped in the new descriptor. This means you will need to check the appropriate module configuration from this documentation and apply it to your own configuration.
-The [Getting Started guide](getting-started.html) provides a good example of a `general-page` json descriptor.
+Not all modules have been directly mapped in the new descriptor. This means you will need to check the appropriate
+module configuration from this documentation and apply it to your own configuration. The
+[Getting Started guide](./getting-started.html) provides a good example of a `general-page` json descriptor.
 
 ### Dialog Page
 The `dialog-page` module has been removed. You can achieve the same result by defining a webitem with a target of dialog.
@@ -144,20 +146,29 @@ The `dialog-page` module has been removed. You can achieve the same result by de
 }
 ```
 
-# oAuth
-<div class="aui-message warning shadowed information-macro">
-    oAuth has been deprecated. Please consider migrating to [JWT](authentication.html).
+### Confluence Macros
+
+* The `<remote-macro>` XML element is replaced by the [`"staticContentMacros"`](../../modules/confluence/static-content-macro.html) module
+* The `<macro-page>` XML element is replaced by the [`"dynamicContentMacros"`](../../modules/confluence/dynamic-content-macro.html) module
+
+# OAuth
+<div class="aui-message warning">
+    <span class="aui-icon icon-warning"></span>
+    OAuth has been deprecated. Please consider migrating to [JWT](../concepts/authentication.html).
 </div>
 
-If your add-on was created using the [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java) or [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) frameworks you can download the latest version for JSON descriptor and [JWT support](authentication.html).
+If your add-on was created using the [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
+or [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) frameworks you can download
+the latest version for JSON descriptor and [JWT support](authentication.html).
 
-The `atlassian-plugin.json` now contains an `authentication` section that can be used to specify your oAuth credentials as follows:
+The `atlassian-plugin.json` now contains an `authentication` section that can be used to specify your oAuth credentials
+as follows:
 
 ```
 {
     "name": "My sample Add-on",
     "authentication": {
-        "type": "oAuth",
+        "type": "oauth",
         "publicKey": "S0m3Publ1cK3y"
     }
 }
@@ -165,23 +176,22 @@ The `atlassian-plugin.json` now contains an `authentication` section that can be
 
 ## Atlassian Connect Express
 
-[atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) now contains support for JWT and the `atlassian-plugin.json`. By upgrading these framework you will benifit from the new functionality.
+[atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) now contains support for JWT and
+the `atlassian-plugin.json`. By upgrading these framework you will benefit from the new functionality.
 
-<div class="aui-message warning shadowed information-macro">
-    oAuth has been entirely removed from the latest version of ACE.
+<div class="aui-message warning">
+    <span class="aui-icon icon-warning"></span>
+    OAuth has been entirely removed from the latest version of ACE.
 </div>
 
-### To upgrade
-
- * Change the version number of `atlassian-connect-express` in the `package.json` file to the latest version
- * npm update
- * update your atlassian-plugin.xml to atlassian-plugin.json
+See: [upgrading ACE](./upgrade-ace.html)
 
 
 ## Atlassian Connect Play
 [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
 
-By upgrading to the new version of [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java) you will gain support for JWT and the new atlassian-plugin.json descriptor format.
+By upgrading to the new version of [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
+you will gain support for JWT and the new `atlassian-plugin.json` descriptor format.
 
 
 
@@ -191,9 +201,9 @@ By upgrading to the new version of [atlassian-connect-play-java](https://bitbuck
 ```
 {
     "name": "Hello World",
+    "key": "hello-world",
     "description": "Atlassian Connect add-on",
     "baseUrl": "http://www.example.com",
-    "key": "myaddon_helloworld",
     "enableLicensing": true
 }
 ```

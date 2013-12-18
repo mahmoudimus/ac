@@ -3,9 +3,13 @@
  * [Jira Conditions](#jiraconditions)
  * [Confluence Conditions](#confluenceconditions)
 
-A condition specifies requirements that must be met for a user to access the features or UI exposed by a module. For instance, the condition can require a user to be an administrator, have edit permissions, and apply other requirements for access. If the condition is not met, the panel, page, or other UI element exposed by the add-on does not appear on the page. 
+A condition specifies requirements that must be met for a user to access the features or UI exposed by a module. For
+instance, the condition can require a user to be an administrator, have edit permissions, and apply other requirements
+for access. If the condition is not met, the panel, page, or other UI element exposed by the add-on does not appear on
+the page.
 
-Various types of modules accept conditions, including generalPage, adminPage, and webItems. To see whether a certain module accepts conditions, see their specific module documentation page.
+Various types of modules accept conditions, including generalPage, adminPage, and webItems. To see whether a certain
+module accepts conditions, see their specific module documentation page.
 
 ## Remote Conditions
 
@@ -26,7 +30,15 @@ Various types of modules accept conditions, including generalPage, adminPage, an
 }
 ```
 
-For a remote condition, the Atlassian application issues a request to the remote resource and expects in the response either a true or false value that specifies whether to show or hide the module feature. The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request authentication information passed through as a header, rather than as a query string parameter.
+For a remote condition, the Atlassian application issues a request to the remote resource and expects a response which
+specifies whether to show or hide the module feature.
+
+    {
+        "shouldDisplay": false
+    }
+
+The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request
+authentication information passed through as a header, rather than as a query string parameter.
 
 
 ## Static conditions
