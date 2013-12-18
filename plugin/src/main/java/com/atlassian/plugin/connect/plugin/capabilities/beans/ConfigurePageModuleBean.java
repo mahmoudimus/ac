@@ -19,6 +19,7 @@ import com.google.gson.annotations.SerializedName;
  * Json Example:
  * @exampleJson {@see ConnectJsonExamples#CONFIGURE_PAGE_EXAMPLE}
  * @schemaTitle Configure Page
+ * @since 1.0
  */
 public class ConfigurePageModuleBean extends ConnectPageModuleBean
 {
