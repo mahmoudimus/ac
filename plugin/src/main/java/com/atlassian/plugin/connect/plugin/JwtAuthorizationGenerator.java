@@ -17,12 +17,15 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicHeaderValueParser;
+import org.apache.http.message.ParserCursor;
+import org.apache.http.util.CharArrayBuffer;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,6 +41,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
 {
+    private static final char[] QUERY_DELIMITERS = new char[] { '&' };
+
     private static final String JWT_EXPIRY_SECONDS_PROPERTY = "com.atlassian.connect.jwt.expiry_seconds";
     /**
      * Default of 3 minutes.
@@ -89,14 +94,14 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
 
         Map<String, String[]> completeParams = params;
 
-        if (!StringUtils.isEmpty(targetPath.getQuery()))
-        {
-            completeParams = new HashMap<String, String[]>(params);
-            completeParams.putAll(constructParameterMap(targetPath));
-        }
-
         try
         {
+            if (!StringUtils.isEmpty(targetPath.getQuery()))
+            {
+                completeParams = new HashMap<String, String[]>(params);
+                completeParams.putAll(constructParameterMap(targetPath));
+            }
+
             JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, new CanonicalHttpUriRequest(httpMethod.toString(), targetPath.getPath(), "", completeParams));
         }
         catch (UnsupportedEncodingException e)
@@ -111,24 +116,53 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
         return jwtService.issueJwt(jsonBuilder.build(), appLink);
     }
 
-    private static Map<String, String[]> constructParameterMap(URI uri)
+    private static Map<String, String[]> constructParameterMap(URI uri) throws UnsupportedEncodingException
     {
-        List<NameValuePair> queryParams = URLEncodedUtils.parse(uri.getQuery(), Charset.forName("UTF-8"));
+        return transformParamsMultiMapIntoStringToArrayMap(parseQueryStringParameters(uri.getQuery()));
+    }
 
-        Multimap<String, String> queryParamsMapIntermediate = HashMultimap.create(queryParams.size(), 1); // 1 value per key is close to the truth in most cases
-        // efficiently collect { name1 -> { value1, value2, ... }, name2 -> { ... }, ... }
-        for (NameValuePair nameValuePair : queryParams)
-        {
-            queryParamsMapIntermediate.put(nameValuePair.getName(), nameValuePair.getValue());
-        }
-
-        Map<String, String[]> queryParamsMap = new HashMap<String, String[]>(queryParamsMapIntermediate.size());
+    private static Map<String, String[]> transformParamsMultiMapIntoStringToArrayMap(Multimap<String, String> queryParams)
+    {
+        Map<String, String[]> queryParamsMap = new HashMap<String, String[]>(queryParams.size());
 
         // convert String -> Collection<String> to String -> String[]
-        for (Map.Entry<String, Collection<String>> entry : queryParamsMapIntermediate.asMap().entrySet())
+        for (Map.Entry<String, Collection<String>> entry : queryParams.asMap().entrySet())
         {
             queryParamsMap.put(entry.getKey(), entry.getValue().toArray(new String[entry.getValue().size()]));
         }
 
         return queryParamsMap;
-    }}
+    }
+
+    private static Multimap<String, String> parseQueryStringParameters(final String query) throws UnsupportedEncodingException
+    {
+        if (query == null)
+        {
+            return HashMultimap.create(0, 0);
+        }
+
+        Multimap<String, String> queryParams = HashMultimap.create();
+
+        BasicHeaderValueParser parser = BasicHeaderValueParser.DEFAULT;
+        CharArrayBuffer buffer = new CharArrayBuffer(query.length());
+        buffer.append(query);
+        ParserCursor cursor = new ParserCursor(0, buffer.length());
+
+        while (!cursor.atEnd())
+        {
+            NameValuePair nvp = parser.parseNameValuePair(buffer, cursor, QUERY_DELIMITERS);
+
+            if (nvp.getName().length() > 0)
+            {
+                queryParams.put(urlDecode(nvp.getName()), urlDecode(nvp.getValue()));
+            }
+        }
+
+        return queryParams;
+    }
+
+    private static String urlDecode(final String content) throws UnsupportedEncodingException
+    {
+        return URLDecoder.decode(content, Consts.UTF_8.displayName());
+    }
+}

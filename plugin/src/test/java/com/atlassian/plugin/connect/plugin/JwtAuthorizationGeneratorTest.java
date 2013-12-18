@@ -42,7 +42,7 @@ public class JwtAuthorizationGeneratorTest
 {
     private static final String A_MOCK_JWT = "a.mock.jwt";
     private static final Map<String,List<String>> PARAMS = ImmutableMap.of("a_param", asList("a_value"));
-    private static final URI A_URI = URI.create("http://any.url/path?b_param=b_value");
+    private static final URI A_URI = URI.create("http://any.url/path?b_param=b+value+with+spaces&c_param=c_value");
 
     @Mock private JwtService jwtService;
     @Mock private ApplicationLink applicationLink;
@@ -89,7 +89,9 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void hasQueryHashClaimWithCorrectValue() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(HttpMethod.POST.toString(), A_URI.getPath(), "", ImmutableMap.of("a_param", new String[]{"a_value"}, "b_param", new String[]{"b_value"})));
+        CanonicalHttpUriRequest canonicalRequest = new CanonicalHttpUriRequest(HttpMethod.POST.toString(), A_URI.getPath(), "",
+                ImmutableMap.of("a_param", new String[]{"a_value"}, "b_param", new String[]{"b value with spaces"}, "c_param", new String[]{"c_value"}));
+        String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(canonicalRequest);
         verify(jwtService).issueJwt(argThat(hasClaim(JwtConstants.Claims.QUERY_HASH, expectedQueryHash, true)), eq(applicationLink));
     }
 
