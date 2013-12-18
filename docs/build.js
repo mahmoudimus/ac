@@ -41,29 +41,34 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
 
         if (property.type === "array") {
             property.id = id;
-            if (property.items && property.items["$ref"] === "#") {
-                // self reference
-                property.arrayType = 'object';
-                property.arrayTypes = [{id: parent.id, title: parent.name}];
-            } else {
-                property.arrayType = property.items.type;
-                if (property.arrayType === 'object') {
-                    property.arrayTypes = [];
-                    if (property.items.anyOf) {
-                        _.each(property.items.anyOf, function (child) {
+            
+            property.arrayType = property.items.type;
+            if (property.arrayType === 'object') {
+                property.arrayTypes = [];
+                if (property.items.anyOf) {
+                    _.each(property.items.anyOf, function (child) {
+                        if(child["$ref"] === "#")
+                        {
+                            // self reference 
+                            property.arrayTypes.push({id: parent.id, title: parent.name});
+                        }
+                        else
+                        {
                             property.arrayTypes.push({
                                 id: child.id,
                                 title: child.title || child.id
                             });
-                        });
-                    } else if (property.items.id) {
-                        property.arrayTypes.push({
-                            id: property.items.id,
-                            title: property.items.title || property.items.id
-                        });
-                    }
+                        }
+                        
+                    });
+                } else if (property.items.id) {
+                    property.arrayTypes.push({
+                        id: property.items.id,
+                        title: property.items.title || property.items.id
+                    });
                 }
             }
+
             property = _.pick(property, ["id", "type", "title", "description", "fieldDescription", "arrayType", "arrayTypes"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
