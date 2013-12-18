@@ -45,6 +45,11 @@
             "title": "Licensing"
         }
     },
+    "rest-apis": {
+        "product-api-browser.html": {
+            "title": "Product API Browser"
+        }
+    },
     "resources": {
         "samples.html": {
             "title": "Sample Add-ons"
