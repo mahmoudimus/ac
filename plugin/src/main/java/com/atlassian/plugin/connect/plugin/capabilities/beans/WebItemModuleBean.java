@@ -19,12 +19,12 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarg
  * that’s inserted into some standard place in the Atlassian application interface, such as the
  * administration menu.
  *
- * The form that the link takes can vary depending on the location. For instance, a web item in the header bar
- * (with a location section of `system.top.navigation.bar`) adds a link to the navigation bar across the top of the
+ * The form that the url takes can vary depending on the location. For instance, a web item in the header bar
+ * (with a location section of `system.top.navigation.bar`) adds a url to the navigation bar across the top of the
  * interface. On the other hand, a web item in the `opsbar-operation` location section in JIRA adds an item to the
  * issue operation buttons.
  *
- * A web item link can open a new page in the application or a dialog, depending on your configuration.
+ * A web item url can open a new page in the application or a dialog, depending on your configuration.
  *
  * Web items are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
  * application and don't know where to start, a web item may be all you need.
@@ -36,11 +36,11 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarg
 public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
-     *  Specifies the URL targeted by the link. The URL can be absolute or relative to either the
+     *  Specifies the URL targeted by the url. The URL can be absolute or relative to either the
      *  product URL or the add-on's base URL, depending on the _context_ parameter.
      */
     @Required
-    private String link;
+    private String url;
 
     /**
      * The location in the application interface where the web item should appear. For the Atlassian application
@@ -49,7 +49,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * Places in the Atlassian UI are identified by what are known as "well-known locations".
      * For example, the `system.admin/globalsettings` location is in the administrative
-     * menu link on the left side of the Administration Console.
+     * menu url on the left side of the Administration Console.
      */
     @Required
     private String location;
@@ -77,34 +77,34 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     private Integer weight;
 
     /**
-     * Defines the way the link is opened in the browser, such as in a modal or inline dialog.
-     * If omitted, the link behaves as a regular hyperlink.
+     * Defines the way the url is opened in the browser, such as in a modal or inline dialog.
+     * If omitted, the url behaves as a regular hyperlink.
      *
      * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBITEM_TARGET_EXAMPLE}
      */
     private WebItemTargetBean target;
 
     /**
-     * Specifies custom styles for the web link target page, if desired. By default, the web item content gets
+     * Specifies custom styles for the web url target page, if desired. By default, the web item content gets
      * styled in the default style of the target application.
      */
     private List<String> styleClasses;
 
     /**
-     * The internationalised text to be used in the link's tooltip.
+     * The internationalised text to be used in the url's tooltip.
      */
     private I18nProperty tooltip;
 
     /**
-     * An optional icon to display with the link text or as the link, specified by URL to its hosted location.
-     * You can specify a particular width and height for the icon. Most link icons in Atlassian applications
+     * An optional icon to display with the url text or as the url, specified by URL to its hosted location.
+     * You can specify a particular width and height for the icon. Most url icons in Atlassian applications
      * are 16 by 16 pixels.
      */
     private IconBean icon;
 
     public WebItemModuleBean()
     {
-        this.link = "";
+        this.url = "";
         this.location = "";
         this.context = AddOnUrlContext.addon;
         this.weight = 100;
@@ -118,9 +118,9 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         super(builder);
         
-        if (null == link)
+        if (null == url)
         {
-            this.link = "";
+            this.url = "";
         }
         
         if(null == context)
@@ -144,9 +144,9 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         }
     }
 
-    public String getLink()
+    public String getUrl()
     {
-        return link;
+        return url;
     }
 
     public String getLocation()
@@ -186,7 +186,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
 
     public boolean isAbsolute()
     {
-        return (null != getLink() && getLink().toLowerCase().startsWith("http"));
+        return (null != getUrl() && getUrl().toLowerCase().startsWith("http"));
     }
     
     public static WebItemModuleBeanBuilder newWebItemBean()
@@ -205,7 +205,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         return Objects.toStringHelper(this)
                 .add("key", getKey())
                 .add("name", getName())
-                .add("link", getLink())
+                .add("url", getUrl())
                 .add("location", getLocation())
                 .add("weight", getWeight())
                 .add("styleClasses", getStyleClasses())
@@ -231,7 +231,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         WebItemModuleBean other = (WebItemModuleBean) otherObj;
 
         return new EqualsBuilder()
-                .append(link, other.link)
+                .append(url, other.url)
                 .append(location, other.location)
                 .append(context, other.context)
                 .append(weight, other.weight)
@@ -246,7 +246,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     public int hashCode()
     {
         return new HashCodeBuilder(13, 61)
-                .append(link)
+                .append(url)
                 .append(location)
                 .append(context)
                 .append(weight)

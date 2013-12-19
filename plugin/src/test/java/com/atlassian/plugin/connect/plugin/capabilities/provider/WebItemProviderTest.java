@@ -83,7 +83,7 @@ public class WebItemProviderTest
     {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withLink("http://www.google.com")
+                .withUrl("http://www.google.com")
                 .withLocation("atl.admin/menu")
                 .build();
 
@@ -104,7 +104,7 @@ public class WebItemProviderTest
     {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withLink("http://www.google.com")
+                .withUrl("http://www.google.com")
                 .withLocation("atl.admin/menu")
                 .withContext(AddOnUrlContext.addon)
                 .build();
@@ -126,7 +126,7 @@ public class WebItemProviderTest
     {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withLink("http://www.google.com")
+                .withUrl("http://www.google.com")
                 .withLocation("atl.admin/menu")
                 .withContext(AddOnUrlContext.product)
                 .build();
@@ -148,7 +148,7 @@ public class WebItemProviderTest
     {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withLink("/some/admin")
+                .withUrl("/some/admin")
                 .withLocation("atl.admin/menu")
                 .build();
 
@@ -169,7 +169,7 @@ public class WebItemProviderTest
     {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withLink("/some/admin")
+                .withUrl("/some/admin")
                 .withLocation("atl.admin/menu")
                 .withContext(AddOnUrlContext.addon)
                 .build();
@@ -191,7 +191,7 @@ public class WebItemProviderTest
     {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withLink("/local/jira/admin")
+                .withUrl("/local/jira/admin")
                 .withLocation("atl.admin/menu")
                 .withContext(AddOnUrlContext.product)
                 .build();
@@ -213,13 +213,13 @@ public class WebItemProviderTest
     {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withLink("http://www.google.com")
+                .withUrl("http://www.google.com")
                 .withLocation("atl.admin/menu")
                 .build();
 
         WebItemModuleBean bean2 = newWebItemBean()
                 .withName(new I18nProperty("My Other Web Item", "my.other.webitem"))
-                .withLink("/my/addon")
+                .withUrl("/my/addon")
                 .withLocation("atl.admin/menu")
                 .build();
 
