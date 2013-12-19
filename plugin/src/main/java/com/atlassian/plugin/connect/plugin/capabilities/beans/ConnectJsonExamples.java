@@ -34,6 +34,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModu
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
@@ -63,6 +64,7 @@ public class ConnectJsonExamples
     public static final String PRJ_ADMIN_PAGE_EXAMPLE = createProjectAdminPageExample();
     public static final String SEARCH_VIEW_EXAMPLE = createSearchViewExample();
     public static final String SINGLE_CONDITION_EXAMPLE = createSingleConditionExample();
+    public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
     public static final String STATIC_MACRO_EXAMPLE = createStaticMacroExample();
     public static final String URL_EXAMPLE = createUrlExample();
     public static final String VENDOR_EXAMPLE = createVendorExample();
@@ -84,7 +86,7 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withLink("/my-web-item").withLocation("system.preset.filters").build())
+                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withUrl("/my-web-item").withLocation("system.preset.filters").build())
                 .build();
 
         return gson.toJson(addonBean);
@@ -102,7 +104,7 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withLink("/my-web-item").withLocation("system.preset.filters").build())
+                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withUrl("/my-web-item").withLocation("system.preset.filters").build())
                 .withModules("webPanels", newWebPanelBean().withName(i18nProperty("Web Panel")).withLocation("com.atlassian.jira.plugin.headernav.left.context").withUrl("/my-web-panel").build())
                 .withModules("generalPages", newPageBean().withName(i18nProperty("General Page")).withUrl("my-general-page").build())
                 .withModules("adminPages", newPageBean().withName(i18nProperty("Admin Page")).withUrl("my-admin-page").build())
@@ -165,7 +167,7 @@ public class ConnectJsonExamples
     {
         WebItemModuleBean webItemModuleBean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", ""))
-                .withLink("/my-web-item")
+                .withUrl("/my-web-item")
                 .withLocation("system.preset.filters")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(16).withWidth(16).build())
                 .withStyleClasses("webitem", "system-present-webitem")
@@ -323,6 +325,23 @@ public class ConnectJsonExamples
     {
         SingleConditionBean bean = newSingleConditionBean().withCondition("user_is_logged_in").build();
         return gson.toJson(createModuleObject("condition", bean));
+    }
+
+    private static String createCompositeConditionExample()
+    {
+        CompositeConditionBean bean = newCompositeConditionBean()
+                .withType(CompositeConditionType.AND)
+                .withConditions(
+                        newCompositeConditionBean()
+                        .withType(CompositeConditionType.OR)
+                        .withConditions(
+                                newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_FILE_TO_ISSUE).build()
+                                ,newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_SCREENSHOT_TO_ISSUE).build()
+                        ).build()
+                        ,newSingleConditionBean().withCondition(JiraConditions.USER_IS_LOGGED_IN).build()
+                ).build();
+
+        return gson.toJson(createModuleObject("conditions",bean));
     }
 
     private static String createUrlExample()

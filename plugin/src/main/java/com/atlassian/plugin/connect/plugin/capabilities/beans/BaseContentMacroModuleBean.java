@@ -2,14 +2,17 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
-import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.*;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +25,7 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      * This URL has to be relative to the add-on base URL.
      */
     @Required
-    @StringSchemaAttributes(format = "uri")
+//    @StringSchemaAttributes(format = "uri")
     private String url;
 
     /**
@@ -155,11 +158,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     public String getUrl()
     {
         return url;
-    }
-
-    public URI createUri() throws URISyntaxException
-    {
-        return null == url ? null : new URI(url);
     }
 
     public I18nProperty getDescription()

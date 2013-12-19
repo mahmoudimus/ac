@@ -43,13 +43,13 @@ You can start JIRA or Confluence with Atlassian Connect as follows:
 ### JIRA
 
 <pre><code data-lang='none'>
-atlas-run-standalone --product jira --version 6.2-OD-03 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m23.1,com.atlassian.jwt:jwt-plugin:1.0-m0,com.atlassian.webhooks:atlassian-webhooks-plugin:0.17.3,com.atlassian.httpclient:atlassian-httpclient-plugin:0.17.1,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.2-m1 --jvmargs -Datlassian.upm.on.demand=true
+atlas-run-standalone --product jira --version 6.2-OD-05-4 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m25,com.atlassian.jwt:jwt-plugin:1.0-m3,com.atlassian.webhooks:atlassian-webhooks-plugin:0.17.3,com.atlassian.httpclient:atlassian-httpclient-plugin:0.17.1,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.2 --jvmargs -Datlassian.upm.on.demand=true
 </pre></code>
 
 ### Confluence
 
 <pre><code data-lang='none'>
-atlas-run-standalone --product confluence --version 5.3-OD-12 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m23.1,com.atlassian.jwt:jwt-plugin:1.0-m0,com.atlassian.webhooks:atlassian-webhooks-plugin:0.17.3,com.atlassian.httpclient:atlassian-httpclient-plugin:0.17.1,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.2-m1 --jvmargs -Datlassian.upm.on.demand=true
+atlas-run-standalone --product confluence --version 5.3-OD-15 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m25,com.atlassian.jwt:jwt-plugin:1.0-m3,com.atlassian.webhooks:atlassian-webhooks-plugin:0.17.3,com.atlassian.httpclient:atlassian-httpclient-plugin:0.17.1,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.2 --jvmargs -Datlassian.upm.on.demand=true
 </pre></code>
 
 Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This

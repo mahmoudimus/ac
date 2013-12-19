@@ -58,7 +58,7 @@ public class PageToWebItemAndServletConverter
                 .withName(bean.getName())
                 .withKey(bean.getKey())
                 .withContext(product)
-                .withLink(hostUrlTemplate.getTemplateString())
+                .withUrl(hostUrlTemplate.getTemplateString())
                 .withLocation(location)
                 .withWeight(weight)
                 .withIcon(bean.getIcon())

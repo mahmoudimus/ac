@@ -53,9 +53,9 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemModul
         }
         else
         {
-            RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getLink());
+            RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
             
-            WebItemModuleBean newBean = newWebItemBean(bean).withLink(localUrl.getRelativeUri()).build();
+            WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl.getRelativeUri()).build();
             descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
 
             //todo: make sure we do something to actually look up condition and metaTags map
@@ -73,7 +73,7 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemModul
 //            
 //            if(!servletExists)
 //            {
-//                descriptors.add(iframePageFactory.createIFrameServletDescriptor(plugin,newBean,localUrl,bean.getLink(),"atl.general","", new AlwaysDisplayCondition(),new HashMap<String, String>()));
+//                descriptors.add(iframePageFactory.createIFrameServletDescriptor(plugin,newBean,localUrl,bean.getUrl(),"atl.general","", new AlwaysDisplayCondition(),new HashMap<String, String>()));
 //            }
         }
 

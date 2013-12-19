@@ -24,7 +24,7 @@ public class ConnectInstallationTestUtil
                         .withInstalled("/installed")
                         .build())
                 .withModule("webItems", WebItemModuleBean.newWebItemBean()
-                        .withLink("/webItem")
+                        .withUrl("/webItem")
                         .withLocation("location")
                         .withName(new I18nProperty("text", "key")) // leaving this out results in a null vs empty-string mismatch between original and serialized-then-deserialized beans
                         .withTooltip(new I18nProperty("text", "key")) // leaving this out results in a null vs empty-string mismatch between original and serialized-then-deserialized beans

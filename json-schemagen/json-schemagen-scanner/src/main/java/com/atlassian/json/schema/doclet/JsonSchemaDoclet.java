@@ -23,10 +23,12 @@ public class JsonSchemaDoclet
     private static final Logger log = Logger.getLogger(JsonSchemaDoclet.class.getName());
     
     private static final String LS = System.getProperty("line.separator");
+    private static final String P = LS + LS;
     private static final String OPTION_OUTPUT = "-output";
     private static final String TITLE_TAG = "schemaTitle";
     private static final String EXAMPLE_TAG = "exampleJson";
     private static final String SEE_TAG = "@see";
+    private static final String TEXT_TAG = "Text";
 
     public static boolean start(RootDoc rootDoc)
     {
@@ -39,7 +41,7 @@ public class JsonSchemaDoclet
         {
             SchemaClassDoc schemaClassDoc = new SchemaClassDoc();
             schemaClassDoc.setClassName(classDoc.qualifiedTypeName());
-            schemaClassDoc.setClassDoc(getDocWithExample(classDoc));
+            schemaClassDoc.setClassDoc(getDocWithIncludes(classDoc));
             schemaClassDoc.setClassTitle(getTitle(classDoc));
 
             List<SchemaFieldDoc> schemaFieldDocs = new ArrayList<SchemaFieldDoc>();
@@ -95,7 +97,7 @@ public class JsonSchemaDoclet
                     }
                 }
 
-                schemaFieldDoc.setFieldDocs(getDocWithExample(docForField));
+                schemaFieldDoc.setFieldDocs(getDocWithIncludes(docForField));
 
                 schemaFieldDocs.add(schemaFieldDoc);
             }
@@ -104,17 +106,27 @@ public class JsonSchemaDoclet
         addFieldDocs(classDoc.superclass(),schemaFieldDocs);
     }
 
-    private static String getDocWithExample(Doc doc)
+    private static String getDocWithIncludes(Doc doc)
     {
         StringBuilder sb = new StringBuilder();
-
+        
         if (!Strings.isNullOrEmpty(doc.commentText()))
         {
-            sb.append(doc.commentText()).append(LS).append(LS);
+            for(Tag tag : doc.inlineTags())
+            {
+                if(tag.kind().equals(TEXT_TAG))
+                {
+                    sb.append(P).append(tag.text());
+                }
+                else if(tag.kind().equals(SEE_TAG))
+                {
+                    sb.append(getIncludeFromLink((SeeTag) tag));
+                }
+            }
+            //sb.append(doc.commentText()).append(LS).append(LS);
         }
 
         String example = getExamples(doc);
-
         if (!Strings.isNullOrEmpty(example))
         {
             sb.append(example);
@@ -126,7 +138,7 @@ public class JsonSchemaDoclet
     private static String getExamples(Doc doc)
     {
         Tag[] exampleTags = getTagsOrNull(doc, EXAMPLE_TAG);
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder(P);
         
         if (null != exampleTags)
         {
@@ -147,7 +159,7 @@ public class JsonSchemaDoclet
                         {
                             sb.append(inlineTag.text());
                         }
-                        sb.append(LS);
+                        sb.append(P);
                     }
                 }
             }
@@ -156,11 +168,11 @@ public class JsonSchemaDoclet
         return sb.toString();
     }
 
-    private static String getExampleFromLink(SeeTag linkTag)
+    private static String getIncludeFromLink(SeeTag linkTag)
     {
         final MemberDoc fieldDoc = linkTag.referencedMember();
 
-        if (null == fieldDoc || !fieldDoc.isStatic())
+        if (null == fieldDoc || !fieldDoc.isStatic() || !fieldDoc.isField())
         {
             return "";
         }
@@ -181,8 +193,7 @@ public class JsonSchemaDoclet
                 declaredField.setAccessible(true);
             }
 
-            String example = (String) declaredField.get(null);
-            return LS + LS + StringUtil.indent(example, 4);
+            return (String) declaredField.get(null);
 
         }
         catch (Exception e)
@@ -190,6 +201,12 @@ public class JsonSchemaDoclet
             e.printStackTrace();
             return "";
         }
+    }
+    
+    private static String getExampleFromLink(SeeTag linkTag)
+    {
+        String example = getIncludeFromLink(linkTag);
+        return P + StringUtil.indent(example, 4);
     }
 
     private static String getTitle(Doc taggedDoc)

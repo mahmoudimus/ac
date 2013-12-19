@@ -117,7 +117,7 @@ public class WebItemModuleBeanTest
     {
         return newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webItem"))
-                .withLink("/my-general-page")
+                .withUrl("/my-general-page")
                 .withLocation("system.preset.filters")
                 .withIcon(IconBean.newIconBean()
                         .withHeight(16)

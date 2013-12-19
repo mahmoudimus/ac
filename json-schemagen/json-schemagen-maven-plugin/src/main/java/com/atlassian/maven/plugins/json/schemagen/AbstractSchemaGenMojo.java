@@ -6,6 +6,7 @@ import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -13,7 +14,10 @@ import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.*;
+import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.graph.Dependency;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 
 public abstract class AbstractSchemaGenMojo extends AbstractMojo
@@ -29,6 +33,12 @@ public abstract class AbstractSchemaGenMojo extends AbstractMojo
     
     @Component
     private MavenSession session;
+    
+    @Component
+    private ProjectDependenciesResolver resolver;
+    
+    @Parameter(defaultValue = "${repositorySystemSession}")
+    private RepositorySystemSession reposession;
 
     public MojoExecutor.ExecutionEnvironment executionEnvironment()
     {
@@ -72,6 +82,13 @@ public abstract class AbstractSchemaGenMojo extends AbstractMojo
             docletPaths.addAll(project.getRuntimeClasspathElements());
             docletPaths.addAll(project.getSystemClasspathElements());
 
+            DependencyResolutionResult result = resolver.resolve(new DefaultDependencyResolutionRequest(project, reposession));
+            
+            for(Dependency dep : result.getDependencies())
+            {
+                docletPaths.add(dep.getArtifact().getFile().getPath());
+            }
+            
             URL[] pluginUrls = ((URLClassLoader)Thread.currentThread().getContextClassLoader()).getURLs();
             for(URL pluginUrl : pluginUrls)
             {
@@ -86,6 +103,10 @@ public abstract class AbstractSchemaGenMojo extends AbstractMojo
             return docletPath.toString();
         }
         catch (DependencyResolutionRequiredException e)
+        {
+            throw new MojoExecutionException("Dependencies must be resolved", e);
+        }
+        catch (DependencyResolutionException e)
         {
             throw new MojoExecutionException("Dependencies must be resolved", e);
         }

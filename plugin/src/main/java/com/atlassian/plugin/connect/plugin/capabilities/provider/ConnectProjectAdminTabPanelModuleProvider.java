@@ -76,7 +76,7 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
         return newWebItemBean()
                 .withName(bean.getName())
                 .withKey(bean.getKey())
-                .withLink(localUrl)
+                .withUrl(localUrl)
                 .withLocation(bean.getAbsoluteLocation())
                 .withWeight(bean.getWeight())
                 .build();
