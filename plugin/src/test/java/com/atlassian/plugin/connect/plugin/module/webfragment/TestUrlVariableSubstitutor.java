@@ -16,6 +16,12 @@ public class TestUrlVariableSubstitutor
     }
 
     @Test
+    public void testLegacySubstitutionInSimpleCase()
+    {
+        assertThat(SUBSTITUTOR.replace("my_page_id=${page.id}", CONTEXT), is("my_page_id=1234"));
+    }
+
+    @Test
     public void testSubstitutionWhenValueIsUsedMultipleTimes()
     {
         assertThat(SUBSTITUTOR.replace("my_page_id={page.id}&other_page_id={page.id}", CONTEXT), is("my_page_id=1234&other_page_id=1234"));
