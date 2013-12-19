@@ -11,20 +11,20 @@
 </div>
 
 
-<img id="indexlogo" src="./assets/images/ac_logo.png" width="720">
+<img class="index-logo" src="./assets/images/ac_logo.png" width="720">
 
-# Build, install and sell add-ons in Atlassian OnDemand.
+<h1 class="index-heading">Build, install and sell add-ons in Atlassian OnDemand</h1>
 
 <div class="aui-group">
     <div class="aui-item">
-        <div class="indexboxes">
+        <div class="index-box">
             <img src="./assets/images/gears.png" width="100">
             <h2>Customize your product</h2>
             <p>Build an add-on to enhance, extend or integrate your Atlassian product.</p>
         </div>
     </div>
     <div class="aui-item">
-        <div class="indexboxes">
+        <div class="index-box">
             <img src="./assets/images/globe.png" width="100">
             <h2>Share with the world</h2>
             <p>Share your add-on with millions of developers on the Atlassian Marketplace.</p>
