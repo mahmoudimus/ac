@@ -8,6 +8,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteA
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.sal.api.user.UserManager;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -22,7 +24,11 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
     @Mock
     private MacroContentManager macroContentManager;
     @Mock
+    private UserManager userManager;
+    @Mock
     private I18nPropertiesPluginManager i18nPropertiesPluginManager;
+    @Mock
+    private UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Override
     protected XhtmlMacroModuleDescriptor createModuleDescriptorForTest()
@@ -30,10 +36,12 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
 
         StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new StaticContentMacroModuleDescriptorFactory(
-                remotablePluginAccessorFactoryForTests,
-                macroContentManager,
                 new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
-                i18nPropertiesPluginManager);
+                i18nPropertiesPluginManager,
+                macroContentManager,
+                userManager,
+                remotablePluginAccessorFactoryForTests,
+                urlVariableSubstitutor);
 
         StaticContentMacroModuleBean bean = createBeanBuilder()
                 .withMethod(MacroHttpMethod.POST)
