@@ -9,17 +9,15 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Page modules are UI extension points that add-ons can use to insert content into various areas of the host
- * application's interface. You implement a page module (along with the other type of module you can use with
- * Atlassian Connect, webhooks) by declaring it in the add-on descriptor and implementing the add-on code that
- * composes it.
+ * Page modules allow add-ons to insert new pages into atlassian products.
+ * These can be automatically resized to the width and height of your add-on's content.
+ * The location attribute defines where links to the new page appear.
  *
- * Each application has page module types that are specific for it, but there are some common page types as well.
- * For instance, both JIRA and Confluence support the general-page and profile-page module, but only JIRA has the
- * issue-panel-page.
+ * Each type of page displays differently:
  *
- * The page module takes care of integrating the add-on content into the application for you. The add-on content
- * automatically gets the page styles and decorators from the host application.
+ * * `generalPages` - have no extra styling and by default a link to the page is displayed in the main navigation menu.
+ * * `adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.
+ * * `profilePages` - ( __Confluence only__) displayed as sections inside user profiles. Like admin pages, they appear with all the necessary components around them (such as menus).
  *
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PAGE_EXAMPLE}
  * @since 1.0
