@@ -32,8 +32,8 @@ div.ac-properties
                         a(href = baseUrl + '/modules/confluence/')
                             +propertyValue(class='aui-lozenge-complete')
                                 | Confluence Modules
-                    - else if (entityLinks[prop.id])
-                        a(href = baseUrl + '/' + entityLinks[prop.id] + '.html')
+                    - else if (entityLinks[prop.slug])
+                        a(href = baseUrl + '/' + entityLinks[prop.slug] + '.html')
                             - if (prop.title)
                                 +propertyValue(class='aui-lozenge-complete')
                                     = prop.title
@@ -50,7 +50,7 @@ div.ac-properties
                     - if (prop.arrayType === 'object')
                         | [&nbsp;
                         - each type in prop.arrayTypes
-                            a(href = baseUrl + '/' + entityLinks[type.id] + '.html')
+                            a(href = baseUrl + '/' + entityLinks[type.slug] + '.html')
                                 +propertyValue(class='aui-lozenge-complete')
                                     = type.title
                             | ,&nbsp;
