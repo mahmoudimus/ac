@@ -20,7 +20,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarg
  * administration menu.
  *
  * The form that the url takes can vary depending on the location. For instance, a web item in the header bar
- * (with a location section of `system.top.navigation.bar`) adds a url to the navigation bar across the top of the
+ * (with a location section of `system.top.navigation.bar`) adds a link to the navigation bar across the top of the
  * interface. On the other hand, a web item in the `opsbar-operation` location section in JIRA adds an item to the
  * issue operation buttons.
  *
