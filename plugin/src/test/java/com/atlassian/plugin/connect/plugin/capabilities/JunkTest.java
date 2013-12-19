@@ -1,18 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
-
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.gson.Gson;
-
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
@@ -30,7 +27,7 @@ public class JunkTest
     {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withLink("/my-general-page")
+                .withUrl("/my-general-page")
                 .withLocation("atl.admin/menu")
                 .withWeight(100)
                 .withTooltip(new I18nProperty("click me!", "click.me"))
@@ -60,14 +57,14 @@ public class JunkTest
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .withModule("webItems", newWebItemBean()
                         .withName(new I18nProperty("My Web Item", "my.webitem"))
-                        .withLink("/my-general-page")
+                        .withUrl("/my-general-page")
                         .withLocation("atl.admin/menu")
                         .withWeight(100)
                         .withTooltip(new I18nProperty("click me!", "click.me"))
                         .withStyleClasses("ac-link", "aui-link")
                         .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
                         .build())
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey("S0m3Publ1cK3y").build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
                 .build();
 
         Gson gson = ConnectModulesGsonFactory.getGson();

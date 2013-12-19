@@ -1,21 +1,29 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.CompositeConditionBeanBuilder;
-
 import com.google.common.base.Objects;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * Composite Conditions are composed of a collection of Single Condition/Composite Conditions and a type attribute.
+ * 
+ * The type attribute defines what logical operator is used to evaluate its collection of condition elements. 
+ * 
+ * The type can be one of "and" or "or"
+ * 
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#COMPOSITE_CONDITION_EXAMPLE}
+ * @schemaTitle Composite Condition
  * @since 1.0
+ * @schemaTitle Composite Condition
  */
 public class CompositeConditionBean extends BaseModuleBean implements ConditionalBean
 {
     private List<ConditionalBean> conditions;
-    transient private CompositeConditionType type;
+    private CompositeConditionType type;
 
     public CompositeConditionBean()
     {

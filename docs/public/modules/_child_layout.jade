@@ -1,61 +1,107 @@
-- var capability = schemas[product].properties.capabilities.properties[current.source]
-h1
-    = capability.title || capability.items.title
+mixin propertyValue
+    code
+        block
 
-!= yield
+mixin auiLozenge
+    if block
+        span.aui-lozenge.aui-lozenge-subtle(class=attributes.class)
+            block
+
+h1
+    = module.name
+
+!= module.description
 
 h2 Properties
 
-table.aui
-    thead
-        tr
-          th Name
-          th Type
-          th Description
-      tbody
-        - for(var prop in capability.items.properties)
-            tr
-                td
-                    = prop
-                td
-                    span.aui-lozenge
-                        = capability.items.properties[prop].type
-                td
-                    = capability.items.properties[prop].description
+div.ac-properties
+    - each prop in module.properties
+        h3
+            code
+                = prop.key
+        div.aui-group
+            div.aui-item.ac-property-key
+                h5 Type
+            div.aui-item
+                - if (prop.type === 'object')
+                    - if (prop.id === 'moduleList')
+                        a(href = baseUrl + '/modules/jira/')
+                            +propertyValue(class='aui-lozenge-complete')
+                                | JIRA Modules
+                        | &nbsp;or&nbsp;
+                        a(href = baseUrl + '/modules/confluence/')
+                            +propertyValue(class='aui-lozenge-complete')
+                                | Confluence Modules
+                    - else if (entityLinks[prop.slug])
+                        a(href = baseUrl + '/' + entityLinks[prop.slug] + '.html')
+                            - if (prop.title)
+                                +propertyValue(class='aui-lozenge-complete')
+                                    = prop.title
+                            - else if (prop.name)
+                                +propertyValue(class='aui-lozenge-complete')
+                                    = prop.name
+                            - else
+                                +propertyValue(class='aui-lozenge-complete')
+                                    = prop.id
+                    - else
+                        +propertyValue()
+                            = prop.type
+                - else if (prop.type === 'array')
+                    - if (prop.arrayType === 'object')
+                        | [&nbsp;
+                        - each type in prop.arrayTypes
+                            a(href = baseUrl + '/' + entityLinks[type.slug] + '.html')
+                                +propertyValue(class='aui-lozenge-complete')
+                                    = type.title
+                            | ,&nbsp;
+                        | &hellip; ]
+                    - else
+                        | [&nbsp;
+                        +propertyValue()
+                            = prop.arrayType
+                        | , &hellip; ]
+                - else
+                    +propertyValue()
+                        = prop.type
+                    - if (prop.type === 'string' && prop.format)
+                        p
+                        +propertyValue
+                            = prop.format
+                    - else if (prop.type === 'string' && prop.pattern)
+                        p
+                        +propertyValue
+                            = prop.pattern
+        - if (prop.required)
+            div.aui-group
+                div.aui-item.ac-property-key
+                    h5 Required
+                div.aui-item
+                    +auiLozenge(class='aui-lozenge-error') Yes
 
+        - if (prop.defaultValue)
+            div.aui-group
+                div.aui-item.ac-property-key
+                    h5 Defaults to
+                div.aui-item
+                    code
+                        = prop.defaultValue
 
-//- h2 JSON Schema
-//- textarea.code
-//-     != JSON.stringify(capability,null,2)
-
-script.
-    var cmOpts = {
-        mode: "javascript",
-        theme: "neat",
-        lineNumbers:true,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-        indentWithTabs:false,
-        electricChars:true,
-        matchBrackets:true,
-        autoCloseBrackets:true,
-        highlightSelectionMatches:true,
-        indentUnit:2,
-        lineWrapping: true,
-        readOnly:true
-    };
-    $('.code').each(function(){
-        CodeMirror.fromTextArea(this, cmOpts);
-    });
-
-    function cmIfyPreCodeBlocks(block){
-        var sample = block;
-        var text = sample.textContent || sample.innerText;
-        var newOpts = cmOpts;
-        newOpts.value = text;
-        CodeMirror(
-            function(node){
-                sample.parentNode.replaceChild(node, sample)
-            }, newOpts
-        );
-    }
-    $('pre code').each(function(){cmIfyPreCodeBlocks(this)});
+        - if (prop.enum)
+            div.aui-group
+                div.aui-item.ac-property-key
+                    h5 Allowed values
+                div.aui-item
+                    ul
+                    - each value in prop.enum
+                        li
+                            code
+                                = value
+        - if (prop.fieldDescription || prop.description)
+            div.aui-group
+                div.aui-item.ac-property-key
+                    h5 Description
+                div.aui-item
+                    - if (prop.fieldDescription)
+                        != prop.fieldDescription
+                    - else
+                        != prop.description

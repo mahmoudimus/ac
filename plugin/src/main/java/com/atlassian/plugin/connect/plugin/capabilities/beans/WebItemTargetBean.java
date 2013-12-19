@@ -2,11 +2,17 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BeanWithParamsBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemTargetBeanBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collections;
 import java.util.Map;
 
 /**
+ * Defines the way a web item link is opened in the browser, such as in a modal or inline dialog.
+ * 
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBITEM_TARGET_EXAMPLE}
+ * @schemaTitle Web Item Target
  * @since 1.0
  */
 public class WebItemTargetBean extends BeanWithParams
@@ -66,5 +72,35 @@ public class WebItemTargetBean extends BeanWithParams
     public static WebItemTargetBeanBuilder newWebItemTargetBean(WebItemTargetBean bean)
     {
         return new WebItemTargetBeanBuilder(bean);
+    }
+
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof WebItemTargetBean && super.equals(otherObj)))
+        {
+            return false;
+        }
+
+        WebItemTargetBean other = (WebItemTargetBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(type, other.type)
+                .append(options, other.options)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(19, 23)
+                .append(type)
+                .append(options)
+                .build();
     }
 }

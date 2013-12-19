@@ -1,13 +1,14 @@
 package com.atlassian.json.schema;
 
+import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
+import com.atlassian.json.schema.model.*;
+import com.atlassian.json.schema.scanner.model.InterfaceList;
+import com.atlassian.json.schema.util.StringUtil;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.util.*;
-
-import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
-import com.atlassian.json.schema.model.*;
-import com.atlassian.json.schema.scanner.model.InterfaceList;
 
 import static com.atlassian.json.schema.util.ReflectionUtil.isParameterizedType;
 
@@ -68,17 +69,53 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
             {
                 try
                 {
-                    Class<?> implClass = Class.forName(impl);
+                    Class<?> implClass = Thread.currentThread().getContextClassLoader().loadClass(impl);
                     anyOf.add((ObjectSchema) generateObjectSchema(implClass,null,clazz));
                 }
                 catch (ClassNotFoundException e)
                 {
-                    //TODO: should we throw or ignore?
-                    e.printStackTrace();
+                    throw new RuntimeException("Unable to find class for interface", e);
                 }
             }
             schema.setAnyOf(anyOf);
             
+            return schema;
+        }
+        else
+        {
+            return generateObjectSchema(clazz,field);
+        }
+    }
+
+    @Override
+    protected JsonSchema generateInterfaceSchemaWithSelfRef(Class<?> clazz, Field field, Class<?> self)
+    {
+        if(!interfaceList.getImplementors(clazz).isEmpty())
+        {
+            InterfaceSchema schema = new InterfaceSchema();
+            Set<ObjectSchema> anyOf = new HashSet<ObjectSchema>();
+
+            for(String impl : interfaceList.getImplementors(clazz))
+            {
+                try
+                {
+                    if(self.getName().equals(impl))
+                    {
+                        anyOf.add((ObjectSchema) generateSelfRef());
+                    }
+                    else
+                    {
+                        Class<?> implClass = Thread.currentThread().getContextClassLoader().loadClass(impl);
+                        anyOf.add((ObjectSchema) generateObjectSchema(implClass,null,clazz));
+                    }
+                }
+                catch (ClassNotFoundException e)
+                {
+                    throw new RuntimeException("Unable to find class for interface", e);
+                }
+            }
+            schema.setAnyOf(anyOf);
+
             return schema;
         }
         else
@@ -144,16 +181,21 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
             }
         }
 
+        addCommonAttrsForField(schema,field);
+
         return schema;
     }
 
     @Override
-    protected JsonSchema generateArraySchema(Field field, Class... ifaces)
+    protected JsonSchema generateArraySchema(Class<?> owner, Field field, String defaultArrayTitle, Class... ifaces)
     {
         ArrayTypeSchema schema = new ArrayTypeSchema();
         
         if(null != field)
         {
+            addCommonAttrsForField(schema,field);
+            addArrayAttrsForField(schema,field);
+            
             if (isParameterizedType(field.getGenericType()))
             {
                 ParameterizedType ptype = (ParameterizedType) field.getGenericType();
@@ -161,27 +203,29 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
                 
                 if(listType.isInterface() && Arrays.asList(ifaces).contains(listType))
                 {
-                    schema.setItems(generateSelfRef());
+                    schema.setItems(generateInterfaceSchemaWithSelfRef(listType,null,owner));
                 }
                 else
                 {
-                    schema.setItems(generateSchemaForClass(listType,null));
+                    JsonSchema listTypeSchema = generateSchemaForClass(listType, null);
+                    if(StringUtil.isBlank(listTypeSchema.getTitle()))
+                    {
+                        listTypeSchema.setTitle(defaultArrayTitle);
+                    }
+                    schema.setItems(listTypeSchema);
                 }
             }
-            
-            addCommonAttrsForField(schema,field);
-            addArrayAttrsForField(schema,field);
         }
 
         return schema;
     }
 
     @Override
-    protected JsonSchema generateSchemaForField(Class<?> owner, Field field, Class<?>[] ifaces)
+    protected JsonSchema generateSchemaForField(Class<?> owner, Field field, Class<?>[] ifaces, String defaultArrayTitle)
     {
         if (Collection.class.isAssignableFrom(field.getType()))
         {
-            return generateArraySchema(field, ifaces);
+            return generateArraySchema(owner, field, defaultArrayTitle, ifaces);
         }
         else if(Arrays.asList(ifaces).contains(field.getType()))
         {
@@ -195,7 +239,7 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
 
     public JsonSchema generateSelfRef()
     {
-        BasicSchema refSchema = new BasicSchema();
+        ObjectSchema refSchema = new ObjectSchema();
         refSchema.setRef("#");
         
         return refSchema;

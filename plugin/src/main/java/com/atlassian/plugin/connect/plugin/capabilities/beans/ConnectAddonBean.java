@@ -1,22 +1,25 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.Map;
-
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * The root descriptor for an Atlassian Connect add on
- * 
- * Json Example:
- * @exampleJson {@see ConnectJsonExamples#ADDON_EXAMPLE}
- * @schemaTitle Connect Addon Root Descriptor
+ *
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_EXAMPLE}
+ * @exampleJson Kitchen Sink: <p class="expandNextPre"></p>{@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_COMPLETE_EXAMPLE}
+ * @schemaTitle Addon Descriptor
  * @since 1.0
  */
 public class ConnectAddonBean extends BaseModuleBean
@@ -24,19 +27,63 @@ public class ConnectAddonBean extends BaseModuleBean
     public static final int DEFAULT_WEIGHT = 100;
 
     /**
-     * The plugin key for the add on
+     * A unique key to identify the add-on
      */
+    @Required
     private String key;
+
+    /**
+     * The human-readable name of the add-on
+     */
     private String name;
+
+    /**
+     * The version of the add-on
+     */
     private String version;
+
+    /**
+     * A human readable description of what the add-on does
+     */
     private String description;
+
+    /**
+     * The vendor who is offering the add-on
+     */
     private VendorBean vendor;
-    private Map<String,String> links;
+
+    /**
+     * A set of links that the add-on wishes to publish
+     * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#LINKS_EXAMPLE}
+     */
+    private Map<String, String> links;
+
+    /**
+     * Allows the add on to register for plugin lifecycle notifications
+     */
     private LifecycleBean lifecycle;
+
+    /**
+     * The base url of the remote add on
+     */
+    @Required
+    @StringSchemaAttributes(format = "uri")
     private String baseUrl;
+
+    /**
+     * Defines the authentication type to use when signing requests between the host application and the connect add on.
+     */
     private AuthenticationBean authentication;
+
+    /**
+     * Whether or not to enable licensing options in the UPM.Marketplace for this add on
+     */
+    @CommonSchemaAttributes(defaultValue = "false")
     private Boolean enableLicensing;
-    
+
+    /**
+     * The list of modules this add on provides
+     */
     private ModuleList modules;
     
     public ConnectAddonBean()
@@ -112,10 +159,6 @@ public class ConnectAddonBean extends BaseModuleBean
         return key;
     }
 
-    /**
-     * the name of the addon
-     * @return
-     */
     public String getName()
     {
         return name;
@@ -174,5 +217,55 @@ public class ConnectAddonBean extends BaseModuleBean
     public static ConnectAddonBeanBuilder newConnectAddonBean(ConnectAddonBean defaultBean)
     {
         return new ConnectAddonBeanBuilder(defaultBean);
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof ConnectAddonBean))
+        {
+            return false;
+        }
+
+        ConnectAddonBean other = (ConnectAddonBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(key, other.key)
+                .append(name, other.name)
+                .append(version, other.version)
+                .append(description, other.description)
+                .append(vendor, other.vendor)
+                .append(links, other.links)
+                .append(lifecycle, other.lifecycle)
+                .append(baseUrl, other.baseUrl)
+                .append(authentication, other.authentication)
+                .append(enableLicensing, other.enableLicensing)
+                .append(modules, other.modules)
+                .isEquals();
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(41, 7)
+                .append(key)
+                .append(name)
+                .append(version)
+                .append(description)
+                .append(vendor)
+                .append(links)
+                .append(lifecycle)
+                .append(baseUrl)
+                .append(authentication)
+                .append(enableLicensing)
+                .append(modules)
+                .build();
     }
 }

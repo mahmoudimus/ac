@@ -54,20 +54,20 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withLink("/irwi?page_id=${page.id}")
+                                .withUrl("/irwi?page_id=${page.id}")
                                 .build(),
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
                                 .withName(new I18nProperty("Quick page link", "ac.qp"))
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withLink("/pages/viewpage.action?pageId=${page.id}")
+                                .withUrl("/pages/viewpage.action?pageId=${page.id}")
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("google link", "ac.gl"))
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withLink("http://www.google.com")
+                                .withUrl("http://www.google.com")
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build(),
                                         newSingleConditionBean().withCondition("/onlyBettyCondition").build()

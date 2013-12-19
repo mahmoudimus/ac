@@ -12,13 +12,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookMod
  * * When an issue is created or closed in JIRA
  * * When a page is created or updated in Confluence
  *
- * While some webhooks are specific to the Atlassian application, JIRA or Confluence, others are common to all
- * applications. This type includes, for example, the webhooks that generate notifications when the add-on is enabled.
  *
- * Most add-ons should implement the remote_plugin_enabled webhook. The Atlassian application uses this event to supply
- * its public key to the add-on. The Authenticating with OAuth page shows an example of how to use this webhook.
- *
- * ### Handling the webhook event
+ *### Handling the webhook event
  *
  * To receive webhook events, your add-on needs to include the webhook module declaration in its JSON descriptor. The
  * declaration indicates the relative URL of the local resource at which it will receive the notification. In other
@@ -27,40 +22,97 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookMod
  * Each webhook POST sent to the add-on will also include the authentication headers that allow the add-on to
  * validate the authenticity of that request.
  *
- * #### Sample webhooks JSON block
+ *### Webhook event types
  *
- *     {
- *         "webhooks": [
- *             {
- *                 "event": "jira:issue_created",
- *                 "url": "/issue-created"
- *             },
- *             ...
- *             {
- *                 "event": "jira:issue_updated",
- *                 "url": "/issue-updated"
- *             }
- *         ]
- *     }
+ * Below is a list of all available webhook events.
  *
- * ### Webhook event types
+ *#### Jira Webhook events
  *
- * To find out what webhooks are available for each application, the best place to look is in the Interactive
- * Descriptor Guide [JIRA](https://developer.atlassian.com/connect/api/jira) or
- * [Confluence](https://developer.atlassian.com/connect/api/confluence).
+ * * `connect_addon_disabled`
+ * * `connect_addon_enabled`
+ * * `jira-webhook-post-function`
+ * * `jira:issue_created`
+ * * `jira:issue_deleted`
+ * * `jira:issue_updated`
+ * * `jira:worklog_updated`
+ * * `plugin_enabled`
+ * * `plugins_upgraded`
+ * * `remote_issue_link_aggregate_cleared_event`
+ * * `remote_plugin_disabled`
+ * * `remote_plugin_enabled`
+ * * `remote_plugin_installed`
+ * * `remote_workflow_post_function`
+ * * `server_upgraded`
  *
- * ### Inspecting webhook contents
+ *#### Confluence Webhook events
+ *
+ * * `attachment_created`
+ * * `attachment_removed`
+ * * `attachment_updated`
+ * * `attachment_viewed`
+ * * `blog_created`
+ * * `blog_removed`
+ * * `blog_restored`
+ * * `blog_trashed`
+ * * `blog_updated`
+ * * `blog_viewed`
+ * * `cache_statistics_changed`
+ * * `comment_created`
+ * * `comment_removed`
+ * * `comment_updated`
+ * * `connect_addon_disabled`
+ * * `connect_addon_enabled`
+ * * `group_created`
+ * * `group_removed`
+ * * `label_added`
+ * * `label_created`
+ * * `label_deleted`
+ * * `label_removed`
+ * * `login`
+ * * `login_failed`
+ * * `logout`
+ * * `page_children_reordered`
+ * * `page_created`
+ * * `page_moved`
+ * * `page_removed`
+ * * `page_restored`
+ * * `page_trashed`
+ * * `page_updated`
+ * * `page_viewed`
+ * * `plugin_enabled`
+ * * `plugins_upgraded`
+ * * `remote_plugin_disabled`
+ * * `remote_plugin_enabled`
+ * * `remote_plugin_installed`
+ * * `search_performed`
+ * * `server_upgraded`
+ * * `space_created`
+ * * `space_logo_updated`
+ * * `space_permissions_updated`
+ * * `space_removed`
+ * * `space_updated`
+ * * `status_cleared`
+ * * `status_created`
+ * * `status_removed`
+ * * `user_created`
+ * * `user_deactivated`
+ * * `user_followed`
+ * * `user_reactivated`
+ * * `user_removed`
+ *
+ *### Inspecting webhook contents
  *
  * Each type of webhook event includes information specific to that event in the body content of the POST message. The
  * add-on resource that listens for webhook posts should receive and process the content as appropriate for the add-on.
  * To understand what type of content each webhook generates, you can use the webhook inspector tool.
  *
- * The <a href="https://bitbucket.org/atlassianlabs/webhook-inspector">Webhook Inspector</a> is a
- * <a href="https://bitbucket.org/atlassian/atlassian-connect-express">atlassian-connect-express</a> Connect add-on
+ * The [Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) is a
+ * [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) Connect add-on
  * that you can install in your development environment to inspect the content of event messages. The Webhook Inspector
  * subscribes and generates each webhook event type available on the running instance of the Atlassian application,
  * and prints the body posted by the instance to the console screen.
  *
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
  * @schemaTitle Webhooks
  * @since 1.0
  */

@@ -1,10 +1,9 @@
 package com.atlassian.json.schema.model;
 
-import java.util.List;
+import com.atlassian.json.schema.SchemaType;
+
 import java.util.Map;
 import java.util.Set;
-
-import com.atlassian.json.schema.SchemaType;
 
 public class ObjectSchema extends BasicSchema
 {

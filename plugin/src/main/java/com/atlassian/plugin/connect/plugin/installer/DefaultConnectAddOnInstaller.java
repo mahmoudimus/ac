@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.util.Set;
-
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -10,7 +8,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
@@ -18,13 +15,14 @@ import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.upm.spi.PluginInstallException;
-
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
@@ -39,11 +37,12 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectDescriptorRegistry connectDescriptorRegistry;
     private final ConnectEventHandler connectEventHandler;
+    private final SharedSecretService sharedSecretService;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
-    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext, ConnectApplinkManager connectApplinkManager, ConnectDescriptorRegistry connectDescriptorRegistry, ConnectEventHandler connectEventHandler)
+    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext, ConnectApplinkManager connectApplinkManager, ConnectDescriptorRegistry connectDescriptorRegistry, ConnectEventHandler connectEventHandler, SharedSecretService sharedSecretService)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -55,6 +54,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectApplinkManager = connectApplinkManager;
         this.connectDescriptorRegistry = connectDescriptorRegistry;
         this.connectEventHandler = connectEventHandler;
+        this.sharedSecretService = sharedSecretService;
     }
 
     @Override
@@ -73,11 +73,11 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         }
         catch (PluginInstallException e)
         {
-            log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...",e);
+            log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...", e);
             pluginController.uninstall(installedPlugin);
             throw e;
         }
-        
+
         return installedPlugin;
     }
 
@@ -99,26 +99,28 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             try
             {
                 AuthenticationType authType = addOn.getAuthentication().getType();
-                String sharedKey = addOn.getAuthentication().getSharedKey();
+                final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType); // TODO ACDEV-378: also check the algorithm
+                String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
+                String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
                 //applink MUST be created before any modules
-                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, sharedKey);
-                
+                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey);
+
                 //create the modules
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
 
                 //save the descriptor so we can use it again if we ever need to re-enable the addon
-                connectDescriptorRegistry.storeDescriptor(pluginKey,jsonDescriptor);
-                
+                connectDescriptorRegistry.storeDescriptor(pluginKey, jsonDescriptor);
+
                 //make the sync callback if needed
-                connectEventHandler.pluginInstalled(addOn);
+                connectEventHandler.pluginInstalled(addOn, sharedSecret);
                 
                 /*
                 We need to manually fire the enabled event because the actual plugin enabled already fired and we ignored it.
                 This is so we can register webhooks during the module registration phase and they will get fired with this enabled event.
                  */
                 connectEventHandler.publishEnabledEvent(pluginKey);
-                
+
             }
             catch (IllegalStateException e)
             {
@@ -131,7 +133,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             long endTime = System.currentTimeMillis();
 
-            log.info("Capabilities based connect app started in " + (endTime - startTime) + "ms");
+            log.info("Connect add-on installed in " + (endTime - startTime) + "ms");
 
             return installedPlugin;
 
@@ -147,9 +149,14 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
     }
 
+    private boolean addOnUsesSymmetricSharedSecret(AuthenticationType authType)
+    {
+        return AuthenticationType.JWT.equals(authType);
+    }
+
     private void uninstallWithException(Plugin installedPlugin, Exception e) throws Exception
     {
-        log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...",e);
+        log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...", e);
         beanToModuleRegistrar.unregisterDescriptorsForPlugin(installedPlugin);
         pluginController.uninstall(installedPlugin);
         throw e;

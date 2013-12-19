@@ -1,4 +1,4 @@
-(this.AP || this._AP).define("_xdm", ["_events"], function (events) {
+(this.AP || this._AP).define("_xdm", ["_events", "_base64"], function (events, base64) {
 
   "use strict";
 
@@ -121,7 +121,18 @@
       // Add-on-side constructor branch
       target = w.parent;
       localKey = "local"; // Would be better to make this the add-on key, but it's not readily available at this time
-      remoteKey = param(loc, "oauth_consumer_key");
+
+      // identify the add-on by unique key: first try JWT issuer claim and fall back to OAuth1 consumer key
+      var jwt = param(loc, "jwt");
+      remoteKey = jwt ? parseJwtIssuer(jwt) : param(loc, "oauth_consumer_key");
+
+      // if the authentication method is "none" then it is valid to have no jwt and no oauth in the url
+      // but equally we don't trust this iframe as far as we can throw it, so assign it a random id
+      // in order to prevent it from talking to any other iframe
+      if (null == remoteKey) {
+          remoteKey = Math.random(); // unpredictable and unsecured, like an oauth consumer key
+      }
+
       addonKey = localKey;
       remoteOrigin = param(loc, "xdm_e");
       channel = param(loc, "xdm_c");
@@ -320,7 +331,8 @@
 
     // Crudely extracts a query param value from a url by name
     function param(url, name) {
-      return decodeURIComponent(RegExp(name + "=([^&]+)").exec(url)[1]);
+        var match = RegExp(name + "=([^&]+)").exec(url);
+        return match && match.length > 0 ? decodeURIComponent(match[1]) : null;
     }
 
     // Determines a base url consisting of protocol+domain+port from a given url string
@@ -372,6 +384,33 @@
     function log() {
       var log = $.log || (w.AJS && w.AJS.log);
       if (log) log.apply(w, arguments);
+    }
+
+    function parseJwtIssuer(jwt) {
+      return parseJwtClaims(jwt)['iss'];
+    }
+
+    function parseJwtClaims(jwt) {
+
+      if (null == jwt || '' == jwt) {
+        throw('Invalid JWT: must be neither null nor empty-string.');
+      }
+
+      var firstPeriodIndex = jwt.indexOf('.');
+      var secondPeriodIndex = jwt.indexOf('.', firstPeriodIndex + 1);
+
+      if (firstPeriodIndex < 0 || secondPeriodIndex <= firstPeriodIndex) {
+        throw('Invalid JWT: must contain 2 period (".") characters.');
+      }
+
+      var encodedClaims = jwt.substring(firstPeriodIndex + 1, secondPeriodIndex);
+
+      if (null == encodedClaims || '' == encodedClaims) {
+        throw('Invalid JWT: encoded claims must be neither null nor empty-string.');
+      }
+
+      var claimsString = base64.decode(encodedClaims);
+      return JSON.parse(claimsString);
     }
 
     // Immediately start listening for events

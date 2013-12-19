@@ -1,0 +1,64 @@
+{
+    "guides": {
+        "introduction.html": {
+            "title": "Introduction"
+        },
+        "getting-started.html": {
+            "title": "Getting Started"
+        },
+        "whats-new.html": {
+            "title": "What's New"
+        }
+    },
+    "concepts": {
+        "addon-descriptor.html": {
+            "title": "Descriptors"
+        },
+        "modules.html": {
+            "title": "Modules"
+        },
+        "pages.html": {
+            "title": "Pages"
+        },
+        "authentication.html": {
+            "title": "Authentication"
+        },
+        "scopes.html": {
+            "title": "Scopes"
+        },
+        "conditions.html": {
+            "title": "Conditions"
+        },
+        "javascript-api.html": {
+            "title": "Javascript API"
+        },
+        "styling-with-aui.html": {
+            "title": "Styling Add-ons with AUI"
+        },
+        "addon-installation-full.html": {
+            "title": "Installing an Add-on"
+        },
+        "development-loop.html": {
+            "title": "Development Loop"
+        },
+        "licensing.html": {
+            "title": "Licensing"
+        }
+    },
+    "rest-apis": {
+        "product-api-browser.html": {
+            "title": "Product API Browser"
+        }
+    },
+    "resources": {
+        "samples.html": {
+            "title": "Sample Add-ons"
+        },
+        "faqs.html": {
+            "title": "FAQs"
+        },
+        "getting-help.html": {
+            "title": "Getting Help"
+        }
+    }
+}

@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
-import org.openqa.selenium.By;
 
 /**
  * Base confluence page.
@@ -14,24 +13,24 @@ import org.openqa.selenium.By;
 public abstract class ConfluenceBasePage implements Page
 {
     @Inject
-    private PageBinder pageBinder;
+    private ConnectPageOperations connectPageOperations;
 
-    @javax.inject.Inject
-    private com.atlassian.webdriver.AtlassianWebDriver driver;
-
+    @Deprecated // use it.ConnectWebDriverTestBase#connectPageOperations
     public RemoteWebPanel findWebPanel(String id)
     {
-        return pageBinder.bind(RemoteWebPanel.class, id);
+        return connectPageOperations.findWebPanel(id);
     }
 
+    @Deprecated // use it.ConnectWebDriverTestBase#connectPageOperations
     public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownLinkId)
     {
-        return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownLinkId);
+        return connectPageOperations.findWebItem(webItemId, dropDownLinkId);
     }
 
+    @Deprecated // use it.ConnectWebDriverTestBase#connectPageOperations
     public Boolean webItemDoesNotExist(String webItemId)
     {
-        return !driver.elementExists(By.id(webItemId));
+        return connectPageOperations.webItemDoesNotExist(webItemId);
     }
 
 }

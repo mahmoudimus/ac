@@ -1,16 +1,9 @@
 package com.atlassian.json.schema.doclet;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.doclet.model.SchemaClassDoc;
 import com.atlassian.json.schema.doclet.model.SchemaFieldDoc;
-
+import com.atlassian.json.schema.util.StringUtil;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
@@ -18,14 +11,24 @@ import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.sun.javadoc.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
 public class JsonSchemaDoclet
 {
     private static final Logger log = Logger.getLogger(JsonSchemaDoclet.class.getName());
     
+    private static final String LS = System.getProperty("line.separator");
+    private static final String P = LS + LS;
     private static final String OPTION_OUTPUT = "-output";
     private static final String TITLE_TAG = "schemaTitle";
     private static final String EXAMPLE_TAG = "exampleJson";
     private static final String SEE_TAG = "@see";
+    private static final String TEXT_TAG = "Text";
 
     public static boolean start(RootDoc rootDoc)
     {
@@ -38,35 +41,13 @@ public class JsonSchemaDoclet
         {
             SchemaClassDoc schemaClassDoc = new SchemaClassDoc();
             schemaClassDoc.setClassName(classDoc.qualifiedTypeName());
-            schemaClassDoc.setClassDoc(getDocWithExample(classDoc));
+            schemaClassDoc.setClassDoc(getDocWithIncludes(classDoc));
             schemaClassDoc.setClassTitle(getTitle(classDoc));
 
             List<SchemaFieldDoc> schemaFieldDocs = new ArrayList<SchemaFieldDoc>();
-
-            for (FieldDoc fieldDoc : classDoc.fields())
-            {
-                if (!fieldDoc.isTransient() && !fieldDoc.isStatic())
-                {
-                    SchemaFieldDoc schemaFieldDoc = new SchemaFieldDoc();
-                    schemaFieldDoc.setFieldName(fieldDoc.name());
-                    schemaFieldDoc.setFieldTitle(getTitle(fieldDoc));
-
-                    if (Strings.isNullOrEmpty(fieldDoc.commentText()))
-                    {
-                        MethodDoc accessor = findFieldAccessor(classDoc, fieldDoc);
-                        if (null != accessor && !Strings.isNullOrEmpty(accessor.commentText()))
-                        {
-                            schemaFieldDoc.setFieldDocs(accessor.commentText());
-                        }
-                    }
-                    else
-                    {
-                        schemaFieldDoc.setFieldDocs(fieldDoc.commentText());
-                    }
-
-                    schemaFieldDocs.add(schemaFieldDoc);
-                }
-            }
+            
+            addFieldDocs(classDoc,schemaFieldDocs);
+            
 
             schemaClassDoc.setFieldDocs(schemaFieldDocs);
 
@@ -90,17 +71,62 @@ public class JsonSchemaDoclet
         return true;
     }
 
-    private static String getDocWithExample(Doc doc)
+    private static void addFieldDocs(ClassDoc classDoc, List<SchemaFieldDoc> schemaFieldDocs)
+    {
+        if(null == classDoc || Object.class.getName().equals(classDoc.qualifiedName()))
+        {
+            return;
+        }
+        
+        for (FieldDoc fieldDoc : classDoc.fields())
+        {
+            if (!fieldDoc.isTransient() && !fieldDoc.isStatic())
+            {
+                SchemaFieldDoc schemaFieldDoc = new SchemaFieldDoc();
+                schemaFieldDoc.setFieldName(fieldDoc.name());
+                schemaFieldDoc.setFieldTitle(getTitle(fieldDoc));
+                
+                Doc docForField = fieldDoc;
+                
+                if (Strings.isNullOrEmpty(fieldDoc.commentText()))
+                {
+                    MethodDoc accessor = findFieldAccessor(classDoc, fieldDoc);
+                    if (null != accessor && !Strings.isNullOrEmpty(accessor.commentText()))
+                    {
+                        docForField = accessor;
+                    }
+                }
+
+                schemaFieldDoc.setFieldDocs(getDocWithIncludes(docForField));
+
+                schemaFieldDocs.add(schemaFieldDoc);
+            }
+        }
+        
+        addFieldDocs(classDoc.superclass(),schemaFieldDocs);
+    }
+
+    private static String getDocWithIncludes(Doc doc)
     {
         StringBuilder sb = new StringBuilder();
-
+        
         if (!Strings.isNullOrEmpty(doc.commentText()))
         {
-            sb.append(doc.commentText()).append("\n");
+            for(Tag tag : doc.inlineTags())
+            {
+                if(tag.kind().equals(TEXT_TAG))
+                {
+                    sb.append(P).append(tag.text());
+                }
+                else if(tag.kind().equals(SEE_TAG))
+                {
+                    sb.append(getIncludeFromLink((SeeTag) tag));
+                }
+            }
+            //sb.append(doc.commentText()).append(LS).append(LS);
         }
 
-        String example = getExample(doc);
-
+        String example = getExamples(doc);
         if (!Strings.isNullOrEmpty(example))
         {
             sb.append(example);
@@ -109,46 +135,44 @@ public class JsonSchemaDoclet
         return sb.toString();
     }
 
-    private static String getExample(Doc doc)
+    private static String getExamples(Doc doc)
     {
-        Tag exampleTag = getSingleTagOrNull(doc, EXAMPLE_TAG);
-
-        if (null != exampleTag)
+        Tag[] exampleTags = getTagsOrNull(doc, EXAMPLE_TAG);
+        StringBuilder sb = new StringBuilder(P);
+        
+        if (null != exampleTags)
         {
-            final Tag[] inlineTags = exampleTag.inlineTags();
+            for(Tag exampleTag : exampleTags)
+            {
+                final Tag[] inlineTags = exampleTag.inlineTags();
 
-            if (null != inlineTags && inlineTags.length > 0)
-            {
-                for (Tag inlineTag : inlineTags)
+                if (null != inlineTags && inlineTags.length > 0)
                 {
-                    if (SEE_TAG.equals(inlineTag.name()))
+                    for (Tag inlineTag : inlineTags)
                     {
-                        final SeeTag linkTag = (SeeTag) inlineTag;
-                        return getExampleFromLink(linkTag);
+                        if (SEE_TAG.equals(inlineTag.name()))
+                        {
+                            final SeeTag linkTag = (SeeTag) inlineTag;
+                            sb.append(getExampleFromLink(linkTag));
+                        }
+                        else if (!Strings.isNullOrEmpty(inlineTag.text()))
+                        {
+                            sb.append(inlineTag.text());
+                        }
+                        sb.append(P);
                     }
-                    else if (!Strings.isNullOrEmpty(inlineTag.text()))
-                    {
-                        return inlineTag.text();
-                    }
-                }
-            }
-            else
-            {
-                if (!Strings.isNullOrEmpty(exampleTag.text()))
-                {
-                    return exampleTag.text();
                 }
             }
         }
 
-        return "";
+        return sb.toString();
     }
 
-    private static String getExampleFromLink(SeeTag linkTag)
+    private static String getIncludeFromLink(SeeTag linkTag)
     {
         final MemberDoc fieldDoc = linkTag.referencedMember();
 
-        if (null == fieldDoc || !fieldDoc.isStatic())
+        if (null == fieldDoc || !fieldDoc.isStatic() || !fieldDoc.isField())
         {
             return "";
         }
@@ -178,6 +202,12 @@ public class JsonSchemaDoclet
             return "";
         }
     }
+    
+    private static String getExampleFromLink(SeeTag linkTag)
+    {
+        String example = getIncludeFromLink(linkTag);
+        return P + StringUtil.indent(example, 4);
+    }
 
     private static String getTitle(Doc taggedDoc)
     {
@@ -198,12 +228,19 @@ public class JsonSchemaDoclet
         if (fieldDoc.type().simpleTypeName().equals("boolean") || fieldDoc.type().simpleTypeName().equals("Boolean"))
         {
             accessorName = "is" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
+            
+            //try to find method starting with "is". If not found, we'll fall through to finding the getter
+            for (MethodDoc methodDoc : classDoc.methods())
+            {
+                if (methodDoc.name().equals(accessorName))
+                {
+                    return methodDoc;
+                }
+            }
         }
-        else
-        {
-            accessorName = "get" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
-        }
-
+        
+        accessorName = "get" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
+        
         for (MethodDoc methodDoc : classDoc.methods())
         {
             if (methodDoc.name().equals(accessorName))
@@ -265,6 +302,18 @@ public class JsonSchemaDoclet
         if (tags != null && tags.length > 0)
         {
             return tags[0];
+        }
+
+        return null;
+    }
+
+    private static Tag[] getTagsOrNull(Doc taggedDoc, String tagName)
+    {
+        final Tag[] tags = taggedDoc.tags(tagName);
+
+        if (tags != null && tags.length > 0)
+        {
+            return tags;
         }
 
         return null;

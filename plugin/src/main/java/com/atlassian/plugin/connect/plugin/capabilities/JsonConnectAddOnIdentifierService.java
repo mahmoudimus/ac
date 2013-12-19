@@ -1,20 +1,19 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import java.io.File;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
-
 import org.dom4j.Document;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.File;
+import java.io.InputStream;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 @Named("jsonConnectAddOnIdentifierService")
 public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifierService
@@ -48,15 +47,24 @@ public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifier
     {
         try
         {
-            Manifest mf = new Manifest(plugin.getResourceAsStream("/META-INF/MANIFEST.MF"));
+            InputStream resourceAsStream = plugin.getResourceAsStream("/META-INF/MANIFEST.MF");
 
-            return mf.getMainAttributes().containsKey(new Attributes.Name(CONNECT_ADDON_HEADER));
+            if (null != resourceAsStream)
+            {
+                Manifest mf = new Manifest(resourceAsStream);
+                return mf.getMainAttributes().containsKey(new Attributes.Name(CONNECT_ADDON_HEADER));
+            }
+            else
+            {
+                log.debug("Plugin '{}' has no MANIFEST.MF file. Defaulting to isConnectAddon=false.", plugin.getKey());
+            }
         }
         catch (Exception e)
         {
-            log.debug("Exception reading from MANIFEST.MF", e);
-            return false;
+            log.debug("Exception reading from MANIFEST.MF for plugin '{}'. Defaulting to isConnectAddon=false.", plugin.getKey(), e);
         }
+
+        return false;
     }
 
     @Override

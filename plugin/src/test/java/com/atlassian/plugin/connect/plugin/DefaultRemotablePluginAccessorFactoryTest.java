@@ -7,10 +7,12 @@ import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
@@ -22,6 +24,7 @@ import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Supplier;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +47,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     public static final String BASE_URL = "http://server:1234/contextPath";
 
     @Mock private ConnectApplinkManager connectApplinkManager;
+    @Mock private ConnectDescriptorRegistry descriptorRegistry;
     @Mock private PluginAccessor pluginAccessor;
     @Mock private ApplicationProperties applicationProperties;
     @Mock private EventPublisher eventPublisher;
@@ -53,6 +57,8 @@ public class DefaultRemotablePluginAccessorFactoryTest
     @Mock private LocaleHelper localeHelper;
     @Mock private PluginRetrievalService pluginRetrievalService;
     @Mock private JwtService jwtService;
+    @Mock private ConsumerService consumerService;
+    @Mock private UserManager userManager;
 
     private DefaultRemotablePluginAccessorFactory factory;
 
@@ -63,7 +69,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
-        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService);
+        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, descriptorRegistry, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager);
     }
 
     @Test
@@ -77,6 +83,15 @@ public class DefaultRemotablePluginAccessorFactoryTest
     {
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
         assertThat(factory.create(PLUGIN_KEY, null), is(instanceOf(OAuthSigningRemotablePluginAccessor.class)));
+    }
+
+    @Test
+    public void createsNoAuthSigningPluginAccessorWhenRequired()
+    {
+        ApplicationLink applicationLink = mock(ApplicationLink.class);
+        when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(applicationLink);
+        when(applicationLink.getProperty(AuthenticationMethod.PROPERTY_NAME)).thenReturn(AuthenticationMethod.NONE.toString().toLowerCase());
+        assertThat(factory.create(PLUGIN_KEY, null), is(instanceOf(NoAuthRemotablePluginAccessor.class)));
     }
 
     @Test
@@ -200,6 +215,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     private Plugin mockPlugin()
     {
         Plugin plugin = mock(Plugin.class);
+        when(plugin.getKey()).thenReturn(PLUGIN_KEY);
         when(plugin.getName()).thenReturn(PLUGIN_NAME);
         return plugin;
     }

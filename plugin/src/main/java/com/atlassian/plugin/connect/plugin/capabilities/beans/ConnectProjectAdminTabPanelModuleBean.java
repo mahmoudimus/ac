@@ -3,20 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectProjectAdminTabPanelModuleBeanBuilder;
 
 /**
- * Module bean for Jira ProjectAdmin Tab Pages. The module JSON looks like
- * <p>
- * <pre>
- * "jiraProjectAdminTabPanels": [{
- *   "name": {
- *     "value": "My ProjectAdmin Tab",
- *     "i18n": "my.tab"
- *   },
- *   "url": "/my-general-page",
- *   "weight": 100
- *   "location" : "projectgroup4"
- * }]
- * </pre>
- * </p>
+ * Module bean for Jira ProjectAdmin Tab Pages.
+ * 
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PRJ_ADMIN_PAGE_EXAMPLE}
  *
  * @schemaTitle Project Admin Tab Panel
  */

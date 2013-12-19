@@ -6,18 +6,17 @@ import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.Validate;
-import org.apache.xalan.lib.Redirect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Given an addon key and a relative path, builds an absolute URL and redirects the client to it.

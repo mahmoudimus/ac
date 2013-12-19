@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonEventDataBuilder;
+
+import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -16,12 +16,13 @@ public class ConnectAddonEventData extends BaseModuleBean
     private String key;
     private String clientKey;
     private String publicKey;
+    private String sharedSecret; // optional
     private String serverVersion;
     private String pluginsVersion;
     private String baseUrl;
     private String productType;
     private String description;
-    private String userKey;
+    @Deprecated private String userKey; // Not to be used with JWT (should be in the token)
     private String serviceEntitlementNumber;
     private String eventType;
     
@@ -32,6 +33,7 @@ public class ConnectAddonEventData extends BaseModuleBean
         this.links = newHashMap();
         this.clientKey = "";
         this.publicKey = "";
+        this.sharedSecret = "";
         this.serverVersion = "";
         this.pluginsVersion = "";
         this.baseUrl = "";
@@ -62,6 +64,10 @@ public class ConnectAddonEventData extends BaseModuleBean
         if(null == publicKey)
         {
             this.publicKey = "";
+        }
+        if (null == sharedSecret)
+        {
+            this.sharedSecret = "";
         }
         if(null == serverVersion)
         {
@@ -117,6 +123,11 @@ public class ConnectAddonEventData extends BaseModuleBean
         return publicKey;
     }
 
+    public String getSharedSecret()
+    {
+        return sharedSecret;
+    }
+
     public String getServerVersion()
     {
         return serverVersion;
@@ -142,6 +153,7 @@ public class ConnectAddonEventData extends BaseModuleBean
         return description;
     }
 
+    @Deprecated // Not to be used with JWT
     public String getUserKey()
     {
         return userKey;

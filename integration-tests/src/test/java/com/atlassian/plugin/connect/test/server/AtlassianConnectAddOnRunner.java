@@ -185,6 +185,21 @@ public final class AtlassianConnectAddOnRunner
         uninstall();
     }
 
+    public static void stopAndUninstallQuietly(AtlassianConnectAddOnRunner runner)
+    {
+        if (runner != null)
+        {
+            try
+            {
+                runner.stopAndUninstall();
+            }
+            catch (Exception e)
+            {
+                // ignore
+            }
+        }
+    }
+
     public AtlassianConnectAddOnRunner start() throws Exception
     {
         port = Utils.pickFreePort();

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ModuleBean;
 
 /**
  * @since 1.0
