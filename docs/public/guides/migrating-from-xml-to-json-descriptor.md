@@ -134,6 +134,8 @@ The `dialog-page` module has been removed. A replacement is coming in the near f
 
 * The `<remote-macro>` XML element is replaced by the [`"staticContentMacros"`](../modules/confluence/static-content-macro.html) module
 * The `<macro-page>` XML element is replaced by the [`"dynamicContentMacros"`](../modules/confluence/dynamic-content-macro.html) module
+* The `<context-parameters>` XML element no longer exists. You can now use variable substitution to include macro parameters in the URL.
+
 
 # OAuth
 <div class="aui-message warning">

@@ -23,6 +23,32 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     /**
      * The link to the add-on resource that provides the content for the iFrame.
      * This URL has to be relative to the add-on base URL.
+     *
+     * Additional context parameters can be passed as variables in the URL.
+     *
+     * ```
+     * "url": "/macro-renderer?space_id=${space.id}&page_id=${page.id}"
+     * ```
+     *
+     * <div class="aui-message warning">
+     *   <p class="title">
+     *     <span class="aui-icon icon-warning"></span>
+     *       <strong>Change Ahead</strong>
+     *   </p>
+     *   The variable format will change to the standard URL template format `{variable}`
+     *   in one of the next releases.
+     * </div>
+     *
+     * Currently support variables for macros are:
+     *
+     * * `page.id`: The page ID, e.g. '1376295'
+     * * `page.title`: The page title, e.g. 'My Page'
+     * * `page.type`: The page type, e.g. 'page'
+     * * `page.version.id`: The page version, e.g. '6'
+     * * `space.id`: The space ID, e.g. 'ac'
+     * * `space.key`: The space key, e.g. '65537'
+     * * `user.id`: The user ID, e.g. 'admin'
+     * * `user.key`: The user key, e.g. 'ff80808143087d180143087d3a910004'
      */
     @Required
 //    @StringSchemaAttributes(format = "uri")
@@ -49,17 +75,17 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      *
      * Currently, the following categories are supported by Confluence:
      *
-     * * ``admin``: Administration
-     * * ``communication``: Communication
-     * * ``confluence-content``: Confluence Content
-     * * ``development``: Development
-     * * ``external-content``: External Content
-     * * ``formatting``: Formatting
-     * * ``hidden-macros``: Hidden
-     * * ``media``: Media
-     * * ``navigation``: Navigation
-     * * ``reporting``: Reporting
-     * * ``visuals``: Visuals & Images
+     * * `admin`: Administration
+     * * `communication`: Communication
+     * * `confluence-content`: Confluence Content
+     * * `development`: Development
+     * * `external-content`: External Content
+     * * `formatting`: Formatting
+     * * `hidden-macros`: Hidden
+     * * `media`: Media
+     * * `navigation`: Navigation
+     * * `reporting`: Reporting
+     * * `visuals`: Visuals & Images
      */
     private Set<String> categories;
 

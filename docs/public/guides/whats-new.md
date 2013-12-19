@@ -71,7 +71,8 @@ quicker and easier.
 #### Known Issues
 
 * Web items with a target of 'dialog' require an absolute url and the requests are not signed. This will be fixed early in the new year
-
+* The URL variable substitution format will change from `${variable}` to the standard URL template format `{variable}`
+  in one of the next releases
 
 ## Earlier Releases
 For earlier release notes, please see the [Atlassian Connect Blog](https://developer.atlassian.com/pages/viewrecentblogposts.action?key=AC).
