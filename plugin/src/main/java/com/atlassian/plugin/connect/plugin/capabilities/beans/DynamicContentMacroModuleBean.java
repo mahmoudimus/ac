@@ -13,8 +13,28 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.DynamicCon
  */
 public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
 {
+    /**
+     * The preferred width of the macro content.
+     */
+    private String width;
+
+    /**
+     * The preferred height of the macro content.
+     */
+    private String height;
+
     public DynamicContentMacroModuleBean()
     {
+    }
+
+    public String getWidth()
+    {
+        return width;
+    }
+
+    public String getHeight()
+    {
+        return height;
     }
 
     public DynamicContentMacroModuleBean(DynamicContentMacroModuleBeanBuilder builder)

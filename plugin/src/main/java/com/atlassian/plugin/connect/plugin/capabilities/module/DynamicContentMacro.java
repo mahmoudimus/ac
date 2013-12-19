@@ -45,8 +45,8 @@ public final class DynamicContentMacro extends AbstractContentMacro
 
             IFrameContext iFrameContext = new IFrameContextImpl(getPluginKey(), uri.getPath(), getNamespace(counter), getIFrameParams());
             MacroRequestParameters macroParameters = new MacroRequestParameters.Builder()
-                    .withSingleValueParameters(parameters)
-                    .withMultiValueParameters(uri.getQueryParameters())
+                    .withMacroParameters(parameters)
+                    .withURLParameters(uri.getQueryParameters())
                     .withBody(storageFormatBody)
                     .build();
 

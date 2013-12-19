@@ -89,8 +89,6 @@ public class StaticContentMacroModuleBeanTest
                                 .build()
                         )
                         .withFeatured(true)
-                        .withWidth("100px")
-                        .withHeight("50px")
                         .withIcon(newIconBean().withUrl("/mymacro/icon.png").withHeight(80).withWidth(80).build())
                         .withParameters(newMacroParameterBean()
                                 .withIdentifier("myparam")

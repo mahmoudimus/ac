@@ -49,8 +49,8 @@ public class StaticContentMacro extends AbstractContentMacro
             uri = resolveUrlTemplate(macroContext.getParameters());
 
             MacroRequestParameters macroParameters = new MacroRequestParameters.Builder()
-                    .withSingleValueParameters(parameters)
-                    .withMultiValueParameters(uri.getQueryParameters())
+                    .withMacroParameters(parameters)
+                    .withURLParameters(uri.getQueryParameters())
                     .withBody(storageFormatBody)
                     .build();
 

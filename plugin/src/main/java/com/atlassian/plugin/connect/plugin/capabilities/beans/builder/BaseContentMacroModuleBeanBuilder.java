@@ -20,8 +20,6 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     private MacroBodyType bodyType;
     private Set<String> aliases;
     private Boolean featured;
-    private String width;
-    private String height;
     private List<MacroParameterBean> parameters;
     private MacroEditorBean editor;
 
@@ -40,8 +38,6 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
         this.bodyType = defaultBean.getBodyType();
         this.aliases = defaultBean.getAliases();
         this.featured = defaultBean.isFeatured();
-        this.width = defaultBean.getWidth();
-        this.height = defaultBean.getHeight();
         this.parameters = defaultBean.getParameters();
         this.editor = defaultBean.getEditor();
     }
@@ -97,18 +93,6 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     public T withFeatured(Boolean featured)
     {
         this.featured = featured;
-        return (T) this;
-    }
-
-    public T withWidth(String width)
-    {
-        this.width = width;
-        return (T) this;
-    }
-
-    public T withHeight(String height)
-    {
-        this.height = height;
         return (T) this;
     }
 

@@ -87,16 +87,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     private Boolean featured;
 
     /**
-     * The preferred width of the macro content.
-     */
-    private String width;
-
-    /**
-     * The preferred height of the macro content.
-     */
-    private String height;
-
-    /**
      * The list of parameter input fields that will be displayed.
      */
     private List<MacroParameterBean> parameters;
@@ -198,16 +188,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     public Boolean isFeatured()
     {
         return featured;
-    }
-
-    public String getWidth()
-    {
-        return width;
-    }
-
-    public String getHeight()
-    {
-        return height;
     }
 
     public List<MacroParameterBean> getParameters()

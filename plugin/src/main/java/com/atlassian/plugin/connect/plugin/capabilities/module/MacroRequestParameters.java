@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.module;
 
 import com.atlassian.renderer.v2.macro.Macro;
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -19,20 +20,21 @@ public class MacroRequestParameters
             queryParameters = Maps.newHashMap();
         }
 
-        public Builder withSingleValueParameters(Map<String, String> map)
+        public Builder withMacroParameters(Map<String, String> map)
         {
             for (Map.Entry<String, String> entry : map.entrySet())
             {
                 withParameter(entry.getKey(), entry.getValue());
             }
+            queryParameters.remove(Macro.RAW_PARAMS_KEY);
             return this;
         }
 
-        public Builder withMultiValueParameters(Map<String, List<String>> map)
+        public Builder withURLParameters(Map<String, List<String>> map)
         {
             for (Map.Entry<String, List<String>> entry : map.entrySet())
             {
-                List<String> list = getList(entry.getKey());
+                List<String> list = getorCreateList(entry.getKey());
                 list.addAll(entry.getValue());
             }
             return this;
@@ -45,12 +47,12 @@ public class MacroRequestParameters
 
         private Builder withParameter(String key, String value)
         {
-            List<String> list = getList(key);
+            List<String> list = getorCreateList(key);
             list.add(value);
             return this;
         }
 
-        private List<String> getList(String key)
+        private List<String> getorCreateList(String key)
         {
             List<String> list = queryParameters.get(key);
             if (null == list)
@@ -68,7 +70,6 @@ public class MacroRequestParameters
 
         public MacroRequestParameters build()
         {
-            queryParameters.remove(Macro.RAW_PARAMS_KEY);
             return new MacroRequestParameters(this);
         }
     }
@@ -99,6 +100,7 @@ public class MacroRequestParameters
             @Override
             public String apply(List<String> from)
             {
+                Preconditions.checkArgument(from.size() == 1, "Multi-valued query parameters are not supported yet: {}", from);
                 return from.get(0);
             }
         });
