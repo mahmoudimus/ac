@@ -19,12 +19,12 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarg
  * that’s inserted into some standard place in the Atlassian application interface, such as the
  * administration menu.
  *
- * The form that the url takes can vary depending on the location. For instance, a web item in the header bar
+ * The form that the link takes can vary depending on the location. For instance, a web item in the header bar
  * (with a location section of `system.top.navigation.bar`) adds a link to the navigation bar across the top of the
  * interface. On the other hand, a web item in the `opsbar-operation` location section in JIRA adds an item to the
  * issue operation buttons.
  *
- * A web item url can open a new page in the application or a dialog, depending on your configuration.
+ * A web item link can open a new page in the application or a dialog, depending on your configuration.
  *
  * Web items are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
  * application and don't know where to start, a web item may be all you need.
@@ -49,7 +49,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * Places in the Atlassian UI are identified by what are known as "well-known locations".
      * For example, the `system.admin/globalsettings` location is in the administrative
-     * menu url on the left side of the Administration Console.
+     * menu on the left side of the Administration Console.
      */
     @Required
     private String location;
@@ -85,19 +85,19 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     private WebItemTargetBean target;
 
     /**
-     * Specifies custom styles for the web url target page, if desired. By default, the web item content gets
+     * Specifies custom styles for the web item target page, if desired. By default, the web item content gets
      * styled in the default style of the target application.
      */
     private List<String> styleClasses;
 
     /**
-     * The internationalised text to be used in the url's tooltip.
+     * The internationalised text to be used in the link's tooltip.
      */
     private I18nProperty tooltip;
 
     /**
-     * An optional icon to display with the url text or as the url, specified by URL to its hosted location.
-     * You can specify a particular width and height for the icon. Most url icons in Atlassian applications
+     * An optional icon to display with the link text or as the link, specified by URL to its hosted location.
+     * You can specify a particular width and height for the icon. Most link icons in Atlassian applications
      * are 16 by 16 pixels.
      */
     private IconBean icon;
