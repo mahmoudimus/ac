@@ -68,6 +68,10 @@ This documentation reflects all of the changes outlined here (JWT and JSON Descr
 add-on module types, and is generated directly from source code. We hope this will also make developing Connect add-ons
 quicker and easier.
 
+#### Known Issues
+
+* Web items with a target of 'dialog' require an absolute url and the requests are not signed. This will be fixed early in the new year
+
 
 ## Earlier Releases
 For earlier release notes, please see the [Atlassian Connect Blog](https://developer.atlassian.com/pages/viewrecentblogposts.action?key=AC).
