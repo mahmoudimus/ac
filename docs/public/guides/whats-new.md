@@ -68,9 +68,11 @@ This documentation reflects all of the changes outlined here (JWT and JSON Descr
 add-on module types, and is generated directly from source code. We hope this will also make developing Connect add-ons
 quicker and easier.
 
-#### Known Issues
+#### Known Limitations
 
+* Permission scopes are not implemented in the JSON descriptor. We've temporarily allowed JSON descriptor add-ons to bypass all permissions when running in development mode
 * Web items with a target of 'dialog' require an absolute url and the requests are not signed. This will be fixed early in the new year
+* JSON descriptor add-ons aren't yet available to be deployed to OnDemand (we're targeting mid January 2014)
 * The URL variable substitution format will change from `${variable}` to the standard URL template format `{variable}`
   in one of the next releases
 
