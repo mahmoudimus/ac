@@ -12,7 +12,7 @@ This page provides an overview of the process for making an add-on publicly avai
 There are some general requirements and recommendations for selling on the Marketplace that apply to both Atlassian Connect add-ons and traditional downloadable add-ons. A few places to get started are:
 
 - [Marketplace FAQ](https://www.atlassian.com/licensing/marketplace) contains customer-facing information on the Marketplace.
-- [Atlassian Marketplace developer's site](https://www.atlassian.com/licensing/marketplace) contains general information about selling add-ons on the Marketplace. Some of that information is specific to downloadable, Java add-on.  
+- [Atlassian Marketplace developer's site](https://developer.atlassian.com/display/MARKET/Marketplace+overview) contains general information about selling add-ons on the Marketplace. Some of that information is specific to downloadable, Java add-on.  
 - [Add-on approval guidelines](https://developer.atlassian.com/display/MARKET/Add-on+approval+guidelines#Add-onapprovalguidelines-CriteriaforAtlassianConnectadd-ons), including some guidelines specific to Atlassian Connect.  
 
 ## How customers purchase Atlassian Connect add-ons
