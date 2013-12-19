@@ -68,7 +68,7 @@ public class BundleBuilderTest
                         .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
-                        .withLink("/irwi")
+                        .withUrl("/irwi")
                         .build())
                 .build();
         

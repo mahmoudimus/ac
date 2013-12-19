@@ -39,7 +39,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                         .withName(new I18nProperty("Only Betty", ONLY_BETTY_WEBITEM))
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
-                        .withLink("http://www.google.com")
+                        .withUrl("http://www.google.com")
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_logged_in").build()
                                 ,newSingleConditionBean().withCondition("/onlyBettyCondition").build()
@@ -49,7 +49,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                         .withName(new I18nProperty("Betty And Barney", BETTY_AND_BARNEY_WEBITEM))
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
-                        .withLink("http://www.google.com")
+                        .withUrl("http://www.google.com")
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_logged_in").build()
                                 , newCompositeConditionBean()
@@ -64,7 +64,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                         .withName(new I18nProperty("Admin Rights", ADMIN_RIGHTS_WEBITEM))
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
-                        .withLink("http://www.google.com")
+                        .withUrl("http://www.google.com")
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_admin").build()
                         )

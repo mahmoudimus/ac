@@ -86,7 +86,7 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withLink("/my-web-item").withLocation("system.preset.filters").build())
+                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withUrl("/my-web-item").withLocation("system.preset.filters").build())
                 .build();
 
         return gson.toJson(addonBean);
@@ -104,7 +104,7 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withLink("/my-web-item").withLocation("system.preset.filters").build())
+                .withModules("webItems", newWebItemBean().withName(i18nProperty("Web Item")).withUrl("/my-web-item").withLocation("system.preset.filters").build())
                 .withModules("webPanels", newWebPanelBean().withName(i18nProperty("Web Panel")).withLocation("com.atlassian.jira.plugin.headernav.left.context").withUrl("/my-web-panel").build())
                 .withModules("generalPages", newPageBean().withName(i18nProperty("General Page")).withUrl("my-general-page").build())
                 .withModules("adminPages", newPageBean().withName(i18nProperty("Admin Page")).withUrl("my-admin-page").build())
@@ -167,7 +167,7 @@ public class ConnectJsonExamples
     {
         WebItemModuleBean webItemModuleBean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", ""))
-                .withLink("/my-web-item")
+                .withUrl("/my-web-item")
                 .withLocation("system.preset.filters")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(16).withWidth(16).build())
                 .withStyleClasses("webitem", "system-present-webitem")

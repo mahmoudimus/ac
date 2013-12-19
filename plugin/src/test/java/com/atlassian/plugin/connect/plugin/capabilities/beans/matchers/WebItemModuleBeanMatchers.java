@@ -31,7 +31,7 @@ public class WebItemModuleBeanMatchers extends NameToKeyBeanMatchers
             @Override
             protected String getValue(WebItemModuleBean moduleBean)
             {
-                return moduleBean.getLink();
+                return moduleBean.getUrl();
             }
         };
     }

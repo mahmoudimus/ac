@@ -12,7 +12,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<WebItemModuleBeanBuilder, WebItemModuleBean>
 {
-    private String link;
+    private String url;
     private String location;
     private AddOnUrlContext context;
     private Integer weight;
@@ -30,7 +30,7 @@ public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuil
     {
         super(defaultBean);
 
-        this.link = defaultBean.getLink();
+        this.url = defaultBean.getUrl();
         this.location = defaultBean.getLocation();
         this.context = defaultBean.getContext();
         this.weight = defaultBean.getWeight();
@@ -40,9 +40,9 @@ public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuil
         this.target = defaultBean.getTarget();
     }
 
-    public WebItemModuleBeanBuilder withLink(String link)
+    public WebItemModuleBeanBuilder withUrl(String url)
     {
-        this.link = link;
+        this.url = url;
         return this;
     }
 

@@ -90,7 +90,7 @@ public class PageToWebItemAndServletConverterTest
     @Test
     public void createsWebItemWithHostVersionOfPageBeanUrl()
     {
-        assertThat(webItem(), hasProperty("link", is("/plugins/servlet/ac/" + PLUGIN_KEY + "/" + URL)));
+        assertThat(webItem(), hasProperty("url", is("/plugins/servlet/ac/" + PLUGIN_KEY + "/" + URL)));
     }
 
     @Test

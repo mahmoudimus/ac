@@ -41,7 +41,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                         .withName(new I18nProperty("Only Betty", ONLY_BETTY_WEBITEM))
                         .withLocation("system.browse")
                         .withWeight(1)
-                        .withLink("http://www.google.com")
+                        .withUrl("http://www.google.com")
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_logged_in").build()
                                 ,newSingleConditionBean().withCondition("/onlyBettyCondition").build()
@@ -51,7 +51,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                         .withName(new I18nProperty("Betty And Barney", BETTY_AND_BARNEY_WEBITEM))
                         .withLocation("system.browse")
                         .withWeight(1)
-                        .withLink("http://www.google.com")
+                        .withUrl("http://www.google.com")
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_logged_in").build()
                                 , newCompositeConditionBean()
@@ -66,7 +66,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                         .withName(new I18nProperty("Admin Rights", ADMIN_RIGHTS_WEBITEM))
                         .withLocation("system.browse")
                         .withWeight(1)
-                        .withLink("http://www.google.com")
+                        .withUrl("http://www.google.com")
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_confluence_administrator").build()
                         )

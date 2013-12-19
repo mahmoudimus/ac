@@ -17,7 +17,7 @@
     },
     "modules": {
         "webItems": [{
-            "link": "/my-general-page",
+            "url": "/my-general-page",
             "icon": {
                 "height": 16,
                 "width": 20,

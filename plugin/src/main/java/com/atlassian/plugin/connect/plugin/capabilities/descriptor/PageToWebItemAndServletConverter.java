@@ -55,7 +55,7 @@ public class PageToWebItemAndServletConverter
         return newWebItemBean()
                 .withName(bean.getName())
                 .withKey(bean.getKey())
-                .withLink(hostUrlTemplate.getTemplateString())
+                .withUrl(hostUrlTemplate.getTemplateString())
                 .withLocation(location)
                 .withWeight(weight)
                 .withIcon(bean.getIcon())

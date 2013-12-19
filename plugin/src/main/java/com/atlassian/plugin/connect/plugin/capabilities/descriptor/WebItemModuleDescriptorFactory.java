@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
@@ -61,7 +60,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
         }
 
         Element linkElement = webItemElement.addElement("link").addAttribute("linkId", webItemKey);
-        linkElement.setText(bean.getLink());
+        linkElement.setText(bean.getUrl());
 
         List<String> styles = newArrayList(bean.getStyleClasses());
 
@@ -94,7 +93,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
             log.debug("Created web item: " + printNode(webItemElement));
         }
 
-        return createWebItemDescriptor(plugin, webItemElement, webItemKey, bean.getLink(), bean.isAbsolute());
+        return createWebItemDescriptor(plugin, webItemElement, webItemKey, bean.getUrl(), bean.isAbsolute());
     }
 
     private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String key, String url, boolean absolute)

@@ -70,20 +70,20 @@ public class AppRunner
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
-                                .withLink("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}")
+                                .withUrl("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}")
                                 .build(),
                             newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
                                 .withName(new I18nProperty("Quick project link", "ac.qp"))
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
-                                .withLink("/browse/ACDEV-1234")
+                                .withUrl("/browse/ACDEV-1234")
                                 .build(),
                             newWebItemBean()
                                 .withName(new I18nProperty("google link", "ac.gl"))
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
-                                .withLink("http://www.google.com")
+                                .withUrl("http://www.google.com")
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build(),
                                         newSingleConditionBean().withCondition("/onlyBettyCondition").build()

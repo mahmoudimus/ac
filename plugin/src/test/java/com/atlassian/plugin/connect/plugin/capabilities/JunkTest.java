@@ -27,7 +27,7 @@ public class JunkTest
     {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withLink("/my-general-page")
+                .withUrl("/my-general-page")
                 .withLocation("atl.admin/menu")
                 .withWeight(100)
                 .withTooltip(new I18nProperty("click me!", "click.me"))
@@ -57,7 +57,7 @@ public class JunkTest
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .withModule("webItems", newWebItemBean()
                         .withName(new I18nProperty("My Web Item", "my.webitem"))
-                        .withLink("/my-general-page")
+                        .withUrl("/my-general-page")
                         .withLocation("atl.admin/menu")
                         .withWeight(100)
                         .withTooltip(new I18nProperty("click me!", "click.me"))
