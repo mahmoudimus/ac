@@ -10,7 +10,9 @@ import java.util.Map;
 
 /**
  * Defines the way a web item link is opened in the browser, such as in a modal or inline dialog.
- *
+ * 
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBITEM_TARGET_EXAMPLE}
+ * @schemaTitle Web Item Target
  * @since 1.0
  */
 public class WebItemTargetBean extends BeanWithParams
