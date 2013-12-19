@@ -49,7 +49,7 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
                 property.arrayTypes = [];
                 if (property.items.anyOf) {
                     _.each(property.items.anyOf, function (child) {
-                        if (child["$ref" === "#"]) {
+                        if (child["$ref"] === "#") {
                             // self reference 
                             property.arrayTypes.push({
                                 id: parent.id, 
