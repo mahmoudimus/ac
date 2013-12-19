@@ -49,6 +49,7 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      * * `space.key`: The space key, e.g. '65537'
      * * `user.id`: The user ID, e.g. 'admin'
      * * `user.key`: The user key, e.g. 'ff80808143087d180143087d3a910004'
+     * * `output.type`: The output type, e.g. 'display'
      */
     @Required
 //    @StringSchemaAttributes(format = "uri")
