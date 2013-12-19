@@ -30,7 +30,7 @@ public class TestDialogWithContext extends JiraWebDriverTestBase
                         .resource(ConnectAppServlets.openDialogServlet()))
                 .add(DialogPageModule.key("my-dialog")
                         .name("Remote dialog")
-                        .path("/my-dialog?my-issue-id=${issue.id}")
+                        .path("/my-dialog?my-issue-id={issue.id}")
                         .section("")
                         .resource(ConnectAppServlets.closeDialogServlet()))
                 .start();

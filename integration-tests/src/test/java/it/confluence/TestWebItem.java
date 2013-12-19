@@ -41,13 +41,13 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
                         .name("AC General Web Item")
                         .section("system.browse")
                         .weight(100)
-                        .link(RemoteWebItemModule.Link.link("/irwi?space_id=${space.key}&page_id=${page.id}", false))
+                        .link(RemoteWebItemModule.Link.link("/irwi?space_id={space.key}&page_id={page.id}", false))
                         .resource(ConnectAppServlets.helloWorldServlet()))
                 .add(RemoteWebItemModule.key(ABSOLUTE_WEB_ITEM)
                         .name("Quick project link")
                         .section("system.browse")
                         .weight(100)
-                        .link(RemoteWebItemModule.Link.link(product.getProductInstance().getBaseUrl() + "/display/${space.key}", false)))
+                        .link(RemoteWebItemModule.Link.link(product.getProductInstance().getBaseUrl() + "/display/{space.key}", false)))
                 .start();
     }
 

@@ -91,7 +91,7 @@ public class IFramePageServlet extends HttpServlet
     }
 
     /**
-     * Map ( {"page_id":"${page.id}"}, {"page_id":1234} ) to {"page.id":1234}}
+     * Map ( {"page_id":"{page.id}"}, {"page_id":1234} ) to {"page.id":1234}}
      * @param req Incoming {@link HttpServletRequest} containing concrete parameters and their values
      * @return {@link Map&lt;String, Object&gt;} suitable for sending to {@link UrlVariableSubstitutor}
      */
@@ -106,8 +106,8 @@ public class IFramePageServlet extends HttpServlet
 
             if (contextParamNameToSymbolicName.containsKey(requestParamName))
             {
-                String symbolicName = contextParamNameToSymbolicName.get(requestParamName); // e.g. "${space.id}"
-                symbolicName = symbolicName.replaceAll("\\$\\{([^}]*)}", "$1"); // "${space.id}" -> "space.id"
+                String symbolicName = contextParamNameToSymbolicName.get(requestParamName); // e.g. "{space.id}"
+                symbolicName = symbolicName.replaceAll("\\$\\{([^}]*)}", "$1"); // "{space.id}" -> "space.id"
                 result.put(symbolicName, paramWithValue.getValue());
             }
         }

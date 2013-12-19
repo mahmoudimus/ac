@@ -15,16 +15,16 @@ import java.util.regex.Pattern;
 /**
  * Substitutes strings with variables defined with those defined in a given context.
  * <p>
- * Variables are in the form ${var.name}, and are looked up in a nested map.
+ * Variables are in the form {var.name}, and are looked up in a nested map.
  * <p>
- * For example, given the source string "hi=${user.name}" and a context such as
+ * For example, given the source string "hi={user.name}" and a context such as
  * createMapOf("user", createMapOf("name", "joe")), {@link UrlVariableSubstitutor#replace(String, java.util.Map)}
  * would return "hi=joe".
  * <p>
  * All values in the context are percent-encoded for subsitution into a URL.
  * <p>
  * Variables that that cannot be found in the map are replaced by an empty string. For example,
- * given the source String "hi=${foo.bar}" and an empty map, {@link UrlVariableSubstitutor#replace(String, java.util.Map)}
+ * given the source String "hi={foo.bar}" and an empty map, {@link UrlVariableSubstitutor#replace(String, java.util.Map)}
  * would return "hi="
  */
 @Component
@@ -32,9 +32,9 @@ public class UrlVariableSubstitutor
 {
     private static final Logger log = LoggerFactory.getLogger(UrlVariableSubstitutor.class);
 
-    public static final String PLACEHOLDER_PATTERN_STRING = "\\$\\{([^}]*)}"; // in "http://server/path?foo=${var}&something" match "${var}" with group 1 = "var"
+    public static final String PLACEHOLDER_PATTERN_STRING = "\\{([^}]*)}"; // in "http://server/path?foo={var}&something" match "{var}" with group 1 = "var"
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile(PLACEHOLDER_PATTERN_STRING);
-    private static final Pattern VARIABLE_EQUALS_PLACEHOLDER_PATTERN = Pattern.compile("([^}&?]+)=(" + PLACEHOLDER_PATTERN_STRING + ")"); // in "http://server/path?name=${var}&something" match "name=${var}" with groups = "name", "${var}" and "var"
+    private static final Pattern VARIABLE_EQUALS_PLACEHOLDER_PATTERN = Pattern.compile("([^}&?]+)=(" + PLACEHOLDER_PATTERN_STRING + ")"); // in "http://server/path?name={var}&something" match "name={var}" with groups = "name", "{var}" and "var"
 
     /**
      * Replaces all variables in the given source with values from the given context.
@@ -59,7 +59,7 @@ public class UrlVariableSubstitutor
 
     /**
      * Parses from the given URL a {@link Map} of name-in-source to context-variable-name.
-     * @param source string containing variables (e.g. "http://server:80/path?my_page_id=${page.id}" or "my_page_id=${page.id}")
+     * @param source string containing variables (e.g. "http://server:80/path?my_page_id={page.id}" or "my_page_id={page.id}")
      * @return {@link Map} of name-in-source to context-variable-name (e.g. "my_page_id" => "page.id")
      */
     public Map<String, String> getContextVariableMap(final String source)

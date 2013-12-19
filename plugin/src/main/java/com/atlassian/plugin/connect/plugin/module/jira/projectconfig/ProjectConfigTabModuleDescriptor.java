@@ -101,7 +101,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 				.setWebItemContext(new DefaultWebItemContext(
                         "atl.jira.proj.config/" + location,
                         weight,
-                        ImmutableMap.of("projectKey", "${project.key}")
+                        ImmutableMap.of("projectKey", "{project.key}")
                 ))
 				.setMetaTagContent("adminActiveTab", key)
 				.build(getPlugin(), descriptor);

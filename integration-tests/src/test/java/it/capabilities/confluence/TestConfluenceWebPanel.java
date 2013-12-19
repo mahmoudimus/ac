@@ -35,7 +35,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     private static final String IFRAME_URL_VIEW = "/tcwp-view";
     private static final String IFRAME_URL_PROFILE = "/tcwp-profile";
 
-    private static final String IFRAME_URL_PARAMETERS = "?page_id=${page.id}&space_key=${space.key}";
+    private static final String IFRAME_URL_PARAMETERS = "?page_id={page.id}&space_key={space.key}";
 
     private static final String IFRAME_CONTENT_EDIT = "edit contents";
     private static final String IFRAME_CONTENT_VIEW = "view contents";

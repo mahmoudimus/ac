@@ -37,7 +37,7 @@ public class TestVersionTabPanel extends TestBase
         remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
                 .addModule(ConnectTabPanelModuleProvider.VERSION_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Version Tab Panel", null))
-                        .withUrl("/ipp?version_id=${version.id}&project_id=${project.id}&project_key=${project.key}")
+                        .withUrl("/ipp?version_id={version.id}&project_id={project.id}&project_key={project.key}")
                         .withWeight(1234)
                         .build())
                 .addRoute("/ipp", ConnectAppServlets.apRequestServlet())

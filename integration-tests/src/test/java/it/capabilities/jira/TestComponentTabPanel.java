@@ -35,7 +35,7 @@ public class TestComponentTabPanel extends TestBase
         remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
                 .addModule(ConnectTabPanelModuleProvider.COMPONENT_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Component Tab Panel", null))
-                        .withUrl("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
+                        .withUrl("/ipp?component_id={component.id}&project_id={project.id}&project_key={project.key}")
                         .withWeight(1234)
                         .build())
                 .addRoute("/ipp", ConnectAppServlets.apRequestServlet())

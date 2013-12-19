@@ -42,7 +42,7 @@ public class ConnectIssueTabPanelModuleDescriptorTest
 {
     private static final String ADDON_HTML_CONTENT = "the content goes here";
     private static final String ADDON_NAME = "My Issue Tab Page";
-    private static final String ADDON_URL = "http://blah?my_issue_key=${issue.key}";
+    private static final String ADDON_URL = "http://blah?my_issue_key={issue.key}";
     private static final String ADDON_KEY = "my-issue-tab-page";
     private static final String ADDON_I18_NAME = "My Plugin i18";
     private static final Element ISSUE_TAB_PAGE_ELEMENT = createElement();
@@ -118,7 +118,7 @@ public class ConnectIssueTabPanelModuleDescriptorTest
     {
         List<IssueAction> actions = createDescriptor().getModule().getActions(new GetActionsRequest(issue, mock(User.class), true, true, ""));
         actions.get(0).getHtml();
-        String expectedUrl = ADDON_URL.replace("${issue.key}", ISSUE_KEY);
+        String expectedUrl = ADDON_URL.replace("{issue.key}", ISSUE_KEY);
         verify(iFrameRenderer).render(argThat(hasIFramePath(expectedUrl)), anyString());
     }
 
