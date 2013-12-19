@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.css" media="all">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/theme/neat.min.css" media="all">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui.css" media="all">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-experimental.css" media="all">
     <!--[if lt IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie.css" media="all"><![endif]-->
     <!--[if IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie9.css" media="all"><![endif]-->
     <link rel="stylesheet" href="<%= baseUrl %>/assets/css/styles.css" media="all">
@@ -39,6 +40,16 @@
                                 <span class="aui-header-logo-device">Atlassian Connect</span>
                             </a>
                         </h1>
+                    </div>
+                    <div class="aui-header-secondary">
+                        <ul class="aui-nav">
+                            <li>
+                                <a href="https://ecosystem.atlassian.net/browse/AC" class="issue-collector-feedback">
+                                    <span class="aui-icon aui-icon-small aui-iconfont-help">Help</span>
+                                    Feedback
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>
@@ -147,6 +158,18 @@
                 $(this).nextAll("pre").first().addClass("aui-expander-content");
             }
         );
+    </script>
+    <!-- issue collector -->
+    <script type="text/javascript" src="https://ecosystem.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e/en_US-mqmy26-1988229788/6206/199/1.4.1/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d5b17e2f"></script>
+    <script>
+        window.ATL_JQ_PAGE_PROPS = {
+            "triggerFunction": function(showCollectorDialog) {
+                jQuery(".issue-collector-feedback").click(function(e) {
+                    e.preventDefault();
+                    showCollectorDialog();
+                });
+            }
+        };
     </script>
 </body>
 
