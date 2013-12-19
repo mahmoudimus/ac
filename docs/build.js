@@ -32,47 +32,53 @@ var debug = program.debug ? console.log : function() {/* no-op */};
  */
 function collapseArrayAndObjectProperties(properties, required, parent) {
     return _.map(properties, function(property, id) {
-        debug("\n\nCollapsed:\n", util.inspect(property, {depth: 3}));
+        debug("\nCollapsed:\n", util.inspect(property, {depth: 2}));
 
         // prefer fieldTitle if present (provides better context)
         if (property.fieldTitle) {
             property.title = property.fieldTitle;
         }
 
+        property.slug = slugify(property.title || property.id);
+
         if (property.type === "array") {
             property.id = id;
-            
             property.arrayType = property.items.type;
+
             if (property.arrayType === 'object') {
                 property.arrayTypes = [];
                 if (property.items.anyOf) {
                     _.each(property.items.anyOf, function (child) {
-                        if(child["$ref"] === "#")
-                        {
+                        if (child["$ref" === "#"]) {
                             // self reference 
-                            property.arrayTypes.push({id: parent.id, title: parent.name});
-                        }
-                        else
-                        {
+                            property.arrayTypes.push({
+                                id: parent.id, 
+                                title: parent.name, 
+                                slug: parent.slug
+                            });
+                        } else {
+                            var title = child.title || child.id;
                             property.arrayTypes.push({
                                 id: child.id,
-                                title: child.title || child.id
+                                title: title,
+                                slug: slugify(title)
                             });
                         }
-                        
                     });
                 } else if (property.items.id) {
+                    var title = property.items.title || property.items.id;
                     property.arrayTypes.push({
                         id: property.items.id,
-                        title: property.items.title || property.items.id
+                        title: title,
+                        slug: slugify(title)
                     });
                 }
             }
-
-            property = _.pick(property, ["id", "type", "title", "description", "fieldDescription", "arrayType", "arrayTypes"]);
+            
+            property = _.pick(property, ["id", "type", "title", "slug", "description", "fieldDescription", "arrayType", "arrayTypes"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
-            property = _.pick(property, ["id", "type", "title", "description", "fieldDescription"]);
+            property = _.pick(property, ["id", "type", "title", "slug", "description", "fieldDescription"]);
         }
 
         if (required && required.indexOf(id) > -1) {
@@ -88,7 +94,7 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
             property.fieldDescription = renderMarkdown(property.fieldDescription);
         }
 
-        debug("into:\n", util.inspect(property, {depth: 3}));
+        debug("into:\n", util.inspect(property, {depth: 2}), "\n");
 
         return property;
     });
@@ -160,7 +166,7 @@ function copyToGenSrc(filenames) {
  * Convert the supplied string into a string suitable for use in a filename or url.
  */
 function slugify(string) {
-    return string
+    return string && string
             .toLowerCase()
             .replace(/[^\w ]+/g,'')
             .replace(/ +/g,'-');
@@ -180,7 +186,7 @@ function writeEntitiesToDisk(entities, pathMappings) {
         if (pathMapping) {
             _.each(entitySet, function(entity) {
                 entity.selfLink = pathMapping + '/' + entity.slug;
-                entityLinks[entity.id] = entity.selfLink;
+                entityLinks[entity.slug] = entity.selfLink;
 
                 var placeholder =
                         "Placeholder - this file indicates static web directory " +
@@ -217,8 +223,11 @@ function findRootEntities(schemas) {
  */
 function findProductModules(schemas, productId, productDisplayName) {
     // find product modules
-    var productModules = jsonPath(schemas, "$." + productId + ".properties.modules.properties.*[?(@.id)]");
-
+    var productModules = jsonPath(schemas, "$." + productId + ".properties.modules.properties.*");
+    // unwrap array types
+    productModules = _.map(productModules, function (moduleOrArray) {
+        return moduleOrArray.type === "array" ? moduleOrArray.items : moduleOrArray;
+    });
     var moduleList = schemas[productId].properties.modules;
     // the module list serves as our landing page for each product's modules
     moduleList.pageName = "index";
@@ -259,6 +268,8 @@ function rebuildHarpSite() {
         fragment: findFragmentEntities(schemas)
     };
 
+    debug("\nEntities:\n", util.inspect(entities, {depth: 3}), "\n");
+
     copyToGenSrc(srcFiles);
     copyToGenSrc("node_modules");
 
@@ -268,6 +279,8 @@ function rebuildHarpSite() {
         confluence: "modules/confluence",
         fragment: "modules/fragment"
     });
+
+    debug("\nEntity links:\n", util.inspect(entityLinks, {depth: 2}), "\n");
 
     var harpGlobals = fs.readJsonSync('./globals.json');
 
