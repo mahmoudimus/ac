@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
@@ -44,15 +45,17 @@ public final class PermissionManagerImpl implements PermissionManager
 
     private final Set<ApiScope> DEFAULT_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
+    private final IsDevModeService isDevModeService;
 
     @Autowired
     public PermissionManagerImpl(
             PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager,
             PermissionsReader permissionsReader,
+            IsDevModeService isDevModeService,
             JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService)
     {
-        this(pluginAccessor, permissionsReader, jsonConnectAddOnIdentifierService,
+        this(pluginAccessor, permissionsReader, isDevModeService, jsonConnectAddOnIdentifierService,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
     }
@@ -60,10 +63,12 @@ public final class PermissionManagerImpl implements PermissionManager
     PermissionManagerImpl(
             PluginAccessor pluginAccessor,
             PermissionsReader permissionsReader,
+            IsDevModeService isDevModeService,
             JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker)
     {
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
+        this.isDevModeService = isDevModeService;
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.permissionsReader = checkNotNull(permissionsReader);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
@@ -117,7 +122,7 @@ public final class PermissionManagerImpl implements PermissionManager
     private Set<String> getPermissionsForPlugin(String pluginKey)
     {
         Set<String> permissions = Sets.newHashSet();
-        if (jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey))
+        if (jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey) && isDevModeService.isDevMode())
         {
             // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
             permissions.addAll(getPermissionKeys());
