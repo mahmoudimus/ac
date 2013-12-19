@@ -14,7 +14,7 @@ The primary documentation for Atlassian Connect [is this space](./index.html). I
 - [Atlassian Connect on Atlassian Answers](https://answers.atlassian.com/tags/atlassian-connect)
 
 ### What is the launch timeline for Atlassian Connect?
-**TBD**
+Beta of Atlassian Connect started in May 2013 at [AtlasCamp 2013](https://www.atlassian.com/atlascamp/2013) and was publicly announced in October 2013 at Summit 2013. We are expecting to announce a 1.0 release in the first quarter of 2014.
 
 ### What products support Atlassian Connect?
 Atlassian Connect is available in JIRA and Confluence OnDemand for beta development and use.
@@ -51,7 +51,7 @@ No. You may choose from any of the great PaaS or hosting providers on the market
 Add-ons will be installable in OnDemand through the Atlassian Marketplace only. To install custom add-ons intended for the private use of an organization, you will need to create a private listing for the add-on on the Marketplace. 
 
 ### How does Atlassian Connect relate to Application Links or UAL?
-Atlassian Connect uses Application Links to store the relationship between the Atlassian application and the external add-on, as well as authentication information. This means that an Atlassian Connect add-on appears as a regular Application Link (optionally configured with incoming and outgoing authentication providers) when viewed through the Application Links administration UI. Atlassian Connect can allow third-parties to provide a "one-click" user experience for customers that want to enable the integration.
+Atlassian Connect uses Application Links to store the relationship between the Atlassian application and the external add-on which includes authentication information. This means that an Atlassian Connect add-on appears as a regular Application Link when viewed through the Application Links administration UI. Atlassian Connect can allow third-parties to provide a "one-click" user experience for customers that want to enable the integration.
 
 ### To what extent will Atlassian Connect add-ons be supported by Atlassian?
 Atlassian Connect add-ons will receive the same level of support that Plugins 2 add-ons do today. We support the platform, the SDK and the documentation. Vendors are responsible for supporting the add-ons they build. 
