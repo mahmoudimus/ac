@@ -36,7 +36,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarg
 public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
-     *  Specifies the URL targeted by the url. The URL can be absolute or relative to either the
+     *  Specifies the URL targeted by the web item. The URL can be absolute or relative to either the
      *  product URL or the add-on's base URL, depending on the _context_ parameter.
      */
     @Required
