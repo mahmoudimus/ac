@@ -9,7 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Composite Conditions are composed of a collection of Single Condition/Composite Conditions and a type attribute.
+ * 
+ * The type attribute defines what logical operator is used to evaluate its collection of condition elements. 
+ * 
+ * The type can be one of "and" or "or"
+ * 
+ * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#COMPOSITE_CONDITION_EXAMPLE}
+ * @schemaTitle Composite Condition
  * @since 1.0
+ * @schemaTitle Composite Condition
  */
 public class CompositeConditionBean extends BaseModuleBean implements ConditionalBean
 {

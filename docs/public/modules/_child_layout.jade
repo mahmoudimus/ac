@@ -1,5 +1,5 @@
-mixin auiPropertyLozenge
-    +auiLozenge(class='ac-property-type ' + attributes.class)
+mixin propertyValue
+    code
         block
 
 mixin auiLozenge
@@ -14,124 +14,94 @@ h1
 
 h2 Properties
 
-table.aui
-    thead
-        tr
-          th Name
-          th Type
-          th
-          th Description
-    tbody
-        - each prop in module.properties
-            tr
-                td
-                    code
-                        = prop.key
-                td
-                    - if (prop.type === 'object')
-                        - if (prop.id === 'moduleList')
-                            a(href = baseUrl + '/modules/jira/')
-                                +auiPropertyLozenge(class='aui-lozenge-complete')
-                                    | JIRA Modules
-                            | &nbsp;or&nbsp;
-                            a(href = baseUrl + '/modules/confluence/')
-                                +auiPropertyLozenge(class='aui-lozenge-complete')
-                                    | Confluence Modules
-                        - else if (entityLinks[prop.id])
-                            a(href = baseUrl + '/' + entityLinks[prop.id] + '.html')
-                                - if (prop.title)
-                                    +auiPropertyLozenge(class='aui-lozenge-complete')
-                                        = prop.title
-                                - else if (prop.name)
-                                    +auiPropertyLozenge(class='aui-lozenge-complete')
-                                        = prop.name
-                                - else
-                                    +auiPropertyLozenge(class='aui-lozenge-complete')
-                                        = prop.id
-                        - else
-                            +auiPropertyLozenge()
-                                = prop.type
-                    - else if (prop.type === 'array')
-                        - if (prop.arrayType === 'object')
-                            | [&nbsp;
-                            - each type in prop.arrayTypes
-                                a(href = baseUrl + '/' + entityLinks[type.id] + '.html')
-                                    +auiPropertyLozenge(class='aui-lozenge-complete')
-                                        = type.title
-                                | ,&nbsp;
-                            | &hellip; ]
-                        - else
-                            | [&nbsp;
-                            +auiPropertyLozenge()
-                                = prop.arrayType
-                            | , &hellip; ]
+div.ac-properties
+    - each prop in module.properties
+        h3
+            code
+                = prop.key
+        div.aui-group
+            div.aui-item.ac-property-key
+                h5 Type
+            div.aui-item
+                - if (prop.type === 'object')
+                    - if (prop.id === 'moduleList')
+                        a(href = baseUrl + '/modules/jira/')
+                            +propertyValue(class='aui-lozenge-complete')
+                                | JIRA Modules
+                        | &nbsp;or&nbsp;
+                        a(href = baseUrl + '/modules/confluence/')
+                            +propertyValue(class='aui-lozenge-complete')
+                                | Confluence Modules
+                    - else if (entityLinks[prop.slug])
+                        a(href = baseUrl + '/' + entityLinks[prop.slug] + '.html')
+                            - if (prop.title)
+                                +propertyValue(class='aui-lozenge-complete')
+                                    = prop.title
+                            - else if (prop.name)
+                                +propertyValue(class='aui-lozenge-complete')
+                                    = prop.name
+                            - else
+                                +propertyValue(class='aui-lozenge-complete')
+                                    = prop.id
                     - else
-                        +auiPropertyLozenge()
+                        +propertyValue()
                             = prop.type
-                        - if (prop.type === 'string' && prop.format)
-                            p
-                            +auiPropertyLozenge
-                                = prop.format
-                        - else if (prop.type === 'string' && prop.pattern)
-                            p
-                            +auiPropertyLozenge
-                                = prop.pattern
-                td
-                    - if (prop.required)
-                        +auiLozenge(class='aui-lozenge-error') Required
-                    - if (prop.defaultValue)
-                        div
-                            | defaults to&nbsp;
+                - else if (prop.type === 'array')
+                    - if (prop.arrayType === 'object')
+                        | [&nbsp;
+                        - each type in prop.arrayTypes
+                            a(href = baseUrl + '/' + entityLinks[type.slug] + '.html')
+                                +propertyValue(class='aui-lozenge-complete')
+                                    = type.title
+                            | ,&nbsp;
+                        | &hellip; ]
+                    - else
+                        | [&nbsp;
+                        +propertyValue()
+                            = prop.arrayType
+                        | , &hellip; ]
+                - else
+                    +propertyValue()
+                        = prop.type
+                    - if (prop.type === 'string' && prop.format)
+                        p
+                        +propertyValue
+                            = prop.format
+                    - else if (prop.type === 'string' && prop.pattern)
+                        p
+                        +propertyValue
+                            = prop.pattern
+        - if (prop.required)
+            div.aui-group
+                div.aui-item.ac-property-key
+                    h5 Required
+                div.aui-item
+                    +auiLozenge(class='aui-lozenge-error') Yes
+
+        - if (prop.defaultValue)
+            div.aui-group
+                div.aui-item.ac-property-key
+                    h5 Defaults to
+                div.aui-item
+                    code
+                        = prop.defaultValue
+
+        - if (prop.enum)
+            div.aui-group
+                div.aui-item.ac-property-key
+                    h5 Allowed values
+                div.aui-item
+                    ul
+                    - each value in prop.enum
+                        li
                             code
-                                = prop.defaultValue
-                td
-                    div
-                        - if (prop.fieldDescription)
-                            != prop.fieldDescription
-                        - else
-                            != prop.description
-
-                        - if (prop.enum)
-                            p
-                                | Allowed values:
-                                ul
-                                - each value in prop.enum
-                                    li
-                                        code
-                                            = value
-
-//- h2 JSON Schema
-//- textarea.code
-//-     != JSON.stringify(capability,null,2)
-
-script.
-    var cmOpts = {
-        mode: "javascript",
-        theme: "neat",
-        lineNumbers:true,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-        indentWithTabs:false,
-        electricChars:true,
-        matchBrackets:true,
-        autoCloseBrackets:true,
-        highlightSelectionMatches:true,
-        indentUnit:2,
-        lineWrapping: true,
-        readOnly:true
-    };
-    $('.code').each(function(){
-        CodeMirror.fromTextArea(this, cmOpts);
-    });
-
-    function cmIfyPreCodeBlocks(block){
-        var sample = block;
-        var text = sample.textContent || sample.innerText;
-        var newOpts = cmOpts;
-        newOpts.value = text;
-        CodeMirror(
-            function(node){
-                sample.parentNode.replaceChild(node, sample)
-            }, newOpts
-        );
-    }
-    $('pre code').each(function(){cmIfyPreCodeBlocks(this)});
+                                = value
+        - if (prop.fieldDescription || prop.description)
+            div.aui-group
+                div.aui-item.ac-property-key
+                    h5 Description
+                div.aui-item
+                    - if (prop.fieldDescription)
+                        != prop.fieldDescription
+                    - else
+                        != prop.description

@@ -1,0 +1,87 @@
+# Licensing
+
+Any add-on intended for sale on the Marketplace needs to be license-enabled. Add-ons work alongside the [Universal Plugin Manager (UPM)](https://confluence.atlassian.com/display/UPM/Universal+Plugin+Manager+Documentation) to apply licensing requirements in a particular Atlassian application instance.
+
+The UPM and add-on should perform the following functions relating to license enforcement.
+
+UPM does the following:
+
+ * Stores licenses for the Atlassian instance, including local and remote plugin licenses
+ * Checks the license status for the an instance before servicing a request that involves a license-enabled add-on
+ * Reports the licensing status of the instance to the plugin in each request
+
+The add-on should perform these functions: 
+
+ * Check the license status in service requests it gets from the Atlassian instance
+ * Implement the logic appropriate given that status. For instance, for an expired license, the add-on may choose to disable its features, enter a read-only state, or function in some other restricted manner that makes sense for the use case of the particular add-on.
+
+## Development Considerations
+
+In a nutshell, to implement licensing for Atlassian Connect, you need to:
+
+ * Set the enableLicensing flag in the add-on descriptor for the add-on.
+ * Write the code to check the lic URL parameter in all incoming requests.
+ * Use a REST resource at /license to get additional license information.
+ * Implement the logic appropriate for the add-on based on the license status. 
+
+By default, the results of a license check by the Atlassian application is cached for 5 minutes. In other words, if the HTTP client uses caching, you may receive the same details in response to each request to the plugin for that time.
+
+## Setting the License-Enabled Flag
+
+To implement licensing in an add-on, set the licensing enabled flag in the plugin descriptor to true. Any add-on intended for sale should have this flag enabled.
+
+The licensing enabled flag appears in the descriptor file `atlassian-connect.json`
+
+```
+{
+    "name": "Hello World",
+    "key": "hello-world",
+    "description": "Atlassian Connect add-on",
+    "baseUrl": "http://www.example.com",
+    "enableLicensing": true
+}
+```
+
+This tells UPM to check and report licensing status to the plugin. On the other hand, if you are using a plugin strictly for internal use or you plan to distribute it freely on the Marketplace, this should be set to false.
+
+## Handling Requests with the License Status
+
+Each incoming request from the Atlassian application instance includes a query parameter named lic. For example:
+
+```
+http://....?lic=active
+```
+
+Your add-on should check this value to determine the license status of the instance associated with the current request. The `lic` parameter may have one of three values:
+
+ * `active` – the license is valid for this instance and add-on.
+ * `expired` – a license is present, but it is expired.
+ * `none` – no license is present.
+
+## Accessing License Details
+
+In addition to the `lic` parameter, an add-on can use a REST API resource to get an instance's license for this plugin.
+
+The license resource is exposed as a REST resource at this URL:
+
+```
+/rest/atlassian-connect/latest/license
+```
+
+Among other information, the plugin can use the resource to discover:
+
+ * whether the plugin license for an instance is valid.
+ * the organisation name, SEN and contact email associated with the license
+ * the number of users allowed by the current license
+ * the expiration date of the license
+ * license type, such as commercial or academic
+
+You can use the REST API Browser to test this resource, just as you can any other resource exposed by the application. For more information, see the REST API Browser page.
+
+ * [JIRA REST API Browser](https://jira.atlassian.com/plugins/servlet/restbrowser#/)
+ * [Confluence REST API Browser](https://confluence.atlassian.com/plugins/servlet/restbrowser#/)
+
+## Testing license enforcement
+
+You can test licensing-related behavior of your add-on in a local, development environment to an extent. But there's no way to replicate the interaction with the UPM and Atlassian Marketplace in a local environment alone. In the production environment, the Atlassian Marketplace serves licenses for new subscribers, and UPM interacts with the Marketplace to get the license state. 
+

@@ -51,7 +51,7 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
 
         if (Collection.class.isAssignableFrom(clazz))
         {
-            return generateArraySchema(field, null);
+            return generateArraySchema(clazz, field, null);
         }
 
         if (clazz.isEnum())
@@ -378,11 +378,13 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
 
     protected abstract JsonSchema generateInterfaceSchema(Class<?> clazz, Field field);
 
+    protected abstract JsonSchema generateInterfaceSchemaWithSelfRef(Class<?> clazz, Field field, Class<?> self);
+
     protected abstract <T> JsonSchema generateEnumSchema(Class<T> clazz, Field field);
 
     protected abstract JsonSchema generateMapSchema(Class<?> clazz, Field field);
 
     protected abstract JsonSchema processSimpleType(Class<?> clazz, Field field);
 
-    protected abstract JsonSchema generateArraySchema(Field field, String defaultArrayTitle, Class... ifaces);
+    protected abstract JsonSchema generateArraySchema(Class<?> clazz, Field field, String defaultArrayTitle, Class... ifaces);
 }

@@ -9,8 +9,6 @@ import com.atlassian.upm.pageobjects.PluginManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConfigurePageModuleBean.newConfigurePageBean;
-
 /**
  * Test of addon configure page in Confluence
  */
@@ -19,7 +17,7 @@ public class TestConfigurePage extends AbstractPageTst
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        startConnectAddOn("configurePages", newConfigurePageBean());
+        startConnectAddOn("configurePage");
     }
 
     @Test

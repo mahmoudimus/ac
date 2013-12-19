@@ -19,9 +19,9 @@ of the box.
 
 We have also updated several of the example add-ons:
 
-* [webhook-inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) (todo)
-* [atlassian-connect-jira-example](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-example) (todo)
-* [atlassian-connect-confluence-example](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-example) (todo)
+* [webhook-inspector](https://bitbucket.org/atlassianlabs/webhook-inspector)
+* [atlassian-connect-jira-example](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-example)
+* [atlassian-connect-confluence-example](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-example)
 
 More docs are coming soon:
 
@@ -67,6 +67,10 @@ Lastly, the Atlassian Connect dev team is pleased to preview our new documentati
 This documentation reflects all of the changes outlined here (JWT and JSON Descriptor). It completely documents all of the
 add-on module types, and is generated directly from source code. We hope this will also make developing Connect add-ons
 quicker and easier.
+
+#### Known Issues
+
+* Web items with a target of 'dialog' require an absolute url and the requests are not signed. This will be fixed early in the new year
 
 
 ## Earlier Releases

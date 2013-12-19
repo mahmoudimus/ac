@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConfigurePageModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.google.common.base.Function;
@@ -30,10 +30,6 @@ public class ConnectPluginXmlFactoryTest
     private static final String EXPECTED_CONFIGURE_URL = "/plugins/servlet/ac/addonKey/" + MY_CONFIG_MODULE;
     private ConnectAddonBean addonWithNoConfigurePages;
     private ConnectAddonBean addonWithOneConfigurePage;
-    private ConnectAddonBean addonWithTwoConfigurePagesOneDefault;
-    private ConnectAddonBean addonWithTwoConfigurePagesNoDefault;
-    private ConnectAddonBean addonWithTwoConfigurePagesBothDefault;
-    private ConnectAddonBean addonWithTwoConfigurePagesNonDefaultUsesDefaultKey;
 
     @Before
     public void init()
@@ -41,38 +37,11 @@ public class ConnectPluginXmlFactoryTest
         addonWithNoConfigurePages = ConnectAddonBean.newConnectAddonBean().build();
         addonWithOneConfigurePage = ConnectAddonBean.newConnectAddonBean()
                 .withKey("addonKey")
-                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
+                .withModule("configurePage", ConnectPageModuleBean.newPageBean()
                         .withName(new I18nProperty("myConfigModule", null))
                         .build())
                 .build();
 
-        addonWithTwoConfigurePagesOneDefault = ConnectAddonBean.newConnectAddonBean()
-                .withKey("addonKey")
-                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-                        .build())
-                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-                        .withKey(MY_CONFIG_MODULE)
-                        .setAsDefault()
-                        .build())
-                .build();
-
-        addonWithTwoConfigurePagesNoDefault = ConnectAddonBean.newConnectAddonBean()
-                .withKey("addonKey")
-                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-                        .build())
-                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-                        .build())
-                .build();
-
-        addonWithTwoConfigurePagesBothDefault = ConnectAddonBean.newConnectAddonBean()
-                .withKey("addonKey")
-                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-                        .setAsDefault()
-                        .build())
-                .withModule("configurePages", ConfigurePageModuleBean.newConfigurePageBean()
-                        .setAsDefault()
-                        .build())
-                .build();
     }
 
     @Test
@@ -91,30 +60,6 @@ public class ConnectPluginXmlFactoryTest
     public void theConfigureUrlIsCorrectForAddonKey() throws DocumentException
     {
         assertThat(getConfigUrls(addonWithOneConfigurePage).get(0), equalTo(EXPECTED_CONFIGURE_URL));
-    }
-
-    @Test
-    public void oneConfigureUrlParamAddedWhenTwoConfigureModulesWithOneMarkedDefault() throws DocumentException
-    {
-        assertThat(getConfigUrls(addonWithTwoConfigurePagesOneDefault), hasSize(1));
-    }
-
-    @Test
-    public void theConfigureUrlIsCorrectForAddonKeyWhenTwoModules() throws DocumentException
-    {
-        assertThat(getConfigUrls(addonWithTwoConfigurePagesOneDefault).get(0), equalTo(EXPECTED_CONFIGURE_URL));
-    }
-
-    @Test(expected = InvalidAddonConfigurationException.class)
-    public void throwsExceptionWhenTwoModulesSpecifiedButNoDefault() throws DocumentException
-    {
-        getConfigUrls(addonWithTwoConfigurePagesNoDefault);
-    }
-
-    @Test(expected = InvalidAddonConfigurationException.class)
-    public void throwsExceptionWhenTwoModulesSpecifiedAndBothDefault() throws DocumentException
-    {
-        getConfigUrls(addonWithTwoConfigurePagesBothDefault);
     }
 
     private List<String> getConfigUrls(ConnectAddonBean bean) throws DocumentException

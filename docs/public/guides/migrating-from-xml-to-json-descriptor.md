@@ -127,24 +127,8 @@ module configuration from this documentation and apply it to your own configurat
 [Getting Started guide](./getting-started.html) provides a good example of a `general-page` json descriptor.
 
 ### Dialog Page
-The `dialog-page` module has been removed. You can achieve the same result by defining a webitem with a target of dialog.
 
-```
-{
-    "modules": {
-        "webItems": [{
-            "location": "system.top.navigation.bar",
-            "target": {
-                "type": "dialog"
-            },
-            "url": "/dialog",
-            "name": {
-                "value": "Hello World"
-            }
-        }]
-    }
-}
-```
+The `dialog-page` module has been removed. A replacement is coming in the near future.
 
 ### Confluence Macros
 

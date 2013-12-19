@@ -40,6 +40,14 @@
         },
         "development-loop.html": {
             "title": "Development Loop"
+        },
+        "licensing.html": {
+            "title": "Licensing"
+        }
+    },
+    "rest-apis": {
+        "product-api-browser.html": {
+            "title": "Product API Browser"
         }
     },
     "resources": {
@@ -48,6 +56,9 @@
         },
         "faqs.html": {
             "title": "FAQs"
+        },
+        "getting-help.html": {
+            "title": "Getting Help"
         }
     }
 }

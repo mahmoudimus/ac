@@ -17,6 +17,9 @@ If you have an existing Connect add-on using ACE `0.8.x`, follow these steps to 
 2. Rename `atlassian-plugin.xml` to `atlassian-connect.json` per our [migration guide](./migrating-from-xml-to-json-descriptor.html)
 Specific notes relating to ACE:
   * You _must_ have the lifecycle `installed` event registered to `/installed`
+  * Update `routes/index.js` to return `atlassian-connect.json` instead of the xml descriptor
+  * Apart from the `{{localBaseUrl}}` variable, `atlassian-connect.json` no longer supports substitution from `config.json`
+  Any substituted variables will need to be directly placed into your descriptor.
 3. Run `npm install`
 4. Test with `node app.js`
 

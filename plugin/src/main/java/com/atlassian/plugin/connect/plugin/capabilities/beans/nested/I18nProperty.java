@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Represents a string that can be resolved via a localization properties file.
  * 
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#I18N_EXAMPLE}
+ * @schemaTitle i18n Property
  */
 public class I18nProperty
 {
@@ -23,7 +24,7 @@ public class I18nProperty
      */
     private String i18n;
 
-    public I18nProperty(String defaultValue,String i18n)
+    public I18nProperty(String defaultValue, String i18n)
     {
         this.i18n = i18n;
         this.value = defaultValue;
