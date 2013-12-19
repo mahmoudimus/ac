@@ -5,7 +5,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
  */
 public enum AddOnUrlContext
 {
-    addon, product;
+    addon, addonDirect, product;
 
     @Override
     public String toString()

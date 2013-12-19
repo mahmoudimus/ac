@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addonDirect;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -69,7 +70,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         else
         {
             String renderedUrl = getRenderedUrl(context);
-            if (addOnUrlContext == addon)
+            if (addOnUrlContext == addonDirect)
             {
                 try
                 {
