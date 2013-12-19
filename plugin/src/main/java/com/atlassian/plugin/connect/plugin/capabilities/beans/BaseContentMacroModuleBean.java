@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
@@ -25,7 +26,7 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      * This URL has to be relative to the add-on base URL.
      */
     @Required
-//    @StringSchemaAttributes(format = "uri")
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
     /**
