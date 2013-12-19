@@ -51,7 +51,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                         .resource(new TestConfluencePageMacro.MyMacroServlet()))
                 .add(GeneralPageModule.key("remotePluginGeneral")
                         .name("Remotable Plugin app1 General")
-                        .path("/page?page_id={page.id}")
+                        .path("/page?page_id=${page.id}") // TODO: this is not working wo the $. As it is deprecated I didn't chance down why
                         .linkName("Remotable Plugin app1 General Link")
                         .iconUrl("/public/sandcastles.jpg")
                         .height("600")
