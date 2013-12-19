@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
 import com.atlassian.confluence.event.events.content.page.PageViewEvent;
@@ -19,6 +20,8 @@ import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
@@ -73,30 +76,44 @@ public class MacroContentManager implements DisposableBean
         this.macroContentLinkParser = macroContentLinkParser;
     }
 
+    public String getStaticContent(final MacroInstance macroInstance)
+    {
+        final UserProfile author = userManager.getRemoteUser();
+        final String username = author == null ? "" : author.getUsername();
+        final String userKey = author == null ? "" : author.getUserKey().getStringValue();
+        final Map<String, String> urlParameters = macroInstance.getUrlParameters(username, userKey);
+
+        Map<String, String> headers = macroInstance.getHeaders(username, userKey);
+
+        return getStaticContent(macroInstance.method, macroInstance.getPath(), urlParameters, headers,
+                macroInstance.conversionContext, macroInstance.getRemotablePluginAccessor());
+    }
+
+    public String getStaticContent(HttpMethod method, URI path, Map<String, String> urlParameters,
+                                   final ConversionContext conversionContext,
+                                   final RemotablePluginAccessor accessor)
+    {
+        return getStaticContent(method, path, urlParameters, ImmutableMap.<String, String>of(), conversionContext, accessor);
+    }
+
     /*!
      The macro content retrieval process details how content is retrieved from the remote plugin
      for display in a macro.  This process does not guarantee the content is only retrieved once
      per cache key as it may be possible for concurrent requests to both prompt a macro content
      retrieval.
     */
-    public String getStaticContent(final MacroInstance macroInstance)
+    private String getStaticContent(HttpMethod method, URI path, Map<String, String> urlParameters,
+                                   Map<String, String> headers, final ConversionContext conversionContext,
+                                   final RemotablePluginAccessor accessor)
     {
-        final UserProfile author = userManager.getRemoteUser();
-        final String username = author == null ? "" : author.getUsername();
-        final String userKey = author == null ? "" : author.getUserKey().getStringValue();
-
-        final Map<String, String> urlParameters = macroInstance.getUrlParameters(username, userKey);
-
-        Map<String, String> headers = macroInstance.getHeaders(username, userKey);
-        Promise<String> promise = macroInstance.getRemotablePluginAccessor()
-                                               .executeAsync(macroInstance.method, macroInstance.getPath(), urlParameters, headers);
+        Promise<String> promise = accessor.executeAsync(method, path, urlParameters, headers);
 
         try
         {
             // AC-795: synchronous until bigpipe- and confluence-related infinite rendering loop is fixed.
             // we are now rendering in the same thread as any sub-rendering macro which "fixes the glitch".
             String remoteXhtml = promise.claim();
-            remoteXhtml = macroContentLinkParser.parse(macroInstance.getRemotablePluginAccessor(), remoteXhtml, urlParameters);
+            remoteXhtml = macroContentLinkParser.parse(accessor, remoteXhtml, urlParameters);
 
             /*!
            The storage-format XML returned from the Remotable Plugin is then scrubbed to ensure any
@@ -113,12 +130,12 @@ public class MacroContentManager implements DisposableBean
                         {
                             try
                             {
-                                return xhtmlUtils.convertStorageToView(cleanedXhtml, macroInstance.getConversionContext());
+                                return xhtmlUtils.convertStorageToView(cleanedXhtml, conversionContext);
                             }
                             catch (Exception e)
                             {
                                 log.warn("Unable to convert storage format for app {} with error {}",
-                                        macroInstance.getRemotablePluginAccessor().getKey(), e.getMessage());
+                                        accessor.getKey(), e.getMessage());
                                 if (log.isDebugEnabled())
                                 {
                                     log.debug("Error converting storage format", e);

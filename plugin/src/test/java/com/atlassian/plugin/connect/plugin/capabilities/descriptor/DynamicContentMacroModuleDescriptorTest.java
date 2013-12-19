@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.DynamicCon
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
 import org.junit.runner.RunWith;
@@ -25,6 +26,8 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
     private UserManager userManager;
     @Mock
     private I18nPropertiesPluginManager i18nPropertiesPluginManager;
+    @Mock
+    private UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Override
     protected XhtmlMacroModuleDescriptor createModuleDescriptorForTest()
@@ -32,11 +35,12 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
 
         DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new DynamicContentMacroModuleDescriptorFactory(
-                remotablePluginAccessorFactoryForTests,
+                new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
+                i18nPropertiesPluginManager,
                 iFrameRenderer,
                 userManager,
-                new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
-                i18nPropertiesPluginManager);
+                remotablePluginAccessorFactoryForTests,
+                urlVariableSubstitutor);
 
         DynamicContentMacroModuleBean bean = createBeanBuilder().build();
 

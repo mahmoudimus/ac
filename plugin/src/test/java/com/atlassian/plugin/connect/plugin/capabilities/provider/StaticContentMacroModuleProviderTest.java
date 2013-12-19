@@ -4,6 +4,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacro
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.StaticContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.StaticContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.sal.api.user.UserManager;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -16,15 +18,21 @@ public class StaticContentMacroModuleProviderTest extends AbstractContentMacroMo
 {
     @Mock
     private MacroContentManager macroContentManager;
+    @Mock
+    private UserManager userManager;
+    @Mock
+    private UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Override
     protected StaticContentMacroModuleProvider createModuleProvider()
     {
         StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new StaticContentMacroModuleDescriptorFactory(
-                remotablePluginAccessorFactoryForTests,
-                macroContentManager,
                 absoluteAddOnUrlConverter,
-                i18nPropertiesPluginManager);
+                i18nPropertiesPluginManager,
+                macroContentManager,
+                userManager,
+                remotablePluginAccessorFactoryForTests,
+                urlVariableSubstitutor);
 
         return new StaticContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory,
                 servletDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, relativeAddOnUrlConverter);
