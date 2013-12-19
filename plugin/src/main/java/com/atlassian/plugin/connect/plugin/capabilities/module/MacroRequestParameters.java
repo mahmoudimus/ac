@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
-import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.renderer.v2.macro.Macro;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -43,12 +43,6 @@ public class MacroRequestParameters
             return withParameter("body", value);
         }
 
-        public Builder withUser(UserProfile user)
-        {
-            return withParameter("user_key", null == user ? "" : user.getUserKey().getStringValue())
-                   .withParameter("user_id", null == user ? "" : user.getUsername());
-        }
-
         private Builder withParameter(String key, String value)
         {
             List<String> list = getList(key);
@@ -74,6 +68,7 @@ public class MacroRequestParameters
 
         public MacroRequestParameters build()
         {
+            queryParameters.remove(Macro.RAW_PARAMS_KEY);
             return new MacroRequestParameters(this);
         }
     }

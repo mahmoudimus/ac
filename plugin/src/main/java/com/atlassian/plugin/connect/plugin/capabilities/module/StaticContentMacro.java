@@ -45,14 +45,13 @@ public class StaticContentMacro extends AbstractContentMacro
         Uri uri = null;
         try
         {
-            MacroContext macroContext = new MacroContext(conversionContext);
+            MacroContext macroContext = new MacroContext(conversionContext, getUser());
             uri = resolveUrlTemplate(macroContext.getParameters());
 
             MacroRequestParameters macroParameters = new MacroRequestParameters.Builder()
                     .withSingleValueParameters(parameters)
                     .withMultiValueParameters(uri.getQueryParameters())
                     .withBody(storageFormatBody)
-                    .withUser(getUser())
                     .build();
 
             return macroContentManager.getStaticContent(macroBean.getMethod().getMethod(), new URI(uri.getPath()),

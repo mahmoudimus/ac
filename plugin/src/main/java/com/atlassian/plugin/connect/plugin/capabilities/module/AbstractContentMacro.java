@@ -16,7 +16,7 @@ public abstract class AbstractContentMacro implements Macro
 {
     private final String pluginKey;
     private final BaseContentMacroModuleBean macroBean;
-    private final UserProfile user;
+    private final UserManager userManager;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
 
@@ -28,7 +28,7 @@ public abstract class AbstractContentMacro implements Macro
     {
         this.pluginKey = pluginKey;
         this.macroBean = macroBean;
-        this.user = userManager.getRemoteUser();
+        this.userManager = userManager;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
     }
@@ -52,11 +52,12 @@ public abstract class AbstractContentMacro implements Macro
 
     protected UserProfile getUser()
     {
-        return user;
+        return userManager.getRemoteUser();
     }
 
     protected String getUsername()
     {
+        UserProfile user = getUser();
         return null == user ? "" : user.getUsername();
     }
 

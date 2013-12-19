@@ -40,7 +40,7 @@ public final class DynamicContentMacro extends AbstractContentMacro
         String counter = incrementCounter(conversionContext);
         try
         {
-            MacroContext macroContext = new MacroContext(conversionContext);
+            MacroContext macroContext = new MacroContext(conversionContext, getUser());
             Uri uri = resolveUrlTemplate(macroContext.getParameters());
 
             IFrameContext iFrameContext = new IFrameContextImpl(getPluginKey(), uri.getPath(), getNamespace(counter), getIFrameParams());
@@ -48,7 +48,6 @@ public final class DynamicContentMacro extends AbstractContentMacro
                     .withSingleValueParameters(parameters)
                     .withMultiValueParameters(uri.getQueryParameters())
                     .withBody(storageFormatBody)
-                    .withUser(getUser())
                     .build();
 
             if (getOutputType().equals(OutputType.INLINE))
