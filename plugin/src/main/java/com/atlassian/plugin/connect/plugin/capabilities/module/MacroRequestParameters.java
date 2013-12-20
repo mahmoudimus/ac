@@ -40,11 +40,6 @@ public class MacroRequestParameters
             return this;
         }
 
-        public Builder withBody(String value)
-        {
-            return withParameter("body", value);
-        }
-
         private Builder withParameter(String key, String value)
         {
             List<String> list = getorCreateList(key);

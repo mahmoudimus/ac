@@ -6,10 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.StaticCont
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.net.URI;
 import java.util.Map;
@@ -17,14 +14,18 @@ import java.util.Map;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class StaticContentMacroTest extends AbstractContentMacroTest<StaticContentMacroModuleBean, StaticContentMacro, StaticContentMacroModuleBeanBuilder>
+public class StaticContentMacroUrlTemplateTest extends AbstractContentMacroUrlTemplateTest<StaticContentMacroModuleBean, StaticContentMacro, StaticContentMacroModuleBeanBuilder>
 {
-    @Mock
     private MacroContentManager macroContentManager;
 
+    public StaticContentMacroUrlTemplateTest(String variable, String expectedValue)
+    {
+        super(variable, expectedValue);
+        macroContentManager = mock(MacroContentManager.class);
+    }
 
     @Override
     protected StaticContentMacroModuleBeanBuilder createBeanBuilder()

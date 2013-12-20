@@ -22,6 +22,11 @@ public class ContentEntityForTests extends ContentEntityObject implements Spaced
         this.version = Integer.parseInt(version);
     }
 
+    public ContentEntityForTests()
+    {
+        this("page", "111", "Page Title", "1", "sp", "222");
+    }
+
     @Override
     public String getType()
     {

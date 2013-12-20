@@ -4,10 +4,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacr
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.DynamicContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
@@ -16,14 +13,19 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class DynamicContentMacroTest extends AbstractContentMacroTest<DynamicContentMacroModuleBean, DynamicContentMacro, DynamicContentMacroModuleBeanBuilder>
+public class DynamicContentMacroUrlTemplateTest extends AbstractContentMacroUrlTemplateTest<DynamicContentMacroModuleBean, DynamicContentMacro, DynamicContentMacroModuleBeanBuilder>
 {
-    @Mock
     private IFrameRenderer iFrameRenderer;
+
+    public DynamicContentMacroUrlTemplateTest(String variable, String expectedValue)
+    {
+        super(variable, expectedValue);
+        iFrameRenderer = mock(IFrameRenderer.class);
+    }
 
     @Override
     protected DynamicContentMacroModuleBeanBuilder createBeanBuilder()

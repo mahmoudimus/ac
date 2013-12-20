@@ -25,14 +25,15 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      * The link to the add-on resource that provides the content for the iFrame.
      * This URL has to be relative to the add-on base URL.
      *
-     * Additional context parameters can be passed as variables in the URL.
+     * The macro body and additional context parameters can be passed as variables in the URL.
      *
      * ```
-     * "url": "/macro-renderer?space_id={space.id}&page_id={page.id}"
+     * "url": "/macro-renderer?body={body}&space_id={space.id}&page_id={page.id}"
      * ```
      *
      * Currently supported variables for macros are:
      *
+     * * `body`: The macro body
      * * `page.id`: The page ID, e.g. '1376295'
      * * `page.title`: The page title, e.g. 'My Page'
      * * `page.type`: The page type, e.g. 'page'
