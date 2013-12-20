@@ -231,7 +231,7 @@ public class ConnectJsonExamples
     {
         DynamicContentMacroModuleBean macroModuleBean = newDynamicContentMacroModuleBean()
                 .withName(new I18nProperty("Maps", ""))
-                .withUrl("/render-map?pageTitle=${page.title}")
+                .withUrl("/render-map?pageTitle={page.title}")
                 .withAliases("map")
                 .withBodyType(MacroBodyType.NONE)
                 .withOutputType(MacroOutputType.BLOCK)
@@ -265,7 +265,7 @@ public class ConnectJsonExamples
     {
         StaticContentMacroModuleBean macroModuleBean = newStaticContentMacroModuleBean()
                 .withName(new I18nProperty("Maps", ""))
-                .withUrl("/render-map?pageTitle=${page.title}")
+                .withUrl("/render-map?pageTitle={page.title}")
                 .withAliases("map")
                 .withBodyType(MacroBodyType.NONE)
                 .withOutputType(MacroOutputType.BLOCK)
