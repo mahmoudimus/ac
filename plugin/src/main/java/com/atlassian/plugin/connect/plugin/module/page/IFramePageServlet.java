@@ -106,8 +106,9 @@ public class IFramePageServlet extends HttpServlet
 
             if (contextParamNameToSymbolicName.containsKey(requestParamName))
             {
-                String symbolicName = contextParamNameToSymbolicName.get(requestParamName); // e.g. "{space.id}"
-                symbolicName = symbolicName.replaceAll("\\$\\{([^}]*)}", "$1"); // "{space.id}" -> "space.id"
+                String symbolicName = contextParamNameToSymbolicName.get(requestParamName); // e.g. "{space.id}" or ${space.id} in legacy case
+                symbolicName = symbolicName.replaceAll("\\$\\{([^}]*)}", "$1"); // "${space.id}" -> "space.id" - legacy case
+                symbolicName = symbolicName.replaceAll("\\{([^}]*)}", "$1"); // "{space.id}" -> "space.id"
                 result.put(symbolicName, paramWithValue.getValue());
             }
         }
