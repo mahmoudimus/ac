@@ -57,7 +57,7 @@ public class PageToWebItemAndServletConverter
         return newWebItemBean()
                 .withName(bean.getName())
                 .withKey(bean.getKey())
-                .withContext(product)
+                .withContext(product) // Note the reason this is not 'addon' AddonUrlTemplatePair encapsulates the knowledge about the relationship of the host wrapping url to the addon url
                 .withUrl(hostUrlTemplate.getTemplateString())
                 .withLocation(location)
                 .withWeight(weight)
