@@ -41,7 +41,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
                         "generalPages",
                         newPageBean()
                                 .withName(new I18nProperty("My Awesome Page", null))
-                                .withUrl("/pg?project_id=${project.id}&project_key=${project.key}")
+                                .withUrl("/pg?project_id={project.id}&project_key={project.key}")
                                 .withWeight(1234)
                                 .build())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())

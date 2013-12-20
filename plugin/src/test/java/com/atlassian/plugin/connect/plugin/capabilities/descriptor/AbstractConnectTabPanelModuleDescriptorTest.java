@@ -30,7 +30,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorTest<T extends TabP
     public void rendersWithCorrectUrl() throws IOException
     {
         createDescriptor().getModule().getHtml(browseComponentContext);
-        String expectedUrl = getRawUrl().replace("${project.id}", String.valueOf(TestContextBuilder.PROJECT_ID)).replace("${project.key}", TestContextBuilder.PROJECT_KEY);
+        String expectedUrl = getRawUrl().replace("{project.id}", String.valueOf(TestContextBuilder.PROJECT_ID)).replace("{project.key}", TestContextBuilder.PROJECT_KEY);
         verify(getIFrameRenderer()).render(argThat(hasIFramePath(expectedUrl)), anyString());
     }
 

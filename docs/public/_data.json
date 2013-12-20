@@ -1,13 +1,19 @@
 {
     "guides": {
+        "whats-new.html": {
+            "title": "What's New"
+        },
         "introduction.html": {
             "title": "Introduction"
         },
         "getting-started.html": {
             "title": "Getting Started"
         },
-        "whats-new.html": {
-            "title": "What's New"
+        "private-listings.html": {
+            "title": "Private Listings"
+        },
+        "selling-on-marketplace.html": {
+            "title": "Selling on Marketplace"
         }
     },
     "concepts": {
