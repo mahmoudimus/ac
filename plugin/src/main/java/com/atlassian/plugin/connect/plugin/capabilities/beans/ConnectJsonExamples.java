@@ -72,6 +72,7 @@ public class ConnectJsonExamples
     public static final String WEBITEM_EXAMPLE = createWebItemExample();
     public static final String WEBITEM_TARGET_EXAMPLE = createWebitemTargetExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
+    public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
 
 
     private static String createAddonExample()
@@ -402,6 +403,29 @@ public class ConnectJsonExamples
         return gson.toJson(obj);
     }
 
+    private static String createLifecycleExample()
+    {
+        LifecycleBean bean = newLifecycleBean()
+                .withInstalled("/installed")
+                .withUninstalled("/uninstalled")
+                .withEnabled("/enabled")
+                .build();
+
+        return gson.toJson(bean);
+    }
+    private static String createMacroEditorExample()
+    {
+        MacroEditorBean macroEditorBean = newMacroEditorBean()
+                .withUrl("/generate_md")
+                .withInsertTitle(new I18nProperty("Insert MarkDown", "macro.md.insert"))
+                .withEditTitle(new I18nProperty("Edit MarkDown", "macro.md.edit"))
+                .withHeight("300px")
+                .withWidth("400px")
+                .build();
+
+        return gson.toJson(createModuleObject("editor", macroEditorBean));
+    }
+
     private static JsonObject createModuleArray(String name, ModuleBean bean)
     {
         JsonObject obj = new JsonObject();
@@ -420,16 +444,4 @@ public class ConnectJsonExamples
         return obj;
     }
 
-    private static String createMacroEditorExample()
-    {
-        MacroEditorBean macroEditorBean = newMacroEditorBean()
-                .withUrl("/generate_md")
-                .withInsertTitle(new I18nProperty("Insert MarkDown", "macro.md.insert"))
-                .withEditTitle(new I18nProperty("Edit MarkDown", "macro.md.edit"))
-                .withHeight("300px")
-                .withWidth("400px")
-                .build();
-
-        return gson.toJson(macroEditorBean);
-    }
 }

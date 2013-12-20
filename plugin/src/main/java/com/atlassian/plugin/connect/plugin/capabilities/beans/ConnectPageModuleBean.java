@@ -20,7 +20,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.
  * * `profilePages` - ( __Confluence only__) displayed as sections inside user profiles. Like admin pages, they appear with all the necessary components around them (such as menus).
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PAGE_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PAGE_EXAMPLE}
  * @since 1.0
  */
 public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
@@ -32,12 +34,12 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     @Required
     @StringSchemaAttributes(format = "uri-template")
     private String url;
-    
+
     @CommonSchemaAttributes(defaultValue = "100")
     private Integer weight;
-    
+
     private String location;
-    
+
     private IconBean icon;
 
     public ConnectPageModuleBean()

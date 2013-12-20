@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.MacroEdito
  * URL to a page in your add-on which will be shown in the dialog iframe.
  *
  *#### Example
- * 
+ *
  * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}
  * @schemaTitle Macro Editor
  * @since 1.0

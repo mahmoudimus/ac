@@ -28,8 +28,9 @@ import com.google.common.base.Objects;
  *#### CONFLUENCE
  * {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConfluenceConditions#CONDITION_LIST}
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#SINGLE_CONDITION_EXAMPLE}
- * @schemaTitle Single Condition
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#SINGLE_CONDITION_EXAMPLE}
  * @since 1.0
  * @schemaTitle Single Condition
  */

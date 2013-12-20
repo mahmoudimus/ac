@@ -114,7 +114,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookMod
  * subscribes and generates each webhook event type available on the running instance of the Atlassian application,
  * and prints the body posted by the instance to the console screen.
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
  * @schemaTitle Webhooks
  * @since 1.0
  */

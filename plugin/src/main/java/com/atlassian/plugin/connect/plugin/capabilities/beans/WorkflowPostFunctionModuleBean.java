@@ -151,7 +151,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
  *          }
  *      }
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#POST_FUNCTION_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#POST_FUNCTION_EXAMPLE}
  * @schemaTitle Workflow Post Function
  * @since 1.0
  */

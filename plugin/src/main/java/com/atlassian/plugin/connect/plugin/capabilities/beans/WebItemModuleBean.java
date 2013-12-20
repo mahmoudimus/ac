@@ -30,7 +30,9 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarg
  * Web items are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
  * application and don't know where to start, a web item may be all you need.
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBITEM_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBITEM_EXAMPLE}
  * @schemaTitle Web Item
  * @since 1.0
  */
@@ -119,22 +121,22 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     public WebItemModuleBean(WebItemModuleBeanBuilder builder)
     {
         super(builder);
-        
+
         if (null == url)
         {
             this.url = "";
         }
-        
+
         if(null == context)
         {
             this.context = AddOnUrlContext.addon;
         }
-        
+
         if(null == weight)
         {
             this.weight = 100;
         }
-        
+
         if(null == target)
         {
             this.target = newWebItemTargetBean().build();
@@ -165,7 +167,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         return weight;
     }
-    
+
     public WebItemTargetBean getTarget()
     {
         return target;
@@ -190,7 +192,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         return (null != getUrl() && getUrl().toLowerCase().startsWith("http"));
     }
-    
+
     public static WebItemModuleBeanBuilder newWebItemBean()
     {
         return new WebItemModuleBeanBuilder();
