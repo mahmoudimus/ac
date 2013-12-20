@@ -70,7 +70,7 @@ public class AppRunner
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
-                                .withUrl("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}")
+                                .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
                                 .build(),
                             newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
@@ -109,12 +109,12 @@ public class AppRunner
                     .addCapabilities("generalPages",
                             newPageBean()
                                     .withName(new I18nProperty("My Awesome Page", "my.awesome.page"))
-                                    .withUrl("/pg?page_id=${page.id}")
+                                    .withUrl("/pg?page_id={page.id}")
                                     .withWeight(1234)
                                     .build(),
                             newPageBean()
                                     .withName(new I18nProperty("Another Awesome Page", "another.awesome.page"))
-                                    .withUrl("/pg?page_id=${page.id}")
+                                    .withUrl("/pg?page_id={page.id}")
                                     .withWeight(1234)
                                     .build())
                     .addCapabilities("adminPages",
@@ -129,7 +129,7 @@ public class AppRunner
                                     .withWeight(1234)
                                     .build())
                     .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet("betty"))
-                    .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}",
+                    .addRoute("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}",
                             ConnectAppServlets.helloWorldServlet())
                     .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                     .start();

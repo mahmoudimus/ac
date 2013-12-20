@@ -68,7 +68,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
         when(remotablePluginAccessorFactory.get(anyString())).thenReturn(remotablePluginAccessor);
 
         descriptor = webItemFactory.createWebItemModuleDescriptor(
-                "/myplugin?my_project_id=${project.id}&my_project_key=${project.key}",
+                "/myplugin?my_project_id={project.id}&my_project_key={project.key}",
                 "myLinkId", false, product, remotablePluginAccessorFactory.get(plugin.getKey()));
         descriptor.init(plugin, createElement());
         descriptor.enabled();

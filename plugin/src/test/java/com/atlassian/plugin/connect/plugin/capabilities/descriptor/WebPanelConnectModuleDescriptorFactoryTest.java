@@ -84,7 +84,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
 
         WebPanelModuleBean bean = newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", "my.webpanel"))
-                .withUrl("http://www.google.com?my_project_id=${project.id}&my_project_key=${project.key}")
+                .withUrl("http://www.google.com?my_project_id={project.id}&my_project_key={project.key}")
                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                 .withLayout(new WebPanelLayout("10px", "100%"))
                 .withWeight(50)

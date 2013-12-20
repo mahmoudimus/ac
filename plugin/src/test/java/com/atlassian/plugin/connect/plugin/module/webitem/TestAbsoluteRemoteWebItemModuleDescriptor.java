@@ -9,7 +9,7 @@ public class TestAbsoluteRemoteWebItemModuleDescriptor extends RemoteWebItemModu
     @Override
     protected String getInputLinkText()
     {
-        return "http://server:80/path?my_page_id=${page.id}";
+        return "http://server:80/path?my_page_id={page.id}";
     }
 
     protected String getExpectedUrl()

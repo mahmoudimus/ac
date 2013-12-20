@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.google.common.base.Objects;
@@ -29,6 +30,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * This can be absolute or relative to the addon's baseUrl
      */
     @Required
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
     
     @CommonSchemaAttributes(defaultValue = "100")
