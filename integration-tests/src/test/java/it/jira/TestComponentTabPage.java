@@ -34,7 +34,7 @@ public class TestComponentTabPage extends TestBase
                 .addOAuth()
                 .add(ComponentTabPageModule.key(JIRA_COMPONENT_TAB_PANEL)
                         .name("Component Tab Panel")
-                        .path("/ipp?component_id={component.id}&project_id={project.id}&project_key={project.key}")
+                        .path("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
                         .resource(ConnectAppServlets.apRequestServlet()))
                 .start();
     }

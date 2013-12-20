@@ -35,13 +35,13 @@ public class TestWebItem extends JiraWebDriverTestBase
                         .name("AC General Web Item")
                         .section("system.top.navigation.bar")
                         .weight(1)
-                        .link(RemoteWebItemModule.Link.link("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}", false))
+                        .link(RemoteWebItemModule.Link.link("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}", false))
                         .resource(ConnectAppServlets.helloWorldServlet()))
                 .add(RemoteWebItemModule.key(ABSOLUTE_WEB_ITEM)
                         .name("Quick project link")
                         .section("system.top.navigation.bar")
                         .weight(1)
-                        .link(RemoteWebItemModule.Link.link(product.getProductInstance().getBaseUrl() + "/browse/{project.key}", false)))
+                        .link(RemoteWebItemModule.Link.link(product.getProductInstance().getBaseUrl() + "/browse/${project.key}", false)))
                 .start();
     }
 

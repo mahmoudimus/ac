@@ -36,7 +36,7 @@ public class TestVersionTabPage extends TestBase
                 .addOAuth()
                 .add(VersionTabPageModule.key(JIRA_VERSION_TAB_PANEL)
                         .name("Version Tab Panel")
-                        .path("/ipp?version_id={version.id}&project_id={project.id}&project_key={project.key}")
+                        .path("/ipp?version_id=${version.id}&project_id=${project.id}&project_key=${project.key}")
                         .resource(ConnectAppServlets.apRequestServlet()))
                 .start();
 
