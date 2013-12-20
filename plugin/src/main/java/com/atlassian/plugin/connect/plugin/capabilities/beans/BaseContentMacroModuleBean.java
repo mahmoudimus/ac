@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
@@ -27,19 +28,10 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      * Additional context parameters can be passed as variables in the URL.
      *
      * ```
-     * "url": "/macro-renderer?space_id=${space.id}&page_id=${page.id}"
+     * "url": "/macro-renderer?space_id={space.id}&page_id={page.id}"
      * ```
      *
-     * <div class="aui-message warning">
-     *   <p class="title">
-     *     <span class="aui-icon icon-warning"></span>
-     *       <strong>Change Ahead</strong>
-     *   </p>
-     *   The variable format will change to the standard URL template format `{variable}`
-     *   in one of the next releases.
-     * </div>
-     *
-     * Currently support variables for macros are:
+     * Currently supported variables for macros are:
      *
      * * `page.id`: The page ID, e.g. '1376295'
      * * `page.title`: The page title, e.g. 'My Page'
@@ -52,7 +44,7 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      * * `output.type`: The output type, e.g. 'display'
      */
     @Required
-//    @StringSchemaAttributes(format = "uri")
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
     /**
