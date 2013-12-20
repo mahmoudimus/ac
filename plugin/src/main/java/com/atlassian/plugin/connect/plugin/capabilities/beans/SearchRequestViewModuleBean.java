@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SearchRequestViewModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 
@@ -22,11 +23,11 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18n
  *
  * Your service will be invoked with these parameters:
  *
- * * `__issues__`: A comma-separated list of issue keys
- * * `__link__`: A link back to the JIRA Issue Navigator where the action was invoked
- * * `__startIssue__`: The index of the first passed issue key in the list of all issues
- * * `__endIssue__`: The index of the last passed issue key in the list of all issues
- * * `__totalIssues__`: The number of issues in the entire search result
+ * * `issues`: A comma-separated list of issue keys
+ * * `link`: A link back to the JIRA Issue Navigator where the action was invoked
+ * * `startIssue`: The index of the first passed issue key in the list of all issues
+ * * `endIssue`: The index of the last passed issue key in the list of all issues
+ * * `totalIssues`: The number of issues in the entire search result
  *
  * @exampleJson Example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#SEARCH_VIEW_EXAMPLE}
  * @schemaTitle Search Request View
@@ -38,6 +39,7 @@ public class SearchRequestViewModuleBean extends BeanWithKeyAndParamsAndConditio
      * The URL of the service that will render the representation for the result set. The URL is
      * interpreted relative to the *baseUrl* in the descriptor.
      */
+    @Required
     private String url;
 
     /**

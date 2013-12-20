@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 
 /**
  * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#URL_EXAMPLE}
+ * @schemaTitle URL
  */
 public class UrlBean
 {

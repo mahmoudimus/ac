@@ -256,6 +256,12 @@ public class ConnectJsonExamples
                         .withValues("Map", "Satellite")
                         .build()
                 )
+                .withEditor(newMacroEditorBean()
+                        .withUrl("/map-editor")
+                        .withInsertTitle(new I18nProperty("Insert Map", ""))
+                        .withEditTitle(new I18nProperty("Edit Map", ""))
+                        .build()
+                )
                 .build();
 
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
@@ -286,6 +292,12 @@ public class ConnectJsonExamples
                         .withMultiple(false)
                         .withRequired(true)
                         .withValues("Map", "Satellite")
+                        .build()
+                )
+                .withEditor(newMacroEditorBean()
+                        .withUrl("/map-editor")
+                        .withInsertTitle(new I18nProperty("Insert Map", ""))
+                        .withEditTitle(new I18nProperty("Edit Map", ""))
                         .build()
                 )
                 .build();
@@ -345,7 +357,7 @@ public class ConnectJsonExamples
     private static String createUrlExample()
     {
         UrlBean bean = new UrlBean("/my-url");
-        return gson.toJson(createModuleObject("url", bean));
+        return gson.toJson(createModuleObject("endpoint", bean));
     }
 
     private static String createVendorExample()
@@ -395,7 +407,7 @@ public class ConnectJsonExamples
         JsonObject obj = new JsonObject();
         JsonArray arr = new JsonArray();
         arr.add(gson.toJsonTree(bean));
-        obj.add("generalPages", arr);
+        obj.add(name, arr);
 
         return obj;
     }

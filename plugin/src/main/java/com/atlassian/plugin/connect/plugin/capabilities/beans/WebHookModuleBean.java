@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookModuleBeanBuilder;
 
 /**
@@ -121,10 +123,13 @@ public class WebHookModuleBean extends BeanWithParams
     /**
      * Specifies the named event you would like to listen to (e.g., "enabled", "jira:issue_created", etc.)
      */
+    @Required
     private String event;
     /**
      * Specifies your add-on's POST webhook handler URL. This property has to be a relative URL.
      */
+    @Required
+    @StringSchemaAttributes(format = "uri")
     private String url;
 
     public WebHookModuleBean(WebHookModuleBeanBuilder builder)
