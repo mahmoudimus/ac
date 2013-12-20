@@ -46,7 +46,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
                         "generalPages",
                         newPageBean()
                                 .withName(new I18nProperty("My Awesome Page", null))
-                                .withUrl("/pg?page_id=${page.id}")
+                                .withUrl("/pg?page_id={page.id}")
                                 .withWeight(1234)
                                 .build())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())

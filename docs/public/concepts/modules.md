@@ -68,10 +68,10 @@ Confluence supports these context variables:
 
 A particular variable is available only where it makes sense given the application context. For example, a JIRA issue page only exposes issue and project data. Similarly, version and component information is available only in project administration pages.
 
-URL variables are available to any of the page modules, including web panels, web items, general pages and dialog pages, except for Confluence macros. To add a variable to a URL, enclose the variable name in curly brackets, as follows: `${variable.name}`
+URL variables are available to any of the page modules, including web panels, web items, general pages and dialog pages, except for Confluence macros. To add a variable to a URL, enclose the variable name in curly brackets, as follows: `{variable.name}`
 
 For example, the following URL includes variables that are bound to the JIRA project id and current issue key at runtime:
 ```
-url="/myPage?issueKey=${issue.key}&projectId=${project.id}"
+url="/myPage?issueKey={issue.key}&projectId={project.id}"
 ```
 If the application isn't able to bind a value to the variable at runtime for any reason, it passes an empty value instead.

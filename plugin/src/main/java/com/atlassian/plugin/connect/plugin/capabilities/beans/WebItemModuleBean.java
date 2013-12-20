@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
@@ -40,6 +41,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      *  product URL or the add-on's base URL, depending on the _context_ parameter.
      */
     @Required
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
     /**

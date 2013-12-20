@@ -46,7 +46,7 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
     private static final String ADDON_KEY = "myKey";
     private static final String ADDON_NAME = "myName";
     private static final String ADDON_URL = "/myUrl";
-    private static final String EXPECTED_IFRAME_URL = "/plugins/servlet/xx/myUrl?projectKey=${project.key}";
+    private static final String EXPECTED_IFRAME_URL = "/plugins/servlet/xx/myUrl?projectKey={project.key}";
     private static final String EXPECTED_IFRAME_DESCRIPTOR_URL = "/xx/myUrl";
     private static final RelativeAddOnUrl EXPECTED_IFRAME_URL_HOLDER = new RelativeAddOnUrl(Uri.parse(EXPECTED_IFRAME_DESCRIPTOR_URL));
     private static final String ADDON_I18_NAME_KEY = "myi18key";

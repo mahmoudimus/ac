@@ -57,7 +57,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 
         descriptor = webItemFactory.createWebItemModuleDescriptor(
-                "/myplugin?my_project_id=${project.id}&my_project_key=${project.key}",
+                "/myplugin?my_project_id={project.id}&my_project_key={project.key}",
                 "myLinkId", false);
         descriptor.init(plugin, createElement());
         descriptor.enabled();

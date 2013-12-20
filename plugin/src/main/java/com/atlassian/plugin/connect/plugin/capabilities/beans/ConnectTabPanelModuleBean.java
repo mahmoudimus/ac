@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectTabPanelModuleBeanBuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -15,7 +17,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
 {
+    @Required
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
+
     private Integer weight;
 
     public ConnectTabPanelModuleBean() {
