@@ -1,6 +1,6 @@
 # Styling Add-ons with Atlassian UI
 
-The Atlassian User Interface Library (AUI) is the framework that Atlassian users to build our products. AUI is a library
+The Atlassian User Interface Library (AUI) is the framework that Atlassian uses to build our products. AUI is a library
  of Javascript, CSS, templates and other resources you can include in your projects. Building a user interface with
  AUI automatically ensures your feature is ADG compliant in terms of look, feel and control behavior. Anything that
  you find in the Atlassian Design Guidelines (ADG) you can build with the AUI library.
@@ -11,7 +11,7 @@ this task.
 
 ## Using AUI styling in your pages
 
-The most convenient way of styling your pages to look like atlassian products is to use the AUI css and javascript. You can
+The most convenient way of styling your pages to look like Atlassian products is to use the AUI CSS and Javascript. You can
 include these resources on any page that you serve. In most cases, you should use the most recent version of AUI that is
 available. It's your responsiblity to update as new versions become available. Not only will you get new features and bug
 fixes, but using the most recent version of AUI ensures that your styles will most closely match those of your host application.
@@ -34,7 +34,7 @@ An easy way to get started with AUI is to experiment with the [sandbox](https://
 
 ## Minimal styling
 
-Atlassian Connect provides a small set of CSS styles for styling your pages, but that this stylesheet is not the
+Atlassian Connect provides a small set of CSS styles for styling your pages, but this stylesheet is not the
 [Atlassian User Interface (AUI)](https://developer.atlassian.com/design/). To style your pages using AUI and the
 ADG, you should reference the AUI flat-pack into your add-on using the [CDN](http://cdnjs.com/libraries/aui/).
 But if you just need a minimal set of styles, you can add the following to your HTML:

@@ -36,7 +36,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * at any time, without having to create a new version or report the change to the Atlassian instance. The changes are
  * reflected in the Atlassian instance immediately (or at least at page reload time).
  *
- * However, some add-ons changes do require a change in the descriptor file itself. For example, say you modify the add-on
+ * However, some add-on changes do require a change in the descriptor file itself. For example, say you modify the add-on
  * to have a new page module. Since this requires a page module declaration in the descriptor, it means making an updated
  * descriptor available, which instances will have to re-register. To propagate this change, you need to create a new version
  * of the add-on in its Marketplace listing. The Marketplace will take care of the rest: informing administrators

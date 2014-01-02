@@ -26,8 +26,8 @@ specific for each application.
 - **Request the appropriate scopes.** Your add-on must specify what type of access it needs from its host Atlassian
 application. You declare required scopes for the add-on in the add-on descriptor file. Scopes determine which REST API
 resources the add-on can use.
-- **List in the Atlassian Marketplace.** Not every add-on needs to be publicly available on the Atlassian
-Marketplace, but all must be registered on the Marketplace in order to be installed. The Marketplace allows your to create
+- **List in the Atlassian Marketplace.** Not every add-on needs to be publicly available on the [Atlassian
+Marketplace](https://marketplace.atlassian.com), but all must be registered on the Marketplace in order to be installed. The Marketplace allows your to create
 private listings, which accessible only to you.
 - **Add user interface elements to the Atlassian application UI.**
 - **Recognize the user.** Because your add-on has been authenticated via JWT, each request from the target application
