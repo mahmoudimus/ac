@@ -1,5 +1,13 @@
 <% var auiVersion = "5.4.1" %>
 
+<%
+   // calculate the relative path to the document root from the page depth
+   var relDocRoot = "";
+   for (var i = 1; i < current.path.length; i++) {
+      relDocRoot += "../";
+   }
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +24,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/aui/css/aui-experimental.css" media="all">
     <!--[if lt IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/aui/css/aui-ie.css" media="all"><![endif]-->
     <!--[if IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/aui/css/aui-ie9.css" media="all"><![endif]-->
-    <link rel="stylesheet" href="<%= baseUrl %>/assets/css/styles.css" media="all">
+    <link rel="stylesheet" href="<%= relDocRoot %>assets/css/styles.css" media="all">
     <script src="//code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.3.0/lodash.min.js"></script>
@@ -36,7 +44,7 @@
                 <div class="aui-header-inner">
                     <div class="aui-header-primary">
                         <h1 id="logo" class="aui-header-logo aui-header-logo-ac">
-                            <a href="<%= baseUrl %>/index.html">
+                            <a href="<%= relDocRoot %>index.html">
                                 <span class="aui-header-logo-device">Atlassian Connect</span>
                             </a>
                         </h1>
@@ -68,7 +76,7 @@
 
             <div class="aui-page-panel">
                 <div class="aui-page-panel-inner">
-                    <%- partial('_partials/_sidebar.ejs') %>
+                    <%- partial('_partials/_sidebar.ejs', { relDocRoot: relDocRoot }) %>
                     <section class="aui-page-panel-content ac-page">
                         <%
                             var module;
@@ -85,7 +93,7 @@
                         %>
 
                         <% if (module) { %>
-                            <%- partial('modules/_child_layout.jade', { module: module }) %>
+                            <%- partial('modules/_child_layout.jade', { module: module, relDocRoot: relDocRoot }) %>
                         <% } else { %>
                             <%- yield %>
                         <% } %>

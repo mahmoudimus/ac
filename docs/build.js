@@ -22,7 +22,6 @@ var confluenceSchemaPath = '../plugin/target/classes/schema/confluence-schema.js
 program
   .option('-s, --serve', 'Serve and automatically watch for changes')
   .option('-d, --debug', 'Output debug information')
-  .option('-b, --baseUrl [url]', 'Set the base url for rendered links')
   .parse(process.argv);
 
 var debug = program.debug ? console.log : function() {/* no-op */};
@@ -286,8 +285,7 @@ function rebuildHarpSite() {
 
     harpGlobals.globals = _.extend({
         entityLinks: entityLinks,
-        entities: entities,
-        baseUrl: program.baseUrl || ''
+        entities: entities
     }, harpGlobals.globals);
 
     fs.outputFileSync(genSrcPrefix + '/harp.json', JSON.stringify(harpGlobals, null, 2));
