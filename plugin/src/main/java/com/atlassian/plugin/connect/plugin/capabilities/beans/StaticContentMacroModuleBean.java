@@ -5,12 +5,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.StaticCont
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroHttpMethod;
 
 /**
- * A Confluence macro that returns XHTML in the Confluence storage format.
- * The add-on will only be called on creation of the macro or when the macro is edited,
- * but not on page view.
+ * A Confluence macro that returns XHTML in the Confluence storage format. The add-on will only be called on creation of
+ * the macro or when the macro is edited, but not on page view. Instead, your macro is responsible for adding valid
+ * Storage Format XML to the confluence page, which the Confluence will render for you at view time. Note, unlike most
+ * Connect modules, this content is not displayed in an iframe.
  *
  * Please consult [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
- * for additional information.
+ * for additional information about how to construct valid storage format XML.
  *
  *#### Example
  *

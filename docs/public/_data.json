@@ -17,15 +17,6 @@
         }
     },
     "concepts": {
-        "addon-descriptor.html": {
-            "title": "Descriptors"
-        },
-        "modules.html": {
-            "title": "Modules"
-        },
-        "pages.html": {
-            "title": "Pages"
-        },
         "authentication.html": {
             "title": "Authentication"
         },
@@ -34,6 +25,9 @@
         },
         "conditions.html": {
             "title": "Conditions"
+        },
+        "context-parameters.html": {
+            "title": "Context Parameters"
         },
         "javascript-api.html": {
             "title": "Javascript API"
