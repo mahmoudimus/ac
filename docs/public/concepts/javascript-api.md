@@ -13,7 +13,7 @@ Atlassian Connect transparently enables cross-domain messaging in its page modul
 
 ## Debugging `all.js`
 
-A non-compressed version of the all.js javascript can be viewed by replaceing `all.js` with `all-debug.js` for example:
+A non-compressed version of the all.js javascript can be viewed by replacing `all.js` with `all-debug.js` for example:
 
 ```
 <script src="https://{OnDemand hostname}/{context}/atlassian-connect/all.js"></script>

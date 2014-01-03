@@ -7,9 +7,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Allows an addon to register callbacks for plugin lifecycle events.
- * Each property in this object is a url that can be absolute or relative to the addon's baseUrl.
- * When a lifecycle event is fired, it will POST to the appropriate url registered for the event.
+ * Allows an addon to register callbacks for plugin lifecycle events. Each property in this object is a url that can be
+ * absolute or relative to the addon's baseUrl. When a lifecycle event is fired, it will POST to the appropriate url
+ * registered for the event.
  * 
  * @exampleJson payload: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PARAMS_EXAMPLE}
  * 
