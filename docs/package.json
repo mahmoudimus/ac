@@ -15,7 +15,7 @@
     "start": "./build.js --serve",
     "update": "./build.js",
     "build": "./build.js",
-    "release:prepare": "./build.js --baseUrl 'https://developer.atlassian.com/static/connect/docs'",
+    "release:prepare": "./build.js",
     "clean": "rm -rf target"
   },
   "author": "ac-dev@atlassian.com"
