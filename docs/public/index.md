@@ -18,15 +18,15 @@
 <div class="aui-group">
     <div class="aui-item">
         <div class="index-box">
-            <img src="./assets/images/gears.png" width="100">
-            <h2>Customize your product</h2>
+            [<img src="./assets/images/gears.png" width="100">](./guides/introduction.html)
+            [<h2>Customize your product</h2>](./guides/introduction.html)
             <p>Build an add-on to enhance, extend or integrate your Atlassian product.</p>
         </div>
     </div>
     <div class="aui-item">
         <div class="index-box">
-            <img src="./assets/images/globe.png" width="100">
-            <h2>Share with the world</h2>
+            [<img src="./assets/images/CharlieGears.png" width="100">](./guides/selling-on-marketplace.html)
+            [<h2>Share it with the world</h2>](./guides/selling-on-marketplace.html)
             <p>Share your add-on with millions of developers on the Atlassian Marketplace.</p>
         </div>
     </div>
