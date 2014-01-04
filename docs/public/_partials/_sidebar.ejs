@@ -5,7 +5,7 @@
                 <% for (var page in public._data.guides) { %>
                 <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
                 <li <%= selected %>>
-                    <a href="<%= baseUrl %>/guides/<%= page %>"><%= public._data.guides[page].title %></a>
+                    <a href="<%= relDocRoot %>guides/<%= page %>"><%= public._data.guides[page].title %></a>
                 </li>
                 <% } %>
             </ul>
@@ -17,17 +17,17 @@
             <% for(var concept in public._data.concepts) { %>
             <% var selected = concept.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
             <li <%= selected %>>
-                <a href="<%= baseUrl %>/concepts/<%= concept %>"><%= public._data.concepts[concept].title %></a>
+                <a href="<%= relDocRoot %>concepts/<%= concept %>"><%= public._data.concepts[concept].title %></a>
             </li>
             <% } %>
             </ul>
 
             <div class="aui-nav-heading">
-                <a href="<%= baseUrl %>/modules/">AddOn Descriptor</a>
+                <a href="<%= relDocRoot %>modules/">AddOn Descriptor</a>
             </div>
 
-            <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira }) %>
-            <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence }) %>
+            <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira, relDocRoot: relDocRoot }) %>
+            <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence, relDocRoot: relDocRoot }) %>
 
             <div class="aui-nav-heading">
                 <strong>Product APIs</strong>
@@ -36,7 +36,7 @@
                 <% for(var resource in public._data["rest-apis"]) { %>
                 <% var selected = resource.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
                 <li <%= selected %>>
-                    <a href="<%= baseUrl %>/rest-apis/<%= resource %>"><%= public._data["rest-apis"][resource].title %></a>
+                    <a href="<%= relDocRoot %>rest-apis/<%= resource %>"><%= public._data["rest-apis"][resource].title %></a>
                 </li>
                 <% } %>
             </ul>
@@ -48,7 +48,7 @@
                 <% for(var resource in public._data.resources) { %>
                 <% var selected = resource.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
                 <li <%= selected %>>
-                    <a href="<%= baseUrl %>/resources/<%= resource %>"><%= public._data.resources[resource].title %></a>
+                    <a href="<%= relDocRoot %>resources/<%= resource %>"><%= public._data.resources[resource].title %></a>
                 </li>
                 <% } %>
             </ul>
