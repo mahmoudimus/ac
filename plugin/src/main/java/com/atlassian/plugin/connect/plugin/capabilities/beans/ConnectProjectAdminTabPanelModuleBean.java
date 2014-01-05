@@ -4,8 +4,10 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPro
 
 /**
  * Module bean for Jira ProjectAdmin Tab Pages.
- * 
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PRJ_ADMIN_PAGE_EXAMPLE}
+ *
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PRJ_ADMIN_PAGE_EXAMPLE}
  *
  * @schemaTitle Project Admin Tab Panel
  */

@@ -72,6 +72,7 @@ public class ConnectJsonExamples
     public static final String WEBITEM_EXAMPLE = createWebItemExample();
     public static final String WEBITEM_TARGET_EXAMPLE = createWebitemTargetExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
+    public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
 
 
     private static String createAddonExample()
@@ -256,6 +257,12 @@ public class ConnectJsonExamples
                         .withValues("Map", "Satellite")
                         .build()
                 )
+                .withEditor(newMacroEditorBean()
+                        .withUrl("/map-editor")
+                        .withInsertTitle(new I18nProperty("Insert Map", ""))
+                        .withEditTitle(new I18nProperty("Edit Map", ""))
+                        .build()
+                )
                 .build();
 
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
@@ -286,6 +293,12 @@ public class ConnectJsonExamples
                         .withMultiple(false)
                         .withRequired(true)
                         .withValues("Map", "Satellite")
+                        .build()
+                )
+                .withEditor(newMacroEditorBean()
+                        .withUrl("/map-editor")
+                        .withInsertTitle(new I18nProperty("Insert Map", ""))
+                        .withEditTitle(new I18nProperty("Edit Map", ""))
                         .build()
                 )
                 .build();
@@ -345,7 +358,7 @@ public class ConnectJsonExamples
     private static String createUrlExample()
     {
         UrlBean bean = new UrlBean("/my-url");
-        return gson.toJson(createModuleObject("url", bean));
+        return gson.toJson(createModuleObject("endpoint", bean));
     }
 
     private static String createVendorExample()
@@ -390,12 +403,35 @@ public class ConnectJsonExamples
         return gson.toJson(obj);
     }
 
+    private static String createLifecycleExample()
+    {
+        LifecycleBean bean = newLifecycleBean()
+                .withInstalled("/installed")
+                .withUninstalled("/uninstalled")
+                .withEnabled("/enabled")
+                .build();
+
+        return gson.toJson(bean);
+    }
+    private static String createMacroEditorExample()
+    {
+        MacroEditorBean macroEditorBean = newMacroEditorBean()
+                .withUrl("/generate_md")
+                .withInsertTitle(new I18nProperty("Insert MarkDown", "macro.md.insert"))
+                .withEditTitle(new I18nProperty("Edit MarkDown", "macro.md.edit"))
+                .withHeight("300px")
+                .withWidth("400px")
+                .build();
+
+        return gson.toJson(createModuleObject("editor", macroEditorBean));
+    }
+
     private static JsonObject createModuleArray(String name, ModuleBean bean)
     {
         JsonObject obj = new JsonObject();
         JsonArray arr = new JsonArray();
         arr.add(gson.toJsonTree(bean));
-        obj.add("generalPages", arr);
+        obj.add(name, arr);
 
         return obj;
     }
@@ -408,16 +444,4 @@ public class ConnectJsonExamples
         return obj;
     }
 
-    private static String createMacroEditorExample()
-    {
-        MacroEditorBean macroEditorBean = newMacroEditorBean()
-                .withUrl("/generate_md")
-                .withInsertTitle(new I18nProperty("Insert MarkDown", "macro.md.insert"))
-                .withEditTitle(new I18nProperty("Edit MarkDown", "macro.md.edit"))
-                .withHeight("300px")
-                .withWidth("400px")
-                .build();
-
-        return gson.toJson(macroEditorBean);
-    }
 }

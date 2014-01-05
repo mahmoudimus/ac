@@ -12,8 +12,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.MacroEdito
  * Defining a Macro Editor allows you to implement a custom UI for the macro, by specifying a
  * URL to a page in your add-on which will be shown in the dialog iframe.
  *
- * JSON Example:
- * @exampleJson {@see ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}
  * @schemaTitle Macro Editor
  * @since 1.0
  */
@@ -37,12 +38,12 @@ public class MacroEditorBean extends BaseModuleBean
     private I18nProperty insertTitle;
 
     /**
-     * The preferred width of the edit dialog.
+     * The preferred width of the edit dialog, e.g. ``500px``.
      */
     private String width;
 
     /**
-     * The preferred height of the edit dialog.
+     * The preferred height of the edit dialog, e.g. ``300px``.
      */
     private String height;
 

@@ -43,8 +43,10 @@ import static com.google.common.collect.Maps.newHashMap;
  * and automatically installing the available update.
  *
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_EXAMPLE}
- * @exampleJson <p class="expandNextPre">Full example with all modules:</p> {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_COMPLETE_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_EXAMPLE}
+ * @exampleJson Kitchen Sink: <p class="expandNextPre"></p>{@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_COMPLETE_EXAMPLE}
  * @schemaTitle Addon Descriptor
  * @since 1.0
  */
@@ -112,7 +114,7 @@ public class ConnectAddonBean extends BaseModuleBean
      * The list of modules this add on provides
      */
     private ModuleList modules;
-    
+
     public ConnectAddonBean()
     {
         this.key = "";
@@ -136,12 +138,12 @@ public class ConnectAddonBean extends BaseModuleBean
         {
             this.key = "";
         }
-        
+
         if(null == name)
         {
             this.name = "";
         }
-        
+
         if(null == version)
         {
             this.version = "1.0";
@@ -161,12 +163,12 @@ public class ConnectAddonBean extends BaseModuleBean
         {
             this.vendor = VendorBean.newVendorBean().build();
         }
-        
+
         if(null == links)
         {
             this.links = newHashMap();
         }
-        
+
         if(null == lifecycle)
         {
             this.lifecycle = newLifecycleBean().build();

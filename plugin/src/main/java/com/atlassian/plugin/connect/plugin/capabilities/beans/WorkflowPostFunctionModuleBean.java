@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WorkflowPostFunctionModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
@@ -150,7 +151,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
  *          }
  *      }
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#POST_FUNCTION_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#POST_FUNCTION_EXAMPLE}
  * @schemaTitle Workflow Post Function
  * @since 1.0
  */
@@ -180,6 +183,7 @@ public class WorkflowPostFunctionModuleBean extends NameToKeyBean
     /**
      * The relative URL to the add-on resource that will receive the HTTP POST after a workflow transition.
      */
+    @Required
     private UrlBean triggered;
 
     public WorkflowPostFunctionModuleBean()
