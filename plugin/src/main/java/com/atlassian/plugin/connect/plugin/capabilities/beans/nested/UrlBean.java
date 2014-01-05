@@ -11,6 +11,7 @@ import java.net.URISyntaxException;
  *
  * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#URL_EXAMPLE}
  * @schemaTitle URL
+ * @since 1.0
  */
 public class UrlBean
 {

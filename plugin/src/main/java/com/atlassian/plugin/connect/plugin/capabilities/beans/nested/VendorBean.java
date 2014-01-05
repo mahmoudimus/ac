@@ -12,6 +12,7 @@ import com.google.common.base.Objects;
  *
  * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#VENDOR_EXAMPLE}
  * @schemaTitle Plugin Vendor
+ * @since 1.0
  */
 public class VendorBean extends BaseModuleBean
 {
