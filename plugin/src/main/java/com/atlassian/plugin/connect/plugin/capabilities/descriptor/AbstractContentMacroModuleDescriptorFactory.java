@@ -16,11 +16,11 @@ import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModu
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.upm.spi.PluginInstallException;
+import com.atlassian.uri.Uri;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
@@ -160,7 +160,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         {
             dimensions = new Dimensions(bean.getWidth(), bean.getHeight());
         }
-        return new ImagePlaceholderMacro(macro, URI.create(absoluteUrl), dimensions, bean.applyChrome());
+        return new ImagePlaceholderMacro(macro, Uri.parse(absoluteUrl), dimensions, bean.applyChrome());
     }
 
     private LinkBean makeAbsolute(Plugin plugin, LinkBean documentation)
