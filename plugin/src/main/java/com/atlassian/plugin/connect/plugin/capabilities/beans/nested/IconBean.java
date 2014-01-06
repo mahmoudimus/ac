@@ -10,9 +10,12 @@ import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleBeanUt
 
 /**
  * Defines an icon to display
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ICON_EXAMPLE}
- * @since 1.0
+ *
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ICON_EXAMPLE}
  * @schemaTitle Icon
+ * @since 1.0
  */
 public class IconBean
 {
@@ -24,7 +27,7 @@ public class IconBean
      * The height in pixels of the icon image.
      */
     private int height;
-    
+
     /**
      * The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the
      * URL as an absolute URL or relative to the add-on's base URL.

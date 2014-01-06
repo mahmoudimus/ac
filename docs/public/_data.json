@@ -1,25 +1,22 @@
 {
     "guides": {
+        "whats-new.html": {
+            "title": "What's New"
+        },
         "introduction.html": {
             "title": "Introduction"
         },
         "getting-started.html": {
             "title": "Getting Started"
         },
-        "whats-new.html": {
-            "title": "What's New"
+        "private-listings.html": {
+            "title": "Private Listings"
+        },
+        "selling-on-marketplace.html": {
+            "title": "Selling on Marketplace"
         }
     },
     "concepts": {
-        "addon-descriptor.html": {
-            "title": "Descriptors"
-        },
-        "modules.html": {
-            "title": "Modules"
-        },
-        "pages.html": {
-            "title": "Pages"
-        },
         "authentication.html": {
             "title": "Authentication"
         },
@@ -28,6 +25,9 @@
         },
         "conditions.html": {
             "title": "Conditions"
+        },
+        "context-parameters.html": {
+            "title": "Context Parameters"
         },
         "javascript-api.html": {
             "title": "Javascript API"

@@ -24,6 +24,25 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     /**
      * The link to the add-on resource that provides the content for the iFrame.
      * This URL has to be relative to the add-on base URL.
+     *
+     * The macro body and additional context parameters can be passed as variables in the URL.
+     *
+     * ```
+     * "url": "/macro-renderer?body={body}&space_id={space.id}&page_id={page.id}"
+     * ```
+     *
+     * Currently supported variables for macros are:
+     *
+     * * `body`: The macro body
+     * * `page.id`: The page ID, e.g. '1376295'
+     * * `page.title`: The page title, e.g. 'My Page'
+     * * `page.type`: The page type, e.g. 'page'
+     * * `page.version.id`: The page version, e.g. '6'
+     * * `space.id`: The space ID, e.g. 'ac'
+     * * `space.key`: The space key, e.g. '65537'
+     * * `user.id`: The user ID, e.g. 'admin'
+     * * `user.key`: The user key, e.g. 'ff80808143087d180143087d3a910004'
+     * * `output.type`: The output type, e.g. 'display'
      */
     @Required
     @StringSchemaAttributes(format = "uri-template")
@@ -50,17 +69,17 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      *
      * Currently, the following categories are supported by Confluence:
      *
-     * * ``admin``: Administration
-     * * ``communication``: Communication
-     * * ``confluence-content``: Confluence Content
-     * * ``development``: Development
-     * * ``external-content``: External Content
-     * * ``formatting``: Formatting
-     * * ``hidden-macros``: Hidden
-     * * ``media``: Media
-     * * ``navigation``: Navigation
-     * * ``reporting``: Reporting
-     * * ``visuals``: Visuals & Images
+     * * `admin`: Administration
+     * * `communication`: Communication
+     * * `confluence-content`: Confluence Content
+     * * `development`: Development
+     * * `external-content`: External Content
+     * * `formatting`: Formatting
+     * * `hidden-macros`: Hidden
+     * * `media`: Media
+     * * `navigation`: Navigation
+     * * `reporting`: Reporting
+     * * `visuals`: Visuals & Images
      */
     private Set<String> categories;
 
@@ -86,16 +105,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      */
     @CommonSchemaAttributes(defaultValue = "false")
     private Boolean featured;
-
-    /**
-     * The preferred width of the macro content.
-     */
-    private String width;
-
-    /**
-     * The preferred height of the macro content.
-     */
-    private String height;
 
     /**
      * The list of parameter input fields that will be displayed.
@@ -199,16 +208,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     public Boolean isFeatured()
     {
         return featured;
-    }
-
-    public String getWidth()
-    {
-        return width;
-    }
-
-    public String getHeight()
-    {
-        return height;
     }
 
     public List<MacroParameterBean> getParameters()

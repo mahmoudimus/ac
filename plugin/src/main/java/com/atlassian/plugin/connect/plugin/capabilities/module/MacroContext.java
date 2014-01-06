@@ -16,10 +16,11 @@ public class MacroContext
 {
     private final Map<String, Object> contextParameters;
 
-    public MacroContext(ConversionContext conversionContext, UserProfile user)
+    public MacroContext(ConversionContext conversionContext, String storageFormatBody, UserProfile user)
     {
         Map<String, Object> ctx = newHashMap();
 
+        ctx.put("body", storageFormatBody);
         ctx.put("output.type", conversionContext.getOutputType());
 
         ContentEntityObject entity = conversionContext.getEntity();

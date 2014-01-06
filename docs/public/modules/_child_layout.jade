@@ -25,15 +25,15 @@ div.ac-properties
             div.aui-item
                 - if (prop.type === 'object')
                     - if (prop.id === 'moduleList')
-                        a(href = baseUrl + '/modules/jira/')
+                        a(href = relDocRoot + 'modules/jira/')
                             +propertyValue(class='aui-lozenge-complete')
                                 | JIRA Modules
                         | &nbsp;or&nbsp;
-                        a(href = baseUrl + '/modules/confluence/')
+                        a(href = relDocRoot + 'modules/confluence/')
                             +propertyValue(class='aui-lozenge-complete')
                                 | Confluence Modules
                     - else if (entityLinks[prop.slug])
-                        a(href = baseUrl + '/' + entityLinks[prop.slug] + '.html')
+                        a(href = relDocRoot + entityLinks[prop.slug] + '.html')
                             - if (prop.title)
                                 +propertyValue(class='aui-lozenge-complete')
                                     = prop.title
@@ -50,7 +50,7 @@ div.ac-properties
                     - if (prop.arrayType === 'object')
                         | [&nbsp;
                         - each type in prop.arrayTypes
-                            a(href = baseUrl + '/' + entityLinks[type.slug] + '.html')
+                            a(href = relDocRoot + entityLinks[type.slug] + '.html')
                                 +propertyValue(class='aui-lozenge-complete')
                                     = type.title
                             | ,&nbsp;

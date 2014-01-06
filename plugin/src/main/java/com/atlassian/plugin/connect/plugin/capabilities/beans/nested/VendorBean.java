@@ -7,8 +7,12 @@ import com.google.common.base.Objects;
 
 /**
  * Gives basic information about the plugin vendor
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#VENDOR_EXAMPLE}
+ *
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#VENDOR_EXAMPLE}
  * @schemaTitle Plugin Vendor
+ * @since 1.0
  */
 public class VendorBean extends BaseModuleBean
 {
@@ -33,12 +37,12 @@ public class VendorBean extends BaseModuleBean
     public VendorBean(VendorBeanBuilder builder)
     {
         super(builder);
-        
+
         if(null == name)
         {
             this.name = "";
         }
-        
+
         if(null == url)
         {
             this.url = "";
@@ -54,7 +58,7 @@ public class VendorBean extends BaseModuleBean
     {
         return url;
     }
-    
+
     public static VendorBeanBuilder newVendorBean()
     {
         return new VendorBeanBuilder();

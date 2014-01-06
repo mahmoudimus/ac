@@ -12,8 +12,9 @@ public class BeanWithKeyAndParams extends NameToKeyBean
 {
     /**
      * This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.
-     * 
-     * Example:
+     *
+     *#### Example
+     *
      * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PARAMS_EXAMPLE}
      * @schemaTitle Object
      */

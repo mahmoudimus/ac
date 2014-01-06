@@ -62,14 +62,6 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
 
-        if (null != bean.getWidth())
-        {
-            element.setAttribute("width", bean.getWidth());
-        }
-        if (null != bean.getHeight())
-        {
-            element.setAttribute("height", bean.getHeight());
-        }
         if (bean.hasDocumentation())
         {
             element.setAttribute("documentation-url", bean.getDocumentation().getUrl());
