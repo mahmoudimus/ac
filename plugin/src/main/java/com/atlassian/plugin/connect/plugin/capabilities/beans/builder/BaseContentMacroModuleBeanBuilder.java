@@ -22,6 +22,7 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     private Boolean featured;
     private List<MacroParameterBean> parameters;
     private MacroEditorBean editor;
+    private ImagePlaceholderBean imagePlaceholder;
 
     public BaseContentMacroModuleBeanBuilder()
     {
@@ -40,6 +41,7 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
         this.featured = defaultBean.isFeatured();
         this.parameters = defaultBean.getParameters();
         this.editor = defaultBean.getEditor();
+        this.imagePlaceholder = defaultBean.getImagePlaceholder();
     }
 
     public T withUrl(String url)
@@ -111,6 +113,12 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     public T withEditor(MacroEditorBean editor)
     {
         this.editor = editor;
+        return (T) this;
+    }
+
+    public T withImagePlaceholder(ImagePlaceholderBean imagePlaceholder)
+    {
+        this.imagePlaceholder = imagePlaceholder;
         return (T) this;
     }
 }
