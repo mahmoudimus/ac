@@ -43,6 +43,12 @@
           "url": "/mymacro/icon.png",
           "width": 80
         },
+        "imagePlaceholder": {
+          "applyChrome": true,
+          "height": 25,
+          "url": "images/placeholder.png",
+          "width": 100
+        },
         "name": {
           "i18n": "some.macro.name",
           "value": "Some Macro"

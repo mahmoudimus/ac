@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
+import com.atlassian.confluence.content.render.xhtml.ConversionContext;
+import com.atlassian.confluence.macro.EditorImagePlaceholder;
+import com.atlassian.confluence.macro.ImagePlaceholder;
+import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -9,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseConten
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
@@ -21,6 +26,7 @@ import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,10 +36,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.Matchers.any;
@@ -137,5 +145,111 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                 is(instanceOf(ServletModuleDescriptor.class)),
                 is(instanceOf(WebResourceModuleDescriptor.class))
         ));
+    }
+
+    @Test
+    public void testMacroWithImagePlaceholder() throws Exception
+    {
+        T builder = createMacroBeanBuilder()
+                .withName(new I18nProperty("The Macro Name", "macro.name.key"))
+                .withUrl("/my-macro")
+                .withImagePlaceholder(ImagePlaceholderBean.newImagePlaceholderBean()
+                        .withUrl("/images/placeholder.png")
+                        .build()
+                );
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(plugin, bundleContext, "", Lists.newArrayList(builder.build()));
+        Macro macro = getMacro(modules);
+        assertThat(macro, is(instanceOf(EditorImagePlaceholder.class)));
+    }
+
+    @Test
+    public void testImagePlaceholderUrl() throws Exception
+    {
+        T builder = createMacroBeanBuilder()
+                .withName(new I18nProperty("The Macro Name", "macro.name.key"))
+                .withUrl("/my-macro")
+                .withImagePlaceholder(ImagePlaceholderBean.newImagePlaceholderBean()
+                        .withUrl("/images/placeholder.png")
+                        .build()
+                );
+        ImagePlaceholder imagePlaceHolder = getImagePlaceholder(builder, ImmutableMap.<String, String>of());
+        assertThat(imagePlaceHolder.getUrl(), is("http://www.example.com/images/placeholder.png"));
+    }
+
+    @Test
+    public void testImagePlaceholderUrlWithParameters() throws Exception
+    {
+        T builder = createMacroBeanBuilder()
+                .withName(new I18nProperty("The Macro Name", "macro.name.key"))
+                .withUrl("/my-macro")
+                .withImagePlaceholder(ImagePlaceholderBean.newImagePlaceholderBean()
+                        .withUrl("/images/placeholder.png")
+                        .build()
+                );
+        ImagePlaceholder imagePlaceHolder = getImagePlaceholder(builder, ImmutableMap.<String, String>of(
+            "p1", "v1",
+            "p2", "v2")
+        );
+        assertThat(imagePlaceHolder.getUrl(), is("http://www.example.com/images/placeholder.png?p1=v1&p2=v2"));
+    }
+
+    @Test
+    public void testImagePlaceholderDimensions() throws Exception
+    {
+        T builder = createMacroBeanBuilder()
+                .withName(new I18nProperty("The Macro Name", "macro.name.key"))
+                .withUrl("/my-macro")
+                .withImagePlaceholder(ImagePlaceholderBean.newImagePlaceholderBean()
+                        .withUrl("/images/placeholder.png")
+                        .withWidth(60)
+                        .withHeight(30)
+                        .build()
+                );
+        ImagePlaceholder imagePlaceHolder = getImagePlaceholder(builder, ImmutableMap.<String, String>of());
+        assertThat("width", imagePlaceHolder.getDimensions().getWidth(), is(60));
+        assertThat("height", imagePlaceHolder.getDimensions().getHeight(), is(30));
+    }
+
+    @Test
+    public void testImagePlaceholderNoDimensions() throws Exception
+    {
+        T builder = createMacroBeanBuilder()
+                .withName(new I18nProperty("The Macro Name", "macro.name.key"))
+                .withUrl("/my-macro")
+                .withImagePlaceholder(ImagePlaceholderBean.newImagePlaceholderBean()
+                        .withUrl("/images/placeholder.png")
+                        .build()
+                );
+        ImagePlaceholder imagePlaceHolder = getImagePlaceholder(builder, ImmutableMap.<String, String>of());
+        assertThat(imagePlaceHolder.getDimensions(), is(nullValue()));
+    }
+
+    @Test
+    public void testImagePlaceholderApplyChrome() throws Exception
+    {
+        T builder = createMacroBeanBuilder()
+                .withName(new I18nProperty("The Macro Name", "macro.name.key"))
+                .withUrl("/my-macro")
+                .withImagePlaceholder(ImagePlaceholderBean.newImagePlaceholderBean()
+                        .withUrl("/images/placeholder.png")
+                        .withApplyChrome(true)
+                        .build()
+                );
+        ImagePlaceholder imagePlaceHolder = getImagePlaceholder(builder, ImmutableMap.<String, String>of());
+        assertThat(imagePlaceHolder.applyPlaceholderChrome(), is(true));
+    }
+
+    private ImagePlaceholder getImagePlaceholder(T builder, Map<String, String> parameters)
+    {
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(plugin, bundleContext, "", Lists.newArrayList(builder.build()));
+        EditorImagePlaceholder macro = (EditorImagePlaceholder) getMacro(modules);
+        return macro.getImagePlaceholder(parameters, mock(ConversionContext.class));
+    }
+
+    private Macro getMacro(List<ModuleDescriptor> modules)
+    {
+        XhtmlMacroModuleDescriptor descriptor = (XhtmlMacroModuleDescriptor) modules.get(0);
+        descriptor.enabled();
+        return descriptor.getModule();
     }
 }
