@@ -49,7 +49,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         this.remotablePluginAccessor = checkNotNull(remotablePluginAccessor);
         this.url = url;
         this.id = id;
-        this.absolute = absolute; // TODO: we could add absolute as another literal in the AddOnUrlContext enum
+        this.absolute = absolute;
         this.addOnUrlContext = addOnUrlContext;
     }
 
