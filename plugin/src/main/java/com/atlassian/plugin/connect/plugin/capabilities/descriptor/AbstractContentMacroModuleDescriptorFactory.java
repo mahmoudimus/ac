@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ImagePlaceh
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceHolderMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceholderMacro;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
@@ -152,7 +152,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         return new MacroMetadataParser(docBeanFactory);
     }
 
-    protected ImagePlaceHolderMacro decorateWithImagePlaceHolder(Plugin plugin, Macro macro, ImagePlaceholderBean bean)
+    protected ImagePlaceholderMacro decorateWithImagePlaceHolder(Plugin plugin, Macro macro, ImagePlaceholderBean bean)
     {
         String absoluteUrl = getAbsoluteUrl(plugin, bean.getUrl());
         Dimensions dimensions = null;
@@ -162,7 +162,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         }
         boolean applyChrome = bean.applyChrome();
 
-        return new ImagePlaceHolderMacro(macro, new DefaultImagePlaceholder(absoluteUrl, dimensions, applyChrome));
+        return new ImagePlaceholderMacro(macro, new DefaultImagePlaceholder(absoluteUrl, dimensions, applyChrome));
     }
 
     private LinkBean makeAbsolute(Plugin plugin, LinkBean documentation)

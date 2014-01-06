@@ -9,12 +9,12 @@ import com.google.common.base.Preconditions;
 
 import java.util.Map;
 
-public class ImagePlaceHolderMacro implements Macro, EditorImagePlaceholder
+public class ImagePlaceholderMacro implements Macro, EditorImagePlaceholder
 {
     private final Macro delegate;
     private final ImagePlaceholder imagePlaceholder;
 
-    public ImagePlaceHolderMacro(Macro delegate, ImagePlaceholder imagePlaceholder)
+    public ImagePlaceholderMacro(Macro delegate, ImagePlaceholder imagePlaceholder)
     {
         this.delegate = Preconditions.checkNotNull(delegate);
         this.imagePlaceholder = imagePlaceholder;
