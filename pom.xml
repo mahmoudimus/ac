@@ -31,17 +31,6 @@
     
     <profiles>
         <profile>
-            <id>docs</id>
-            <activation>
-                <property>
-                    <name>!skipDocs</name>
-                </property>
-            </activation>
-            <modules>
-                <module>docs</module>
-            </modules>
-        </profile>
-        <profile>
             <id>it</id>
             <modules>
                 <module>rest-test-plugin</module>
