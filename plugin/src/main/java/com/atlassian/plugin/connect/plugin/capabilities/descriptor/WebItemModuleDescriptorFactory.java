@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.base.Joiner;
 import org.dom4j.Element;
@@ -28,13 +30,18 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
 
     private final IconModuleFragmentFactory iconModuleFragmentFactory;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
+    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
     @Autowired
-    public WebItemModuleDescriptorFactory(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory, IconModuleFragmentFactory iconModuleFragmentFactory, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
+    public WebItemModuleDescriptorFactory(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory,
+                                          IconModuleFragmentFactory iconModuleFragmentFactory,
+                                          ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+                                          RemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         this.productWebItemDescriptorFactory = productWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
+        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
     }
 
     @Override
@@ -93,14 +100,16 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
             log.debug("Created web item: " + printNode(webItemElement));
         }
 
-        return createWebItemDescriptor(plugin, webItemElement, webItemKey, bean.getUrl(), bean.isAbsolute());
+        return createWebItemDescriptor(plugin, webItemElement, webItemKey, bean.getUrl(), bean.isAbsolute(), bean.getContext());
     }
 
-    private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String key, String url, boolean absolute)
+    private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String key, String url,
+                                                            boolean absolute, AddOnUrlContext urlContext)
     {
         webItemElement.addAttribute("system", "true");
 
-        final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(url, key, absolute);
+        final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(url, key,
+                absolute, urlContext, remotablePluginAccessorFactory.get(plugin.getKey()));
 
         descriptor.init(plugin, webItemElement);
 

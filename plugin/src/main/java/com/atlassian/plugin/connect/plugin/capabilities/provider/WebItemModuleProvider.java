@@ -47,7 +47,7 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemModul
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        if (bean.isAbsolute() || bean.getContext().equals(AddOnUrlContext.product))
+        if (bean.isAbsolute() || bean.getContext().equals(AddOnUrlContext.product) || bean.getContext().equals(AddOnUrlContext.addon))
         {
             descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext, bean));
         }
