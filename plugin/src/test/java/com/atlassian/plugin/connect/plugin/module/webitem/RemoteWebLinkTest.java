@@ -17,8 +17,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.decorated;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addonDirect;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -67,7 +67,7 @@ public class RemoteWebLinkTest
     @Test
     public void productUrlsRelativeToHost()
     {
-        // TODO: need to distinguish product vs addon (via host - wrapped iframe). Or maybe that happens further up the chain
+        // TODO: need to distinguish product vs decorated. Or maybe that happens further up the chain
         assertThat(getDisplayableUrl(product, false), equalTo(HOST_CONTEXT + SUBSTITUTED_URL));
     }
 
@@ -75,14 +75,14 @@ public class RemoteWebLinkTest
     public void absoluteUrlsUnmolested()
     {
         assertThat(getDisplayableUrl(product, true), equalTo(SUBSTITUTED_URL));
-        assertThat(getDisplayableUrl(addon, true), equalTo(SUBSTITUTED_URL));
+        assertThat(getDisplayableUrl(decorated, true), equalTo(SUBSTITUTED_URL));
         assertThat(getDisplayableUrl(null, true), equalTo(SUBSTITUTED_URL));
     }
 
     @Test
     public void addonDirectUrlsSignedAndRelativeToAddonServer()
     {
-        assertThat(getDisplayableUrl(addonDirect, false), equalTo(SIGNED_ADDON_URL));
+        assertThat(getDisplayableUrl(addon, false), equalTo(SIGNED_ADDON_URL));
     }
 
     private String getDisplayableUrl(AddOnUrlContext urlContext, boolean absolute)

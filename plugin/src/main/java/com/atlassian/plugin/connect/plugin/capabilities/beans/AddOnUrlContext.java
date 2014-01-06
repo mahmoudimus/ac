@@ -5,7 +5,20 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
  */
 public enum AddOnUrlContext
 {
-    addon, addonDirect, product;
+    /**
+     * A relative URL whose end target is the addon but initially targets the host so the iFrame can be decorated.
+     */
+    decorated,
+
+    /**
+     * A URL that is relative to the addon host.
+     */
+    addon,
+
+    /**
+     * A URL that is relative to the host product.
+     */
+    product;
 
     @Override
     public String toString()

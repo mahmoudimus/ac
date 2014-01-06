@@ -113,7 +113,7 @@ public class WebItemProviderTest
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withUrl("http://www.google.com")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.addon)
+                .withContext(AddOnUrlContext.decorated)
                 .build();
 
         WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
@@ -178,7 +178,7 @@ public class WebItemProviderTest
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withUrl("/some/admin")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.addon)
+                .withContext(AddOnUrlContext.decorated)
                 .build();
 
         WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
