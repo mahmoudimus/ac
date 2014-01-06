@@ -1,12 +1,17 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import com.atlassian.confluence.macro.DefaultImagePlaceholder;
+import com.atlassian.confluence.macro.Macro;
+import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceHolderMacro;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
@@ -147,6 +152,19 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         return new MacroMetadataParser(docBeanFactory);
     }
 
+    protected ImagePlaceHolderMacro decorateWithImagePlaceHolder(Plugin plugin, Macro macro, ImagePlaceholderBean bean)
+    {
+        String absoluteUrl = getAbsoluteUrl(plugin, bean.getUrl());
+        Dimensions dimensions = null;
+        if (null != bean.getHeight() && null != bean.getWidth())
+        {
+            dimensions = new Dimensions(bean.getWidth(), bean.getHeight());
+        }
+        boolean applyChrome = bean.applyChrome();
+
+        return new ImagePlaceHolderMacro(macro, new DefaultImagePlaceholder(absoluteUrl, dimensions, applyChrome));
+    }
+
     private LinkBean makeAbsolute(Plugin plugin, LinkBean documentation)
     {
         if (null != documentation)
@@ -166,7 +184,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         catch (URISyntaxException e)
         {
             // help vendors find errors in their descriptors
-            throw new PluginInstallException("Malformed documentation link declared by '"
+            throw new PluginInstallException("Malformed url declared by '"
                     + plugin.getName()
                     + "' (" + plugin.getKey() + "): "
                     + url, e);

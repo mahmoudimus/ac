@@ -36,6 +36,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelMod
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ImagePlaceholderBean.newImagePlaceholderBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;
@@ -73,6 +74,7 @@ public class ConnectJsonExamples
     public static final String WEBITEM_TARGET_EXAMPLE = createWebitemTargetExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
+    public static final String IMAGE_PLACEHOLDER_EXAMPLE = createImagePlaceholderExample();
 
 
     private static String createAddonExample()
@@ -424,6 +426,18 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleObject("editor", macroEditorBean));
+    }
+
+    private static String createImagePlaceholderExample()
+    {
+        ImagePlaceholderBean imagePlaceholderBean = newImagePlaceholderBean()
+                .withUrl("/images/placeholder.png")
+                .withWidth(100)
+                .withHeight(25)
+                .withApplyChrome(true)
+                .build();
+
+        return gson.toJson(createModuleObject("imagePlaceholder", imagePlaceholderBean));
     }
 
     private static JsonObject createModuleArray(String name, ModuleBean bean)
