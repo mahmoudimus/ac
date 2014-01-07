@@ -55,8 +55,8 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     @Override
     public String getRenderedUrl(final Map<String, Object> context)
     {
-        final Map<String, Object> extractedWebPanelParameters = urlParametersSerializer.getExtractedWebPanelParameters(context);
-        return getRenderedUrlFromParams(extractedWebPanelParameters);
+        final Map<String, Object> extractedWebLinkParameters = urlParametersSerializer.getExtractedWebPanelParameters(context);
+        return getRenderedUrlFromParams(extractedWebLinkParameters);
     }
 
     private String getRenderedUrlFromParams(final Map<String, Object> params)
@@ -67,8 +67,8 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     @Override
     public String getDisplayableUrl(final HttpServletRequest req, final Map<String, Object> context)
     {
-        final Map<String, Object> extractedWebPanelParameters = urlParametersSerializer.getExtractedWebPanelParameters(context);
-        String renderedUrl = getRenderedUrlFromParams(extractedWebPanelParameters);
+        final Map<String, Object> extractedWebLinkParameters = urlParametersSerializer.getExtractedWebPanelParameters(context);
+        String renderedUrl = getRenderedUrlFromParams(extractedWebLinkParameters);
 
         if (absolute)
         {
@@ -80,7 +80,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             {
                 try
                 {
-                    return remotablePluginAccessor.signGetUrl(new URI(renderedUrl), HideousParameterContextThingy.transformToPathForm(extractedWebPanelParameters));
+                    return remotablePluginAccessor.signGetUrl(new URI(renderedUrl), HideousParameterContextThingy.transformToPathForm(extractedWebLinkParameters));
                 }
                 catch (URISyntaxException e)
                 {
