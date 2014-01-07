@@ -15,10 +15,14 @@
     "modules": {
         "webItems": [
             {
-                "name": {"value": "a web item", "i18n":"name.key"}
+                "name": {"value": "a web item", "i18n":"name.key"},
+                "location": "system.top.navigation.bar",
+                "url": "/webitem1"
             },
             {
-                "name": {"value": "another web item", "i18n":"another.name.key"}
+                "name": {"value": "another web item", "i18n":"another.name.key"},
+                "location": "system.top.navigation.bar",
+                "url": "/webitem2"
             }
         ]
     }
