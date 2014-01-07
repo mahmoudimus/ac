@@ -134,7 +134,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
         assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
         assertEquals(project.getId(), webItem.getFromQueryString("pid"));
-        assertThat(webItem.getFromQueryString("jwt"), is(notNullValue()));
         assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
     }
 

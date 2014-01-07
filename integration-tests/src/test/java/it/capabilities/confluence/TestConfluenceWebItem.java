@@ -134,7 +134,6 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
-        assertThat(webItem.getFromQueryString("jwt"), is(notNullValue()));
         assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
     }
 
