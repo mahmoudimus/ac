@@ -67,6 +67,21 @@
                 equal(spy.firstCall.args[1]['height'], '200');
             });
 
+            test("createStatusMessages creates a loading status", function() {
+                var dom = contentUtilities.createStatusMessages();
+                equal($(dom).find('.ap-loading').length, 1);
+            });
+
+            test("createStatusMessages creates a timeout status", function() {
+                var dom = contentUtilities.createStatusMessages();
+                equal($(dom).find('.ap-load-timeout').length, 1);
+            });
+
+            test("createStatusMessages creates a error status", function() {
+                var dom = contentUtilities.createStatusMessages();
+                equal($(dom).find('.ap-load-error').length, 1);
+            });
+
 
         });
 
