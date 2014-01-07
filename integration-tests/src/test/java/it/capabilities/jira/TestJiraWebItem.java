@@ -50,6 +50,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addCapabilities("webItems",
                         newWebItemBean()
+                                .withContext(AddOnUrlContext.decorated)
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
@@ -119,6 +120,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
         assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
         assertEquals(project.getId(), webItem.getFromQueryString("pid"));
+        assertThat(webItem.getPath(), startsWith(product.getProductInstance().getBaseUrl()));
     }
 
     @Test
