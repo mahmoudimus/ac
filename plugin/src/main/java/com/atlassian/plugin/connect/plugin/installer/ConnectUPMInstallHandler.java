@@ -109,6 +109,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
                     String msg = "Invalid connect descriptor: " + result.getMessageReport();
                     log.error(msg);
                     
+                    //Note: currently UPM can only display static custom messages from I18n props. It will not display any dynamic strings.
                     throw new PluginInstallException(msg,errorI18nKey,false);
                 }
                 
