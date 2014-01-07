@@ -56,24 +56,31 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     public String getRenderedUrl(final Map<String, Object> context)
     {
         final Map<String, Object> extractedWebPanelParameters = urlParametersSerializer.getExtractedWebPanelParameters(context);
-        return urlVariableSubstitutor.replace(url, extractedWebPanelParameters);
+        return getRenderedUrlFromParams(extractedWebPanelParameters);
+    }
+
+    private String getRenderedUrlFromParams(final Map<String, Object> params)
+    {
+        return urlVariableSubstitutor.replace(url, params);
     }
 
     @Override
     public String getDisplayableUrl(final HttpServletRequest req, final Map<String, Object> context)
     {
+        final Map<String, Object> extractedWebPanelParameters = urlParametersSerializer.getExtractedWebPanelParameters(context);
+        String renderedUrl = getRenderedUrlFromParams(extractedWebPanelParameters);
+
         if (absolute)
         {
-            return getRenderedUrl(context);
+            return renderedUrl;
         }
         else
         {
-            String renderedUrl = getRenderedUrl(context);
             if (addOnUrlContext == addon)
             {
                 try
                 {
-                    return remotablePluginAccessor.signGetUrl(new URI(renderedUrl), HideousParameterContextThingy.transformToPathForm(context));
+                    return remotablePluginAccessor.signGetUrl(new URI(renderedUrl), HideousParameterContextThingy.transformToPathForm(extractedWebPanelParameters));
                 }
                 catch (URISyntaxException e)
                 {
