@@ -37,8 +37,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
       events.push({name: name, properties: props});
     }
 
-    function showStatus() {
+    function showStatus(status) {
       $home.find(".ap-status").addClass("hidden");
+      $home.find('.ap-' + status).removeClass('hidden');
     }
 
     var timeout = setTimeout(function () {
@@ -253,6 +254,8 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
         }
       }
     });
+
+    showStatus('loading');
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
