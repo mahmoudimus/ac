@@ -27,6 +27,8 @@ import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.assertURIEquals;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -39,6 +41,7 @@ import static org.junit.Assert.assertTrue;
 public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 {
     private static final String ADDON_WEBITEM = "ac-general-web-item";
+    private static final String ADDON_DIRECT_WEBITEM = "ac-direct-to-addon-web-item";
     private static final String PRODUCT_WEBITEM = "quick-page-link";
     private static final String ABSOLUTE_WEBITEM = "google-link";
     private static final String SPACE = "ds";
@@ -52,6 +55,13 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                 .addCapabilities("webItems",
                         newWebItemBean()
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
+                                .withLocation("system.content.action")
+                                .withWeight(1)
+                                .withUrl("/irwi?page_id={page.id}")
+                                .build(),
+                        newWebItemBean()
+                                .withContext(AddOnUrlContext.addon)
+                                .withName(new I18nProperty("AC Direct To Addon Web Item", "ac.dir"))
                                 .withLocation("system.content.action")
                                 .withWeight(1)
                                 .withUrl("/irwi?page_id={page.id}")
@@ -111,6 +121,20 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
+        assertThat(webItem.getPath(), startsWith(product.getProductInstance().getBaseUrl()));
+    }
+
+    @Test
+    public void testAddonDirectWebItem() throws Exception
+    {
+        loginAsAdmin();
+
+        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(ADDON_DIRECT_WEBITEM);
+        RemoteWebItem webItem = pageAndWebItem.right();
+        assertNotNull("Web item should be found", webItem);
+
+        assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
+        assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
     }
 
     @Test

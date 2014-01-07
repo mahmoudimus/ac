@@ -32,7 +32,7 @@ public class TestDescriptorValidation
     @Test
     public void testBadConfluenceDescriptor() throws Exception
     {
-        String json = readAddonTestFile("validJiraDescriptor.json");
+        String json = readAddonTestFile("invalidConfluenceDescriptor.json");
         DescriptorValidationResult result = validator.validate(json);
 
         assertFalse(result.isSuccess());

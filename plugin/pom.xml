@@ -354,6 +354,12 @@
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
+                    <testBundleExcludes>
+                        <testBundleExclude>
+                            <groupId>com.atlassian.plugin</groupId>
+                            <artifactId>atlassian-spring-scanner</artifactId>
+                        </testBundleExclude>
+                    </testBundleExcludes>
                     <instructions>
                         <!-- <Import-Package>
                             com.atlassian.upm.*,
