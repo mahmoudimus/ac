@@ -127,7 +127,8 @@ public class HideousParameterContextThingy
         final Iterable<Pair<List<String>, String[]>> pairs = transformToPathFormPairs(nestedMapsParams);
         for (Pair<List<String>, String[]> pair : pairs)
         {
-            builder.put(createPath(pair.getLeft()), pair.getRight());
+            if (pair.getRight() != null)
+                builder.put(createPath(pair.getLeft()), pair.getRight());
         }
 
         return builder.build();
@@ -172,7 +173,9 @@ public class HideousParameterContextThingy
         if (value instanceof Map)
             return transformToPathFormPairs((Map<?, ?>) value);
 
-        String[] arrValue = value instanceof String[] ? (String[]) value : new String[]{value.toString()};
+        String[] arrValue = null;
+        if (value != null)
+            arrValue = value instanceof String[] ? (String[]) value : new String[]{value.toString()};
 
         return ImmutableList.of(Pair.of((List<String>) ImmutableList.<String>of(), arrValue));
     }
