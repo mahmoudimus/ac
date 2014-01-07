@@ -55,24 +55,22 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     {
         boolean isConnectXml = connectIdentifier.isConnectAddOn(descriptorFile);
         boolean canInstall = isConnectXml;
-        DescriptorValidationResult result;
-        
+                
         if (!isConnectXml)
         {
             try
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                result = jsonDescriptorValidator.validate(json);
+                canInstall = jsonDescriptorValidator.isConnectJson(json);
 
-                canInstall = result.isSuccess();
                 if (!canInstall)
                 {
-                    log.error("Could not validate add-on descriptor: " + result.getMessageReport());
+                    log.error("The given plugin descriptor is not a valid connect json file");
                 }
             }
             catch (Exception e)
             {
-                log.error(ConnectUPMInstallHandler.class.getSimpleName() + " can not load descriptor " + descriptorFile.getName(), e);
+                log.error("Cannot load descriptor " + descriptorFile.getName(), e);
                 canInstall = false;
             }
         }
@@ -89,6 +87,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         {
             boolean isXml = connectIdentifier.isConnectAddOn(descriptorFile);
             Plugin plugin;
+            DescriptorValidationResult result;
 
             UserProfile user = userManager.getRemoteUser();
             String username = user == null ? "" : user.getUsername();
@@ -102,6 +101,17 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             else
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
+                result = jsonDescriptorValidator.validate(json);
+                Option<String> errorI18nKey = Option.some("connect.invalid.descriptor.install.exception");
+                
+                if(!result.isSuccess())
+                {
+                    String msg = "Invalid connect descriptor: " + result.getMessageReport();
+                    log.error(msg);
+                    
+                    throw new PluginInstallException(msg,errorI18nKey,false);
+                }
+                
                 plugin = connectInstaller.install(username, json);
             }
 
