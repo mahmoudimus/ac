@@ -64,8 +64,16 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return (T) new DynamicContentMacro(plugin.getKey(), bean, userManager, iFrameRenderer, remotablePluginAccessorFactory, urlVariableSubstitutor);
+                DynamicContentMacro macro = new DynamicContentMacro(plugin.getKey(), bean, userManager, iFrameRenderer,
+                        remotablePluginAccessorFactory, urlVariableSubstitutor);
+
+                if (bean.hasImagePlaceholder())
+                {
+                    return (T) decorateWithImagePlaceHolder(plugin, macro, bean.getImagePlaceholder());
+                }
+                return (T) macro;
             }
         };
     }
+
 }
