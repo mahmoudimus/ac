@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @since 1.0
@@ -68,7 +69,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
                     log.error("The given plugin descriptor is not a valid connect json file");
                 }
             }
-            catch (Exception e)
+            catch (IOException e)
             {
                 log.error("Cannot load descriptor " + descriptorFile.getName(), e);
                 canInstall = false;

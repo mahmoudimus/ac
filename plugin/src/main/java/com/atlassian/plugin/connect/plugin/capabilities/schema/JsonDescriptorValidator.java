@@ -17,6 +17,7 @@ import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +68,9 @@ public class JsonDescriptorValidator implements ConnectDescriptorValidator
                 valid = (jobj.has(ConnectAddonBean.KEY_ATTR) && jobj.has(ConnectAddonBean.BASE_URL_ATTR));
             }
         }
-        catch (Exception e)
+        catch (JsonSyntaxException e)
         {
+            log.trace(e.getMessage(),e);
             valid = false;
         }
         
