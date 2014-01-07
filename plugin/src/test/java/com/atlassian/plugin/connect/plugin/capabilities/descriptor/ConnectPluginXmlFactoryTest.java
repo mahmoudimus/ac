@@ -25,9 +25,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectPluginXmlFactoryTest
 {
-
-    private static final String MY_CONFIG_MODULE = "my-config-module";
-    private static final String EXPECTED_CONFIGURE_URL = "/plugins/servlet/ac/addonKey/" + MY_CONFIG_MODULE;
+    private static final String EXPECTED_CONFIGURE_URL = "/plugins/servlet/ac/addonKey/configure-page-url";
     private ConnectAddonBean addonWithNoConfigurePages;
     private ConnectAddonBean addonWithOneConfigurePage;
 
@@ -39,9 +37,9 @@ public class ConnectPluginXmlFactoryTest
                 .withKey("addonKey")
                 .withModule("configurePage", ConnectPageModuleBean.newPageBean()
                         .withName(new I18nProperty("myConfigModule", null))
+                        .withUrl("/configure-page-url")
                         .build())
                 .build();
-
     }
 
     @Test
