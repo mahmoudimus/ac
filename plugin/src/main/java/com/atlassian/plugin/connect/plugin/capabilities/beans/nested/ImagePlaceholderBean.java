@@ -78,9 +78,9 @@ public class ImagePlaceholderBean
         return url;
     }
 
-    public Boolean applyChrome()
+    public boolean applyChrome()
     {
-        return applyChrome;
+        return null == applyChrome ? false : applyChrome;
     }
 
     public static ImagePlaceholderBeanBuilder newImagePlaceholderBean()

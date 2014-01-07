@@ -43,7 +43,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -206,8 +208,8 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                         .build()
                 );
         ImagePlaceholder imagePlaceHolder = getImagePlaceholder(builder, ImmutableMap.<String, String>of());
-        assertThat("width", imagePlaceHolder.getDimensions().getWidth(), is(60));
-        assertThat("height", imagePlaceHolder.getDimensions().getHeight(), is(30));
+        assertThat(imagePlaceHolder.getDimensions(),
+                both(hasProperty("width", is(60))).and(hasProperty("height", is(30))));
     }
 
     @Test
@@ -225,7 +227,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
     }
 
     @Test
-    public void testImagePlaceholderApplyChrome() throws Exception
+    public void testImagePlaceholderApplyChromeTrue() throws Exception
     {
         T builder = createMacroBeanBuilder()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
@@ -237,6 +239,35 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                 );
         ImagePlaceholder imagePlaceHolder = getImagePlaceholder(builder, ImmutableMap.<String, String>of());
         assertThat(imagePlaceHolder.applyPlaceholderChrome(), is(true));
+    }
+
+    @Test
+    public void testImagePlaceholderApplyChromeFalse() throws Exception
+    {
+        T builder = createMacroBeanBuilder()
+                .withName(new I18nProperty("The Macro Name", "macro.name.key"))
+                .withUrl("/my-macro")
+                .withImagePlaceholder(ImagePlaceholderBean.newImagePlaceholderBean()
+                        .withUrl("/images/placeholder.png")
+                        .withApplyChrome(false)
+                        .build()
+                );
+        ImagePlaceholder imagePlaceHolder = getImagePlaceholder(builder, ImmutableMap.<String, String>of());
+        assertThat(imagePlaceHolder.applyPlaceholderChrome(), is(false));
+    }
+
+    @Test
+    public void testImagePlaceholderApplyChromeDefault() throws Exception
+    {
+        T builder = createMacroBeanBuilder()
+                .withName(new I18nProperty("The Macro Name", "macro.name.key"))
+                .withUrl("/my-macro")
+                .withImagePlaceholder(ImagePlaceholderBean.newImagePlaceholderBean()
+                        .withUrl("/images/placeholder.png")
+                        .build()
+                );
+        ImagePlaceholder imagePlaceHolder = getImagePlaceholder(builder, ImmutableMap.<String, String>of());
+        assertThat(imagePlaceHolder.applyPlaceholderChrome(), is(false));
     }
 
     private ImagePlaceholder getImagePlaceholder(T builder, Map<String, String> parameters)
