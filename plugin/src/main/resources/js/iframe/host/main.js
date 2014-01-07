@@ -226,6 +226,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
         },
         // !!! JIRA specific !!!
         getWorkflowConfiguration: function (uuid, callback) {
+          if(!/^[\w|-]+$/.test(uuid)){
+            throw new Error("Invalid workflow ID");
+          }
           var value,
           selector = $("#remoteWorkflowPostFunctionConfiguration-"+uuid)[0];
 

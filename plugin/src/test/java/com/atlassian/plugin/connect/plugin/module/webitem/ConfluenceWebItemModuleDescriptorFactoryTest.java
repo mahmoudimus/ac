@@ -4,6 +4,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
@@ -24,10 +26,12 @@ import org.mockito.stubbing.Answer;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,6 +51,12 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
 
     @Mock
     private ContainerContext containerContext;
+
+    @Mock
+    private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+
+    @Mock
+    private RemotablePluginAccessor remotablePluginAccessor;
 
     private WebItemModuleDescriptor descriptor;
 
@@ -70,10 +80,10 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
                 return invocation.getArguments()[0];
             }
         });
-
+        when(remotablePluginAccessorFactory.get(anyString())).thenReturn(remotablePluginAccessor);
         descriptor = webItemFactory.createWebItemModuleDescriptor(
                 "/myplugin?my_project_id={project.id}&my_project_key={project.key}",
-                "myLinkId", false);
+                "myLinkId", false, product, remotablePluginAccessorFactory.get(plugin.getKey()));
         descriptor.init(plugin, createElement());
         descriptor.enabled();
     }

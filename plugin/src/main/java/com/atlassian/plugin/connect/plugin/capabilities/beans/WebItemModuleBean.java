@@ -61,10 +61,11 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     /**
      * The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.
      *
-     * This context can be either `addon`, which renders the URL relative to the add-on's base URL, or
-     * `product`, which renders the URL relative to the product's base URL.
+     * This context can be either `addon`, which renders the URL relative to the add-on's base URL,
+     * `decorated` which indirectly targets the addon host but initially renders relative to the product host so that the iFrame can be decorated
+     * or `product`, which renders the URL relative to the product's base URL.
      */
-    @CommonSchemaAttributes(defaultValue = "addon")
+    @CommonSchemaAttributes(defaultValue = "decorated")
     private AddOnUrlContext context;
 
     /**
@@ -110,7 +111,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         this.url = "";
         this.location = "";
-        this.context = AddOnUrlContext.addon;
+        this.context = AddOnUrlContext.decorated;
         this.weight = 100;
         this.target = newWebItemTargetBean().build();
         this.styleClasses = new ArrayList<String>();
@@ -129,7 +130,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
 
         if(null == context)
         {
-            this.context = AddOnUrlContext.addon;
+            this.context = AddOnUrlContext.decorated;
         }
 
         if(null == weight)
