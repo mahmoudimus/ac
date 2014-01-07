@@ -15,6 +15,7 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/content"], function($, host
             }
             options.container = options.ns;
             options.src = options.url;
+            content.data('inlineDialog', $inlineDialog);
             if(!content.find('iframe').length){
                 content.attr('id', 'ap-' + options.ns);
                 content.append('<div id="embedded-' + options.ns + '" />');
