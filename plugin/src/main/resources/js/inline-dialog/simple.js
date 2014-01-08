@@ -40,9 +40,9 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function(
             id: $inlineDialog.attr('id'),
             show: function() {
                 $inlineDialog.show();
-            },
-
+            }
         };
+
     };
 
 });
