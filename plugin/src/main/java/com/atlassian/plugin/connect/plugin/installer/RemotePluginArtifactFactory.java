@@ -4,7 +4,7 @@ import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAddOnBundleBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
@@ -54,7 +54,7 @@ public class RemotePluginArtifactFactory
             @Override
             public void build(ZipBuilder builder) throws IOException
             {
-                builder.addFile("atlassian-plugin.xml", document);
+                builder.addFile(Filenames.ATLASSIAN_PLUGIN_XML, document);
             }
         }));
     }
@@ -78,8 +78,8 @@ public class RemotePluginArtifactFactory
         builder.manifest(createManifest(addOn, username));
 
         //create the plugin.xml
-        builder.addResource("atlassian-plugin.xml", pluginXmlFactory.createPluginXml(addOn));
-        builder.addResource(Filenames.ATLASSIAN_ADD_ON_JSON, CapabilitiesGsonFactory.getGson().toJson(addOn));
+        builder.addResource(Filenames.ATLASSIAN_PLUGIN_XML, pluginXmlFactory.createPluginXml(addOn));
+        builder.addResource(Filenames.ATLASSIAN_ADD_ON_JSON, ConnectModulesGsonFactory.getGson().toJson(addOn));
 
         return new JarPluginArtifact(builder.build(addOn.getKey().replaceAll(CLEAN_FILENAME_PATTERN, "-").toLowerCase()));
     }

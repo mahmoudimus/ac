@@ -1,20 +1,17 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
+import com.atlassian.plugin.connect.spi.util.ServletUtils;
+import com.atlassian.sal.api.user.UserKey;
+import com.google.common.base.Function;
+import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.atlassian.plugin.connect.spi.util.ServletUtils;
-
-import com.atlassian.sal.api.user.UserKey;
-import com.google.common.base.Function;
-
-import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import static com.google.common.collect.Iterables.transform;
 

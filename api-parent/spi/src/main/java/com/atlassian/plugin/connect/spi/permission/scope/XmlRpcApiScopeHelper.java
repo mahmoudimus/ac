@@ -1,15 +1,12 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
-
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
-
 import org.dom4j.Document;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.readDocument;
 import static com.google.common.collect.Iterables.transform;

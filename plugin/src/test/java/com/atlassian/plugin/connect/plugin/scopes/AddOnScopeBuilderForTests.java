@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.scopes;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import org.hamcrest.Matcher;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import static java.util.Arrays.asList;

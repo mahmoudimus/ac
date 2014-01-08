@@ -4,7 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.util.BundleLocator;
 import com.atlassian.plugin.connect.plugin.util.StreamUtil;
 import com.atlassian.plugin.connect.spi.Filenames;
@@ -21,8 +21,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,9 +45,6 @@ public final class DescriptorPermissionsReader implements PermissionsReader
     private final Cache<Plugin,Set<String>> permissionsCache;
     private final Cache<Plugin,Set<ScopeName>> scopesCache;
     private final String productKey;
-
-    private static final Logger log = LoggerFactory.getLogger(DescriptorPermissionsReader.class);
-    private static final String ATLASSIAN_PLUGIN_XML = "atlassian-plugin.xml";
 
     @Inject
     public DescriptorPermissionsReader(final HostProperties hostProperties, final BundleLocator bundleLocator)
@@ -111,7 +106,7 @@ public final class DescriptorPermissionsReader implements PermissionsReader
     {
         try
         {
-            URL sourceUrl = bundle.getEntry(ATLASSIAN_PLUGIN_XML);
+            URL sourceUrl = bundle.getEntry(Filenames.ATLASSIAN_PLUGIN_XML);
             Document source = XmlUtils.createSecureSaxReader().read(sourceUrl);
 
             return read(source, productKey);
@@ -132,7 +127,7 @@ public final class DescriptorPermissionsReader implements PermissionsReader
         }
 
         String json = StreamUtil.getStringFromInputStream(FileUtils.getResource(sourceUrl.toString()));
-        ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         return addOn.getScopes();
     }
 

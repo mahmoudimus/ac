@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.spi.permission;
 
-import java.util.Set;
-
 import com.atlassian.plugin.Plugin;
-
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import org.dom4j.Document;
+
+import java.util.Set;
 
 /**
  *

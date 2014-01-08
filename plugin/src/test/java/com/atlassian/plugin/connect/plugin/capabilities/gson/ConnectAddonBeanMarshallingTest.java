@@ -3,18 +3,18 @@ package com.atlassian.plugin.connect.plugin.capabilities.gson;
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.google.gson.Gson;
 import org.junit.Test;
 
-import java.util.List;
-
-import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
+import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -135,31 +135,31 @@ public class ConnectAddonBeanMarshallingTest
     @Test
     public void noScopes() throws IOException
     {
-        String json = readCapabilitiesTestFile("addonMultipleCapabilities.json");
-        ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        String json = readAddonTestFile("addonMultipleCapabilities.json");
+        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is(Collections.<ScopeName>emptySet()));
     }
 
     @Test
     public void singleScope() throws IOException
     {
-        String json = readCapabilitiesTestFile("singleScope.json");
-        ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        String json = readAddonTestFile("singleScope.json");
+        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ)));
     }
 
     @Test
     public void multipleScopes() throws IOException
     {
-        String json = readCapabilitiesTestFile("multipleScopes.json");
-        ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        String json = readAddonTestFile("multipleScopes.json");
+        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ, ScopeName.WRITE)));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void badScopeName() throws IOException
     {
-        String json = readCapabilitiesTestFile("badScopeName.json");
-        CapabilitiesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class).getScopes();
+        String json = readAddonTestFile("badScopeName.json");
+        ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class).getScopes();
     }
 }

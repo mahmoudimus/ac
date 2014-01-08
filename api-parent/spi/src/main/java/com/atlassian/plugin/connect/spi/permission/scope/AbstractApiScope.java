@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.PermissionInfo;
 import com.atlassian.sal.api.user.UserKey;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

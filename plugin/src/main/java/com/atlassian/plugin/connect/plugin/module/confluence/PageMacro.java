@@ -12,6 +12,10 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+
 public final class PageMacro extends AbstractRemoteMacro
 {
     private final UserManager userManager;
