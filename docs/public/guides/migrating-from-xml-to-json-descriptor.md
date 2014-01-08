@@ -58,8 +58,12 @@ installed, enabled, disabled and uninstalled webhooks have been replaced with li
 }
 ```
 
-The installed event is now synchronous, this means that if your `installed` lifecycle event URL does not return a 200 or
- 204 response code, the add-on will fail to install. All other lifecycle events are asynchronous.
+If you declare an `installed` lifecycle event URL and it does not return a 200 or 204 response code, the Atlassian
+product will consider the installation as failed and notify the user attempting to install the add-on. Response codes
+from requests to other lifecycle URLs are ignored.
+
+The `installed` payload also contains the details for handling JWT authenticated requests to and from the Atlassian
+product. See [JWT Installation Handshake](../concepts/authentication.html#installation) for further details.
 
 ## Webhooks
 
