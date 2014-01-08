@@ -8,30 +8,6 @@ _AP.define("host/content", ["_dollar"], function ($) {
         return AJS.contextPath() + "/plugins/servlet/atlassian-connect/" + pluginKey + "/" + capability.key;
     }
 
-    function createStatusMessages() {
-        var i,
-        stats = $('<div class="ap-stats" />'),
-        statuses = {
-            loading: {
-                description: 'Loading add-on...'
-            },
-            "load-timeout": {
-                description: 'Add-on is not responding. Wait or <a href="#" class="ap-btn-cancel">cancel</a>?'
-            },
-            "load-error": {
-                description: 'Add-on failed to load.'
-            }
-        };
-
-        for(i in statuses){
-            var status = $('<div class="ap-' + i + ' ap-status hidden" />');
-            status.append('<small>' + statuses[i].description + '</small>');
-            stats.append(status);
-        }
-        return stats;
-
-    }
-
     function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
         var contentUrl = this.getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
@@ -70,8 +46,7 @@ _AP.define("host/content", ["_dollar"], function ($) {
     return {
         getContentUrl: getContentUrl,
         getIframeHtmlForKey: getIframeHtmlForKey,
-        eventHandler: eventHandler,
-        createStatusMessages: createStatusMessages
+        eventHandler: eventHandler
     };
 
 
