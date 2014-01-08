@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.spi;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.util.concurrent.Promise;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Abstracts interactions with the remote plugin

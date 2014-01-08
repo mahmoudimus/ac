@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.*;
 
+import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
@@ -60,14 +61,14 @@ abstract class ConfluenceScope extends AbstractPermission implements ApiScope
     }
 
     @Override
-    public final boolean allow(HttpServletRequest request, String username)
+    public final boolean allow(HttpServletRequest request, UserKey user)
     {
-        return v1XmlRpcApiScopeHelper.allow(request, username) ||
-                v2XmlRpcApiScopeHelper.allow(request, username) ||
-                v1JsonRpcScopeHelper.allow(request, username) ||
-                v2JsonRpcScopeHelper.allow(request, username) ||
-                restApiScopeHelper.allow(request, username) ||
-                downloadScopeHelper.allow(request, username);
+        return v1XmlRpcApiScopeHelper.allow(request, user) ||
+                v2XmlRpcApiScopeHelper.allow(request, user) ||
+                v1JsonRpcScopeHelper.allow(request, user) ||
+                v2JsonRpcScopeHelper.allow(request, user) ||
+                restApiScopeHelper.allow(request, user) ||
+                downloadScopeHelper.allow(request, user);
     }
 
     @Override

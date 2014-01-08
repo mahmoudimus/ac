@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 
+import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 
 import org.apache.commons.io.IOUtils;
@@ -40,7 +41,7 @@ public final class JsonRpcApiScopeHelper
         });
     }
 
-    public boolean allow(HttpServletRequest request, String username)
+    public boolean allow(HttpServletRequest request, UserKey user)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))

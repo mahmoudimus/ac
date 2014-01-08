@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
+import com.atlassian.sal.api.user.UserKey;
 
 import static java.util.Arrays.asList;
 
@@ -26,9 +27,9 @@ public class ReadLicenseScope extends AbstractPermission implements ApiScope
     }
 
     @Override
-    public boolean allow(final HttpServletRequest request, final String username)
+    public boolean allow(final HttpServletRequest request, final UserKey user)
     {
-        return scopeHelper.allow(request, username);
+        return scopeHelper.allow(request, user);
     }
 
     @Override

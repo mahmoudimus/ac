@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 
+import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
@@ -51,7 +52,7 @@ public final class RpcEncodedSoapApiScopeHelper
         }));
     }
 
-    public boolean allow(HttpServletRequest request, String user)
+    public boolean allow(HttpServletRequest request, UserKey user)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))

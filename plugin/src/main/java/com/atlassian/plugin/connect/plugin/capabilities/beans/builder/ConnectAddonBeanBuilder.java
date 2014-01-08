@@ -6,8 +6,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedList;
 
@@ -24,6 +29,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private VendorBean vendor;
     private Map<String, String> links;
     private ModuleList modules;
+    private Set<ScopeName> scopes;
     private LifecycleBean lifecycle;
     private String baseUrl;
     private AuthenticationBean authentication;
@@ -45,6 +51,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.lifecycle = defaultBean.getLifecycle();
         this.baseUrl = defaultBean.getBaseUrl();
         this.authentication = defaultBean.getAuthentication();
+        this.scopes = defaultBean.getScopes();
         this.enableLicensing = defaultBean.getEnableLicensing();
     }
 
@@ -103,6 +110,21 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     {
         this.links = links;
 
+        return (T) this;
+    }
+
+    public T withScopes(Set<ScopeName> scopes)
+    {
+        if (null == this.scopes)
+        {
+            this.scopes = new HashSet<ScopeName>(scopes.size());
+        }
+        else
+        {
+            this.scopes.clear();
+        }
+
+        this.scopes.addAll(scopes);
         return (T) this;
     }
     

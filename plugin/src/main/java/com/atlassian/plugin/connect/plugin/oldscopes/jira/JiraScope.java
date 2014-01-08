@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
+import com.atlassian.sal.api.user.UserKey;
 
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
@@ -30,9 +31,9 @@ abstract class JiraScope extends AbstractPermission implements ApiScope
     }
 
     @Override
-    public final boolean allow(HttpServletRequest request, String username)
+    public final boolean allow(HttpServletRequest request, UserKey user)
     {
-        return soapScopeHelper.allow(request, username) || jsonRpcScopeHelper.allow(request, username) || restApiScopeHelper.allow(request, username);
+        return soapScopeHelper.allow(request, user) || jsonRpcScopeHelper.allow(request, user) || restApiScopeHelper.allow(request, user);
     }
 
     @Override

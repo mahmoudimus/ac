@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
 import com.google.gson.Gson;
@@ -33,6 +34,7 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapter(mapStringType, new IgnoredEmptyMapSerializer())
                 .registerTypeAdapter(String.class, new EmptyStringIgnoringTypeAdapter().nullSafe())
                 .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
+                .registerTypeAdapter(ScopeName.class, new ScopeNameSerializer())
                 ;
     }
 
