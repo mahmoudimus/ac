@@ -6,6 +6,7 @@ import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
@@ -117,6 +118,12 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      */
     private MacroEditorBean editor;
 
+    /**
+     * The image rendered in the editor as the macro placeholder. It can only be used with bodyless macros and will behave
+     * just like a regular macro placeholder. Any parameter changes in the macro browser will cause the image
+     * to be reloaded - so that changes can be seen.
+     */
+    private ImagePlaceholderBean imagePlaceholder;
 
     public BaseContentMacroModuleBean()
     {
@@ -220,6 +227,11 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
         return editor;
     }
 
+    public ImagePlaceholderBean getImagePlaceholder()
+    {
+        return imagePlaceholder;
+    }
+
     public boolean hasEditor()
     {
         return editor != null;
@@ -233,5 +245,10 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     public boolean hasDocumentation()
     {
         return documentation != null;
+    }
+
+    public boolean hasImagePlaceholder()
+    {
+        return imagePlaceholder != null;
     }
 }

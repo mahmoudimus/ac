@@ -21,6 +21,11 @@
         <url-pattern>/atlassian-connect/schema/*</url-pattern>
     </servlet-filter>
 
+    <servlet-filter key="documentation-filter" class="com.atlassian.plugin.connect.plugin.docs.DocumentationFilter"
+                    location="after-encoding">
+        <url-pattern>/atlassian-connect/docs/*</url-pattern>
+    </servlet-filter>
+
     <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
             location="before-decoration">
         <url-pattern>/*</url-pattern>
@@ -59,6 +64,11 @@
         </description>
         <url-pattern>/render-signed-iframe</url-pattern>
     </servlet>
+
+    <!-- docs are built and copied into target/classes/docs during the prepare-package phase -->
+    <web-resource key="docs">
+        <resource type="download" name="docs/" location="docs" />
+    </web-resource>
 
     <web-resource key="ap-amd">
         <resource type="download" name="_ap.js" location="/js/iframe/host/_ap.js" />
