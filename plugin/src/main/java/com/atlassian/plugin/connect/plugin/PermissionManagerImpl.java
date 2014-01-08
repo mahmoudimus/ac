@@ -150,7 +150,7 @@ public final class PermissionManagerImpl implements PermissionManager
         return castToApiScopes(getApiScopesForPermissionsAsPermissions(permissions));
     }
 
-    private Iterable<ApiScope> castToApiScopes(Iterable<Permission> permissions)
+    private static Iterable<ApiScope> castToApiScopes(Iterable<Permission> permissions)
     {
         return transform(permissions, new CastPermissionApiScope());
     }
@@ -160,7 +160,7 @@ public final class PermissionManagerImpl implements PermissionManager
         return filter(permissionTracker.getModules(), Predicates.and(new IsApiScope(), new IsInPermissions(permissions)));
     }
 
-    private Collection<ScopeName> addImpliedScopesTo(Set<ScopeName> scopeReferences)
+    private static Collection<ScopeName> addImpliedScopesTo(Set<ScopeName> scopeReferences)
     {
         Set<ScopeName> allScopeReferences = new HashSet<ScopeName>(scopeReferences);
 
