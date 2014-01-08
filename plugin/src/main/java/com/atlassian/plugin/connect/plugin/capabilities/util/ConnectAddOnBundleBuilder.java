@@ -77,7 +77,7 @@ public class ConnectAddOnBundleBuilder
 
             newJar = updateManifestInJar(fileNamePrefix, tempJarFile, manifestMap);
     
-            FileUtils.forceDelete(tempJarFile);
+            FileUtils.deleteQuietly(tempJarFile);
         }
         catch (FileNotFoundException e)
         {
