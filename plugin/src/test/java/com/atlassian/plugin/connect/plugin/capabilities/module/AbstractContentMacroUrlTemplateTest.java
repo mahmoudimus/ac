@@ -11,6 +11,7 @@ import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.Maps;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.when;
 public abstract class AbstractContentMacroUrlTemplateTest<B extends BaseContentMacroModuleBean, M extends AbstractContentMacro, T extends BaseContentMacroModuleBeanBuilder<T, B>>
 {
     public static final String BODY = "some macro content";
+    public static final String HASH = DigestUtils.md5Hex(BODY);
     public static final String PAGE_TYPE = "page";
     public static final String PAGE_ID = "56789";
     public static final String PAGE_TITLE = "Test Page";
@@ -40,7 +42,8 @@ public abstract class AbstractContentMacroUrlTemplateTest<B extends BaseContentM
     public static Collection<Object[]> testData()
     {
         return Arrays.asList(new Object[][]{
-                {"body", BODY},
+                {"macro.hash", HASH},
+                {"macro.body", BODY},
                 {"page.type", PAGE_TYPE},
                 {"page.id", PAGE_ID},
                 {"page.title", PAGE_TITLE},

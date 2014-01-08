@@ -34,7 +34,8 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      *
      * Currently supported variables for macros are:
      *
-     * * `body`: The macro body
+     * * `macro.hash`: The hash of the macro body
+     * * `macro.body`: The macro body
      * * `page.id`: The page ID, e.g. '1376295'
      * * `page.title`: The page title, e.g. 'My Page'
      * * `page.type`: The page type, e.g. 'page'
