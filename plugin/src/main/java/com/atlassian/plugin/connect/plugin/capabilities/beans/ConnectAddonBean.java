@@ -52,6 +52,9 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class ConnectAddonBean extends BaseModuleBean
 {
+    public static final String KEY_ATTR = "key";
+    public static final String BASE_URL_ATTR = "baseUrl";
+    
     public static final int DEFAULT_WEIGHT = 100;
 
     /**
