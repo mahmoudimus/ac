@@ -582,6 +582,10 @@
             <name>MuleSoft Repository</name>
             <url>https://repository.mulesoft.org/releases</url>
         </pluginRepository>
+        <pluginRepository>
+            <id>maven-central</id>
+            <url>http://repo1.maven.org/maven2</url>
+        </pluginRepository>
     </pluginRepositories>
     <properties>
         <!-- VERSIONS -->
