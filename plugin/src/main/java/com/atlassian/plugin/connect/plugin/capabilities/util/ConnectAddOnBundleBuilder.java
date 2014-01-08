@@ -172,6 +172,7 @@ public class ConnectAddOnBundleBuilder
         // close
         jarZip.close();
         append.close();
+        bnd.close();
         
         return newJar;
     }
