@@ -13,7 +13,10 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function(
 
             options.w = options.w || options.width;
             options.h = options.h || options.height;
-            options.container = options.ns = options.ns ||  nextId();
+            if (!options.ns) {
+                options.ns = nextId();
+            }
+            options.container = options.ns;
             options.src = options.url = options.url || contentUrl;
             content.data('inlineDialog', $inlineDialog);
 
