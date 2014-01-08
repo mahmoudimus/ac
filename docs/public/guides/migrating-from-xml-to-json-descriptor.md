@@ -53,7 +53,7 @@ installed, enabled, disabled and uninstalled webhooks have been replaced with li
 ```
 
 The installed event is now synchronous, this means that if your `installed` lifecycle event URL does not return a 200 or
- 204 response header, the add-on will fail to install. All other lifecycle events are asynchronous.
+ 204 response code, the add-on will fail to install. All other lifecycle events are asynchronous.
 
 ## Webhooks
 
