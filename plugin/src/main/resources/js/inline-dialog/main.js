@@ -30,7 +30,7 @@ _AP.define("inline-dialog", ["_dollar", "inline-dialog/simple"], function($, sim
             properties.bindTo = $('#' + id);
             var dialog = simpleInlineDialog(properties.bindTo.attr("href"), properties);
 
-            $(window.document).on("click", '#' + id, dialog.show);
+            $(window.document).on("click", properties.bindTo.attr('id'), dialog.show);
         });
     }
 
