@@ -41,7 +41,8 @@ The information contained in the two descriptors below is identical. It shows th
 ```
 
 ## Lifecycle Events
-installed, enabled, disabled and uninstalled webhooks have been replaced with life cycle events. Below is an example:
+The `installed`, `enabled`, `disabled` and `uninstalled` webhooks have been replaced with lifecycle events. Below is an
+example:
 
 ```
 {
