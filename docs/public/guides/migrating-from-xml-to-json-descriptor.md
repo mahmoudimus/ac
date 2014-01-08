@@ -153,7 +153,7 @@ If your add-on was created using the [atlassian-connect-play-java](https://bitbu
 or [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) frameworks you can download
 the latest version for JSON descriptor and [JWT support](authentication.html).
 
-The `atlassian-connect.json` now contains an `authentication` section that can be used to specify your oAuth credentials
+The `atlassian-connect.json` now contains an `authentication` section that can be used to specify your OAuth credentials
 as follows:
 
 ```
