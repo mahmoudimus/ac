@@ -1,12 +1,17 @@
 # Migrate to JSON module descriptors and JWT
 
+This document demonstrates how to convert a legacy `atlassian-plugin.xml` descriptor into one matching the new JSON
+format. By convention, JSON descriptors are named `atlassian-connect.json`.
+
 ## Resources
  * [Getting Started](./getting-started.html) - the hello world tutorial has been renamed to the getting started guide and now uses the new JSON descriptor format for all examples.
  * [Modules](../concepts/modules) - You can view all available modules and their respective documentation under the "JIRA Modules" and "Confluence Modules" sections of the navigation menu.
 
 ## Basic Add-on information
 
-The information contained in these two descriptors is identical. It shows the new format for the basic information about your addon.
+The information contained in the two descriptors below is identical. It shows the new format for the basic information about your addon.
+
+### atlassian-plugin.xml
 ```
 <?xml version="1.0" ?>
 <atlassian-plugin key="hello-world" name="Hello World" plugins-version="2">
@@ -20,6 +25,7 @@ The information contained in these two descriptors is identical. It shows the ne
 </atlassian-plugin>
 ```
 
+### atlassian-connect.json
 ```
 {
     "name": "Hello World",
