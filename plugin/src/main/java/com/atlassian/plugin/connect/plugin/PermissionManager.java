@@ -43,7 +43,9 @@ public interface PermissionManager
      */
     boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, UserKey user);
 
+    /**
+     * @deprecated Used only in OAuth and email sending, both of which are themselves deprecated.
+     */
+    @Deprecated
     void requirePermission(String pluginKey, String permissionKey) throws PermissionDeniedException;
-
-    boolean hasPermission(String pluginKey, String permissionKey) throws PermissionDeniedException;
 }

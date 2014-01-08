@@ -205,6 +205,10 @@ public final class PermissionManagerImpl implements PermissionManager
         return permissions;
     }
 
+    /**
+     * @deprecated Used only in OAuth and email sending, both of which are themselves deprecated.
+     */
+    @Deprecated
     @Override
     public void requirePermission(String pluginKey, String permissionKey) throws PermissionDeniedException
     {
@@ -213,12 +217,6 @@ public final class PermissionManagerImpl implements PermissionManager
             throw new PermissionDeniedException(pluginKey,
                     format("Plugin '%s' requires a resource protected by '%s', but it did not request it.", pluginKey, permissionKey));
         }
-    }
-
-    @Override
-    public boolean hasPermission(String pluginKey, String permissionKey) throws PermissionDeniedException
-    {
-        return getPermissionsForPlugin(pluginKey).contains(permissionKey);
     }
 
     private static final class IsInApiScopePredicate implements Predicate<ApiScope>
