@@ -147,7 +147,7 @@ If your add-on was created using the [atlassian-connect-play-java](https://bitbu
 or [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) frameworks you can download
 the latest version for JSON descriptor and [JWT support](authentication.html).
 
-The `atlassian-plugin.json` now contains an `authentication` section that can be used to specify your oAuth credentials
+The `atlassian-connect.json` now contains an `authentication` section that can be used to specify your oAuth credentials
 as follows:
 
 ```
@@ -163,7 +163,7 @@ as follows:
 ## Atlassian Connect Express
 
 [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) now contains support for JWT and
-the `atlassian-plugin.json`. By upgrading these framework you will benefit from the new functionality.
+the `atlassian-connect.json`. By upgrading these framework you will benefit from the new functionality.
 
 <div class="aui-message warning">
     <span class="aui-icon icon-warning"></span>
@@ -177,7 +177,7 @@ See: [upgrading ACE](./upgrade-ace.html)
 [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
 
 By upgrading to the new version of [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
-you will gain support for JWT and the new `atlassian-plugin.json` descriptor format.
+you will gain support for JWT and the new `atlassian-connect.json` descriptor format.
 
 
 
