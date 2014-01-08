@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc, addons) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper"], function ($, XdmRpc, addons, statusHelper) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -37,16 +37,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
       events.push({name: name, properties: props});
     }
 
-    function showStatus() {
-      $home.find(".ap-status").addClass("hidden");
-    }
-
     var timeout = setTimeout(function () {
       timeout = null;
-      showStatus("load-timeout");
+      statusHelper.showloadTimeoutStatus($home);
       var $timeout = $home.find(".ap-load-timeout");
       $timeout.find("a.ap-btn-cancel").click(function () {
-        showStatus("load-error");
+        statusHelper.showLoadErrorStatus($home);
         $nexus.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
       });
       layoutIfNeeded();
@@ -87,7 +83,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
             preventTimeout();
             $content.addClass("iframe-init");
             var elapsed = new Date().getTime() - start;
-            showStatus("loaded");
+            statusHelper.showLoadedStatus($home);
             layoutIfNeeded();
             $nexus.trigger("ra.iframe.init");
             publish("plugin.iframeinited", {elapsed: elapsed});
@@ -253,6 +249,8 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
         }
       }
     });
+
+    statusHelper.showLoadingStatus($home);
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
