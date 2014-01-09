@@ -42,7 +42,8 @@
             "title": "Development Loop"
         },
         "upgrades.html": {
-            "title": "Upgrades"
+            "title": "Upgrades",
+            "new": true
         },
         "licensing.html": {
             "title": "Licensing"
