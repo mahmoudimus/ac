@@ -142,14 +142,19 @@ for a full list of all supported modules.
 
 ### Dialog Page
 
-The `dialog-page` module has been removed. A replacement is coming in the near future.
+* The `dialog-page` module has been removed. A replacement is coming in the near future.
 
 ### Confluence Macros
 
-* The `<remote-macro>` XML element is replaced by the [`"staticContentMacros"`](../modules/confluence/static-content-macro.html) module
-* The `<macro-page>` XML element is replaced by the [`"dynamicContentMacros"`](../modules/confluence/dynamic-content-macro.html) module
+* The `<remote-macro>` XML element is replaced by the [`staticContentMacros`](../modules/confluence/static-content-macro.html) module
+* The `<macro-page>` XML element is replaced by the [`dynamicContentMacros`](../modules/confluence/dynamic-content-macro.html) module
 * The `<context-parameters>` XML element no longer exists. You can now use variable substitution to include macro parameters in the URL.
 
+### Project Config Tabs and Panels
+
+* The `<project-config-tab>` XML element has been replaced by the [`jiraProjectAdminTabPanels`](../modules/jira/project-admin-tab-panel.html) module.
+* The `<project-config-panel` XML element no longer exists. Instead, use a [`webPanels`](../modules/jira/web-panel.html)
+module with the `location` attribute set to `webpanels.admin.summary.left-panels` or `webpanels.admin.summary.right-panels`.
 
 # OAuth
 <div class="aui-message warning">
