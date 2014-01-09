@@ -16,17 +16,17 @@ catching a previously unhandled exception can all be done by writing and deployi
 see these changes as soon as you update your web app. In many cases (e.g. catching an exception or adding a
 configuration option) there is no immediate reason why end users should be aware that you made the change.
 
-You may version these kinds of changes your add-on in any way you want, including not at all. Some services version with
-dates, others with commit hashes, and others use named versioned.
+You may version these kinds of changes to your add-on in any way you want, including not at all. Some services version with
+dates, others with commit hashes, and others use named versions.
 
-Regardless of how you version and release your add-on itself, the Marketplace must keep up with the version of your
+Regardless of how you version and release your add-on, the Marketplace must keep up with the latest version of your
 [descriptor file](../modules/). Whenever you change your add-on descriptor file ({{atlassian-connect.json}}), that file
 must be updated on the Marketplace and installed on all client instances before that change will take effect.
 
 ## Changing your add-on's descriptor file
 
 In the near future, the Marketplace will periodically poll your add-on's descriptor, notice when it changes,
-automatically bump the version, and automatically update it in all installations within 24 hours.  For now, however, you
+automatically update the version, and automatically update it in all installations within 24 hours.  For now, however, you
 must manually upload a new version of your descriptor to the Marketplace when you have a change. This change will still
 get pushed to all clients within 24 hours. Not every client will be updated simultaneously, so your add-on may need to
 handle the old and new version of your descriptor simultaneously during the upgrade window.
@@ -43,7 +43,7 @@ either to approve or to uninstall the add-on.
 
 3. You change your add-on to require additional [scopes](./scopes.html) (a "scope" is a group of permissions). In this
 case, the marketplace update will happen automatically, but your clients must be given the opportunity to approve the
-new scopes. They must choose either to approve or to uninstall the add-on.
+new scopes. They must choose either to approve or to uninstall the add-on. 
 
 In case two and three, until an admin in each installation accepts the new scopes or the new pricing the old descriptor
 will remain in effect. Your add-on will have to handle both old and new behavior. You have only one add-on web app but
