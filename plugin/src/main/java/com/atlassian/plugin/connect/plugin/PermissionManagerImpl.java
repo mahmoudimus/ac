@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifi
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
-import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
@@ -28,6 +27,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,37 +53,40 @@ import static java.lang.String.format;
 public final class PermissionManagerImpl implements PermissionManager
 {
     private final PluginAccessor pluginAccessor;
-    private final ConnectAddOnIdentifierService connectAddOnIdentifierService;
+    private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final PermissionsReader permissionsReader;
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
     private final Collection<AddOnScope> allScopes;
-
-    private final Set<ApiScope> DEFAULT_OLD_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
     private final IsDevModeService isDevModeService;
+
+    @Deprecated
+    private static final Set<ApiScope> DEFAULT_OLD_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
+
+    private static final Logger log = LoggerFactory.getLogger(PermissionManagerImpl.class);
 
     @Autowired
     public PermissionManagerImpl(
             PluginAccessor pluginAccessor,
-            JsonConnectAddOnIdentifierService connectAddOnIdentifierService,
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
             PluginEventManager pluginEventManager,
             PermissionsReader permissionsReader,
             IsDevModeService isDevModeService,
             ApplicationProperties applicationProperties) throws IOException
     {
-        this(pluginAccessor, connectAddOnIdentifierService, permissionsReader, isDevModeService, applicationProperties,
+        this(pluginAccessor, jsonConnectAddOnIdentifierService, permissionsReader, isDevModeService, applicationProperties,
              new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
     }
 
     PermissionManagerImpl(
             PluginAccessor pluginAccessor,
-            ConnectAddOnIdentifierService connectAddOnIdentifierService,
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
             PermissionsReader permissionsReader,
             IsDevModeService isDevModeService,
             ApplicationProperties applicationProperties,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker) throws IOException
     {
         this.pluginAccessor = checkNotNull(pluginAccessor);
-        this.connectAddOnIdentifierService = checkNotNull(connectAddOnIdentifierService);
+        this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
         this.permissionsReader = checkNotNull(permissionsReader);
         this.isDevModeService = checkNotNull(isDevModeService);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
@@ -111,10 +115,19 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, UserKey user)
     {
-        return any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
+        boolean isInScopes = any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
+
+        // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
+        if (!isInScopes && isDevModeService.isDevMode() && jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey))
+        {
+            log.warn(String.format("Dev mode: allowing plugin '%s' to access '%s' for user '%s'", pluginKey, req.getRequestURI(), user.getStringValue()));
+            isInScopes = true;
+        }
+
+        return isInScopes;
     }
 
-    private Collection<AddOnScope> buildScopes(String applicationDisplayName) throws IOException
+    private static Collection<AddOnScope> buildScopes(String applicationDisplayName) throws IOException
     {
         if (StringUtils.isEmpty(applicationDisplayName))
         {
@@ -140,21 +153,24 @@ public final class PermissionManagerImpl implements PermissionManager
 
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String pluginKey)
     {
-        return connectAddOnIdentifierService.isConnectAddOn(pluginKey)
+        return jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey)
                 ? StaticAddOnScopes.dereference(allScopes, addImpliedScopesTo(getScopeReferences(pluginKey)))
-                : Iterables.concat(DEFAULT_OLD_API_SCOPES, getApiScopesForPermissions(getPermissionsForPlugin(pluginKey)));
+                : Iterables.concat(DEFAULT_OLD_API_SCOPES, getApiScopesForPermissions(getOldStylePermissionsForPlugin(pluginKey)));
     }
 
+    @Deprecated
     private Iterable<ApiScope> getApiScopesForPermissions(final Set<String> permissions)
     {
         return castToApiScopes(getApiScopesForPermissionsAsPermissions(permissions));
     }
 
+    @Deprecated
     private static Iterable<ApiScope> castToApiScopes(Iterable<Permission> permissions)
     {
         return transform(permissions, new CastPermissionApiScope());
     }
 
+    @Deprecated
     private Iterable<Permission> getApiScopesForPermissionsAsPermissions(Set<String> permissions)
     {
         return filter(permissionTracker.getModules(), Predicates.and(new IsApiScope(), new IsInPermissions(permissions)));
@@ -186,10 +202,11 @@ public final class PermissionManagerImpl implements PermissionManager
                 });
     }
 
-    private Set<String> getPermissionsForPlugin(String pluginKey)
+    @Deprecated
+    private Set<String> getOldStylePermissionsForPlugin(String pluginKey)
     {
         Set<String> permissions = Sets.newHashSet();
-        if (connectAddOnIdentifierService.isConnectAddOn(pluginKey) && isDevModeService.isDevMode())
+        if (jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey) && isDevModeService.isDevMode())
         {
             // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
             permissions.addAll(getPermissionKeys());
@@ -212,7 +229,7 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public void requirePermission(String pluginKey, String permissionKey) throws PermissionDeniedException
     {
-        if (!getPermissionsForPlugin(pluginKey).contains(permissionKey))
+        if (!getOldStylePermissionsForPlugin(pluginKey).contains(permissionKey))
         {
             throw new PermissionDeniedException(pluginKey,
                     format("Plugin '%s' requires a resource protected by '%s', but it did not request it.", pluginKey, permissionKey));
@@ -246,6 +263,7 @@ public final class PermissionManagerImpl implements PermissionManager
         }
     }
 
+    @Deprecated
     private static final class IsInPermissions implements Predicate<Permission>
     {
         private final Set<String> permissions;
@@ -262,6 +280,7 @@ public final class PermissionManagerImpl implements PermissionManager
         }
     }
 
+    @Deprecated
     private static final class CastPermissionApiScope implements Function<Permission, ApiScope>
     {
         @Override
