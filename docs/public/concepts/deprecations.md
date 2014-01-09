@@ -41,7 +41,7 @@ Atlassian Connect is replacing the OAuth 1.0 2LO implementation with JWT.
         <h5>Deprecated in</h5>
     </div>
     <div class="aui-item">
-        <span class="aui-lozenge">1.0-m26</span>
+        <span class="aui-lozenge">1.0-m25</span>
     </div>
 </div>
 <div class="aui-group">
@@ -73,7 +73,7 @@ Atlassian Connect will no longer provide a REST endpoint allowing add-ons to sen
         <h5>Deprecated in</h5>
     </div>
     <div class="aui-item">
-        <span class="aui-lozenge">1.0-m25</span>
+        <span class="aui-lozenge">1.0-m26</span>
     </div>
 </div>
 <div class="aui-group">
