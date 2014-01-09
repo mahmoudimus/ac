@@ -46,6 +46,10 @@
         },
         "licensing.html": {
             "title": "Licensing"
+        },
+        "deprecations.html": {
+            "title": "Deprecation Notices",
+            "new": true
         }
     },
     "rest-apis": {
