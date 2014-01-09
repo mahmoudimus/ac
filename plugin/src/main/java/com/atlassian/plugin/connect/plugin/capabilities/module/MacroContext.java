@@ -6,6 +6,7 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
@@ -20,7 +21,8 @@ public class MacroContext
     {
         Map<String, Object> ctx = newHashMap();
 
-        ctx.put("body", storageFormatBody);
+        ctx.put("macro.body", storageFormatBody);
+        ctx.put("macro.hash", DigestUtils.md5Hex(storageFormatBody));
         ctx.put("output.type", conversionContext.getOutputType());
 
         ContentEntityObject entity = conversionContext.getEntity();
