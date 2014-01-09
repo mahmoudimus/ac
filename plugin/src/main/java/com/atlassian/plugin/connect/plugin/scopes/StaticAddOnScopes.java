@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 import static com.google.common.collect.Collections2.transform;
@@ -51,7 +52,15 @@ public class StaticAddOnScopes
     static Collection<AddOnScope> buildFor(String product) throws IOException
     {
         Collection<AddOnScope> scopes = new ArrayList<AddOnScope>();
-        String rawJson = StreamUtil.getStringFromInputStream(StaticAddOnScopes.class.getResourceAsStream(resourceLocation(product)));
+        String scopesFileResourceName = resourceLocation(product);
+        InputStream inputStream = StaticAddOnScopes.class.getResourceAsStream(scopesFileResourceName);
+
+        if (null == inputStream)
+        {
+            throw new IOException(String.format("Static scopes resource does not exist: '%s'", scopesFileResourceName));
+        }
+
+        String rawJson = StreamUtil.getStringFromInputStream(inputStream);
         AddOnScopeBeans scopeBeans = new GsonBuilder().create().fromJson(rawJson, AddOnScopeBeans.class);
 
         for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
