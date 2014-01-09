@@ -15,13 +15,21 @@ import static com.google.common.collect.Maps.newHashMap;
 
 public class MacroContext
 {
+
+    /**
+     * Specifies how much of the body to allow in the GET request to a remote app.  If the body parameter is
+     * included in a URL, this values specifies how its truncated.
+     */
+    private final static int MAX_BODY_LENGTH = 128;
+
     private final Map<String, Object> contextParameters;
 
     public MacroContext(ConversionContext conversionContext, String storageFormatBody, UserProfile user)
     {
         Map<String, Object> ctx = newHashMap();
 
-        ctx.put("macro.body", storageFormatBody);
+        ctx.put("macro.body", StringUtils.left(storageFormatBody, MAX_BODY_LENGTH));
+        ctx.put("macro.truncated", storageFormatBody.length() > MAX_BODY_LENGTH);
         ctx.put("macro.hash", DigestUtils.md5Hex(storageFormatBody));
         ctx.put("output.type", conversionContext.getOutputType());
 
