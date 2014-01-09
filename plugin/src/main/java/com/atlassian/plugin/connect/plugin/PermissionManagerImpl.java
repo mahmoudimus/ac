@@ -67,28 +67,30 @@ public final class PermissionManagerImpl implements PermissionManager
     @Autowired
     public PermissionManagerImpl(
             PluginAccessor pluginAccessor,
-            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
             PluginEventManager pluginEventManager,
             PermissionsReader permissionsReader,
             IsDevModeService isDevModeService,
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
             ApplicationProperties applicationProperties) throws IOException
     {
-        this(pluginAccessor, jsonConnectAddOnIdentifierService, permissionsReader, isDevModeService, applicationProperties,
-             new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
+        this(pluginAccessor, permissionsReader, isDevModeService, jsonConnectAddOnIdentifierService,
+                new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
+                        pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class),
+                applicationProperties);
     }
 
     PermissionManagerImpl(
             PluginAccessor pluginAccessor,
-            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
             PermissionsReader permissionsReader,
             IsDevModeService isDevModeService,
-            ApplicationProperties applicationProperties,
-            PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker) throws IOException
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
+            PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker,
+            ApplicationProperties applicationProperties) throws IOException
     {
-        this.pluginAccessor = checkNotNull(pluginAccessor);
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
-        this.permissionsReader = checkNotNull(permissionsReader);
         this.isDevModeService = checkNotNull(isDevModeService);
+        this.pluginAccessor = checkNotNull(pluginAccessor);
+        this.permissionsReader = checkNotNull(permissionsReader);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
         this.allScopes = buildScopes(applicationProperties.getDisplayName());
     }
