@@ -156,6 +156,11 @@ for a full list of all supported modules.
 * The `<project-config-panel>` XML element no longer exists. Instead, use a [`webPanels`](../modules/jira/web-panel.html)
 module with the `location` attribute set to `webpanels.admin.summary.left-panels` or `webpanels.admin.summary.right-panels`.
 
+### Documentation Links
+
+* The `<param name="documentation.url">` XML element has been replaced by adding a [`links`](../modules/#links) module
+at the descriptor root.
+
 # OAuth
 <div class="aui-message warning">
     <span class="aui-icon icon-warning"></span>
