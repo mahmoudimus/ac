@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.security.KeyPair;
@@ -297,6 +299,7 @@ public class ConnectRunner
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
         {
             String json = ConnectModulesGsonFactory.getGson().toJson(addon);
+            response.setContentType(MediaType.APPLICATION_JSON);
             response.getWriter().write(json);
             response.getWriter().close();
         }
