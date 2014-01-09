@@ -153,7 +153,7 @@ for a full list of all supported modules.
 ### Project Config Tabs and Panels
 
 * The `<project-config-tab>` XML element has been replaced by the [`jiraProjectAdminTabPanels`](../modules/jira/project-admin-tab-panel.html) module.
-* The `<project-config-panel` XML element no longer exists. Instead, use a [`webPanels`](../modules/jira/web-panel.html)
+* The `<project-config-panel>` XML element no longer exists. Instead, use a [`webPanels`](../modules/jira/web-panel.html)
 module with the `location` attribute set to `webpanels.admin.summary.left-panels` or `webpanels.admin.summary.right-panels`.
 
 # OAuth
