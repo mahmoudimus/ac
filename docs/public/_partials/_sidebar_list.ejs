@@ -1,0 +1,12 @@
+<ul class="aui-nav">
+    <% for (var page in public._data[category]) { %>
+    <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
+    <li <%= selected %>>
+        <a href="<%= relDocRoot + category + '/' + page %>"><%= public._data[category][page].title %>
+        <% if (public._data[category][page].new) { %>
+            <span class="aui-lozenge aui-lozenge-success">new!</span>
+        <% } %>
+        </a>
+    </li>
+    <% } %>
+</ul>

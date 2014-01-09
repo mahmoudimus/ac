@@ -1,26 +1,12 @@
 <div class="aui-page-panel-nav">
     <nav class="aui-navgroup aui-navgroup-vertical">
         <div class="aui-navgroup-inner">
-            <ul class="aui-nav">
-                <% for (var page in public._data.guides) { %>
-                <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
-                <li <%= selected %>>
-                    <a href="<%= relDocRoot %>guides/<%= page %>"><%= public._data.guides[page].title %></a>
-                </li>
-                <% } %>
-            </ul>
+            <%- partial('_sidebar_list.ejs', { category: 'guides' }) %>
 
             <div class="aui-nav-heading">
                 <strong>Core Concepts</strong>
             </div>
-            <ul class="aui-nav">
-            <% for(var concept in public._data.concepts) { %>
-            <% var selected = concept.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
-            <li <%= selected %>>
-                <a href="<%= relDocRoot %>concepts/<%= concept %>"><%= public._data.concepts[concept].title %></a>
-            </li>
-            <% } %>
-            </ul>
+            <%- partial('_sidebar_list.ejs', { category: 'concepts' }) %>
 
             <div class="aui-nav-heading">
                 <a href="<%= relDocRoot %>modules/">AddOn Descriptor</a>
@@ -32,27 +18,9 @@
             <div class="aui-nav-heading">
                 <strong>Product APIs</strong>
             </div>
-            <ul class="aui-nav">
-                <% for(var resource in public._data["rest-apis"]) { %>
-                <% var selected = resource.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
-                <li <%= selected %>>
-                    <a href="<%= relDocRoot %>rest-apis/<%= resource %>"><%= public._data["rest-apis"][resource].title %></a>
-                </li>
-                <% } %>
-            </ul>
 
-            <div class="aui-nav-heading">
-                <strong>Resources</strong>
-            </div>
-            <ul class="aui-nav">
-                <% for(var resource in public._data.resources) { %>
-                <% var selected = resource.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
-                <li <%= selected %>>
-                    <a href="<%= relDocRoot %>resources/<%= resource %>"><%= public._data.resources[resource].title %></a>
-                </li>
-                <% } %>
-            </ul>
-
+            <%- partial('_sidebar_list.ejs', { category: 'rest-apis' }) %>
+            <%- partial('_sidebar_list.ejs', { category: 'resources' }) %>
         </div>
     </nav>
 </div>
