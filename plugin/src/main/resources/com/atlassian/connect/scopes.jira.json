@@ -1,3 +1,11 @@
 {
-    "scopes" : []
+    "scopes": [{
+        "key": "READ",
+        "restPaths": [{
+            "name": "api",
+            "basePaths": ["/user"],
+            "versions": ["2"],
+            "methods": ["get"]
+        }]
+    }]
 }
