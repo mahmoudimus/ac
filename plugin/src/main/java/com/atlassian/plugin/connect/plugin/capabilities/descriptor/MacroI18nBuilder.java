@@ -26,7 +26,7 @@ public class MacroI18nBuilder
     // {pluginKey}.{macroName}.label
     public MacroI18nBuilder addName(I18nProperty property)
     {
-        if (!StringUtils.isBlank(property.getValue()))
+        if (null != property && !StringUtils.isBlank(property.getValue()))
         {
             String key = String.format(MACRO_NAME_FORMAT, pluginKey, macroName);
             i18n.put(key, property.getValue());
@@ -37,7 +37,7 @@ public class MacroI18nBuilder
     // {pluginKey}.{macroName}.desc
     public MacroI18nBuilder addDescription(I18nProperty property)
     {
-        if (!StringUtils.isBlank(property.getValue()))
+        if (null != property && !StringUtils.isBlank(property.getValue()))
         {
             String key = String.format(MACRO_DESC_FORMAT, pluginKey, macroName);
             i18n.put(key, property.getValue());
@@ -48,7 +48,7 @@ public class MacroI18nBuilder
     // {pluginKey}.{macroName}.param.{paramName}.label
     public MacroI18nBuilder addParameterLabel(String parameterName, I18nProperty property)
     {
-        if (!StringUtils.isBlank(property.getValue()))
+        if (null != property && !StringUtils.isBlank(property.getValue()))
         {
             String key = String.format(PARAM_NAME_FORMAT, pluginKey, macroName, parameterName);
             i18n.put(key, property.getValue());
@@ -59,7 +59,7 @@ public class MacroI18nBuilder
     // {pluginKey}.{macroName}.param.{paramName}.desc
     public MacroI18nBuilder addParameterDescription(String parameterName, I18nProperty property)
     {
-        if (!StringUtils.isBlank(property.getValue()))
+        if (null != property && !StringUtils.isBlank(property.getValue()))
         {
             String key = String.format(PARAM_DESC_FORMAT, pluginKey, macroName, parameterName);
             i18n.put(key, property.getValue());
