@@ -148,7 +148,7 @@ for a full list of all supported modules.
 
 * The `<remote-macro>` XML element is replaced by the [`staticContentMacros`](../modules/confluence/static-content-macro.html) module
 * The `<macro-page>` XML element is replaced by the [`dynamicContentMacros`](../modules/confluence/dynamic-content-macro.html) module
-* The `<context-parameters>` XML element no longer exists. You can now use variable substitution to include macro parameters in the URL.
+* The `<context-parameters>` XML element no longer exists. You can now use [variable substitution](../concepts/context-parameters.html) to include macro parameters in the URL.
 
 ### Project Config Tabs and Panels
 
