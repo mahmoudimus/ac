@@ -169,7 +169,7 @@ at the descriptor root.
 
 If your add-on was created using the [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
 or [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) frameworks you can download
-the latest version for JSON descriptor and [JWT support](authentication.html).
+the latest version for JSON descriptor and [JWT support](../concepts/authentication.html).
 
 The `atlassian-connect.json` now contains an `authentication` section that can be used to specify your OAuth credentials
 as follows:
