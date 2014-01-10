@@ -3,7 +3,20 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.AdminPageModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DynamicContentMacroModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.EntityPropertyIndexDocumentModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ProfilePageModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.SearchRequestViewModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.StaticContentMacroModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider;
 import com.atlassian.plugin.spring.scanner.ProductFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -213,6 +226,13 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
     private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
 
+    /**
+     * The Entity Property module allows you to add selected properties to JIRA index.
+     * @schemaTitle Entity Property Index Document
+     */
+    @ConnectModule(value = EntityPropertyIndexDocumentModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<EntityPropertyIndexDocumentModuleBean> jiraEntityPropertyIndexDocuments;
+
     /////////////////////////////////////////////////////
     ///////    CONFLUENCE MODULES
     /////////////////////////////////////////////////////
@@ -252,6 +272,7 @@ public class ModuleList extends BaseModuleBean
         this.jiraSearchRequestViews = newArrayList();
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
+        this.jiraEntityPropertyIndexDocuments = newArrayList();
         this.profilePages = newArrayList();
         this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
@@ -310,6 +331,10 @@ public class ModuleList extends BaseModuleBean
         if (null == jiraWorkflowPostFunctions)
         {
             this.jiraWorkflowPostFunctions = newArrayList();
+        }
+        if (null == jiraEntityPropertyIndexDocuments)
+        {
+            this.jiraEntityPropertyIndexDocuments = newArrayList();
         }
         if (null == webhooks)
         {
@@ -372,6 +397,11 @@ public class ModuleList extends BaseModuleBean
     public List<WorkflowPostFunctionModuleBean> getJiraWorkflowPostFunctions()
     {
         return jiraWorkflowPostFunctions;
+    }
+
+    public List<EntityPropertyIndexDocumentModuleBean> getJiraEntityPropertyIndexDocuments()
+    {
+        return jiraEntityPropertyIndexDocuments;
     }
 
     public List<ConnectPageModuleBean> getGeneralPages()
@@ -443,6 +473,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraSearchRequestViews, other.jiraSearchRequestViews)
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
+                .append(jiraEntityPropertyIndexDocuments, other.jiraEntityPropertyIndexDocuments)
                 .append(profilePages, other.profilePages)
                 .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
@@ -468,6 +499,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraSearchRequestViews)
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
+                .append(jiraEntityPropertyIndexDocuments)
                 .append(profilePages)
                 .append(staticContentMacros)
                 .append(webhooks)
