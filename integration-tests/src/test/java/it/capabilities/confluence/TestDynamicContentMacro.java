@@ -4,11 +4,14 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
+import com.atlassian.confluence.pageobjects.component.editor.InsertMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroForm;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.MacroList;
@@ -33,14 +36,20 @@ import static org.junit.Assert.assertThat;
 public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
 {
     private static final String SIMPLE_MACRO_NAME = "Simple Macro";
-    private static final String SIMPLE_MACRO_ALIAS = "alias";
+    private static final String SIMPLE_MACRO_ALIAS = "unlikelytocollide";
 
     private static final String PARAMETER_MACRO_NAME = "Parameter Macro";
+    private static final String LONG_BODY_MACRO_NAME = "Long Body Macro";
+    private static final String SHORT_BODY_MACRO_NAME = "Short Body Macro";
+    private static final String FEATURED_MACRO_NAME = "Featured Macro";
 
     private static ConnectRunner remotePlugin;
 
     private static DynamicContentMacroModuleBean simpleMacro;
     private static DynamicContentMacroModuleBean parameterMacro;
+    private static DynamicContentMacroModuleBean longBodyMacro;
+    private static DynamicContentMacroModuleBean shortBodyMacro;
+    private static DynamicContentMacroModuleBean featuredMacro;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -98,8 +107,44 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
                 )
                 .build();
 
+        longBodyMacro = newDynamicContentMacroModuleBean()
+                .withUrl("/render-macro?hash={macro.hash}")
+                .withName(new I18nProperty(LONG_BODY_MACRO_NAME, ""))
+                .withBodyType(MacroBodyType.RICH_TEXT)
+                .withParameters(
+                        newMacroParameterBean()
+                                .withIdentifier("param1")
+                                .withName(new I18nProperty("Parameter", ""))
+                                .withType("enum")
+                                .withValues("A", "B")
+                                .build()
+                )
+                .build();
+
+        shortBodyMacro = newDynamicContentMacroModuleBean()
+                .withUrl("/render-macro")
+                .withName(new I18nProperty(SHORT_BODY_MACRO_NAME, ""))
+                .withBodyType(MacroBodyType.RICH_TEXT)
+                .build();
+
+        featuredMacro = newDynamicContentMacroModuleBean()
+                .withUrl("/render-macro")
+                .withName(new I18nProperty(FEATURED_MACRO_NAME, ""))
+                .withIcon(newIconBean()
+                        .withUrl("images/macro-icon.png")
+                        .build()
+                )
+                .withFeatured(true)
+                .build();
+
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapabilities("dynamicContentMacros", simpleMacro, parameterMacro)
+                .addCapabilities("dynamicContentMacros",
+                        simpleMacro,
+                        parameterMacro,
+                        longBodyMacro,
+                        shortBodyMacro,
+                        featuredMacro
+                )
                 .addRoute("/render-macro", ConnectAppServlets.helloWorldServlet())
                 .start();
 
@@ -111,6 +156,7 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
         product.getPageBinder().override(MacroBrowserDialog.class, ConfluenceMacroBrowserDialog.class);
         product.getPageBinder().override(EditorContent.class, ConfluenceEditorContent.class);
         product.getPageBinder().override(MacroForm.class, ConfluenceMacroForm.class);
+        product.getPageBinder().override(InsertMenu.class, ConfluenceInsertMenu.class);
     }
 
     @AfterClass
@@ -181,5 +227,13 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
         ));
     }
 
+    @Test
+    public void testFeaturedMacro() throws Exception
+    {
+        CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editorPage.openInsertMenu();
+
+        assertThat(insertMenu.hasEntryWithKey(featuredMacro.getKey()), is(true));
+    }
 
 }
