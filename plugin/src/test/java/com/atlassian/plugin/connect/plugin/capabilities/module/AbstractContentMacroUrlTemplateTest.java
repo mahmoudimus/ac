@@ -44,6 +44,7 @@ public abstract class AbstractContentMacroUrlTemplateTest<B extends BaseContentM
         return Arrays.asList(new Object[][]{
                 {"macro.hash", HASH},
                 {"macro.body", BODY},
+                {"macro.truncated", "false"},
                 {"page.type", PAGE_TYPE},
                 {"page.id", PAGE_ID},
                 {"page.title", PAGE_TITLE},
