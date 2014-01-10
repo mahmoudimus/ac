@@ -4,12 +4,17 @@
         _AP.require(["inline-dialog/simple"], function(simpleInlineDialog) {
 
             var INLINE_DIALOG_SELECTOR = '.aui-inline-dialog';
-            var MOCK_DIALOG_ID = 'foobar';
 
             module("Inline Dialog Simple", {
                 setup: function() {
-                    var inlineDialogMock = $("<div id='" + MOCK_DIALOG_ID + "'></div>");
-                    this.server = sinon.fakeServer.create();
+                    if (!_AP.create) {
+                        _AP.require(["host/main"], function(main) {
+                            _AP.create = main;
+                        });
+                        this.apCreateMock = true;
+                    }
+
+                    var inlineDialogMock = $("<div></div>");
                     AJS.contextPath = function() { return ""; };
                     $content = $('<div class="' + INLINE_DIALOG_SELECTOR + '"><div class="ap-content"></div></div>');
                     $('<div id="qunit-fixture">').append($content).appendTo('body');
@@ -22,7 +27,10 @@
                     .returns(inlineDialogMock);
                 },
                 teardown: function() {
-                    this.server.restore();
+                    //restore _AP.create to it's default state.
+                    if(this.apCreateMock){
+                        delete _AP.create;
+                    }
                     this.showPopupMock.reset();
                     AJS.InlineDialog = null;
                     $('#qunit-fixture').remove();
@@ -37,29 +45,12 @@
                 ok(AJS.InlineDialog.calledOnce);
             });
 
-            test("Inline dialog create launches an xhr", function() {
-                var href ="someurl";
-                var options = {};
-
-                this.server.respondWith("GET", href,
-                    [200, { "Content-Type": "text/html" }, 'This is the <span id="my-span">content</span>']);
-
-                simpleInlineDialog(href, options);
-                this.server.respond();
-
-                equal(href, this.server.requests[0].url);
-            });
-
             test("Inline dialog returns the inline dialog id", function() {
                 var href ="someurl";
                 var options = {};
 
-                this.server.respondWith("GET", href,
-                    [200, { "Content-Type": "text/html" }, 'This is the <span id="my-span">content</span>']);
-
                 var inlineDialog = simpleInlineDialog(href, options);
-                this.server.respond();
-                equal(MOCK_DIALOG_ID, inlineDialog.id);
+                ok(inlineDialog.id.length > 1);
             });
 
 

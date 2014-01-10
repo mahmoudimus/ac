@@ -9,6 +9,7 @@ import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutableApplicationLink;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
@@ -122,7 +123,7 @@ public class DefaultConnectApplinkManagerTest
     public void creatingAnAddOnWithJwtAuthenticationSetsTheSharedSecret()
     {
         MutableApplicationLink appLink = createAppLink();
-        verify(appLink).putProperty("atlassian.jwt.shared.secret", "signing key");
+        verify(appLink).putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, "signing key");
     }
 
     @Before

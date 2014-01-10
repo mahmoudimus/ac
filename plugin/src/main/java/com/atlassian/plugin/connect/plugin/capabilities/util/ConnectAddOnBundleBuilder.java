@@ -77,7 +77,7 @@ public class ConnectAddOnBundleBuilder
 
             newJar = updateManifestInJar(fileNamePrefix, tempJarFile, manifestMap);
     
-            FileUtils.forceDelete(tempJarFile);
+            FileUtils.deleteQuietly(tempJarFile);
         }
         catch (FileNotFoundException e)
         {
@@ -172,6 +172,7 @@ public class ConnectAddOnBundleBuilder
         // close
         jarZip.close();
         append.close();
+        bnd.close();
         
         return newJar;
     }
