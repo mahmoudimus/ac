@@ -46,7 +46,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     private static final String ADDON_DIRECT_WEBITEM = "ac-direct-to-addon-web-item";
     private static final String PRODUCT_WEBITEM = "quick-page-link";
     private static final String ABSOLUTE_WEBITEM = "google-link";
-    private static final String ABSOLUTE_WEBITEM_INLINE_DIALOG = "wikipedia-link";
+    private static final String ADDON_WEBITEM_INLINE_DIALOG = "wikipedia-link";
     private static final String SPACE = "ds";
 
     private static ConnectRunner remotePlugin;
@@ -87,10 +87,13 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 ).build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("wikipedia link", "ac.ild"))
-                                .withLocation("system.content.action")
+                                .withLocation("system.content.metadata")
                                 .withWeight(1)
                                 .withContext(AddOnUrlContext.addon)
                                 .withUrl("http://www.wikipedia.org")
+                                .withTarget(
+                                        newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build()
+                                )
                                 .build())
 
                 .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(BARNEY_USERNAME))
@@ -183,11 +186,11 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
 
     @Test
-    public void testAbsoluteWebItemInlineDialog() throws Exception
+    public void testAddonWebItemInlineDialog() throws Exception
     {
         loginAsAdmin();
 
-        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(ABSOLUTE_WEBITEM_INLINE_DIALOG);
+        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(ADDON_WEBITEM_INLINE_DIALOG);
         RemoteWebItem webItem = pageAndWebItem.right();
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
