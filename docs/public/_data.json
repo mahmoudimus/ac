@@ -41,8 +41,16 @@
         "development-loop.html": {
             "title": "Development Loop"
         },
+        "upgrades.html": {
+            "title": "Upgrades",
+            "new": true
+        },
         "licensing.html": {
             "title": "Licensing"
+        },
+        "deprecations.html": {
+            "title": "Deprecation Notices",
+            "new": true
         }
     },
     "rest-apis": {
