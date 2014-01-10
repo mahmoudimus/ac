@@ -31,7 +31,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * They appear without borders, making them look like a non-iframed fragment of the page
  * * For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content). To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. For example, using ACE:
  *
- *      <script src="{{hostScriptUrl}}" type="text/javascript" data-options="sizeToParent:true"></script>
+ *      `<script src="{{hostScriptUrl}}" type="text/javascript" data-options="sizeToParent:true"></script>`
  *
  *As implied here, for most page content modules, you do not need to be concerned with iframe sizing. It's all handled
  * for you. However, an exception exists for inline macros.
