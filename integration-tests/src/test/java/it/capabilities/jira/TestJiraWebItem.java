@@ -36,8 +36,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static final String PRODUCT_WEBITEM = "quick-project-link";
     private static final String ABSOLUTE_WEBITEM = "google-link";
     private static final String ABSOLUTE_WEBITEM_INLINE_DIALOG = "wikipedia-link";
-    private static final String ABSOLUTE_WEBITEM_INLINE_DIALOG_CONTENT = "ap-inline-dialog-content-1";
-
 
     private static ConnectRunner remotePlugin;
 
