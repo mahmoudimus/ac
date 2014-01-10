@@ -9,6 +9,9 @@ import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+
 public class MacroRequestParameters
 {
     public static class Builder
@@ -17,7 +20,7 @@ public class MacroRequestParameters
 
         public Builder()
         {
-            queryParameters = Maps.newHashMap();
+            queryParameters = newHashMap();
         }
 
         public Builder withMacroParameters(Map<String, String> map)
@@ -52,7 +55,7 @@ public class MacroRequestParameters
             List<String> list = queryParameters.get(key);
             if (null == list)
             {
-                list = Lists.newArrayList();
+                list = newArrayList();
                 queryParameters.put(key, list);
             }
             return list;

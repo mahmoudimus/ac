@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
+import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.spi.module.RemoteCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
@@ -19,7 +19,7 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.util.ConditionUtils.isRemoteCondition;
+import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 import static com.google.common.collect.Maps.newHashMap;
 
 @Component

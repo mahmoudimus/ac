@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.WebItemModuleBeanMatchers.hasUrlValue;
+import static com.atlassian.plugin.connect.modules.beans.matchers.WebItemModuleBeanMatchers.hasUrlValue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;

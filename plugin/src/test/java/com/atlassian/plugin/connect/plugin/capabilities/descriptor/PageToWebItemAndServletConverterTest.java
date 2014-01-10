@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SingleConditionBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
+import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
@@ -23,7 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertThat;

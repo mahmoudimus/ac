@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
+import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;

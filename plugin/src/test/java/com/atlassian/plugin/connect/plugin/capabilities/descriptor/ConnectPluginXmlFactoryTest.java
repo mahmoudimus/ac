@@ -3,9 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.dom4j.Document;

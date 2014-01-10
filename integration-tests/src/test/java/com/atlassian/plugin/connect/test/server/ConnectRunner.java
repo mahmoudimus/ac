@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.test.server;
 
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
@@ -35,9 +35,9 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
+import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -307,7 +307,7 @@ public class ConnectRunner
 
     private static class TestEnv implements Environment
     {
-        private Map<String, String> env = Maps.newHashMap();
+        private Map<String, String> env = newHashMap();
 
         @Override
         public String getEnv(String name)

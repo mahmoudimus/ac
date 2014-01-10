@@ -4,11 +4,12 @@ import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.Format;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFormat;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.uri.Uri;
 import org.slf4j.Logger;
@@ -53,7 +54,7 @@ public class StaticContentMacro extends AbstractContentMacro
                     .withURLParameters(uri.getQueryParameters())
                     .build();
 
-            return macroContentManager.getStaticContent(macroBean.getMethod().getMethod(), new URI(uri.getPath()),
+            return macroContentManager.getStaticContent(HttpMethod.valueOf(macroBean.getMethod().name()), new URI(uri.getPath()),
                     macroParameters.getSingleQueryParameters(), conversionContext, remotablePluginAccessor);
         }
         catch (Exception e)

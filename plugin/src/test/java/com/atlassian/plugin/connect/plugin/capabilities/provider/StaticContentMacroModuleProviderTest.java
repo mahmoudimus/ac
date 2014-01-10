@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.StaticContentMacroModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.StaticContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StaticContentMacroModuleProviderTest extends AbstractContentMacroModuleProviderTest<StaticContentMacroModuleProvider,
