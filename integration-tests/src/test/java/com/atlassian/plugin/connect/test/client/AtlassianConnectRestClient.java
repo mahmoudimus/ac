@@ -124,7 +124,7 @@ public final class AtlassianConnectRestClient
         return upmToken;
     }
 
-    public <T> T sendRequestAsUser(HttpRequest request, ResponseHandler<T> handler, String username, String passowrd) throws Exception
+    public <T> T sendRequestAsUser(HttpRequest request, ResponseHandler<T> handler, String username, String password) throws Exception
     {
         URI uri = new java.net.URI(baseUrl);
 
@@ -141,7 +141,7 @@ public final class AtlassianConnectRestClient
         BasicHttpContext localcontext = new BasicHttpContext();
         localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
 
-        return getDefaultHttpClient(username, passowrd).execute(targetHost, request, handler, localcontext);
+        return getDefaultHttpClient(username, password).execute(targetHost, request, handler, localcontext);
     }
 
     private DefaultHttpClient getDefaultHttpClient(String username, String password)
