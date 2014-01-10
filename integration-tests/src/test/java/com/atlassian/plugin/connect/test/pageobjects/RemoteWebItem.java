@@ -111,4 +111,25 @@ public class RemoteWebItem
     {
         return path;
     }
+
+    public boolean isInlineDialog()
+    {
+        if(null == webItem)
+        {
+            return false;
+        }
+        if(webItem.hasClass("ap-inline-dialog")){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isActiveInlineDialog()
+    {
+        if(isInlineDialog())
+        {
+            return webItem.hasClass("active");
+        }
+        return false;
+    }
 }
