@@ -34,7 +34,7 @@ public class ModuleKeyGenerator
      */
     public static String nameToKey(String name)
     {
-        return camelCaseOrSpaceToDashed(name);
+        return randomName(camelCaseOrSpaceToDashed(name));
     }
 
     /**
@@ -46,7 +46,7 @@ public class ModuleKeyGenerator
      */
     public static String nameToKey(String prefix, String name)
     {
-        return camelCaseOrSpaceToDashed(prefix) + "-" + camelCaseOrSpaceToDashed(name);
+        return randomName(camelCaseOrSpaceToDashed(prefix) + "-" + camelCaseOrSpaceToDashed(name));
     }
 
     public static String camelCaseOrSpaceToDashed(String s)
