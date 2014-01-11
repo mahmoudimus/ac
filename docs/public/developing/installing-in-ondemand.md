@@ -1,11 +1,13 @@
-# Private Listings
+# Installing in OnDemand
 
 The [Getting Started](/guides/getting-started.html) tutorial describes how to test an Atlassian Connect add-on in a local environment. If you followed it, you ran the Atlassian application on a local machine and installed the add-on manually through a developer mode feature in the Atlassian application. The next phase in your testing should be to test the add-on in the context of a live OnDemand instance.
 
-To do so, you need to create a private Atlassian Marketplace listing. A Marketplace listing is necessary whether you intend to make the add-on publicly available or just use it internally. This is because OnDemand applications only accept add-ons that are installed through the Marketplace.
+To do so, you need to create a Private Listing for your add-on on the Atlassian Marketplace. A Marketplace listing is
+necessary whether you intend to make the add-on publicly available or just use it internally. This is because
+OnDemand applications only accept add-ons that are installed through the Marketplace.
 
 ## Before starting
-To create a listing, you'll need a Marketplace user account that's associated with a vendor. You can create a new profile for a vendor when creating the listing, or have your account added to an existing vendor profile by someone already associated with that profile. To get an account on the Marketplace, sign up here. 
+To create a listing, you'll need a Marketplace user account that's associated with a vendor. You can create a new profile for a vendor when creating the listing, or have your account added to an existing vendor profile by someone already associated with that profile. To get an account on the Marketplace, sign up [here](https://id.atlassian.com/profile/signUp.action?application=mpac&continue=https://marketplace.atlassian.com/).
 
 Also, before starting, you will need to have your add-on descriptor file on hand. When creating the listing, the Marketplace form asks you to upload the file from a directory location.
 

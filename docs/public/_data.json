@@ -8,12 +8,21 @@
         },
         "getting-started.html": {
             "title": "Getting Started"
+        }
+    },
+    "developing": {
+        "development-loop.html": {
+            "title": "Local Development"
         },
-        "private-listings.html": {
-            "title": "Private Listings"
+        "installing-in-ondemand.html": {
+            "title": "Installing in OnDemand"
         },
         "selling-on-marketplace.html": {
             "title": "Selling on Marketplace"
+        },
+        "upgrades.html": {
+            "title": "Upgrading your Add-on",
+            "new": true
         }
     },
     "concepts": {
@@ -34,16 +43,6 @@
         },
         "styling-with-aui.html": {
             "title": "Styling Add-ons with AUI"
-        },
-        "addon-installation-full.html": {
-            "title": "Installing an Add-on"
-        },
-        "development-loop.html": {
-            "title": "Development Loop"
-        },
-        "upgrades.html": {
-            "title": "Upgrades",
-            "new": true
         },
         "licensing.html": {
             "title": "Licensing"
