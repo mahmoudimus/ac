@@ -16,7 +16,7 @@ With your Marketplace account set up and add-on descriptor on hand, create the A
 
 1. Log in to the [Atlassian Marketplace](https://marketplace.atlassian.com/).
 2. Click the **Manage Add-ons** link.
-3. Click **Create new add-on**
+3. Click **Create new add-on**.
 4. Choose a vendor or, if you don't have a vendor profile yet, click **Create new vendor** to configure a new vendor profile for your add-on.
 5. Choose **Private** as the add-on visibility option. If you intend to use the add-on for internal-use only, it can remain private for the life of the listing. If you choose to make the listing public later, you can.
 6. Click **Upload add-on file**.
