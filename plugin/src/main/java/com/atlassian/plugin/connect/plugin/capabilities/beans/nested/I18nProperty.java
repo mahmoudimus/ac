@@ -5,7 +5,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Represents a string that can be resolved via a localization properties file.
+ * Represents a string that can be resolved via a localization properties file. You can use the same `i18n Property` key
+ * and value in multiple places if you like, but identical keys must have identical values.
  *
  *#### Example
  *

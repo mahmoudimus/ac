@@ -319,7 +319,7 @@ function startHarpServerAndWatchSrcFiles() {
     }
 
     // debounce to prevent multiple rapid saves from kicking off multiple rebuilds
-    restartHarpServer = _.debounce(restartHarpServer, 2000);
+    restartHarpServer = _.debounce(restartHarpServer, 1000);
 
     harpServer = startHarpServer();
 
