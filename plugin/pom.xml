@@ -729,6 +729,7 @@
                         </goals>
                         <configuration>
                             <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
+                            <sourcepath>src/main/java:../modules/src/main/java</sourcepath>
                         </configuration>
                     </execution>
                     <execution>
