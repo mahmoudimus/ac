@@ -18,7 +18,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `generalPages` - have no extra styling and by default a link to the page is displayed in the main navigation menu.
  * * `adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.
  * * `profilePages` - (__Confluence only__) displayed as sections inside user profiles. Like admin pages, they appear with all the necessary components around them (such as menus).
-
+ * * `configurePage` - used to configure the addon itself. A link to the page is displayed in the add-on's entry in
+ * _Manage Add-ons_. Unlike the other page modules, an add-on may only define a single `configurePage`.
+ *
  * <!-- ## Seamless iframes -->
  *
  *The content for a page module is injected into the Atlassian application in the form of a "seamless" iframe.
@@ -29,7 +31,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * They appear without borders, making them look like a non-iframed fragment of the page
  * * For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content). To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. For example, using ACE:
  *
- *      <script src="{{hostScriptUrl}}" type="text/javascript" data-options="sizeToParent:true"></script>
+ *      `<script src="{{hostScriptUrl}}" type="text/javascript" data-options="sizeToParent:true"></script>`
  *
  *As implied here, for most page content modules, you do not need to be concerned with iframe sizing. It's all handled
  * for you. However, an exception exists for inline macros.

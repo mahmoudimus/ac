@@ -16,6 +16,7 @@ h2 Properties
 
 div.ac-properties
     - each prop in module.properties
+        a(id = prop.key)
         h3
             code
                 = prop.key
