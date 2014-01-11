@@ -14,6 +14,7 @@ public class ModuleKeyGenerator
 {
     private static final SecureRandom random = new SecureRandom();
     public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<>_]";
+    public static final String MODULE_KEY_PREFIX = "acm-";
 
     /**
      * Generates a key using the given prefix and a random number.
@@ -23,7 +24,7 @@ public class ModuleKeyGenerator
      */
     public static String generateKey(String prefix)
     {
-        return randomName(camelCaseOrSpaceToDashed(prefix) + "-");
+        return randomName(MODULE_KEY_PREFIX);
     }
 
     /**
@@ -34,7 +35,7 @@ public class ModuleKeyGenerator
      */
     public static String nameToKey(String name)
     {
-        return randomName(camelCaseOrSpaceToDashed(name));
+        return randomName(MODULE_KEY_PREFIX);
     }
 
     /**
@@ -46,7 +47,7 @@ public class ModuleKeyGenerator
      */
     public static String nameToKey(String prefix, String name)
     {
-        return randomName(camelCaseOrSpaceToDashed(prefix) + "-" + camelCaseOrSpaceToDashed(name));
+        return randomName(MODULE_KEY_PREFIX);
     }
 
     public static String camelCaseOrSpaceToDashed(String s)
