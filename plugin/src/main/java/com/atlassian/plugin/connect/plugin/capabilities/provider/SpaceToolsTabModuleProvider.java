@@ -38,7 +38,9 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
     public static final String SPACE_ADMIN_SECTION = "system.space.admin";
     @VisibleForTesting
     public static final String DEFAULT_LOCATION = "addons";
-
+    @VisibleForTesting
+    public static final String LEGACY_LOCATION = "spaceops";    // All legacy web items go in this location.
+    @VisibleForTesting
     public static final String SPACE_ADMIN_KEY_SUFFIX = "-legacy-space-admin";
 
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
@@ -89,7 +91,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
                     .withName(bean.getName())
                     .withKey(spaceAdminLegacyKey)
                     .withUrl(url)
-                    .withLocation(SPACE_ADMIN_SECTION + "/spaceops")
+                    .withLocation(SPACE_ADMIN_SECTION + "/" + LEGACY_LOCATION)
                     .withWeight(weight)
                     .withConditions(conditions)
                     .withConditions(newSingleConditionBean()

@@ -18,9 +18,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
+import java.util.List;
+
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,11 +60,21 @@ public class SpaceToolsTabModuleProviderTest
 
         provider.provideModules(plugin, bundleContext, "spaceTools", ImmutableList.of(bean));
 
-        WebItemModuleBean webItemBean = captureWebItemBean();
-        assertEquals("Test Module", webItemBean.getName().getValue());
-        assertEquals("test-module", webItemBean.getKey());
-        assertEquals(666, webItemBean.getWeight());
-        assertEquals(SpaceToolsTabModuleProvider.SPACE_TOOLS_SECTION + "/test-location", webItemBean.getLocation());
+        WebItemBeans webItems = captureWebItemBeans();
+
+        // Space Tools web item
+        assertEquals("Test Module", webItems.spaceTools.getName().getValue());
+        assertEquals("test-module", webItems.spaceTools.getKey());
+        assertEquals(666, webItems.spaceTools.getWeight());
+        assertEquals(SpaceToolsTabModuleProvider.SPACE_TOOLS_SECTION + "/test-location", webItems.spaceTools.getLocation());
+
+        // Space Admin web item
+        assertEquals("Test Module", webItems.spaceAdmin.getName().getValue());
+        assertEquals("test-module" + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX, webItems.spaceAdmin.getKey());
+        assertEquals(666, webItems.spaceAdmin.getWeight());
+        // Space Admin should *always* be in the LEGACY_LOCATION, regardless of any specific location specified by the
+        // Space Tab Module bean.
+        assertEquals(SpaceToolsTabModuleProvider.SPACE_ADMIN_SECTION + "/" + SpaceToolsTabModuleProvider.LEGACY_LOCATION, webItems.spaceAdmin.getLocation());
     }
 
     @Test
@@ -69,8 +82,10 @@ public class SpaceToolsTabModuleProviderTest
     {
         provider.provideModules(plugin, bundleContext, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
 
-        WebItemModuleBean webItemBean = captureWebItemBean();
-        assertEquals(SpaceToolsActionDescriptorFactory.NAMESPACE_PREFIX + "my-plugin/test-module.action?key=${space.key}", webItemBean.getUrl());
+        WebItemBeans webItems = captureWebItemBeans();
+        String expectedUrl = SpaceToolsActionDescriptorFactory.NAMESPACE_PREFIX + "my-plugin/test-module.action?key=${space.key}";
+        assertEquals(expectedUrl, webItems.spaceTools.getUrl());
+        assertEquals(expectedUrl, webItems.spaceAdmin.getUrl());
     }
 
     @Test
@@ -79,17 +94,19 @@ public class SpaceToolsTabModuleProviderTest
         when(productAccessor.getPreferredGeneralWeight()).thenReturn(666);
         provider.provideModules(plugin, bundleContext, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
 
-        WebItemModuleBean webItemBean = captureWebItemBean();
-        assertEquals(666, webItemBean.getWeight());
+        WebItemBeans webItems = captureWebItemBeans();
+        assertEquals(666, webItems.spaceTools.getWeight());
+        assertEquals(666, webItems.spaceAdmin.getWeight());
     }
 
     @Test
-    public void testWebItemDefaultLocation()
+    public void testSpaceToolsWebItemDefaultLocation()
     {
         provider.provideModules(plugin, bundleContext, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
 
-        WebItemModuleBean webItemBean = captureWebItemBean();
-        assertEquals(SpaceToolsTabModuleProvider.SPACE_TOOLS_SECTION + "/" + SpaceToolsTabModuleProvider.DEFAULT_LOCATION, webItemBean.getLocation());
+        WebItemBeans webItems = captureWebItemBeans();
+        assertEquals(SpaceToolsTabModuleProvider.SPACE_TOOLS_SECTION + "/" + SpaceToolsTabModuleProvider.DEFAULT_LOCATION, webItems.spaceTools.getLocation());
+        assertEquals(SpaceToolsTabModuleProvider.SPACE_ADMIN_SECTION + "/" + SpaceToolsTabModuleProvider.LEGACY_LOCATION, webItems.spaceAdmin.getLocation());
     }
 
     @Test
@@ -97,13 +114,24 @@ public class SpaceToolsTabModuleProviderTest
     {
         provider.provideModules(plugin, bundleContext, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
 
-        verify(spaceToolsActionDescriptorFactory).create(plugin, "test-module", "Test Module", "/test.destination");
+        verify(spaceToolsActionDescriptorFactory).create(plugin, "test-module", "test-module" + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX, "Test Module", "/test.destination");
     }
 
-    private WebItemModuleBean captureWebItemBean()
+    private WebItemBeans captureWebItemBeans()
     {
         ArgumentCaptor<WebItemModuleBean> captor = ArgumentCaptor.forClass(WebItemModuleBean.class);
-        verify(webItemModuleDescriptorFactory).createModuleDescriptor(eq(plugin), eq(bundleContext), captor.capture());
-        return captor.getValue();
+        verify(webItemModuleDescriptorFactory, times(2)).createModuleDescriptor(eq(plugin), eq(bundleContext), captor.capture());
+        List<WebItemModuleBean> beans = captor.getAllValues();
+        return new WebItemBeans(beans.remove(0), beans.remove(0));
+    }
+
+    private class WebItemBeans {
+        WebItemModuleBean spaceTools;
+        WebItemModuleBean spaceAdmin;
+
+        private WebItemBeans(WebItemModuleBean spaceTools, WebItemModuleBean spaceAdmin) {
+            this.spaceTools = spaceTools;
+            this.spaceAdmin = spaceAdmin;
+        }
     }
 }

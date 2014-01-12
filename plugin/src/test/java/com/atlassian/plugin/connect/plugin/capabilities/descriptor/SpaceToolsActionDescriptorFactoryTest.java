@@ -28,7 +28,7 @@ public class SpaceToolsActionDescriptorFactoryTest
     @Test
     public void testCreate()
     {
-        SpaceToolsActionDescriptor descriptor = factory.create(plugin, "test-module", "Test Module", "/test-module");
+        SpaceToolsActionDescriptor descriptor = factory.create(plugin, "test-module", "test-module-legacy", "Test Module", "/test-module");
 
         assertEquals("action-test-module", descriptor.getKey());
     }
