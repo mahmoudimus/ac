@@ -25,12 +25,12 @@ public class SpaceToolsActionDescriptorFactory
         this.eventPublisher = eventPublisher;
     }
 
-    public SpaceToolsActionDescriptor create(Plugin plugin, String key, String title, String remoteUrl)
+    public SpaceToolsActionDescriptor create(Plugin plugin, String spaceToolsWebItemKey, String spaceAdminWebItemKey, String title, String remoteUrl)
     {
         PageInfo pageInfo = new PageInfo(GeneralPageModuleProvider.GENERAL_PAGE_DECORATOR, "", title, null, Collections.EMPTY_MAP);
-        SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(plugin, remoteUrl, key, pageInfo);
-        String moduleKey = "action-" + key;
+        SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(plugin, remoteUrl, spaceToolsWebItemKey, spaceAdminWebItemKey, pageInfo);
+        String moduleKey = "action-" + spaceToolsWebItemKey;
         String namespace = NAMESPACE_PREFIX + plugin.getKey();
-        return new SpaceToolsActionDescriptor(eventPublisher, plugin, moduleKey, spaceTabContext, namespace, key);
+        return new SpaceToolsActionDescriptor(eventPublisher, plugin, moduleKey, spaceTabContext, namespace, spaceToolsWebItemKey);
     }
 }

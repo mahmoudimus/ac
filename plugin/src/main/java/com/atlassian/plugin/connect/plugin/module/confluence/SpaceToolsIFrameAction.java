@@ -28,9 +28,14 @@ public class SpaceToolsIFrameAction extends SpaceAdminAction
         return this.context;
     }
 
-    public String getSelectedWebItemKey()
+    public String getSpaceAdminWebItemKey()
     {
-        return this.context.getWebItemKey();
+        return this.context.getSpaceAdminWebItemKey();
+    }
+
+    public String getSpaceToolsWebItemKey()
+    {
+        return this.context.getSpaceToolsWebItemKey();
     }
 
     public void setiFrameRenderer(IFrameRenderer iFrameRenderer)

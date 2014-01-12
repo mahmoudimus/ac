@@ -9,20 +9,26 @@ public class SpaceToolsTabContext
 {
     private final Plugin plugin;
     private final String url;
-    private final String webItemKey;
+    private final String spaceToolsWebItemKey;
+    private final String spaceAdminWebItemKey;
     private final PageInfo pageInfo;
 
-    public SpaceToolsTabContext(Plugin plugin, String url, String webItemKey, PageInfo pageInfo)
+    public SpaceToolsTabContext(Plugin plugin, String url, String spaceToolsWebItemKey, String spaceAdminWebItemKey, PageInfo pageInfo)
     {
         this.plugin = plugin;
         this.url = url;
-        this.webItemKey = webItemKey;
+        this.spaceToolsWebItemKey = spaceToolsWebItemKey;
+        this.spaceAdminWebItemKey = spaceAdminWebItemKey;
         this.pageInfo = pageInfo;
     }
 
-    public String getWebItemKey()
+    public String getSpaceToolsWebItemKey()
     {
-        return webItemKey;
+        return spaceToolsWebItemKey;
+    }
+
+    public String getSpaceAdminWebItemKey() {
+        return spaceAdminWebItemKey;
     }
 
     public Plugin getPlugin()

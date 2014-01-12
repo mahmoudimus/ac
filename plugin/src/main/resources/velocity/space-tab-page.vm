@@ -12,10 +12,10 @@
 
     #applyDecorator ("root")
             #decoratorParam ("context" "spaceadminpanel")
-            #decoratorParam ("selection" $selectedWebItemKey)
+            #decoratorParam ("selection" $spaceAdminWebItemKey)
             #decoratorParam ("title" $spaceTabInfo.pageInfo.title)
             #decoratorParam ("selectedTab" "admin")
-            #decoratorParam ("selectedSpaceToolsWebItem" $selectedWebItemKey)
+            #decoratorParam ("selectedSpaceToolsWebItem" $spaceToolsWebItemKey)
             #decoratorParam("helper" $action.helper)
 
             $iframeHtml
