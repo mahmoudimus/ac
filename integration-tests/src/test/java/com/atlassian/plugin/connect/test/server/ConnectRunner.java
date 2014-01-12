@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.server;
 
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
@@ -31,7 +32,9 @@ import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
@@ -54,6 +57,7 @@ public class ConnectRunner
     private final AtlassianConnectRestClient installer;
     private final ConnectAddonBeanBuilder addonBuilder;
     private final String pluginKey;
+    private final Set<ScopeName> scopes = new HashSet<ScopeName>();
     private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
     
@@ -200,6 +204,12 @@ public class ConnectRunner
         return this;
     }
 
+    public ConnectRunner addScope(ScopeName scopeName)
+    {
+        scopes.add(scopeName);
+        return this;
+    }
+
     public SignedRequestHandler getSignedRequestHandler()
     {
         return signedRequestHandler;
@@ -232,6 +242,7 @@ public class ConnectRunner
         final String displayUrl = "http://localhost:" + port;
 
         addonBuilder.withBaseurl(displayUrl);
+        addonBuilder.withScopes(scopes);
 
         this.addon = addonBuilder.build();
 
