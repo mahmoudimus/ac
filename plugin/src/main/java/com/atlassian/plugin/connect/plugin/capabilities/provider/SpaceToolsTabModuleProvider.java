@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SpaceToolsActionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -17,14 +17,14 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Confluence "Space Tools" tabs are modelled as a web-item and an x-work action.
  */
 @Component
-public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<ConnectPageCapabilityBean>
+public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<ConnectPageModuleBean>
 {
     @VisibleForTesting
     public static final String SPACE_TOOLS_SECTION = "system.space.tools";
@@ -44,10 +44,10 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<ConnectPageCapabilityBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<ConnectPageModuleBean> beans)
     {
         List<ModuleDescriptor> modules = Lists.newArrayList();
-        for (ConnectPageCapabilityBean bean : beans)
+        for (ConnectPageModuleBean bean : beans)
         {
             String key = bean.getKey();
 
@@ -55,15 +55,15 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
             String location = isNullOrEmpty(bean.getLocation()) ? DEFAULT_LOCATION : bean.getLocation();
 
             String url = SpaceToolsActionDescriptorFactory.NAMESPACE_PREFIX + plugin.getKey() + "/" + key + ".action?key=${space.key}";
-            WebItemCapabilityBean webItemCapabilityBean = newWebItemBean()
+            WebItemModuleBean webItemModuleBean = newWebItemBean()
                 .withName(bean.getName())
                 .withKey(bean.getKey())
-                .withLink(url)
+                .withUrl(url)
                 .withLocation(SPACE_TOOLS_SECTION + "/" + location)
                 .withWeight(weight)
                 .build();
 
-            modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemCapabilityBean));
+            modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemModuleBean));
             modules.add(this.spaceTabActionDescriptorFactory.create(plugin, key, bean.getDisplayName(), bean.getUrl()));
         }
         return modules;
