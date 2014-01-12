@@ -14,7 +14,7 @@ public class AddOnScopeApiPathBuilder
     {
         for (String basePath : restPathBean.getBasePaths())
         {
-            restResources.add(new RestApiScopeHelper.RestScope(restPathBean.getName(), restPathBean.getVersions(), basePath, restPathBean.getMethods()));
+            restResources.add(new RestApiScopeHelper.RestScope(restPathBean.getName(), restPathBean.getVersions(), basePath, restPathBean.getMethods(), true));
         }
 
         return this;

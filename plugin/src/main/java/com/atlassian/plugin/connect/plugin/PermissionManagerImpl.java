@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifi
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
@@ -18,7 +19,6 @@ import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -71,12 +71,12 @@ public final class PermissionManagerImpl implements PermissionManager
             PermissionsReader permissionsReader,
             IsDevModeService isDevModeService,
             JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
-            ApplicationProperties applicationProperties) throws IOException
+            ScopeService scopeService) throws IOException
     {
         this(pluginAccessor, permissionsReader, isDevModeService, jsonConnectAddOnIdentifierService,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class),
-                applicationProperties);
+                scopeService);
     }
 
     PermissionManagerImpl(
@@ -85,14 +85,14 @@ public final class PermissionManagerImpl implements PermissionManager
             IsDevModeService isDevModeService,
             JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker,
-            ApplicationProperties applicationProperties) throws IOException
+            ScopeService scopeService) throws IOException
     {
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
         this.isDevModeService = checkNotNull(isDevModeService);
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.permissionsReader = checkNotNull(permissionsReader);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
-        this.allScopes = buildScopes(applicationProperties.getDisplayName());
+        this.allScopes = scopeService.build();
     }
 
     @Override

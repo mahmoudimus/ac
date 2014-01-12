@@ -24,6 +24,22 @@ public class AddOnScopeBean
         private Collection<String> versions; // set by gson
         private Collection<String> methods; // set by gson
 
+        public RestPathBean()
+        {
+            this.name = null;
+            this.basePaths = null;
+            this.versions = null;
+            this.methods = null;
+        }
+
+        public RestPathBean(String name, Collection<String> basePaths, Collection<String> versions, Collection<String> methods)
+        {
+            this.name = name;
+            this.basePaths = basePaths;
+            this.versions = versions;
+            this.methods = methods;
+        }
+
         public String getName()
         {
             return name;

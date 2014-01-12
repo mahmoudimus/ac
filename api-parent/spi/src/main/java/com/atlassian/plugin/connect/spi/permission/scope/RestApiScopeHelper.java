@@ -84,13 +84,20 @@ public final class RestApiScopeHelper
         private final Collection<String> versions;
         private final String basePath;
         private final Collection<String> methods;
+        private final boolean pathIsRegex;
 
         public RestScope(String name, Collection<String> versions, String basePath, Collection<String> methods)
+        {
+            this(name, versions, basePath, methods, false);
+        }
+
+        public RestScope(String name, Collection<String> versions, String basePath, Collection<String> methods, boolean pathIsRegex)
         {
             this.name = name;
             this.versions = new ArrayList<String>(Collections2.transform(versions, LOWERCASE_TRANSFORM)); // TransformedCollection.equals() is broken
             this.basePath = basePath;
             this.methods = new ArrayList<String>(Collections2.transform(methods, LOWERCASE_TRANSFORM));
+            this.pathIsRegex = pathIsRegex;
         }
 
         public String getName()
@@ -102,7 +109,7 @@ public final class RestApiScopeHelper
         {
             return this.name.equalsIgnoreCase(name) &&
                     this.versions.contains(version) &&
-                    path.startsWith(basePath) &&
+                    (pathIsRegex ? path.matches(basePath) : path.startsWith(basePath)) &&
                     this.methods.contains(method);
         }
 
@@ -141,6 +148,7 @@ public final class RestApiScopeHelper
                     .append(versions, restScope.versions)
                     .append(basePath, restScope.basePath)
                     .append(methods, restScope.methods)
+                    .append(pathIsRegex, restScope.pathIsRegex)
                     .isEquals();
         }
 
@@ -152,6 +160,7 @@ public final class RestApiScopeHelper
                     .append(versions)
                     .append(basePath)
                     .append(methods)
+                    .append(pathIsRegex)
                     .toHashCode();
         }
 
@@ -163,6 +172,7 @@ public final class RestApiScopeHelper
                     .append(versions)
                     .append(basePath)
                     .append(methods)
+                    .append(pathIsRegex)
                     .toString();
         }
     }
