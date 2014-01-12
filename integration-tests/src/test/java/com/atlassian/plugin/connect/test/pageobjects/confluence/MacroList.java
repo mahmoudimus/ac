@@ -12,6 +12,6 @@ public class MacroList
     public boolean hasEntryWithKey(String macroKey)
     {
         PageElement macroEntry = macroList.find(By.className("autocomplete-macro-" + macroKey));
-        return macroEntry.isPresent();
+        return macroEntry.isVisible();
     }
 }
