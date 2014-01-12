@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -20,13 +20,11 @@ import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.WebItemCapabilityBeanMatchers.hasUrlValue;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.WebItemModuleBeanMatchers.hasUrlValue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,8 +41,8 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
 
     protected Plugin plugin = new PluginForTests(PLUGIN_KEY, "pluginName");
 
-    private List<ConnectPageCapabilityBean> beans = ImmutableList.of(
-            ConnectPageCapabilityBean.newPageBean().build()
+    private List<ConnectPageModuleBean> beans = ImmutableList.of(
+            ConnectPageModuleBean.newPageBean().build()
     );
 
     @Before
@@ -52,7 +50,7 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     {
         moduleProvider = createPageModuleProvider();
         when(webItemModuleDescriptorFactory.createModuleDescriptor(any(Plugin.class), any(BundleContext.class),
-                any(WebItemCapabilityBean.class))).thenReturn(mock(WebItemModuleDescriptor.class));
+                any(WebItemModuleBean.class))).thenReturn(mock(WebItemModuleDescriptor.class));
         when(servletDescriptorFactory.createIFrameServletDescriptor(any(Plugin.class), any(IFrameServletBean.class)))
                 .thenReturn(mock(ServletModuleDescriptor.class));
     }
@@ -63,14 +61,14 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     public void callsWebItemModuleDescriptorFactoryWithProvidedPlugin()
     {
         verify(webItemModuleDescriptorFactory()).createModuleDescriptor(eq(plugin), any(BundleContext.class),
-                any(WebItemCapabilityBean.class));
+                any(WebItemModuleBean.class));
     }
 
     @Test
     public void callsWebItemModuleDescriptorFactoryWithProvidedBundleContext()
     {
         verify(webItemModuleDescriptorFactory()).createModuleDescriptor(any(Plugin.class), eq(bundleContext),
-                any(WebItemCapabilityBean.class));
+                any(WebItemModuleBean.class));
     }
 
     // establishes that the key of the plugin was used in the construction of the url

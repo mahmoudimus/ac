@@ -1,9 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import java.util.Map;
-
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.UrlTemplate;
@@ -13,7 +12,10 @@ import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import java.util.Map;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
@@ -22,12 +24,12 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public class PageToWebItemAndServletConverter
 {
-    private final WebItemCapabilityBean webItemBean;
+    private final WebItemModuleBean webItemBean;
     private final IFrameServletBean servletBean;
     private final static Condition DEFAULT_CONDITION = new AlwaysDisplayCondition();
 
 
-    public PageToWebItemAndServletConverter(ConnectPageCapabilityBean pageBean, String pluginKey,
+    public PageToWebItemAndServletConverter(ConnectPageModuleBean pageBean, String pluginKey,
                                             int defaultWeight, String defaultSection, String decorator,
                                             String templateSuffix, Map<String, String> metaTagsContent,
                                             Condition condition, IFrameParams iFrameParams)
@@ -35,18 +37,18 @@ public class PageToWebItemAndServletConverter
         AddonUrlTemplatePair urlTemplatePair = createUrlTemplatePair(pageBean, pluginKey);
 
         // TODO: In ACDEV-498 push the url template into RemoteWebLink
-        webItemBean = createWebItemCapabilityBean(pageBean, urlTemplatePair.getHostUrlPaths().getHostUrlTemplate(),
+        webItemBean = createWebItemModuleBean(pageBean, urlTemplatePair.getHostUrlPaths().getHostUrlTemplate(),
                 defaultWeight, defaultSection);
         servletBean = createServletBean(pageBean, urlTemplatePair, decorator, templateSuffix, metaTagsContent,
                 condition, iFrameParams);
     }
 
-    private AddonUrlTemplatePair createUrlTemplatePair(ConnectPageCapabilityBean pageBean, String pluginKey)
+    private AddonUrlTemplatePair createUrlTemplatePair(ConnectPageModuleBean pageBean, String pluginKey)
     {
         return new AddonUrlTemplatePair(pageBean.getUrl(), pluginKey);
     }
 
-    private WebItemCapabilityBean createWebItemCapabilityBean(ConnectPageCapabilityBean bean, UrlTemplate hostUrlTemplate,
+    private WebItemModuleBean createWebItemModuleBean(ConnectPageModuleBean bean, UrlTemplate hostUrlTemplate,
             int defaultWeight, String defaultSection)
     {
         Integer weight = bean.getWeight() == null ? defaultWeight : bean.getWeight();
@@ -55,7 +57,8 @@ public class PageToWebItemAndServletConverter
         return newWebItemBean()
                 .withName(bean.getName())
                 .withKey(bean.getKey())
-                .withLink(hostUrlTemplate.getTemplateString())
+                .withContext(product) // Note the reason this is not 'addon' AddonUrlTemplatePair encapsulates the knowledge about the relationship of the host wrapping url to the addon url
+                .withUrl(hostUrlTemplate.getTemplateString())
                 .withLocation(location)
                 .withWeight(weight)
                 .withIcon(bean.getIcon())
@@ -63,7 +66,7 @@ public class PageToWebItemAndServletConverter
                 .build();
     }
 
-    private IFrameServletBean createServletBean(ConnectPageCapabilityBean pageBean, AddonUrlTemplatePair urlTemplatePair,
+    private IFrameServletBean createServletBean(ConnectPageModuleBean pageBean, AddonUrlTemplatePair urlTemplatePair,
                                                 String decorator, String templateSuffix, Map<String, String> metaTagsContent,
                                                 Condition condition, IFrameParams iFrameParams)
     {
@@ -74,7 +77,7 @@ public class PageToWebItemAndServletConverter
                 iFrameParams == null ? new IFrameParamsImpl() : iFrameParams);
     }
 
-    public WebItemCapabilityBean getWebItemBean()
+    public WebItemModuleBean getWebItemBean()
     {
         return webItemBean;
     }

@@ -1,45 +1,43 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ModuleList;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.AutowireWithConnectPluginDecorator;
+import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.sal.api.ApplicationProperties;
-
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookCapabilityBean.newWebHookBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookModuleBean.newWebHookBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedListWithType;
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -74,10 +72,10 @@ public class BeanToModuleRegistrar
         BeanTransformContext ctx = new BeanTransformContext(connectAutowiringPlugin, addonBundleContext, ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase()));
 
         //we MUST add in the lifecycle webhooks first
-        CapabilityList capabilityList = getCapabilitiesWithLifecycleWebhooks(addon);
+        ModuleList moduleList = getCapabilitiesWithLifecycleWebhooks(addon);
         
-        //now process the capability fields
-        processFields(capabilityList, ctx, descriptorsToRegister);
+        //now process the module fields
+        processFields(moduleList, ctx, descriptorsToRegister);
 
 
         if (!descriptorsToRegister.isEmpty())
@@ -86,7 +84,7 @@ public class BeanToModuleRegistrar
         }
     }
 
-    private CapabilityList getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
+    private ModuleList getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
     {
         LifecycleBean lifecycle = addon.getLifecycle();
         ConnectAddonBeanBuilder builder = newConnectAddonBean(addon);
@@ -94,44 +92,45 @@ public class BeanToModuleRegistrar
         if(!Strings.isNullOrEmpty(lifecycle.getEnabled()))
         {
             //add webhook
-            builder.withCapability(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
+            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
         }
         if(!Strings.isNullOrEmpty(lifecycle.getDisabled()))
         {
             //add webhook
-            builder.withCapability(WEBHOOKS_FIELD,newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
+            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
         }
         if(!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
         {
             //add webhook
-            builder.withCapability(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
+            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
         }
         
-        return builder.build().getCapabilities();
+        return builder.build().getModules();
     }
 
-    private void processFields(CapabilityList capabilityList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
+    private void processFields(ModuleList moduleList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
     {
-        for (Field field : capabilityList.getClass().getDeclaredFields())
+        for (Field field : moduleList.getClass().getDeclaredFields())
         {
-            if (field.isAnnotationPresent(CapabilityModuleProvider.class))
+            if (field.isAnnotationPresent(ConnectModule.class))
             {
                 try
                 {
-                    CapabilityModuleProvider anno = field.getAnnotation(CapabilityModuleProvider.class);
+                    ConnectModule anno = field.getAnnotation(ConnectModule.class);
                     field.setAccessible(true);
 
                     Type fieldType = field.getGenericType();
 
-                    List<? extends CapabilityBean> beanList;
+                    List<? extends ModuleBean> beanList;
 
-                    if (isParameterizedListWithType(fieldType, CapabilityBean.class))
+                    if (isParameterizedListWithType(fieldType, ModuleBean.class))
                     {
-                        beanList = (List<? extends CapabilityBean>) field.get(capabilityList);
+                        beanList = (List<? extends ModuleBean>) field.get(moduleList);
                     }
                     else
                     {
-                        beanList = (List<? extends CapabilityBean>) newArrayList((CapabilityBean) field.get(capabilityList));
+                        ModuleBean moduleBean = (ModuleBean) field.get(moduleList);
+                        beanList = moduleBean == null ? ImmutableList.<ModuleBean>of() : newArrayList(moduleBean);
                     }
 
                     descriptorsToRegister.addAll(getDescriptors(ctx, field.getName(), anno, beanList));
@@ -145,7 +144,7 @@ public class BeanToModuleRegistrar
     }
 
 
-    private List<DescriptorToRegister> getDescriptors(BeanTransformContext ctx, String jsonFieldName, CapabilityModuleProvider providerAnnotation, List<? extends CapabilityBean> beans)
+    private List<DescriptorToRegister> getDescriptors(BeanTransformContext ctx, String jsonFieldName, ConnectModule providerAnnotation, List<? extends ModuleBean> beans)
     {
         List<ProductFilter> products = Arrays.asList(providerAnnotation.products());
         if (products.contains(ProductFilter.ALL) || (null != ctx.getAppFilter() && products.contains(ctx.getAppFilter())))

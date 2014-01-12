@@ -1,20 +1,21 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
-
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedList;
 
 /**
  * @since 1.0
  */
-public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extends ConnectAddonBean> extends BaseCapabilityBeanBuilder<T, B>
+@SuppressWarnings ({ "unchecked", "UnusedDeclaration" })
+public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extends ConnectAddonBean> extends BaseModuleBeanBuilder<T, B>
 {
     private String key;
     private String name;
@@ -22,7 +23,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private String description;
     private VendorBean vendor;
     private Map<String, String> links;
-    private CapabilityList capabilities;
+    private ModuleList modules;
     private LifecycleBean lifecycle;
     private String baseUrl;
     private AuthenticationBean authentication;
@@ -40,7 +41,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.description = defaultBean.getDescription();
         this.vendor = defaultBean.getVendor();
         this.links = defaultBean.getLinks();
-        this.capabilities = defaultBean.getCapabilities();
+        this.modules = defaultBean.getModules();
         this.lifecycle = defaultBean.getLifecycle();
         this.baseUrl = defaultBean.getBaseUrl();
         this.authentication = defaultBean.getAuthentication();
@@ -77,23 +78,23 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         return (T) this;
     }
 
-    public T withCapabilities(String fieldName, CapabilityBean... beans)
+    public T withModules(String fieldName, ModuleBean... beans)
     {
-        for (CapabilityBean bean : beans)
+        for (ModuleBean bean : beans)
         {
-            withCapability(fieldName, bean);
+            withModule(fieldName, bean);
         }
         return (T) this;
     }
 
-    public T withCapability(String fieldName, CapabilityBean bean)
+    public T withModule(String fieldName, ModuleBean bean)
     {
-        if (null == capabilities)
+        if (null == modules)
         {
-            this.capabilities = new CapabilityList();
+            this.modules = new ModuleList();
         }
 
-        addBeanReflectivelyByType(fieldName, capabilities, bean);
+        addBeanReflectivelyByType(fieldName, modules, bean);
 
         return (T) this;
     }
@@ -129,7 +130,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         return (T) this;
     }
     
-    private void addBeanReflectivelyByType(String fieldName, CapabilityList capabilities, CapabilityBean bean)
+    private void addBeanReflectivelyByType(String fieldName, ModuleList capabilities, ModuleBean bean)
     {
         Class beanClass = bean.getClass();
         try
@@ -155,11 +156,11 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         }
         catch (IllegalAccessException e)
         {
-            throw new RuntimeException("Unable to access capability field for bean of type: " + bean.getClass(),e);
+            throw new RuntimeException("Unable to access module field for bean of type: " + bean.getClass(),e);
         }
         catch (NoSuchFieldException e)
         {
-            throw new RuntimeException("Unable to find capability field '" + fieldName + "' for bean of type: " + bean.getClass());
+            throw new RuntimeException("Unable to find module field '" + fieldName + "' for bean of type: " + bean.getClass());
         }
     }
 

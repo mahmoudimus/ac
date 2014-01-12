@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.capabilities.CheckUsernameConditionServlet;
 import it.servlet.ConnectAppServlets;
 
@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean.newWebPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 
 /**
@@ -64,26 +64,26 @@ public class AppRunner
 //                    .start();
 
 
-            ConnectCapabilitiesRunner remotePlugin = new ConnectCapabilitiesRunner(JIRA,"my-plugin")
+            ConnectRunner remotePlugin = new ConnectRunner(JIRA,"my-plugin")
                     .addCapabilities("webItems",
                             newWebItemBean()
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
-                                .withLink("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}")
+                                .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
                                 .build(),
                             newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
                                 .withName(new I18nProperty("Quick project link", "ac.qp"))
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
-                                .withLink("/browse/ACDEV-1234")
+                                .withUrl("/browse/ACDEV-1234")
                                 .build(),
                             newWebItemBean()
                                 .withName(new I18nProperty("google link", "ac.gl"))
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
-                                .withLink("http://www.google.com")
+                                .withUrl("http://www.google.com")
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build(),
                                         newSingleConditionBean().withCondition("/onlyBettyCondition").build()
@@ -109,12 +109,12 @@ public class AppRunner
                     .addCapabilities("generalPages",
                             newPageBean()
                                     .withName(new I18nProperty("My Awesome Page", "my.awesome.page"))
-                                    .withUrl("/pg?page_id=${page.id}")
+                                    .withUrl("/pg?page_id={page.id}")
                                     .withWeight(1234)
                                     .build(),
                             newPageBean()
                                     .withName(new I18nProperty("Another Awesome Page", "another.awesome.page"))
-                                    .withUrl("/pg?page_id=${page.id}")
+                                    .withUrl("/pg?page_id={page.id}")
                                     .withWeight(1234)
                                     .build())
                     .addCapabilities("adminPages",
@@ -129,7 +129,7 @@ public class AppRunner
                                     .withWeight(1234)
                                     .build())
                     .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet("betty"))
-                    .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}",
+                    .addRoute("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}",
                             ConnectAppServlets.helloWorldServlet())
                     .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                     .start();

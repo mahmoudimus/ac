@@ -1,16 +1,31 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseCapabilityBean;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.VendorBeanBuilder;
-
 import com.google.common.base.Objects;
 
 /**
+ * Gives basic information about the plugin vendor
+ *
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#VENDOR_EXAMPLE}
+ * @schemaTitle Plugin Vendor
  * @since 1.0
  */
-public class VendorBean extends BaseCapabilityBean
+public class VendorBean extends BaseModuleBean
 {
+    /**
+     * The name of the plugin vendor.
+     * Supply your name or the name of the company you work for.
+     */
     private String name;
+
+    /**
+     * The url for the vendor's website
+     */
+    @StringSchemaAttributes(format = "uri")
     private String url;
 
     public VendorBean()
@@ -22,12 +37,12 @@ public class VendorBean extends BaseCapabilityBean
     public VendorBean(VendorBeanBuilder builder)
     {
         super(builder);
-        
+
         if(null == name)
         {
             this.name = "";
         }
-        
+
         if(null == url)
         {
             this.url = "";
@@ -43,7 +58,7 @@ public class VendorBean extends BaseCapabilityBean
     {
         return url;
     }
-    
+
     public static VendorBeanBuilder newVendorBean()
     {
         return new VendorBeanBuilder();

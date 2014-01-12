@@ -1,35 +1,36 @@
 package it.capabilities.jira;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean.newWebPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean.newWebPanelBean;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 
 public class TestWebPanel extends JiraWebDriverTestBase
 {
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
 
     private RemoteWebPanel webPanel;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
-                .addCapability("webPanels", newWebPanelBean()
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
+                .addModule("webPanels", newWebPanelBean()
                         .withName(new I18nProperty("HipChat Discussions", "hipchat.discussions"))
-                        .withUrl("http://www.google.com")
-                                .withLocation("com.atlassian.jira.plugin.headernav.left.context")
+                        // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
+                        .withUrl("/myWebPanelPage?issueId{issue.id}")
+                        .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                         .withLayout(new WebPanelLayout("100%", "200px"))
                         .withWeight(1234)
                         .build()).start();
@@ -61,6 +62,6 @@ public class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void urlIsCorrect()
     {
-        assertThat(webPanel.getIFrameSourceUrl(), startsWith("http://www.google.com")); // will end with the plugin's displayUrl and auth parameters
+        assertThat(webPanel.getIFrameSourceUrl(), startsWith(remotePlugin.getAddon().getBaseUrl() + "/myWebPanelPage"));
     }
 }

@@ -1,18 +1,18 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionType;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * @since 1.0
  */
-public class CompositeConditionBeanBuilder extends BaseCapabilityBeanBuilder<CompositeConditionBeanBuilder,CompositeConditionBean>
+public class CompositeConditionBeanBuilder extends BaseModuleBeanBuilder<CompositeConditionBeanBuilder,CompositeConditionBean>
 {
     private List<ConditionalBean> conditions;
     private CompositeConditionType type;

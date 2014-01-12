@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.NameToKeyBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 
 /**
  * @since 1.0
  */
-public class NameToKeyBeanBuilder<T extends NameToKeyBeanBuilder, B extends NameToKeyBean> extends BaseCapabilityBeanBuilder<T,B>
+public class NameToKeyBeanBuilder<T extends NameToKeyBeanBuilder, B extends NameToKeyBean> extends BaseModuleBeanBuilder<T,B>
 {
     private String key;
     private I18nProperty name;

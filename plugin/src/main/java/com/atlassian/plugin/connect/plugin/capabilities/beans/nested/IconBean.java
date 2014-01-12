@@ -1,10 +1,20 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.util.CapabilityBeanUtils.copyFieldsByNameAndType;
+import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleBeanUtils.copyFieldsByNameAndType;
 
 /**
+ * Defines an icon to display
+ *
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ICON_EXAMPLE}
+ * @schemaTitle Icon
  * @since 1.0
  */
 public class IconBean
@@ -17,17 +27,20 @@ public class IconBean
      * The height in pixels of the icon image.
      */
     private int height;
+
     /**
      * The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the
      * URL as an absolute URL or relative to the add-on's base URL.
      */
+    @Required
+    @StringSchemaAttributes(format = "uri")
     private String url;
 
     public IconBean()
     {
-        this.width = width;
-        this.height = height;
-        this.url = url;
+        this.width = 16;
+        this.height = 16;
+        this.url = "";
     }
 
     public IconBean(IconBeanBuilder builder)
@@ -65,4 +78,35 @@ public class IconBean
         return new IconBeanBuilder(defaultBean);
     }
 
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof IconBean))
+        {
+            return false;
+        }
+
+        IconBean other = (IconBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(width, other.width)
+                .append(height, other.height)
+                .append(url, other.url)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(53, 11)
+                .append(width)
+                .append(height)
+                .append(url)
+                .build();
+    }
 }

@@ -1,5 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
+/**
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PANEL_LAYOUT_EXAMPLE}
+ * @schemaTitle Web Panel Layout
+ * @since 1.0
+ */
 public class WebPanelLayout
 {
     private final String width;

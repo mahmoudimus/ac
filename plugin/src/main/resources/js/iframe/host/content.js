@@ -30,7 +30,10 @@ _AP.define("host/content", ["_dollar"], function ($) {
             event.preventDefault();
             var $el = $(event.target);
             var href = $el.closest("a").attr("href");
-            var options = {bindTo: $el};
+            var options = {
+                bindTo: $el,
+                header: $el.text()
+            };
             var re = /[?&](width|height)=([^&]+)/g, match;
             while (match = re.exec(href)) {
                 options[match[1]] = decodeURIComponent(match[2]);

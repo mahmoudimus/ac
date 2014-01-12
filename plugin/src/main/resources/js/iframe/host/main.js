@@ -1,12 +1,13 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc, addons) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper"], function ($, XdmRpc, addons, statusHelper) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
       events = (AJS.EventQueue = AJS.EventQueue || []),
-      defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); };
+      defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); },
+      log = (window.AJS && window.AJS.log) || (window.console && window.console.log) || (function() {});
 
   function contentDiv(ns) {
     return $("#embedded-" + ns);
@@ -36,16 +37,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
       events.push({name: name, properties: props});
     }
 
-    function showStatus() {
-      $home.find(".ap-status").addClass("hidden");
-    }
-
     var timeout = setTimeout(function () {
       timeout = null;
-      showStatus("load-timeout");
+      statusHelper.showloadTimeoutStatus($home);
       var $timeout = $home.find(".ap-load-timeout");
       $timeout.find("a.ap-btn-cancel").click(function () {
-        showStatus("load-error");
+        statusHelper.showLoadErrorStatus($home);
         $nexus.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
       });
       layoutIfNeeded();
@@ -86,7 +83,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
             preventTimeout();
             $content.addClass("iframe-init");
             var elapsed = new Date().getTime() - start;
-            showStatus("loaded");
+            statusHelper.showLoadedStatus($home);
             layoutIfNeeded();
             $nexus.trigger("ra.iframe.init");
             publish("plugin.iframeinited", {elapsed: elapsed});
@@ -148,7 +145,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
             // @todo adding #aui-message-bar only works for the view-issue page for now
             $.html("div").attr("id", "aui-message-bar").prependTo("#details-module");
           }
-          $(".aui-message#" + id).remove();
+          this.clearMessage(id);
           AJS.messages.info({
             title: title,
             body: "<p>" + $("<div/>").text(body).html() + "<p>",
@@ -157,7 +154,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
           });
         },
         clearMessage: function (id) {
-          $(".aui-message#" + id).remove();
+          var selector = $(".aui-message#" + id).first();
+          if(selector.length === 1 && selector.hasClass("aui-message")){
+            selector.remove();
+          } else {
+            log("Unable to clear message");
+          }
         },
         setDialogButtonEnabled: function (name, enabled) {
           var button = getDialogButton(name);
@@ -220,7 +222,19 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
         },
         // !!! JIRA specific !!!
         getWorkflowConfiguration: function (uuid, callback) {
-          callback($("#remoteWorkflowPostFunctionConfiguration-"+uuid).val());
+          if(!/^[\w|-]+$/.test(uuid)){
+            throw new Error("Invalid workflow ID");
+          }
+          var value,
+          selector = $("#remoteWorkflowPostFunctionConfiguration-"+uuid)[0];
+
+          // if the matching selector has an id that starts with the correct string
+          if(selector && selector.id.match(/remoteWorkflowPostFunctionConfiguration\-/).length === 1){
+            value = $(selector).val();
+          } else {
+            throw ("Workflow configuration not found");
+          }
+          callback(value);
         },
         // !!! Confluence specific !!!
         saveMacro: function(updatedParams) {
@@ -235,6 +249,8 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
         }
       }
     });
+
+    statusHelper.showLoadingStatus($home);
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);

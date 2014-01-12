@@ -1,26 +1,23 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readCapabilitiesTestFile;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @since 1.0
@@ -30,9 +27,9 @@ public class ConnectConditionMarshallingTest
     @Test
     public void verifyDeserializationWorks() throws Exception
     {
-        String json = readCapabilitiesTestFile("conditionMarshalling.json");
+        String json = readAddonTestFile("conditionMarshalling.json");
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGson();
         Type listType = new TypeToken<List<ConditionalBean>>() {}.getType();
 
         List<ConditionalBean> conditionList = gson.fromJson(json, listType);
@@ -71,7 +68,7 @@ public class ConnectConditionMarshallingTest
                         .build()
         );
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(conditionList, conditionalType);
 
         assertEquals(expected, json);

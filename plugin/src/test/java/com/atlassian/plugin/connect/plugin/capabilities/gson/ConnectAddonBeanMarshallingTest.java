@@ -1,20 +1,18 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
-
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.google.gson.Gson;
-
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readCapabilitiesTestFile;
+import java.util.List;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Tests the basic marshalling of capability beans
+ * Tests the basic marshalling of module beans
  * <p/>
  * This is the only place where we should actually have to test the marshalling as the adapter factory handles everything.
  * This is also the only class that should be using hard-coded json strings.
@@ -29,9 +27,9 @@ public class ConnectAddonBeanMarshallingTest
     @Test
     public void verifyAddonValues() throws Exception
     {
-        String json = readCapabilitiesTestFile("addonNoCapabilities.json");
+        String json = readAddonTestFile("addonNoCapabilities.json");
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGson();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
         assertEquals("My Plugin", addOn.getName());
@@ -52,9 +50,9 @@ public class ConnectAddonBeanMarshallingTest
     @Test
     public void verifyExtraValuesAreIgnored() throws Exception
     {
-        String json = readCapabilitiesTestFile("addonExtraValue.json");
+        String json = readAddonTestFile("addonExtraValue.json");
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGson();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
         assertEquals("My Plugin", addOn.getName());
@@ -75,50 +73,50 @@ public class ConnectAddonBeanMarshallingTest
     @Test
     public void noCapabilitiesReturnsEmptyList() throws Exception
     {
-        String json = readCapabilitiesTestFile("addonNoCapabilities.json");
+        String json = readAddonTestFile("addonNoCapabilities.json");
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGson();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
-        assertNotNull(addOn.getCapabilities());
+        assertNotNull(addOn.getModules());
     }
 
     /**
-     * Tests that a capability whose value is an object gets transformed into a list of one
+     * Tests that a module whose value is an object gets transformed into a list of one
      *
      * @throws Exception
      */
     @Test
-    public void singleCapability() throws Exception
+    public void singleModule() throws Exception
     {
-        String json = readCapabilitiesTestFile("addonSingleCapability.json");
+        String json = readAddonTestFile("addonSingleCapability.json");
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGson();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
-        List<WebItemCapabilityBean> moduleList = addOn.getCapabilities().getWebItems();
+        List<WebItemModuleBean> moduleList = addOn.getModules().getWebItems();
 
         assertEquals(1, moduleList.size());
 
-        WebItemCapabilityBean module = moduleList.get(0);
+        WebItemModuleBean module = moduleList.get(0);
 
         assertEquals("a web item", module.getName().getValue());
     }
 
     /**
-     * Verifies that multiple capability entries with mixed object / array values is marshalled properly
+     * Verifies that multiple module entries with mixed object / array values is marshalled properly
      *
      * @throws Exception
      */
     @Test
     public void multiCapabilities() throws Exception
     {
-        String json = readCapabilitiesTestFile("addonMultipleCapabilities.json");
+        String json = readAddonTestFile("addonMultipleCapabilities.json");
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGson();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
-        List<WebItemCapabilityBean> moduleList = addOn.getCapabilities().getWebItems();
+        List<WebItemModuleBean> moduleList = addOn.getModules().getWebItems();
 
         assertEquals(2, moduleList.size());
         assertEquals("a web item", moduleList.get(0).getName().getValue());

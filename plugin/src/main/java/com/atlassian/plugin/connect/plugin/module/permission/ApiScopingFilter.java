@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.permission;
 
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
@@ -28,7 +29,7 @@ public class ApiScopingFilter implements Filter
     /**
      * Set by {@link OAuth2LOAuthenticator}, indicating the Connect add-on that is the origin of the current request.
      */
-    public static final String PLUGIN_KEY = "Plugin-Key";
+    public static final String PLUGIN_KEY = JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME;
 
     /**
      * Request header set by /iframe/host/main.js, indicating that the current request is an XDM request. The value

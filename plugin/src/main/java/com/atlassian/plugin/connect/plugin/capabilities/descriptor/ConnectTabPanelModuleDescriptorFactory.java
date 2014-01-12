@@ -2,10 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
-
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class ConnectTabPanelModuleDescriptorFactory
         this.connectAutowireUtil = connectAutowireUtil;
     }
 
-    public ModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, ConnectTabPanelCapabilityBean bean, TabPanelDescriptorHints hints)
+    public ModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
     {
         DOMElement element = new DOMElement(hints.getDomElementName());
         
@@ -63,7 +62,7 @@ public class ConnectTabPanelModuleDescriptorFactory
         }
 
         ModuleDescriptor descriptor = connectAutowireUtil.createBean(hints.getDescriptorClass());
-        descriptor.init(plugin,element);
+        descriptor.init(plugin, element);
         
         return descriptor;
     }

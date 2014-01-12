@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin;
 
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.util.MapFunctions;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -33,10 +34,10 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     private static final Logger log = LoggerFactory.getLogger(DefaultRemotablePluginAccessorBase.class);
     private static final char QUERY_PARAM_SEPARATOR = '&';
 
-    protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
+    protected DefaultRemotablePluginAccessorBase(Plugin plugin, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
     {
-        this.pluginKey = pluginKey;
-        this.pluginName = pluginName;
+        this.pluginKey = plugin.getKey();
+        this.pluginName = plugin.getName();
         this.baseUrlSupplier = baseUrlSupplier;
         this.httpContentRetriever = httpContentRetriever;
     }
@@ -81,13 +82,21 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
 
     protected URI getTargetUrl(URI targetPath)
     {
-        UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetPath));
-        String path = uriBuilder.getPath();
+        if (targetPath.isAbsolute())
+        {
+            throw new IllegalArgumentException("Target url was absolute (" + targetPath.toString() + "). Expected relative path to base URL of add-on (" + getBaseUrl().toString() + ").");
+        }
+
+        String path = targetPath.getRawPath();
         if (!StringUtils.startsWith(path, "/"))
         {
             path = "/" + path;
         }
-        uriBuilder.setPath(getBaseUrl().toString() + path);
+
+        UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(getBaseUrl()));
+        uriBuilder.setPath(uriBuilder.getPath() + path);
+        uriBuilder.setQuery(targetPath.getRawQuery());
+
         return uriBuilder.toUri().toJavaUri();
     }
 
@@ -111,7 +120,7 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
                     {
                         throw new IllegalArgumentException(String.format("targetPath and params arguments both contain a parameter called '%s'. " +
                                 "This is ambiguous (which takes precedence? is it a mistake?). Please supply this parameters in one or the other. targetPath = '%s', params['%s'] = [%s]",
-                                nameValuePair.getName(), targetPath.getQuery(), StringUtils.join(params.get(nameValuePair.getName()), ',')));
+                                nameValuePair.getName(), targetPath.getQuery(), nameValuePair.getName(), StringUtils.join(params.get(nameValuePair.getName()), ',')));
                     }
                 }
                 else

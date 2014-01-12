@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.spi.module;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -13,15 +9,16 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.base.Function;
-
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
@@ -46,10 +43,10 @@ public final class RemoteCondition implements Condition
     private static final Logger log = LoggerFactory.getLogger(RemoteCondition.class);
 
     public RemoteCondition(ProductAccessor productAccessor,
-                           RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                           BigPipeManager bigPipeManager,
-                           UserManager userManager,
-                           TemplateRenderer templateRenderer)
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            BigPipeManager bigPipeManager,
+            UserManager userManager,
+            TemplateRenderer templateRenderer)
     {
         this.productAccessor = productAccessor;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
@@ -78,45 +75,45 @@ public final class RemoteCondition implements Condition
     public boolean shouldDisplay(Map<String, Object> context)
     {
         return remotablePluginAccessorFactory.get(pluginKey)
-                                                                        .executeAsync(HttpMethod.GET, url, getParameters(context), Collections.<String, String>emptyMap())
-                                                                        .fold(
-                                                                                new Function<Throwable, Boolean>()
-                                                                                {
-                                                                                    @Override
-                                                                                    public Boolean apply(Throwable t)
-                                                                                    {
-                                                                                        log.warn("Unable to retrieve remote condition from plugin {}: {}", pluginKey, t);
-                                                                                        t.printStackTrace();
-                                                                                        //return "<script>AJS.log('Unable to retrieve remote condition from plugin \'" + pluginKey + "\'');</script>";
-                                                                                        return false;
-                                                                                    }
-                                                                                },
-                                                                                new Function<String, Boolean>()
-                                                                                {
-                                                                                    @Override
-                                                                                    public Boolean apply(String value)
-                                                                                    {
-                                                                                        try
-                                                                                        {
-                                                                                            JSONObject obj = (JSONObject) JSONValue.parseWithException(value);
+                .executeAsync(HttpMethod.GET, url, getParameters(context), Collections.<String, String>emptyMap())
+                .fold(
+                        new Function<Throwable, Boolean>()
+                        {
+                            @Override
+                            public Boolean apply(Throwable t)
+                            {
+                                log.warn("Unable to retrieve remote condition from plugin {}: {}", pluginKey, t);
+                                t.printStackTrace();
+                                //return "<script>AJS.log('Unable to retrieve remote condition from plugin \'" + pluginKey + "\'');</script>";
+                                return false;
+                            }
+                        },
+                        new Function<String, Boolean>()
+                        {
+                            @Override
+                            public Boolean apply(String value)
+                            {
+                                try
+                                {
+                                    JSONObject obj = (JSONObject) JSONValue.parseWithException(value);
 //                                                                                            if ((Boolean) obj.get("shouldDisplay"))
 //                                                                                            {
 //                                                                                                return "<script>AJS.$(\"" + toHideSelector + "\").removeClass('hidden').parent().removeClass('hidden');</script>";
 //                                                                                            }
-                                                                                            return (Boolean) obj.get("shouldDisplay");
-                                                                                        }
-                                                                                        catch (ParseException e)
-                                                                                        {
-                                                                                            log.warn("Invalid JSON returned from remote condition: " + value);
-                                                                                            return false;
-                                                                                        }
-                                                                                        
-                                                                                    }
-                                                                                }
-                                                                        ).claim();
+                                    return (Boolean) obj.get("shouldDisplay");
+                                }
+                                catch (ParseException e)
+                                {
+                                    log.warn("Invalid JSON returned from remote condition: " + value);
+                                    return false;
+                                }
+
+                            }
+                        }
+                ).claim();
 
 //        bigPipeManager.getBigPipe().getScriptChannel().promiseContent(responsePromise);
-        
+
         // always return true as the link will be disabled by default via the 'hidden' class
     }
 
@@ -128,7 +125,8 @@ public final class RemoteCondition implements Condition
             params.put(contextParam, templateRenderer.renderFragment(productAccessor.getLinkContextParams().get(contextParam), context));
         }
         UserProfile remoteUser = userManager.getRemoteUser();
-        if (remoteUser != null) {
+        if (remoteUser != null)
+        {
             params.put("user_id", remoteUser.getUsername());
             params.put("user_key", remoteUser.getUserKey().getStringValue());
         }

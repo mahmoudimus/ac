@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import it.capabilities.CheckUsernameConditionServlet;
 import it.confluence.ConfluenceWebDriverTestBase;
@@ -21,12 +21,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.assertURIEquals;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -39,35 +41,43 @@ import static org.junit.Assert.assertTrue;
 public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 {
     private static final String ADDON_WEBITEM = "ac-general-web-item";
+    private static final String ADDON_DIRECT_WEBITEM = "ac-direct-to-addon-web-item";
     private static final String PRODUCT_WEBITEM = "quick-page-link";
     private static final String ABSOLUTE_WEBITEM = "google-link";
     private static final String SPACE = "ds";
 
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addCapabilities("webItems",
                         newWebItemBean()
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withLink("/irwi?page_id=${page.id}")
+                                .withUrl("/irwi?page_id={page.id}")
+                                .build(),
+                        newWebItemBean()
+                                .withContext(AddOnUrlContext.addon)
+                                .withName(new I18nProperty("AC Direct To Addon Web Item", "ac.dir"))
+                                .withLocation("system.content.action")
+                                .withWeight(1)
+                                .withUrl("/irwi?page_id={page.id}")
                                 .build(),
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
                                 .withName(new I18nProperty("Quick page link", "ac.qp"))
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withLink("/pages/viewpage.action?pageId=${page.id}")
+                                .withUrl("/pages/viewpage.action?pageId={page.id}")
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("google link", "ac.gl"))
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withLink("http://www.google.com")
+                                .withUrl("http://www.google.com")
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build(),
                                         newSingleConditionBean().withCondition("/onlyBettyCondition").build()
@@ -76,7 +86,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
                 .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(BARNEY_USERNAME))
                 .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(BETTY_USERNAME))
-                .addRoute("/irwi?page_id=${page.id}", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/irwi?page_id={page.id}", ConnectAppServlets.helloWorldServlet())
                 .start();
     }
 
@@ -111,6 +121,20 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
+        assertThat(webItem.getPath(), startsWith(product.getProductInstance().getBaseUrl()));
+    }
+
+    @Test
+    public void testAddonDirectWebItem() throws Exception
+    {
+        loginAsAdmin();
+
+        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(ADDON_DIRECT_WEBITEM);
+        RemoteWebItem webItem = pageAndWebItem.right();
+        assertNotNull("Web item should be found", webItem);
+
+        assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
+        assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
     }
 
     @Test

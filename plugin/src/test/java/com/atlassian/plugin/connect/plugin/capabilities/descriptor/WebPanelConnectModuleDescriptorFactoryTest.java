@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean.newWebPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.IFrameContextMatchers.hasIFramePath;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -82,9 +82,9 @@ public class WebPanelConnectModuleDescriptorFactoryTest
         when(webFragmentHelper.loadCondition(eq(CONDITION_CLASSNAME), eq(plugin))).thenReturn(condition);
         when(condition.shouldDisplay(anyMap())).thenReturn(true);
 
-        WebPanelCapabilityBean bean = newWebPanelBean()
+        WebPanelModuleBean bean = newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", "my.webpanel"))
-                .withUrl("http://www.google.com?my_project_id=${project.id}&my_project_key=${project.key}")
+                .withUrl("http://www.google.com?my_project_id={project.id}&my_project_key={project.key}")
                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                 .withLayout(new WebPanelLayout("10px", "100%"))
                 .withWeight(50)

@@ -8,11 +8,11 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 
 /**
  * Test of remote issue tab panel in JIRA
@@ -22,17 +22,17 @@ public class TestIssueTabPanel extends TestBase
     private static final String PLUGIN_KEY = "my-plugin";
     private static JiraOps jiraOps = new JiraOps(jira().getProductInstance());
 
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
     private String issueKey;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(), PLUGIN_KEY)
-                .addCapability(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS, newTabPanelBean()
+        remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), PLUGIN_KEY)
+                .addModule(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Issue Tab Panel", null))
-                        .withUrl("/ipp?issue_id=${issue.id}&project_id=${project.id}&project_key=${project.key}")
+                        .withUrl("/ipp?issue_id={issue.id}&project_id={project.id}&project_key={project.key}")
                         .withWeight(1234)
                         .build())
                 .addRoute("/ipp", ConnectAppServlets.apRequestServlet())

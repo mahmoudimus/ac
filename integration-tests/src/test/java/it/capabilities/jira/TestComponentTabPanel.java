@@ -7,11 +7,11 @@ import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -24,7 +24,7 @@ public class TestComponentTabPanel extends TestBase
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
     private static final String COMPONENT_NAME = "test-component";
     private static final String JIRA_COMPONENT_TAB_PANEL = "jira-component-tab-panel";
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
 
     private String componentId;
 
@@ -32,10 +32,10 @@ public class TestComponentTabPanel extends TestBase
     @BeforeClass
     public static void setUpClassTest() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability(ConnectTabPanelModuleProvider.COMPONENT_TAB_PANELS, newTabPanelBean()
+        remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
+                .addModule(ConnectTabPanelModuleProvider.COMPONENT_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Component Tab Panel", null))
-                        .withUrl("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
+                        .withUrl("/ipp?component_id={component.id}&project_id={project.id}&project_key={project.key}")
                         .withWeight(1234)
                         .build())
                 .addRoute("/ipp", ConnectAppServlets.apRequestServlet())

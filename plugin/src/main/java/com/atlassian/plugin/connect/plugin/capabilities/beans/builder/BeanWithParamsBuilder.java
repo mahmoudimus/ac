@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BeanWithParams;
+
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
-public class BeanWithParamsBuilder<T extends BeanWithParamsBuilder, B extends BeanWithParams> extends BaseCapabilityBeanBuilder<T,B>
+public class BeanWithParamsBuilder<T extends BeanWithParamsBuilder, B extends BeanWithParams> extends BaseModuleBeanBuilder<T,B>
 {
     private Map<String, String> params;
 

@@ -13,11 +13,11 @@
     "baseUrl": "http://www.example.com",
     "authentication" : {
         "type" : "oauth",
-        "sharedKey": "S0m3Publ1cK3y"
+        "publicKey": "S0m3Publ1cK3y"
     },
-    "capabilities": {
+    "modules": {
         "webItems": [{
-            "link": "/my-general-page",
+            "url": "/my-general-page",
             "context": "product",
             "icon": {
                 "height": 16,

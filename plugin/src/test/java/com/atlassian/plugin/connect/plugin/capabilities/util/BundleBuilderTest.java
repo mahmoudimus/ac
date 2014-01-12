@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
-import java.io.File;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
@@ -12,11 +7,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPlugin
 import com.atlassian.plugin.connect.plugin.installer.RemotePluginArtifactFactory;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.sal.api.ApplicationProperties;
-
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-
 import org.apache.felix.framework.util.MapToDictionary;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,8 +16,13 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
+import java.io.File;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -67,11 +64,11 @@ public class BundleBuilderTest
                 .withKey("my-plugin")
                 .withName("my plugin")
                 .withVersion("1.0")
-                .withCapabilities("webItems",newWebItemBean()
+                .withModules("webItems", newWebItemBean()
                         .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
-                        .withLink("/irwi")
+                        .withUrl("/irwi")
                         .build())
                 .build();
         

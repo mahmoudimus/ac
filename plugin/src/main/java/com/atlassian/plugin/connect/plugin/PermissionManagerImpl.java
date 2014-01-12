@@ -1,13 +1,9 @@
 package com.atlassian.plugin.connect.plugin;
 
-import java.util.Arrays;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
@@ -18,18 +14,20 @@ import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.atlassian.fugue.Option.option;
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Set;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Iterables.*;
@@ -46,14 +44,18 @@ public final class PermissionManagerImpl implements PermissionManager
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
 
     private final Set<ApiScope> DEFAULT_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
+    private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
+    private final IsDevModeService isDevModeService;
 
     @Autowired
     public PermissionManagerImpl(
             PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager,
-            PermissionsReader permissionsReader)
+            PermissionsReader permissionsReader,
+            IsDevModeService isDevModeService,
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService)
     {
-        this(pluginAccessor, permissionsReader,
+        this(pluginAccessor, permissionsReader, isDevModeService, jsonConnectAddOnIdentifierService,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
     }
@@ -61,8 +63,12 @@ public final class PermissionManagerImpl implements PermissionManager
     PermissionManagerImpl(
             PluginAccessor pluginAccessor,
             PermissionsReader permissionsReader,
+            IsDevModeService isDevModeService,
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker)
     {
+        this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
+        this.isDevModeService = isDevModeService;
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.permissionsReader = checkNotNull(permissionsReader);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
@@ -113,18 +119,23 @@ public final class PermissionManagerImpl implements PermissionManager
         return filter(permissionTracker.getModules(), Predicates.and(new IsApiScope(), new IsInPermissions(permissions)));
     }
 
-    private Set<String> getPermissionsForPlugin(String clientKey)
+    private Set<String> getPermissionsForPlugin(String pluginKey)
     {
-        return option(pluginAccessor.getPlugin(clientKey)).fold(
-                Suppliers.ofInstance(ImmutableSet.<String>of()),
-                new Function<Plugin, Set<String>>()
-                {
-                    @Override
-                    public Set<String> apply(Plugin plugin)
-                    {
-                        return permissionsReader.getPermissionsForPlugin(plugin);
-                    }
-                });
+        Set<String> permissions = Sets.newHashSet();
+        if (jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey) && isDevModeService.isDevMode())
+        {
+            // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
+            permissions.addAll(getPermissionKeys());
+        }
+        else
+        {
+            Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+            if (plugin != null)
+            {
+                permissions.addAll(permissionsReader.getPermissionsForPlugin(plugin));
+            }
+        }
+        return permissions;
     }
 
     @Override

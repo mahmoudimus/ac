@@ -1,9 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
 
-public class LifecycleBeanBuilder extends BaseCapabilityBeanBuilder<LifecycleBeanBuilder,LifecycleBean>
+public class LifecycleBeanBuilder extends BaseModuleBeanBuilder<LifecycleBeanBuilder,LifecycleBean>
 {
     private String installed;
     private String uninstalled;

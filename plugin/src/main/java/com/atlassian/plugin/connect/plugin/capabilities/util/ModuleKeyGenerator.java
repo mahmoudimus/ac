@@ -1,15 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
-import java.security.SecureRandom;
-
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Joiner;
-
 import org.apache.commons.lang3.StringUtils;
+
+import java.security.SecureRandom;
 
 /**
  * Utility class to help with module key generation and conversion.
- * None of our capability beans should expose a key and instead we should be using this utlity everywhere we need a module key.
+ * None of our module beans should expose a key and instead we should be using this utlity everywhere we need a module key.
  */
 public class ModuleKeyGenerator
 {

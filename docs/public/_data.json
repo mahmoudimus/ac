@@ -1,0 +1,72 @@
+{
+    "guides": {
+        "whats-new.html": {
+            "title": "What's New"
+        },
+        "introduction.html": {
+            "title": "Introduction"
+        },
+        "getting-started.html": {
+            "title": "Getting Started"
+        },
+        "private-listings.html": {
+            "title": "Private Listings"
+        },
+        "selling-on-marketplace.html": {
+            "title": "Selling on Marketplace"
+        }
+    },
+    "concepts": {
+        "authentication.html": {
+            "title": "Authentication"
+        },
+        "scopes.html": {
+            "title": "Scopes"
+        },
+        "conditions.html": {
+            "title": "Conditions"
+        },
+        "context-parameters.html": {
+            "title": "Context Parameters"
+        },
+        "javascript-api.html": {
+            "title": "Javascript API"
+        },
+        "styling-with-aui.html": {
+            "title": "Styling Add-ons with AUI"
+        },
+        "addon-installation-full.html": {
+            "title": "Installing an Add-on"
+        },
+        "development-loop.html": {
+            "title": "Development Loop"
+        },
+        "upgrades.html": {
+            "title": "Upgrades",
+            "new": true
+        },
+        "licensing.html": {
+            "title": "Licensing"
+        },
+        "deprecations.html": {
+            "title": "Deprecation Notices",
+            "new": true
+        }
+    },
+    "rest-apis": {
+        "product-api-browser.html": {
+            "title": "Product API Browser"
+        }
+    },
+    "resources": {
+        "samples.html": {
+            "title": "Sample Add-ons"
+        },
+        "faqs.html": {
+            "title": "FAQs"
+        },
+        "getting-help.html": {
+            "title": "Getting Help"
+        }
+    }
+}

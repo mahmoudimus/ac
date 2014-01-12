@@ -6,19 +6,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A template for URLs with one or more variables as parameter values.
- * The parameters to the URL may contain variables in the form paramName=${variableName}. For example a URL might look like
+ * The parameters to the URL may contain variables in the form paramName={variableName}. For example a URL might look like
  *
  * ```
- * /acmeaddon?pid=${project.id}&issueid=${issue.id}
+ * /acmeaddon?pid={project.id}&issueid={issue.id}
  *  ```
  *
- * where ${project.id} and ${issue.id} are variables whose value will be substituted by corresponding variables. e.g.
+ * where {project.id} and {issue.id} are variables whose value will be substituted by corresponding variables. e.g.
  *
  * ```
  * /acmeaddon?pid=15&issueid=100
  * ```
  *
- * The form with the variables (/acmeaddon?pid=${project.id}&issueid=${issue.id}) is a template for actual
+ * The form with the variables (/acmeaddon?pid={project.id}&issueid={issue.id}) is a template for actual
  * URL instances (/acmeaddon?pid=15&issueid=100).
  */
 public class UrlTemplate

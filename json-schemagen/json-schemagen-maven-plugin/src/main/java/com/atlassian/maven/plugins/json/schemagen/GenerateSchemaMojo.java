@@ -1,25 +1,26 @@
 package com.atlassian.maven.plugins.json.schemagen;
 
-import java.io.File;
-import java.lang.reflect.Constructor;
-
 import com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider;
 import com.atlassian.json.schema.JsonSchemaGenerator;
 import com.atlassian.json.schema.JsonSchemaGeneratorProvider;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.model.JsonSchema;
 import com.atlassian.json.schema.scanner.model.InterfaceList;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 
 import static com.atlassian.json.schema.ClassloaderUtil.getClassloader;
 
@@ -62,8 +63,8 @@ public class GenerateSchemaMojo extends AbstractSchemaGenMojo
         Thread.currentThread().setContextClassLoader(getClassloader(getClasspath()));
         try
         {
-            Gson gson = new Gson();
-            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+            Gson gson = new GsonBuilder().setFieldNamingStrategy(new SchemaFieldNamingStrategy()).create();
+            Gson prettyGson = new GsonBuilder().setPrettyPrinting().setFieldNamingStrategy(new SchemaFieldNamingStrategy()).create();
             
             JsonSchemaGeneratorProvider provider = getProvider();
             JsonSchemaDocs schemaDocs = new JsonSchemaDocs();
@@ -122,5 +123,21 @@ public class GenerateSchemaMojo extends AbstractSchemaGenMojo
         Constructor ctr = providerClass.getConstructor();
         
         return (JsonSchemaGeneratorProvider) ctr.newInstance();
+    }
+
+    private class SchemaFieldNamingStrategy implements FieldNamingStrategy
+    {
+        @Override
+        public String translateName(Field field)
+        {
+            if("enumList".equals(field.getName()))
+            {
+                return "enum";
+            }
+            else
+            {
+                return FieldNamingPolicy.IDENTITY.translateName(field);
+            }
+        }
     }
 }

@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
@@ -10,12 +7,13 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.ServiceProvider;
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
-import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -28,17 +26,19 @@ import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
 import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
-
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -46,12 +46,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class DefaultRemotablePluginAccessorFactory implements RemotablePluginAccessorFactory, DisposableBean
 {
     private final ConnectApplinkManager connectApplinkManager;
+    private final ConnectDescriptorRegistry connectDescriptorRegistry;
     private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
     private final PluginAccessor pluginAccessor;
     private final ApplicationProperties applicationProperties;
     private final EventPublisher eventPublisher;
     private final JwtService jwtService;
+    private final ConsumerService consumerService;
+    private final UserManager userManager;
 
     private final Map<String, RemotablePluginAccessor> accessors;
 
@@ -59,19 +62,25 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     @Autowired
     public DefaultRemotablePluginAccessorFactory(ConnectApplinkManager connectApplinkManager,
+            ConnectDescriptorRegistry connectDescriptorRegistry,
             OAuthLinkManager oAuthLinkManager,
             CachingHttpContentRetriever httpContentRetriever,
             PluginAccessor pluginAccessor,
             ApplicationProperties applicationProperties,
             EventPublisher eventPublisher,
-            JwtService jwtService)
+            JwtService jwtService,
+            ConsumerService consumerService,
+            UserManager userManager)
     {
         this.connectApplinkManager = connectApplinkManager;
+        this.connectDescriptorRegistry = connectDescriptorRegistry;
         this.oAuthLinkManager = oAuthLinkManager;
         this.httpContentRetriever = httpContentRetriever;
         this.pluginAccessor = pluginAccessor;
         this.applicationProperties = applicationProperties;
         this.eventPublisher = eventPublisher;
+        this.consumerService = consumerService;
+        this.userManager = userManager;
         this.eventPublisher.register(this);
         this.jwtService = jwtService;
 
@@ -213,28 +222,36 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
         checkNotNull(plugin, "Plugin not found: '%s'", pluginKey);
 
-        return signsWithJwt(pluginKey)
-                // don't need to get the actual provider as it doesn't really matter
-                ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, connectApplinkManager, httpContentRetriever)
-                : new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider(), httpContentRetriever, oAuthLinkManager);
-    }
-
-    private boolean signsWithJwt(String pluginKey)
-    {
         ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
-        Object authTypeProperty = null;
-
+        AuthenticationMethod authenticationMethod = null;
         if (null == appLink)
         {
             log.error("Found no app link by plugin key '{}'!", pluginKey);
         }
         else
         {
-            authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
+            Object authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
+            if (authTypeProperty != null)
+            {
+                authenticationMethod = AuthenticationMethod.forName(authTypeProperty.toString());
+            }
         }
 
-        // for backwards compatibility default to "not JWT" if the property does not exist
-        return null != authTypeProperty && AuthenticationMethod.JWT.equals(AuthenticationMethod.forName(authTypeProperty.toString()));
+        if (AuthenticationMethod.JWT.equals(authenticationMethod))
+        {
+            return new JwtSigningRemotablePluginAccessor(plugin, displayUrl, jwtService, consumerService,
+                    connectApplinkManager, httpContentRetriever, userManager);
+        }
+        else if (AuthenticationMethod.NONE.equals(authenticationMethod))
+        {
+            return new NoAuthRemotablePluginAccessor(plugin, displayUrl, httpContentRetriever);
+        }
+        else
+        {
+            // default to OAuth (for backwards compatibility)
+            return new OAuthSigningRemotablePluginAccessor(plugin, displayUrl, getDummyServiceProvider(),
+                    httpContentRetriever, oAuthLinkManager);
+        }
     }
 
     private ServiceProvider getDummyServiceProvider()

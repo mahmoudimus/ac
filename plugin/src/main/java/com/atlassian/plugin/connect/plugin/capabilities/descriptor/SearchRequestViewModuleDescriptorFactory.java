@@ -9,7 +9,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.RemoteSearchRequestView;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -27,7 +27,7 @@ import java.net.URISyntaxException;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @JiraComponent
-public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDescriptorFactory<SearchRequestViewCapabilityBean, SearchRequestViewModuleDescriptor>
+public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDescriptorFactory<SearchRequestViewModuleBean, SearchRequestViewModuleDescriptor>
 {
     private final JiraAuthenticationContext authenticationContext;
     private final SearchRequestURLHandler urlHandler;
@@ -58,7 +58,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     }
 
     @Override
-    public SearchRequestViewModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, SearchRequestViewCapabilityBean bean)
+    public SearchRequestViewModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, SearchRequestViewModuleBean bean)
     {
         SearchRequestViewModuleDescriptorImpl descriptor = new SearchRequestViewModuleDescriptorImpl(authenticationContext,
                 urlHandler, createModuleFactory(bean, plugin), conditionDescriptorFactory);
@@ -68,7 +68,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     }
 
 
-    private Element createElement(SearchRequestViewCapabilityBean bean, Plugin plugin)
+    private Element createElement(SearchRequestViewModuleBean bean, Plugin plugin)
     {
         DOMElement element = new DOMElement("search-request-view");
 
@@ -96,7 +96,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         return element;
     }
 
-    private ModuleFactory createModuleFactory(final SearchRequestViewCapabilityBean bean, final Plugin plugin)
+    private ModuleFactory createModuleFactory(final SearchRequestViewModuleBean bean, final Plugin plugin)
     {
         return new ModuleFactory()
         {
