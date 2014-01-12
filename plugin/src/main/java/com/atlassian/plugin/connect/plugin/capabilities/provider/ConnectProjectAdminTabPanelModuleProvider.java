@@ -57,8 +57,8 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
         {
             RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
 
-            // we can't pass projectKey as an "extra param" to relativeAddOnUrlConverter as it will encode the ${}
-            String webItemUri = localUrl.getRelativeUri() + "?projectKey=${project.key}";
+            // we can't pass projectKey as an "extra param" to relativeAddOnUrlConverter as it will encode the {}
+            String webItemUri = appendProjectKeyParam(localUrl.getRelativeUri());
             WebItemModuleBean webItemModuleBean = createWebItemModuleBean(bean, webItemUri);
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemModuleBean));
 
@@ -68,6 +68,11 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
         }
 
         return builder.build();
+    }
+
+    private String appendProjectKeyParam(final String relativeUri)
+    {
+        return relativeUri + (relativeUri.contains("?") ? "&" : "?") + "projectKey={project.key}";
     }
 
     private WebItemModuleBean createWebItemModuleBean(ConnectProjectAdminTabPanelModuleBean bean,

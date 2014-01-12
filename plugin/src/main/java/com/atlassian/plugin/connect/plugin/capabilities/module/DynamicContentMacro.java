@@ -40,14 +40,13 @@ public final class DynamicContentMacro extends AbstractContentMacro
         String counter = incrementCounter(conversionContext);
         try
         {
-            MacroContext macroContext = new MacroContext(conversionContext, getUser());
+            MacroContext macroContext = new MacroContext(conversionContext, storageFormatBody, getUser());
             Uri uri = resolveUrlTemplate(macroContext.getParameters());
 
             IFrameContext iFrameContext = new IFrameContextImpl(getPluginKey(), uri.getPath(), getNamespace(counter), getIFrameParams());
             MacroRequestParameters macroParameters = new MacroRequestParameters.Builder()
-                    .withSingleValueParameters(parameters)
-                    .withMultiValueParameters(uri.getQueryParameters())
-                    .withBody(storageFormatBody)
+                    .withMacroParameters(parameters)
+                    .withURLParameters(uri.getQueryParameters())
                     .build();
 
             if (getOutputType().equals(OutputType.INLINE))

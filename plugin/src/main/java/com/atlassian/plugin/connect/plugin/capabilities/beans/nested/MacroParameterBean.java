@@ -13,7 +13,8 @@ import java.util.List;
 /**
  * Describes a parameter input field for a macro.
  *
- * Example:
+ *#### Example
+ *
  * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
  * @schemaTitle Macro Input Parameter
  * @since 1.0
@@ -44,13 +45,13 @@ public class MacroParameterBean extends BaseModuleBean
      *
      * Currently the following parameter types are supported in the macro browser's UI:
      *
-     * * ``attachment``: displays an autocomplete field for search on attachment filenames.
-     * * ``boolean``: displays a check box.
-     * * ``confluence-content``: displays an autocomplete field for search on page and blog titles.
-     * * ``enum``: displays a select field.
-     * * ``spacekey``: displays an autocomplete field for search on space names.
-     * * ``string``: displays an input field (this is the default if unknown type).
-     * * ``username``: displays an autocomplete field for search on username and full name.
+     * * `attachment`: displays an autocomplete field for search on attachment filenames.
+     * * `boolean`: displays a check box.
+     * * `confluence-content`: displays an autocomplete field for search on page and blog titles.
+     * * `enum`: displays a select field.
+     * * `spacekey`: displays an autocomplete field for search on space names.
+     * * `string`: displays an input field (this is the default if unknown type).
+     * * `username`: displays an autocomplete field for search on username and full name.
      *
      */
     @Required

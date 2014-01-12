@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookModuleBeanBuilder;
 
 /**
@@ -112,7 +114,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookMod
  * subscribes and generates each webhook event type available on the running instance of the Atlassian application,
  * and prints the body posted by the instance to the console screen.
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
  * @schemaTitle Webhooks
  * @since 1.0
  */
@@ -121,10 +125,13 @@ public class WebHookModuleBean extends BeanWithParams
     /**
      * Specifies the named event you would like to listen to (e.g., "enabled", "jira:issue_created", etc.)
      */
+    @Required
     private String event;
     /**
      * Specifies your add-on's POST webhook handler URL. This property has to be a relative URL.
      */
+    @Required
+    @StringSchemaAttributes(format = "uri")
     private String url;
 
     public WebHookModuleBean(WebHookModuleBeanBuilder builder)

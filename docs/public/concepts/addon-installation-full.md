@@ -45,7 +45,7 @@ In your request:
 
 Capture the header named "upm-token" in the response. This is the UPM token you need for the next request.
 Now install your add-on by issuing a POST request to the following resource:
-`http://HOST_NAME:PORT/CONTEXT/rest/plugins/1.0/?token=${upm-token}`
+`http://HOST_NAME:PORT/CONTEXT/rest/plugins/1.0/?token={upm-token}`
 In your request:
 
  1. Again use the actual host name and port and path for your target Atlassian application.

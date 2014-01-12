@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
@@ -24,15 +28,13 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-
 import static com.atlassian.plugin.connect.plugin.capabilities.ConnectAsserts.assertURIEquals;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +58,12 @@ public class WebItemProviderTest
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
         webInterfaceManager = mock(WebInterfaceManager.class);
         webFragmentHelper = mock(WebFragmentHelper.class);
-        webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager), new IconModuleFragmentFactory(remotablePluginAccessorFactoryForTests), new ConditionModuleFragmentFactory(mock(ProductAccessor.class), new ParamsModuleFragmentFactory()));
+
+        webItemFactory = new WebItemModuleDescriptorFactory(
+                new WebItemModuleDescriptorFactoryForTests(webInterfaceManager),
+                new IconModuleFragmentFactory(remotablePluginAccessorFactoryForTests),
+                new ConditionModuleFragmentFactory(mock(ProductAccessor.class), new ParamsModuleFragmentFactory()),
+                remotablePluginAccessorFactoryForTests);
         servletRequest = mock(HttpServletRequest.class);
 
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
@@ -106,7 +113,7 @@ public class WebItemProviderTest
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withUrl("http://www.google.com")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.addon)
+                .withContext(AddOnUrlContext.decorated)
                 .build();
 
         WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
@@ -171,7 +178,7 @@ public class WebItemProviderTest
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withUrl("/some/admin")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.addon)
+                .withContext(AddOnUrlContext.decorated)
                 .build();
 
         WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());

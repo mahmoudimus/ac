@@ -2,9 +2,11 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
@@ -23,9 +25,48 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     /**
      * The link to the add-on resource that provides the content for the iFrame.
      * This URL has to be relative to the add-on base URL.
+     *
+     * Additional context parameters can be passed as variables in the URL.
+     *
+     * ```
+     * "url": "/macro-renderer?body={macro.body}&space_id={space.id}&page_id={page.id}"
+     * ```
+     *
+     * Since macro bodies can be of arbitrary size and may contain sensitive data, care must be taken
+     * as to how its passed to your connect addon.  You have three options to gain access to the body:
+     *
+     * * If you can predict the size of your body and is consistently less than 128 characters, you
+     * can include it in the GET request using the {macro.body} parameter.
+     * * If you know your macro contains a body that will often exceed the 128 character threshold
+     * (or is known to contain sensitive data), then you can include the {macro.hash} parameter and
+     * use the Confluence REST api to call back to collect the body.
+     * * If you want, you can include, {macro.body}, {macro.hash}, and {macro.truncated}.  This way
+     * your plugin can call back to confluence only if {macro.truncated} is 'true'.  This will allow
+     * you to skip the callback if it's not needed.  This would be useful for macros that don't
+     * contain sensitive data of an unpredictable size.
+     *
+     * Note:  If you include the {macro.body} in your URL you are potentially leaking sensitive data
+     * to any intermediate host on the internet.  This may result in the body being cached or indexed
+     * by a third party.  If you are concerned about the security of your macro, you should always use
+     * the {macro.hash} and use the Confluence REST api to collect the body.
+     *
+     * Currently supported variables for macros are:
+     *
+     * * `macro.hash`: The hash of the macro body
+     * * `macro.body`: The macro body, truncated to 128 characters
+     * * `macro.truncated`: True if the macro body was truncated, false of not
+     * * `page.id`: The page ID, e.g. '1376295'
+     * * `page.title`: The page title, e.g. 'My Page'
+     * * `page.type`: The page type, e.g. 'page'
+     * * `page.version.id`: The page version, e.g. '6'
+     * * `space.id`: The space ID, e.g. 'ac'
+     * * `space.key`: The space key, e.g. '65537'
+     * * `user.id`: The user ID, e.g. 'admin'
+     * * `user.key`: The user key, e.g. 'ff80808143087d180143087d3a910004'
+     * * `output.type`: The output type, e.g. 'display'
      */
     @Required
-//    @StringSchemaAttributes(format = "uri")
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
     /**
@@ -49,17 +90,17 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      *
      * Currently, the following categories are supported by Confluence:
      *
-     * * ``admin``: Administration
-     * * ``communication``: Communication
-     * * ``confluence-content``: Confluence Content
-     * * ``development``: Development
-     * * ``external-content``: External Content
-     * * ``formatting``: Formatting
-     * * ``hidden-macros``: Hidden
-     * * ``media``: Media
-     * * ``navigation``: Navigation
-     * * ``reporting``: Reporting
-     * * ``visuals``: Visuals & Images
+     * * `admin`: Administration
+     * * `communication`: Communication
+     * * `confluence-content`: Confluence Content
+     * * `development`: Development
+     * * `external-content`: External Content
+     * * `formatting`: Formatting
+     * * `hidden-macros`: Hidden
+     * * `media`: Media
+     * * `navigation`: Navigation
+     * * `reporting`: Reporting
+     * * `visuals`: Visuals & Images
      */
     private Set<String> categories;
 
@@ -87,16 +128,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     private Boolean featured;
 
     /**
-     * The preferred width of the macro content.
-     */
-    private String width;
-
-    /**
-     * The preferred height of the macro content.
-     */
-    private String height;
-
-    /**
      * The list of parameter input fields that will be displayed.
      */
     private List<MacroParameterBean> parameters;
@@ -107,6 +138,12 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
      */
     private MacroEditorBean editor;
 
+    /**
+     * The image rendered in the editor as the macro placeholder. It can only be used with bodyless macros and will behave
+     * just like a regular macro placeholder. Any parameter changes in the macro browser will cause the image
+     * to be reloaded - so that changes can be seen.
+     */
+    private ImagePlaceholderBean imagePlaceholder;
 
     public BaseContentMacroModuleBean()
     {
@@ -200,16 +237,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
         return featured;
     }
 
-    public String getWidth()
-    {
-        return width;
-    }
-
-    public String getHeight()
-    {
-        return height;
-    }
-
     public List<MacroParameterBean> getParameters()
     {
         return parameters;
@@ -218,6 +245,11 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     public MacroEditorBean getEditor()
     {
         return editor;
+    }
+
+    public ImagePlaceholderBean getImagePlaceholder()
+    {
+        return imagePlaceholder;
     }
 
     public boolean hasEditor()
@@ -233,5 +265,10 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
     public boolean hasDocumentation()
     {
         return documentation != null;
+    }
+
+    public boolean hasImagePlaceholder()
+    {
+        return imagePlaceholder != null;
     }
 }

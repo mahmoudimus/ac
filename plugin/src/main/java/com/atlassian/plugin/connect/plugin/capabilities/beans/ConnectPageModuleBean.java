@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.google.common.base.Objects;
@@ -9,17 +10,35 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Page modules allow add-ons to insert new pages into atlassian products.
- * These can be automatically resized to the width and height of your add-on's content.
- * The location attribute defines where links to the new page appear.
+ *Page modules allow add-ons to insert new pages into atlassian products. These can be automatically resized to the width
+ * and height of your add-on's content. The location attribute defines where links to the new page appear.
  *
- * Each type of page displays differently:
+ *Each type of page displays differently:
  *
  * * `generalPages` - have no extra styling and by default a link to the page is displayed in the main navigation menu.
  * * `adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.
- * * `profilePages` - ( __Confluence only__) displayed as sections inside user profiles. Like admin pages, they appear with all the necessary components around them (such as menus).
+ * * `profilePages` - (__Confluence only__) displayed as sections inside user profiles. Like admin pages, they appear with all the necessary components around them (such as menus).
+ * * `configurePage` - used to configure the addon itself. A link to the page is displayed in the add-on's entry in
+ * _Manage Add-ons_. Unlike the other page modules, an add-on may only define a single `configurePage`.
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PAGE_EXAMPLE}
+ * <!-- ## Seamless iframes -->
+ *
+ *The content for a page module is injected into the Atlassian application in the form of a "seamless" iframe.
+ * Seamless iframes are regular HTML iframes but with the following characteristics:
+ *
+ * * Their size is based on the page height and width inside the iframe (i.e., no scrollbars)
+ * * They are dynamically resized based on the inner content or relative browser window sizing
+ * * They appear without borders, making them look like a non-iframed fragment of the page
+ * * For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content). To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. For example, using ACE:
+ *
+ *      `<script src="{{hostScriptUrl}}" type="text/javascript" data-options="sizeToParent:true"></script>`
+ *
+ *As implied here, for most page content modules, you do not need to be concerned with iframe sizing. It's all handled
+ * for you. However, an exception exists for inline macros.
+ *
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#PAGE_EXAMPLE}
  * @since 1.0
  */
 public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
@@ -29,13 +48,14 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * This can be absolute or relative to the addon's baseUrl
      */
     @Required
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
-    
+
     @CommonSchemaAttributes(defaultValue = "100")
     private Integer weight;
-    
+
     private String location;
-    
+
     private IconBean icon;
 
     public ConnectPageModuleBean()

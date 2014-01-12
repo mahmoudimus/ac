@@ -36,7 +36,7 @@ public class ConnectComponentTabPanelModuleDescriptorTest extends AbstractConnec
 {
     private static final String ADDON_HTML_CONTENT = "the content goes here";
     private static final String ADDON_NAME = "My Component Tab Page";
-    private static final String ADDON_URL = "http://blah?my_project_id=${project.id}&my_project_key=${project.key}";
+    private static final String ADDON_URL = "http://blah?my_project_id={project.id}&my_project_key={project.key}";
     private static final String ADDON_KEY = "my-component-tab-page";
     private static final String ADDON_I18_NAME = "My Plugin i18";
     private static final Element ISSUE_TAB_PAGE_ELEMENT = createElement();

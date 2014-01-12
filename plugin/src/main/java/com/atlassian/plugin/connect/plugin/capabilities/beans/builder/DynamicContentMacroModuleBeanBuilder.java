@@ -4,6 +4,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacr
 
 public class DynamicContentMacroModuleBeanBuilder extends BaseContentMacroModuleBeanBuilder<DynamicContentMacroModuleBeanBuilder, DynamicContentMacroModuleBean>
 {
+    private String width;
+    private String height;
+
     public DynamicContentMacroModuleBeanBuilder()
     {
     }
@@ -11,6 +14,20 @@ public class DynamicContentMacroModuleBeanBuilder extends BaseContentMacroModule
     public DynamicContentMacroModuleBeanBuilder(DynamicContentMacroModuleBean defaultBean)
     {
         super(defaultBean);
+        this.width = defaultBean.getWidth();
+        this.height = defaultBean.getHeight();
+    }
+
+    public DynamicContentMacroModuleBeanBuilder withWidth(String width)
+    {
+        this.width = width;
+        return this;
+    }
+
+    public DynamicContentMacroModuleBeanBuilder withHeight(String height)
+    {
+        this.height = height;
+        return this;
     }
 
     @Override

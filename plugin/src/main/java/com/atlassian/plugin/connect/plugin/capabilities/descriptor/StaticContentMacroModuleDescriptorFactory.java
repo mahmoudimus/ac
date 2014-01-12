@@ -48,8 +48,13 @@ public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMa
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return (T) new StaticContentMacro(plugin.getKey(), bean, userManager, macroContentManager,
+                StaticContentMacro macro = new StaticContentMacro(plugin.getKey(), bean, userManager, macroContentManager,
                         remotablePluginAccessorFactory, urlVariableSubstitutor);
+                if (bean.hasImagePlaceholder())
+                {
+                    return (T) decorateWithImagePlaceHolder(plugin, macro, bean.getImagePlaceholder());
+                }
+                return (T) macro;
             }
         };
     }

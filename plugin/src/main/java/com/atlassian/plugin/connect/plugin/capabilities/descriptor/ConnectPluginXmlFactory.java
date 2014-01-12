@@ -66,8 +66,7 @@ public class ConnectPluginXmlFactory
             @Override
             public String apply(@Nullable ConnectPageModuleBean pageModule)
             {
-                return relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(addon.getKey(),
-                        pageModule.getKey()).getRelativeUri();
+                return relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(addon.getKey(), pageModule.getUrl()).getRelativeUri();
             }
         });
     }

@@ -2,12 +2,13 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 
 import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebItemModuleDescriptor;
 import com.atlassian.confluence.plugin.descriptor.web.model.ConfluenceWebLink;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -34,43 +35,54 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute, AddOnUrlContext addOnUrlContext,
+                                                                 RemotablePluginAccessor remotablePluginAccessor)
     {
-        return new RemoteConfluenceWebItemModuleDescriptor(urlVariableSubstitutor, contextMapURLSerializer, contextMapURLSerializer, webFragmentHelper, url, linkId, absolute);
+        return new RemoteConfluenceWebItemModuleDescriptor(urlVariableSubstitutor, contextMapURLSerializer, webFragmentHelper,
+                remotablePluginAccessor, url, linkId, absolute, addOnUrlContext);
     }
 
     private static final class RemoteConfluenceWebItemModuleDescriptor extends ConfluenceWebItemModuleDescriptor
     {
         private final UrlVariableSubstitutor urlVariableSubstitutor;
-        private final ContextMapURLSerializer urlParametersSerializer;
         private final ContextMapURLSerializer contextMapURLSerializer;
         private final WebFragmentHelper webFragmentHelper;
+        private final RemotablePluginAccessor remotablePluginAccessor;
         private final String url;
         private final String linkId;
         private final boolean absolute;
+        private final AddOnUrlContext addOnUrlContext;
 
         private RemoteConfluenceWebItemModuleDescriptor(
                 UrlVariableSubstitutor urlVariableSubstitutor,
-                ContextMapURLSerializer urlParametersSerializer,
                 ContextMapURLSerializer contextMapURLSerializer,
                 WebFragmentHelper webFragmentHelper,
+                RemotablePluginAccessor remotablePluginAccessor,
                 String url,
                 String linkId,
-                boolean absolute)
+                boolean absolute, AddOnUrlContext addOnUrlContext)
         {
             this.urlVariableSubstitutor = urlVariableSubstitutor;
-            this.urlParametersSerializer = urlParametersSerializer;
             this.contextMapURLSerializer = contextMapURLSerializer;
             this.webFragmentHelper = webFragmentHelper;
+            this.remotablePluginAccessor = remotablePluginAccessor;
             this.url = url;
             this.linkId = linkId;
             this.absolute = absolute;
+            this.addOnUrlContext = addOnUrlContext;
         }
 
         @Override
         public ConfluenceWebLink getLink()
         {
-            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, linkId, absolute));
+            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer,
+                    remotablePluginAccessor, url, linkId, absolute, addOnUrlContext));
+        }
+
+        @Override
+        public void destroy()
+        {
+
         }
     }
 }

@@ -10,14 +10,25 @@ public class ConfigurationUtils
 
     public static int getIntSystemProperty(String name, final int defaultValue)
     {
-        try
+        int result = defaultValue;
+        String rawPropertyValue = System.getProperty(name);
+
+        if (null == rawPropertyValue)
         {
-            return Integer.parseInt(StringUtils.strip(System.getProperty(name)));
+            log.warn(String.format("System property '%s' does not exist or has a null value. Returning default value %d.", name, defaultValue));
         }
-        catch (Exception e)
+        else
         {
-            log.warn(String.format("Failed to retrieve system property '%s' as int due to exception. Returning default value %d.", name, defaultValue), e);
-            return defaultValue;
+            try
+            {
+                result = Integer.parseInt(StringUtils.strip(rawPropertyValue));
+            }
+            catch (Exception e)
+            {
+                log.warn(String.format("Failed to retrieve system property '%s' as int due to exception. Returning default value %d.", name, defaultValue), e);
+            }
         }
+
+        return result;
     }
 }

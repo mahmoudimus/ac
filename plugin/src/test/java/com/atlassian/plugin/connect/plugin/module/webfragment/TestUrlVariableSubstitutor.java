@@ -12,54 +12,54 @@ public class TestUrlVariableSubstitutor
     @Test
     public void testSubstitutionInSimpleCase()
     {
-        assertThat(SUBSTITUTOR.replace("my_page_id=${page.id}", CONTEXT), is("my_page_id=1234"));
+        assertThat(SUBSTITUTOR.replace("my_page_id={page.id}", CONTEXT), is("my_page_id=1234"));
     }
 
     @Test
     public void testSubstitutionWhenValueIsUsedMultipleTimes()
     {
-        assertThat(SUBSTITUTOR.replace("my_page_id=${page.id}&other_page_id=${page.id}", CONTEXT), is("my_page_id=1234&other_page_id=1234"));
+        assertThat(SUBSTITUTOR.replace("my_page_id={page.id}&other_page_id={page.id}", CONTEXT), is("my_page_id=1234&other_page_id=1234"));
     }
 
     @Test
     public void testSubstitutionWhenReferencedValueIsNotInContext()
     {
-        assertThat(SUBSTITUTOR.replace("thing=${stuff}", CONTEXT), is("thing="));
+        assertThat(SUBSTITUTOR.replace("thing={stuff}", CONTEXT), is("thing="));
     }
 
     @Test
     public void testSubstitutionWhenParameterNameIsUsedMultipleTimes()
     {
         // this is a silly URL but UrlVariableSubstitutor should still do as asked
-        assertThat(SUBSTITUTOR.replace("my_page_id=${page.id}&my_page_id=${page.id}", CONTEXT), is("my_page_id=1234&my_page_id=1234"));
+        assertThat(SUBSTITUTOR.replace("my_page_id={page.id}&my_page_id={page.id}", CONTEXT), is("my_page_id=1234&my_page_id=1234"));
     }
 
     @Test
     public void testSubstitutionWhenContextValueIsNull()
     {
-        assertThat(SUBSTITUTOR.replace("thing=${uh_oh}", CONTEXT), is("thing="));
+        assertThat(SUBSTITUTOR.replace("thing={uh_oh}", CONTEXT), is("thing="));
     }
 
     @Test
     public void testSubstitutionWhenTheContextValueIsAlsoTheParameterName()
     {
         // this is a silly URL but UrlVariableSubstitutor should still do as asked
-        assertThat(SUBSTITUTOR.replace("${page.id}=${page.id}", CONTEXT), is("1234=1234"));
+        assertThat(SUBSTITUTOR.replace("{page.id}={page.id}", CONTEXT), is("1234=1234"));
     }
 
     @Test
     public void testSubstitutionInBigCombinedCase()
     {
-        assertThat(SUBSTITUTOR.replace("http://server:3000/some/path?p=${page.id}&p2=${page.id}&p2=${uh_oh}&does_not_exist=${herpderp}", CONTEXT), is("http://server:3000/some/path?p=1234&p2=1234&p2=&does_not_exist="));
+        assertThat(SUBSTITUTOR.replace("http://server:3000/some/path?p={page.id}&p2={page.id}&p2={uh_oh}&does_not_exist={herpderp}", CONTEXT), is("http://server:3000/some/path?p=1234&p2=1234&p2=&does_not_exist="));
     }
 
     @Test
     public void testGetContextVariableMap()
     {
         Map<String, String> expected = new HashMap<String, String>(2);
-        expected.put("my_page_id", "${page.id}");
-        expected.put("thing", "${stuff}");
-        assertThat(SUBSTITUTOR.getContextVariableMap("http://server:80/path?my_page_id=${page.id}&thing=${stuff}"), is(expected));
+        expected.put("my_page_id", "{page.id}");
+        expected.put("thing", "{stuff}");
+        assertThat(SUBSTITUTOR.getContextVariableMap("http://server:80/path?my_page_id={page.id}&thing={stuff}"), is(expected));
     }
 
     private static final UrlVariableSubstitutor SUBSTITUTOR = new UrlVariableSubstitutor();

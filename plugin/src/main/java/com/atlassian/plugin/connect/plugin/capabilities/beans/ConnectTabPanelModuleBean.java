@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectTabPanelModuleBeanBuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -10,12 +12,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * The tab panel module takes care of integrating the add-on content into the application for you. The add-on content
  * automatically gets the tab panel styles and decorators from the host application.
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#COMPONENT_TAB_PANEL_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#COMPONENT_TAB_PANEL_EXAMPLE}
  * @since 1.0
  */
 public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
 {
+    @Required
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
+
     private Integer weight;
 
     public ConnectTabPanelModuleBean() {
@@ -31,7 +38,7 @@ public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
     public ConnectTabPanelModuleBean(ConnectTabPanelModuleBeanBuilder builder)
     {
         super(builder);
-        
+
         if(null == weight)
         {
             this.weight = 100;

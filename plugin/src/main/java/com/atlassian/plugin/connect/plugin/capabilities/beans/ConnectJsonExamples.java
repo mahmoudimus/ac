@@ -36,6 +36,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelMod
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ImagePlaceholderBean.newImagePlaceholderBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;
@@ -72,6 +73,8 @@ public class ConnectJsonExamples
     public static final String WEBITEM_EXAMPLE = createWebItemExample();
     public static final String WEBITEM_TARGET_EXAMPLE = createWebitemTargetExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
+    public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
+    public static final String IMAGE_PLACEHOLDER_EXAMPLE = createImagePlaceholderExample();
 
 
     private static String createAddonExample()
@@ -231,7 +234,7 @@ public class ConnectJsonExamples
     {
         DynamicContentMacroModuleBean macroModuleBean = newDynamicContentMacroModuleBean()
                 .withName(new I18nProperty("Maps", ""))
-                .withUrl("/render-map")
+                .withUrl("/render-map?pageTitle={page.title}")
                 .withAliases("map")
                 .withBodyType(MacroBodyType.NONE)
                 .withOutputType(MacroOutputType.BLOCK)
@@ -254,6 +257,12 @@ public class ConnectJsonExamples
                         .withMultiple(false)
                         .withRequired(true)
                         .withValues("Map", "Satellite")
+                        .build()
+                )
+                .withEditor(newMacroEditorBean()
+                        .withUrl("/map-editor")
+                        .withInsertTitle(new I18nProperty("Insert Map", ""))
+                        .withEditTitle(new I18nProperty("Edit Map", ""))
                         .build()
                 )
                 .build();
@@ -265,7 +274,7 @@ public class ConnectJsonExamples
     {
         StaticContentMacroModuleBean macroModuleBean = newStaticContentMacroModuleBean()
                 .withName(new I18nProperty("Maps", ""))
-                .withUrl("/render-map")
+                .withUrl("/render-map?pageTitle={page.title}")
                 .withAliases("map")
                 .withBodyType(MacroBodyType.NONE)
                 .withOutputType(MacroOutputType.BLOCK)
@@ -276,8 +285,6 @@ public class ConnectJsonExamples
                         .build()
                 )
                 .withFeatured(true)
-                .withWidth("200px")
-                .withHeight("200px")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .withParameters(newMacroParameterBean()
                         .withIdentifier("view")
@@ -288,6 +295,12 @@ public class ConnectJsonExamples
                         .withMultiple(false)
                         .withRequired(true)
                         .withValues("Map", "Satellite")
+                        .build()
+                )
+                .withEditor(newMacroEditorBean()
+                        .withUrl("/map-editor")
+                        .withInsertTitle(new I18nProperty("Insert Map", ""))
+                        .withEditTitle(new I18nProperty("Edit Map", ""))
                         .build()
                 )
                 .build();
@@ -347,7 +360,7 @@ public class ConnectJsonExamples
     private static String createUrlExample()
     {
         UrlBean bean = new UrlBean("/my-url");
-        return gson.toJson(createModuleObject("url", bean));
+        return gson.toJson(createModuleObject("endpoint", bean));
     }
 
     private static String createVendorExample()
@@ -392,12 +405,48 @@ public class ConnectJsonExamples
         return gson.toJson(obj);
     }
 
+    private static String createLifecycleExample()
+    {
+        LifecycleBean bean = newLifecycleBean()
+                .withInstalled("/installed")
+                .withUninstalled("/uninstalled")
+                .withEnabled("/enabled")
+                .withDisabled("/disabled")
+                .build();
+
+        return gson.toJson(bean);
+    }
+    private static String createMacroEditorExample()
+    {
+        MacroEditorBean macroEditorBean = newMacroEditorBean()
+                .withUrl("/generate_md")
+                .withInsertTitle(new I18nProperty("Insert MarkDown", "macro.md.insert"))
+                .withEditTitle(new I18nProperty("Edit MarkDown", "macro.md.edit"))
+                .withHeight("300px")
+                .withWidth("400px")
+                .build();
+
+        return gson.toJson(createModuleObject("editor", macroEditorBean));
+    }
+
+    private static String createImagePlaceholderExample()
+    {
+        ImagePlaceholderBean imagePlaceholderBean = newImagePlaceholderBean()
+                .withUrl("/images/placeholder.png")
+                .withWidth(100)
+                .withHeight(25)
+                .withApplyChrome(true)
+                .build();
+
+        return gson.toJson(createModuleObject("imagePlaceholder", imagePlaceholderBean));
+    }
+
     private static JsonObject createModuleArray(String name, ModuleBean bean)
     {
         JsonObject obj = new JsonObject();
         JsonArray arr = new JsonArray();
         arr.add(gson.toJsonTree(bean));
-        obj.add("generalPages", arr);
+        obj.add(name, arr);
 
         return obj;
     }
@@ -410,16 +459,4 @@ public class ConnectJsonExamples
         return obj;
     }
 
-    private static String createMacroEditorExample()
-    {
-        MacroEditorBean macroEditorBean = newMacroEditorBean()
-                .withUrl("/generate_md")
-                .withInsertTitle(new I18nProperty("Insert MarkDown", "macro.md.insert"))
-                .withEditTitle(new I18nProperty("Edit MarkDown", "macro.md.edit"))
-                .withHeight("300px")
-                .withWidth("400px")
-                .build();
-
-        return gson.toJson(macroEditorBean);
-    }
 }

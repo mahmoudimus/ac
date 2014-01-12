@@ -29,7 +29,7 @@ public class TestWebPanel extends JiraWebDriverTestBase
                 .addModule("webPanels", newWebPanelBean()
                         .withName(new I18nProperty("HipChat Discussions", "hipchat.discussions"))
                         // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
-                        .withUrl("/myWebPanelPage?issueId${issue.id}")
+                        .withUrl("/myWebPanelPage?issueId{issue.id}")
                         .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                         .withLayout(new WebPanelLayout("100%", "200px"))
                         .withWeight(1234)

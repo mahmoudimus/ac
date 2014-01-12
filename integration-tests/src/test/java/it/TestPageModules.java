@@ -28,6 +28,7 @@ import java.util.TimeZone;
 
 import static it.TestConstants.BETTY_USERNAME;
 import static java.lang.String.valueOf;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 public class TestPageModules extends AbstractRemotablePluginTest
@@ -41,34 +42,38 @@ public class TestPageModules extends AbstractRemotablePluginTest
                 .addOAuth()
                 .addPermission("resttest")
                 .add(GeneralPageModule.key("remotePluginGeneral")
-                                      .name("Remotable Plugin app1 General")
-                                      .path("/rpg")
-                                      .linkName("Remotable Plugin app1 General Link")
-                                      .iconUrl("/public/sandcastles.jpg")
-                                      .height("600")
-                                      .width("700")
-                                      .resource(ConnectAppServlets.apRequestServlet()))
+                        .name("Remotable Plugin app1 General")
+                        .path("/rpg")
+                        .linkName("Remotable Plugin app1 General Link")
+                        .iconUrl("/public/sandcastles.jpg")
+                        .height("600")
+                        .width("700")
+                        .resource(ConnectAppServlets.apRequestServlet()))
                 .add(GeneralPageModule.key("amdTest")
-                                      .name("AMD Test app1 General")
-                                      .path("/amdTest")
-                                      .resource(ConnectAppServlets.amdTestServlet()))
+                        .name("AMD Test app1 General")
+                        .path("/amdTest")
+                        .resource(ConnectAppServlets.amdTestServlet()))
                 .add(GeneralPageModule.key("onlyBetty")
-                                      .name("Only Betty")
-                                      .path("/ob")
-                                      .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new OnlyBettyConditionServlet()))
-                                      .resource(ConnectAppServlets.apRequestServlet()))
+                        .name("Only Betty")
+                        .path("/ob")
+                        .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new OnlyBettyConditionServlet()))
+                        .resource(ConnectAppServlets.apRequestServlet()))
+                .add(GeneralPageModule.key("encodedSpaces")
+                        .name("Encoded Spaces")
+                        .path("/my?bologne=O%20S%20C%20A%20R")
+                        .resource(ConnectAppServlets.helloWorldServlet()))
                 .add(DialogPageModule.key("remotePluginDialog")
-                                     .name("Remotable Plugin app1 Dialog")
-                                     .path("/rpd")
-                                     .resource(ConnectAppServlets.dialogServlet()))
+                        .name("Remotable Plugin app1 Dialog")
+                        .path("/rpd")
+                        .resource(ConnectAppServlets.dialogServlet()))
                 .add(GeneralPageModule.key("sizeToParent")
-                                     .name("Size to parent general page")
-                                     .path("/fsg")
-                                     .resource(ConnectAppServlets.sizeToParentServlet()))
+                        .name("Size to parent general page")
+                        .path("/fsg")
+                        .resource(ConnectAppServlets.sizeToParentServlet()))
                 .add(DialogPageModule.key("sizeToParentDialog")
-                                     .name("Size to parent dialog page")
-                                     .path("/fsg")
-                                     .resource(ConnectAppServlets.sizeToParentServlet()))
+                        .name("Size to parent dialog page")
+                        .path("/fsg")
+                        .resource(ConnectAppServlets.sizeToParentServlet()))
                 .start();
     }
 
@@ -191,6 +196,18 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertTrue(remotePluginTestPage.isLoaded());
 
         runner.stopAndUninstall();
+    }
+
+    @Test
+    public void testEncodedSpaceInPageModuleUrl()
+    {
+        // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", "Encoded Spaces");
+        assertTrue(page.isRemotePluginLinkPresent());
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+
+        assertThat(remotePluginTest.getValueBySelector("#hello-world-message"), is("Hello world"));
     }
 
     @Test

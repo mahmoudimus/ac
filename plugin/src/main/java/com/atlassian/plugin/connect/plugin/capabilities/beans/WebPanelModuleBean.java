@@ -8,7 +8,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLay
  * controls in the application interface as a group. For example, the existing "People" panel in JIRA issue view
  * shows the assignee, reporter, and similar information for the issue.
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBPANEL_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBPANEL_EXAMPLE}
  * @schemaTitle Web Panel
  * @since 1.0
  */
@@ -87,12 +89,12 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         return weight;
     }
-    
+
     public boolean isAbsolute()
     {
         return (null != getUrl() && getUrl().toLowerCase().startsWith("http"));
     }
-    
+
     public static WebPanelModuleBeanBuilder newWebPanelBean()
     {
         return new WebPanelModuleBeanBuilder();

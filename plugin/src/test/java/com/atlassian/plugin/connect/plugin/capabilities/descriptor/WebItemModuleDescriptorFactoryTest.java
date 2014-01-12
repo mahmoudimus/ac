@@ -65,7 +65,8 @@ public class WebItemModuleDescriptorFactoryTest
 
         RemotablePluginAccessorFactoryForTests pluginAccessorFactory = new RemotablePluginAccessorFactoryForTests();
         pluginAccessorFactory.withBaseUrl(ADDON_BASE_URL);
-        webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager), new IconModuleFragmentFactory(pluginAccessorFactory), conditionModuleFragmentFactory);
+        webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager),
+                new IconModuleFragmentFactory(pluginAccessorFactory), conditionModuleFragmentFactory, pluginAccessorFactory);
 
         when(servletRequest.getContextPath()).thenReturn("http://ondemand.com/jira");
 
@@ -240,7 +241,7 @@ public class WebItemModuleDescriptorFactoryTest
     {
         return newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withUrl("http://www.google.com?my_project_id=${project.id}&my_project_key=${project.key}")
+                .withUrl("http://www.google.com?my_project_id={project.id}&my_project_key={project.key}")
                 .withLocation("atl.admin/menu")
                 .withWeight(123);
     }

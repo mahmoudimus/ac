@@ -12,6 +12,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddo
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ImagePlaceholderBean.newImagePlaceholderBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
@@ -89,8 +90,6 @@ public class StaticContentMacroModuleBeanTest
                                 .build()
                         )
                         .withFeatured(true)
-                        .withWidth("100px")
-                        .withHeight("50px")
                         .withIcon(newIconBean().withUrl("/mymacro/icon.png").withHeight(80).withWidth(80).build())
                         .withParameters(newMacroParameterBean()
                                 .withIdentifier("myparam")
@@ -110,6 +109,13 @@ public class StaticContentMacroModuleBeanTest
                                 .withInsertTitle(new I18nProperty("Insert Title", "insert.title.key"))
                                 .withHeight("100px")
                                 .withWidth("200px")
+                                .build()
+                        )
+                        .withImagePlaceholder(newImagePlaceholderBean()
+                                .withUrl("images/placeholder.png")
+                                .withWidth(100)
+                                .withHeight(25)
+                                .withApplyChrome(true)
                                 .build()
                         )
                         .build()

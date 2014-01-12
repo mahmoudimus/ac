@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
@@ -29,7 +30,9 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarg
  * Web items are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
  * application and don't know where to start, a web item may be all you need.
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBITEM_EXAMPLE}
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#WEBITEM_EXAMPLE}
  * @schemaTitle Web Item
  * @since 1.0
  */
@@ -40,6 +43,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      *  product URL or the add-on's base URL, depending on the _context_ parameter.
      */
     @Required
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
     /**
@@ -57,10 +61,11 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     /**
      * The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.
      *
-     * This context can be either `addon`, which renders the URL relative to the add-on's base URL, or
-     * `product`, which renders the URL relative to the product's base URL.
+     * This context can be either `addon`, which renders the URL relative to the add-on's base URL,
+     * `decorated` which indirectly targets the addon host but initially renders relative to the product host so that the iFrame can be decorated
+     * or `product`, which renders the URL relative to the product's base URL.
      */
-    @CommonSchemaAttributes(defaultValue = "addon")
+    @CommonSchemaAttributes(defaultValue = "decorated")
     private AddOnUrlContext context;
 
     /**
@@ -106,7 +111,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         this.url = "";
         this.location = "";
-        this.context = AddOnUrlContext.addon;
+        this.context = AddOnUrlContext.decorated;
         this.weight = 100;
         this.target = newWebItemTargetBean().build();
         this.styleClasses = new ArrayList<String>();
@@ -117,22 +122,22 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     public WebItemModuleBean(WebItemModuleBeanBuilder builder)
     {
         super(builder);
-        
+
         if (null == url)
         {
             this.url = "";
         }
-        
+
         if(null == context)
         {
-            this.context = AddOnUrlContext.addon;
+            this.context = AddOnUrlContext.decorated;
         }
-        
+
         if(null == weight)
         {
             this.weight = 100;
         }
-        
+
         if(null == target)
         {
             this.target = newWebItemTargetBean().build();
@@ -163,7 +168,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         return weight;
     }
-    
+
     public WebItemTargetBean getTarget()
     {
         return target;
@@ -188,7 +193,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         return (null != getUrl() && getUrl().toLowerCase().startsWith("http"));
     }
-    
+
     public static WebItemModuleBeanBuilder newWebItemBean()
     {
         return new WebItemModuleBeanBuilder();

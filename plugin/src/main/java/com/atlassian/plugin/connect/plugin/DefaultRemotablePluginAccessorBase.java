@@ -95,7 +95,7 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
 
         UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(getBaseUrl()));
         uriBuilder.setPath(uriBuilder.getPath() + path);
-        uriBuilder.setQuery(targetPath.getQuery());
+        uriBuilder.setQuery(targetPath.getRawQuery());
 
         return uriBuilder.toUri().toJavaUri();
     }
@@ -120,7 +120,7 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
                     {
                         throw new IllegalArgumentException(String.format("targetPath and params arguments both contain a parameter called '%s'. " +
                                 "This is ambiguous (which takes precedence? is it a mistake?). Please supply this parameters in one or the other. targetPath = '%s', params['%s'] = [%s]",
-                                nameValuePair.getName(), targetPath.getQuery(), StringUtils.join(params.get(nameValuePair.getName()), ',')));
+                                nameValuePair.getName(), targetPath.getQuery(), nameValuePair.getName(), StringUtils.join(params.get(nameValuePair.getName()), ',')));
                     }
                 }
                 else

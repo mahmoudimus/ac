@@ -40,6 +40,23 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
         this.urlVariableSubstitutor = urlVariableSubstitutor;
     }
 
+    @Override
+    protected DOMElement createDOMElement(Plugin plugin, DynamicContentMacroModuleBean bean)
+    {
+        DOMElement element = super.createDOMElement(plugin, bean);
+
+        if (null != bean.getWidth())
+        {
+            element.setAttribute("width", bean.getWidth());
+        }
+        if (null != bean.getHeight())
+        {
+            element.setAttribute("height", bean.getHeight());
+        }
+
+        return element;
+    }
+
     protected ModuleFactory createModuleFactory(final Plugin plugin, final DOMElement element, final DynamicContentMacroModuleBean bean)
     {
         return new ModuleFactory()
@@ -47,8 +64,16 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return (T) new DynamicContentMacro(plugin.getKey(), bean, userManager, iFrameRenderer, remotablePluginAccessorFactory, urlVariableSubstitutor);
+                DynamicContentMacro macro = new DynamicContentMacro(plugin.getKey(), bean, userManager, iFrameRenderer,
+                        remotablePluginAccessorFactory, urlVariableSubstitutor);
+
+                if (bean.hasImagePlaceholder())
+                {
+                    return (T) decorateWithImagePlaceHolder(plugin, macro, bean.getImagePlaceholder());
+                }
+                return (T) macro;
             }
         };
     }
+
 }

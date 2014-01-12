@@ -15,15 +15,46 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBe
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * The root descriptor for an Atlassian Connect add on
+ * The add-on descriptor is a JSON file (`atlassian-connect.json`) that describes the add-on to the Atlassian application.
+ * The descriptor includes general information for the add-on, as well as the modules that the add-on wants to use or
+ * extend.
  *
- * @exampleJson example: {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_EXAMPLE}
+ * If you're familiar with Java add-on development with previous versions of the Atlassian Plugin Framework, you may already be
+ * familiar with the `atlassian-plugin.xml` descriptors. The `atlassian-connect.json` serves the same function.
+ *
+ * The descriptor serves as the glue between the remote add-on and the Atlassian application. When an administrator for an
+ * Atlassian OnDemand instance installs an add-on, what they are really doing is installing this descriptor file, which
+ * contains pointers to your service. You can see an example below.
+ *
+ * For details and application-specific reference information on the descriptor please refer to the "jira modules"
+ * and "confluence modules" sections of this documentation. But we'll call out a few highlights from the example here.
+ *
+ * The version element identifies the version of the add-on itself. Note that versioning works differently for Atlassian
+ * Connect add-ons than it does for traditional, in-process add-ons.
+ *
+ * Since Atlassian Connect add-ons are remote and largely independent from the Atlassian application, they can be changed
+ * at any time, without having to create a new version or report the change to the Atlassian instance. The changes are
+ * reflected in the Atlassian instance immediately (or at least at page reload time).
+ *
+ * However, some add-on changes do require a change in the descriptor file itself. For example, say you modify the add-on
+ * to have a new page module. Since this requires a page module declaration in the descriptor, it means making an updated
+ * descriptor available, which instances will have to re-register. To propagate this change, you need to create a new version
+ * of the add-on in its Marketplace listing. The Marketplace will take care of the rest: informing administrators
+ * and automatically installing the available update. See [Upgrades](../concepts/upgrades.html) for more details.
+ *
+ *
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_EXAMPLE}
  * @exampleJson Kitchen Sink: <p class="expandNextPre"></p>{@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ADDON_COMPLETE_EXAMPLE}
  * @schemaTitle Addon Descriptor
  * @since 1.0
  */
 public class ConnectAddonBean extends BaseModuleBean
 {
+    public static final String KEY_ATTR = "key";
+    public static final String BASE_URL_ATTR = "baseUrl";
+    
     public static final int DEFAULT_WEIGHT = 100;
 
     /**
@@ -43,7 +74,8 @@ public class ConnectAddonBean extends BaseModuleBean
     private String version;
 
     /**
-     * A human readable description of what the add-on does
+     * A human readable description of what the add-on does. The description will be visible in the `Manage Add-ons`
+     * section of the administration console. Provide meaningful and identifying information for the instance administrator.
      */
     private String description;
 
@@ -85,7 +117,7 @@ public class ConnectAddonBean extends BaseModuleBean
      * The list of modules this add on provides
      */
     private ModuleList modules;
-    
+
     public ConnectAddonBean()
     {
         this.key = "";
@@ -109,12 +141,12 @@ public class ConnectAddonBean extends BaseModuleBean
         {
             this.key = "";
         }
-        
+
         if(null == name)
         {
             this.name = "";
         }
-        
+
         if(null == version)
         {
             this.version = "1.0";
@@ -134,12 +166,12 @@ public class ConnectAddonBean extends BaseModuleBean
         {
             this.vendor = VendorBean.newVendorBean().build();
         }
-        
+
         if(null == links)
         {
             this.links = newHashMap();
         }
-        
+
         if(null == lifecycle)
         {
             this.lifecycle = newLifecycleBean().build();

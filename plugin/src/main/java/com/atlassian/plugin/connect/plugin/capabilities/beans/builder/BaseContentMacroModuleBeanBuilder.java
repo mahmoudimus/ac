@@ -20,10 +20,9 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     private MacroBodyType bodyType;
     private Set<String> aliases;
     private Boolean featured;
-    private String width;
-    private String height;
     private List<MacroParameterBean> parameters;
     private MacroEditorBean editor;
+    private ImagePlaceholderBean imagePlaceholder;
 
     public BaseContentMacroModuleBeanBuilder()
     {
@@ -40,10 +39,9 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
         this.bodyType = defaultBean.getBodyType();
         this.aliases = defaultBean.getAliases();
         this.featured = defaultBean.isFeatured();
-        this.width = defaultBean.getWidth();
-        this.height = defaultBean.getHeight();
         this.parameters = defaultBean.getParameters();
         this.editor = defaultBean.getEditor();
+        this.imagePlaceholder = defaultBean.getImagePlaceholder();
     }
 
     public T withUrl(String url)
@@ -100,18 +98,6 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
         return (T) this;
     }
 
-    public T withWidth(String width)
-    {
-        this.width = width;
-        return (T) this;
-    }
-
-    public T withHeight(String height)
-    {
-        this.height = height;
-        return (T) this;
-    }
-
     public T withParameters(MacroParameterBean... parameters)
     {
         this.parameters = ImmutableList.copyOf(parameters);
@@ -127,6 +113,12 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     public T withEditor(MacroEditorBean editor)
     {
         this.editor = editor;
+        return (T) this;
+    }
+
+    public T withImagePlaceholder(ImagePlaceholderBean imagePlaceholder)
+    {
+        this.imagePlaceholder = imagePlaceholder;
         return (T) this;
     }
 }

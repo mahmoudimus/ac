@@ -17,7 +17,7 @@ public class AddonUrlTemplatePairTest
 {
 
     private static final String ADDON_PATH = "/blah";
-    private static final String ONE_VARIABLE_URL = ADDON_PATH + "?pageid=${page.id}";
+    private static final String ONE_VARIABLE_URL = ADDON_PATH + "?pageid={page.id}";
     private static final String PLUGIN_KEY = "FOO";
 
     @Test

@@ -9,7 +9,7 @@ public class TestRelativeRemoteWebItemModuleDescriptor extends RemoteWebItemModu
     @Override
     protected String getInputLinkText()
     {
-        return "my_page_id=${page.id}";
+        return "my_page_id={page.id}";
     }
 
     protected String getExpectedUrl()
