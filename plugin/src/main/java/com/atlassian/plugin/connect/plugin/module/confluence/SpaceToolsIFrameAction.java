@@ -19,7 +19,7 @@ public class SpaceToolsIFrameAction extends SpaceAdminAction
     public String getIframeHtml() throws IOException
     {
         IFrameParams iFrameParams = new IFrameParamsImpl();
-        IFrameContext iFrameContext = new IFrameContextImpl(context.getPlugin().getKey(), context.getUrl(), "", iFrameParams);
+        IFrameContext iFrameContext = new IFrameContextImpl(context.getPlugin().getKey(), context.getUrl(), context.getSpaceToolsWebItemKey(), iFrameParams);
         return iFrameRenderer.render(iFrameContext, this.getAuthenticatedUser().getName());
     }
 
