@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;

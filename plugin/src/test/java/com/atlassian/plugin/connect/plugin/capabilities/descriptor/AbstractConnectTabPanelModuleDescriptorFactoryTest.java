@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import org.dom4j.Element;
@@ -17,7 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;

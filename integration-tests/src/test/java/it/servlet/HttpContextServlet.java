@@ -13,10 +13,11 @@ import java.util.Map;
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
+import static com.google.common.collect.Maps.newHashMap;
 
 public class HttpContextServlet extends HttpServlet
 {
-    private final Map<String, Object> baseContext = Maps.newHashMap();
+    private final Map<String, Object> baseContext = newHashMap();
     private final ContextServlet servlet;
 
     public HttpContextServlet(ContextServlet servlet)

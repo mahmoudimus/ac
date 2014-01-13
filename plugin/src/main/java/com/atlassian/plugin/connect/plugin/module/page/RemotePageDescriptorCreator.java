@@ -35,6 +35,7 @@ import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getServi
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Creates a builder for remote page descriptor generation.  Builder instances meant to be shared
@@ -81,8 +82,8 @@ public final class RemotePageDescriptorCreator
         private String decorator = "";
         private String templateSuffix = "";
         private Condition condition = new AlwaysDisplayCondition();
-        private Map<String, String> metaTagsContent = Maps.newHashMap();
-        private Map<String, String> contextParams = Maps.newHashMap();
+        private Map<String, String> metaTagsContent = newHashMap();
+        private Map<String, String> contextParams = newHashMap();
 
         public Builder()
         {

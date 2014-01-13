@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.StaticContentMacroModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -11,7 +11,7 @@ import org.mockito.ArgumentMatcher;
 import java.net.URI;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;

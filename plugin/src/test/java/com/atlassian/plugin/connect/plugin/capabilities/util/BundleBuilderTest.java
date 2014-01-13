@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
 import com.atlassian.plugin.PluginArtifact;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
 import com.atlassian.plugin.connect.plugin.installer.RemotePluginArtifactFactory;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
@@ -21,8 +21,8 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
