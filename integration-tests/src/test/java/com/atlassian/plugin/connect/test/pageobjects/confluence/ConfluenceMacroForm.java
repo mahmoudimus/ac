@@ -18,14 +18,14 @@ public class ConfluenceMacroForm extends MacroForm
     private static final String MACRO_PARAM = "macro-param-";
 
     @ElementBy(className = "macro-input-fields")
-    private PageElement fieldForm;
+    private PageElement inputFieldForm;
 
     @FindBy(className = "macro-param-input")
     private List<WebElement> parameterInputs;
 
     public boolean hasField(String parameterName)
     {
-        PageElement field = fieldForm.find(By.id(MACRO_PARAM + parameterName));
+        PageElement field = inputFieldForm.find(By.id(MACRO_PARAM + parameterName));
         return field.isPresent();
     }
 

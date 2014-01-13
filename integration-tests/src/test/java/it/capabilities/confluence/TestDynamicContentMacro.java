@@ -47,6 +47,7 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
     private static final String SHORT_BODY_MACRO_NAME = "Short Body Macro";
     private static final String FEATURED_MACRO_NAME = "Featured Macro";
     private static final String IMAGE_PLACEHOLDER_MACRO_NAME = "Image Placeholder Macro";
+    private static final String PARAMETER_MACRO_NAME = "SingleParam Macro";
 
     private static ConnectRunner remotePlugin;
 
@@ -56,6 +57,7 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
     private static DynamicContentMacroModuleBean shortBodyMacro;
     private static DynamicContentMacroModuleBean featuredMacro;
     private static DynamicContentMacroModuleBean imagePlaceholderMacro;
+    private static DynamicContentMacroModuleBean parameterMacro;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -117,14 +119,6 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
                 .withUrl("/render-macro?hash={macro.hash}")
                 .withName(new I18nProperty(LONG_BODY_MACRO_NAME, ""))
                 .withBodyType(MacroBodyType.PLAIN_TEXT)
-                .withParameters(
-                        newMacroParameterBean()
-                                .withIdentifier("param1")
-                                .withName(new I18nProperty("Parameter", ""))
-                                .withType("enum")
-                                .withValues("A", "B")
-                                .build()
-                )
                 .build();
 
         shortBodyMacro = newDynamicContentMacroModuleBean()
@@ -160,6 +154,17 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
                         .build())
                 .build();
 
+        parameterMacro = newDynamicContentMacroModuleBean()
+                .withUrl("/render-macro")
+                .withName(new I18nProperty(PARAMETER_MACRO_NAME, ""))
+                .withParameters(newMacroParameterBean()
+                        .withIdentifier("param1")
+                        .withName(new I18nProperty("Param 1", ""))
+                        .withType("string")
+                        .build()
+                )
+                .build();
+
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addCapabilities("dynamicContentMacros",
                         simpleMacro,
@@ -167,7 +172,8 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
                         longBodyMacro,
                         shortBodyMacro,
                         featuredMacro,
-                        imagePlaceholderMacro
+                        imagePlaceholderMacro,
+                        parameterMacro
                 )
                 .addRoute("/render-macro", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
@@ -299,6 +305,28 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
         rpc.removePage(savedPage.getPageId());
 
         assertThat(hash, is(DigestUtils.md5Hex(body)));
+    }
+
+    @Test
+    public void testParameterInclusion() throws Exception
+    {
+        CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        editorPage.setTitle("Parameter Page");
+
+        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
+        MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);
+        ConfluenceMacroForm macroForm = (ConfluenceMacroForm) macro.select();
+
+        macroForm.getAutocompleteField("param1").setValue("param value");
+        macroBrowser.insertMacro();
+
+        ViewPage savedPage = editorPage.save();
+        RenderedMacro renderedMacro = connectPageOperations.findMacro(parameterMacro.getKey(), 0);
+        String value = renderedMacro.getFromQueryString("param1");
+
+        rpc.removePage(savedPage.getPageId());
+
+        assertThat(value, is("param value"));
     }
 
     @Test
