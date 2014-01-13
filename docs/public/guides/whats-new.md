@@ -1,7 +1,7 @@
 
 # What's New
 
-## 1.0-m26
+## 1.0-m27
 HTML injection in i18n property values is no longer allowed, even when the add-on has the "generate any HTML" permission.
 
 ## 1.0-m25

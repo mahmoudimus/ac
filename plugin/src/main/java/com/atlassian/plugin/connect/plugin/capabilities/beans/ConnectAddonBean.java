@@ -243,9 +243,14 @@ public class ConnectAddonBean extends BaseModuleBean
             @Override
             public ScopeName apply(@Nullable String input)
             {
+                if (null == input)
+                {
+                    throw new IllegalArgumentException("Scope names must not be null");
+                }
+
                 try
                 {
-                    return ScopeName.valueOf(input);
+                    return ScopeName.valueOf(input.toUpperCase());
                 }
                 catch (IllegalArgumentException e)
                 {
