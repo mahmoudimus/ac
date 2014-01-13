@@ -19,6 +19,8 @@ import com.atlassian.sal.api.user.UserManager;
 
 import com.google.common.collect.Maps;
 
+import static com.google.common.collect.Maps.newHashMap;
+
 /**
  * A servlet that loads its content from a remote plugin's iframe.
  * @deprecated this is insecure. will be deleted in an upcoming release.
@@ -69,7 +71,7 @@ public class ContextFreeIFramePageServlet extends HttpServlet
 
         public ContextFreeIFrameParamsImpl()
         {
-            params = Maps.newHashMap();
+            params = newHashMap();
         }
 
         @Override

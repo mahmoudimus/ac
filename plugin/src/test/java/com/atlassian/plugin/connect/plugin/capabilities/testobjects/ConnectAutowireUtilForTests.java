@@ -9,11 +9,13 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 import static org.mockito.Mockito.mock;
 
 public class ConnectAutowireUtilForTests implements ConnectAutowireUtil
 {
-    private final Map<Class<?>, Object> predefinedMocks = Maps.newHashMap();
+    private final Map<Class<?>, Object> predefinedMocks = newHashMap();
 
     public ConnectAutowireUtilForTests defineMock(Class<?> clazz, Object instance)
     {
@@ -28,7 +30,7 @@ public class ConnectAutowireUtilForTests implements ConnectAutowireUtil
         Preconditions.checkState(constructors.length == 1);
         Constructor<T> constructor = (Constructor<T>) constructors[0];
 
-        ArrayList<Object> mockArguments = Lists.newArrayList();
+        ArrayList<Object> mockArguments = newArrayList();
 
         for (Class<?> parameterClass : constructor.getParameterTypes())
         {

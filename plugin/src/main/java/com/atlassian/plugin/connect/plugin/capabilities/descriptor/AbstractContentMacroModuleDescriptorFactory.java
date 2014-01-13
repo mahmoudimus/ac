@@ -5,10 +5,10 @@ import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ImagePlaceholderBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
+import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceholderMacro;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
@@ -23,7 +23,7 @@ import org.osgi.framework.BundleContext;
 
 import java.net.URISyntaxException;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean.newLinkBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
 
 public abstract class AbstractContentMacroModuleDescriptorFactory<B extends BaseContentMacroModuleBean> implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor>
 {

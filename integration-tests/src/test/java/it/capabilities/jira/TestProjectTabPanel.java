@@ -1,7 +1,7 @@
 package it.capabilities.jira;
 
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import java.util.concurrent.Callable;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static org.junit.Assert.assertEquals;
 
 /**

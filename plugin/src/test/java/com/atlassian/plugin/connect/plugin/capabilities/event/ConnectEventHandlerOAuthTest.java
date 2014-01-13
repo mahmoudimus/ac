@@ -10,7 +10,7 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
@@ -36,9 +36,6 @@ import org.osgi.framework.BundleContext;
 import java.net.URI;
 import java.util.Dictionary;
 
-import javax.ws.rs.POST;
-
-import static com.atlassian.plugin.connect.plugin.util.ConnectInstallationTestUtil.SHARED_SECRET_FIELD_NAME;
 import static com.atlassian.plugin.connect.plugin.util.ConnectInstallationTestUtil.createBean;
 import static com.atlassian.plugin.connect.plugin.util.ConnectInstallationTestUtil.hasSharedSecret;
 import static com.atlassian.plugin.connect.plugin.util.ConnectInstallationTestUtil.hasUserKey;
