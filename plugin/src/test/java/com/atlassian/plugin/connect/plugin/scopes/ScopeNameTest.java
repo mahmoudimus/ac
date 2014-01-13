@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ScopeNameTest
 {
     @Test
-    public void readImplesNothing()
+    public void readImpliesNothing()
     {
         assertThat(ScopeName.READ.getImplied(), is(Collections.<ScopeName>emptySet()));
     }
