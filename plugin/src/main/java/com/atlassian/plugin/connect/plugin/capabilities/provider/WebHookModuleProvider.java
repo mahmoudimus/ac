@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebHookModuleDescriptorFactory;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;

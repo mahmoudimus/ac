@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.google.common.collect.Maps.newHashMap;
+
 /**
  * Substitutes strings with variables defined with those defined in a given context.
  * <p>
@@ -69,7 +71,7 @@ public class UrlVariableSubstitutor
      */
     public Map<String, String> getContextVariableMap(final String source)
     {
-        Map<String, String> contextVariables = Maps.newHashMap();
+        Map<String, String> contextVariables = newHashMap();
         Matcher m = VARIABLE_EQUALS_PLACEHOLDER_PATTERN.matcher(source);
         while (m.find())
         {

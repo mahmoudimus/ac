@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.tests.TestBase;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 
 /**
  * Test of remote issue tab panel in JIRA

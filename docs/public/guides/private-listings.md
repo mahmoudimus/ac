@@ -1,6 +1,6 @@
 # Private Listings
 
-The [Getting Started](/guides/getting-started.html) tutorial describes how to test an Atlassian Connect add-on in a local environment. If you followed it, you ran the Atlassian application on a local machine and installed the add-on manually through a developer mode feature in the Atlassian application. The next phase in your testing should be to test the add-on in the context of a live OnDemand instance.
+The [Getting Started](../guides/getting-started.html) tutorial describes how to test an Atlassian Connect add-on in a local environment. If you followed it, you ran the Atlassian application on a local machine and installed the add-on manually through a developer mode feature in the Atlassian application. The next phase in your testing should be to test the add-on in the context of a live OnDemand instance.
 
 To do so, you need to create a private Atlassian Marketplace listing. A Marketplace listing is necessary whether you intend to make the add-on publicly available or just use it internally. This is because OnDemand applications only accept add-ons that are installed through the Marketplace.
 
@@ -41,7 +41,7 @@ Access tokens let you install and test add-ons that are under development in liv
 ### About access tokens
 To create access tokens for an add-on, you first need to create a private listing for it on the Atlassian Marketplace. You can then use the private listing page of the add-on to generate and manage tokens. 
 
-For paid add-ons, after you install your add-on and apply an access token to it, you can test the add-on against the various [license states](/concepts/licensing.html) it will encounter in the real world, such as valid, expired, and unlicensed.
+For paid add-ons, after you install your add-on and apply an access token to it, you can test the add-on against the various [license states](../concepts/licensing.html) it will encounter in the real world, such as valid, expired, and unlicensed.
 
 While access tokens are like licenses, a few restrictions apply to access tokens that differentiate them from licenses. Notably, there can only be ten tokens per add-on. Also, a token is bound to a particular add-on and OnDemand instance. After a token is applied to an Atlassian application instance, it is permanently associated with that instance. You cannot use it on another instance.
 

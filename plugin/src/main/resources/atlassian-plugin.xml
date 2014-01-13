@@ -23,7 +23,7 @@
 
     <servlet-filter key="documentation-filter" class="com.atlassian.plugin.connect.plugin.docs.DocumentationFilter"
                     location="after-encoding">
-        <url-pattern>/atlassian-connect/docs/*</url-pattern>
+        <url-pattern>/atlassian-connect/docs*</url-pattern>
     </servlet-filter>
 
     <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
@@ -114,7 +114,6 @@
 
     <web-resource key="inline-dialog">
         <resource type="download" name="inline-dialog-main.js" location="js/inline-dialog/main.js" />
-        <resource type="download" name="inline-dialog-binder.js" location="js/inline-dialog/binder.js" />
         <resource type="download" name="inline-dialog-simple.js" location="js/inline-dialog/simple.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>

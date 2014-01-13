@@ -1,3 +1,15 @@
+<%
+    // returns "class='aui-nav-selected'" for the current page, or the empty string otherwise
+    var selected = function(path) {
+        var isSelected = false;
+        // trim file extension if present
+        if (path.indexOf('.') > -1) {
+            path = path.split('.')[0];
+        }
+        return path === current.path.join("/") ? "class='aui-nav-selected'" : "";
+    };
+%>
+
 <div class="aui-page-panel-nav">
     <nav class="aui-navgroup aui-navgroup-vertical">
         <div class="aui-navgroup-inner">
@@ -11,6 +23,17 @@
             <div class="aui-nav-heading">
                 <a href="<%= relDocRoot %>modules/">AddOn Descriptor</a>
             </div>
+            <ul class="aui-nav">
+                <li <%= selected('modules/authentication') %>>
+                    <a href="<%= relDocRoot %>modules/authentication">Authentication</a>
+                </li>
+                <li <%= selected('modules/lifecycle') %>>
+                    <a href="<%= relDocRoot %>modules/lifecycle">Lifecycle</a>
+                </li>
+                <li <%= selected('modules/plugin-vendor') %>>
+                    <a href="<%= relDocRoot %>modules/plugin-vendor">Plugin Vendor</a>
+                </li>
+            </ul>
 
             <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira, relDocRoot: relDocRoot }) %>
             <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence, relDocRoot: relDocRoot }) %>
@@ -20,6 +43,7 @@
             </div>
 
             <%- partial('_sidebar_list.ejs', { category: 'rest-apis' }) %>
+
             <%- partial('_sidebar_list.ejs', { category: 'resources' }) %>
         </div>
     </nav>

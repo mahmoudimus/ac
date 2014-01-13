@@ -25,6 +25,9 @@ public class GenerateSupportDocsMojo extends AbstractSchemaGenMojo
 {
     @Parameter
     private String basePackage = "";
+
+    @Parameter(property = "sourcepath", defaultValue = "${project.basedir}/src/main/java")
+    private String sourcepath = "";
     
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException
@@ -65,6 +68,7 @@ public class GenerateSupportDocsMojo extends AbstractSchemaGenMojo
                         element(name("docletPath"), getClasspath()),
                         element(name("additionalparam"),"-output \"" + resourcedocPath + "\""),
                         element(name("sourceFileIncludes"),element(name("sourceFileInclude"),packagePath)),
+                        element(name("sourcepath"),sourcepath),
                         element(name("quiet"),"true"),
                         element(name("show"),"private"),
                         element(name("useStandardDocletOptions"),"false")

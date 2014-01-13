@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Retrieves http content asynchronously and caches its contents in memory according to the returned headers
@@ -132,7 +133,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
 
     private Map<String, String> getAttributes(String pluginKey)
     {
-        final Map<String, String> properties = Maps.newHashMap();
+        final Map<String, String> properties = newHashMap();
         properties.put("purpose", "content-retrieval");
         properties.put("moduleKey", pluginKey);
         return properties;

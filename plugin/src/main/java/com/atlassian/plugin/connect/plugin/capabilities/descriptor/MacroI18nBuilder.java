@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Properties;

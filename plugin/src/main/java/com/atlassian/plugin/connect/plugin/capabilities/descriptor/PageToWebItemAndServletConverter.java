@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.UrlTemplate;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
@@ -14,8 +14,8 @@ import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**

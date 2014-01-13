@@ -9,7 +9,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewModuleBean;
+import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.RemoteSearchRequestView;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;

@@ -3,15 +3,13 @@ package com.atlassian.plugin.connect.plugin.product.jira;
 import java.util.Map;
 
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.plugin.webfragment.conditions.CanConvertToIssueCondition;
 import com.atlassian.jira.user.preferences.JiraUserPreferences;
 import com.atlassian.jira.user.preferences.PreferenceKeys;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.JiraConditions;
-import com.atlassian.plugin.connect.plugin.module.jira.conditions.ViewingOwnProfileCondition;
+import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
@@ -42,7 +43,7 @@ public class TestIFramePageServlet
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        contextParamNameToSymbolicName = Maps.newHashMap();
+        contextParamNameToSymbolicName = newHashMap();
         servlet = new IFramePageServlet(pageInfo, iFramePageRenderer, iframeContext, userManager, urlVariableSubstitutor,
                 contextParamNameToSymbolicName);
     }

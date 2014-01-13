@@ -1,7 +1,18 @@
+<%
+    // returns "class='aui-nav-selected'" for the current page, or the empty string otherwise
+    var selected = function(path) {
+        var isSelected = false;
+        // trim file extension if present
+        if (path.indexOf('.') > -1) {
+            path = path.split('.')[0];
+        }
+        return path === current.path.join("/") ? "class='aui-nav-selected'" : "";
+    };
+%>
+
 <ul class="aui-nav">
     <% for (var page in public._data[category]) { %>
-    <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
-    <li <%= selected %>>
+    <li <%= selected(category + '/' + page) %>>
         <a href="<%= relDocRoot + category + '/' + page %>"><%= public._data[category][page].title %>
         <% if (public._data[category][page].new) { %>
             <span class="aui-lozenge aui-lozenge-success">new!</span>

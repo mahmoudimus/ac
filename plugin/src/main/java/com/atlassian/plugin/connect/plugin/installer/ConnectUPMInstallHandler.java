@@ -1,8 +1,9 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.schema.DescriptorValidationResult;
-import com.atlassian.plugin.connect.plugin.capabilities.schema.JsonDescriptorValidator;
+import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
+import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
+import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -39,9 +40,10 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     private final FormatConverter formatConverter;
     private final BundleContext bundleContext;
     private final JsonDescriptorValidator jsonDescriptorValidator;
+    private final ConnectSchemaLocator schemaLocator;
 
     @Inject
-    public ConnectUPMInstallHandler(LegacyAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext, JsonDescriptorValidator jsonDescriptorValidator)
+    public ConnectUPMInstallHandler(LegacyAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext, JsonDescriptorValidator jsonDescriptorValidator, ConnectSchemaLocator schemaLocator)
     {
         this.connectIdentifier = connectIdentifier;
         this.connectInstaller = connectInstaller;
@@ -49,6 +51,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         this.formatConverter = formatConverter;
         this.bundleContext = bundleContext;
         this.jsonDescriptorValidator = jsonDescriptorValidator;
+        this.schemaLocator = schemaLocator;
     }
 
     @Override
@@ -102,7 +105,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             else
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                result = jsonDescriptorValidator.validate(json);
+                result = jsonDescriptorValidator.validate(json,schemaLocator.getSchemaForCurrentProduct());
                 Option<String> errorI18nKey = Option.some("connect.invalid.descriptor.install.exception");
                 
                 if(!result.isSuccess())
