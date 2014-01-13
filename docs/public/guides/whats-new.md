@@ -1,6 +1,9 @@
 
 # What's New
 
+## 1.0-m26
+HTML injection in i18n property values is no longer allowed, even when the add-on has the "generate any HTML" permission.
+
 ## 1.0-m25
 Atlassian Connect `1.0-m25` introduces a number of changes to how you will build add-ons for Atlassian OnDemand. There
 are two important changes in this release: a new format for your add-on descriptor and a new authentication method. Both
