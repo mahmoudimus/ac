@@ -1,6 +1,5 @@
     package com.atlassian.plugin.connect.plugin.scopes;
 
-    import com.atlassian.json.schema.util.StringUtil;
     import com.atlassian.plugin.connect.api.scopes.ScopeName;
     import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
     import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBeans;
@@ -88,9 +87,9 @@ public class StaticAddOnScopes
 
             for (AddOnScopeBean.RestPathBean restPathBean : scopeBeans.getRestPaths())
             {
-                if (StringUtil.isBlank(restPathBean.getKey()))
+                if (null == restPathBean.getKey())
                 {
-                    throw new IllegalArgumentException(String.format("restPath index %d in scopes file '%s' has a missing or blank key", restPathIndex, scopesFileResourceName));
+                    throw new IllegalArgumentException(String.format("restPath index %d in scopes file '%s' has a null or missing 'key': please add a key", restPathIndex, scopesFileResourceName));
                 }
 
                 if (restPathBean.getKey().equals(restPathKey))
