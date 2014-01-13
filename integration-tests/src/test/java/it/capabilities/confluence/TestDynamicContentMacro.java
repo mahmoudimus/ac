@@ -275,7 +275,7 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
 
         macroBrowser.insertMacro();
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
-        editorContent.setMacroBody(shortBodyMacro.getKey(), "a short body");
+        editorContent.setMacroBody("a short body", true);
 
         ViewPage savedPage = editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacro(shortBodyMacro.getKey(), 0);
@@ -298,7 +298,7 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
 
         String body = StringUtils.repeat("x ", 200);
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
-        editorContent.setMacroBody(longBodyMacro.getKey(), body);
+        editorContent.setMacroBody(body, false);
 
         ViewPage savedPage = editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacro(longBodyMacro.getKey(), 0);

@@ -35,26 +35,18 @@ public class ConfluenceEditorContent extends EditorContent
         });
     }
 
-    public void setMacroBody(final String macroKey, final String macroBody)
+    public void setMacroBody(final String macroBody, boolean isRichText)
     {
-        execute.onTinyMceIFrame(new Callable<Void>()
+        String body = format(macroBody, isRichText);
+        client.executeScript("tinyMCE.activeEditor.contentDocument.getElementsByClassName(\"wysiwyg-macro-body\")[0].innerHTML=\"" + body +"\"");
+    }
+
+    private String format(String macroBody, boolean richText)
+    {
+        if (richText)
         {
-            @Override
-            public Void call()
-            {
-                List<PageElement> macros = page.findAll(By.className("wysiwyg-macro"));
-                for (PageElement macro : macros)
-                {
-                    String name = macro.getAttribute("data-macro-name");
-                    if (macroKey.equals(name))
-                    {
-                        PageElement macroBodyElement = macro.find(By.tagName("td"));
-                        macroBodyElement.click();
-                    }
-                }
-                return null;
-            }
-        });
-        type(macroBody);
+            return "<p>" + macroBody + "</p>";
+        }
+        return "<pre>" + macroBody + "</pre>";
     }
 }
