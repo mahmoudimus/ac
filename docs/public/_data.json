@@ -1,13 +1,14 @@
 {
     "guides": {
-        "whats-new.html": {
-            "title": "What's New"
-        },
         "introduction.html": {
             "title": "Introduction"
         },
         "getting-started.html": {
             "title": "Getting Started"
+        },
+        "whats-new.html": {
+            "title": "What's New",
+            "new": true
         }
     },
     "developing": {
