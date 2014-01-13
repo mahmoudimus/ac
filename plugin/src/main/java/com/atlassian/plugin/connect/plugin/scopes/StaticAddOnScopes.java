@@ -1,20 +1,20 @@
     package com.atlassian.plugin.connect.plugin.scopes;
 
-import com.atlassian.plugin.connect.api.scopes.ScopeName;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
-import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBeans;
-import com.atlassian.plugin.connect.plugin.util.StreamUtil;
-import com.google.common.base.Function;
-import com.google.gson.GsonBuilder;
+    import com.atlassian.json.schema.util.StringUtil;
+    import com.atlassian.plugin.connect.api.scopes.ScopeName;
+    import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
+    import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBeans;
+    import com.atlassian.plugin.connect.plugin.util.StreamUtil;
+    import com.google.common.base.Function;
+    import com.google.gson.GsonBuilder;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+    import javax.annotation.Nonnull;
+    import javax.annotation.Nullable;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.util.*;
 
-import static com.google.common.collect.Collections2.transform;
+    import static com.google.common.collect.Collections2.transform;
 
 public class StaticAddOnScopes
 {
@@ -53,6 +53,18 @@ public class StaticAddOnScopes
     {
         Collection<AddOnScope> scopes = new ArrayList<AddOnScope>();
         String scopesFileResourceName = resourceLocation(product);
+        AddOnScopeBeans scopeBeans = parseScopeBeans(scopesFileResourceName);
+
+        for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
+        {
+            constructAndAddScope(scopes, scopesFileResourceName, scopeBeans, scopeBean);
+        }
+
+        return scopes;
+    }
+
+    private static AddOnScopeBeans parseScopeBeans(String scopesFileResourceName) throws IOException
+    {
         InputStream inputStream = StaticAddOnScopes.class.getResourceAsStream(scopesFileResourceName);
 
         if (null == inputStream)
@@ -61,31 +73,56 @@ public class StaticAddOnScopes
         }
 
         String rawJson = StreamUtil.getStringFromInputStream(inputStream);
-        AddOnScopeBeans scopeBeans = new GsonBuilder().create().fromJson(rawJson, AddOnScopeBeans.class);
+        return new GsonBuilder().create().fromJson(rawJson, AddOnScopeBeans.class);
+    }
 
-        for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
+    private static void constructAndAddScope(Collection<AddOnScope> scopes, String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean)
+    {
+        checkScopeName(scopeBean); // scope names must be valid
+        AddOnScopeApiPathBuilder pathsBuilder = new AddOnScopeApiPathBuilder();
+
+        for (String restPathKey : scopeBean.getRestPaths())
         {
-            // scope names must be valid
-            try
+            boolean found = false;
+            int restPathIndex = 0;
+
+            for (AddOnScopeBean.RestPathBean restPathBean : scopeBeans.getRestPaths())
             {
-                ScopeName.valueOf(scopeBean.getKey());
-            }
-            catch (IllegalArgumentException e)
-            {
-                throw new InvalidDescriptorException(String.format("Scope name '%s' is not valid. Valid scopes are %s", scopeBean.getKey(), Arrays.asList(ScopeName.values())));
+                if (StringUtil.isBlank(restPathBean.getKey()))
+                {
+                    throw new IllegalArgumentException(String.format("restPath index %d in scopes file '%s' has a missing or blank key", restPathIndex, scopesFileResourceName));
+                }
+
+                if (restPathBean.getKey().equals(restPathKey))
+                {
+                    found = true;
+                    pathsBuilder.withRestPaths(restPathBean, scopeBean.getMethods());
+                    break;
+                }
+
+                ++restPathIndex;
             }
 
-            AddOnScopeApiPathBuilder pathsBuilder = new AddOnScopeApiPathBuilder();
-
-            for (AddOnScopeBean.RestPathBean restPathBean : scopeBean.getRestPaths())
+            if (!found)
             {
-                pathsBuilder.withRestPaths(restPathBean);
+                throw new IllegalArgumentException(String.format("restPath key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
+                                                                 restPathKey, scopeBean.getKey(), scopesFileResourceName));
             }
-
-            scopes.add(new AddOnScope(scopeBean.getKey(), pathsBuilder.build()));
         }
 
-        return scopes;
+        scopes.add(new AddOnScope(scopeBean.getKey(), pathsBuilder.build()));
+    }
+
+    private static void checkScopeName(AddOnScopeBean scopeBean)
+    {
+        try
+        {
+            ScopeName.valueOf(scopeBean.getKey());
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new IllegalArgumentException(String.format("Scope name '%s' is not valid. Valid scopes are %s", scopeBean.getKey(), Arrays.asList(ScopeName.values())));
+        }
     }
 
     /**

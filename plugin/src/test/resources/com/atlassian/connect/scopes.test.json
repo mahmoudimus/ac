@@ -1,21 +1,42 @@
 {
     "scopes" : [{
         "key" : "READ",
-        "restPaths" : [{
-            "name" : "mywork",
-            "basePaths" : ["/notification.*", "/status.*", "/task.*"],
-            "versions" : ["1", "latest"],
-            "methods" : ["get"]
-        },{
-            "name" : "prototype",
-            "basePaths" : ["/search.*", "/content.*", "/attachment.*", "/breadcrumb.*", "/space.*"],
-            "versions" : ["1", "latest"],
-            "methods" : ["get"]
-        },{
-            "name" : "ui",
-            "basePaths" : ["/content.*"],
-            "versions" : ["1", "1.0", "latest"],
-            "methods" : ["get"]
-        }]
+        "methods": ["get"],
+        "restPaths" : ["mywork", "mywork status", "prototype", "prototype content", "ui"]
+    }, {
+        "key": "WRITE",
+        "methods": ["post", "put"],
+        "restPaths": ["mywork", "mywork action", "prototype content", "ui"]
+    }],
+    "restPaths" : [{
+        "key" : "mywork",
+        "name" : "mywork",
+        "basePaths" : ["/notification.*", "/task.*"],
+        "versions" : ["1", "latest"]
+    },{
+        "key" : "mywork status",
+        "name" : "mywork",
+        "basePaths" : ["/status.*"],
+        "versions" : ["1", "latest"]
+    },{
+        "key" : "mywork action",
+        "name" : "mywork",
+        "basePaths" : ["/action.*"],
+        "versions" : ["1", "latest"]
+    },{
+        "key" : "prototype",
+        "name" : "prototype",
+        "basePaths" : ["/search.*", "/attachment.*", "/breadcrumb.*", "/space.*"],
+        "versions" : ["1", "latest"]
+    },{
+        "key" : "prototype content",
+        "name" : "prototype",
+        "basePaths" : ["/content.*"],
+        "versions" : ["1", "latest"]
+    },{
+        "key" : "ui",
+        "name" : "ui",
+        "basePaths" : ["/content.*"],
+        "versions" : ["1", "1.0", "latest"]
     }]
 }

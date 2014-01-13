@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -19,14 +18,14 @@ public class StaticAddOnScopesTest
     @Test
     public void readsTestScopes() throws IOException
     {
-        assertThat(getTestScopes(), is(AddOnScopeBuilderForTests.buildReadScope()));
+        assertThat(getTestScopes(), is(AddOnScopeBuilderForTests.buildScopes()));
     }
 
     @Test
     public void referencedScopesAreFound() throws IOException
     {
-        Collection<AddOnScope> scopes = StaticAddOnScopes.dereference(getTestScopes(), asList(ScopeName.READ));
-        assertThat(scopes, Is.is(AddOnScopeBuilderForTests.buildReadScope()));
+        Collection<AddOnScope> scopes = StaticAddOnScopes.dereference(getTestScopes(), asList(ScopeName.READ, ScopeName.WRITE));
+        assertThat(scopes, Is.is(AddOnScopeBuilderForTests.buildScopes()));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -35,7 +34,7 @@ public class StaticAddOnScopesTest
         StaticAddOnScopes.dereference(getTestScopes(), asList((ScopeName)null));
     }
 
-    @Test(expected = InvalidDescriptorException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void readingABadResourceNameResultsInException() throws IOException
     {
         StaticAddOnScopes.buildFor("bad_name");

@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import org.hamcrest.Matcher;
 
@@ -9,20 +10,28 @@ import static java.util.Arrays.asList;
 
 public class AddOnScopeBuilderForTests
 {
-    public static Matcher<Collection<AddOnScope>> buildReadScope()
+    public static Matcher<Collection<AddOnScope>> buildScopes()
     {
-        AddOnScopeApiPath path = new AddOnScopeApiPath.RestApiPath(asList(
+        AddOnScopeApiPath readPaths = new AddOnScopeApiPath.RestApiPath(asList(
                 new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/notification.*", asList("get"), true),
-                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/status.*", asList("get"), true),
                 new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/task.*", asList("get"), true),
+                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/status.*", asList("get"), true),
                 new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/search.*", asList("get"), true),
-                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/content.*", asList("get"), true),
                 new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/attachment.*", asList("get"), true),
                 new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/breadcrumb.*", asList("get"), true),
                 new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/space.*", asList("get"), true),
+                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/content.*", asList("get"), true),
                 new RestApiScopeHelper.RestScope("ui", asList("1", "1.0", "latest"), "/content.*", asList("get"), true)
         ));
-        Matcher<AddOnScope> readScope = new AddOnScopeMatcher("READ", asList(path));
-        return new AddOnScopesMatcher(asList(readScope));
+        Matcher<AddOnScope> readScope = new AddOnScopeMatcher(ScopeName.READ.name(), asList(readPaths));
+        AddOnScopeApiPath writePaths = new AddOnScopeApiPath.RestApiPath(asList(
+                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/notification.*", asList("post", "put"), true),
+                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/task.*", asList("post", "put"), true),
+                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/action.*", asList("post", "put"), true),
+                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/content.*", asList("post", "put"), true),
+                new RestApiScopeHelper.RestScope("ui", asList("1", "1.0", "latest"), "/content.*", asList("post", "put"), true)
+        ));
+        Matcher<AddOnScope> writeScope = new AddOnScopeMatcher(ScopeName.WRITE.name(), asList(writePaths));
+        return new AddOnScopesMatcher(asList(readScope, writeScope));
     }
 }
