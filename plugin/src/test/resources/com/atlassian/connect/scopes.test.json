@@ -3,17 +3,17 @@
         "key" : "READ",
         "restPaths" : [{
             "name" : "mywork",
-            "basePaths" : ["/notification", "/status", "/task"],
+            "basePaths" : ["/notification.*", "/status.*", "/task.*"],
             "versions" : ["1", "latest"],
             "methods" : ["get"]
         },{
             "name" : "prototype",
-            "basePaths" : ["/search", "/content", "/attachment", "/breadcrumb", "/space"],
+            "basePaths" : ["/search.*", "/content.*", "/attachment.*", "/breadcrumb.*", "/space.*"],
             "versions" : ["1", "latest"],
             "methods" : ["get"]
         },{
             "name" : "ui",
-            "basePaths" : ["/content"],
+            "basePaths" : ["/content.*"],
             "versions" : ["1", "1.0", "latest"],
             "methods" : ["get"]
         }]
