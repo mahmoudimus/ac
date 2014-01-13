@@ -1,37 +1,53 @@
 # Getting Started
 
-In this Hello World tutorial, we'll turn an HTML page into an Atlassian Connect add-on. Using a simple HTML page allows us to focus on the things that distinguish an ordinary web application from an Atlassian Connect add-on, setting aside the details of building web applications for now.
+In this Hello World tutorial, we'll turn an HTML page into an Atlassian Connect add-on. Using a simple HTML page allows
+us to focus on the things that distinguish an ordinary web application from an Atlassian Connect add-on, setting aside
+the details of building web applications for now.
 
-While a deployed Atlassian Connect add-on normally operates remotely from the Atlassian OnDemand application, for this tutorial, we'll work on a single system. We'll host the add-on using a lightweight web server provided by Python. The target Atlassian application will be a local instance of an OnDemand build.
+While a deployed Atlassian Connect add-on normally operates remotely from the Atlassian OnDemand application, for this
+tutorial, we'll work on a single system. We'll host the add-on using a lightweight web server provided by Python. The
+target Atlassian application will be a local instance of an OnDemand build.
 
-While testing locally gets you started, eventually you will need to try out the add-on in a live OnDemand instance. To do so, you'll need to create a listing for the add-on on the Marketplace. For more information, see [Listing Private Add-ons](https://developer.atlassian.com/display/AC/Listing+Private+Add-ons) and [Managing Access Tokens](https://developer.atlassian.com/display/AC/Managing+Access+Tokens). 
+While testing locally gets you started, eventually you will need to try out the add-on in a live OnDemand instance. To
+do so, you'll need to create a listing for the add-on on the Marketplace. For more information, see
+[Listing Private Add-ons](https://developer.atlassian.com/display/AC/Listing+Private+Add-ons) and
+[Managing Access Tokens](https://developer.atlassian.com/display/AC/Managing+Access+Tokens).
 
-The command examples in this tutorial use Linux or OS X. If working on another operating system, use the command appropriate for your environment.
+The command examples in this tutorial use Linux or OS X. If working on another operating system, use the command
+appropriate for your environment.
 
 ## Start the target Atlassian application with the Atlassian SDK
 
-The easiest way to get a local instance of the Atlassian application running is with the [Atlassian SDK](https://developer.atlassian.com/display/DOCS/Downloads). If you don't have the SDK installed, you should download and install it now.
+The easiest way to get a local instance of the Atlassian application running is with the
+[Atlassian SDK](https://developer.atlassian.com/display/DOCS/Downloads). If you don't have the SDK installed, you
+should download and install it now.
 
-We'll use the `atlas-run-standalone` command, which starts an Atlassian application. The SDK lets you specify a particular version of the Atlassian application to start. For testing and developing Atlassian Connect add-ons, we're going to start the application with some specific component versions we need. 
+We'll use the `atlas-run-standalone` command, which starts an Atlassian application. The SDK lets you specify a
+particular version of the Atlassian application to start. For testing and developing Atlassian Connect add-ons, we're
+going to start the application with some specific component versions we need.
 
 <div class="aui-message warning">
     <p class="title">
         <span class="aui-icon icon-warning"></span>
         <strong>Important</strong>
     </p>
-    We recommend you start the host application using the SDK command shown here. Atlassian Connect is only present in Atlassian OnDemand and not yet included with Download instances of our software. Therefore certain components, including the Atlassian Connect Framework itself, are included here in the startup command. Without these components present, Connect add-ons cannot be installed. If you are not using the commands below, you must ensure all of the components listed in the `--bundled-plugins` argument are present in your Atlassian application.
+    We recommend you start the host application using the SDK command shown here. Atlassian Connect is only present in
+    Atlassian OnDemand and not yet included with Download instances of our software. Therefore certain components,
+    including the Atlassian Connect Framework itself, are included here in the startup command. Without these components
+    present, Connect add-ons cannot be installed. If you are not using the commands below, you must ensure all of the
+    components listed in the `--bundled-plugins` argument are present in your Atlassian application.
 </div>
 
 You can start JIRA or Confluence with Atlassian Connect as follows:
 
 ### JIRA
 ```
-atlas-run-standalone --product jira --version 6.2-OD-05-4 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m25,com.atlassian.jwt:jwt-plugin:1.0-m3,com.atlassian.webhooks:atlassian-webhooks-plugin:0.17.3,com.atlassian.httpclient:atlassian-httpclient-plugin:0.17.1,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.2,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true
+atlas-run-standalone --product jira --version 6.2-OD-06-43 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m27,com.atlassian.jwt:jwt-plugin:1.0-m6,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.5,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true
 ```
 
 ### Confluence
 ```
-atlas-run-standalone --product confluence --version 5.3-OD-15 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m25,com.atlassian.jwt:jwt-plugin:1.0-m3,com.atlassian.webhooks:atlassian-webhooks-plugin:0.17.3,com.atlassian.httpclient:atlassian-httpclient-plugin:0.17.1,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.2,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true
+atlas-run-standalone --product confluence --version 5.4-OD-4 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m27,com.atlassian.jwt:jwt-plugin:1.0-m6,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.5,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true
 ```
 
 Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This includes the version of Atlassian Connect framework. Those component versions will change as Atlassian Connect development continues. To find out about new version updates, subscribe to the Atlassian Connect [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev), and keep your eye on Atlassian Connect [blog posts](https://developer.atlassian.com/display/AC/Atlassian+Connect).

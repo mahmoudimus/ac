@@ -53,6 +53,14 @@
             "new": true
         }
     },
+    "release-notes": {
+        "1-0-m27.html": {
+            "title": "1.0-m27"
+        },
+        "1-0-m25.html": {
+            "title": "1.0-m25"
+        }
+    },
     "rest-apis": {
         "product-api-browser.html": {
             "title": "Product API Browser"
