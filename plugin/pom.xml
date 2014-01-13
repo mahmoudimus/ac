@@ -205,11 +205,6 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.jwt</groupId>
-            <artifactId>jwt-http-client</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.jwt</groupId>
             <artifactId>jwt-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
