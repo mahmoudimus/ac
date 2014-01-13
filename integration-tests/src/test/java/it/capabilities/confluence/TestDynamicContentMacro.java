@@ -14,7 +14,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyTy
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroEditor;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroForm;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.MacroList;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
@@ -274,8 +273,9 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
         MacroItem macro = macroBrowser.searchForFirst(SHORT_BODY_MACRO_NAME);
         macro.select();
 
-        ConfluenceMacroEditor macroEditor = macroBrowser.insertMacro();
-        macroEditor.setBody("a short body");
+        macroBrowser.insertMacro();
+        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
+        editorContent.setMacroBody(shortBodyMacro.getKey(), "a short body");
 
         ViewPage savedPage = editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacro(shortBodyMacro.getKey(), 0);
@@ -294,10 +294,11 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
         ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(LONG_BODY_MACRO_NAME);
         macro.select();
-        ConfluenceMacroEditor macroEditor = macroBrowser.insertMacro();
+        macroBrowser.insertMacro();
 
         String body = StringUtils.repeat("x ", 200);
-        macroEditor.setBody(body);
+        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
+        editorContent.setMacroBody(longBodyMacro.getKey(), body);
 
         ViewPage savedPage = editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacro(longBodyMacro.getKey(), 0);
@@ -351,7 +352,7 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
         assertThat(content1, is(content2));
     }
 
-    @Test
+    //@Test -- will only work in 5.3-OD-13 and later
     public void testImagePlaceholder() throws Exception
     {
         CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);

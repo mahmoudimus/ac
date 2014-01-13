@@ -10,9 +10,8 @@ public class ConfluenceMacroBrowserDialog extends MacroBrowserDialog
     @Inject
     PageBinder pageBinder;
 
-    public ConfluenceMacroEditor insertMacro()
+    public void insertMacro()
     {
         clickButton("ok", true);
-        return pageBinder.bind(ConfluenceMacroEditor.class);
     }
 }
