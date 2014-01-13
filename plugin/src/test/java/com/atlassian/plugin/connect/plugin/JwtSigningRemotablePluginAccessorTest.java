@@ -32,6 +32,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
+import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
+import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
@@ -191,7 +193,7 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     protected Map<String, String> getPostSigningHeaders(Map<String, String> preSigningHeaders)
     {
         Map<String, String> headers = new HashMap<String, String>(preSigningHeaders);
-        headers.put(JwtUtil.AUTHORIZATION_HEADER, JwtUtil.JWT_AUTH_HEADER_PREFIX + MOCK_JWT);
+        headers.put(AUTHORIZATION_HEADER, JWT_AUTH_HEADER_PREFIX + MOCK_JWT);
         return headers;
     }
 

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Option;
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.core.JwtUtil;
 import com.atlassian.jwt.core.TimeUtil;
@@ -26,6 +27,7 @@ import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
+import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -68,7 +70,7 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
                 return checkNotNull(input).toArray(new String[input.size()]);
             }
         });
-        return Option.some(JwtUtil.JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, paramsAsArrays, null, consumerService.getConsumer().getKey(), jwtService, applicationLink));
+        return Option.some(JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, paramsAsArrays, null, consumerService.getConsumer().getKey(), jwtService, applicationLink));
     }
 
     static String encodeJwt(HttpMethod httpMethod, URI targetPath, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, ApplicationLink appLink)
