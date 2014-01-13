@@ -6,7 +6,7 @@ Atlassian Connect is a distributed add-on technology for extending Atlassian app
 ### Where are the docs?
 You've found them!
 
-The primary documentation for Atlassian Connect [is this space](./index.html). Individual tools that you can use with Atlassian Connect, such as [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express), may provide their own, separate documentation.
+The primary documentation for Atlassian Connect [is here](../index.html). Individual tools that you can use with Atlassian Connect, such as [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express), may provide their own, separate documentation.
 
 ### What other information resources exist?
 - [Google group](https://groups.google.com/forum/?fromgroups#!forum/atlassian-connect-dev)
@@ -77,7 +77,7 @@ We expect that most current vendors will start by writing a new Atlassian Connec
 - Your add-on will be much less coupled to the host product, making it more resilient and your customers more likely to upgrade successfully
 
 ### What does this mean for a vendor whose Plugins 2 add-on is currently bundled in OnDemand?
-You can and should start selling your add-on through the Atlasssian Marketplace today. To do so, you should implement Atlassian [licensing](/concepts/licensing.html) in your add-on and submit a new version. As the Atlassian OnDemand platform matures, our goal is to transition all third-party Plugins 2 add-ons to Atlassian Connect. The security and robustness that the new platform provides will help both Atlassian and vendors to move forward more quickly. We will work with you individually to accomplish this over the coming years.
+You can and should start selling your add-on through the Atlasssian Marketplace today. To do so, you should implement Atlassian [licensing](../concepts/licensing.html) in your add-on and submit a new version. As the Atlassian OnDemand platform matures, our goal is to transition all third-party Plugins 2 add-ons to Atlassian Connect. The security and robustness that the new platform provides will help both Atlassian and vendors to move forward more quickly. We will work with you individually to accomplish this over the coming years.
 
 ### How can add-ons change code safely?
 Atlassian Connect is designed to decouple add-ons from the Atlassian application. Because you are running a remote service, you can change your underlying application at any time and as often as you find necessary. The only part of your application controlled by Atlassian is your add-on descriptor file, which is stored on the [Atlassian Marketplace](https://marketplace.atlassian.com/). You can change your descriptor by uploading a new version to the Marketplace, which will automatically be pushed to all your customers. By versioning your API, paying attention to the versioning and careful deprecation of the Atlassian application's API, you can move forward with more confidence.
