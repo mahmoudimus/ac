@@ -20,6 +20,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 
 import static com.atlassian.plugin.connect.spi.util.XmlUtils.createSecureSaxReader;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  *
@@ -108,7 +109,7 @@ public class Utils
 
     private static class TestEnv implements Environment
     {
-        private Map<String, String> env = Maps.newHashMap();
+        private Map<String, String> env = newHashMap();
 
         @Override
         public String getEnv(String name)

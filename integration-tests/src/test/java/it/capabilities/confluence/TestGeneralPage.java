@@ -1,7 +1,7 @@
 package it.capabilities.confluence;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
@@ -21,7 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.google.common.base.Charsets.UTF_8;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;

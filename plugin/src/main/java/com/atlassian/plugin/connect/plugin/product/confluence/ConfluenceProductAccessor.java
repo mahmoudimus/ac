@@ -7,7 +7,7 @@ import com.atlassian.mail.Email;
 import com.atlassian.mail.MailException;
 import com.atlassian.mail.MailFactory;
 import com.atlassian.mail.server.SMTPMailServer;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConfluenceConditions;
+import com.atlassian.plugin.connect.modules.beans.ConfluenceConditions;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;

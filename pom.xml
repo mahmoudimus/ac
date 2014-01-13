@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m26-SNAPSHOT</version>
+    <version>1.0-m28-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -26,6 +26,7 @@
     <modules>
         <module>json-schemagen</module>
         <module>api-parent</module>
+        <module>modules</module>
         <module>plugin</module>
     </modules>
     
@@ -603,7 +604,7 @@
         <atlassian.jira.testkit.version>6.0.45</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.4.1</atlassian.mail.version>
         <atlassian.oauth.version>1.3.0</atlassian.oauth.version>
-        <atlassian.jwt.version>1.0-m6</atlassian.jwt.version>
+        <atlassian.jwt.version>1.0-m7</atlassian.jwt.version>
         <atlassian.json.schema.validator.version>1.0-m0</atlassian.json.schema.validator.version>
         <atlassian.plugins.version>3.0.7</atlassian.plugins.version>
         <atlassian.plugins.api.version>2.10</atlassian.plugins.api.version>
@@ -634,12 +635,12 @@
         <guava.version>10.0.1</guava.version>
 
         <!-- BUILD STUFF -->
-        <jgitflow.version>1.0-alpha26</jgitflow.version>
+        <jgitflow.version>1.0-internal3</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
-        <atlassian.spring.scanner.version>1.0-m8</atlassian.spring.scanner.version>
+        <atlassian.spring.scanner.version>1.0-m9</atlassian.spring.scanner.version>
     </properties>
 
     <repositories>
