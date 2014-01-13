@@ -21,4 +21,15 @@ public class ConfluenceEditorContent extends EditorContent
         return binder.bind(MacroList.class);
     }
 
+    public String getImagePlaceholderUrl()
+    {
+        return execute.onTinyMceIFrame(new Callable<String>()
+        {
+            @Override
+            public String call()
+            {
+                return page.find(By.className("editor-inline-macro")).getAttribute("src");
+            }
+        });
+    }
 }
