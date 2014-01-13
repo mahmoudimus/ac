@@ -19,6 +19,7 @@ public class RemoteWebItem
     public static enum ItemMatchingMode { ID, LINK_TEXT }
 
     private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-servlet-";
+    private static final String INLINE_DIALOG_ACTIVE_CLASS = "active";
 
     @Inject
     private PageElementFinder elementFinder;
@@ -114,30 +115,15 @@ public class RemoteWebItem
 
     public boolean isInlineDialog()
     {
-        if(null == webItem)
-        {
-            return false;
-        }
-        if(webItem.hasClass("ap-inline-dialog")){
-            return true;
-        }
-        return false;
+        return null != webItem && webItem.hasClass("ap-inline-dialog");
     }
 
     public boolean isActiveInlineDialog()
     {
-        if(isInlineDialog())
+        if (!isInlineDialog())
         {
-            if(webItem.hasClass("active"))
-            {
-                return true;
-
-            } else if(webItem.find(By.className("active")).isPresent())
-            {
-                return true;
-            }
+            return false;
         }
-
-        return false;
+        return webItem.hasClass(INLINE_DIALOG_ACTIVE_CLASS) || webItem.find(By.className(INLINE_DIALOG_ACTIVE_CLASS)).isPresent();
     }
 }
