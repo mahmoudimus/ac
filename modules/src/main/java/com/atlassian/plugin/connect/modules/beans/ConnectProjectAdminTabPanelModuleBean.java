@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.modules.beans;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectProjectAdminTabPanelModuleBeanBuilder;
 
 /**
- * Module bean for Jira ProjectAdmin Tab Pages.
- * <p/>
- * #### Example
+ * Project administration tab panel modules add a new tab and corresponding page to the left hand menu on the JIRA
+ * project administration page.
  *
+ *#### Example
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PRJ_ADMIN_PAGE_EXAMPLE}
  * @schemaTitle Project Admin Tab Panel
  */

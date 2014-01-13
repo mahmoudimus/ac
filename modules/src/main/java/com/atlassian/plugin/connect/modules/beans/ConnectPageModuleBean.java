@@ -7,33 +7,34 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanB
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 
 import com.google.common.base.Objects;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Page modules allow add-ons to insert new pages into atlassian products. These can be automatically resized to the width
+ *Page modules allow add-ons to insert new pages into atlassian products. These can be automatically resized to the width
  * and height of your add-on's content. The location attribute defines where links to the new page appear.
- * <p/>
- * Each type of page displays differently:
- * <p/>
+ *
+ *Each type of page displays differently:
+ *
  * * `generalPages` - have no extra styling and by default a link to the page is displayed in the main navigation menu.
  * * `adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.
  * * `profilePages` - (__Confluence only__) displayed as sections inside user profiles. Like admin pages, they appear with all the necessary components around them (such as menus).
- * <p/>
+ * * `configurePage` - used to configure the addon itself. A link to the page is displayed in the add-on's entry in
+ * _Manage Add-ons_. Unlike the other page modules, an add-on may only define a single `configurePage`.
+ *
  * <!-- ## Seamless iframes -->
- * <p/>
- * The content for a page module is injected into the Atlassian application in the form of a "seamless" iframe.
+ *
+ *The content for a page module is injected into the Atlassian application in the form of a "seamless" iframe.
  * Seamless iframes are regular HTML iframes but with the following characteristics:
- * <p/>
+ *
  * * Their size is based on the page height and width inside the iframe (i.e., no scrollbars)
  * * They are dynamically resized based on the inner content or relative browser window sizing
  * * They appear without borders, making them look like a non-iframed fragment of the page
  * * For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content). To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. For example, using ACE:
- * <p/>
- * <script src="{{hostScriptUrl}}" type="text/javascript" data-options="sizeToParent:true"></script>
- * <p/>
- * As implied here, for most page content modules, you do not need to be concerned with iframe sizing. It's all handled
+ *
+ *      `<script src="{{hostScriptUrl}}" type="text/javascript" data-options="sizeToParent:true"></script>`
+ *
+ *As implied here, for most page content modules, you do not need to be concerned with iframe sizing. It's all handled
  * for you. However, an exception exists for inline macros.
  * <p/>
  * #### Example
@@ -83,7 +84,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     * Specifies the URL targeted by the page. The URL is relative to the add-on's base URL.
+     *  Specifies the URL targeted by the page. The URL is relative to the add-on's base URL.
      */
     public String getUrl()
     {
@@ -92,10 +93,10 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
 
     /**
      * Determines the order in which the page's link appears in the menu or list.
-     * <p/>
+     *
      * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
      * while the "heaviest" weights sink to the bottom of the menu or list.
-     * <p/>
+     *
      * Built-in web items have weights that are incremented by numbers that leave room for additional
      * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
      * in a sensible order given existing items.
@@ -106,9 +107,9 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     * An optional icon to display with the link text or as the link, specified by URL to its hosted location.
-     * You can specify a particular width and height for the icon. Most link icons in Atlassian applications
-     * are 16 by 16 pixels.
+     *  An optional icon to display with the link text or as the link, specified by URL to its hosted location.
+     *  You can specify a particular width and height for the icon. Most link icons in Atlassian applications
+     *  are 16 by 16 pixels.
      */
     public IconBean getIcon()
     {
@@ -119,7 +120,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * The location in the application interface where the page's link should appear. For the Atlassian application
      * interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or
      * navigation list in the UI.
-     * <p/>
+     *
      * Places in the Atlassian UI are identified by what are known as "well-known locations."
      * For example, the "system.admin/globalsettings" location is in the administrative
      * menu link on the left side of the Administration Console.

@@ -30,12 +30,20 @@ public class DocumentationFilter implements Filter
 
         if (req.getServletPath().indexOf(FILTER_PREFIX) == 0) {
             String docPath = req.getServletPath().substring(FILTER_PREFIX.length());
-            if (docPath.length() == 0 || docPath.endsWith("/")) {
+
+            if (docPath.endsWith("/"))
+            {
+                // append index.html if request is for a directory
                 docPath += "index.html";
+            }
+            else if (!docPath.contains("."))
+            {
+                // if no file extension, assume it's a directory and redirect with a trailing slash
+                res.sendRedirect(req.getRequestURI() + "/");
+                return;
             }
 
             docPath = DOCS_PREFIX + docPath;
-
             req.getRequestDispatcher(docPath).forward(req, res);
         } else {
             filterChain.doFilter(req, res);

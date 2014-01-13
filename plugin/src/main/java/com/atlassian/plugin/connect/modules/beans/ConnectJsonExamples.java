@@ -412,6 +412,7 @@ public class ConnectJsonExamples
                 .withInstalled("/installed")
                 .withUninstalled("/uninstalled")
                 .withEnabled("/enabled")
+                .withDisabled("/disabled")
                 .build();
 
         return gson.toJson(bean);
