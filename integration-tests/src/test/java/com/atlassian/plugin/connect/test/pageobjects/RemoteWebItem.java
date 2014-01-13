@@ -128,8 +128,16 @@ public class RemoteWebItem
     {
         if(isInlineDialog())
         {
-            return webItem.hasClass("active");
+            if(webItem.hasClass("active"))
+            {
+                return true;
+
+            } else if(webItem.find(By.className("active")).isPresent())
+            {
+                return true;
+            }
         }
+
         return false;
     }
 }

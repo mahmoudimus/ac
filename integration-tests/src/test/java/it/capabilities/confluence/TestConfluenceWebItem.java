@@ -194,10 +194,8 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(ADDON_WEBITEM_INLINE_DIALOG);
         RemoteWebItem webItem = pageAndWebItem.right();
         assertNotNull("Web item should be found", webItem);
-        product.getTester().getDriver().waitUntilElementIsVisible(By.id("wikipedia-link"));
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
         webItem.click();
-        product.getTester().getDriver().waitUntilElementIsVisible(By.id("embedded-inline-dialog-content-1"));
         assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
     }
 
