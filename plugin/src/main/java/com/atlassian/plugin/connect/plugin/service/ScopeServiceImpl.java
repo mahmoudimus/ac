@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ public class ScopeServiceImpl implements ScopeService
 {
     private final ApplicationProperties applicationProperties;
 
+    @Autowired
     public ScopeServiceImpl(ApplicationProperties applicationProperties)
     {
         this.applicationProperties = checkNotNull(applicationProperties);
