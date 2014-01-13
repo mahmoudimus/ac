@@ -635,7 +635,7 @@
         <guava.version>10.0.1</guava.version>
 
         <!-- BUILD STUFF -->
-        <jgitflow.version>1.0-alpha27</jgitflow.version>
+        <jgitflow.version>1.0-internal1</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
