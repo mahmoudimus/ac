@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.util.BundleLocator;
-import com.atlassian.plugin.connect.plugin.util.StreamUtil;
 import com.atlassian.plugin.connect.spi.Filenames;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
@@ -16,6 +15,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.opensymphony.util.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -126,7 +126,7 @@ public final class DescriptorPermissionsReader implements PermissionsReader
             return Collections.emptySet();
         }
 
-        String json = StreamUtil.getStringFromInputStream(FileUtils.getResource(sourceUrl.toString()));
+        String json = IOUtils.toString(FileUtils.getResource(sourceUrl.toString()), "UTF-8");
         ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         return addOn.getScopes();
     }

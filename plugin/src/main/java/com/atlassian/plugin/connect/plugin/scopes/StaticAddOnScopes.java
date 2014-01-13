@@ -3,9 +3,9 @@
     import com.atlassian.plugin.connect.api.scopes.ScopeName;
     import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
     import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBeans;
-    import com.atlassian.plugin.connect.plugin.util.StreamUtil;
     import com.google.common.base.Function;
     import com.google.gson.GsonBuilder;
+    import org.apache.commons.io.IOUtils;
 
     import javax.annotation.Nonnull;
     import javax.annotation.Nullable;
@@ -71,7 +71,7 @@ public class StaticAddOnScopes
             throw new IOException(String.format("Static scopes resource does not exist: '%s'", scopesFileResourceName));
         }
 
-        String rawJson = StreamUtil.getStringFromInputStream(inputStream);
+        String rawJson = IOUtils.toString(inputStream, "UTF-8");
         return new GsonBuilder().create().fromJson(rawJson, AddOnScopeBeans.class);
     }
 
