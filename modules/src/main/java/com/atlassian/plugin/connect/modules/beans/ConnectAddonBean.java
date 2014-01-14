@@ -1,22 +1,22 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.Map;
-
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
-import com.google.common.base.Function;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-
+import com.google.common.base.Function;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.collect.Collections2.transform;
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**

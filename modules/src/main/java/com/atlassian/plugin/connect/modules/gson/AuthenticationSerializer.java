@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.modules.gson;
 
-import java.lang.reflect.Type;
-
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.builder.AuthenticationBeanBuilder;
-
 import com.google.gson.*;
+
+import java.lang.reflect.Type;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 

@@ -1,11 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.schema;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
-import com.atlassian.plugin.spring.scanner.util.ProductFilterUtil;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
-
 import org.apache.commons.io.IOUtils;
 
 import javax.inject.Inject;

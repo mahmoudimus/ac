@@ -3,9 +3,7 @@ package com.atlassian.plugin.connect.modules.beans;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.NameToKeyBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-
 import com.google.common.base.Strings;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

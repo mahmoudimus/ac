@@ -1,7 +1,6 @@
 package it.servlet;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

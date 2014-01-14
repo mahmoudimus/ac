@@ -1,7 +1,5 @@
 package it.capabilities.jira;
 
-import java.rmi.RemoteException;
-
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.testkit.client.restclient.Version;
 import com.atlassian.jira.testkit.client.restclient.VersionClient;
@@ -12,6 +10,8 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import org.junit.*;
+
+import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static org.hamcrest.Matchers.equalTo;

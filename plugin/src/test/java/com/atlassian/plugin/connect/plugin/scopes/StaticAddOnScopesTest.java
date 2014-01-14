@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
-import com.atlassian.plugin.connect.api.scopes.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 

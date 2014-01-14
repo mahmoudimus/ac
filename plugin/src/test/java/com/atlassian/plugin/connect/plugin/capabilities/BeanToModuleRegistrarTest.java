@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import com.atlassian.plugin.connect.api.scopes.ScopeName;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ModuleList;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
+import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.WebHookModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.AutowireWithConnectPluginDecorator;

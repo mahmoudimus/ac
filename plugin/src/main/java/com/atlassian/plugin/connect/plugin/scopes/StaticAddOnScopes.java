@@ -1,6 +1,6 @@
     package com.atlassian.plugin.connect.plugin.scopes;
 
-    import com.atlassian.plugin.connect.api.scopes.ScopeName;
+    import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
     import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
     import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBeans;
     import com.google.common.base.Function;

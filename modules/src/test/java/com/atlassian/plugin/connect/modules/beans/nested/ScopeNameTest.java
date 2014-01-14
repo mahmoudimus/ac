@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.google.common.collect.Sets;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.Is;

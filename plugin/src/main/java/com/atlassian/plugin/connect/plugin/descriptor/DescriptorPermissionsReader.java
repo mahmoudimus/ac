@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.api.scopes.ScopeName;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.util.BundleLocator;
 import com.atlassian.plugin.connect.spi.Filenames;
 import com.atlassian.plugin.connect.spi.host.HostProperties;

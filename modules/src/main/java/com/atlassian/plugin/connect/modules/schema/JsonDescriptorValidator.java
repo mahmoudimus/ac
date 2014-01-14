@@ -1,11 +1,6 @@
 package com.atlassian.plugin.connect.modules.schema;
 
-import java.io.IOException;
-
-import javax.inject.Named;
-
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.exceptions.ProcessingException;
@@ -18,9 +13,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Named;
+import java.io.IOException;
 
 @Named
 public class JsonDescriptorValidator implements ConnectDescriptorValidator

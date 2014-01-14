@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
-import static com.atlassian.plugin.connect.modules.beans.matchers.WebItemModuleBeanMatchers.*;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.WebItemModuleBeanMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;

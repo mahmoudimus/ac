@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.spi.permission;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.scopes.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import org.dom4j.Document;
 
 import java.util.Set;

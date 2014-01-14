@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
+import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -7,9 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.atlassian.plugin.connect.modules.beans.*;
-import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedList;
 

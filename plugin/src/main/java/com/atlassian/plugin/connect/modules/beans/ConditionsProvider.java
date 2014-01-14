@@ -1,12 +1,9 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.Map;
-
 import com.atlassian.plugin.web.Condition;
-
 import com.google.common.collect.ImmutableMap;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.Map;
 
 public abstract class ConditionsProvider
 {

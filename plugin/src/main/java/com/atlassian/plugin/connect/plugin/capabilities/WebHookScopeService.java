@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import com.atlassian.plugin.connect.api.scopes.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 
 public interface WebHookScopeService
 {

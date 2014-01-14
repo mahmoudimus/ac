@@ -1,14 +1,13 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
+import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.*;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleBeanBuilder, B extends BaseContentMacroModuleBean> extends NameToKeyBeanBuilder<T, B>
 {

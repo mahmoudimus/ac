@@ -3,9 +3,7 @@ package com.atlassian.plugin.connect.plugin.util;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
-
 import com.google.gson.JsonParser;
-
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.ArgumentMatcher;
 

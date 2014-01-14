@@ -1,19 +1,18 @@
 package com.atlassian.plugin.connect.test.server;
 
-import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import it.servlet.ContextServlet;
 import it.servlet.HttpContextServlet;
 import net.oauth.signature.RSA_SHA1;
@@ -28,7 +27,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.security.KeyPair;
