@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 
 import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebItemModuleDescriptor;
 import com.atlassian.confluence.plugin.descriptor.web.model.ConfluenceWebLink;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;

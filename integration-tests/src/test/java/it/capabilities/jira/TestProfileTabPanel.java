@@ -2,8 +2,7 @@ package it.capabilities.jira;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -15,7 +14,7 @@ import org.junit.Test;
 
 import java.rmi.RemoteException;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 

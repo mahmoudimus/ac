@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.DynamicContentMacroModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicContentMacroModuleProviderTest extends AbstractContentMacroModuleProviderTest<DynamicContentMacroModuleProvider,

@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.descriptor.WebItemModuleDescriptorFactoryForTests;
@@ -28,9 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.HashMap;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

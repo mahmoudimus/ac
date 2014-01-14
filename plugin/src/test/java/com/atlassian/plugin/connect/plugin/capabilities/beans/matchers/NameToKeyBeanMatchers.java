@@ -1,7 +1,7 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
+package com.atlassian.plugin.connect.modules.beans.matchers;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.NameToKeyBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.NameToKeyBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import org.mockito.ArgumentMatcher;
 
 import static org.hamcrest.Matchers.is;

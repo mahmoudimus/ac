@@ -4,13 +4,13 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
+import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.MacroI18nBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -34,7 +34,8 @@ import org.osgi.framework.BundleContext;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean> implements ConnectModuleProvider<T>
 {
@@ -60,7 +61,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
     public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<T> beans)
     {
-        List<ModuleDescriptor> moduleDescriptors = Lists.newArrayList();
+        List<ModuleDescriptor> moduleDescriptors = newArrayList();
 
         for (T bean : beans)
         {
@@ -72,7 +73,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
     protected List<ModuleDescriptor> createModuleDescriptors(Plugin plugin, BundleContext bundleContext, T macroBean)
     {
-        List<ModuleDescriptor> descriptors = Lists.newArrayList();
+        List<ModuleDescriptor> descriptors = newArrayList();
 
         // The actual Macro module descriptor
         descriptors.add(createMacroModuleDescriptor(plugin, bundleContext, macroBean));

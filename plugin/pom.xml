@@ -70,6 +70,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-modules</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -201,11 +206,6 @@
         <dependency>
             <groupId>com.atlassian.jwt</groupId>
             <artifactId>jwt-applinks</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.jwt</groupId>
-            <artifactId>jwt-http-client</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -428,8 +428,8 @@
                             com.atlassian.plugin.connect.plugin.*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin.product*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin.product.*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.capabilities.beans*,
-                            com.atlassian.plugin.connect.plugin.capabilities.beans.*
+                            com.atlassian.plugin.connect.modules.beans*,
+                            com.atlassian.plugin.connect.modules.beans.*
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
@@ -723,7 +723,8 @@
                             <goal>generate-support-docs</goal>
                         </goals>
                         <configuration>
-                            <basePackage>com.atlassian.plugin.connect.plugin.capabilities.beans</basePackage>
+                            <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
+                            <sourcepath>src/main/java:../modules/src/main/java</sourcepath>
                         </configuration>
                     </execution>
                     <execution>
@@ -734,7 +735,7 @@
                         </goals>
                         <configuration>
                             <generatorProvider>com.atlassian.plugin.connect.schema.JiraSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean</rootClassName>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
                         </configuration>
@@ -747,13 +748,46 @@
                         </goals>
                         <configuration>
                             <generatorProvider>com.atlassian.plugin.connect.schema.ConfluenceSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean</rootClassName>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- we need to use this instead of built-in javac processing so we can process multiple source roots -->
+            <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <version>2.2.4</version>
+                <executions>
+                    <execution>
+                        <id>process</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <additionalSourceDirectories>
+                        <additionalSourceDirectory>../modules/src/main/java/</additionalSourceDirectory>
+                        <additionalSourceDirectory>../api-parent/spi/src/main/java/</additionalSourceDirectory>
+                    </additionalSourceDirectories>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgument>-proc:none</compilerArgument>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            
         </plugins>
     </build>
 

@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
+import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
 import com.google.common.base.Objects;
 import org.hamcrest.Description;
 import org.junit.Test;

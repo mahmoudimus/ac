@@ -28,7 +28,7 @@
  DAMAGE.
  */
 
-package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
+package com.atlassian.plugin.connect.modules.beans.matchers;
 
 import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;
@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.IsEmptyMap.emptyMap;
+import static com.atlassian.plugin.connect.modules.beans.matchers.IsEmptyMap.emptyMap;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.beans.PropertyUtil.NO_ARGUMENTS;
 import static org.hamcrest.beans.PropertyUtil.propertyDescriptorsFor;

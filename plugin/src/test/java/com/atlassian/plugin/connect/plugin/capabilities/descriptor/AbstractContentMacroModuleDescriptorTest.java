@@ -4,20 +4,20 @@ import com.atlassian.confluence.macro.browser.beans.MacroIcon;
 import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroParameterBean.newMacroParameterBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;

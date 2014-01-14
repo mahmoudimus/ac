@@ -1,6 +1,6 @@
 package it.capabilities.jira;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
@@ -18,7 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.google.common.base.Charsets.UTF_8;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;

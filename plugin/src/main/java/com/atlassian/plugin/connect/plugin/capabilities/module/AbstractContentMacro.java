@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
 import com.atlassian.confluence.macro.Macro;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;

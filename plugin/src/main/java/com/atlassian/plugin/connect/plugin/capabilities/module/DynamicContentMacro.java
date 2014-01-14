@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.module;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
