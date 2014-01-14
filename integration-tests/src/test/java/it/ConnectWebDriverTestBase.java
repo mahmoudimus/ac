@@ -1,5 +1,7 @@
 package it;
 
+import com.atlassian.jira.testkit.client.PluginsControl;
+import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -9,6 +11,7 @@ import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 
 import static it.TestConstants.ADMIN_USERNAME;
@@ -26,7 +29,15 @@ public abstract class ConnectWebDriverTestBase
     protected ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
 
-
+    @BeforeClass
+    public static void setup()
+    {
+        // disable license banner
+        if("jira".equalsIgnoreCase(product.getProductInstance().getInstanceId()))
+        {
+            new PluginsControl(new TestKitLocalEnvironmentData()).disablePluginModule("com.atlassian.support.stp:stp-license-status-resources");
+        }
+    }
 
     @Before
     @After

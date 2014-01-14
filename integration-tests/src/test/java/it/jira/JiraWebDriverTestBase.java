@@ -1,7 +1,5 @@
 package it.jira;
 
-import com.atlassian.jira.testkit.client.PluginsControl;
-import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.ConnectWebDriverTestBase;
@@ -18,10 +16,9 @@ public class JiraWebDriverTestBase extends ConnectWebDriverTestBase
     protected RemoteProject project;
 
     @BeforeClass
-    public static void setup() throws RemoteException
+    public static void setup()
     {
         jiraOps = new JiraOps(product.getProductInstance());
-        new PluginsControl(new TestKitLocalEnvironmentData()).disablePluginModule("com.atlassian.support.stp:stp-license-status-resources");
     }
 
     @Before
