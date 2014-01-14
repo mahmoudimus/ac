@@ -32,7 +32,7 @@ import java.util.List;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static org.junit.Assert.assertThat;
 
-public class TestEntityPropertyIndexDocument
+public class TestEntityProperty
 {
     private static final TestKitLocalEnvironmentData localEnvironmentData = new TestKitLocalEnvironmentData();
     private static final String ATTACHMENT_PROPERTY_KEY = "attachment";
