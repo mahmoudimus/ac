@@ -7,8 +7,6 @@ import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebItemModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
-import static org.mockito.Mockito.mock;
-
 /**
  * @since 1.0
  */

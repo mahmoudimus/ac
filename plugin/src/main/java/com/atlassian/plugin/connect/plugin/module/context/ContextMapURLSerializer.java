@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.context;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

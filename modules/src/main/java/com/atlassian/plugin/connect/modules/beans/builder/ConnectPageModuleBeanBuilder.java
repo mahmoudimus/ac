@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
+
+import java.util.Map;
 
 public class ConnectPageModuleBeanBuilder<T extends ConnectPageModuleBeanBuilder, B extends ConnectPageModuleBean> extends BeanWithKeyParamsAndConditionsBuilder<T, B>
 {

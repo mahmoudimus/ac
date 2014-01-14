@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
-
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 

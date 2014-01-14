@@ -1,39 +1,34 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.WebItemContext;
 import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+import java.util.Map;
+
 import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 

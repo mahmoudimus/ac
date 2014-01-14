@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.builder.BeanWithParamsBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemTargetBeanBuilder;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Defines the way a web item link is opened in the browser, such as in a modal or inline dialog.

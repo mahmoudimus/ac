@@ -1,14 +1,12 @@
 package it.capabilities;
 
 import cc.plural.jsonij.JSON;
+import cc.plural.jsonij.Value;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.collect.Lists;
-
-import cc.plural.jsonij.Value;
 import it.AbstractBrowserlessTest;
 import it.servlet.ConnectAppServlets;
-
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Test;

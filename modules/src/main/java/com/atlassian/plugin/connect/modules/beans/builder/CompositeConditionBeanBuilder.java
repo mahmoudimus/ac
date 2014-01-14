@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 

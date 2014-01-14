@@ -23,4 +23,6 @@
                 "i18n": "some.page.name"
             }
         }
-    }}
+    },
+    "scopes": []
+}

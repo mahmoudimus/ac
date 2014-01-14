@@ -9,7 +9,6 @@ import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
-
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -23,10 +22,7 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalUriAttribute;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import static org.apache.commons.lang.Validate.notNull;
 

@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.product.jira;
 
-import java.util.Map;
-
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.user.preferences.JiraUserPreferences;
 import com.atlassian.jira.user.preferences.PreferenceKeys;
@@ -10,15 +8,13 @@ import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.plugin.connect.modules.beans.JiraConditions;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.google.common.collect.Maps.newHashMap;
+import java.util.Map;
 
 @JiraComponent
 public final class JiraProductAccessor implements ProductAccessor
