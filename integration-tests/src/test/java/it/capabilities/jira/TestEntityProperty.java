@@ -59,7 +59,7 @@ public class TestEntityProperty
 
         remotePlugin = new ConnectRunner(localEnvironmentData.getBaseUrl().toString(), PLUGIN_KEY)
                 .addModule(
-                        "jiraEntityPropertyIndexDocuments",
+                        "jiraEntityProperties",
                         newEntityPropertyModuleBean()
                                 .withName(new I18nProperty("JIRA Attachment indexing", "jira.attachment.indexing"))
                                 .withKeyConfiguration(keyConfigurationBean)

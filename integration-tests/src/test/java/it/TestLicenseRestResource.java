@@ -1,5 +1,6 @@
 package it;
 
+import com.atlassian.plugin.connect.LicenseUtils;
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.google.gson.Gson;
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @since 1.0
  */
-public class TestLicenseRestResource extends AbstractRemotablePluginTest
+public class TestLicenseRestResource extends ConnectWebDriverTestBase
 {
     @Test
     public void anonymousReturnsLicense() throws Exception
@@ -24,7 +25,7 @@ public class TestLicenseRestResource extends AbstractRemotablePluginTest
         AtlassianConnectAddOnRunner runner = null;
         try
         {
-            addPluginLicenses();
+            LicenseUtils.addPluginLicenses(product);
 
             runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
             .addOAuth()
@@ -52,13 +53,12 @@ public class TestLicenseRestResource extends AbstractRemotablePluginTest
         finally
         {
             //NOTE: the timebomb license disables the ability to delete plugins!
-            resetLicenses();
+            LicenseUtils.resetLicenses(product);
             
             if(null != runner)
             {
                 runner.stopAndUninstall();
             }
         }
-        
     }
 }

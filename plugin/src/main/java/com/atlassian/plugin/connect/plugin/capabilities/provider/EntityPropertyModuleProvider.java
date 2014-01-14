@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectEntityPropertyIndexDocumentModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectEntityPropertyModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -15,10 +15,10 @@ import java.util.List;
 @JiraComponent
 public class EntityPropertyModuleProvider implements ConnectModuleProvider<EntityPropertyModuleBean>
 {
-    private final ConnectEntityPropertyIndexDocumentModuleDescriptorFactory descriptorFactory;
+    private final ConnectEntityPropertyModuleDescriptorFactory descriptorFactory;
 
     @Autowired
-    public EntityPropertyModuleProvider(ConnectEntityPropertyIndexDocumentModuleDescriptorFactory descriptorFactory)
+    public EntityPropertyModuleProvider(ConnectEntityPropertyModuleDescriptorFactory descriptorFactory)
     {
         this.descriptorFactory = descriptorFactory;
     }

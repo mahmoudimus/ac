@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModu
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -15,14 +14,14 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactory implements ConnectModuleDescriptorFactory<EntityPropertyModuleBean, EntityPropertyIndexDocumentModuleDescriptor>
+public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModuleDescriptorFactory<EntityPropertyModuleBean, EntityPropertyIndexDocumentModuleDescriptor>
 {
     public static final String DESCRIPTOR_NAME = "index-document-configuration";
 
     private final ConnectAutowireUtil autowireUtil;
 
     @Autowired
-    public ConnectEntityPropertyIndexDocumentModuleDescriptorFactory(ConnectAutowireUtil autowireUtil)
+    public ConnectEntityPropertyModuleDescriptorFactory(ConnectAutowireUtil autowireUtil)
     {
         this.autowireUtil = autowireUtil;
     }
@@ -33,7 +32,7 @@ public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactory implement
     {
         Element indexDocumentConfiguration = new DOMElement(DESCRIPTOR_NAME);
 
-        indexDocumentConfiguration.addAttribute("key", ModuleKeyGenerator.generateKey(DESCRIPTOR_NAME));
+        indexDocumentConfiguration.addAttribute("key", bean.getKey());
         indexDocumentConfiguration.addAttribute("entity-key", bean.getEntityType().getValue());
         indexDocumentConfiguration.addAttribute("i18n-name-key", bean.getName().getI18n());
 

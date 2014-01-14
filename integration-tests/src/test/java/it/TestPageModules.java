@@ -4,7 +4,12 @@ import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.OAuthUtils;
-import com.atlassian.plugin.connect.test.pageobjects.*;
+import com.atlassian.plugin.connect.test.pageobjects.AccessDeniedIFramePage;
+import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.PluginManagerPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.Condition;
 import com.atlassian.plugin.connect.test.server.module.ConfigurePageModule;
@@ -19,18 +24,22 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.TimeZone;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.TimeZone;
 
 import static it.TestConstants.BETTY_USERNAME;
 import static java.lang.String.valueOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-public class TestPageModules extends AbstractRemotablePluginTest
+public class TestPageModules extends ConnectWebDriverTestBase
 {
     private static AtlassianConnectAddOnRunner remotePlugin;
 

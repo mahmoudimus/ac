@@ -1,18 +1,16 @@
 package it.capabilities;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-
+import com.atlassian.plugin.connect.LicenseUtils;
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import com.google.gson.Gson;
-
+import it.ConnectWebDriverTestBase;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import it.AbstractRemotablePluginTest;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -20,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 //TODO: we need to implement permissions before we can use OAuth and Licensing. Once we can request permissions in a json descriptor, this should be put back in
 @Ignore
-public class TestLicenseResource extends AbstractRemotablePluginTest
+public class TestLicenseResource extends ConnectWebDriverTestBase
 {
 
     public static final String PLUGIN_KEY = "i-am-licensed";
@@ -31,7 +29,7 @@ public class TestLicenseResource extends AbstractRemotablePluginTest
         ConnectRunner runner = null;
         try
         {
-            addPluginLicenses();
+            LicenseUtils.addPluginLicenses(product);
 
             runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                     .addOAuth()
@@ -57,13 +55,12 @@ public class TestLicenseResource extends AbstractRemotablePluginTest
         finally
         {
             //NOTE: the timebomb license disables the ability to delete plugins!
-            resetLicenses();
+            LicenseUtils.resetLicenses(product);
 
             if(null != runner)
             {
                 runner.stopAndUninstall();
             }
         }
-
     }
 }

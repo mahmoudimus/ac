@@ -16,16 +16,16 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static it.TestConstants.BETTY_USERNAME;
 import static org.hamcrest.CoreMatchers.is;
@@ -35,7 +35,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestAppPermissions extends AbstractRemotablePluginTest
+public class TestAppPermissions extends ConnectWebDriverTestBase
 {
 
     private static final String LICENSE_RESPONSE_STATUS_CODE_ID = "licenseResponseStatusCode";

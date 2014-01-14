@@ -41,7 +41,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith (MockitoJUnitRunner.class)
-public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactoryTest
+public class ConnectEntityPropertyModuleDescriptorFactoryTest
 {
     public static final String PROPERTY_KEY = "attachment";
     public static final String SIZE_EXTRACTOR = "size";
@@ -64,7 +64,7 @@ public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactoryTest
     public void setUp()
     {
         when(plugin.getKey()).thenReturn("com.atlassian.plugin.key");
-        ConnectEntityPropertyIndexDocumentModuleDescriptorFactory factory = new ConnectEntityPropertyIndexDocumentModuleDescriptorFactory(autowireUtil);
+        ConnectEntityPropertyModuleDescriptorFactory factory = new ConnectEntityPropertyModuleDescriptorFactory(autowireUtil);
         when(autowireUtil.createBean(eq(EntityPropertyIndexDocumentModuleDescriptorImpl.class)))
                 .thenReturn(new EntityPropertyIndexDocumentModuleDescriptorImpl(authContext, moduleFactory));
         EntityPropertyModuleBean bean = createBean();
