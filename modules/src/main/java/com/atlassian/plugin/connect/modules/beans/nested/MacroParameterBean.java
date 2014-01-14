@@ -105,10 +105,6 @@ public class MacroParameterBean extends BaseModuleBean
         {
             name = I18nProperty.empty();
         }
-        if (null == description)
-        {
-            description = I18nProperty.empty();
-        }
         if (null == type)
         {
             type = "string";
