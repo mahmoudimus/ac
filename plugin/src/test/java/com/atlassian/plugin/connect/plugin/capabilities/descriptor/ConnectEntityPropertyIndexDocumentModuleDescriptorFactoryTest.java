@@ -8,7 +8,7 @@ import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescript
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyIndexDocumentModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexType;
@@ -31,7 +31,7 @@ import java.util.List;
 
 import static com.atlassian.jira.index.IndexDocumentConfiguration.ExtractConfiguration;
 import static com.atlassian.jira.index.IndexDocumentConfiguration.KeyConfiguration;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyIndexDocumentModuleBean.newEntityPropertyIndexDocumentModuleBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -67,7 +67,7 @@ public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactoryTest
         ConnectEntityPropertyIndexDocumentModuleDescriptorFactory factory = new ConnectEntityPropertyIndexDocumentModuleDescriptorFactory(autowireUtil);
         when(autowireUtil.createBean(eq(EntityPropertyIndexDocumentModuleDescriptorImpl.class)))
                 .thenReturn(new EntityPropertyIndexDocumentModuleDescriptorImpl(authContext, moduleFactory));
-        EntityPropertyIndexDocumentModuleBean bean = createBean();
+        EntityPropertyModuleBean bean = createBean();
         this.moduleDescriptor = factory.createModuleDescriptor(plugin, bundleContext, bean);
     }
 
@@ -113,7 +113,7 @@ public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactoryTest
         assertThat(moduleDescriptor.getI18nNameKey(), is(I18N_KEY));
     }
 
-    private EntityPropertyIndexDocumentModuleBean createBean()
+    private EntityPropertyModuleBean createBean()
     {
         ImmutableList<EntityPropertyIndexExtractionConfigurationBean> extractionConfigurationBeans = ImmutableList.of(
                 new EntityPropertyIndexExtractionConfigurationBean(SIZE_EXTRACTOR, EntityPropertyIndexType.number),
@@ -121,7 +121,7 @@ public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactoryTest
         EntityPropertyIndexKeyConfigurationBean keyConfigurationBean =
                 new EntityPropertyIndexKeyConfigurationBean(extractionConfigurationBeans, PROPERTY_KEY);
 
-        return newEntityPropertyIndexDocumentModuleBean()
+        return newEntityPropertyModuleBean()
                 .withKeyConfiguration(keyConfigurationBean)
                 .withPropertyType(EntityPropertyType.issue)
                 .withName(new I18nProperty("Attachment Indexing", I18N_KEY))

@@ -5,41 +5,49 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Represents a reference to the value from JSON object and the type of the referenced data.
+ * Defines an entity property to be indexed by JIRA. An entity property is a reference to a JSON object, which also defines it's type.
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
- * @schemaTitle Index Extraction
+ * @schemaTitle Property Index
  * @since 1.0
  */
 public class EntityPropertyIndexExtractionConfigurationBean
 {
     /**
-     * The path to the JSON data which is supposed to be indexed. The path will be the key of a flatten JSON object with '.' as the delimiter.
+     * The objectName to the JSON data which is supposed to be indexed. The objectName will be the key of a flatten JSON object with '.' as the delimiter.
      *
-     * For instance, for JSON "{"label": {"color": "red", "text":"connect"}} the valid path
+     * For instance, for JSON <code>"{"label": {"color": "red", "text":"connect"}}</code> the valid objectName
      * referencing the color is label.color.
      *
      * Currently, specifying of index for JSON arrays is not supported.
      */
     @Required
-    private String path;
+    private String objectName;
 
     /**
      * The type of the referenced value.
+     *
+     * The type can:
+     * * `number`, which is indexed as a number and allows the range ordering and searching on this field.
+     * * `text`, which is tokenized before indexing and allows searching by the value content.
+     * * `string` which is indexed as is and allows searching for the exact phase.
+     * * `date`, which is indexed as date and allows date range searching and ordering. The expected date format is [YYYY]-[MM]-[DD].\
+     * Expected date time format is [YYYY]-[MM]-[DD]T[hh]:[mm] with optional offset from UTC: +/-[hh]:[mm] or `Z` for no offset.\
+     * For reference, please check ISO_8601 standard.
      */
     @Required
     private EntityPropertyIndexType type;
 
-    public EntityPropertyIndexExtractionConfigurationBean(String path, EntityPropertyIndexType type)
+    public EntityPropertyIndexExtractionConfigurationBean(String objectName, EntityPropertyIndexType type)
     {
-        this.path = path;
+        this.objectName = objectName;
         this.type = type;
     }
 
-    public String getPath()
+    public String getObjectName()
     {
-        return path;
+        return objectName;
     }
 
     public EntityPropertyIndexType getType()
@@ -63,7 +71,7 @@ public class EntityPropertyIndexExtractionConfigurationBean
         EntityPropertyIndexExtractionConfigurationBean other = (EntityPropertyIndexExtractionConfigurationBean) otherObj;
 
         return new EqualsBuilder()
-                .append(path, other.path)
+                .append(objectName, other.objectName)
                 .append(type, other.type)
                 .isEquals();
     }
@@ -72,7 +80,7 @@ public class EntityPropertyIndexExtractionConfigurationBean
     public int hashCode()
     {
         return new HashCodeBuilder(53, 11)
-                .append(path)
+                .append(objectName)
                 .append(type)
                 .build();
     }

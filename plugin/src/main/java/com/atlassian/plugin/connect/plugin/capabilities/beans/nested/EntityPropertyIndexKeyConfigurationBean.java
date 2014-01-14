@@ -7,11 +7,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.List;
 
 /**
- * Represents a reference to the value from JSON object and the type of referenced data.
+ * Defines the list of extractors which index selected JSON objects from defined property.
+ *
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ENTITY_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE}
- * @schemaTitle Index Extraction
+ * @schemaTitle Index Key Configuration
  * @since 1.0
  */
 public class EntityPropertyIndexKeyConfigurationBean

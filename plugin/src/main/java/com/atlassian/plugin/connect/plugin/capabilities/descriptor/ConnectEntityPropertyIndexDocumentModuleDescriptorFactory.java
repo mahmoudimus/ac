@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptor;
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptorImpl;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyIndexDocumentModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
@@ -15,7 +15,7 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactory implements ConnectModuleDescriptorFactory<EntityPropertyIndexDocumentModuleBean, EntityPropertyIndexDocumentModuleDescriptor>
+public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactory implements ConnectModuleDescriptorFactory<EntityPropertyModuleBean, EntityPropertyIndexDocumentModuleDescriptor>
 {
     public static final String DESCRIPTOR_NAME = "index-document-configuration";
 
@@ -29,12 +29,12 @@ public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactory implement
 
     @Override
     public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext,
-            EntityPropertyIndexDocumentModuleBean bean)
+            EntityPropertyModuleBean bean)
     {
         Element indexDocumentConfiguration = new DOMElement(DESCRIPTOR_NAME);
 
         indexDocumentConfiguration.addAttribute("key", ModuleKeyGenerator.generateKey(DESCRIPTOR_NAME));
-        indexDocumentConfiguration.addAttribute("entity-key", bean.getPropertyType().getValue());
+        indexDocumentConfiguration.addAttribute("entity-key", bean.getEntityType().getValue());
         indexDocumentConfiguration.addAttribute("i18n-name-key", bean.getName().getI18n());
 
         for (EntityPropertyIndexKeyConfigurationBean keyConfigurationBean : bean.getKeyConfigurations())
@@ -45,7 +45,7 @@ public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactory implement
             for (EntityPropertyIndexExtractionConfigurationBean extractionBean : keyConfigurationBean.getExtractions())
             {
                 final Element propertyExtractionElement = keyConfigurationElement.addElement("extract");
-                propertyExtractionElement.addAttribute("path", extractionBean.getPath());
+                propertyExtractionElement.addAttribute("path", extractionBean.getObjectName());
                 propertyExtractionElement.addAttribute("type", extractionBean.getType().toString());
             }
         }

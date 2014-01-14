@@ -23,13 +23,13 @@ public class EntityPropertyIndexDocumentModuleBeanTest
     @Test
     public void producesCorrectBean() throws IOException
     {
-        EntityPropertyIndexDocumentModuleBean expectedBean = createModuleBean();
+        EntityPropertyModuleBean expectedBean = createModuleBean();
         String json = readTestFile();
 
-        EntityPropertyIndexDocumentModuleBean addOn =
-                ConnectModulesGsonFactory.getGson().fromJson(json, EntityPropertyIndexDocumentModuleBean.class);
+        EntityPropertyModuleBean addOn =
+                ConnectModulesGsonFactory.getGson().fromJson(json, EntityPropertyModuleBean.class);
 
-        assertThat(addOn.getPropertyType(), is(expectedBean.getPropertyType()));
+        assertThat(addOn.getEntityType(), is(expectedBean.getEntityType()));
         assertThat(addOn.getKeyConfigurations(), hasSize(1));
 
         EntityPropertyIndexKeyConfigurationBean addOnKeyConfigurationBean = addOn.getKeyConfigurations().get(0);
@@ -39,14 +39,14 @@ public class EntityPropertyIndexDocumentModuleBeanTest
         assertThat(addOnKeyConfigurationBean.getExtractions(), containsInAnyOrder(expectedKeyConfigurationBean.getExtractions().toArray()));
     }
 
-    private EntityPropertyIndexDocumentModuleBean createModuleBean()
+    private EntityPropertyModuleBean createModuleBean()
     {
         List<EntityPropertyIndexExtractionConfigurationBean> extractions = Lists.newArrayList(
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number),
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.string)
         );
 
-        return EntityPropertyIndexDocumentModuleBean.newEntityPropertyIndexDocumentModuleBean()
+        return EntityPropertyModuleBean.newEntityPropertyModuleBean()
                 .withName(new I18nProperty("My Index", "my.index"))
                 .withPropertyType(EntityPropertyType.issue)
                 .withKeyConfiguration(new EntityPropertyIndexKeyConfigurationBean(extractions, "attachment"))

@@ -29,7 +29,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyIndexDocumentModuleBean.newEntityPropertyIndexDocumentModuleBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static org.junit.Assert.assertThat;
 
 public class TestEntityPropertyIndexDocument
@@ -60,7 +60,7 @@ public class TestEntityPropertyIndexDocument
         remotePlugin = new ConnectRunner(localEnvironmentData.getBaseUrl().toString(), PLUGIN_KEY)
                 .addModule(
                         "jiraEntityPropertyIndexDocuments",
-                        newEntityPropertyIndexDocumentModuleBean()
+                        newEntityPropertyModuleBean()
                                 .withName(new I18nProperty("JIRA Attachment indexing", "jira.attachment.indexing"))
                                 .withKeyConfiguration(keyConfigurationBean)
                                 .withPropertyType(EntityPropertyType.issue)
@@ -95,27 +95,45 @@ public class TestEntityPropertyIndexDocument
     }
 
     @Test
-    public void attachmentIssuePropertyIndexedAndSearchable() throws JSONException
+    public void attachmentStringIssuePropertyIndexedAndSearchable() throws JSONException
     {
         IssueCreateResponse issue = issueClient.createIssue(PROJECT_KEY, "Issue with attachment data");
 
         // Issue property should be indexed during PUT operation
-        JSONObject attachmentData = new JSONObject(ImmutableMap.<String, Object>of("size", 10, "extension", "jpg"));
+        JSONObject attachmentData = getAttachmentData();
+        entityPropertyClient.put(issue.key, ATTACHMENT_PROPERTY_KEY, attachmentData);
+
+        // Check the entity property was saved and is accessible for Connect add-on
+        JSONObject entityProperty = new JSONObject(entityPropertyClient.get(issue.key, ATTACHMENT_PROPERTY_KEY).value);
+        assertThat(entityProperty.getString("extension"), Matchers.is("jpg"));
+
+        SearchResult byFileExtensionSearchResult =
+                searchClient.getSearch(new SearchRequest().jql("issue.property[attachment].extension = \"jpg\""));
+        assertHasIssues(byFileExtensionSearchResult, Lists.newArrayList(issue.key));
+    }
+
+    @Test
+    public void attachmentIntegerIssuePropertyIndexedAndSearchable() throws JSONException
+    {
+        IssueCreateResponse issue = issueClient.createIssue(PROJECT_KEY, "Another issue with attachment data");
+
+        // Issue property should be indexed during PUT operation
+        JSONObject attachmentData = getAttachmentData();
         entityPropertyClient.put(issue.key, ATTACHMENT_PROPERTY_KEY, attachmentData);
 
         // Check the entity property was saved and is accessible for Connect add-on
         JSONObject entityProperty = new JSONObject(entityPropertyClient.get(issue.key, ATTACHMENT_PROPERTY_KEY).value);
         assertThat(entityProperty.getInt("size"), Matchers.is(10));
-        assertThat(entityProperty.getString("extension"), Matchers.is("jpg"));
 
         // Check it is possible to search for the issues by the indexed property
         SearchResult byAttachmentSizeSearchResult =
                 searchClient.getSearch(new SearchRequest().jql("issue.property[attachment].\"size\" > 5"));
         assertHasIssues(byAttachmentSizeSearchResult, Lists.newArrayList(issue.key));
+    }
 
-        SearchResult byFileExtensionSearchResult =
-                searchClient.getSearch(new SearchRequest().jql("issue.property[attachment].extension = \"jpg\""));
-        assertHasIssues(byFileExtensionSearchResult, Lists.newArrayList(issue.key));
+    private static JSONObject getAttachmentData()
+    {
+        return new JSONObject(ImmutableMap.<String, Object>of("size", 10, "extension", "jpg"));
     }
 
     private static void assertHasIssues(SearchResult searchResult, List<String> issueKeys)

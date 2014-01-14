@@ -34,7 +34,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPage
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyIndexDocumentModuleBean.newEntityPropertyIndexDocumentModuleBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewModuleBean.newSearchRequestViewModuleBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
@@ -85,7 +85,7 @@ public class ConnectJsonExamples
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
     public static final String IMAGE_PLACEHOLDER_EXAMPLE = createImagePlaceholderExample();
-    public static final String ENTITY_PROPERTY_INDEX_DOCUMENT_EXAMPLE = createEntityPropertyIndexDocumentExample();
+    public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyIndexDocumentExample();
     public static final String ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
     public static final String ENTITY_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createEntityPropertyIndexKeyConfigurationExample();
 
@@ -136,7 +136,7 @@ public class ConnectJsonExamples
                 .withModules("profilePages", newPageBean().withName(i18nProperty("Profile Page")).withUrl("my-confluence-profile-page").build())
                 .withModules("dynamicContentMacros", newDynamicContentMacroModuleBean().withName(i18nProperty("Dynamic Macro")).withUrl("/dynamic-macro").build())
                 .withModules("staticContentMacros", newStaticContentMacroModuleBean().withName(i18nProperty("Static Macro")).withUrl("/static-macro").build())
-                .withModules("jiraEntityPropertyIndexDocuments", newEntityPropertyIndexDocumentModuleBean().withName(i18nProperty("Entity Property Index Document"))
+                .withModules("jiraEntityProperties", newEntityPropertyModuleBean().withName(i18nProperty("Entity Property"))
                         .withPropertyType(EntityPropertyType.issue)
                         .withKeyConfiguration(new EntityPropertyIndexKeyConfigurationBean(newArrayList(new EntityPropertyIndexExtractionConfigurationBean("label.color", EntityPropertyIndexType.string)), "label")).build())
                 .build();
@@ -465,13 +465,13 @@ public class ConnectJsonExamples
         EntityPropertyIndexKeyConfigurationBean issueAttachmentIndexConfiguration =
                 new EntityPropertyIndexKeyConfigurationBean(extractionConfiguration, "attachment");
 
-        EntityPropertyIndexDocumentModuleBean entityPropertyIndexDocumentModuleBean = newEntityPropertyIndexDocumentModuleBean()
+        EntityPropertyModuleBean entityPropertyModuleBean = newEntityPropertyModuleBean()
                 .withName(new I18nProperty("Attachment Index Document", ""))
                 .withPropertyType(EntityPropertyType.issue)
                 .withKeyConfiguration(issueAttachmentIndexConfiguration)
                 .build();
 
-        return gson.toJson(createModuleArray("jiraEntityPropertyIndexDocuments", entityPropertyIndexDocumentModuleBean));
+        return gson.toJson(createModuleArray("jiraEntityProperties", entityPropertyModuleBean));
     }
 
     private static String createEntityPropertyIndexExtractionConfigurationExample()

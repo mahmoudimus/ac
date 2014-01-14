@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageMo
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DynamicContentMacroModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.EntityPropertyIndexDocumentModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.EntityPropertyModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ProfilePageModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SearchRequestViewModuleProvider;
@@ -227,11 +227,11 @@ public class ModuleList extends BaseModuleBean
     private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
 
     /**
-     * The Entity Property module allows you to add selected properties to JIRA index.
-     * @schemaTitle Entity Property Index Document
+     * The Entity Property are add-on key/value stories in certain JIRA objects, such as issues and projects.
+     * @schemaTitle Entity Property
      */
-    @ConnectModule(value = EntityPropertyIndexDocumentModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<EntityPropertyIndexDocumentModuleBean> jiraEntityPropertyIndexDocuments;
+    @ConnectModule(value = EntityPropertyModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<EntityPropertyModuleBean> jiraEntityProperties;
 
     /////////////////////////////////////////////////////
     ///////    CONFLUENCE MODULES
@@ -272,7 +272,7 @@ public class ModuleList extends BaseModuleBean
         this.jiraSearchRequestViews = newArrayList();
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
-        this.jiraEntityPropertyIndexDocuments = newArrayList();
+        this.jiraEntityProperties = newArrayList();
         this.profilePages = newArrayList();
         this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
@@ -332,9 +332,9 @@ public class ModuleList extends BaseModuleBean
         {
             this.jiraWorkflowPostFunctions = newArrayList();
         }
-        if (null == jiraEntityPropertyIndexDocuments)
+        if (null == jiraEntityProperties)
         {
-            this.jiraEntityPropertyIndexDocuments = newArrayList();
+            this.jiraEntityProperties = newArrayList();
         }
         if (null == webhooks)
         {
@@ -399,9 +399,9 @@ public class ModuleList extends BaseModuleBean
         return jiraWorkflowPostFunctions;
     }
 
-    public List<EntityPropertyIndexDocumentModuleBean> getJiraEntityPropertyIndexDocuments()
+    public List<EntityPropertyModuleBean> getJiraEntityProperties()
     {
-        return jiraEntityPropertyIndexDocuments;
+        return jiraEntityProperties;
     }
 
     public List<ConnectPageModuleBean> getGeneralPages()
@@ -473,7 +473,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraSearchRequestViews, other.jiraSearchRequestViews)
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
-                .append(jiraEntityPropertyIndexDocuments, other.jiraEntityPropertyIndexDocuments)
+                .append(jiraEntityProperties, other.jiraEntityProperties)
                 .append(profilePages, other.profilePages)
                 .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
@@ -499,7 +499,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraSearchRequestViews)
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
-                .append(jiraEntityPropertyIndexDocuments)
+                .append(jiraEntityProperties)
                 .append(profilePages)
                 .append(staticContentMacros)
                 .append(webhooks)

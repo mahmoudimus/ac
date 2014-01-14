@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.EntityPropertyIndexDocumentModuleBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.EntityPropertyModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyType;
 import com.google.common.collect.Lists;
@@ -11,36 +11,36 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.List;
 
 /**
- * Entity Property Index Document allows add-ons to index selected values from JSON properties stored against issues. For the
- * documentation of available REST resources available for issue properties, please check https://docs.atlassian.com/jira/REST/ondemand/#d2e529.
+ * Entity properties allows add-ons to add key/value stores to JIRA entities, such as issues or projects.
+ * These values are indexed by JIRA and able to be queried via a REST api or through JQL. For more information,
+ * please see the [JIRA documentation on entity properties](https://docs.atlassian.com/jira/REST/ondemand/#d2e529).
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ENTITY_PROPERTY_INDEX_DOCUMENT_EXAMPLE}
- * @schemaTitle Entity Property Index Document
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ENTITY_PROPERTY_EXAMPLE}
+ * @schemaTitle Entity Property
  * @since 1.0
  */
-public class EntityPropertyIndexDocumentModuleBean extends NameToKeyBean
+public class EntityPropertyModuleBean extends NameToKeyBean
 {
-
     /**
      * List of properties from which selected values are indexed.
      */
     private List<EntityPropertyIndexKeyConfigurationBean> keyConfigurations;
 
     /**
-     * The key
+     * The type of the entity. The default value is issue.
      */
     @CommonSchemaAttributes (defaultValue = "issue")
-    private EntityPropertyType propertyType;
+    private EntityPropertyType entityType;
 
-    public EntityPropertyIndexDocumentModuleBean()
+    public EntityPropertyModuleBean()
     {
         this.keyConfigurations = Lists.newArrayList();
-        this.propertyType = EntityPropertyType.issue;
+        this.entityType = EntityPropertyType.issue;
     }
 
-    public EntityPropertyIndexDocumentModuleBean(EntityPropertyIndexDocumentModuleBeanBuilder builder)
+    public EntityPropertyModuleBean(EntityPropertyModuleBeanBuilder builder)
     {
         super(builder);
 
@@ -48,9 +48,9 @@ public class EntityPropertyIndexDocumentModuleBean extends NameToKeyBean
         {
             this.keyConfigurations = Lists.newArrayList();
         }
-        if (null == propertyType)
+        if (null == entityType)
         {
-            this.propertyType = EntityPropertyType.issue;
+            this.entityType = EntityPropertyType.issue;
         }
     }
 
@@ -59,21 +59,21 @@ public class EntityPropertyIndexDocumentModuleBean extends NameToKeyBean
         return keyConfigurations;
     }
 
-    public EntityPropertyType getPropertyType()
+    public EntityPropertyType getEntityType()
     {
-        return propertyType;
+        return entityType;
     }
 
-    public static EntityPropertyIndexDocumentModuleBeanBuilder newEntityPropertyIndexDocumentModuleBean()
+    public static EntityPropertyModuleBeanBuilder newEntityPropertyModuleBean()
     {
-        return new EntityPropertyIndexDocumentModuleBeanBuilder();
+        return new EntityPropertyModuleBeanBuilder();
     }
 
     @Override
     public int hashCode()
     {
         return new HashCodeBuilder(53, 11)
-                .append(propertyType)
+                .append(entityType)
                 .append(keyConfigurations)
                 .build();
     }
@@ -86,16 +86,16 @@ public class EntityPropertyIndexDocumentModuleBean extends NameToKeyBean
             return true;
         }
 
-        if (!(otherObj instanceof EntityPropertyIndexDocumentModuleBean))
+        if (!(otherObj instanceof EntityPropertyModuleBean))
         {
             return false;
         }
 
-        final EntityPropertyIndexDocumentModuleBean other = (EntityPropertyIndexDocumentModuleBean) otherObj;
+        final EntityPropertyModuleBean other = (EntityPropertyModuleBean) otherObj;
 
         return new EqualsBuilder()
-                .append(propertyType, other.keyConfigurations)
-                .append(propertyType, other.propertyType)
+                .append(entityType, other.keyConfigurations)
+                .append(entityType, other.entityType)
                 .isEquals();
     }
 }
