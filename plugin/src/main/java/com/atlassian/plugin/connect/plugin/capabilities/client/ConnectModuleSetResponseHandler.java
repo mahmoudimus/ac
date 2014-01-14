@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.client;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;

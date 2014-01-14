@@ -1,30 +1,39 @@
+<%
+    // returns "class='aui-nav-selected'" for the current page, or the empty string otherwise
+    var selected = function(path) {
+        var isSelected = false;
+        // trim file extension if present
+        if (path.indexOf('.') > -1) {
+            path = path.split('.')[0];
+        }
+        return path === current.path.join("/") ? "class='aui-nav-selected'" : "";
+    };
+%>
+
 <div class="aui-page-panel-nav">
     <nav class="aui-navgroup aui-navgroup-vertical">
         <div class="aui-navgroup-inner">
-            <ul class="aui-nav">
-                <% for (var page in public._data.guides) { %>
-                <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
-                <li <%= selected %>>
-                    <a href="<%= relDocRoot %>guides/<%= page %>"><%= public._data.guides[page].title %></a>
-                </li>
-                <% } %>
-            </ul>
+            <%- partial('_sidebar_list.ejs', { category: 'guides' }) %>
 
             <div class="aui-nav-heading">
                 <strong>Core Concepts</strong>
             </div>
-            <ul class="aui-nav">
-            <% for(var concept in public._data.concepts) { %>
-            <% var selected = concept.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
-            <li <%= selected %>>
-                <a href="<%= relDocRoot %>concepts/<%= concept %>"><%= public._data.concepts[concept].title %></a>
-            </li>
-            <% } %>
-            </ul>
+            <%- partial('_sidebar_list.ejs', { category: 'concepts' }) %>
 
             <div class="aui-nav-heading">
                 <a href="<%= relDocRoot %>modules/">AddOn Descriptor</a>
             </div>
+            <ul class="aui-nav">
+                <li <%= selected('modules/authentication') %>>
+                    <a href="<%= relDocRoot %>modules/authentication">Authentication</a>
+                </li>
+                <li <%= selected('modules/lifecycle') %>>
+                    <a href="<%= relDocRoot %>modules/lifecycle">Lifecycle</a>
+                </li>
+                <li <%= selected('modules/plugin-vendor') %>>
+                    <a href="<%= relDocRoot %>modules/plugin-vendor">Plugin Vendor</a>
+                </li>
+            </ul>
 
             <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira, relDocRoot: relDocRoot }) %>
             <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence, relDocRoot: relDocRoot }) %>
@@ -32,27 +41,10 @@
             <div class="aui-nav-heading">
                 <strong>Product APIs</strong>
             </div>
-            <ul class="aui-nav">
-                <% for(var resource in public._data["rest-apis"]) { %>
-                <% var selected = resource.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
-                <li <%= selected %>>
-                    <a href="<%= relDocRoot %>rest-apis/<%= resource %>"><%= public._data["rest-apis"][resource].title %></a>
-                </li>
-                <% } %>
-            </ul>
 
-            <div class="aui-nav-heading">
-                <strong>Resources</strong>
-            </div>
-            <ul class="aui-nav">
-                <% for(var resource in public._data.resources) { %>
-                <% var selected = resource.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
-                <li <%= selected %>>
-                    <a href="<%= relDocRoot %>resources/<%= resource %>"><%= public._data.resources[resource].title %></a>
-                </li>
-                <% } %>
-            </ul>
+            <%- partial('_sidebar_list.ejs', { category: 'rest-apis' }) %>
 
+            <%- partial('_sidebar_list.ejs', { category: 'resources' }) %>
         </div>
     </nav>
 </div>

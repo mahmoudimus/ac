@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.PluginArtifact;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAddOnBundleBuilder;

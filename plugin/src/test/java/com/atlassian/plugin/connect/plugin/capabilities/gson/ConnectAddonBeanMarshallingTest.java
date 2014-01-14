@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+
 import com.google.gson.Gson;
 import org.junit.Test;
 

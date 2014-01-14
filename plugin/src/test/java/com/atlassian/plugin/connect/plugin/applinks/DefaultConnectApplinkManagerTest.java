@@ -13,7 +13,7 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;

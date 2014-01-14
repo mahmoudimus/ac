@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.StaticContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroHttpMethod;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroHttpMethod;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)

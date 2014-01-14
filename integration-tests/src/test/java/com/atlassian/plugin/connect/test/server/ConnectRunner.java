@@ -2,12 +2,12 @@ package com.atlassian.plugin.connect.test.server;
 
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.security.KeyPair;
@@ -36,9 +38,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
+import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -308,6 +310,7 @@ public class ConnectRunner
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
         {
             String json = ConnectModulesGsonFactory.getGson().toJson(addon);
+            response.setContentType(MediaType.APPLICATION_JSON);
             response.getWriter().write(json);
             response.getWriter().close();
         }
@@ -315,7 +318,7 @@ public class ConnectRunner
 
     private static class TestEnv implements Environment
     {
-        private Map<String, String> env = Maps.newHashMap();
+        private Map<String, String> env = newHashMap();
 
         @Override
         public String getEnv(String name)

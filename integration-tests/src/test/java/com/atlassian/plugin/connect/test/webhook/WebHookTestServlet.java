@@ -4,8 +4,7 @@ import cc.plural.jsonij.JPath;
 import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
-import com.atlassian.plugin.connect.api.scopes.ScopeName;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.server.module.WebhookModule;
@@ -20,6 +19,8 @@ import java.net.URI;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
+
+import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 
 public final class WebHookTestServlet extends HttpServlet
 {

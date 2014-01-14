@@ -1,7 +1,8 @@
 package it.com.atlassian.plugin.connect.schema;
 
-import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectDescriptorValidator;
-import com.atlassian.plugin.connect.plugin.capabilities.schema.DescriptorValidationResult;
+import com.atlassian.plugin.connect.modules.schema.ConnectDescriptorValidator;
+import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
+import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,17 +15,19 @@ import static org.junit.Assert.assertTrue;
 public class TestDescriptorValidation
 {
     private ConnectDescriptorValidator validator;
+    private ConnectSchemaLocator schemaLocator;
 
-    public TestDescriptorValidation(final ConnectDescriptorValidator validator)
+    public TestDescriptorValidation(final ConnectDescriptorValidator validator, final ConnectSchemaLocator schemaLocator)
     {
         this.validator = validator;
+        this.schemaLocator = schemaLocator;
     }
 
     @Test
     public void testGoodConfluenceDescriptor() throws Exception
     {
         String json = readAddonTestFile("validConfluenceDescriptor.json");
-        DescriptorValidationResult result = validator.validate(json);
+        DescriptorValidationResult result = validator.validate(json,schemaLocator.getSchemaForCurrentProduct());
 
         assertTrue(result.isSuccess());
     }
@@ -33,7 +36,7 @@ public class TestDescriptorValidation
     public void testBadConfluenceDescriptor() throws Exception
     {
         String json = readAddonTestFile("invalidConfluenceDescriptor.json");
-        DescriptorValidationResult result = validator.validate(json);
+        DescriptorValidationResult result = validator.validate(json,schemaLocator.getSchemaForCurrentProduct());
 
         assertFalse(result.isSuccess());
     }

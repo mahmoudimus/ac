@@ -23,7 +23,7 @@
 
     <servlet-filter key="documentation-filter" class="com.atlassian.plugin.connect.plugin.docs.DocumentationFilter"
                     location="after-encoding">
-        <url-pattern>/atlassian-connect/docs/*</url-pattern>
+        <url-pattern>/atlassian-connect/docs*</url-pattern>
     </servlet-filter>
 
     <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
@@ -84,6 +84,7 @@
         <resource type="download" name="_addons.js" location="/js/iframe/host/_addons.js" />
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content.js" location="/js/iframe/host/content.js" />
+        <resource type="download" name="_status_helper.js" location="/js/iframe/host/_status_helper.js" />
     </web-resource>
 
     <!-- Temporary copy of AUI dialog2 before it lands in all products -->

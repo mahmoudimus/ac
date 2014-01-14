@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.confluence.util.i18n.DocumentationBean;
 import com.atlassian.confluence.util.i18n.DocumentationBeanFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 
 public class ConnectDocumentationBeanFactory implements DocumentationBeanFactory
 {

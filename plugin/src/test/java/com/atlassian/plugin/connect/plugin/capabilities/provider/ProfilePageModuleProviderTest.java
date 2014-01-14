@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
+import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;

@@ -4,11 +4,15 @@ import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.AutowireWithConnectPluginDecorator;
@@ -18,7 +22,7 @@ import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
+import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -35,9 +39,9 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookModuleBean.newWebHookBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedListWithType;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
 import static com.google.common.collect.Lists.newArrayList;
 
 @Component
@@ -168,8 +172,20 @@ public class BeanToModuleRegistrar
         List<ProductFilter> products = Arrays.asList(providerAnnotation.products());
         if (products.contains(ProductFilter.ALL) || (null != ctx.getAppFilter() && products.contains(ctx.getAppFilter())))
         {
+            Class<? extends ConnectModuleProvider> theProviderClass = null;
+            try
+            {
+                theProviderClass = (Class<? extends ConnectModuleProvider>) Class.forName(providerAnnotation.value());
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new ModuleProviderNotFoundException("Unable to load module provider for class [" + providerAnnotation.value() + "]", e);
+            }
+
             ContainerAccessor accessor = theConnectPlugin.getContainerAccessor();
-            Collection<? extends ConnectModuleProvider> providers = accessor.getBeansOfType(providerAnnotation.value());
+            Collection<? extends ConnectModuleProvider> providers = accessor.getBeansOfType(theProviderClass);
+            
+            
             if (!providers.isEmpty())
             {
                 ConnectModuleProvider provider = providers.iterator().next();

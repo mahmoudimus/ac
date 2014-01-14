@@ -52,6 +52,7 @@ import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.parseDocument;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -337,7 +338,7 @@ public final class DescriptorValidator
 
     private void addXslStyleSheet(Document schema)
     {
-        final Map<String, String> arguments = Maps.newHashMap();
+        final Map<String, String> arguments = newHashMap();
         arguments.put("type", "text/xsl");
         arguments.put("href", getXslStyleSheetUrl());
 

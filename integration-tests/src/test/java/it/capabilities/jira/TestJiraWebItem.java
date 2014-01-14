@@ -1,10 +1,10 @@
 package it.capabilities.jira;
 
-import com.atlassian.fugue.Pair;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
@@ -18,20 +18,15 @@ import org.junit.Test;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.assertURIEquals;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-
+import static org.junit.Assert.*;
 /**
  * @since 1.0
  */
@@ -41,6 +36,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static final String ADDON_DIRECT_WEBITEM = "ac-direct-to-addon-web-item";
     private static final String PRODUCT_WEBITEM = "quick-project-link";
     private static final String ABSOLUTE_WEBITEM = "google-link";
+    private static final String ABSOLUTE_WEBITEM_INLINE_DIALOG = "wikipedia-link";
 
     private static ConnectRunner remotePlugin;
 
@@ -79,8 +75,20 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                         newSingleConditionBean().withCondition("user_is_logged_in").build()
                                         , newSingleConditionBean().withCondition("/onlyBettyCondition").build()
                                 )
-                                .build())
-
+                                .build(),
+                        newWebItemBean()
+                                .withName(new I18nProperty("wikipedia link", "ac.ild"))
+                                .withLocation("system.top.navigation.bar")
+                                .withWeight(1)
+                                .withContext(AddOnUrlContext.addon)
+                                .withUrl("http://www.wikipedia.org")
+                                .withTarget(
+                                        newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
+                                        .withParam("onHover", "true")
+                                        .build()
+                                )
+                                .build()
+                )
                 .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(BARNEY_USERNAME))
                 .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(BETTY_USERNAME))
                 .addRoute("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}", ConnectAppServlets.helloWorldServlet())
@@ -174,5 +182,17 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
     //TODO: once generalPage is complete, add a test to check that a web item pointing to the page works properly
 
-        
+    @Test
+    public void testAbsoluteWebItemInlineDialog() throws Exception
+    {
+        loginAsAdmin();
+
+        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM_INLINE_DIALOG, Optional.<String>absent());
+        assertNotNull("Web item should be found", webItem);
+        assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
+        webItem.click();
+        assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
+       }
+
 }

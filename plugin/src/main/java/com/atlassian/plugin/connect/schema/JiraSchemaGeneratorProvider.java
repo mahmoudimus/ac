@@ -4,7 +4,7 @@ import com.atlassian.json.schema.JsonSchemaGenerator;
 import com.atlassian.json.schema.JsonSchemaGeneratorProvider;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.scanner.model.InterfaceList;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
+import com.atlassian.plugin.connect.modules.util.ProductFilter;
 
 public class JiraSchemaGeneratorProvider implements JsonSchemaGeneratorProvider
 {

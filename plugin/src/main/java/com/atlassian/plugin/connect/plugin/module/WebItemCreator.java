@@ -21,7 +21,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalUriAttribute;

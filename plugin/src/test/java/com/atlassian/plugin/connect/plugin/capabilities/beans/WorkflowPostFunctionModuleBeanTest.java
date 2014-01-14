@@ -1,8 +1,8 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans;
+package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
 

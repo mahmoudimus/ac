@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.net.URI;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -17,9 +17,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.decorated;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.decorated;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
