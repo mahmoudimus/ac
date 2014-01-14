@@ -270,10 +270,8 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
         editorPage.setTitle("Short Body Macro");
 
         ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(SHORT_BODY_MACRO_NAME);
-        macro.select();
+        macroBrowser.selectAndInsertMacro(shortBodyMacro.getKey());
 
-        macroBrowser.insertMacro();
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
         editorContent.setMacroBody("a short body", true);
 
@@ -292,9 +290,7 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
         editorPage.setTitle("Long Body Macro");
 
         ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(LONG_BODY_MACRO_NAME);
-        macro.select();
-        macroBrowser.insertMacro();
+        macroBrowser.selectAndInsertMacro(longBodyMacro.getKey());
 
         String body = StringUtils.repeat("x ", 200);
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
@@ -359,9 +355,7 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
         editorPage.setTitle("Image Placeholder Macro");
 
         ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(IMAGE_PLACEHOLDER_MACRO_NAME);
-        macro.select();
-        macroBrowser.insertMacro();
+        macroBrowser.selectAndInsertMacro(imagePlaceholderMacro.getKey());
 
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
         String url = editorContent.getImagePlaceholderUrl();
@@ -374,8 +368,6 @@ public class TestDynamicContentMacro extends AbstractConfluenceWebDriverTest
     private void selectSimpleMacro(CreatePage editorPage)
     {
         ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(SIMPLE_MACRO_NAME);
-        macro.select();
-        macroBrowser.insertMacro();
+        macroBrowser.selectAndInsertMacro(simpleMacro.getKey());
     }
 }
