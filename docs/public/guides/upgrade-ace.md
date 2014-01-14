@@ -23,7 +23,8 @@ Specific notes relating to ACE:
 3. The function `addon.httpClient()` now returns a promise to the outgoing request, rather than the request directly.
 By the time the promise is resolved the request is not writeable, so you must pass in any parameters as part of the
 first argument to `get()`, `post()` etc.<br><br>
-Code should be migrated from:
+Additionally, we no longer support passing the method type by the 'method' parameter, instead you must call the
+appropriate function on the `httpClient`. For example, code should be migrated from
 ```
     addon.httpClient(req)({
         method: 'POST',
