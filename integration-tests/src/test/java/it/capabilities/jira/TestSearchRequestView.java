@@ -1,7 +1,7 @@
 package it.capabilities.jira;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -14,7 +14,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

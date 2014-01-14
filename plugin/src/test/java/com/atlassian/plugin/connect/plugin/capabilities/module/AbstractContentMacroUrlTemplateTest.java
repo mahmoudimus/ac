@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseContentMacroModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.ContentEntityForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;

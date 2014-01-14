@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.applinks;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 
 /**
  * A helper component for creating applinks for add ons.

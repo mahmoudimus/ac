@@ -26,7 +26,7 @@ import org.mockito.stubbing.Answer;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.product;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;

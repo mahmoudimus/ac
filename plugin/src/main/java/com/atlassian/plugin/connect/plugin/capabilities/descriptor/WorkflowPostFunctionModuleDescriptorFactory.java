@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;

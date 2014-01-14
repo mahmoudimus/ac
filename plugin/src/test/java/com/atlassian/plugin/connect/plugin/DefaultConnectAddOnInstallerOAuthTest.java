@@ -6,10 +6,10 @@ import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.installer.DefaultConnectAddOnInstaller;
@@ -70,7 +70,7 @@ public class DefaultConnectAddOnInstallerOAuthTest
         when(pluginAccessor.getPlugin(ADD_ON_KEY)).thenReturn(plugin);
         when(pluginAccessor.isPluginEnabled(ADD_ON_KEY)).thenReturn(true);
         new DefaultConnectAddOnInstaller(remotePluginArtifactFactory, pluginController, pluginAccessor, oAuthLinkManager,
-                remoteEventsHandler, beanToModuleRegistrar, bundleContext, connectApplinkManager, connectDescriptorRegistry, connectEventHandler, new SharedSecretServiceImpl())
-            .install("username", ConnectModulesGsonFactory.getGson(bundleContext).toJson(ADD_ON_BEAN));
+                remoteEventsHandler, beanToModuleRegistrar, connectApplinkManager, connectDescriptorRegistry, connectEventHandler, new SharedSecretServiceImpl())
+            .install("username", ConnectModulesGsonFactory.getGson().toJson(ADD_ON_BEAN));
     }
 }

@@ -2,9 +2,9 @@ package it.capabilities.confluence;
 
 import com.atlassian.fugue.Pair;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
@@ -16,26 +16,21 @@ import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.assertURIEquals;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 /**

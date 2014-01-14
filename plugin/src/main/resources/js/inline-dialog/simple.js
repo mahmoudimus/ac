@@ -7,18 +7,19 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function(
 
     return function (contentUrl, options) {
         var $inlineDialog;
+        idSeq++;
 
         var displayInlineDialog = function(content, trigger, showPopup) {
 
-            if(!options.ns){
+            options.w = options.w || options.width;
+            options.h = options.h || options.height;
+            if (!options.ns) {
                 options.ns = nextId();
             }
-            if(!options.url){
-                options.url = contentUrl;
-            }
             options.container = options.ns;
-            options.src = options.url;
+            options.src = options.url = options.url || contentUrl;
             content.data('inlineDialog', $inlineDialog);
+
             if(!content.find('iframe').length){
                 content.attr('id', 'ap-' + options.ns);
                 content.append('<div id="embedded-' + options.ns + '" />');
@@ -29,25 +30,22 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function(
             return false;
         };
 
-        idSeq++;
-
         //Create the AUI inline dialog with a unique ID.
         $inlineDialog = AJS.InlineDialog(
             options.bindTo,
             //assign unique id to inline Dialog
             "ap-" + nextId(),
             displayInlineDialog,
-            {
-                width: options.width
-            });
+            options
+        );
 
         return {
             id: $inlineDialog.attr('id'),
             show: function() {
                 $inlineDialog.show();
-            },
-
+            }
         };
+
     };
 
 });

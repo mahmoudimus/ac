@@ -1,21 +1,21 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
+import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 
 /**
  * @since 1.0

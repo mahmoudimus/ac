@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SingleConditionBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.capabilities.util.TestContextBuilder;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
@@ -36,9 +36,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelModuleBean.newWebPanelBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.IFrameContextMatchers.hasIFramePath;
+import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
+import static com.atlassian.plugin.connect.modules.beans.matchers.IFrameContextMatchers.hasIFramePath;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;

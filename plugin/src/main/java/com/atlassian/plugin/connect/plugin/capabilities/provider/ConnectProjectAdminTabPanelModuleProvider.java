@@ -3,8 +3,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -58,7 +58,7 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
             RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
 
             // we can't pass projectKey as an "extra param" to relativeAddOnUrlConverter as it will encode the {}
-            String webItemUri = localUrl.getRelativeUri() + "?projectKey={project.key}";
+            String webItemUri = appendProjectKeyParam(localUrl.getRelativeUri());
             WebItemModuleBean webItemModuleBean = createWebItemModuleBean(bean, webItemUri);
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemModuleBean));
 
@@ -68,6 +68,11 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
         }
 
         return builder.build();
+    }
+
+    private String appendProjectKeyParam(final String relativeUri)
+    {
+        return relativeUri + (relativeUri.contains("?") ? "&" : "?") + "projectKey={project.key}";
     }
 
     private WebItemModuleBean createWebItemModuleBean(ConnectProjectAdminTabPanelModuleBean bean,

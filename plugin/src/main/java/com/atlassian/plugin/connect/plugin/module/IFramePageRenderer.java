@@ -80,7 +80,7 @@ public class IFramePageRenderer
 
     private Map<String, List<String>> contextQueryParameters(final Map<String, String[]> queryParams)
     {
-        final Map<String, List<String>> ctxQueryParams = Maps.newHashMap();
+        final Map<String, List<String>> ctxQueryParams = newHashMap();
         for (Map.Entry<String, String[]> param : queryParams.entrySet())
         {
             ctxQueryParams.put(param.getKey(), Arrays.asList(param.getValue()));

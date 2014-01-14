@@ -203,4 +203,4 @@ This is where our framework helpers come in. They help you build some of the plu
  * [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
  * [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express)
 
-Also take a look at our [sample applications](samples.html). They demonstrate authentication and many other patterns you can use to develop Atlassian Connect add-ons.
+Also take a look at our [sample applications](../resources/samples.html). They demonstrate authentication and many other patterns you can use to develop Atlassian Connect add-ons.
