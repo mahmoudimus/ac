@@ -1,12 +1,10 @@
 package com.atlassian.plugin.connect.modules;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
-
 import org.junit.Test;
+
+import java.lang.reflect.Field;
 
 /**
  * This class is here simply to make sure we don't typo a classname when we use @ConnectModule annotations

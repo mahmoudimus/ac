@@ -1,15 +1,14 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import java.util.List;
-
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.MacroParameterBeanBuilder;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 /**
  * Describes a parameter input field for a macro.

@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.modules.util;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+
+import java.util.List;
 
 public class ConditionUtils
 {

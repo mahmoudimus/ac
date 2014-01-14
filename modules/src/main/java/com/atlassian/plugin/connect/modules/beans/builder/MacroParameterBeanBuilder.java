@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParameterBeanBuilder, MacroParameterBean>
 {

@@ -1,36 +1,31 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.schema.descriptor.DescribedModuleDescriptorFactory;
 import com.atlassian.plugin.schema.spi.Schema;
 import com.atlassian.sal.api.ApplicationProperties;
-
 import com.atlassian.sal.api.UrlMode;
 import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
-
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.atlassian.plugin.connect.plugin.rest.InstallerResource.*;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Set;
+
+import static com.atlassian.plugin.connect.plugin.rest.InstallerResource.INSTALLER_RESOURCE_PATH;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.notNull;
-import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterables.*;
 import static java.lang.String.format;
 
 /**
@@ -128,7 +123,8 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
     public void performSecondaryValidations(Document document) throws InstallationFailedException
     {
         Set<String> permissions = permissionsReader.readPermissionsFromDescriptor(document);
-        Collection<String> moduleTypes = transform((List<Element>) document.getRootElement().elements(), new Function<Element, String>()
+        @SuppressWarnings("unchecked")
+        Collection<String> moduleTypes = Collections2.transform((Collection<Element>) document.getRootElement().elements(), new Function<Element, String>()
         {
             @Override
             public String apply(Element input)

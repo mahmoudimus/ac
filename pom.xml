@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-jdtest1</version>
+    <version>1.0-m27.2</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -635,7 +635,7 @@
         <guava.version>10.0.1</guava.version>
 
         <!-- BUILD STUFF -->
-        <jgitflow.version>1.0-alpha26</jgitflow.version>
+        <jgitflow.version>1.0-internal8</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>

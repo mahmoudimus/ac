@@ -1,10 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -16,6 +13,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 import static org.dom4j.DocumentHelper.selectNodes;
 import static org.hamcrest.Matchers.equalTo;

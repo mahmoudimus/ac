@@ -20,7 +20,6 @@ import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.ContextParameterParser;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
-import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
@@ -214,13 +213,11 @@ public class MacroModuleDescriptorCreator
                 i18n.put(pluginKey + "." + macroKey + ".desc", element.element("description").getTextTrim());
             }
 
-            if (!permissionManager.hasPermission(pluginKey, Permissions.GENERATE_ANY_HTML))
+            for (String propName : i18n.stringPropertyNames())
             {
-                for (String propName : i18n.stringPropertyNames())
-                {
-                    i18n.put(propName, escapeAll(i18n.getProperty(propName)));
-                }
+                i18n.put(propName, escapeAll(i18n.getProperty(propName)));
             }
+
             return i18n;
         }
 

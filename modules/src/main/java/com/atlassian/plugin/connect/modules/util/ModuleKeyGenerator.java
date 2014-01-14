@@ -1,10 +1,9 @@
 package com.atlassian.plugin.connect.modules.util;
 
-import java.security.SecureRandom;
-
 import com.google.common.base.Joiner;
-
 import org.apache.commons.lang3.StringUtils;
+
+import java.security.SecureRandom;
 
 /**
  * Utility class to help with module key generation and conversion.

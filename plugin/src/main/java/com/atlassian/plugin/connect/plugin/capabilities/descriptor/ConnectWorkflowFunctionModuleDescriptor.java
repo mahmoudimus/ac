@@ -30,7 +30,6 @@ import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.opensymphony.workflow.FunctionProvider;
 import com.opensymphony.workflow.TypeResolver;
 import com.opensymphony.workflow.WorkflowException;

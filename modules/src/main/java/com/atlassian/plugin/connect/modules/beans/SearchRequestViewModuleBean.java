@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.SearchRequestViewModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.empty;
 

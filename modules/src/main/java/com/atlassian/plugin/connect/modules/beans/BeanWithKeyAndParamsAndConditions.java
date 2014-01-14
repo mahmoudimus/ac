@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.modules.beans.builder.BeanWithKeyParamsAndConditionsBuilder;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 

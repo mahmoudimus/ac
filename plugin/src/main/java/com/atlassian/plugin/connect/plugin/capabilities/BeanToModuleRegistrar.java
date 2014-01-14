@@ -4,12 +4,12 @@ import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleList;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
@@ -20,7 +20,6 @@ import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
-import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -53,19 +52,24 @@ public class BeanToModuleRegistrar
     private final ProductAccessor productAccessor;
     private final ContainerManagedPlugin theConnectPlugin;
     private final ApplicationProperties applicationProperties;
+    private final WebHookScopeService webHookScopeService;
 
     @Autowired
-    public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration, PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor, ApplicationProperties applicationProperties)
+    public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration, PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor,
+                                 ApplicationProperties applicationProperties, WebHookScopeService webHookScopeService)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.productAccessor = productAccessor;
         this.applicationProperties = applicationProperties;
         this.theConnectPlugin = (ContainerManagedPlugin) pluginRetrievalService.getPlugin();
         this.registrations = new ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration>();
+        this.webHookScopeService = webHookScopeService;
     }
 
     public void registerDescriptorsForBeans(Plugin plugin, ConnectAddonBean addon)
     {
+        requireScopesForWebHooks(plugin, addon);
+
         BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
         AutowireWithConnectPluginDecorator connectAutowiringPlugin = new AutowireWithConnectPluginDecorator((AutowireCapablePlugin) theConnectPlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
@@ -82,6 +86,21 @@ public class BeanToModuleRegistrar
         if (!descriptorsToRegister.isEmpty())
         {
             registrations.putIfAbsent(plugin.getKey(), dynamicDescriptorRegistration.registerDescriptors(plugin, descriptorsToRegister));
+        }
+    }
+
+    // don't leak content via web hooks to add-ons without permission to receive that content
+    private void requireScopesForWebHooks(Plugin plugin, ConnectAddonBean addon)
+    {
+        for (WebHookModuleBean webHookModuleBean : addon.getModules().getWebhooks())
+        {
+            ScopeName requiredScope = webHookScopeService.getRequiredScope(webHookModuleBean.getEvent());
+
+            if (!addon.getScopes().contains(requiredScope))
+            {
+                throw new InvalidDescriptorException(String.format("Add-on '%s' requests web hook '%s' but not the '%s' scope required to receive it. Please request this scope in your descriptor.",
+                                                                   plugin.getKey(), webHookModuleBean.getEvent(), requiredScope));
+            }
         }
     }
 

@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.module;
 import com.atlassian.renderer.v2.macro.Macro;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.List;

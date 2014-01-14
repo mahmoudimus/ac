@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-api-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-jdtest1</version>
+        <version>1.0-m27.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -29,6 +29,11 @@
             <artifactId>atlassian-connect-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-modules</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
