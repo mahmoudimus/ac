@@ -123,7 +123,7 @@ public class ConnectEntityPropertyIndexDocumentModuleDescriptorFactoryTest
 
         return newEntityPropertyModuleBean()
                 .withKeyConfiguration(keyConfigurationBean)
-                .withPropertyType(EntityPropertyType.issue)
+                .withEntityType(EntityPropertyType.issue)
                 .withName(new I18nProperty("Attachment Indexing", I18N_KEY))
                 .build();
     }

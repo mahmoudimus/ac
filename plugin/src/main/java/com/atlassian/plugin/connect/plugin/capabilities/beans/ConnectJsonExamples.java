@@ -137,7 +137,7 @@ public class ConnectJsonExamples
                 .withModules("dynamicContentMacros", newDynamicContentMacroModuleBean().withName(i18nProperty("Dynamic Macro")).withUrl("/dynamic-macro").build())
                 .withModules("staticContentMacros", newStaticContentMacroModuleBean().withName(i18nProperty("Static Macro")).withUrl("/static-macro").build())
                 .withModules("jiraEntityProperties", newEntityPropertyModuleBean().withName(i18nProperty("Entity Property"))
-                        .withPropertyType(EntityPropertyType.issue)
+                        .withEntityType(EntityPropertyType.issue)
                         .withKeyConfiguration(new EntityPropertyIndexKeyConfigurationBean(newArrayList(new EntityPropertyIndexExtractionConfigurationBean("label.color", EntityPropertyIndexType.string)), "label")).build())
                 .build();
 
@@ -467,7 +467,7 @@ public class ConnectJsonExamples
 
         EntityPropertyModuleBean entityPropertyModuleBean = newEntityPropertyModuleBean()
                 .withName(new I18nProperty("Attachment Index Document", ""))
-                .withPropertyType(EntityPropertyType.issue)
+                .withEntityType(EntityPropertyType.issue)
                 .withKeyConfiguration(issueAttachmentIndexConfiguration)
                 .build();
 

@@ -3,14 +3,14 @@
         "value" :"My index",
         "i18n": "my.index"
     },
-    "propertyType": "issue",
+    "entityType": "issue",
     "keyConfigurations": [{
         "propertyKey" : "attachment",
         "extractions" : [{
-            "path" : "attachment.size",
+            "objectName" : "attachment.size",
             "type" : "number"
         }, {
-            "path" : "attachment.extension",
+            "objectName" : "attachment.extension",
             "type" : "string"
         }]
     }]

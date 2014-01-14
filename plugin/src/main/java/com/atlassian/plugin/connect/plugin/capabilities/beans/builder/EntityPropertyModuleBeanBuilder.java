@@ -30,7 +30,7 @@ public class EntityPropertyModuleBeanBuilder extends NameToKeyBeanBuilder<Entity
         return this;
     }
 
-    public EntityPropertyModuleBeanBuilder withPropertyType(EntityPropertyType propertyType)
+    public EntityPropertyModuleBeanBuilder withEntityType(EntityPropertyType propertyType)
     {
         this.entityPropertyType = propertyType;
         return this;
