@@ -1,8 +1,5 @@
 {
     "guides": {
-        "whats-new.html": {
-            "title": "What's New"
-        },
         "introduction.html": {
             "title": "Introduction"
         },
@@ -53,20 +50,15 @@
             "new": true
         }
     },
-    "release-notes": {
-        "1-0-m27.html": {
-            "title": "1.0-m27"
-        },
-        "1-0-m25.html": {
-            "title": "1.0-m25"
-        }
-    },
     "rest-apis": {
         "product-api-browser.html": {
             "title": "Product API Browser"
         }
     },
     "resources": {
+        "release-notes.html": {
+            "title": "Release Notes"
+        },
         "samples.html": {
             "title": "Sample Add-ons"
         },

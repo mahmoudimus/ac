@@ -1,5 +1,5 @@
 
-# What's New
+# Release Notes
 
 ## 1.0-m27
 
