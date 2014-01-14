@@ -80,7 +80,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     @Test
     public void completeKeyIsCorrect()
     {
-        assertThat(moduleDescriptor.getCompleteKey(), startsWith("com.atlassian.plugin.key:index-document-configuration"));
+        assertThat(moduleDescriptor.getCompleteKey(), startsWith("com.atlassian.plugin.key:attachment-indexing"));
     }
 
     @Test
