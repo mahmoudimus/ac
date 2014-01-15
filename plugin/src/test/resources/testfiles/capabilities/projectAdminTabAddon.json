@@ -25,5 +25,6 @@
             },
             "location" : "a-location"
         }]
-    }
+    },
+    "scopes" : []
 }

@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.builder.BeanWithParamsBuilder;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 

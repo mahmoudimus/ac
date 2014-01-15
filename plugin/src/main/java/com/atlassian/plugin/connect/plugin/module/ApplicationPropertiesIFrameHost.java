@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.module;
 
-import java.net.URI;
-
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+
+import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

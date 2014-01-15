@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.slf4j.Logger;

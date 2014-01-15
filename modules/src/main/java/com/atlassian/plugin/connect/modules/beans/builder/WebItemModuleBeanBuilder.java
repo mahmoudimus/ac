@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
+
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 

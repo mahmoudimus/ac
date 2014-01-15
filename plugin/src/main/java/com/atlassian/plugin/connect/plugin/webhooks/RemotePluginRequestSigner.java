@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.plugin.webhooks;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
@@ -16,6 +10,12 @@ import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.google.common.base.Preconditions.checkNotNull;

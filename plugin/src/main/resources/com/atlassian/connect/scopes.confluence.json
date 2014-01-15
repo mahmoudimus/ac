@@ -1,0 +1,23 @@
+{
+    "scopes" : [{
+        "key" : "READ",
+        "methods" : ["get"],
+        "restPaths": ["mywork", "prototype", "ui"]
+    }],
+    "restPaths" : [{
+        "key" : "mywork",
+        "name" : "mywork",
+        "basePaths" : ["/notification", "/status", "/task"],
+        "versions" : ["1", "latest"]
+    },{
+        "key" : "prototype",
+        "name" : "prototype",
+        "basePaths" : ["/search", "/content", "/attachment", "/breadcrumb", "/space"],
+        "versions" : ["1", "latest"]
+    },{
+        "key" : "ui",
+        "name" : "ui",
+        "basePaths" : ["/content"],
+        "versions" : ["1", "1.0", "latest"]
+    }]
+}

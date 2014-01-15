@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.modules.beans.matchers;
+package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
 
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.google.common.base.Objects;

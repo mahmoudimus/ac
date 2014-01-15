@@ -2,8 +2,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.testobjects;
 
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;

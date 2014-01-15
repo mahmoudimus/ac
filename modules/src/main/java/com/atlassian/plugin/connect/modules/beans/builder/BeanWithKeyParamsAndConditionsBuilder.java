@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
+import com.atlassian.plugin.connect.modules.beans.BeanWithKeyAndParamsAndConditions;
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import com.atlassian.plugin.connect.modules.beans.BeanWithKeyAndParamsAndConditions;
-import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 import static com.google.common.collect.Lists.newArrayList;
 

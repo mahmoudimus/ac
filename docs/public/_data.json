@@ -59,6 +59,9 @@
         }
     },
     "resources": {
+        "release-notes.html": {
+            "title": "Release Notes"
+        },
         "samples.html": {
             "title": "Sample Add-ons"
         },

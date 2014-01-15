@@ -21,10 +21,7 @@ import redstone.xmlrpc.XmlRpcFault;
 import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase

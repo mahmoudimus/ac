@@ -1,15 +1,14 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.List;
-import java.util.Set;
-
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
-
 import com.google.common.collect.ImmutableSet;
+
+import java.util.List;
+import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.empty;
 import static com.google.common.collect.Lists.newArrayList;

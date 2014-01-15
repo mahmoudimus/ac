@@ -2,9 +2,7 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.LifecycleBeanBuilder;
-
 import com.google.common.base.Strings;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

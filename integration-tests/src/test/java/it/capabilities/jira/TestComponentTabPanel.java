@@ -12,7 +12,6 @@ import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 

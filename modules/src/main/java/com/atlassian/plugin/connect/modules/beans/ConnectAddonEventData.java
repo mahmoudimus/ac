@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
+
+import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 

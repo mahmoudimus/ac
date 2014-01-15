@@ -1,15 +1,10 @@
 package com.atlassian.plugin.connect;
 
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.server.module.Condition;
 import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
-
 import it.TestPageModules;
-import it.capabilities.CheckUsernameConditionServlet;
 import it.servlet.ConnectAppServlets;
 
 import javax.servlet.ServletException;
@@ -18,10 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.test.server.ConnectRunner.newMustacheServlet;
 
 /**
