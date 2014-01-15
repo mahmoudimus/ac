@@ -155,10 +155,6 @@ public abstract class BaseContentMacroModuleBean extends NameToKeyBean
         {
             url = "";
         }
-        if (null == description)
-        {
-            description = empty();
-        }
         if (null == categories)
         {
             categories = ImmutableSet.of();
