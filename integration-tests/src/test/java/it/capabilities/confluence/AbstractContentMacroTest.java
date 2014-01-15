@@ -6,15 +6,18 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.InsertMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroForm;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.MacroList;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -34,6 +37,15 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     protected static final String SIMPLE_MACRO_KEY = "simple-macro";
     private static final String SIMPLE_MACRO_ALIAS = "unlikelytocollide";
 
+    protected static final String LONG_BODY_MACRO_NAME = "Long Body Macro";
+    protected static final String LONG_BODY_MACRO_KEY = "long-body-macro";
+
+    protected static final String SHORT_BODY_MACRO_NAME = "Short Body Macro";
+    protected static final String SHORT_BODY_MACRO_KEY = "short-body-macro";
+
+    protected static final String PARAMETER_MACRO_NAME = "Single Param Macro";
+    protected static final String PARAMETER_MACRO_KEY = "single-param-macro";
+
     private static final String ALL_PARAMETER_TYPES_MACRO_NAME = "All Parameters Macro";
 
     private static final String FEATURED_MACRO_NAME = "Featured Macro";
@@ -41,6 +53,8 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
     private static final String IMAGE_PLACEHOLDER_MACRO_NAME = "Image Placeholder Macro";
     private static final String IMAGE_PLACEHOLDER_MACRO_KEY = "image-placeholder-macro";
+
+    protected ViewPage savedPage;
 
     protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createImagePlaceholderMacro(T builder)
     {
@@ -74,6 +88,38 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                         .build()
                 )
                 .withFeatured(true)
+                .build();
+    }
+
+    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createLongBodyMacro(T builder)
+    {
+        return builder
+                .withUrl("/render-macro?hash={macro.hash}")
+                .withName(new I18nProperty(LONG_BODY_MACRO_NAME, ""))
+                .withBodyType(MacroBodyType.PLAIN_TEXT)
+                .build();
+    }
+
+    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createShortBodyMacro(T builder)
+    {
+        return builder
+                .withUrl("/render-macro?body={macro.body}")
+                .withName(new I18nProperty(SHORT_BODY_MACRO_NAME, ""))
+                .withBodyType(MacroBodyType.RICH_TEXT)
+                .build();
+    }
+
+    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createParameterMacro(T builder)
+    {
+        return builder
+                .withUrl("/render-macro")
+                .withName(new I18nProperty(PARAMETER_MACRO_NAME, ""))
+                .withParameters(newMacroParameterBean()
+                        .withIdentifier("param1")
+                        .withName(new I18nProperty("Param 1", ""))
+                        .withType("string")
+                        .build()
+                )
                 .build();
     }
 
@@ -146,6 +192,15 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         product.getPageBinder().override(InsertMenu.class, ConfluenceInsertMenu.class);
     }
 
+    @After
+    public void cleanup()
+    {
+        if (null != savedPage)
+        {
+            rpc.removePage(savedPage.getPageId());
+        }
+    }
+
     @Test
     public void testMacroIsListed() throws Exception
     {
@@ -214,4 +269,9 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
     protected abstract String getAddonBaseUrl();
 
+    protected void selectSimpleMacro(CreatePage editorPage)
+    {
+        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
+        macroBrowser.selectAndInsertMacro(SIMPLE_MACRO_KEY);
+    }
 }
