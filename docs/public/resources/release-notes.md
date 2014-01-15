@@ -9,6 +9,8 @@
 * Fixed the configure page url with JSON descriptor
 * Better error reporting and bug fixes for JSON descriptor
 
+Additionally, we have relaxed the deprecation period for the XML descriptor until __28th February, 2014__.
+
 Read the [1.0-m27 release notes](../release-notes/1-0-m27.html).
 
 ## 1.0-m25
@@ -19,6 +21,9 @@ of these changes are designed to help developers build add-ons more quickly and 
 * JSON Add-on Descriptor
 * JSON Web Token (JWT) Authentication
 * atlassian-connect-express `v0.9.0`
+
+These new features replace the XML descriptor and OAuth, which are now deprecated. Please read the
+[deprecation notices](../concepts/deprecations.html).
 
 Read the [1.0-m25 release notes](../release-notes/1-0-m25.html).
 
