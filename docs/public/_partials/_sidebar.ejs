@@ -45,6 +45,9 @@
             <%- partial('_sidebar_list.ejs', { category: 'rest-apis' }) %>
 
             <%- partial('_sidebar_list.ejs', { category: 'resources' }) %>
+
+            <%- partial('_module_list.ejs', { title: "Javascript API", modules: public.jsdoc._data, relDocRoot: relDocRoot }) %>
+
         </div>
     </nav>
 </div>

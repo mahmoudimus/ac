@@ -1,5 +1,12 @@
-AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
+AP.define("dialog", ["_dollar", "_rpc"],
 
+  /**
+   * This allows you to open and manage dialogs from inside your javascript. This is helpful in instances where you need to open a dialog when a user interacts with your add-on.
+   *
+   * @exports Dialog
+   */
+
+  function ($, rpc) {
   "use strict";
 
   var isDialog = window.location.toString().indexOf("dialog=1") > 0,
@@ -12,7 +19,13 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
     var listeners = {};
 
     exports = {
-
+      /**
+      * Creates a dialog for a module key
+      * @example
+      * AP.require('dialog', function(dialog){
+      *   dialog.create('mydialog');
+      * });
+      */
       create: function(options) {
         remote.createDialog(options);
         return {
@@ -25,7 +38,14 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
           }
         };
       },
-
+      /**
+      * Closes the currently open dialog. Optionally pass data to listeners of the dialog.close event.
+      * @param {Object} data to be emitted on dialog close.
+      * @example
+      * AP.require('dialog', function(dialog){
+      *   dialog.close({foo: 'bar'});
+      * });
+      */
       close: function(data) {
         remote.events.emit("dialog.close", data);
         remote.closeDialog();
@@ -33,17 +53,36 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
 
       isDialog: isDialog,
 
-      // register callbacks responding to messages from the host dialog, such as "submit" or "cancel"
-      //
-      // @deprecated
+      /**
+      * register callbacks responding to messages from the host dialog, such as "submit" or "cancel"
+      * @deprecated
+      */
       onDialogMessage: function (message, listener) {
         this.getButton(message).bind(listener);
       },
-
-      // gets a button proxy for a button in the host's dialog button panel by name
+      /**
+      * Returns the button that was requested (either cancel or submit)
+      * @returns {DialogButton} Returns the button
+      * @example
+      * AP.require('dialog', function(dialog){
+      *   dialog.getButton('submit');
+      * });
+      */
       getButton: function (name) {
+        /**
+        * @class DialogButton
+        */
         return {
           name: name,
+
+          /**
+          * Sets the button to enabled
+          * @memberOf DialogButton
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').enable();
+          * });
+          */
           enable: function () {
             remote.setDialogButtonEnabled(name, true);
           },
