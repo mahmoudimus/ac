@@ -51,6 +51,14 @@ public class ConnectAppServlets
     }
 
     /**
+     * @return a servlet that automatically resizes to the parent
+     */
+    public static HttpServlet noResizeServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-no-resize.mu"));
+    }
+
+    /**
      * Verify from a WebDriver test using {@link RemoteWebPanel#getCustomMessage()}.
      *
      * @param message the message to display

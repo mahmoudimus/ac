@@ -3,6 +3,8 @@ package it.capabilities.confluence;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroForm;
@@ -16,11 +18,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.assertThat;
 
 public class TestDynamicContentMacro extends AbstractContentMacroTest
 {
+    private static final String SMALL_INLINE_MACRO_NAME = "Small Inline Macro";
+    private static final String SMALL_INLINE_MACRO_KEY = "small-inline-macro";
+
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
@@ -34,6 +41,14 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         DynamicContentMacroModuleBean shortBodyMacro = createShortBodyMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean parameterMacro = createParameterMacro(newDynamicContentMacroModuleBean());
 
+        DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
+                .withUrl("/render-no-resize-macro")
+                .withName(new I18nProperty(SMALL_INLINE_MACRO_NAME, ""))
+                .withOutputType(MacroOutputType.INLINE)
+                .withWidth("60px")
+                .withHeight("30px")
+                .build();
+
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addCapabilities("dynamicContentMacros",
                         simpleMacro,
@@ -42,9 +57,11 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         shortBodyMacro,
                         featuredMacro,
                         imagePlaceholderMacro,
-                        parameterMacro
+                        parameterMacro,
+                        smallInlineMacro
                 )
                 .addRoute("/render-macro", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/render-no-resize-macro", ConnectAppServlets.noResizeServlet())
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .start();
     }
@@ -151,6 +168,23 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         assertThat(content1, is(content2));
     }
+
+    @Test
+    public void testMacroDimensions() throws Exception
+    {
+        CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        editorPage.setTitle("Small Inline Macro");
+
+        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
+        macroBrowser.selectAndInsertMacro(SMALL_INLINE_MACRO_KEY);
+
+        savedPage = editorPage.save();
+
+        RenderedMacro renderedMacro = connectPageOperations.findMacro(SMALL_INLINE_MACRO_KEY, 0);
+
+        assertThat(renderedMacro.getIFrameSize(), both(hasProperty("width", is(60))).and(hasProperty("height", is(30))));
+    }
+
 
     @Override
     protected String getAddonBaseUrl()
