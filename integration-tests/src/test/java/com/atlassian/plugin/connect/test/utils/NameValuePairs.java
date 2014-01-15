@@ -3,12 +3,14 @@ package com.atlassian.plugin.connect.test.utils;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
 
 public class NameValuePairs
 {
@@ -19,6 +21,18 @@ public class NameValuePairs
     public NameValuePairs(String queryString)
     {
         this.nameValuePairs = URLEncodedUtils.parse(queryString, Charset.forName("UTF-8"));
+    }
+
+    public NameValuePairs(Map<String, String[]> parameters)
+    {
+        this.nameValuePairs = Lists.newArrayList();
+        for (Map.Entry<String, String[]> entry : parameters.entrySet())
+        {
+            for (String value : entry.getValue())
+            {
+                nameValuePairs.add(new BasicNameValuePair(entry.getKey(), value));
+            }
+        }
     }
 
     public List<NameValuePair> all(final String name)
@@ -62,4 +76,8 @@ public class NameValuePairs
         }, defaultIfNotFound);
     }
 
+    public List<NameValuePair> getNameValuePairs()
+    {
+        return nameValuePairs;
+    }
 }
