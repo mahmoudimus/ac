@@ -1,8 +1,8 @@
 AP.define("dialog", ["_dollar", "_rpc"],
 
   /**
-   * This allows you to open and manage dialogs from inside your javascript. This is helpful in instances where you need to open a dialog when a user interacts with your add-on.
-   *
+   * This allows you to open and manage dialogs from inside your javascript. 
+   * This is helpful in instances where you need to open a dialog when a user interacts with your add-on.
    * @exports Dialog
    */
 
@@ -55,6 +55,8 @@ AP.define("dialog", ["_dollar", "_rpc"],
 
       /**
       * register callbacks responding to messages from the host dialog, such as "submit" or "cancel"
+      * @param String button either "cancel" or "submit"
+      * @param Function callback function
       * @deprecated
       */
       onDialogMessage: function (message, listener) {
@@ -62,7 +64,7 @@ AP.define("dialog", ["_dollar", "_rpc"],
       },
       /**
       * Returns the button that was requested (either cancel or submit)
-      * @returns {DialogButton} Returns the button
+      * @returns {DialogButton}
       * @example
       * AP.require('dialog', function(dialog){
       *   dialog.getButton('submit');
@@ -71,6 +73,7 @@ AP.define("dialog", ["_dollar", "_rpc"],
       getButton: function (name) {
         /**
         * @class DialogButton
+        * @description A dialog button that can be controlle wtih javascript
         */
         return {
           name: name,
@@ -86,18 +89,58 @@ AP.define("dialog", ["_dollar", "_rpc"],
           enable: function () {
             remote.setDialogButtonEnabled(name, true);
           },
+          /**
+          * Sets the button to disabled
+          * @memberOf DialogButton
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').disable();
+          * });
+          */
           disable: function () {
             remote.setDialogButtonEnabled(name, false);
           },
+          /**
+          * Toggle the button between enabled and disabled.
+          * @memberOf DialogButton
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').toggle();
+          * });
+          */
           toggle: function () {
             var self = this;
             self.isEnabled(function (enabled) {
               self[enabled ? "disable" : "enable"](name);
             });
           },
+          /**
+          * Query a button for it's current state.
+          * @memberOf DialogButton
+          * @param {Function} callback function to receive the status.
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').isEnabled(function(enabled){
+          *     if(enabled){
+          *       //button is enabled
+          *     }
+          *   });
+          * });
+          */
           isEnabled: function (callback) {
             remote.isDialogButtonEnabled(name, callback);
           },
+          /**
+          * Register a callback function. This is triggered when the button is clicked
+          * @memberOf DialogButton
+          * @param {Function} callback function to be triggered on click or programatically.
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').bind(function(){
+          *     alert('clicked!');
+          *   });
+          * });
+          */
           bind: function (listener) {
             var list = listeners[name];
             if (!list) {
@@ -105,6 +148,18 @@ AP.define("dialog", ["_dollar", "_rpc"],
             }
             list.push(listener);
           },
+          /**
+          * Trigger all events on the button.
+          * @memberOf DialogButton
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').bind(function(){
+          *     alert('clicked!');
+          *   });
+          *   dialog.getButton('submit').trigger();
+          *   //displays an alert box with "clicked!".
+          * });
+          */
           trigger: function () {
             var self = this,
                 cont = true,
