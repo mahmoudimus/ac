@@ -32,9 +32,8 @@ var self = this;
     <?js } ?>
 
     <?js if (data.deprecated) { ?>
-        <dt class="important tag-deprecated">Deprecated:</dt><?js
-            if (data.deprecated === true) { ?><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd><?js }
-            else { ?><dd><ul class="dummy"><li><?js= data.deprecated ?></li><ul></dd><?js }
+        <dt class="important tag-deprecated">This functionality is deprecated and may be removed in the future.</dt><?js
+            if (data.deprecated !== true) { ?><dd><ul class="dummy"><li><?js= data.deprecated ?></li><ul></dd><?js }
         ?>
     <?js } ?>
 
