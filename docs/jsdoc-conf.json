@@ -3,7 +3,11 @@
         "allowUnknownTags": true
     },
     "source": {
-        "include": ["../plugin/src/main/resources/js/iframe/plugin/dialog.js"],
+        "include": [
+            "../plugin/src/main/resources/js/iframe/plugin/dialog.js",
+            "../plugin/src/main/resources/js/iframe/plugin/confluence.js",
+            "../plugin/src/main/resources/js/iframe/plugin/jira.js"
+        ],
         "includePattern": ".+\\.js(doc)?$",
         "excludePattern": "(^|\\/|\\\\)_"
     },

@@ -652,6 +652,10 @@ exports.publish = function ( taffyData, opts, tutorials ) {
     * Only modules go into the navigation menu. Other pages are still generated.
     */
     function generateNavigationJSON(){
+        function ucfirst(value){
+            return value.charAt(0).toUpperCase() + value.slice(1);
+        }
+
         var urls = {};
         for ( var longname in helper.longnameToUrl ) {
             var mods = helper.find( modules, {longname : longname} );
@@ -659,7 +663,7 @@ exports.publish = function ( taffyData, opts, tutorials ) {
             for(var mod in mods){
                 var url = helper.longnameToUrl[longname];
                 urls[url] = {
-                    name: mods[mod].name,
+                    name: ucfirst(mods[mod].name),
                     selfLink: 'jsdoc/' + url.replace(/\.html/, '')
                 };
             }
