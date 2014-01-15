@@ -28,14 +28,14 @@ public class EntityPropertyIndexExtractionConfigurationBean
     /**
      * The type of the referenced value.
      *
-     * The type can:
+     * The type can be one of the following values:
      *
      * * `number`, which is indexed as a number and allows the range ordering and searching on this field.
-     * * `text`, which is tokenized before indexing and allows searching for particular words in the texts.
+     * * `text`, which is tokenized before indexing and allows searching for particular words.
      * * `string` which is indexed as is and allows searching for the exact phase only.
-     * * `date`, which is indexed as date and allows date range searching and ordering. The expected date format is [YYYY]-[MM]-[DD].
+     * * `date`, which is indexed as a date and allows date range searching and ordering. The expected date format is [YYYY]-[MM]-[DD].
      * The expected date time format is [YYYY]-[MM]-[DD]T[hh]:[mm] with optional offset from UTC: +/-[hh]:[mm] or `Z` for no offset.
-     * For reference, please check ISO_8601 standard.
+     * For reference, please see [ISO_8601 standard](http://www.w3.org/TR/NOTE-datetime).
      *
      */
     @Required

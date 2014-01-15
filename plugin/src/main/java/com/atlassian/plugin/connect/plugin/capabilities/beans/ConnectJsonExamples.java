@@ -85,7 +85,7 @@ public class ConnectJsonExamples
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
     public static final String IMAGE_PLACEHOLDER_EXAMPLE = createImagePlaceholderExample();
-    public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyIndexDocumentExample();
+    public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
     public static final String ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
     public static final String ENTITY_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createEntityPropertyIndexKeyConfigurationExample();
 
@@ -455,7 +455,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleObject("imagePlaceholder", imagePlaceholderBean));
     }
 
-    private static String createEntityPropertyIndexDocumentExample()
+    private static String createEntityPropertyExample()
     {
         List<EntityPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number),

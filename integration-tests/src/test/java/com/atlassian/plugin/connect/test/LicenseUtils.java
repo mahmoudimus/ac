@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect;
+package com.atlassian.plugin.connect.test;
 
 import com.atlassian.jira.pageobjects.pages.admin.ViewLicensePage;
 import com.atlassian.pageobjects.TestedProduct;

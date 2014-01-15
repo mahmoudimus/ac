@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.List;
 
 /**
- * Entity properties allows add-ons to add key/value stores to JIRA entities, such as issues or projects.
+ * Entity properties allow add-ons to add key/value stores to JIRA entities, such as issues or projects.
  * These values are indexed by JIRA and able to be queried via a REST api or through JQL. For more information,
  * please see the [JIRA documentation on entity properties](https://docs.atlassian.com/jira/REST/ondemand/#d2e529).
  *

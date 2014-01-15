@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPrope
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.Lists;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -23,10 +24,11 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class EntityPropertyIndexDocumentModuleBeanTest
 {
-    private final EntityPropertyModuleBean expectedBean;
-    private final EntityPropertyModuleBean actualBean;
+    private static EntityPropertyModuleBean expectedBean;
+    private static EntityPropertyModuleBean actualBean;
 
-    public EntityPropertyIndexDocumentModuleBeanTest() throws IOException
+    @BeforeClass
+    public static void setUp() throws IOException
     {
         expectedBean = createModuleBean();
         actualBean = ConnectModulesGsonFactory.getGson().fromJson(readTestFile("entityProperty.json"), EntityPropertyModuleBean.class);

@@ -1,18 +1,20 @@
 package it;
 
-import com.atlassian.jira.testkit.client.PluginsControl;
-import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.test.LicenseStatusBannerHelper;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
+import org.apache.http.auth.AuthenticationException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+
+import java.io.IOException;
 
 import static it.TestConstants.ADMIN_USERNAME;
 import static it.TestConstants.BARNEY_USERNAME;
@@ -30,13 +32,10 @@ public abstract class ConnectWebDriverTestBase
             product.getTester().getDriver());
 
     @BeforeClass
-    public static void setup()
+    public static void setup() throws IOException, AuthenticationException
     {
         // disable license banner
-        if("jira".equalsIgnoreCase(product.getProductInstance().getInstanceId()))
-        {
-            new PluginsControl(new TestKitLocalEnvironmentData()).disablePluginModule("com.atlassian.support.stp:stp-license-status-resources");
-        }
+        LicenseStatusBannerHelper.instance().execute(product);
     }
 
     @Before

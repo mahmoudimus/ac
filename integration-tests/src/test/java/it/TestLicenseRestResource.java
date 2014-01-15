@@ -1,6 +1,6 @@
 package it;
 
-import com.atlassian.plugin.connect.LicenseUtils;
+import com.atlassian.plugin.connect.test.LicenseUtils;
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.google.gson.Gson;
