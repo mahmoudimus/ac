@@ -6,6 +6,7 @@
 * Support for Macro image placeholder values
 * Support for long query parameters for remote macros
 * `web-item` module `link` attribute renamed to `url`
+* Fixed bug which prevented incoming JWT requests from being accepted
 * Fixed the configure page url with JSON descriptor
 * Better error reporting and bug fixes for JSON descriptor
 
