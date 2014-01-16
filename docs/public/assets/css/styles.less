@@ -16,11 +16,8 @@
     .ac-deprecations {
         margin-top: 10px;
     }
-    .ac-properties, .ac-deprecations {
+    .ac-properties, .ac-js-methods, .ac-deprecations {
         h3 {
-            &:first-child {
-                border-top: none;
-            }
             margin-top: 15px;
             padding-top: 15px;
             border-top: 1px solid #e9e9e9;
@@ -133,4 +130,20 @@ h1.index-heading {
 div.error {
     text-align: center;
     margin: 50px 0;
+}
+
+.container-overview {
+	.details dd, .details dt {
+		float: left;
+		ul {
+			list-style: none;
+		}
+	}
+	.class-description p:first-child {
+		margin-top: 10px;
+	}
+}
+
+.signature {
+	font-family: monospace;
 }

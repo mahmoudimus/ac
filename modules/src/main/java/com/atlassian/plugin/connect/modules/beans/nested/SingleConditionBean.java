@@ -20,15 +20,15 @@ import com.google.common.base.Objects;
  * <p/>
  * The valid condition names are as follows:
  * <p/>
- * #### JIRA
+ *#### JIRA
  * {@see com.atlassian.plugin.connect.modules.beans.JiraConditions#CONDITION_LIST}
  * <p/>
  * <p/>
  * <p/>
- * #### CONFLUENCE
+ *#### CONFLUENCE
  * {@see com.atlassian.plugin.connect.modules.beans.ConfluenceConditions#CONDITION_LIST}
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SINGLE_CONDITION_EXAMPLE}
  * @schemaTitle Single Condition

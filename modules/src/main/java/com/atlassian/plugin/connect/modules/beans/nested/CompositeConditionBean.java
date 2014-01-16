@@ -15,7 +15,7 @@ import java.util.List;
  * <p/>
  * The type can be one of "and" or "or"
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#COMPOSITE_CONDITION_EXAMPLE}
  * @schemaTitle Composite Condition

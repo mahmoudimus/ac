@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Describes a parameter input field for a macro.
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
  * @schemaTitle Macro Input Parameter
