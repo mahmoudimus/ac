@@ -40,6 +40,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         DynamicContentMacroModuleBean longBodyMacro = createLongBodyMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean shortBodyMacro = createShortBodyMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean parameterMacro = createParameterMacro(newDynamicContentMacroModuleBean());
+        DynamicContentMacroModuleBean editorMacro = createEditorMacro(newDynamicContentMacroModuleBean());
 
         DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/render-no-resize-macro")
@@ -58,9 +59,11 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         featuredMacro,
                         imagePlaceholderMacro,
                         parameterMacro,
-                        smallInlineMacro
+                        smallInlineMacro,
+                        editorMacro
                 )
-                .addRoute("/render-macro", ConnectAppServlets.helloWorldServlet())
+                .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())
+                .addRoute("/render-editor", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/render-no-resize-macro", ConnectAppServlets.noResizeServlet())
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .start();

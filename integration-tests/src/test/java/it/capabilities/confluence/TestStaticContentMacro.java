@@ -48,6 +48,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         StaticContentMacroModuleBean longBodyMacro = createLongBodyMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean shortBodyMacro = createShortBodyMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean parameterMacro = createParameterMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean editorMacro = createEditorMacro(newStaticContentMacroModuleBean());
 
         StaticContentMacroModuleBean storageFormatMacro = newStaticContentMacroModuleBean()
                 .withKey(STORAGE_FORMAT_MACRO_KEY)
@@ -63,7 +64,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                 .build();
 
         StaticContentMacroModuleBean postParameterMacro = newStaticContentMacroModuleBean()
-                .withUrl("/render-macro")
+                .withUrl(DEFAULT_MACRO_URL)
                 .withKey(POST_PARAM_MACRO_KEY)
                 .withName(new I18nProperty(POST_PARAM_MACRO_NAME, ""))
                 .withMethod(MacroHttpMethod.POST)
@@ -89,9 +90,11 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                         parameterMacro,
                         storageFormatMacro,
                         postMacro,
-                        postParameterMacro
+                        postParameterMacro,
+                        editorMacro
                 )
-                .addRoute("/render-macro", ConnectAppServlets.wrapContextAwareServlet(parameterServlet))
+                .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.wrapContextAwareServlet(parameterServlet))
+                .addRoute("/render-editor", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/render-context", ConnectAppServlets.wrapContextAwareServlet(contextServlet))
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/render-storage-format", ConnectAppServlets.resourceServlet("confluence/test-static-content-macro.xhtml", "application/xhtml+xml"))
