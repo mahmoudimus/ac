@@ -5,7 +5,7 @@ var self = this;
 <?js if(kind !== 'class'){ ?>
 
     <dt>
-        <h4 class="name" id="<?js= id ?>"><?js= (kind === 'class' ? 'new ' : '') + name + (kind !== 'event' ? data.signature : '') ?></h4>
+        <h3 class="name" id="<?js= id ?>"><?js= (kind === 'class' ? 'new ' : '') + '<code>' + name + '</code>' + (kind !== 'event' ? data.signature : '') ?></h3>
         <?js if (data.summary) { ?>
             <p class="summary"><?js= summary ?></p>
         <?js } ?>

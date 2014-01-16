@@ -19,13 +19,13 @@
 <section>
 
 <header>
-    <h2><?js if (doc.ancestors && doc.ancestors.length) { ?>
+    <h1><?js if (doc.ancestors && doc.ancestors.length) { ?>
         <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
     <?js } ?>
     <?js= doc.name ?>
     <?js if (doc.variation) { ?>
         <sup class="variation"><?js= doc.variation ?></sup>
-    <?js } ?></h2>
+    <?js } ?></h1>
     <?js if (doc.classdesc) { ?>
         <div class="class-description"><?js= doc.classdesc ?></div>
     <?js } ?>
@@ -116,11 +116,12 @@
         var methods = self.find({kind: 'function', memberof: title === 'Global' ? {isUndefined: true} : doc.longname});
         if (methods && methods.length && methods.forEach) {
     ?>
-        <h3 class="subsection-title">Methods</h3>
-
+        <h2 class="subsection-title">Methods</h2>
+        <div class="ac-js-methods">
         <dl><?js methods.forEach(function(m) { ?>
             <?js= self.partial('method.tmpl', m) ?>
         <?js }); ?></dl>
+        </div>
     <?js } ?>
 
     <?js
