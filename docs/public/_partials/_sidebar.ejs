@@ -37,6 +37,7 @@
 
             <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira, relDocRoot: relDocRoot }) %>
             <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence, relDocRoot: relDocRoot }) %>
+            <%- partial('_module_list.ejs', { title: "Javascript API", modules: public.javascript._data, relDocRoot: relDocRoot }) %>
 
             <div class="aui-nav-heading">
                 <strong>Product APIs</strong>
@@ -45,6 +46,7 @@
             <%- partial('_sidebar_list.ejs', { category: 'rest-apis' }) %>
 
             <%- partial('_sidebar_list.ejs', { category: 'resources' }) %>
+
         </div>
     </nav>
 </div>
