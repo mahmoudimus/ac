@@ -2,7 +2,7 @@
     "scopes": [
         {
             "key": "READ",
-            "restPaths": ["applicationlink", "issuetype", "issue", "manifest", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "customFieldOption", "listApplicationLinks", "issueLinkType", "applicationlinkInfo", "status", "statuscategory", "attachment", "entities", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow"],
+            "restPaths": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "entities", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow"],
             "methods": ["GET"]
         },
         {
@@ -17,7 +17,7 @@
         },
         {
             "key": "ADMIN",
-            "restPaths": ["entitylink", "entitylink_primary", "type_entity", "workflowscheme"],
+            "restPaths": ["applicationlink", "applicationlinkInfo", "listApplicationLinks", "entitylink", "entitylink_primary", "manifest", "type_entity", "workflowscheme"],
             "methods": ["GET", "POST", "PUT", "DELETE"]
         }
     ],
