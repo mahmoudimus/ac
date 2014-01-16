@@ -26,7 +26,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
  * <p/>
  * All URLs are relative to the base URL that is declared in the connect-container element of the descriptor.
  * <p/>
- * ## Contents of the HTTP POST
+ *## Contents of the HTTP POST
  * <p/>
  * To understand the type of content that is sent to the add-on after a state transition, you can use the webhook
  * inspector tool. The [Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) is a Connect add-on
@@ -151,7 +151,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
  * }
  * }
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#POST_FUNCTION_EXAMPLE}
  * @schemaTitle Workflow Post Function

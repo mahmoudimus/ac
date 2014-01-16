@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * absolute or relative to the add-on's baseUrl. When a lifecycle event is fired, it will POST to the appropriate url
  * registered for the event.
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_EXAMPLE}
  * @schemaTitle Lifecycle
