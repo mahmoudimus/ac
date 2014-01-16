@@ -73,27 +73,13 @@ After creating the token, you can remove it by clicking the delete button.
 ### Installing add-ons with access tokens
 After generating the token, you can use the token URL to install the add-on and apply the token,  as follows:
 
- 1. In the Marketplace listing for the add-on, copy the link for the token you generated. 
- 2. Log into the OnDemand instance into which you want to install the add-on.
- 3. Go to the Manage add-ons page in the administration console.
- 4. Click the Settings link at the bottom of the page, and enable private listing by making sure the checkbox is enabled.
-
-	<div class="aui-message warning" style="margin-bottom:10px;">
-	    <p class="title">
-	        <span class="aui-icon icon-warning"></span>
-	    </p>
-			This feature is available in UPM 2.14 only. If using an earlier version of UPM, you need to enable some developer-only features that are normally hidden from view by adding the following query parameter to the UPM URL in your browser:
-
-			<code><pre>?upmDeveloper=true</pre></code>
-
-			In the URL, this parameter needs to go after upm but before the `#manage` string in the URL, not after. So, for example:
-
-			<code><pre>http://hostname/confluence/plugins/servlet/upm?upmDeveloper=true#manage</pre></code>
-	</div>
-
- 5. Back in the Manage add-ons page, click **Upload add-on**.
- 6. Paste the URL of the descriptor from your draft listing and click **Upload**. 
-The add-on manager retrieves the descriptor and installs the add-on, applying the token you generated to the add-on. When done, the Installed and Ready to go dialog appears.
+1. In the Marketplace listing for the add-on, copy the link for the token you generated.
+2. Log into the OnDemand instance into which you want to install the add-on.
+3. Go to the Manage add-ons page in the administration console.
+4. Click the Settings link at the bottom of the page, and enable private listing by making sure the checkbox is enabled.
+5. Back in the Manage add-ons page, click **Upload add-on**.
+6. Paste the URL of the descriptor from your draft listing and click **Upload**.
+7. The add-on manager retrieves the descriptor and installs the add-on, applying the token you generated to the add-on. When done, the Installed and Ready to go dialog appears.
 
 Now you can test your add-on, modify the license state (if it's a paid-via-Atlassian add-on), or manage the token. To test it, set the license state to the one you want to test and start testing.
 
