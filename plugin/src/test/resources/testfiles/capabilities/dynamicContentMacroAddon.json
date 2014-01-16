@@ -88,5 +88,6 @@
     "name": "Atlassian",
     "url": "http://www.atlassian.com"
   },
-  "version": "2.0"
+  "version": "2.0",
+  "scopes": []
 }

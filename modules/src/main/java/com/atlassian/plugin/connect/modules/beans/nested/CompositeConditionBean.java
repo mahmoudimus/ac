@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.builder.CompositeConditionBeanBuilder;
-
 import com.google.common.base.Objects;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Composite Conditions are composed of a collection of Single Condition/Composite Conditions and a type attribute.

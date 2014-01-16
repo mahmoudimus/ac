@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module.webitem;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.net.URI;
-
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
@@ -17,15 +13,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.decorated;
-import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
-import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
+import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)

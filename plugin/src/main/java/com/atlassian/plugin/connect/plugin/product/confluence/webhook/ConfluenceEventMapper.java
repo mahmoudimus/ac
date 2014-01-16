@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.product.confluence.webhook;
 
-import java.util.Map;
-
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.labels.Label;
@@ -16,13 +14,13 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.userstatus.UserStatus;
 import com.atlassian.plugin.connect.plugin.product.EventMapper;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-
 import org.apache.commons.lang.StringUtils;
+
+import java.util.Map;
 
 public class ConfluenceEventMapper implements EventMapper<ConfluenceEvent>
 {

@@ -5,6 +5,7 @@ import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.server.module.WebhookModule;
@@ -19,8 +20,6 @@ import java.net.URI;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
-
-import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 
 public final class WebHookTestServlet extends HttpServlet
 {
@@ -163,6 +162,7 @@ public final class WebHookTestServlet extends HttpServlet
         ConnectRunner runner = new ConnectRunner(baseUrl, webHookId)
                 .addModule("webhooks", WebHookModuleBean.newWebHookBean().withEvent(eventId).withUrl(path).build())
                 .addRoute(path, servlet)
+                .addScope(ScopeName.READ) // for receiving web hooks
                 .start();
 
         tester.test(new WebHookWaiter()

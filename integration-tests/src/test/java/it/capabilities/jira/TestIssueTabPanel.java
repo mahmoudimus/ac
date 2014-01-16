@@ -1,7 +1,5 @@
 package it.capabilities.jira;
 
-import java.rmi.RemoteException;
-
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -11,6 +9,8 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithR
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import org.junit.*;
+
+import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 

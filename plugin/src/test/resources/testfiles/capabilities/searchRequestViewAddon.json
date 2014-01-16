@@ -29,6 +29,8 @@
             }
         ]
     },
+    "scopes": [
+    ],
     "key": "my-add-on",
     "name": "My Add-On",
     "vendor": {

@@ -1,0 +1,8 @@
+{
+    "scopes" : [{
+        "key" : "stupid made-up scope name",
+        "methods": [],
+        "restPaths": []
+    }],
+    "restPaths" : []
+}

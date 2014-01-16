@@ -24,5 +24,6 @@
                 "i18n": "my.projectTabPage"
             }
         }]
-    }
+    },
+    "scopes" : []
 }

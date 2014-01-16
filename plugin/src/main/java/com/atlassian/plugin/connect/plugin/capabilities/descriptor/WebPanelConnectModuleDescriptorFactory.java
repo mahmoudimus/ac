@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
+import com.google.common.base.Strings;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
@@ -37,10 +38,10 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
 
     private Element createDomElement(WebPanelModuleBean bean, String webPanelKey, Plugin plugin)
     {
-        String i18nKey = bean.getName().getI18n();
+        String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
         Element webPanelElement = new DOMElement("remote-web-panel");
         webPanelElement.addAttribute("key", webPanelKey);
-        webPanelElement.addAttribute("i18n-name-key", i18nKey);
+        webPanelElement.addAttribute("i18n-name-key", i18nKeyOrName);
         webPanelElement.addAttribute("location", bean.getLocation());
 
         if (null != bean.getWeight())
@@ -53,7 +54,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
             webPanelElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions(), "#" + webPanelKey));
         }
 
-        webPanelElement.addElement("label").addAttribute("key", i18nKey);
+        webPanelElement.addElement("label").addAttribute("key", i18nKeyOrName);
         webPanelElement.addAttribute("class", IFrameRemoteWebPanel.class.getName());
         webPanelElement.addAttribute("width", bean.getLayout().getWidth());
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());

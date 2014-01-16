@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * #### Example

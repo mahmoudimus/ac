@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
+import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -32,7 +33,7 @@ public final class DownloadScopeHelper
         });
     }
 
-    public boolean allow(final HttpServletRequest request, String username)
+    public boolean allow(final HttpServletRequest request, UserKey user)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         return Iterables.any(pathPrefixes, new Predicate<String>()

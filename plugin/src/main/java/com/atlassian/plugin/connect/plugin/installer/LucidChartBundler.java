@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.io.IOException;
-
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.JarPluginArtifact;
@@ -11,16 +9,18 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
+import com.atlassian.plugin.connect.spi.Filenames;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.util.ClassLoaderUtils;
 import com.atlassian.sal.api.ApplicationProperties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Component
 public final class LucidChartBundler implements InitializingBean, DisposableBean
@@ -78,7 +78,7 @@ public final class LucidChartBundler implements InitializingBean, DisposableBean
             @Override
             public void build(ZipBuilder builder) throws IOException
             {
-                builder.addFile("atlassian-plugin.xml", ClassLoaderUtils.getResourceAsStream("lucid-chart-plugin.xml", getClass()));
+                builder.addFile(Filenames.ATLASSIAN_PLUGIN_XML, ClassLoaderUtils.getResourceAsStream("lucid-chart-plugin.xml", getClass()));
             }
         }));
     }

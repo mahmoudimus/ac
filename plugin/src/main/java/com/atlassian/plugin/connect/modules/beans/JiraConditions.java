@@ -1,18 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.jira.plugin.webfragment.conditions.CanConvertToIssueCondition;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.ViewingOwnProfileCondition;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
 
-import com.google.common.collect.ImmutableMap;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
