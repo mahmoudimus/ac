@@ -7,7 +7,7 @@
         },
         {
             "key": "READ",
-            "restPaths": ["applicationlink", "issuetype", "type_entity", "issue", "manifest", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "custom", "listApplicationLinks", "issueLinkType", "applicationlinkInfo", "status", "entitylink", "attachment", "entities", "field", "project", "mypermissions", "session", "comment", "group", "user", "filter"],
+            "restPaths": ["applicationlink", "issuetype", "type_entity", "issue", "manifest", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "custom", "listApplicationLinks", "issueLinkType", "applicationlinkInfo", "status", "entitylink", "attachment", "entities", "field", "project", "mypermissions", "comment", "group", "user", "filter"],
             "methods": ["GET"]
         },
         {
@@ -189,12 +189,6 @@
             "key": "serverInfo",
             "name": "api",
             "basePaths": ["/serverInfo.*"],
-            "versions": ["2", "2.0.alpha1", "latest"]
-        },
-        {
-            "key": "session",
-            "name": "auth",
-            "basePaths": ["/session.*"],
             "versions": ["2", "2.0.alpha1", "latest"]
         }
     ]
