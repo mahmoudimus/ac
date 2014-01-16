@@ -110,4 +110,8 @@ public class ConnectAppServlets
         return wrapContextAwareServlet(new EchoQueryParametersServlet());
     }
 
+    public static HttpServlet resourceServlet(String resourcePath, String contentType)
+    {
+        return wrapContextAwareServlet(new ResourceServlet(resourcePath, contentType));
+    }
 }

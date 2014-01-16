@@ -7,5 +7,6 @@ public class TestConstants
     public static final String BETTY_USERNAME = "betty";
     public static final String BARNEY_USERNAME = "barney";
 
+    public static final String IFRAME_ID_PREFIX = "easyXDM_embedded-";
     public static final String IFRAME_ID_SUFFIX = "_provider";
 }
