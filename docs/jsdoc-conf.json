@@ -7,11 +7,13 @@
             "../plugin/src/main/resources/js/iframe/plugin/dialog.js",
             "../plugin/src/main/resources/js/iframe/plugin/confluence.js",
             "../plugin/src/main/resources/js/iframe/plugin/jira.js"
-        ],
-        "includePattern": ".+\\.js(doc)?$",
-        "excludePattern": "(^|\\/|\\\\)_"
+        ]
     },
-    "plugins": [],
+    "plugins": ["plugins/markdown"],
+    "markdown": {
+        "parser": "gfm",
+        "hardwrap": true
+    },
     "templates": {
         "cleverLinks": false,
         "monospaceLinks": false,
@@ -20,6 +22,6 @@
         }
     },
     "opts": {
-        "destination": "./public/jsdoc/"
+        "destination": "./public/javascript/"
     }
 }

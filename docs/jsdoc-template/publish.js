@@ -664,11 +664,10 @@ exports.publish = function ( taffyData, opts, tutorials ) {
                 var url = helper.longnameToUrl[longname];
                 urls[url] = {
                     name: ucfirst(mods[mod].name),
-                    selfLink: 'jsdoc/' + url.replace(/\.html/, '')
+                    selfLink: 'javascript/' + url.replace(/\.html/, '')
                 };
             }
         }
-        //console.log(urls);
         return urls;
 
     }

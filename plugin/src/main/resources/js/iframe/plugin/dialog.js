@@ -1,8 +1,11 @@
 AP.define("dialog", ["_dollar", "_rpc"],
 
   /**
-   * This allows you to open and manage dialogs from inside your javascript. 
-   * This is helpful in instances where you need to open a dialog when a user interacts with your add-on.
+   * The Dialog module provides a mechanism for launching modal dialogs from within an add-on's iframe.
+   * A modal dialog displays information without requiring the user to leave the current page.
+   * The dialog is opened over the entire window, rather than within the iframe itself.
+   *
+   * For more information, read about the Atlassian User Interface [dialog component](https://docs.atlassian.com/aui/latest/docs/dialog.html).
    * @exports Dialog
    */
 
@@ -39,8 +42,10 @@ AP.define("dialog", ["_dollar", "_rpc"],
         };
       },
       /**
-      * Closes the currently open dialog. Optionally pass data to listeners of the dialog.close event.
-      * @param {Object} data to be emitted on dialog close.
+      * Closes the currently open dialog. Optionally pass data to listeners of the `dialog.close` event.
+      * This will only close a dialog that has been opened by your add-on.
+      * You can register for close events using the `dialog.close` event and the [events module](module-Event.html)
+      * @param {Object} data An object to be emitted on dialog close.
       * @example
       * AP.require('dialog', function(dialog){
       *   dialog.close({foo: 'bar'});
@@ -73,13 +78,13 @@ AP.define("dialog", ["_dollar", "_rpc"],
       getButton: function (name) {
         /**
         * @class DialogButton
-        * @description A dialog button that can be controlle wtih javascript
+        * @description A dialog button that can be controlled with javascript
         */
         return {
           name: name,
 
           /**
-          * Sets the button to enabled
+          * Sets the button state to enabled
           * @memberOf DialogButton
           * @example
           * AP.require('dialog', function(dialog){
@@ -90,7 +95,7 @@ AP.define("dialog", ["_dollar", "_rpc"],
             remote.setDialogButtonEnabled(name, true);
           },
           /**
-          * Sets the button to disabled
+          * Sets the button state to disabled
           * @memberOf DialogButton
           * @example
           * AP.require('dialog', function(dialog){
@@ -101,7 +106,7 @@ AP.define("dialog", ["_dollar", "_rpc"],
             remote.setDialogButtonEnabled(name, false);
           },
           /**
-          * Toggle the button between enabled and disabled.
+          * Toggle the button state between enabled and disabled.
           * @memberOf DialogButton
           * @example
           * AP.require('dialog', function(dialog){
@@ -117,7 +122,7 @@ AP.define("dialog", ["_dollar", "_rpc"],
           /**
           * Query a button for it's current state.
           * @memberOf DialogButton
-          * @param {Function} callback function to receive the status.
+          * @param {Function} callback function to receive the button state.
           * @example
           * AP.require('dialog', function(dialog){
           *   dialog.getButton('submit').isEnabled(function(enabled){
@@ -131,7 +136,7 @@ AP.define("dialog", ["_dollar", "_rpc"],
             remote.isDialogButtonEnabled(name, callback);
           },
           /**
-          * Register a callback function. This is triggered when the button is clicked
+          * Registers a function to be called when the button is clicked.
           * @memberOf DialogButton
           * @param {Function} callback function to be triggered on click or programatically.
           * @example
@@ -149,7 +154,7 @@ AP.define("dialog", ["_dollar", "_rpc"],
             list.push(listener);
           },
           /**
-          * Trigger all events on the button.
+          * Trigger a callback bound to a button.
           * @memberOf DialogButton
           * @example
           * AP.require('dialog', function(dialog){
@@ -157,7 +162,6 @@ AP.define("dialog", ["_dollar", "_rpc"],
           *     alert('clicked!');
           *   });
           *   dialog.getButton('submit').trigger();
-          *   //displays an alert box with "clicked!".
           * });
           */
           trigger: function () {

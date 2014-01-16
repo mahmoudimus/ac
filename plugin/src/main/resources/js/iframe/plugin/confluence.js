@@ -21,7 +21,8 @@ AP.define("confluence", ["_dollar", "_rpc"],
                     remote.saveMacro(macroParameters);
                 },
                 /**
-                * Close the macro editor
+                * Closes the macro editor, if it is open.
+                * This call does not save any modified parameters to the macro, and saveMacro should be called first if necessary.
                 * @example
                 * AP.require('confluence', function(confluence){
                 *   confluence.closeMacroEditor();
