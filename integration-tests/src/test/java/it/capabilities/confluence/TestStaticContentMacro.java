@@ -16,6 +16,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
@@ -23,6 +24,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBe
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+@Ignore
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {
     private static final String STORAGE_FORMAT_MACRO_NAME = "Storage Format Macro";
