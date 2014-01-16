@@ -16,9 +16,10 @@ Additionally, we have relaxed the deprecation period for the XML descriptor unti
 Read the [1.0-m27 release notes](../release-notes/1-0-m27.html).
 
 ## [1.0-m25](../release-notes/1-0-m25.html)
-Atlassian Connect `1.0-m25` introduces a number of changes to how you will build add-ons for Atlassian OnDemand. There
-are two important changes in this release: a new format for your add-on descriptor and a new authentication method. Both
-of these changes are designed to help developers build add-ons more quickly and easily.
+Atlassian Connect `1.0-m25` introduces a number of changes to how you will build add-ons for
+Atlassian OnDemand. There are two important changes in this release: a new format for your add-on
+descriptor and a new authentication method. Both of these changes are designed to help developers
+build add-ons more quickly and easily.
 
 * JSON Add-on Descriptor
 * JSON Web Token (JWT) Authentication
