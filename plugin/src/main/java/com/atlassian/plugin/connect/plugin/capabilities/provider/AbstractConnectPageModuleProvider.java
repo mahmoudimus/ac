@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PageToWebItemAndServletConverter;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyFactory;
@@ -18,7 +18,10 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Base class for ConnectModuleProviders of Connect Pages. Note that there is actually no P2 module descriptor. Instead
@@ -83,13 +86,27 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
         for (ConnectPageModuleBean bean : beans)
         {
-            PageToWebItemAndServletConverter converter = new PageToWebItemAndServletConverter(bean, plugin.getKey(),
-                    defaultWeight, defaultSection, decorator, templateSuffix, metaTagContents, condition, iFrameParams);
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, converter.getWebItemBean()));
-
+            // register a render strategy for our iframe page
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyFactory.page(plugin.getKey(), bean.getKey(),
                     bean.getUrl(), "velocity/iframe-page" + templateSuffix + ".vm", decorator, bean.getDisplayName());
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
+
+            // create a web item targeting the iframe page
+            Integer weight = bean.getWeight() == null ? defaultWeight : bean.getWeight();
+            String location = isNullOrEmpty(bean.getLocation()) ? defaultSection : bean.getLocation();
+
+            WebItemModuleBean webItemBean = newWebItemBean()
+                    .withName(bean.getName())
+                    .withKey(bean.getKey())
+                    .withContext(product)
+                    .withUrl("/plugins/servlet/ac/" + plugin.getKey() + "/" + bean.getKey())
+                    .withLocation(location)
+                    .withWeight(weight)
+                    .withIcon(bean.getIcon())
+                    .withConditions(bean.getConditions())
+                    .build();
+
+            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemBean));
         }
 
         return builder.build();
