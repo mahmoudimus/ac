@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.test.client;
 
 import cc.plural.jsonij.JSON;
-import cc.plural.jsonij.Value;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -50,16 +50,15 @@ public final class AtlassianConnectRestClient
     private class StatusChecker
     {
         private final String statusUrl;
-        private final int maxAttempts;
-        private final int period;
+        private final long timeout;
+        private final long period;
         private final ScheduledExecutorService scheduledExecutor;
-        private JSON json;
 
-        private StatusChecker(String statusUrl, int maxAttempts, int period)
+        private StatusChecker(String statusUrl, long timeout, TimeUnit timeoutUnit, long period, TimeUnit periodUnit)
         {
             this.statusUrl = statusUrl;
-            this.maxAttempts = maxAttempts;
-            this.period = period;
+            this.timeout = timeoutUnit.toMillis(timeout);
+            this.period = periodUnit.toMillis(period);
             this.scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
         }
 
@@ -70,27 +69,30 @@ public final class AtlassianConnectRestClient
                 @Override
                 public Boolean call() throws Exception
                 {
-                    System.out.println(statusUrl);
                     HttpGet statusGet = new HttpGet(statusUrl);
                     ResponseHandler<String> statusHandler = new BasicResponseHandler();
                     String response = sendRequestAsUser(statusGet, statusHandler, defaultUsername, defaultPassword);
-                    json = JSON.parse(response);
-                    return (null != json.get("enabled"));
+                    if (StringUtils.isNotBlank(response))
+                    {
+                        JSON json = JSON.parse(response);
+                        return (null != json.get("enabled"));
+                    }
+                    return false;
                 }
             };
 
-            ScheduledFuture<Boolean> handle = scheduledExecutor.schedule(statusChecker, period, TimeUnit.MILLISECONDS);
+            ScheduledFuture<Boolean> statusCheck = scheduledExecutor.schedule(statusChecker, period, TimeUnit.MILLISECONDS);
 
-            int remainingAttempts = maxAttempts;
-            while (!handle.get() && remainingAttempts > 0)
+            long abortAfter = System.currentTimeMillis() + timeout;
+
+            while (!statusCheck.get() && abortAfter > System.currentTimeMillis())
             {
-                remainingAttempts--;
-                handle = scheduledExecutor.schedule(statusChecker, period, TimeUnit.MILLISECONDS);
+                statusCheck = scheduledExecutor.schedule(statusChecker, period, TimeUnit.MILLISECONDS);
             }
 
-            if (remainingAttempts == 0)
+            if (abortAfter <= System.currentTimeMillis())
             {
-                throw new Exception("Connect App Plugin did not install within the allotted timeout: " + json.get("status").get("subCode"));
+                throw new Exception("Connect App Plugin did not install within the allotted timeout");
             }
         }
     }
@@ -122,7 +124,7 @@ public final class AtlassianConnectRestClient
             URI uri = new URI(baseUrl);
             final String statusUrl = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + json.get("links").get("self").getString();
 
-            StatusChecker statusChecker = new StatusChecker(statusUrl, 200, 500);
+            StatusChecker statusChecker = new StatusChecker(statusUrl, 1, TimeUnit.MINUTES, 500, TimeUnit.MILLISECONDS);
             statusChecker.run();
         }
     }

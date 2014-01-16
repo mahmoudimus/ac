@@ -99,6 +99,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/render-storage-format", ConnectAppServlets.resourceServlet("confluence/test-static-content-macro.xhtml", "application/xhtml+xml"))
                 .start();
+        warmup();
     }
 
     @AfterClass

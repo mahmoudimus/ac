@@ -225,6 +225,14 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         }
     }
 
+    // Hack: With Chrome driver, the first test often fails in the macro editor selection dialog,
+    // which can be avoided by this warm-up method
+    protected static void warmup()
+    {
+        product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        product.deleteAllCookies();
+    }
+
     @Test
     public void testMacroIsListed() throws Exception
     {

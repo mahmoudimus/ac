@@ -67,6 +67,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .addRoute("/render-no-resize-macro", ConnectAppServlets.noResizeServlet())
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .start();
+        warmup();
     }
 
     @AfterClass
