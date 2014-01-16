@@ -7,11 +7,11 @@ import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class ApplicationPropertiesIFrameHost extends AbstractIFrameHost
+public final class ApplicationPropertiesHostApplicationInfo extends AbstractHostApplicationInfo
 {
     private final ApplicationProperties applicationProperties;
 
-    public ApplicationPropertiesIFrameHost(ApplicationProperties applicationProperties)
+    public ApplicationPropertiesHostApplicationInfo(ApplicationProperties applicationProperties)
     {
         this.applicationProperties = checkNotNull(applicationProperties);
     }

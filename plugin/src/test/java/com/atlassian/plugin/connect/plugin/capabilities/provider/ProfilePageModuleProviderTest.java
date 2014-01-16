@@ -12,7 +12,8 @@ public class ProfilePageModuleProviderTest extends AbstractPageModuleProviderTes
     @Override
     protected ProfilePageModuleProvider createPageModuleProvider()
     {
-        return new ProfilePageModuleProvider(webItemModuleDescriptorFactory, servletDescriptorFactory, productAccessor);
+        return new ProfilePageModuleProvider(iFrameRenderStrategyFactory, iFrameRenderStrategyRegistry,
+                webItemModuleDescriptorFactory, productAccessor);
     }
 
     @Test

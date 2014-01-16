@@ -15,8 +15,8 @@ public class ConfigurePageModuleProviderTest extends AbstractPageModuleProviderT
     @Override
     protected ConfigurePageModuleProvider createPageModuleProvider()
     {
-        return new ConfigurePageModuleProvider(webItemModuleDescriptorFactory, servletDescriptorFactory, productAccessor,
-                userManager);
+        return new ConfigurePageModuleProvider(iFrameRenderStrategyFactory, iFrameRenderStrategyRegistry,
+                webItemModuleDescriptorFactory, productAccessor, userManager);
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.imports;
 import com.atlassian.jira.bc.issue.attachment.AttachmentService;
 import com.atlassian.jira.bc.issue.worklog.WorklogService;
 import com.atlassian.jira.bc.project.ProjectService;
+import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.atlassian.jira.bc.subtask.conversion.IssueToSubTaskConversionService;
 import com.atlassian.jira.bc.subtask.conversion.SubTaskToIssueConversionService;
 import com.atlassian.jira.config.SubTaskManager;
@@ -14,6 +15,7 @@ import com.atlassian.jira.issue.link.IssueLinkTypeManager;
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.issue.vote.VoteManager;
 import com.atlassian.jira.issue.watchers.WatcherManager;
+import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
@@ -54,6 +56,7 @@ public class JiraImports
     private final JiraBaseUrls jiraBaseUrls;
     private final MailQueue mailQueue;
     private final PermissionManager jiraPermissionManager;
+    private final ProjectComponentManager projectComponentManager;
     private final ProjectRoleManager projectRoleManager;
     private final ProjectService projectService;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
@@ -66,6 +69,7 @@ public class JiraImports
     private final UserPreferencesManager userPreferencesManager;
     private final UserUtil userUtil;
     private final VelocityRequestContextFactory velocityRequestContextFactory;
+    private final VersionManager versionManager;
     private final VoteManager voteManager;
     private final WatcherManager watcherManager;
     private final WebFragmentHelper webFragmentHelper;
@@ -85,6 +89,7 @@ public class JiraImports
             @JiraImport JiraBaseUrls jiraBaseUrls,
             @JiraImport MailQueue mailQueue,
             @JiraImport PermissionManager jiraPermissionManager,
+            @JiraImport ProjectComponentManager projectComponentManager,
             @JiraImport ProjectRoleManager projectRoleManager,
             @JiraImport ProjectService projectService,
             @JiraImport SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
@@ -97,6 +102,7 @@ public class JiraImports
             @JiraImport ("jiraUserManager") UserManager userManager,
             @JiraImport UserUtil userUtil,
             @JiraImport VelocityRequestContextFactory velocityRequestContextFactory,
+            @JiraImport ("jiraVersionManager") VersionManager versionManager,
             @JiraImport VoteManager voteManager,
             @JiraImport WatcherManager watcherManager,
             @JiraImport WebFragmentHelper webFragmentHelper,
@@ -115,6 +121,7 @@ public class JiraImports
         this.jiraBaseUrls = jiraBaseUrls;
         this.jiraPermissionManager = jiraPermissionManager;
         this.mailQueue = mailQueue;
+        this.projectComponentManager = projectComponentManager;
         this.projectRoleManager = projectRoleManager;
         this.projectService = projectService;
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
@@ -127,6 +134,7 @@ public class JiraImports
         this.userPreferencesManager = userPreferencesManager;
         this.userUtil = userUtil;
         this.velocityRequestContextFactory = velocityRequestContextFactory;
+        this.versionManager = versionManager;
         this.voteManager = voteManager;
         this.watcherManager = watcherManager;
         this.webFragmentHelper = webFragmentHelper;

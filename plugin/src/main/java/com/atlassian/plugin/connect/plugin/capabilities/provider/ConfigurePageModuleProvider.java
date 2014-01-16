@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,13 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     // Does that mean it was not needed or is this an existing bug?
 
     @Autowired
-    public ConfigurePageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                       IFramePageServletDescriptorFactory servletDescriptorFactory,
-                                       ProductAccessor productAccessor, UserManager userManager)
+    public ConfigurePageModuleProvider(IFrameRenderStrategyFactory iFrameRenderStrategyFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            ProductAccessor productAccessor, UserManager userManager)
     {
-        super(webItemModuleDescriptorFactory, servletDescriptorFactory, productAccessor, userManager,
-                THE_SECTION_U_HAVE_WHEN_UR_NOT_HAVING_A_SECTION);
+        super(iFrameRenderStrategyFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
+                productAccessor, userManager, THE_SECTION_U_HAVE_WHEN_UR_NOT_HAVING_A_SECTION);
     }
 
 }

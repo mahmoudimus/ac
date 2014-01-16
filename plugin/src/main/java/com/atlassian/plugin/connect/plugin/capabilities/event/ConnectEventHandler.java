@@ -129,7 +129,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         //if a descriptor is not stored, it means this event was fired during install before modules were created and we need to ignore
         if (connectIdentifier.isConnectAddOn(plugin) && descriptorRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
+            ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
 
             if (null != addon)
             {
@@ -162,6 +162,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         if (connectIdentifier.isConnectAddOn(plugin))
         {
             beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
+
         }
     }
 
@@ -173,7 +174,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         String pluginKey = plugin.getKey();
         if (descriptorRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
+            ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
 
             if (null != addon)
             {
@@ -196,6 +197,15 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
 
             descriptorRegistry.removeDescriptor(pluginKey);
         }
+    }
+
+    /**
+     * @param pluginKey the key of a Connect addon
+     * @return a {@link ConnectAddonBean} if there is a corresponding descriptor stored in the registry, otherwise null
+     */
+    private ConnectAddonBean unmarshallDescriptor(final String pluginKey)
+    {
+        return ConnectModulesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
     }
 
     public void publishEnabledEvent(String pluginKey)

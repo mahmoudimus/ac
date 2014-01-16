@@ -23,14 +23,14 @@ public class IFramePageRenderer
 {
     private final TemplateRenderer templateRenderer;
     private final IFrameRenderer iframeRenderer;
-    private final IFrameHost iframeHost;
+    private final HostApplicationInfo hostApplicationInfo;
 
     @Inject
-    public IFramePageRenderer(TemplateRenderer templateRenderer, IFrameRenderer iframeRenderer, IFrameHost iframeHost)
+    public IFramePageRenderer(TemplateRenderer templateRenderer, IFrameRenderer iframeRenderer, HostApplicationInfo hostApplicationInfo)
     {
         this.templateRenderer = templateRenderer;
         this.iframeRenderer = iframeRenderer;
-        this.iframeHost = iframeHost;
+        this.hostApplicationInfo = hostApplicationInfo;
     }
 
     public void renderPage(IFrameContext iframeContext, PageInfo pageInfo, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext, Writer writer) throws IOException
@@ -54,7 +54,7 @@ public class IFramePageRenderer
 
             ctx.put("queryParams", contextQueryParameters(queryParams));
             ctx.put("title", pageInfo.getTitle());
-            ctx.put("contextPath", iframeHost.getContextPath());
+            ctx.put("contextPath", hostApplicationInfo.getContextPath());
             ctx.put("iframeHtml", iframeRenderer.render(iframeContext, extraPath, queryParams, remoteUser, productContext));
             ctx.put("decorator", pageInfo.getDecorator());
 

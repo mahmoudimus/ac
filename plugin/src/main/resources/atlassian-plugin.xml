@@ -56,6 +56,7 @@
         </description>
         <url-pattern>/redirect/permanent</url-pattern>
     </servlet>
+
     <servlet key="remotablePluginsIframe"
              name="Remotable Plugins Iframe Generator"
              class="com.atlassian.plugin.connect.plugin.module.page.ContextFreeIFramePageServlet">
@@ -63,6 +64,11 @@
             Generates a template for serving a signed remote iframe
         </description>
         <url-pattern>/render-signed-iframe</url-pattern>
+    </servlet>
+
+    <servlet key="addon-iframe-servlet"
+             class="com.atlassian.plugin.connect.plugin.iframe.ConnectIFrameServlet">
+        <url-pattern>/ac/*</url-pattern>
     </servlet>
 
     <!-- docs are built and copied into target/classes/docs during the prepare-package phase -->

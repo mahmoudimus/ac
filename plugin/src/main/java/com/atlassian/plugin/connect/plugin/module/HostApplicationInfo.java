@@ -5,7 +5,7 @@ import java.net.URI;
 /**
  * Access to host information for the iframe being rendered
  */
-public interface IFrameHost
+public interface HostApplicationInfo
 {
     /**
      * Gets the host URL, as seen by the 'user'

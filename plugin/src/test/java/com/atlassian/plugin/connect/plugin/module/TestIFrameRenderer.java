@@ -43,7 +43,7 @@ public class TestIFrameRenderer
     @Mock private TemplateRenderer templateRenderer;
     @Mock private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     @Mock private RemotablePluginAccessor remotePluginAccessor;
-    @Mock private IFrameHost iframeHost;
+    @Mock private HostApplicationInfo hostApplicationInfo;
     @Mock private LicenseRetriever licenseRetriever;
     @Mock private LocaleHelper localeHelper;
     @Mock private UserPreferencesRetriever userPreferencesRetriever;
@@ -55,7 +55,7 @@ public class TestIFrameRenderer
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        this.iframeRenderer = new IFrameRendererImpl(templateRenderer, iframeHost, remotablePluginAccessorFactory,
+        this.iframeRenderer = new IFrameRendererImpl(templateRenderer, hostApplicationInfo, remotablePluginAccessorFactory,
                 userPreferencesRetriever, licenseRetriever, localeHelper, userManager);
     }
 
@@ -135,8 +135,8 @@ public class TestIFrameRenderer
         UserProfile userProfile = mock(UserProfile.class);
         when(userProfile.getUserKey()).thenReturn(new UserKey(remoteUser + "-key"));
         when(userManager.getUserProfile(remoteUser)).thenReturn(userProfile);
-        when(iframeHost.getContextPath()).thenReturn(iframeContextPath);
-        when(iframeHost.getUrl()).thenReturn(URI.create(iframeHostUrl));
+        when(hostApplicationInfo.getContextPath()).thenReturn(iframeContextPath);
+        when(hostApplicationInfo.getUrl()).thenReturn(URI.create(iframeHostUrl));
         when(licenseRetriever.getLicenseStatus(pluginKey)).thenReturn(LicenseStatus.ACTIVE);
         when(remotablePluginAccessorFactory.get(pluginKey)).thenReturn(remotePluginAccessor);
         when(remotePluginAccessor.signGetUrl(any(URI.class), any(Map.class))).thenReturn(expectedSignedUrl);

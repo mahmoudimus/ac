@@ -13,17 +13,17 @@ import org.springframework.stereotype.Component;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Component
-public final class ServletContextThreadLocalIFrameHost extends AbstractIFrameHost
+public final class ServletContextThreadLocalHostApplicationInfo extends AbstractHostApplicationInfo
 {
-    private final IFrameHost fallback;
+    private final HostApplicationInfo fallback;
 
     @Autowired
-    public ServletContextThreadLocalIFrameHost(ApplicationProperties applicationProperties)
+    public ServletContextThreadLocalHostApplicationInfo(ApplicationProperties applicationProperties)
     {
-        this(new ApplicationPropertiesIFrameHost(applicationProperties));
+        this(new ApplicationPropertiesHostApplicationInfo(applicationProperties));
     }
 
-    public ServletContextThreadLocalIFrameHost(IFrameHost fallback)
+    public ServletContextThreadLocalHostApplicationInfo(HostApplicationInfo fallback)
     {
         this.fallback = checkNotNull(fallback);
     }

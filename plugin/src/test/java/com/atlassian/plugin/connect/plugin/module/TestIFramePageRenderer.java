@@ -31,7 +31,7 @@ public class TestIFramePageRenderer
 {
     @Mock private TemplateRenderer templateRenderer;
     @Mock private IFrameRenderer iframeRenderer;
-    @Mock private IFrameHost iframeHost;
+    @Mock private HostApplicationInfo hostApplicationInfo;
 
     private IFramePageRenderer iframePageRenderer;
 
@@ -39,7 +39,7 @@ public class TestIFramePageRenderer
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        this.iframePageRenderer = new IFramePageRenderer(templateRenderer, iframeRenderer, iframeHost);
+        this.iframePageRenderer = new IFramePageRenderer(templateRenderer, iframeRenderer, hostApplicationInfo);
     }
 
     @Test

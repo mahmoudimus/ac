@@ -33,9 +33,9 @@ import static com.google.common.collect.Maps.newHashMap;
 @Named
 public final class IFrameRendererImpl implements IFrameRenderer
 {
-    private final TemplateRenderer templateRenderer;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final IFrameHost iframeHost;
+    private final HostApplicationInfo hostApplicationInfo;
+    private final TemplateRenderer templateRenderer;
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
@@ -43,7 +43,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
     @Inject
     public IFrameRendererImpl(TemplateRenderer templateRenderer,
-                              IFrameHost iframeHost,
+                              HostApplicationInfo hostApplicationInfo,
                               RemotablePluginAccessorFactory remotablePluginAccessorFactory,
                               UserPreferencesRetriever userPreferencesRetriever, final LicenseRetriever licenseRetriever,
                               LocaleHelper localeHelper, UserManager userManager)
@@ -53,7 +53,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         this.userPreferencesRetriever = checkNotNull(userPreferencesRetriever);
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.templateRenderer = checkNotNull(templateRenderer);
-        this.iframeHost = checkNotNull(iframeHost);
+        this.hostApplicationInfo = checkNotNull(hostApplicationInfo);
         this.userManager = userManager;
     }
 
@@ -94,7 +94,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
     {
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
 
-        final URI hostUrl = iframeHost.getUrl();
+        final URI hostUrl = hostApplicationInfo.getUrl();
 
         UriBuilder uriBuilder = new UriBuilder(Uri.parse(iframeContext.getIframePath()));
         uriBuilder.setPath(uriBuilder.getPath() + ObjectUtils.toString(extraPath));
@@ -110,7 +110,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         allParams.put("xdm_e", new String[]{hostUrl.toString()});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
-        allParams.put("cp", new String[]{iframeHost.getContextPath()});
+        allParams.put("cp", new String[]{ hostApplicationInfo.getContextPath()});
         allParams.put("tz", new String[]{timeZone});
         allParams.put("loc", new String[]{localeHelper.getLocaleTag()});
         allParams.put("lic", new String[]{licenseRetriever.getLicenseStatus(iframeContext.getPluginKey()).value()});
@@ -129,7 +129,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         ctx.put("iframeSrcHtml", escapeQuotes(signedUrl));
         ctx.put("plugin", remotablePluginAccessor);
         ctx.put("namespace", iframeContext.getNamespace());
-        ctx.put("contextPath", iframeHost.getContextPath());
+        ctx.put("contextPath", hostApplicationInfo.getContextPath());
 
         ctx.put("userId", remoteUsername == null ? "" : remoteUsername);
         ctx.put("userKey", user == null ? "" : user.getUserKey().getStringValue());

@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.module;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-abstract class AbstractIFrameHost implements IFrameHost
+abstract class AbstractHostApplicationInfo implements HostApplicationInfo
 {
     protected URI createEasyXdmHost(URI baseUri)
     {

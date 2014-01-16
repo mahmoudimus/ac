@@ -18,7 +18,8 @@ public class GeneralPageModuleProviderTest extends AbstractPageModuleProviderTes
     @Override
     protected GeneralPageModuleProvider createPageModuleProvider()
     {
-        return new GeneralPageModuleProvider(webItemModuleDescriptorFactory, servletDescriptorFactory, productAccessor);
+        return new GeneralPageModuleProvider(iFrameRenderStrategyFactory, iFrameRenderStrategyRegistry,
+                webItemModuleDescriptorFactory, productAccessor);
     }
 
     @Test
