@@ -2,17 +2,17 @@
     "scopes": [
         {
             "key": "READ",
-            "restPaths": ["applicationlink", "issuetype", "type_entity", "issue", "manifest", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "custom", "listApplicationLinks", "issueLinkType", "applicationlinkInfo", "status", "statuscategory", "entitylink", "attachment", "entities", "field", "project", "mypermissions", "comment", "group", "user", "filter"],
+            "restPaths": ["applicationlink", "issuetype", "type_entity", "issue", "manifest", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "customFieldOption", "listApplicationLinks", "issueLinkType", "applicationlinkInfo", "status", "statuscategory", "entitylink", "attachment", "entities", "field", "project", "mypermissions", "comment", "group", "user", "filter"],
             "methods": ["GET"]
         },
         {
             "key": "WRITE",
-            "restPaths": ["issue", "entitylink", "attachment", "entitylink_primary", "version", "component", "search", "priority", "comment", "worklog", "custom"],
+            "restPaths": ["issue", "entitylink", "attachment", "entitylink_primary", "version", "component", "search", "priority", "comment", "worklog", "customFieldOption"],
             "methods": ["POST", "PUT"]
         },
         {
             "key": "DELETE",
-            "restPaths": ["component", "priority", "issue", "entitylink", "attachment", "comment", "worklog", "custom", "version"],
+            "restPaths": ["component", "priority", "issue", "entitylink", "attachment", "comment", "worklog", "customFieldOption", "version"],
             "methods": ["DELETE"]
         }
     ],
@@ -20,181 +20,181 @@
         {
             "key": "applicationlink",
             "name": "applinks",
-            "basePaths": ["/applicationlink.*"],
+            "basePaths": ["/applicationlink($|/.*)"],
             "versions": ["1.0", "latest"]
         },
         {
             "key": "applicationlinkInfo",
             "name": "applinks",
-            "basePaths": ["/applicationlinkInfo.*"],
+            "basePaths": ["/applicationlinkInfo($|/.*)"],
             "versions": ["1.0", "latest"]
         },
         {
             "key": "entities",
             "name": "applinks",
-            "basePaths": ["/entities.*"],
+            "basePaths": ["/entities($|/.*)"],
             "versions": ["1.0", "latest"]
         },
         {
             "key": "entitylink",
             "name": "applinks",
-            "basePaths": ["/entitylink.*"],
+            "basePaths": ["/entitylink($|/.*)"],
             "versions": ["1.0", "latest"]
         },
         {
             "key": "listApplicationLinks",
             "name": "applinks",
-            "basePaths": ["/listApplicationLinks.*"],
+            "basePaths": ["/listApplicationLinks($|/.*)"],
             "versions": ["1.0", "latest"]
         },
         {
             "key": "manifest",
             "name": "applinks",
-            "basePaths": ["/manifest.*"],
+            "basePaths": ["/manifest($|/.*)"],
             "versions": ["1.0", "latest"]
         },
         {
             "key": "type_entity",
             "name": "applinks",
-            "basePaths": ["/type/entity.*"],
+            "basePaths": ["/type/entity($|/.*)"],
             "versions": ["1.0", "latest"]
         },
         {
             "key": "entitylink_primary",
             "name": "applinks",
-            "basePaths": ["/entitylink/primary.*"],
+            "basePaths": ["/entitylink/primary($|/.*)"],
             "versions": ["1.0", "latest"]
         },
         {
             "key": "license",
             "name": "atlassian-connect",
-            "basePaths": ["/license.*"],
+            "basePaths": ["/license($|/.*)"],
             "versions": ["1", "latest"]
         },
         {
             "key": "user",
             "name": "api",
-            "basePaths": ["/user.*"],
+            "basePaths": ["/user($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "group",
             "name": "api",
-            "basePaths": ["/group.*"],
+            "basePaths": ["/group($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "mypermissions",
             "name": "api",
-            "basePaths": ["/mypermissions.*"],
+            "basePaths": ["/mypermissions($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "project",
             "name": "api",
-            "basePaths": ["/project.*"],
+            "basePaths": ["/project($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "issue",
             "name": "api",
-            "basePaths": ["/issue.*"],
+            "basePaths": ["/issue($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "filter",
             "name": "api",
-            "basePaths": ["/filter.*"],
+            "basePaths": ["/filter($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "search",
             "name": "api",
-            "basePaths": ["/search.*"],
+            "basePaths": ["/search($|/.*)"],
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
             "key": "component",
             "name": "api",
-            "basePaths": ["/component.*"],
+            "basePaths": ["/component($|/.*)"],
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
             "key": "priority",
             "name": "api",
-            "basePaths": ["/priority.*"],
+            "basePaths": ["/priority($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "resolution",
             "name": "api",
-            "basePaths": ["/resolution.*"],
+            "basePaths": ["/resolution($|/.*)"],
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
             "key": "version",
             "name": "api",
-            "basePaths": ["/version.*"],
+            "basePaths": ["/version($|/.*)"],
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
             "key": "status",
             "name": "api",
-            "basePaths": ["/status.*"],
+            "basePaths": ["/status($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "statuscategory",
             "name": "api",
-            "basePaths": ["/statuscategory.*"],
+            "basePaths": ["/statuscategory($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "worklog",
             "name": "api",
-            "basePaths": ["/worklog.*"],
+            "basePaths": ["/worklog($|/.*)"],
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
             "key": "customFieldOption",
             "name": "api",
-            "basePaths": ["/customFieldOption.*"],
+            "basePaths": ["/customFieldOption($|/.*)"],
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
             "key": "attachment",
             "name": "api",
-            "basePaths": ["/attachment.*"],
+            "basePaths": ["/attachment($|/.*)"],
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
             "key": "comment",
             "name": "api",
-            "basePaths": ["/comment.*"],
+            "basePaths": ["/comment($|/.*)"],
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
             "key": "field",
             "name": "api",
-            "basePaths": ["/field.*"],
+            "basePaths": ["/field($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "issueLinkType",
             "name": "api",
-            "basePaths": ["/issueLinkType.*"],
+            "basePaths": ["/issueLinkType($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "issuetype",
             "name": "api",
-            "basePaths": ["/issuetype.*"],
+            "basePaths": ["/issuetype($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         },
         {
             "key": "serverInfo",
             "name": "api",
-            "basePaths": ["/serverInfo.*"],
+            "basePaths": ["/serverInfo($|/.*)"],
             "versions": ["2", "2.0.alpha1", "latest"]
         }
     ]
