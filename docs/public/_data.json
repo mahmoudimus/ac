@@ -5,15 +5,11 @@
         },
         "getting-started.html": {
             "title": "Getting Started"
-        },
-        "whats-new.html": {
-            "title": "What's New",
-            "new": true
         }
     },
     "developing": {
-        "development-loop.html": {
-            "title": "Local Development"
+        "developing-locally.html": {
+            "title": "Developing Locally"
         },
         "installing-in-ondemand.html": {
             "title": "Installing in OnDemand"
@@ -47,10 +43,6 @@
         },
         "licensing.html": {
             "title": "Licensing"
-        },
-        "deprecations.html": {
-            "title": "Deprecation Notices",
-            "new": true
         }
     },
     "rest-apis": {
@@ -60,7 +52,12 @@
     },
     "resources": {
         "release-notes.html": {
-            "title": "Release Notes"
+            "title": "Release Notes",
+            "new": true
+        },
+        "deprecations.html": {
+            "title": "Deprecation Notices",
+            "new": true
         },
         "samples.html": {
             "title": "Sample Add-ons"
