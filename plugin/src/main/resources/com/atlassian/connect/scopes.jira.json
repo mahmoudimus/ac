@@ -152,7 +152,7 @@
         {
             "key": "worklog",
             "name": "api",
-            "basePaths": ["/worklog($|/.*)"],
+            "basePaths": ["/issue/.+/worklog($|/.*)"],
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
