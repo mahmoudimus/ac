@@ -58,7 +58,7 @@ AP.define("events", ["_dollar", "_rpc"],
      */
 
     /**
-     * Subscribes a callback to an event name, removing the it once fired.
+     * Subscribes a callback to an event name, removing it once fired.
      * @name once
      * @method
      * @memberof module:Events#
@@ -99,11 +99,10 @@ AP.define("events", ["_dollar", "_rpc"],
      * @memberof module:Events#
      * @param {Function} listener A listener callback to unsubscribe from any event name
      */
+
     /**
      * Emits an event on this bus, firing listeners by name as well as all 'any' listeners. Arguments following the
-     * name parameter are captured and passed to listeners.  The last argument received by all listeners after the
-     * unpacked arguments array will be the fired event object itself, which can be useful for reacting to event
-     * metadata (e.g. the bus's namespace).
+     * name parameter are captured and passed to listeners.
      * @name emit
      * @method
      * @memberof module:Events#
