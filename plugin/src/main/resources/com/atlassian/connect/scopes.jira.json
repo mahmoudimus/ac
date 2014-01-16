@@ -2,18 +2,23 @@
     "scopes": [
         {
             "key": "READ",
-            "restPaths": ["applicationlink", "issuetype", "type_entity", "issue", "manifest", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "customFieldOption", "listApplicationLinks", "issueLinkType", "applicationlinkInfo", "status", "statuscategory", "entitylink", "attachment", "entities", "field", "project", "mypermissions", "comment", "group", "user", "filter"],
+            "restPaths": ["applicationlink", "issuetype", "type_entity", "issue", "manifest", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "customFieldOption", "listApplicationLinks", "issueLinkType", "applicationlinkInfo", "status", "statuscategory", "attachment", "entities", "field", "project", "mypermissions", "comment", "group", "user", "filter"],
             "methods": ["GET"]
         },
         {
             "key": "WRITE",
-            "restPaths": ["issue", "entitylink", "attachment", "entitylink_primary", "version", "component", "search", "priority", "comment", "worklog", "customFieldOption"],
+            "restPaths": ["issue", "attachment", "version", "component", "search", "priority", "comment", "worklog", "customFieldOption"],
             "methods": ["POST", "PUT"]
         },
         {
             "key": "DELETE",
-            "restPaths": ["component", "priority", "issue", "entitylink", "attachment", "comment", "worklog", "customFieldOption", "version"],
+            "restPaths": ["component", "priority", "issue", "attachment", "comment", "worklog", "customFieldOption", "version"],
             "methods": ["DELETE"]
+        },
+        {
+            "key": "ADMIN",
+            "restPaths": ["entitylink", "entitylink_primary"],
+            "methods": ["GET"]
         }
     ],
     "restPaths": [
