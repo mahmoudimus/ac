@@ -1,12 +1,9 @@
 package it.capabilities;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPageModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -14,7 +11,10 @@ import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

@@ -4,8 +4,8 @@ import com.atlassian.json.schema.DefaultJsonSchemaGenerator;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.model.JsonSchema;
 import com.atlassian.json.schema.scanner.model.InterfaceList;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ConnectModule;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
+import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
+import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.google.gson.annotations.SerializedName;
 
 import java.lang.reflect.Field;

@@ -30,7 +30,6 @@ import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.opensymphony.workflow.FunctionProvider;
 import com.opensymphony.workflow.TypeResolver;
 import com.opensymphony.workflow.WorkflowException;
@@ -52,6 +51,7 @@ import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION_UUID;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * A ModuleDescriptor for Connect's version of a Jira Workflow Post Function.
@@ -238,7 +238,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
 
     private String getDialogScriptUrl()
     {
-        ArrayList<String> scriptUrls = Lists.newArrayList();
+        ArrayList<String> scriptUrls = newArrayList();
         ModuleDescriptor<?> dialogModuleDescriptor = pluginRetrievalService.getPlugin().getModuleDescriptor("dialog");
         for (ResourceDescriptor descriptor : dialogModuleDescriptor.getResourceDescriptors())
         {

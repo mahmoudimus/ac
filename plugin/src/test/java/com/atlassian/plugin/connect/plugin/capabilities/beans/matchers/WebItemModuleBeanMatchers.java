@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import org.mockito.ArgumentMatcher;
 
 /**

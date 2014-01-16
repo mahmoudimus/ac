@@ -1,8 +1,5 @@
 {
     "guides": {
-        "whats-new.html": {
-            "title": "What's New"
-        },
         "introduction.html": {
             "title": "Introduction"
         },
@@ -59,6 +56,9 @@
         }
     },
     "resources": {
+        "release-notes.html": {
+            "title": "Release Notes"
+        },
         "samples.html": {
             "title": "Sample Add-ons"
         },

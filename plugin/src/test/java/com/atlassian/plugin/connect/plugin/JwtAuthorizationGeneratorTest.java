@@ -6,7 +6,6 @@ import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
-import com.atlassian.jwt.core.JwtUtil;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
@@ -30,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
+import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -53,7 +53,7 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void authorizationHeaderContainsJwt()
     {
-        assertThat(generate(), is(Option.some(JwtUtil.JWT_AUTH_HEADER_PREFIX + A_MOCK_JWT)));
+        assertThat(generate(), is(Option.some(JWT_AUTH_HEADER_PREFIX + A_MOCK_JWT)));
     }
 
     @Test

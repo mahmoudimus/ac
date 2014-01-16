@@ -1,23 +1,20 @@
 package com.atlassian.plugin.connect.plugin.module;
 
+import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.collect.ImmutableMap;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.atlassian.templaterenderer.TemplateRenderer;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -80,7 +77,7 @@ public class IFramePageRenderer
 
     private Map<String, List<String>> contextQueryParameters(final Map<String, String[]> queryParams)
     {
-        final Map<String, List<String>> ctxQueryParams = Maps.newHashMap();
+        final Map<String, List<String>> ctxQueryParams = newHashMap();
         for (Map.Entry<String, String[]> param : queryParams.entrySet())
         {
             ctxQueryParams.put(param.getKey(), Arrays.asList(param.getValue()));

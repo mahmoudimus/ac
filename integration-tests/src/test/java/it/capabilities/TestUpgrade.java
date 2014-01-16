@@ -1,19 +1,17 @@
 package it.capabilities;
 
 import cc.plural.jsonij.JSON;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import cc.plural.jsonij.Value;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.collect.Lists;
-
-import cc.plural.jsonij.Value;
 import it.AbstractBrowserlessTest;
 import it.servlet.ConnectAppServlets;
-
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static it.matcher.ValueMatchers.hasProperty;
 import static it.matcher.ValueMatchers.isArrayMatching;
 import static org.hamcrest.Matchers.containsInAnyOrder;

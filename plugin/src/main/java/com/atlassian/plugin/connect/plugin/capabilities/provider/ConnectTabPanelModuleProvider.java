@@ -2,8 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
+import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.*;
 import com.atlassian.plugin.connect.plugin.module.jira.componenttab.IFrameComponentTab;
 import com.atlassian.plugin.connect.plugin.module.jira.issuetab.IFrameIssueTab;

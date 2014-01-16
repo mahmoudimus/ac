@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstit
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -19,13 +18,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class TestIFramePageServlet
 {
@@ -42,7 +40,7 @@ public class TestIFramePageServlet
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        contextParamNameToSymbolicName = Maps.newHashMap();
+        contextParamNameToSymbolicName = newHashMap();
         servlet = new IFramePageServlet(pageInfo, iFramePageRenderer, iframeContext, userManager, urlVariableSubstitutor,
                 contextParamNameToSymbolicName);
     }

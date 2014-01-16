@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.webitem;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.InvalidAddonConfigurationException;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.HideousParameterContextThingy;
@@ -16,7 +16,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext.addon;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**

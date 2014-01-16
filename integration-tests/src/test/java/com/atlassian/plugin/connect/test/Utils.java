@@ -1,5 +1,11 @@
 package com.atlassian.plugin.connect.test;
 
+import com.atlassian.plugin.connect.test.server.RunnerSignedRequestHandler;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.openssl.PEMWriter;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -10,16 +16,8 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import com.atlassian.plugin.connect.test.server.RunnerSignedRequestHandler;
-
-import com.google.common.collect.Maps;
-
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.openssl.PEMWriter;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-
 import static com.atlassian.plugin.connect.spi.util.XmlUtils.createSecureSaxReader;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  *
@@ -108,7 +106,7 @@ public class Utils
 
     private static class TestEnv implements Environment
     {
-        private Map<String, String> env = Maps.newHashMap();
+        private Map<String, String> env = newHashMap();
 
         @Override
         public String getEnv(String name)

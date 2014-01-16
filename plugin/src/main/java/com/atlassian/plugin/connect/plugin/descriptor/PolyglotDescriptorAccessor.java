@@ -1,20 +1,19 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
+import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
+import com.atlassian.plugin.connect.plugin.descriptor.util.XmlUtils;
+import com.atlassian.plugin.connect.spi.Filenames;
+import com.google.common.collect.ImmutableSet;
+import org.apache.commons.io.IOUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.osgi.framework.Bundle;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
-import com.atlassian.plugin.connect.plugin.descriptor.util.XmlUtils;
-
-import com.google.common.collect.ImmutableSet;
-
-import org.apache.commons.io.IOUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.osgi.framework.Bundle;
 
 /**
  * Descriptor accessor that supports json, xml, and yaml descriptors
@@ -22,7 +21,7 @@ import org.osgi.framework.Bundle;
 public final class PolyglotDescriptorAccessor implements DescriptorAccessor
 {
     private static final Iterable<DescriptorType> DESCRIPTOR_TYPES = ImmutableSet.of(
-            new DescriptorType("atlassian-plugin.xml", "text/xml", false)
+            new DescriptorType(Filenames.ATLASSIAN_PLUGIN_XML, "text/xml", false)
     );
 
     static interface UrlProvider

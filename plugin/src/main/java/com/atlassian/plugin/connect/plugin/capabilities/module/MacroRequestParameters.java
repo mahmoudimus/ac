@@ -3,11 +3,13 @@ package com.atlassian.plugin.connect.plugin.capabilities.module;
 import com.atlassian.renderer.v2.macro.Macro;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
 public class MacroRequestParameters
 {
@@ -17,7 +19,7 @@ public class MacroRequestParameters
 
         public Builder()
         {
-            queryParameters = Maps.newHashMap();
+            queryParameters = newHashMap();
         }
 
         public Builder withMacroParameters(Map<String, String> map)
@@ -52,7 +54,7 @@ public class MacroRequestParameters
             List<String> list = queryParameters.get(key);
             if (null == list)
             {
-                list = Lists.newArrayList();
+                list = newArrayList();
                 queryParameters.put(key, list);
             }
             return list;

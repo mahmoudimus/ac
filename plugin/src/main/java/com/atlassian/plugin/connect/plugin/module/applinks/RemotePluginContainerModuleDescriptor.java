@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module.applinks;
 
-import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.PublicKey;
-import java.util.List;
-
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.TypeNotInstalledException;
@@ -34,12 +29,16 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.security.GeneralSecurityException;
+import java.security.PublicKey;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
 import static com.google.common.base.Preconditions.checkNotNull;

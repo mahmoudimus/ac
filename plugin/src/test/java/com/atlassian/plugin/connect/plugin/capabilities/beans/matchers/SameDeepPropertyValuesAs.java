@@ -28,26 +28,17 @@
  DAMAGE.
  */
 
-package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
+package com.atlassian.plugin.connect.modules.beans.matchers;
 
-import org.hamcrest.Description;
-import org.hamcrest.DiagnosingMatcher;
-import org.hamcrest.Factory;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.hamcrest.*;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.hamcrest.core.AllOf;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.IsEmptyMap.emptyMap;
+import static com.atlassian.plugin.connect.modules.beans.matchers.IsEmptyMap.emptyMap;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.beans.PropertyUtil.NO_ARGUMENTS;
 import static org.hamcrest.beans.PropertyUtil.propertyDescriptorsFor;

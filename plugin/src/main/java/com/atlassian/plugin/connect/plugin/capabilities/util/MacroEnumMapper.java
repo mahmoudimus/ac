@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
 import com.atlassian.confluence.macro.Macro;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 
 /**
  * Beans can't reference any product-specific classes, hence the mapping here

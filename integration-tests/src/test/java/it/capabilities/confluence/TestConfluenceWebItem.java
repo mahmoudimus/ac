@@ -2,8 +2,9 @@ package it.capabilities.confluence;
 
 import com.atlassian.fugue.Pair;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
@@ -21,18 +22,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.assertURIEquals;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 /**
@@ -44,6 +42,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     private static final String ADDON_DIRECT_WEBITEM = "ac-direct-to-addon-web-item";
     private static final String PRODUCT_WEBITEM = "quick-page-link";
     private static final String ABSOLUTE_WEBITEM = "google-link";
+    private static final String ADDON_WEBITEM_INLINE_DIALOG = "wikipedia-link";
     private static final String SPACE = "ds";
 
     private static ConnectRunner remotePlugin;
@@ -81,6 +80,15 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build(),
                                         newSingleConditionBean().withCondition("/onlyBettyCondition").build()
+                                ).build(),
+                        newWebItemBean()
+                                .withName(new I18nProperty("wikipedia link", "ac.ild"))
+                                .withLocation("system.content.metadata")
+                                .withWeight(1)
+                                .withContext(AddOnUrlContext.addon)
+                                .withUrl("http://www.wikipedia.org")
+                                .withTarget(
+                                        newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build()
                                 )
                                 .build())
 
@@ -171,6 +179,21 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         ConfluenceViewPage viewPage = createAndVisitViewPage();
         assertTrue("Web item should NOT be found", viewPage.webItemDoesNotExist(ABSOLUTE_WEBITEM));
     }
+
+
+    @Test
+    public void testAddonWebItemInlineDialog() throws Exception
+    {
+        loginAsAdmin();
+
+        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(ADDON_WEBITEM_INLINE_DIALOG);
+        RemoteWebItem webItem = pageAndWebItem.right();
+        assertNotNull("Web item should be found", webItem);
+        assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
+        webItem.click();
+        assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
+    }
+
 
     private Pair<ConfluenceViewPage, RemoteWebItem> findViewPageWebItem(String webItemId) throws Exception
     {

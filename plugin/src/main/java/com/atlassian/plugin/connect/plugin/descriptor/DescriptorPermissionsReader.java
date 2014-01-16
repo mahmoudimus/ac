@@ -1,30 +1,35 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.util.BundleLocator;
+import com.atlassian.plugin.connect.spi.Filenames;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.connect.spi.util.XmlUtils;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-
+import com.opensymphony.util.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.google.common.collect.Sets.newHashSet;
@@ -38,6 +43,7 @@ import static com.google.common.collect.Sets.newHashSet;
 public final class DescriptorPermissionsReader implements PermissionsReader
 {
     private final Cache<Plugin,Set<String>> permissionsCache;
+    private final Cache<Plugin,Set<ScopeName>> scopesCache;
     private final String productKey;
 
     @Inject
@@ -50,6 +56,14 @@ public final class DescriptorPermissionsReader implements PermissionsReader
             public Set<String> load(Plugin plugin) throws Exception
             {
                 return read(bundleLocator.getBundle(plugin.getKey()), productKey);
+            }
+        });
+        this.scopesCache = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<Plugin,Set<ScopeName>>()
+        {
+            @Override
+            public Set<ScopeName> load(Plugin plugin) throws Exception
+            {
+                return readScopes(bundleLocator.getBundle(plugin.getKey()), productKey);
             }
         });
     }
@@ -74,11 +88,25 @@ public final class DescriptorPermissionsReader implements PermissionsReader
         return read(document, productKey);
     }
 
+    @Override
+    public Set<ScopeName> readScopesForAddOn(Plugin plugin)
+    {
+        try
+        {
+            return scopesCache.get(plugin);
+        }
+        catch (ExecutionException e)
+        {
+            // should never happen
+            throw new RuntimeException(e);
+        }
+    }
+
     private Set<String> read(Bundle bundle, String productKey)
     {
         try
         {
-            URL sourceUrl = bundle.getEntry("atlassian-plugin.xml");
+            URL sourceUrl = bundle.getEntry(Filenames.ATLASSIAN_PLUGIN_XML);
             Document source = XmlUtils.createSecureSaxReader().read(sourceUrl);
 
             return read(source, productKey);
@@ -87,6 +115,20 @@ public final class DescriptorPermissionsReader implements PermissionsReader
         {
             throw new IllegalArgumentException("Unable to parse permissions from plugin descriptor", e);
         }
+    }
+
+    private Set<ScopeName> readScopes(Bundle bundle, String productKey) throws IOException
+    {
+        URL sourceUrl = bundle.getEntry(Filenames.ATLASSIAN_ADD_ON_JSON);
+
+        if (null == sourceUrl)
+        {
+            return Collections.emptySet();
+        }
+
+        String json = IOUtils.toString(FileUtils.getResource(sourceUrl.toString()), "UTF-8");
+        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        return addOn.getScopes();
     }
 
     private Set<String> read(Document source, String productKey)

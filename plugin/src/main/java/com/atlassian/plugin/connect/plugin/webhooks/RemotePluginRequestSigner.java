@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.webhooks;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
-import com.atlassian.jwt.core.JwtUtil;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
@@ -18,6 +17,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
+import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -47,7 +47,7 @@ public class RemotePluginRequestSigner implements RequestSigner
             final Option<String> authValue = getAuthHeader(uri, pluginKey);
             if (authValue.isDefined())
             {
-                request.setHeader(JwtUtil.AUTHORIZATION_HEADER, authValue.get());
+                request.setHeader(AUTHORIZATION_HEADER, authValue.get());
             }
         }
     }
