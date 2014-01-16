@@ -2,7 +2,7 @@
     "scopes": [
         {
             "key": "DELETE",
-            "restPaths": ["macro", "status", "component", "priority", "issue", "entitylink", "attachment", "comment", "worklog", "custom", "version"],
+            "restPaths": ["status", "component", "priority", "issue", "entitylink", "attachment", "comment", "worklog", "custom", "version"],
             "methods": ["DELETE"]
         },
         {
@@ -17,12 +17,6 @@
         }
     ],
     "restPaths": [
-        {
-            "key": "macro",
-            "name": "atlassian-connect",
-            "basePaths": ["/macro.*"],
-            "versions": ["1", "latest"]
-        },
         {
             "key": "applicationlink",
             "name": "applinks",
@@ -156,9 +150,9 @@
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
-            "key": "custom",
+            "key": "customFieldOption",
             "name": "api",
-            "basePaths": ["/custom.*"],
+            "basePaths": ["/customFieldOption.*"],
             "versions": ["2", "latest", "2.0.alpha1"]
         },
         {
