@@ -72,7 +72,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * In this case, we're declaring a `dialog-page` webItem. This declaration adds a dialog box to JIRA that users can open
  * by clicking a "Create Sub-Tasks" link on an issue.
  * <p/>
- * ### Conditions
+ *### Conditions
  * <p/>
  * You can specify the conditions in which the link (and therefore access to this page) appears. The Atlassian application
  * ensures that the link only appears if it is appropriate for it to do so. In the example, the module should only appear
@@ -80,7 +80,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * must be true for the module to be in effect. Note, the condition only applies to the presence or absence of the link.
  * You should still permission the URL that the link references if appropriate.
  * <p/>
- * ### URLs
+ *### URLs
  * <p/>
  * All module declarations must have a `url` attribute. The url attribute identifies the path on the add-on host to the
  * resource that implements the module. The URL value must be valid relative to the `baseUrl` value in the add-on descriptor.

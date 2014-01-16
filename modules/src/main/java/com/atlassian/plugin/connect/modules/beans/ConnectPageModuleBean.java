@@ -36,7 +36,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *As implied here, for most page content modules, you do not need to be concerned with iframe sizing. It's all handled
  * for you. However, an exception exists for inline macros.
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PAGE_EXAMPLE}
  * @since 1.0
