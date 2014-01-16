@@ -47,6 +47,9 @@ public final class AtlassianConnectRestClient
     private static final String UPM_TOKEN_HEADER = "upm-token";
     private static final Random RAND = new Random();
 
+    /**
+     * Checks the add-on installation status in regular intervals (avoids busy polling)
+     */
     private class StatusChecker
     {
         private final String statusUrl;
