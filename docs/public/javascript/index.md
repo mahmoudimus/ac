@@ -1,1 +1,0 @@
-<span class="page-title">Index</span>
