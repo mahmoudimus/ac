@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  *
  */
@@ -34,5 +37,15 @@ public final class ApiResourceInfo
     public String getRpcMethod()
     {
         return rpcMethod;
+    }
+
+    @Override
+    public String toString()
+    {
+        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
+                .append("path", path)
+                .append("httpMethod", httpMethod)
+                .append("rpcMethod", rpcMethod)
+                .build();
     }
 }

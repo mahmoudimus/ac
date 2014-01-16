@@ -1,19 +1,19 @@
-    package com.atlassian.plugin.connect.plugin.scopes;
+package com.atlassian.plugin.connect.plugin.scopes;
 
-    import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-    import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
-    import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBeans;
-    import com.google.common.base.Function;
-    import com.google.gson.GsonBuilder;
-    import org.apache.commons.io.IOUtils;
+import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
+import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBeans;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.google.common.base.Function;
+import com.google.gson.GsonBuilder;
+import org.apache.commons.io.IOUtils;
 
-    import javax.annotation.Nonnull;
-    import javax.annotation.Nullable;
-    import java.io.IOException;
-    import java.io.InputStream;
-    import java.util.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
-    import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.Collections2.transform;
 
 public class StaticAddOnScopes
 {
@@ -50,9 +50,14 @@ public class StaticAddOnScopes
      */
     static Collection<AddOnScope> buildFor(String product) throws IOException
     {
-        Collection<AddOnScope> scopes = new ArrayList<AddOnScope>();
         String scopesFileResourceName = resourceLocation(product);
         AddOnScopeBeans scopeBeans = parseScopeBeans(scopesFileResourceName);
+        return buildFromBeans(scopeBeans, scopesFileResourceName);
+    }
+
+    private static Collection<AddOnScope> buildFromBeans(AddOnScopeBeans scopeBeans, String scopesFileResourceName)
+    {
+        Collection<AddOnScope> scopes = new ArrayList<AddOnScope>();
 
         for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
         {

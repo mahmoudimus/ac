@@ -1,13 +1,207 @@
 {
-    "scopes": [{
-        "key": "READ",
-        "methods": ["get"],
-        "restPaths": ["api"]
-    }],
-    "restPaths": [{
-        "key": "api",
-        "name": "api",
-        "basePaths": ["/user"],
-        "versions": ["2"]
-    }]
+    "scopes": [
+        {
+            "key": "DELETE",
+            "restPaths": ["macro", "status", "component", "priority", "issue", "entitylink", "attachment", "comment", "worklog", "custom", "version"],
+            "methods": ["DELETE"]
+        },
+        {
+            "key": "READ",
+            "restPaths": ["applicationlink", "issuetype", "type_entity", "issue", "manifest", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "custom", "listApplicationLinks", "issueLinkType", "applicationlinkInfo", "status", "entitylink", "attachment", "entities", "field", "project", "mypermissions", "session", "comment", "group", "user", "filter"],
+            "methods": ["GET"]
+        },
+        {
+            "key": "WRITE",
+            "restPaths": ["status", "issue", "entitylink", "attachment", "entitylink_primary", "version", "component", "search", "priority", "comment", "worklog", "custom"],
+            "methods": ["POST", "PUT"]
+        }
+    ],
+    "restPaths": [
+        {
+            "key": "macro",
+            "name": "atlassian-connect",
+            "basePaths": ["/macro.*"],
+            "versions": ["1", "latest"]
+        },
+        {
+            "key": "applicationlink",
+            "name": "applinks",
+            "basePaths": ["/applicationlink.*"],
+            "versions": ["1.0", "latest"]
+        },
+        {
+            "key": "applicationlinkInfo",
+            "name": "applinks",
+            "basePaths": ["/applicationlinkInfo.*"],
+            "versions": ["1.0", "latest"]
+        },
+        {
+            "key": "entities",
+            "name": "applinks",
+            "basePaths": ["/entities.*"],
+            "versions": ["1.0", "latest"]
+        },
+        {
+            "key": "entitylink",
+            "name": "applinks",
+            "basePaths": ["/entitylink.*"],
+            "versions": ["1.0", "latest"]
+        },
+        {
+            "key": "listApplicationLinks",
+            "name": "applinks",
+            "basePaths": ["/listApplicationLinks.*"],
+            "versions": ["1.0", "latest"]
+        },
+        {
+            "key": "manifest",
+            "name": "applinks",
+            "basePaths": ["/manifest.*"],
+            "versions": ["1.0", "latest"]
+        },
+        {
+            "key": "type_entity",
+            "name": "applinks",
+            "basePaths": ["/type/entity.*"],
+            "versions": ["1.0", "latest"]
+        },
+        {
+            "key": "entitylink_primary",
+            "name": "applinks",
+            "basePaths": ["/entitylink/primary.*"],
+            "versions": ["1.0", "latest"]
+        },
+        {
+            "key": "license",
+            "name": "atlassian-connect",
+            "basePaths": ["/license.*"],
+            "versions": ["1", "latest"]
+        },
+        {
+            "key": "user",
+            "name": "api",
+            "basePaths": ["/user.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "group",
+            "name": "api",
+            "basePaths": ["/group.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "mypermissions",
+            "name": "api",
+            "basePaths": ["/mypermissions.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "project",
+            "name": "api",
+            "basePaths": ["/project.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "issue",
+            "name": "api",
+            "basePaths": ["/issue.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "filter",
+            "name": "api",
+            "basePaths": ["/filter.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "search",
+            "name": "api",
+            "basePaths": ["/search.*"],
+            "versions": ["2", "latest", "2.0.alpha1"]
+        },
+        {
+            "key": "component",
+            "name": "api",
+            "basePaths": ["/component.*"],
+            "versions": ["2", "latest", "2.0.alpha1"]
+        },
+        {
+            "key": "priority",
+            "name": "api",
+            "basePaths": ["/priority.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "resolution",
+            "name": "api",
+            "basePaths": ["/resolution.*"],
+            "versions": ["2", "latest", "2.0.alpha1"]
+        },
+        {
+            "key": "version",
+            "name": "api",
+            "basePaths": ["/version.*"],
+            "versions": ["2", "latest", "2.0.alpha1"]
+        },
+        {
+            "key": "status",
+            "name": "api",
+            "basePaths": ["/status.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "worklog",
+            "name": "api",
+            "basePaths": ["/worklog.*"],
+            "versions": ["2", "latest", "2.0.alpha1"]
+        },
+        {
+            "key": "custom",
+            "name": "api",
+            "basePaths": ["/custom.*"],
+            "versions": ["2", "latest", "2.0.alpha1"]
+        },
+        {
+            "key": "attachment",
+            "name": "api",
+            "basePaths": ["/attachment.*"],
+            "versions": ["2", "latest", "2.0.alpha1"]
+        },
+        {
+            "key": "comment",
+            "name": "api",
+            "basePaths": ["/comment.*"],
+            "versions": ["2", "latest", "2.0.alpha1"]
+        },
+        {
+            "key": "field",
+            "name": "api",
+            "basePaths": ["/field.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "issueLinkType",
+            "name": "api",
+            "basePaths": ["/issueLinkType.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "issuetype",
+            "name": "api",
+            "basePaths": ["/issuetype.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "serverInfo",
+            "name": "api",
+            "basePaths": ["/serverInfo.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        },
+        {
+            "key": "session",
+            "name": "auth",
+            "basePaths": ["/session.*"],
+            "versions": ["2", "2.0.alpha1", "latest"]
+        }
+    ]
 }
