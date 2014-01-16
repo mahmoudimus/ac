@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.client;
 
 import cc.plural.jsonij.JSON;
+import cc.plural.jsonij.Value;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -28,18 +29,71 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.singletonList;
 
 public final class AtlassianConnectRestClient
 {
     private final String baseUrl;
-    private String defaultUsername;
-    private String defaultPassword;
+    private final String defaultUsername;
+    private final String defaultPassword;
 
     public static final String UPM_URL_PATH = "/rest/plugins/1.0/";
     private static final String UPM_TOKEN_HEADER = "upm-token";
     private static final Random RAND = new Random();
+
+    private class StatusChecker
+    {
+        private final String statusUrl;
+        private final int maxAttempts;
+        private final int period;
+        private final ScheduledExecutorService scheduledExecutor;
+        private JSON json;
+
+        private StatusChecker(String statusUrl, int maxAttempts, int period)
+        {
+            this.statusUrl = statusUrl;
+            this.maxAttempts = maxAttempts;
+            this.period = period;
+            this.scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+        }
+
+        public void run() throws Exception
+        {
+            Callable<Boolean> statusChecker = new Callable<Boolean>()
+            {
+                @Override
+                public Boolean call() throws Exception
+                {
+                    System.out.println(statusUrl);
+                    HttpGet statusGet = new HttpGet(statusUrl);
+                    ResponseHandler<String> statusHandler = new BasicResponseHandler();
+                    String response = sendRequestAsUser(statusGet, statusHandler, defaultUsername, defaultPassword);
+                    json = JSON.parse(response);
+                    return (null != json.get("enabled"));
+                }
+            };
+
+            ScheduledFuture<Boolean> handle = scheduledExecutor.schedule(statusChecker, period, TimeUnit.MILLISECONDS);
+
+            int remainingAttempts = maxAttempts;
+            while (!handle.get() && remainingAttempts > 0)
+            {
+                remainingAttempts--;
+                handle = scheduledExecutor.schedule(statusChecker, period, TimeUnit.MILLISECONDS);
+            }
+
+            if (remainingAttempts == 0)
+            {
+                throw new Exception("Connect App Plugin did not install within the allotted timeout: " + json.get("status").get("subCode"));
+            }
+        }
+    }
 
     public AtlassianConnectRestClient(String baseUrl, String username, String password)
     {
@@ -61,27 +115,15 @@ public final class AtlassianConnectRestClient
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
         String response = sendRequestAsUser(post, responseHandler, defaultUsername, defaultPassword);
-
         JSON json = JSON.parse(response);
-        boolean done = (null != json.get("enabled"));
-        int timeout = 1000;
 
-        while (!done && timeout > 1)
+        if (null == json.get("enabled"))
         {
             URI uri = new URI(baseUrl);
-            String statusUrl = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + json.get("links").get("self").getString();
-            HttpGet statusGet = new HttpGet(statusUrl);
-            ResponseHandler<String> statusHandler = new BasicResponseHandler();
-            response = sendRequestAsUser(statusGet, statusHandler, defaultUsername, defaultPassword);
+            final String statusUrl = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + json.get("links").get("self").getString();
 
-            json = JSON.parse(response);
-            done = (null != json.get("enabled"));
-            timeout--;
-        }
-
-        if (timeout < 2)
-        {
-            throw new Exception("Connect App Plugin did not install within the allotted timeout: " + json.get("status").get("subCode"));
+            StatusChecker statusChecker = new StatusChecker(statusUrl, 200, 500);
+            statusChecker.run();
         }
     }
 
