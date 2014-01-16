@@ -6,7 +6,8 @@
         "include": [
             "../plugin/src/main/resources/js/iframe/plugin/dialog.js",
             "../plugin/src/main/resources/js/iframe/plugin/confluence.js",
-            "../plugin/src/main/resources/js/iframe/plugin/jira.js"
+            "../plugin/src/main/resources/js/iframe/plugin/jira.js",
+            "../plugin/src/main/resources/js/iframe/plugin/events.js"
         ]
     },
     "plugins": ["plugins/markdown"],
