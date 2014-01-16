@@ -8,7 +8,8 @@
             "../plugin/src/main/resources/js/iframe/plugin/confluence.js",
             "../plugin/src/main/resources/js/iframe/plugin/jira.js",
             "../plugin/src/main/resources/js/iframe/plugin/events.js",
-            "../plugin/src/main/resources/js/iframe/plugin/request.js"
+            "../plugin/src/main/resources/js/iframe/plugin/request.js",
+            "../plugin/src/main/resources/js/iframe/plugin/env.js"
         ]
     },
     "plugins": ["plugins/markdown"],
