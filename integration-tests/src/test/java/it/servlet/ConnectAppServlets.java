@@ -51,7 +51,7 @@ public class ConnectAppServlets
     }
 
     /**
-     * @return a servlet that automatically resizes to the parent
+     * @return a servlet with resizing disabled
      */
     public static HttpServlet noResizeServlet()
     {
