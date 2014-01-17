@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Lists;
@@ -12,7 +11,6 @@ import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +25,11 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         IFrameRenderStrategyBuilder.AddOnUriBuilder, IFrameRenderStrategyBuilder.ModuleUriBuilder, IFrameRenderStrategyBuilder.TemplatedBuilder,
         IFrameRenderStrategyBuilder.InitializedBuilder
 {
+    private static final String TEMPLATE_PATH = "velocity/";
+    private static final String TEMPLATE_GENERIC = TEMPLATE_PATH + "iframe-page.vm";
+    private static final String TEMPLATE_PROJECT_ADMIN_TAB = TEMPLATE_PATH + "iframe-page-project-admin.vm";
+    private static final String TEMPLATE_DIALOG = TEMPLATE_PATH + "iframe-page-dialog.vm";
+
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
     private final TemplateRenderer templateRenderer;
@@ -68,9 +71,23 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public TemplatedBuilder template(final String templatePath)
+    public TemplatedBuilder genericPageTemplate()
     {
-        template = checkNotNull(templatePath);
+        template = TEMPLATE_GENERIC;
+        return this;
+    }
+
+    @Override
+    public TemplatedBuilder dialogTemplate()
+    {
+        template = TEMPLATE_DIALOG;
+        return this;
+    }
+
+    @Override
+    public TemplatedBuilder projectAdminTabTemplate()
+    {
+        template = TEMPLATE_PROJECT_ADMIN_TAB;
         return this;
     }
 
@@ -189,11 +206,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         public void render(final ModuleContextParameters moduleContextParameters, final OutputStream outputStream)
                 throws IOException
         {
-            if (condition != null && !condition.shouldDisplay(Collections.<String, Object>emptyMap()))
-            {
-                throw new PermissionDeniedException(addOnKey, "Cannot render iframe for this page.");
-            }
-
             String signedUri = iFrameUriBuilderFactory.builder()
                     .addOn(addOnKey)
                     .module(moduleKey)
@@ -214,6 +226,11 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             templateRenderer.render(template, renderContext, new OutputStreamWriter(outputStream));
         }
 
+        @Override
+        public boolean shouldShow(Map<String, Object> conditionContext)
+        {
+            return condition == null || condition.shouldDisplay(conditionContext);
+        }
     }
 
 }

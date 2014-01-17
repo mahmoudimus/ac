@@ -5,6 +5,6 @@ import java.util.HashMap;
 /**
  * Just a {@link java.util.HashMap}.
  */
-public final class HashMapModuleContextParameters extends HashMap<String, String> implements ModuleContextParameters
+public class HashMapModuleContextParameters extends HashMap<String, String> implements ModuleContextParameters
 {
 }

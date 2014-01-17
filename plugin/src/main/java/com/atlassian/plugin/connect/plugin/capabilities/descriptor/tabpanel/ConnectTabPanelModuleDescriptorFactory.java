@@ -1,12 +1,12 @@
-package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,8 +23,7 @@ public class ConnectTabPanelModuleDescriptorFactory
     private static final String NAME = "name";
     private static final String LABEL = "label";
     private static final String CLASS = "class";
-    private static final String CONDITION = "condition";
-    
+
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     private final ConnectAutowireUtil connectAutowireUtil;
 
@@ -35,13 +34,12 @@ public class ConnectTabPanelModuleDescriptorFactory
         this.connectAutowireUtil = connectAutowireUtil;
     }
 
-    public ModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
+    public ModuleDescriptor createModuleDescriptor(Plugin plugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
     {
         DOMElement element = new DOMElement(hints.getDomElementName());
-        
-        String completeKey = hints.getModulePrefix() + bean.getKey();
+
         element
-                .addAttribute(KEY,completeKey)
+                .addAttribute(KEY,bean.getKey())
                 .addAttribute(NAME,bean.getName().getValue())
                 .addAttribute(URL,bean.getUrl());
         
@@ -58,7 +56,7 @@ public class ConnectTabPanelModuleDescriptorFactory
 
         if(!bean.getConditions().isEmpty())
         {
-            element.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + completeKey));
+            element.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + bean.getKey()));
         }
 
         ModuleDescriptor descriptor = connectAutowireUtil.createBean(hints.getDescriptorClass());

@@ -55,6 +55,18 @@ public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyReg
         return addonEndpoints == null ? null : addonEndpoints.get(moduleKey);
     }
 
+    @Override
+    public IFrameRenderStrategy getOrThrow(final String addonKey, final String moduleKey) throws IllegalStateException
+    {
+        IFrameRenderStrategy strategy = get(addonKey, moduleKey);
+        if (strategy == null)
+        {
+            throw new IllegalStateException(String.format("No %s registered for %s:%s",
+                    IFrameRenderStrategy.class.getSimpleName(), addonKey, moduleKey));
+        }
+        return strategy;
+    }
+
     @EventListener
     public void onConnectPluginDisabled(ConnectAddonDisabledEvent event)
     {

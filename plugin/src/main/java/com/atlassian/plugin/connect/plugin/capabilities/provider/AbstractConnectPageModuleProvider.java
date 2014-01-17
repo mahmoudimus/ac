@@ -5,7 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.iframe.ConnectIFrameServlet;
+import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -55,7 +55,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(plugin.getKey())
                     .module(bean.getKey())
-                    .template("velocity/iframe-page" + getTemplateSuffix() + ".vm")
+                    .genericPageTemplate()
                     .urlTemplate(bean.getUrl())
                     .decorator(getDecorator())
                     .condition(getCondition())
@@ -92,11 +92,6 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
     protected Condition getCondition()
     {
         return null;
-    }
-
-    protected String getTemplateSuffix()
-    {
-        return "";
     }
 
     protected boolean hasWebItem()

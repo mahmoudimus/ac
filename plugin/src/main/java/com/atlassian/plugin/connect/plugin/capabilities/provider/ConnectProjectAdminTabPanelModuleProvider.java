@@ -8,7 +8,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.iframe.ConnectIFrameServlet;
+import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -23,6 +23,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextFilter.PROJECT_KEY;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -35,9 +36,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
 {
     public static final String PROJECT_ADMIN_TAB_PANELS = "jiraProjectAdminTabPanels";
 
-    private static final String TEMPLATE_SUFFIX = "-project-admin";
     private static final String ADMIN_ACTIVE_TAB = "adminActiveTab";
-    private static final String PROJECT_KEY = "project.key";
 
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
@@ -83,7 +82,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(plugin.getKey())
                     .module(bean.getKey())
-                    .template("velocity/iframe-page" + TEMPLATE_SUFFIX + ".vm")
+                    .projectAdminTabTemplate()
                     .urlTemplate(bean.getUrl())
                     .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey())
                     .condition(projectAdminCondition)

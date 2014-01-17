@@ -67,7 +67,7 @@
     </servlet>
 
     <servlet key="addon-iframe-servlet"
-             class="com.atlassian.plugin.connect.plugin.iframe.ConnectIFrameServlet">
+             class="com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet">
         <url-pattern>/ac/*</url-pattern>
     </servlet>
 

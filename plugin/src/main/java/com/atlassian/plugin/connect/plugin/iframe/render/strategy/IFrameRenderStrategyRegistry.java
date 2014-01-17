@@ -20,4 +20,12 @@ public interface IFrameRenderStrategyRegistry
      * @return the endpoint if there is one registered for the specified keys, otherwise null.
      */
     IFrameRenderStrategy get(String addonKey, String moduleKey);
+
+    /**
+     * @param addonKey the key of an addon
+     * @param moduleKey the key of a module that supplies an render strategy
+     * @return the endpoint if there is one registered for the specified keys.
+     * @throws java.lang.IllegalStateException if the no render strategy exists for the specified key
+     */
+    IFrameRenderStrategy getOrThrow(String addonKey, String moduleKey) throws IllegalStateException;
 }

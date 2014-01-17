@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
@@ -15,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.*;
@@ -89,14 +89,8 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     private ConnectTabPanelModuleBean createModuleDescriptor()
     {
         ConnectTabPanelModuleBean bean = createModuleBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_URL, ADDON_WEIGHT);
-        connectTabPanelModuleDescriptor = tabPanelModuleDescriptorFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean, descriptorHints);
+        connectTabPanelModuleDescriptor = tabPanelModuleDescriptorFactory.createModuleDescriptor(plugin, bean, descriptorHints);
         return bean;
-    }
-
-    @Test
-    public void createsElementWithCorrectKey()
-    {
-        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementKey(descriptorHints.getModulePrefix() + ADDON_NAME_KEY)));
     }
 
     @Test

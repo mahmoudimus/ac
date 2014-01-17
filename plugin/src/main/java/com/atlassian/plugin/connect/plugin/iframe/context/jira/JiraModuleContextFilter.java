@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.iframe.context.filter;
+package com.atlassian.plugin.connect.plugin.iframe.context.jira;
 
 import com.atlassian.jira.bc.EntityNotFoundException;
 import com.atlassian.jira.bc.project.ProjectService;
@@ -13,6 +13,7 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Strings;
@@ -26,14 +27,14 @@ public class JiraModuleContextFilter implements ModuleContextFilter
 {
     private static final Logger log = LoggerFactory.getLogger(JiraModuleContextFilter.class);
 
-    private static final String ISSUE_ID        = "issue.id";
-    private static final String ISSUE_KEY       = "issue.key";
-    private static final String PROJECT_ID      = "project.id";
-    private static final String PROJECT_KEY     = "project.key";
-    private static final String VERSION_ID      = "version.id";
-    private static final String COMPONENT_ID    = "component.id";
-    private static final String PROFILE_NAME    = "profileUser.name";
-    private static final String PROFILE_KEY     = "profileUser.key";
+    public static final String ISSUE_ID        = "issue.id";
+    public static final String ISSUE_KEY       = "issue.key";
+    public static final String PROJECT_ID      = "project.id";
+    public static final String PROJECT_KEY     = "project.key";
+    public static final String VERSION_ID      = "version.id";
+    public static final String COMPONENT_ID    = "component.id";
+    public static final String PROFILE_NAME    = "profileUser.name";
+    public static final String PROFILE_KEY     = "profileUser.key";
 
     private final PermissionManager permissionManager;
     private final ProjectService projectService;

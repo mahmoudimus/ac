@@ -18,7 +18,9 @@ public interface IFrameRenderStrategyBuilder
 
     interface ModuleUriBuilder
     {
-        TemplatedBuilder template(String templatePath);
+        TemplatedBuilder genericPageTemplate();
+        TemplatedBuilder dialogTemplate();
+        TemplatedBuilder projectAdminTabTemplate();
     }
 
     interface TemplatedBuilder

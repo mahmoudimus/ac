@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.iframe.context;
 
-import com.atlassian.plugin.connect.plugin.iframe.context.filter.ModuleContextFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

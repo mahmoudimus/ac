@@ -1,6 +1,4 @@
-package com.atlassian.plugin.connect.plugin.iframe.context.filter;
-
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+package com.atlassian.plugin.connect.plugin.iframe.context;
 
 /**
  *

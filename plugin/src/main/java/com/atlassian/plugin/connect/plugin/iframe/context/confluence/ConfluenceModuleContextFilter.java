@@ -1,5 +1,6 @@
-package com.atlassian.plugin.connect.plugin.iframe.context.filter;
+package com.atlassian.plugin.connect.plugin.iframe.context.confluence;
 
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
