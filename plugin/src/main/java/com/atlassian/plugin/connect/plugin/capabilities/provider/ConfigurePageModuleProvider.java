@@ -11,12 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
 {
-    private static final String THE_SECTION_U_HAVE_WHEN_UR_NOT_HAVING_A_SECTION = "no-section";
-
-    // TODO: The old version used to pass in productAccessor.getLinkContextParams() to the webitem builder
-    // but as far as I can tell this would have no effect as the remote page builder will overwrite it always.
-    // Does that mean it was not needed or is this an existing bug?
-
     @Autowired
     public ConfigurePageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -24,7 +18,13 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
             ProductAccessor productAccessor, UserManager userManager)
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
-                productAccessor, userManager, THE_SECTION_U_HAVE_WHEN_UR_NOT_HAVING_A_SECTION);
+                productAccessor, userManager);
+    }
+
+    @Override
+    protected boolean hasWebItem()
+    {
+        return false;
     }
 
 }

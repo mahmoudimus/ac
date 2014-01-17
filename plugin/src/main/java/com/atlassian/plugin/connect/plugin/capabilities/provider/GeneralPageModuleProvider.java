@@ -4,26 +4,47 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModule
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.provider.AbstractConnectPageModuleProvider.ConnectPageIFrameParams.withGeneralPage;
+import java.util.Map;
 
 @Component
 public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
 {
-    private static final String GENERAL_PAGE_DECORATOR = "atl.general";
+    private final ProductAccessor productAccessor;
 
     @Autowired
     public GeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                     IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                     WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                     ProductAccessor productAccessor)
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            ProductAccessor productAccessor)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
-                GENERAL_PAGE_DECORATOR, productAccessor.getPreferredGeneralSectionKey(),
-                productAccessor.getPreferredGeneralWeight(), "",
-                new AlwaysDisplayCondition(), withGeneralPage());
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
+        this.productAccessor = productAccessor;
+    }
+
+    @Override
+    protected int getDefaultWeight()
+    {
+        return productAccessor.getPreferredGeneralWeight();
+    }
+
+    @Override
+    protected String getDefaultSection()
+    {
+        return productAccessor.getPreferredGeneralSectionKey();
+    }
+
+    @Override
+    protected String getDecorator()
+    {
+        return "atl.general";
+    }
+
+    @Override
+    protected void augmentRenderContext(final Map<String, Object> additionalRenderContext)
+    {
+        additionalRenderContext.put("general", 1);
     }
 }

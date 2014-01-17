@@ -8,14 +8,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModule
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import org.osgi.framework.BundleContext;
 
 import java.util.List;
-import javax.annotation.Nullable;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -28,50 +27,17 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageModuleBean>
 {
-    private final IFrameParams iFrameParams;
-    private final String defaultSection;
-    private final int defaultWeight;
-
-    public static class ConnectPageIFrameParams extends IFrameParamsImpl
-    {
-        /**
-         * Used in UI to change sizing etc
-         */
-        public void setIsGeneralPage()
-        {
-            setParam("general", "1");
-        }
-
-        public static IFrameParams withGeneralPage()
-        {
-            ConnectPageIFrameParams params = new ConnectPageIFrameParams();
-            params.setIsGeneralPage();
-            return params;
-        }
-    }
-
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
-    private final String decorator;
-    private final String templateSuffix;
-    private final Condition condition;
 
     public AbstractConnectPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            String decorator, String defaultSection, int defaultWeight,
-            String templateSuffix, Condition condition, @Nullable IFrameParams iFrameParams)
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
     {
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
-        this.defaultSection = defaultSection;
-        this.defaultWeight = defaultWeight;
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
-        this.decorator = decorator;
-        this.templateSuffix = templateSuffix;
-        this.condition = condition;
-        this.iFrameParams = iFrameParams;
     }
 
     @Override
@@ -83,35 +49,69 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         for (ConnectPageModuleBean bean : beans)
         {
             // register a render strategy for our iframe page
+            Map<String, Object> additionalRenderContext = Maps.newHashMap();
+            augmentRenderContext(additionalRenderContext);
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(plugin.getKey())
-                .module(bean.getKey())
-                .template("velocity/iframe-page" + templateSuffix + ".vm")
-                .urlTemplate(bean.getUrl())
-                .decorator(decorator)
-                .condition(condition)
-                .title(bean.getDisplayName())
-                .build();
-            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
-
-            // create a web item targeting the iframe page
-            Integer weight = bean.getWeight() == null ? defaultWeight : bean.getWeight();
-            String location = isNullOrEmpty(bean.getLocation()) ? defaultSection : bean.getLocation();
-
-            WebItemModuleBean webItemBean = newWebItemBean()
-                    .withName(bean.getName())
-                    .withKey(bean.getKey())
-                    .withContext(product)
-                    .withUrl("/plugins/servlet/ac/" + plugin.getKey() + "/" + bean.getKey())
-                    .withLocation(location)
-                    .withWeight(weight)
-                    .withIcon(bean.getIcon())
-                    .withConditions(bean.getConditions())
+                    .addOn(plugin.getKey())
+                    .module(bean.getKey())
+                    .template("velocity/iframe-page" + getTemplateSuffix() + ".vm")
+                    .urlTemplate(bean.getUrl())
+                    .decorator(getDecorator())
+                    .condition(getCondition())
+                    .title(bean.getDisplayName())
+                    .additionalRenderContext(additionalRenderContext)
                     .build();
 
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemBean));
+            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
+
+            if (hasWebItem())
+            {
+                // create a web item targeting the iframe page
+                Integer weight = bean.getWeight() == null ? getDefaultWeight() : bean.getWeight();
+                String location = isNullOrEmpty(bean.getLocation()) ? getDefaultSection() : bean.getLocation();
+
+                WebItemModuleBean webItemBean = newWebItemBean()
+                        .withName(bean.getName())
+                        .withKey(bean.getKey())
+                        .withContext(product)
+                        .withUrl("/plugins/servlet/ac/" + plugin.getKey() + "/" + bean.getKey())
+                        .withLocation(location)
+                        .withWeight(weight)
+                        .withIcon(bean.getIcon())
+                        .withConditions(bean.getConditions())
+                        .build();
+
+                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemBean));
+            }
         }
 
         return builder.build();
     }
+
+    protected Condition getCondition()
+    {
+        return null;
+    }
+
+    protected String getTemplateSuffix()
+    {
+        return "";
+    }
+
+    protected boolean hasWebItem()
+    {
+        return true;
+    }
+
+    protected void augmentRenderContext(Map<String, Object> additionalRenderContext)
+    {
+        // no additional context by default
+    }
+
+    protected abstract String getDecorator();
+
+    protected abstract String getDefaultSection();
+
+    protected abstract int getDefaultWeight();
+
 }

@@ -134,6 +134,16 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         }
 
         @Override
+        public InitializedBuilder context(final Map<String, Object> additionalContext)
+        {
+            if (additionalContext != null)
+            {
+                this.additionalContext.putAll(additionalContext);
+            }
+            return this;
+        }
+
+        @Override
         public Map<String, Object> build()
         {
             Map<String, Object> renderContext = createDefaultRenderContextParameters();

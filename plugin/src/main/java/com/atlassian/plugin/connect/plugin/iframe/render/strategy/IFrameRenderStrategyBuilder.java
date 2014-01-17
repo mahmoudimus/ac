@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.plugin.web.Condition;
 
+import java.util.Map;
+
 /**
  *
  */
@@ -29,6 +31,8 @@ public interface IFrameRenderStrategyBuilder
         InitializedBuilder condition(Condition condition);
         InitializedBuilder title(String title);
         InitializedBuilder decorator(String decorator);
+        InitializedBuilder additionalRenderContext(String key, Object object);
+        InitializedBuilder additionalRenderContext(Map<String, Object> additionalRenderContext);
         IFrameRenderStrategy build();
     }
 }

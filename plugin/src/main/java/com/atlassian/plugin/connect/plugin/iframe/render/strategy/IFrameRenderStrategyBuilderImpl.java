@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFac
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,6 +26,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
     private final TemplateRenderer templateRenderer;
+
+    private final Map<String, Object> additionalRenderContext = Maps.newHashMap();
 
     private String addOnKey;
     private String moduleKey;
@@ -95,10 +98,29 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
+    public InitializedBuilder additionalRenderContext(final String key, final Object object)
+    {
+        this.additionalRenderContext.put(key, object);
+        return this;
+    }
+
+    @Override
+    public InitializedBuilder additionalRenderContext(final Map<String, Object> additionalRenderContext)
+    {
+        if (additionalRenderContext != null)
+        {
+            this.additionalRenderContext.putAll(additionalRenderContext);
+        }
+        return this;
+    }
+
+    @Override
     public IFrameRenderStrategy build()
     {
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                templateRenderer, addOnKey, moduleKey, template, urlTemplate, title, decorator, condition);
+                templateRenderer, addOnKey, moduleKey, template, urlTemplate, title, decorator, condition,
+                additionalRenderContext
+        );
     }
 
     private static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
@@ -108,6 +130,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
         private final TemplateRenderer templateRenderer;
 
+        private final Map<String, Object> additionalRenderContext;
         private final String addOnKey;
         private final String moduleKey;
         private final String template;
@@ -118,9 +141,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
         private IFrameRenderStrategyImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
-                final TemplateRenderer templateRenderer, final String addOnKey,
-                final String moduleKey, final String template, final String urlTemplate, final String title,
-                final String decorator, final Condition condition)
+                final TemplateRenderer templateRenderer, final String addOnKey, final String moduleKey,
+                final String template, final String urlTemplate, final String title, final String decorator,
+                final Condition condition, final Map<String, Object> additionalRenderContext)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -132,6 +155,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.title = title;
             this.decorator = decorator;
             this.condition = condition;
+            this.additionalRenderContext = additionalRenderContext;
         }
 
         @Override
@@ -156,6 +180,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .iframeUri(signedUri)
                     .decorator(decorator)
                     .title(title)
+                    .context(additionalRenderContext)
                     .build();
 
             templateRenderer.render(template, renderContext, new OutputStreamWriter(outputStream));

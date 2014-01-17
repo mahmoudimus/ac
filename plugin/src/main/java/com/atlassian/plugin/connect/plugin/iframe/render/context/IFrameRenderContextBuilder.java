@@ -27,6 +27,7 @@ public interface IFrameRenderContextBuilder
         InitializedBuilder decorator(String decorator);
         InitializedBuilder title(String title);
         InitializedBuilder context(String key, Object value);
+        InitializedBuilder context(Map<String, Object> additionalContext);
         Map<String, Object> build();
     }
 }

@@ -20,6 +20,6 @@ public class AdminPageModuleProvider extends AbstractAdminPageModuleProvider
             UserManager userManager)
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
-                productAccessor, userManager, null);
+              productAccessor, userManager);
     }
 }
