@@ -5,6 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.iframe.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -74,7 +75,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                         .withName(bean.getName())
                         .withKey(bean.getKey())
                         .withContext(product)
-                        .withUrl("/plugins/servlet/ac/" + plugin.getKey() + "/" + bean.getKey())
+                        .withUrl(ConnectIFrameServlet.iFrameServletPath(plugin.getKey(), bean.getKey()))
                         .withLocation(location)
                         .withWeight(weight)
                         .withIcon(bean.getIcon())
