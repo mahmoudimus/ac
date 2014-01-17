@@ -173,6 +173,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     {
         return newContentMacroModuleBeanBuilder()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
+                .withKey("the-macro-name")
                 .withUrl("/my-macro")
                 .withAliases("alias1", "alias2")
                 .withBodyType(MacroBodyType.PLAIN_TEXT)

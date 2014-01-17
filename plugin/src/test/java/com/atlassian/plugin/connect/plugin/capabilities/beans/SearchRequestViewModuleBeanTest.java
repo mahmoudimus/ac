@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.modules.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
@@ -62,6 +62,7 @@ public class SearchRequestViewModuleBeanTest
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .withModule("jiraSearchRequestViews", SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
                         .withName(new I18nProperty("My Search Request View", "my.searchRequestView"))
+                        .withKey("jira-search-request-view")
                         .withDescription(new I18nProperty("My description", "my.searchRequestView.desc"))
                         .withUrl("/search-request.csv")
                         .withWeight(10)

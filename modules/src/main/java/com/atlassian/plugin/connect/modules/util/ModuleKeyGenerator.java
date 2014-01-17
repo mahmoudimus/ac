@@ -48,6 +48,14 @@ public class ModuleKeyGenerator
         return camelCaseOrSpaceToDashed(prefix) + "-" + camelCaseOrSpaceToDashed(name);
     }
 
+    /**
+     * Replaces any special characters in a key with '-' and lowercases the entire key.
+     */
+    public static String cleanKey(String originalKey)
+    {
+        return originalKey.replaceAll(CLEAN_FILENAME_PATTERN, "-").toLowerCase();
+    }
+
     public static String camelCaseOrSpaceToDashed(String s)
     {
         String dashed = Joiner.on("-").join(s.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])"));
@@ -56,7 +64,7 @@ public class ModuleKeyGenerator
         return trimmed.toLowerCase();
     }
 
-    private static String randomName(String base)
+    public static String randomName(String base)
     {
         long n = random.nextLong();
         n = (n == Long.MIN_VALUE) ? 0 : Math.abs(n);
