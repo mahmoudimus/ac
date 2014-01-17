@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
-import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
                 GENERAL_PAGE_DECORATOR, productAccessor.getPreferredGeneralSectionKey(),
-                productAccessor.getPreferredGeneralWeight(), "", ImmutableMap.<String, String>of(),
+                productAccessor.getPreferredGeneralWeight(), "",
                 new AlwaysDisplayCondition(), withGeneralPage());
     }
 }

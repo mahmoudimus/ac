@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
-import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
@@ -22,7 +21,7 @@ public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
                 PROFILE_PAGE_DECORATOR, productAccessor.getPreferredProfileSectionKey(),
-                productAccessor.getPreferredProfileWeight(), "", ImmutableMap.<String, String>of(),
+                productAccessor.getPreferredProfileWeight(), "",
                 new AlwaysDisplayCondition(), null);
     }
 }

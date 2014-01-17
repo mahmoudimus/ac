@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableList;
 import org.osgi.framework.BundleContext;
 
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Nullable;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
@@ -56,15 +55,13 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final String decorator;
     private final String templateSuffix;
-    private final Map<String, String> metaTagContents;
     private final Condition condition;
 
     public AbstractConnectPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             String decorator, String defaultSection, int defaultWeight,
-            String templateSuffix, Map<String, String> metaTagContents,
-            Condition condition, @Nullable IFrameParams iFrameParams)
+            String templateSuffix, Condition condition, @Nullable IFrameParams iFrameParams)
     {
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
@@ -73,7 +70,6 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
         this.decorator = decorator;
         this.templateSuffix = templateSuffix;
-        this.metaTagContents = metaTagContents;
         this.condition = condition;
         this.iFrameParams = iFrameParams;
     }

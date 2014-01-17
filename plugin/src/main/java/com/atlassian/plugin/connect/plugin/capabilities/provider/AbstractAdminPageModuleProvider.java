@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.spi.module.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nullable;
 
@@ -23,6 +22,6 @@ public abstract class AbstractAdminPageModuleProvider extends AbstractConnectPag
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
                 ADMIN_PAGE_DECORATOR, sectionKey != null ? sectionKey : productAccessor.getPreferredAdminSectionKey(),
                 productAccessor.getPreferredAdminWeight(), "",
-                ImmutableMap.<String, String>of(), new UserIsAdminCondition(userManager), null);
+                new UserIsAdminCondition(userManager), null);
     }
 }
