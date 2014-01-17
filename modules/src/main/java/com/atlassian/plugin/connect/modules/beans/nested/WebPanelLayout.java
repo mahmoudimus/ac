@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
 /**
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PANEL_LAYOUT_EXAMPLE}
  * @schemaTitle Web Panel Layout

@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
 
 public class ConfluenceEditorContent extends EditorContent
 {
-    public MacroList autocompleteMacro(final String text)
+    public MacroList autoCompleteMacroList(final String text)
     {
         execute.onTinyMceIFrame(new Callable<Void>()
         {
@@ -35,7 +35,17 @@ public class ConfluenceEditorContent extends EditorContent
         });
     }
 
-    public void setMacroBody(final String macroBody, boolean isRichText)
+    public void setRichTextMacroBody(final String macroBody)
+    {
+        setMacroBody("<p>" + macroBody + "</p>");
+    }
+
+    public void setPlainTextMacroBody(final String macroBody)
+    {
+        setMacroBody("<pre>" + macroBody + "</pre>");
+    }
+
+    private void setMacroBody(final String macroBody)
     {
         execute.onTinyMceIFrame(new Callable<Void>()
         {
@@ -48,16 +58,7 @@ public class ConfluenceEditorContent extends EditorContent
             }
         });
 
-        String body = format(macroBody, isRichText);
-        client.executeScript("tinyMCE.activeEditor.contentDocument.getElementsByClassName(\"wysiwyg-macro-body\")[0].innerHTML=\"" + body +"\"");
+        client.executeScript("tinyMCE.activeEditor.contentDocument.getElementsByClassName(\"wysiwyg-macro-body\")[0].innerHTML=\"" + macroBody +"\"");
     }
 
-    private String format(String macroBody, boolean richText)
-    {
-        if (richText)
-        {
-            return "<p>" + macroBody + "</p>";
-        }
-        return "<pre>" + macroBody + "</pre>";
-    }
 }

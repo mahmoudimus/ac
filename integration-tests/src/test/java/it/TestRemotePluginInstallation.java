@@ -19,7 +19,7 @@ import java.util.List;
 import static com.atlassian.plugin.connect.test.Utils.getXml;
 import static org.junit.Assert.*;
 
-public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
+public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
 {
     @Test
     public void testSchemaContainsCustomScope() throws IOException, DocumentException

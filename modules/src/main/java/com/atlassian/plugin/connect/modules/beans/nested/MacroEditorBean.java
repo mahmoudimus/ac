@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder
  * Defining a Macro Editor allows you to implement a custom UI for the macro, by specifying a
  * URL to a page in your add-on which will be shown in the dialog iframe.
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}
  * @schemaTitle Macro Editor

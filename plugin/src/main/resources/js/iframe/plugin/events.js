@@ -1,8 +1,25 @@
-AP.define("events", ["_dollar", "_rpc"], function ($, rpc) {
+AP.define("events", ["_dollar", "_rpc"], 
+    /**
+    * The Events module provides a mechanism for emitting and receiving events.
+    * <h3>Basic example</h3>
+    * ```
+    * //The following will create an alert message every time the event `customEvent` is triggered.
+    * AP.require('events', function(events){
+    *   events.on('customEvent', function(){
+    *       alert('event fired');
+    *   });
+    *   events.emit('customEvent');
+    * });
+    * ```
+    * @name Events
+    * @module
+    */
 
-  "use strict";
+    function ($, rpc) {
 
-  return rpc.extend(function (remote) {
+    "use strict";
+
+    return rpc.extend(function (remote) {
     // Expose an Events API that delegates the to the underlying XdmRpc events bus; this is necessary since the bus
     // itself isn't actually created until the XdmRpc object is constructed, which hasn't happened yet at this point;
     // see the jsdoc in ../_events.js for API docs
@@ -31,6 +48,67 @@ AP.define("events", ["_dollar", "_rpc"], function ($, rpc) {
 //    };
 
     return {
+     /**
+     * Subscribes a callback to an event name.
+     * @name on
+     * @method
+     * @memberof module:Events#
+     * @param {String} name The event name to subscribe the listener to
+     * @param {Function} listener A listener callback to subscribe to the event name
+     */
+
+    /**
+     * Subscribes a callback to an event name, removing it once fired.
+     * @name once
+     * @method
+     * @memberof module:Events#
+     * @param {String} name The event name to subscribe the listener to
+     * @param {Function}listener A listener callback to subscribe to the event name
+     */
+
+    /**
+     * Subscribes a callback to all events, regardless of name.
+     * @name onAny
+     * @method
+     * @memberof module:Events#
+     * @param {Function} listener A listener callback to subscribe for any event name
+     */
+
+    /**
+     * Unsubscribes a callback to an event name.
+     * @name off
+     * @method
+     * @memberof module:Events#
+     * @param {String} name The event name to unsubscribe the listener from
+     * @param {Function} listener The listener callback to unsubscribe from the event name
+     */
+
+    /**
+     * Unsubscribes all callbacks from an event name, or unsubscribes all event-name-specific listeners
+     * if no name if given.
+     * @name offAll
+     * @method
+     * @memberof module:Events#
+     * @param {String} [name] The event name to unsubscribe all listeners from
+     */
+
+    /**
+     * Unsubscribes a callback from the set of 'any' event listeners.
+     * @name offAny
+     * @method
+     * @memberof module:Events#
+     * @param {Function} listener A listener callback to unsubscribe from any event name
+     */
+
+    /**
+     * Emits an event on this bus, firing listeners by name as well as all 'any' listeners. Arguments following the
+     * name parameter are captured and passed to listeners.
+     * @name emit
+     * @method
+     * @memberof module:Events#
+     * @param {String} name The name of event to emit
+     * @param {String[]} args 0 or more additional data arguments to deliver with the event
+     */
       apis: apis
     };
   });

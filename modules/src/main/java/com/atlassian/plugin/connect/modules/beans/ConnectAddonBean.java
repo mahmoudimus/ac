@@ -48,7 +48,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * and automatically installing the available update. See [Upgrades](../concepts/upgrades.html) for more details.
  * <p/>
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_EXAMPLE}
  * @exampleJson Kitchen Sink: <p class="expandNextPre"></p>{@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_COMPLETE_EXAMPLE}
