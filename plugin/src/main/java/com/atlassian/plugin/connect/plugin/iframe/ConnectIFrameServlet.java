@@ -46,6 +46,7 @@ public class ConnectIFrameServlet extends HttpServlet
             {
                 ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
                 resp.setContentType("text/html");
+                renderStrategy.preProcessRequest(req);
                 renderStrategy.render(moduleContextParameters, resp.getOutputStream());
                 return;
             }
