@@ -35,7 +35,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestAppPermissions extends AbstractRemotablePluginTest
+public class TestAppPermissions extends ConnectWebDriverTestBase
 {
 
     private static final String LICENSE_RESPONSE_STATUS_CODE_ID = "licenseResponseStatusCode";
