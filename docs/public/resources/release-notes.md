@@ -9,7 +9,7 @@
 * Fixed bug which prevented incoming JWT requests from being accepted
 * Fixed the configure page url with JSON descriptor
 * Better error reporting and bug fixes for JSON descriptor
-* Docs are now available _in product._ Just visit `https://HOSTNAME:PORT/CONTEXT_PATH/atlassian-connect/docs/`
+* Docs are now available _in product_. Just visit `https://HOSTNAME:PORT/CONTEXT_PATH/atlassian-connect/docs/`
 
 Additionally, we have relaxed the deprecation period for the XML descriptor until __28th February, 2014__.
 

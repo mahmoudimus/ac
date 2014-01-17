@@ -37,7 +37,7 @@ Starting the applications requires you to specify a number of hard-coded compone
 includes the version of Atlassian Connect framework. Those component versions will change as Atlassian Connect
 development continues. To find out about new version updates, subscribe to the Atlassian Connect
 [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev), and keep your eye on
-Atlassian Connect [blog posts](https://developer.atlassian.com/display/AC/Atlassian+Connect).
+Atlassian Connect [release notes](https://developer.atlassian.com/static/connect/docs/resources/release-notes.html).
 
 
 ## Step 2. Start your add-on

@@ -24,16 +24,17 @@ documentation is always guaranteed to be in sync.
 
 
 ### What other information resources exist?
-- [Google group](https://groups.google.com/forum/?fromgroups#!forum/atlassian-connect-dev) - [JIRA
-issue tracker for Atlassian Connect](https://ecosystem.atlassian.net/browse/AC) - [Atlassian Connect
-on Atlassian Answers](https://answers.atlassian.com/tags/atlassian-connect)
+- [Google group](https://groups.google.com/forum/?fromgroups#!forum/atlassian-connect-dev)
+- [JIRA issue tracker for Atlassian Connect](https://ecosystem.atlassian.net/browse/AC)
+- [Atlassian Connect on Atlassian Answers](https://answers.atlassian.com/tags/atlassian-connect)
 
 ### What products support Atlassian Connect?
 Atlassian Connect is available in JIRA and Confluence OnDemand for beta development and use.
 
 Atlassian Connect currently supports:
 
-- JIRA OnDemand - Confluence OnDemand
+- JIRA OnDemand
+- Confluence OnDemand
 
 Other products, including JIRA and Confluence Download will be supported in the future.
 
@@ -74,7 +75,7 @@ REST to communicate, you are free to build in any language, use any framework, a
 manner you wish.
 
 ### Will Atlassian provide hosting for add-ons?
-No. You may choose the many great PaaS or hosting providers.
+No. You may choose from the many great PaaS or hosting providers.
 
 ### How are Atlassian Connect add-ons installed?
 Add-ons are listed on the Atlassian Marketplace and installed via the Add-on manager in every
