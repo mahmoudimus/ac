@@ -11,7 +11,8 @@ import static com.atlassian.plugin.connect.modules.beans.nested.XWorkResultBean.
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
-public class XWorkActionModuleBeanBuilder extends NameToKeyBeanBuilder<XWorkActionModuleBeanBuilder, XWorkActionModuleBean>
+public class XWorkActionModuleBeanBuilder
+        extends NameToKeyBeanBuilder<XWorkActionModuleBeanBuilder, XWorkActionModuleBean>
 {
     private static final String DEFAULT_VALIDATING_STACK = "validatingStack";
     private static final String VELOCITY_RESULT_TYPE = "velocity";

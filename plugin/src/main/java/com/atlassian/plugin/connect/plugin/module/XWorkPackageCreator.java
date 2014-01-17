@@ -24,7 +24,8 @@ import static com.opensymphony.xwork.config.providers.InterceptorBuilder.constru
 import static java.util.Collections.emptyMap;
 
 /**
- * This class is responsible for taking an XWorkActionModuleBean and creating a fully-formed XWork PackageConfig with it
+ * This class is responsible for taking an XWorkActionModuleBean and creating a fully-formed XWork PackageConfig with
+ * it
  */
 public class XWorkPackageCreator
 {
@@ -62,7 +63,7 @@ public class XWorkPackageCreator
         List<?> parentStack = ConfigurationUtil.buildParentsFromString(configuration, "default");
         for (Object parent : parentStack)
         {
-            packageConfig.addParent((PackageConfig)parent);
+            packageConfig.addParent((PackageConfig) parent);
         }
     }
 
@@ -99,7 +100,7 @@ public class XWorkPackageCreator
 
         for (XWorkResultBean resultBean : actionModuleBean.getResultBeans())
         {
-            ResultTypeConfig resultTypeConfig = (ResultTypeConfig)resultTypeConfigs.get(resultBean.getType());
+            ResultTypeConfig resultTypeConfig = (ResultTypeConfig) resultTypeConfigs.get(resultBean.getType());
             String name = resultBean.getName();
             results.put(name, new ResultConfig(name, resultTypeConfig.getClazz(), resultBean.getParams()));
         }
@@ -116,7 +117,7 @@ public class XWorkPackageCreator
             List list = constructInterceptorReference(packageConfig, interceptorRef, Collections.EMPTY_MAP);
             for (Object interceptor : list)
             {
-                interceptors.add((Interceptor)interceptor);
+                interceptors.add((Interceptor) interceptor);
             }
         }
 

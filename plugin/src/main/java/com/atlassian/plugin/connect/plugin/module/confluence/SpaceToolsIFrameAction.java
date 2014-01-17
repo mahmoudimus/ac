@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
-import java.io.IOException;
-
 import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
@@ -9,6 +7,8 @@ import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+
+import java.io.IOException;
 
 public class SpaceToolsIFrameAction extends SpaceAdminAction
 {

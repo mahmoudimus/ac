@@ -1,13 +1,11 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
-
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.xwork.Action;
 import com.opensymphony.xwork.ActionInvocation;
 import com.opensymphony.xwork.ActionProxy;
 import com.opensymphony.xwork.config.entities.ActionConfig;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith (MockitoJUnitRunner.class)
 public class SpaceToolsContextInterceptorTest
 {
     @Mock private SpaceToolsIFrameAction action;

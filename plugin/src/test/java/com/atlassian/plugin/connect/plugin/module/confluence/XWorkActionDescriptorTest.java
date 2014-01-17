@@ -5,27 +5,15 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.module.XWorkPackageCreator;
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
-
-import com.opensymphony.webwork.dispatcher.VelocityResult;
 import com.opensymphony.xwork.config.Configuration;
 import com.opensymphony.xwork.config.ConfigurationManager;
-import com.opensymphony.xwork.config.entities.ActionConfig;
-import com.opensymphony.xwork.config.entities.PackageConfig;
-import com.opensymphony.xwork.config.entities.ResultConfig;
-
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;

@@ -7,9 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.XWorkActionDescriptorFactory;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-
 import com.google.common.collect.ImmutableList;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,13 +25,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith (MockitoJUnitRunner.class)
 public class SpaceToolsTabModuleProviderTest
 {
     private static final ConnectPageModuleBean DEFAULTS_BEAN = newPageBean()
-        .withName(new I18nProperty("Test Module", null))
-        .withUrl("/test.destination")
-        .build();
+            .withName(new I18nProperty("Test Module", null))
+            .withUrl("/test.destination")
+            .build();
 
     @Mock private WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     @Mock private ProductAccessor productAccessor;
@@ -54,9 +52,9 @@ public class SpaceToolsTabModuleProviderTest
     public void testWebItemProperties()
     {
         ConnectPageModuleBean bean = newPageBean(DEFAULTS_BEAN)
-            .withWeight(666)
-            .withLocation("test-location")
-            .build();
+                .withWeight(666)
+                .withLocation("test-location")
+                .build();
 
         provider.provideModules(plugin, bundleContext, "spaceTools", ImmutableList.of(bean));
 
@@ -125,11 +123,13 @@ public class SpaceToolsTabModuleProviderTest
         return new WebItemBeans(beans.remove(0), beans.remove(0));
     }
 
-    private class WebItemBeans {
+    private class WebItemBeans
+    {
         WebItemModuleBean spaceTools;
         WebItemModuleBean spaceAdmin;
 
-        private WebItemBeans(WebItemModuleBean spaceTools, WebItemModuleBean spaceAdmin) {
+        private WebItemBeans(WebItemModuleBean spaceTools, WebItemModuleBean spaceAdmin)
+        {
             this.spaceTools = spaceTools;
             this.spaceAdmin = spaceAdmin;
         }
