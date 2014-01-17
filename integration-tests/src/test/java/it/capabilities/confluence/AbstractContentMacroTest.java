@@ -229,14 +229,14 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     // which can be avoided by this warm-up method
     protected static void warmup()
     {
-        product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        product.deleteAllCookies();
+        getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        getProduct().deleteAllCookies();
     }
 
     @Test
     public void testMacroIsListed() throws Exception
     {
-        CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(SIMPLE_MACRO_NAME);
 
@@ -246,7 +246,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     @Test
     public void testAlias() throws Exception
     {
-        CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
 
         MacroList macroList = editorContent.autoCompleteMacroList(SIMPLE_MACRO_ALIAS);
@@ -256,7 +256,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     @Test
     public void testParameterTypes() throws Exception
     {
-        CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(ALL_PARAMETER_TYPES_MACRO_NAME);
         ConfluenceMacroForm macroForm = (ConfluenceMacroForm) macro.select();
@@ -276,7 +276,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     @Test
     public void testFeaturedMacro() throws Exception
     {
-        CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editorPage.openInsertMenu();
 
         assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
@@ -285,7 +285,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     @Test
     public void testImagePlaceholder() throws Exception
     {
-        CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Image Placeholder Macro");
 
         ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
@@ -302,7 +302,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     @Test
     public void testMacroEditor() throws Exception
     {
-        CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
         macroBrowser.selectMacro(EDITOR_MACRO_KEY);
 

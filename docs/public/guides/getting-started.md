@@ -42,12 +42,12 @@ You can start JIRA or Confluence with Atlassian Connect as follows:
 
 ### JIRA
 ```
-atlas-run-standalone --product jira --version 6.2-OD-06-43 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m27,com.atlassian.jwt:jwt-plugin:1.0-m6,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.5,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true
+atlas-run-standalone --product jira --version 6.2-OD-07-027 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m28,com.atlassian.jwt:jwt-plugin:1.0-m7,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.5,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true
 ```
 
 ### Confluence
 ```
-atlas-run-standalone --product confluence --version 5.4-OD-4 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m27,com.atlassian.jwt:jwt-plugin:1.0-m6,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.5,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true
+atlas-run-standalone --product confluence --version 5.4-OD-4 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m28,com.atlassian.jwt:jwt-plugin:1.0-m7,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.5,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true
 ```
 
 Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This
@@ -63,7 +63,7 @@ specifies the plugin key and name of the add-on, and lists the permissions it ne
 
 First, set up your project and create the descriptor file for the Hello World application:
 
- 1. Create a project directory for your add-on source files, or choose an existing directory location. 
+ 1. Create a project directory for your add-on source files, or choose an existing directory location.
 In choosing a location, it's worth considering that you'll need to expose this directory by web server (or copy the
 files you create here to a location that is served by a web server).
  2. In your project directory, create a new file named `atlassian-plugin.json`.
@@ -239,9 +239,9 @@ participant Browser
 participant Add_on_server
 participant OnDemand
 User->OnDemand: View your Hello World page
-OnDemand->Browser:OnDemand sends back page\nwith iframe to your addon 
-Browser->Add_on_server:GET /helloworld.html?signed_request=* 
-Add_on_server->Browser:Responds with contents of\n helloworld.html page 
+OnDemand->Browser:OnDemand sends back page\nwith iframe to your addon
+Browser->Add_on_server:GET /helloworld.html?signed_request=*
+Add_on_server->Browser:Responds with contents of\n helloworld.html page
 Browser->User:Requested page\nrendered
 </div>
 
