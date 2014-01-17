@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
@@ -35,7 +35,7 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     private static final String PLUGIN_KEY = "pluginKey";
 
     @Mock protected WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
-    @Mock protected IFrameRenderStrategyFactory iFrameRenderStrategyFactory;
+    @Mock protected IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     @Mock protected IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     @Mock protected IFramePageServletDescriptorFactory servletDescriptorFactory;
     @Mock protected BundleContext bundleContext;

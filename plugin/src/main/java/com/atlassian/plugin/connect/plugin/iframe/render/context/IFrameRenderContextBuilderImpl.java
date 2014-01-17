@@ -9,8 +9,6 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -75,31 +73,38 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             this.iframeUri = iframeUri;
         }
 
+        private void putIfNotNull(String key, Object value)
+        {
+            if (value != null) {
+                additionalContext.put(key, value);
+            }
+        }
+
         @Override
         public InitializedBuilder dialog(String dialogId)
         {
-            additionalContext.put("dialog", dialogId);
+            putIfNotNull("dialog", dialogId);
             return this;
         }
 
         @Override
         public InitializedBuilder simpleDialog(final String simpleDialogId)
         {
-            additionalContext.put("simpleDialog", simpleDialogId);
+            putIfNotNull("simpleDialog", simpleDialogId);
             return this;
         }
 
         @Override
         public InitializedBuilder decorator(final String decorator)
         {
-            additionalContext.put("decorator", decorator);
+            putIfNotNull("decorator", decorator);
             return this;
         }
 
         @Override
         public InitializedBuilder title(final String title)
         {
-            additionalContext.put("title", title);
+            putIfNotNull("title", title);
             return this;
         }
 
@@ -124,7 +129,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         @Override
         public InitializedBuilder context(final String key, final Object value)
         {
-            additionalContext.put(key, value);
+            putIfNotNull(key, value);
             return this;
         }
 

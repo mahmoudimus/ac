@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
@@ -51,7 +51,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         }
     }
 
-    private final IFrameRenderStrategyFactory iFrameRenderStrategyFactory;
+    private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final String decorator;
@@ -59,14 +59,14 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
     private final Map<String, String> metaTagContents;
     private final Condition condition;
 
-    public AbstractConnectPageModuleProvider(IFrameRenderStrategyFactory iFrameRenderStrategyFactory,
+    public AbstractConnectPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             String decorator, String defaultSection, int defaultWeight,
             String templateSuffix, Map<String, String> metaTagContents,
             Condition condition, @Nullable IFrameParams iFrameParams)
     {
-        this.iFrameRenderStrategyFactory = iFrameRenderStrategyFactory;
+        this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.defaultSection = defaultSection;
         this.defaultWeight = defaultWeight;
@@ -87,8 +87,15 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         for (ConnectPageModuleBean bean : beans)
         {
             // register a render strategy for our iframe page
-            IFrameRenderStrategy renderStrategy = iFrameRenderStrategyFactory.page(plugin.getKey(), bean.getKey(),
-                    bean.getUrl(), "velocity/iframe-page" + templateSuffix + ".vm", decorator, bean.getDisplayName());
+            IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                .addOn(plugin.getKey())
+                .module(bean.getKey())
+                .template("velocity/iframe-page" + templateSuffix + ".vm")
+                .urlTemplate(bean.getUrl())
+                .decorator(decorator)
+                .condition(condition)
+                .title(bean.getDisplayName())
+                .build();
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
 
             // create a web item targeting the iframe page

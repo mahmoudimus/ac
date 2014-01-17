@@ -13,7 +13,7 @@ public class AdminPageModuleProviderTest extends AbstractPageModuleProviderTest<
     @Override
     protected AdminPageModuleProvider createPageModuleProvider()
     {
-        return new AdminPageModuleProvider(iFrameRenderStrategyFactory, iFrameRenderStrategyRegistry,
+        return new AdminPageModuleProvider(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
                 webItemModuleDescriptorFactory, productAccessor, userManager);
     }
 

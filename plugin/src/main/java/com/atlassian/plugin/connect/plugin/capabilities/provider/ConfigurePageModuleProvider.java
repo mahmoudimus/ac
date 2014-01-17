@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
@@ -18,12 +18,12 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     // Does that mean it was not needed or is this an existing bug?
 
     @Autowired
-    public ConfigurePageModuleProvider(IFrameRenderStrategyFactory iFrameRenderStrategyFactory,
+    public ConfigurePageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             ProductAccessor productAccessor, UserManager userManager)
     {
-        super(iFrameRenderStrategyFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
                 productAccessor, userManager, THE_SECTION_U_HAVE_WHEN_UR_NOT_HAVING_A_SECTION);
     }
 

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -15,12 +15,12 @@ public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
     public static final String PROFILE_PAGE_DECORATOR = "atl.userprofile";
 
     @Autowired
-    public ProfilePageModuleProvider(IFrameRenderStrategyFactory iFrameRenderStrategyFactory,
+    public ProfilePageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                      WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                      ProductAccessor productAccessor)
     {
-        super(iFrameRenderStrategyFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
                 PROFILE_PAGE_DECORATOR, productAccessor.getPreferredProfileSectionKey(),
                 productAccessor.getPreferredProfileWeight(), "", ImmutableMap.<String, String>of(),
                 new AlwaysDisplayCondition(), null);

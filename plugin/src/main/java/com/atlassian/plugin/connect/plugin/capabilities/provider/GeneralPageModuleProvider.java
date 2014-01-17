@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
@@ -17,12 +17,12 @@ public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
     private static final String GENERAL_PAGE_DECORATOR = "atl.general";
 
     @Autowired
-    public GeneralPageModuleProvider(IFrameRenderStrategyFactory iFrameRenderStrategyFactory,
+    public GeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                      WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                      ProductAccessor productAccessor)
     {
-        super(iFrameRenderStrategyFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
                 GENERAL_PAGE_DECORATOR, productAccessor.getPreferredGeneralSectionKey(),
                 productAccessor.getPreferredGeneralWeight(), "", ImmutableMap.<String, String>of(),
                 new AlwaysDisplayCondition(), withGeneralPage());

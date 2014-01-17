@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.module.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -14,13 +14,13 @@ public abstract class AbstractAdminPageModuleProvider extends AbstractConnectPag
 {
     private static final String ADMIN_PAGE_DECORATOR = "atl.admin";
 
-    public AbstractAdminPageModuleProvider(IFrameRenderStrategyFactory iFrameRenderStrategyFactory,
+    public AbstractAdminPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             ProductAccessor productAccessor,
             UserManager userManager, @Nullable String sectionKey)
     {
-        super(iFrameRenderStrategyFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
                 ADMIN_PAGE_DECORATOR, sectionKey != null ? sectionKey : productAccessor.getPreferredAdminSectionKey(),
                 productAccessor.getPreferredAdminWeight(), "",
                 ImmutableMap.<String, String>of(), new UserIsAdminCondition(userManager), null);
