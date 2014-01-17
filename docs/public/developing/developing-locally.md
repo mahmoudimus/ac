@@ -9,7 +9,7 @@ This document explains how you would go about developing your add-on with a loca
 OnDemand, and [Selling on  Marketplace](./selling-on-marketplace.html) explains how to release your add-on to the
 public.
 
-## Step 1. Start the local Atlassian application instance
+## Step 1. Start the local Atlassian application
 
 The easiest way to get a local instance of the Atlassian application is by using the
 [Atlassian Plugins SDK](https://developer.atlassian.com/display/DOCS/Downloads).
@@ -19,7 +19,7 @@ don't need the plugin building capabilities of the SDK, you can use its features
 installing and starting Atlassian applications.
 
 We recommend you start the host application using the SDK command shown here. Atlassian Connect is only present in
-Atlassian OnDemand and not yet included with Download instances of our software. Therefore certain components, including
+Atlassian OnDemand and not yet included with Download distributions of our software. Therefore certain components, including
 the Atlassian Connect Framework itself, are included here in the startup command. Without these components present,
 Connect add-ons cannot be installed. If you are not using the commands below, you must ensure all of the components
 listed in the '--bundled-plugins' argument are present in your Atlassian application.
