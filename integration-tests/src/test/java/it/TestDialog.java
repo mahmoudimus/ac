@@ -17,7 +17,7 @@ import org.junit.Test;
 import static it.TestConstants.BETTY_USERNAME;
 import static org.junit.Assert.assertEquals;
 
-public class TestDialog extends AbstractRemotablePluginTest
+public class TestDialog extends ConnectWebDriverTestBase
 {
     private static AtlassianConnectAddOnRunner remotePlugin;
 
