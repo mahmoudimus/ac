@@ -1,6 +1,6 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans;
+package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

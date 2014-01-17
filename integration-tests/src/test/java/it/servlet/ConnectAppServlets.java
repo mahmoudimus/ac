@@ -51,6 +51,14 @@ public class ConnectAppServlets
     }
 
     /**
+     * @return a servlet with resizing disabled
+     */
+    public static HttpServlet noResizeServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-no-resize.mu"));
+    }
+
+    /**
      * Verify from a WebDriver test using {@link RemoteWebPanel#getCustomMessage()}.
      *
      * @param message the message to display
@@ -110,4 +118,8 @@ public class ConnectAppServlets
         return wrapContextAwareServlet(new EchoQueryParametersServlet());
     }
 
+    public static HttpServlet resourceServlet(String resourcePath, String contentType)
+    {
+        return wrapContextAwareServlet(new ResourceServlet(resourcePath, contentType));
+    }
 }

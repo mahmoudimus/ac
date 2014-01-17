@@ -319,7 +319,7 @@ function startHarpServerAndWatchSrcFiles() {
     }
 
     // debounce to prevent multiple rapid saves from kicking off multiple rebuilds
-    restartHarpServer = _.debounce(restartHarpServer, 2000);
+    restartHarpServer = _.debounce(restartHarpServer, 1000);
 
     harpServer = startHarpServer();
 
@@ -345,6 +345,10 @@ function compileHarpSources() {
     fork('./node_modules/harp/bin/harp', ["-o", "../www", "compile"], {'cwd': genSrcPrefix});
 }
 
+function compileJsDocs() {
+    fork('./node_modules/.bin/jsdoc', ["-c", "jsdoc-conf.json", "-t", "jsdoc-template"]);
+}
+compileJsDocs();
 rebuildHarpSite();
 
 if (program.serve) {

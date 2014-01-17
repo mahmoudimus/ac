@@ -1,30 +1,25 @@
 package com.atlassian.maven.plugins.json.schemagen;
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-
 import com.atlassian.json.schema.doclet.JsonSchemaDoclet;
 import com.atlassian.json.schema.scanner.InterfaceImplementationScanner;
-
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.io.File;
+import java.util.regex.Matcher;
+
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.name;
 
 @Mojo(name = "generate-support-docs")
 public class GenerateSupportDocsMojo extends AbstractSchemaGenMojo
 {
     @Parameter
     private String basePackage = "";
+
+    @Parameter(property = "sourcepath", defaultValue = "${project.basedir}/src/main/java")
+    private String sourcepath = "";
     
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException
@@ -65,6 +60,7 @@ public class GenerateSupportDocsMojo extends AbstractSchemaGenMojo
                         element(name("docletPath"), getClasspath()),
                         element(name("additionalparam"),"-output \"" + resourcedocPath + "\""),
                         element(name("sourceFileIncludes"),element(name("sourceFileInclude"),packagePath)),
+                        element(name("sourcepath"),sourcepath),
                         element(name("quiet"),"true"),
                         element(name("show"),"private"),
                         element(name("useStandardDocletOptions"),"false")

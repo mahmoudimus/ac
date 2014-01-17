@@ -1,8 +1,5 @@
 {
     "guides": {
-        "whats-new.html": {
-            "title": "What's New"
-        },
         "introduction.html": {
             "title": "Introduction"
         },
@@ -41,8 +38,16 @@
         "development-loop.html": {
             "title": "Development Loop"
         },
+        "upgrades.html": {
+            "title": "Upgrades",
+            "new": true
+        },
         "licensing.html": {
             "title": "Licensing"
+        },
+        "deprecations.html": {
+            "title": "Deprecation Notices",
+            "new": true
         }
     },
     "rest-apis": {
@@ -51,6 +56,9 @@
         }
     },
     "resources": {
+        "release-notes.html": {
+            "title": "Release Notes"
+        },
         "samples.html": {
             "title": "Sample Add-ons"
         },

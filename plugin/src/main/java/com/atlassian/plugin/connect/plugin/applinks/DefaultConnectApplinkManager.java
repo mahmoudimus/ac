@@ -7,15 +7,16 @@ import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
@@ -38,7 +39,7 @@ import java.util.List;
 @Named
 public class DefaultConnectApplinkManager implements ConnectApplinkManager
 {
-    public static final String PLUGIN_KEY_PROPERTY = "plugin-key";
+    public static final String PLUGIN_KEY_PROPERTY = JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME;
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectApplinkManager.class);
     private final MutatingApplicationLinkService applicationLinkService;
     private final TypeAccessor typeAccessor;
@@ -98,7 +99,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                     {
                         case JWT:
                             link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
-                            link.putProperty(/*ApplinksJwtPeerService.ATLASSIAN_JWT_SHARED_SECRET*/"atlassian.jwt.shared.secret", publicKey); // TODO: extract in ACDEV-663
+                            link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
                             break;
                         case OAUTH:
                             oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);

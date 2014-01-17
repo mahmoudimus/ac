@@ -1,8 +1,9 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.schema.DescriptorValidationResult;
-import com.atlassian.plugin.connect.plugin.capabilities.schema.JsonDescriptorValidator;
+import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
+import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
+import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @since 1.0
@@ -38,9 +40,10 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     private final FormatConverter formatConverter;
     private final BundleContext bundleContext;
     private final JsonDescriptorValidator jsonDescriptorValidator;
+    private final ConnectSchemaLocator schemaLocator;
 
     @Inject
-    public ConnectUPMInstallHandler(LegacyAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext, JsonDescriptorValidator jsonDescriptorValidator)
+    public ConnectUPMInstallHandler(LegacyAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext, JsonDescriptorValidator jsonDescriptorValidator, ConnectSchemaLocator schemaLocator)
     {
         this.connectIdentifier = connectIdentifier;
         this.connectInstaller = connectInstaller;
@@ -48,6 +51,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         this.formatConverter = formatConverter;
         this.bundleContext = bundleContext;
         this.jsonDescriptorValidator = jsonDescriptorValidator;
+        this.schemaLocator = schemaLocator;
     }
 
     @Override
@@ -55,24 +59,22 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     {
         boolean isConnectXml = connectIdentifier.isConnectAddOn(descriptorFile);
         boolean canInstall = isConnectXml;
-        DescriptorValidationResult result;
-        
+                
         if (!isConnectXml)
         {
             try
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                result = jsonDescriptorValidator.validate(json);
+                canInstall = jsonDescriptorValidator.isConnectJson(json);
 
-                canInstall = result.isSuccess();
                 if (!canInstall)
                 {
-                    log.error("Could not validate add-on descriptor: " + result.getMessageReport());
+                    log.error("The given plugin descriptor is not a valid connect json file");
                 }
             }
-            catch (Exception e)
+            catch (IOException e)
             {
-                log.error(ConnectUPMInstallHandler.class.getSimpleName() + " can not load descriptor " + descriptorFile.getName(), e);
+                log.error("Cannot load descriptor " + descriptorFile.getName(), e);
                 canInstall = false;
             }
         }
@@ -89,6 +91,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         {
             boolean isXml = connectIdentifier.isConnectAddOn(descriptorFile);
             Plugin plugin;
+            DescriptorValidationResult result;
 
             UserProfile user = userManager.getRemoteUser();
             String username = user == null ? "" : user.getUsername();
@@ -102,6 +105,18 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             else
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
+                result = jsonDescriptorValidator.validate(json,schemaLocator.getSchemaForCurrentProduct());
+                Option<String> errorI18nKey = Option.some("connect.invalid.descriptor.install.exception");
+                
+                if(!result.isSuccess())
+                {
+                    String msg = "Invalid connect descriptor: " + result.getMessageReport();
+                    log.error(msg);
+                    
+                    //Note: currently UPM can only display static custom messages from I18n props. It will not display any dynamic strings.
+                    throw new PluginInstallException(msg,errorI18nKey,false);
+                }
+                
                 plugin = connectInstaller.install(username, json);
             }
 

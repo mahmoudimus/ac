@@ -1,5 +1,15 @@
-AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
+AP.define("dialog", ["_dollar", "_rpc"],
 
+  /**
+   * The Dialog module provides a mechanism for launching modal dialogs from within an add-on's iframe.
+   * A modal dialog displays information without requiring the user to leave the current page.
+   * The dialog is opened over the entire window, rather than within the iframe itself.
+   *
+   * For more information, read about the Atlassian User Interface [dialog component](https://docs.atlassian.com/aui/latest/docs/dialog.html).
+   * @exports Dialog
+   */
+
+  function ($, rpc) {
   "use strict";
 
   var isDialog = window.location.toString().indexOf("dialog=1") > 0,
@@ -12,7 +22,13 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
     var listeners = {};
 
     exports = {
-
+      /**
+      * Creates a dialog for a module key
+      * @example
+      * AP.require('dialog', function(dialog){
+      *   dialog.create('mydialog');
+      * });
+      */
       create: function(options) {
         remote.createDialog(options);
         return {
@@ -25,7 +41,16 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
           }
         };
       },
-
+      /**
+      * Closes the currently open dialog. Optionally pass data to listeners of the `dialog.close` event.
+      * This will only close a dialog that has been opened by your add-on.
+      * You can register for close events using the `dialog.close` event and the [events module](module-Event.html)
+      * @param {Object} data An object to be emitted on dialog close.
+      * @example
+      * AP.require('dialog', function(dialog){
+      *   dialog.close({foo: 'bar'});
+      * });
+      */
       close: function(data) {
         remote.events.emit("dialog.close", data);
         remote.closeDialog();
@@ -33,32 +58,94 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
 
       isDialog: isDialog,
 
-      // register callbacks responding to messages from the host dialog, such as "submit" or "cancel"
-      //
-      // @deprecated
+      /**
+      * register callbacks responding to messages from the host dialog, such as "submit" or "cancel"
+      * @param String button either "cancel" or "submit"
+      * @param Function callback function
+      * @deprecated
+      */
       onDialogMessage: function (message, listener) {
         this.getButton(message).bind(listener);
       },
-
-      // gets a button proxy for a button in the host's dialog button panel by name
+      /**
+      * Returns the button that was requested (either cancel or submit)
+      * @returns {DialogButton}
+      * @example
+      * AP.require('dialog', function(dialog){
+      *   dialog.getButton('submit');
+      * });
+      */
       getButton: function (name) {
+        /**
+        * @class DialogButton
+        * @description A dialog button that can be controlled with javascript
+        */
         return {
           name: name,
+
+          /**
+          * Sets the button state to enabled
+          * @memberOf DialogButton
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').enable();
+          * });
+          */
           enable: function () {
             remote.setDialogButtonEnabled(name, true);
           },
+          /**
+          * Sets the button state to disabled
+          * @memberOf DialogButton
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').disable();
+          * });
+          */
           disable: function () {
             remote.setDialogButtonEnabled(name, false);
           },
+          /**
+          * Toggle the button state between enabled and disabled.
+          * @memberOf DialogButton
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').toggle();
+          * });
+          */
           toggle: function () {
             var self = this;
             self.isEnabled(function (enabled) {
               self[enabled ? "disable" : "enable"](name);
             });
           },
+          /**
+          * Query a button for it's current state.
+          * @memberOf DialogButton
+          * @param {Function} callback function to receive the button state.
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').isEnabled(function(enabled){
+          *     if(enabled){
+          *       //button is enabled
+          *     }
+          *   });
+          * });
+          */
           isEnabled: function (callback) {
             remote.isDialogButtonEnabled(name, callback);
           },
+          /**
+          * Registers a function to be called when the button is clicked.
+          * @memberOf DialogButton
+          * @param {Function} callback function to be triggered on click or programatically.
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').bind(function(){
+          *     alert('clicked!');
+          *   });
+          * });
+          */
           bind: function (listener) {
             var list = listeners[name];
             if (!list) {
@@ -66,6 +153,17 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
             }
             list.push(listener);
           },
+          /**
+          * Trigger a callback bound to a button.
+          * @memberOf DialogButton
+          * @example
+          * AP.require('dialog', function(dialog){
+          *   dialog.getButton('submit').bind(function(){
+          *     alert('clicked!');
+          *   });
+          *   dialog.getButton('submit').trigger();
+          * });
+          */
           trigger: function () {
             var self = this,
                 cont = true,

@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.*;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
@@ -16,7 +16,6 @@ import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.upm.spi.PluginInstallException;
 import org.dom4j.Document;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final OAuthLinkManager oAuthLinkManager;
     private final RemoteEventsHandler remoteEventsHandler;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
-    private final BundleContext bundleContext;
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectDescriptorRegistry connectDescriptorRegistry;
     private final ConnectEventHandler connectEventHandler;
@@ -42,7 +40,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
-    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext, ConnectApplinkManager connectApplinkManager, ConnectDescriptorRegistry connectDescriptorRegistry, ConnectEventHandler connectEventHandler, SharedSecretService sharedSecretService)
+    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, ConnectApplinkManager connectApplinkManager, ConnectDescriptorRegistry connectDescriptorRegistry, ConnectEventHandler connectEventHandler, SharedSecretService sharedSecretService)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -50,7 +48,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.oAuthLinkManager = oAuthLinkManager;
         this.remoteEventsHandler = remoteEventsHandler;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
-        this.bundleContext = bundleContext;
         this.connectApplinkManager = connectApplinkManager;
         this.connectDescriptorRegistry = connectDescriptorRegistry;
         this.connectEventHandler = connectEventHandler;
@@ -87,7 +84,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         String pluginKey;
         try
         {
-            ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson(bundleContext).fromJson(jsonDescriptor, ConnectAddonBean.class);
+            ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(jsonDescriptor, ConnectAddonBean.class);
             pluginKey = addOn.getKey();
 
             removeOldPlugin(addOn.getKey());

@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.dom4j.Document;
@@ -17,6 +14,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 import static org.dom4j.DocumentHelper.selectNodes;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -25,9 +25,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectPluginXmlFactoryTest
 {
-
-    private static final String MY_CONFIG_MODULE = "my-config-module";
-    private static final String EXPECTED_CONFIGURE_URL = "/plugins/servlet/ac/addonKey/" + MY_CONFIG_MODULE;
+    private static final String EXPECTED_CONFIGURE_URL = "/plugins/servlet/ac/addonKey/configure-page-url";
     private ConnectAddonBean addonWithNoConfigurePages;
     private ConnectAddonBean addonWithOneConfigurePage;
 
@@ -39,9 +37,9 @@ public class ConnectPluginXmlFactoryTest
                 .withKey("addonKey")
                 .withModule("configurePage", ConnectPageModuleBean.newPageBean()
                         .withName(new I18nProperty("myConfigModule", null))
+                        .withUrl("/configure-page-url")
                         .build())
                 .build();
-
     }
 
     @Test

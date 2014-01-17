@@ -17,6 +17,7 @@ requirejs.config({
     'aui-atlassian': '../target/qunit/dependencies/js/atlassian/atlassian',
     // host side
     'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
+    'iframe/host/_status_helper': '../src/main/resources/js/iframe/host/_status_helper',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'iframe/host/content': '../src/main/resources/js/iframe/host/content',
     'dialog/main': '../src/main/resources/js/dialog/main',
@@ -56,13 +57,20 @@ requirejs.config({
     'inline-dialog/simple': {
       deps: [
         'iframe/host/_dollar',
-        'iframe/host/content'
+        'iframe/host/content',
+        'iframe/host/_status_helper'
+      ]
+    },
+    'iframe/host/_status_helper': {
+      deps: [
+          'iframe/host/_dollar'
       ]
     },
     'inline-dialog/main': {
       deps: [
         'iframe/host/_dollar',
-        'iframe/host/content'
+        'iframe/host/content',
+        'iframe/host/_status_helper'
       ]
     },
     'dialog/main': {

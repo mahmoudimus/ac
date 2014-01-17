@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.DownloadScopeHelper;
+import com.atlassian.sal.api.user.UserKey;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
@@ -23,9 +24,9 @@ public class JiraDownloadAttachmentScope extends AbstractPermission implements A
     }
 
     @Override
-    public boolean allow(final HttpServletRequest request, @Nullable final String username)
+    public boolean allow(final HttpServletRequest request, @Nullable final UserKey user)
     {
-        return delegate.allow(request, username);
+        return delegate.allow(request, user);
     }
 
     @Override

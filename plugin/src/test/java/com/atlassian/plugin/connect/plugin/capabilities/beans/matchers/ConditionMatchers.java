@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
+package com.atlassian.plugin.connect.modules.beans.matchers;
 
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AbstractCompositeCondition;
@@ -10,9 +10,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**

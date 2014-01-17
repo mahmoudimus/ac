@@ -1,18 +1,18 @@
 package com.atlassian.plugin.connect.test.server;
 
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import it.servlet.ContextServlet;
 import it.servlet.HttpContextServlet;
 import net.oauth.signature.RSA_SHA1;
@@ -26,16 +26,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
+import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -54,6 +57,7 @@ public class ConnectRunner
     private final AtlassianConnectRestClient installer;
     private final ConnectAddonBeanBuilder addonBuilder;
     private final String pluginKey;
+    private final Set<ScopeName> scopes = new HashSet<ScopeName>();
     private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
     
@@ -200,6 +204,12 @@ public class ConnectRunner
         return this;
     }
 
+    public ConnectRunner addScope(ScopeName scopeName)
+    {
+        scopes.add(scopeName);
+        return this;
+    }
+
     public SignedRequestHandler getSignedRequestHandler()
     {
         return signedRequestHandler;
@@ -232,6 +242,7 @@ public class ConnectRunner
         final String displayUrl = "http://localhost:" + port;
 
         addonBuilder.withBaseurl(displayUrl);
+        addonBuilder.withScopes(scopes);
 
         this.addon = addonBuilder.build();
 
@@ -297,6 +308,7 @@ public class ConnectRunner
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
         {
             String json = ConnectModulesGsonFactory.getGson().toJson(addon);
+            response.setContentType(MediaType.APPLICATION_JSON);
             response.getWriter().write(json);
             response.getWriter().close();
         }
@@ -304,7 +316,7 @@ public class ConnectRunner
 
     private static class TestEnv implements Environment
     {
-        private Map<String, String> env = Maps.newHashMap();
+        private Map<String, String> env = newHashMap();
 
         @Override
         public String getEnv(String name)

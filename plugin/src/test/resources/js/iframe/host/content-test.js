@@ -67,7 +67,6 @@
                 equal(spy.firstCall.args[1]['height'], '200');
             });
 
-
         });
 
 

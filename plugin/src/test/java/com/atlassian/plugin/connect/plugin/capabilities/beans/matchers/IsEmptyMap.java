@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
+package com.atlassian.plugin.connect.modules.beans.matchers;
 
 import org.hamcrest.Description;
 import org.hamcrest.Factory;

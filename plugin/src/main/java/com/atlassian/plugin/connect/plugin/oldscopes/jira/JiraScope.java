@@ -1,14 +1,11 @@
 package com.atlassian.plugin.connect.plugin.oldscopes.jira;
 
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
-import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
-import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
-import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
-import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
-import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
+import com.atlassian.plugin.connect.spi.permission.scope.*;
+import com.atlassian.sal.api.user.UserKey;
 
-import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.concat;
@@ -30,9 +27,9 @@ abstract class JiraScope extends AbstractPermission implements ApiScope
     }
 
     @Override
-    public final boolean allow(HttpServletRequest request, String username)
+    public final boolean allow(HttpServletRequest request, UserKey user)
     {
-        return soapScopeHelper.allow(request, username) || jsonRpcScopeHelper.allow(request, username) || restApiScopeHelper.allow(request, username);
+        return soapScopeHelper.allow(request, user) || jsonRpcScopeHelper.allow(request, user) || restApiScopeHelper.allow(request, user);
     }
 
     @Override

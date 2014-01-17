@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.plugin.module.permission;
 
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -26,9 +27,10 @@ import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENAB
 public class ApiScopingFilter implements Filter
 {
     /**
-     * Set by {@link OAuth2LOAuthenticator}, indicating the Connect add-on that is the origin of the current request.
+     * Set by a {@link Filter}, possibly using {@link OAuth2LOAuthenticator} or {@link com.atlassian.jwt.plugin.sal.JwtAuthenticator},
+     * indicating the Connect add-on that is the origin of the current request.
      */
-    public static final String PLUGIN_KEY = "Plugin-Key";
+    private static final String PLUGIN_KEY = JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME;
 
     /**
      * Request header set by /iframe/host/main.js, indicating that the current request is an XDM request. The value
@@ -87,19 +89,16 @@ public class ApiScopingFilter implements Filter
     {
         // we consume the input to allow inspection of the body via getInputStream
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
-
-        UserProfile remoteUser = userManager.getRemoteUser();
-        String username = remoteUser == null ? "" : remoteUser.getUsername();
-
-        if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, username))
+        UserKey user = userManager.getRemoteUserKey(req);
+        if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, user))
         {
             log.warn("Request not in an authorized API scope from app '{}' as user '{}' on URL '{}'",
-                    new Object[]{clientKey, username, req.getRequestURI()});
+                    new Object[]{clientKey, user, req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
             return;
         }
         log.info("Authorized app '{}' to access API at URL '{}' for user '{}'",
-                new Object[]{clientKey, req.getRequestURI(), username});
+                new Object[]{clientKey, req.getRequestURI(), user});
         chain.doFilter(inputConsumingRequest, res);
     }
 
@@ -158,14 +157,25 @@ public class ApiScopingFilter implements Filter
     }
 
     /**
-     * @param req the context {@link javax.servlet.http.HttpServletRequest}
-     * @return the OAuth client key for the remote app, or {@code null} if 2LO authentication failed or was not
+     * @param req the context {@link HttpServletRequest}
+     * @return the unique add-on id, synonymous with OAuth client key and JWT issuer, or {@code null} if 2LO authentication failed or was not
      *         attempted
      */
     @Nullable
     public static String extractClientKey(HttpServletRequest req)
     {
         return (String) req.getAttribute(PLUGIN_KEY);
+    }
+
+    /**
+     * Set the id of a Connect add-on in the request attributes.
+     * @param req the context {@link HttpServletRequest}
+     * @return the unique add-on id, synonymous with OAuth client key and JWT issuer, or {@code null} if 2LO authentication failed or was not
+     *         attempted
+     */
+    public static void setClientKey(@Nonnull HttpServletRequest req, @Nonnull String clientKey)
+    {
+        req.setAttribute(PLUGIN_KEY, clientKey);
     }
 
     /**

@@ -1,11 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import javax.annotation.Nullable;
-
 import com.atlassian.fugue.Effect;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
 import com.google.common.base.Function;
 import org.dom4j.Document;
@@ -13,6 +11,8 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
 
 import static com.atlassian.fugue.Option.option;
 
@@ -66,8 +66,7 @@ public class ConnectPluginXmlFactory
             @Override
             public String apply(@Nullable ConnectPageModuleBean pageModule)
             {
-                return relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(addon.getKey(),
-                        pageModule.getKey()).getRelativeUri();
+                return relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(addon.getKey(), pageModule.getUrl()).getRelativeUri();
             }
         });
     }

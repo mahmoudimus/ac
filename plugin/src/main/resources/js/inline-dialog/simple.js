@@ -1,48 +1,32 @@
-_AP.define("inline-dialog/simple", ["_dollar", "host/content"], function($, hostContentUtilities) {
+_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function($, statusHelper) {
 
     var idSeq = 0;
-
-    var servletPlaceHolder = "ap-servlet-placeholder";
+    function nextId(){
+        return 'inline-dialog-content-' + idSeq;
+    }
 
     return function (contentUrl, options) {
-        var $nexus;
-
-        var timeout = setTimeout(function () {
-            $nexus
-                .append("<div class='ap-inline-dialog-loading hidden'>&nbsp;</div>")
-                .find(".ap-inline-dialog-loading").show();
-        }, 500);
-
-        function preventTimeout() {
-            if (timeout) {
-                clearTimeout(timeout);
-                timeout = null;
-            }
-        }
-
         var $inlineDialog;
+        idSeq++;
 
         var displayInlineDialog = function(content, trigger, showPopup) {
-            populateInlineDialog(content);
-            showPopup();
 
-            $.ajax(contentUrl, {
-                dataType: "html",
-                success: function(data) {
-                    preventTimeout();
-                    content.html(data);
-                    content.data('inlineDialog', $inlineDialog);
-                },
-                error: function(xhr, status, ex) {
-                    preventTimeout();
-                    var title = "Unable to load add-on content";
-                    $nexus.html("<div class='aui-message error' style='margin: 10px'></div>");
-                    $nexus.find(".error").append("<p class='title'>" + title + "</p>");
-                    var msg = status + (ex ? ": " + ex.toString() : "");
-                    $nexus.find(".error").append(msg);
-                    AJS.log(msg);
-                }
-            });
+            options.w = options.w || options.width;
+            options.h = options.h || options.height;
+            if (!options.ns) {
+                options.ns = nextId();
+            }
+            options.container = options.ns;
+            options.src = options.url = options.url || contentUrl;
+            content.data('inlineDialog', $inlineDialog);
+
+            if(!content.find('iframe').length){
+                content.attr('id', 'ap-' + options.ns);
+                content.append('<div id="embedded-' + options.ns + '" />');
+                content.append(statusHelper.createStatusMessages());
+                _AP.create(options);
+            }
+            showPopup();
             return false;
         };
 
@@ -50,27 +34,18 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/content"], function($, host
         $inlineDialog = AJS.InlineDialog(
             options.bindTo,
             //assign unique id to inline Dialog
-            "ap-inline-dialog-" + (idSeq += 1),
+            "ap-" + nextId(),
             displayInlineDialog,
-            {
-                width: options.width
-            });
-
-        function populateInlineDialog(content){
-            if($("." + servletPlaceHolder, content).length !== 1){
-                content.wrapInner('<span class="' + servletPlaceHolder + '"></span>');
-            }
-            $nexus = content.find("." + servletPlaceHolder);
-        }
+            options
+        );
 
         return {
             id: $inlineDialog.attr('id'),
             show: function() {
                 $inlineDialog.show();
-            },
-
+            }
         };
+
     };
 
 });
-

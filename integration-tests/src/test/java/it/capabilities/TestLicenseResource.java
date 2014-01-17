@@ -1,16 +1,19 @@
 package it.capabilities;
 
-import com.atlassian.plugin.connect.test.LicenseUtils;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
+import com.atlassian.plugin.connect.test.LicenseUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.gson.Gson;
+
 import it.ConnectWebDriverTestBase;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -62,5 +65,6 @@ public class TestLicenseResource extends ConnectWebDriverTestBase
                 runner.stopAndUninstall();
             }
         }
+
     }
 }

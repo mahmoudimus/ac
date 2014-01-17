@@ -1,5 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
+import aQute.lib.osgi.Builder;
+import aQute.lib.osgi.Jar;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.osgi.framework.Constants;
+
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -9,13 +15,6 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.osgi.framework.Constants;
-
-import aQute.lib.osgi.Builder;
-import aQute.lib.osgi.Jar;
 
 /**
  * @since 1.0
@@ -77,7 +76,7 @@ public class ConnectAddOnBundleBuilder
 
             newJar = updateManifestInJar(fileNamePrefix, tempJarFile, manifestMap);
     
-            FileUtils.forceDelete(tempJarFile);
+            FileUtils.deleteQuietly(tempJarFile);
         }
         catch (FileNotFoundException e)
         {
@@ -172,6 +171,7 @@ public class ConnectAddOnBundleBuilder
         // close
         jarZip.close();
         append.close();
+        bnd.close();
         
         return newJar;
     }

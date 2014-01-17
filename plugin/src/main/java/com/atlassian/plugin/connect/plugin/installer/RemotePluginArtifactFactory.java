@@ -1,27 +1,27 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.PluginArtifact;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAddOnBundleBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.spi.Filenames;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-
 import com.google.common.base.Strings;
-
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Creates plugin artifacts for plugins installed in remote mode
@@ -54,7 +54,7 @@ public class RemotePluginArtifactFactory
             @Override
             public void build(ZipBuilder builder) throws IOException
             {
-                builder.addFile("atlassian-plugin.xml", document);
+                builder.addFile(Filenames.ATLASSIAN_PLUGIN_XML, document);
             }
         }));
     }
@@ -78,7 +78,8 @@ public class RemotePluginArtifactFactory
         builder.manifest(createManifest(addOn, username));
 
         //create the plugin.xml
-        builder.addResource("atlassian-plugin.xml", pluginXmlFactory.createPluginXml(addOn));
+        builder.addResource(Filenames.ATLASSIAN_PLUGIN_XML, pluginXmlFactory.createPluginXml(addOn));
+        builder.addResource(Filenames.ATLASSIAN_ADD_ON_JSON, ConnectModulesGsonFactory.getGson().toJson(addOn));
 
         return new JarPluginArtifact(builder.build(addOn.getKey().replaceAll(CLEAN_FILENAME_PATTERN, "-").toLowerCase()));
     }

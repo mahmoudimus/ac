@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.context;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Serializes a web-panel's context to URL parameters which will be included in web-panel's iframe URL.
@@ -33,7 +33,7 @@ public class ContextMapURLSerializer
 
     public Map<String, Object> getExtractedWebPanelParameters(final Map<String, Object> context)
     {
-        Map<String, Object> whiteListedContext = Maps.newHashMap();
+        Map<String, Object> whiteListedContext = newHashMap();
         for (ContextMapParameterExtractor extractor : contextMapParameterExtractors)
         {
             Optional<Object> option = extractor.extract(context);

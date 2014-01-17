@@ -7,7 +7,7 @@
     best documentation and clearest set of guidelines we can, and we're making these pre-release notes available to you
     for consideration and feedback.
     <p>
-    Please see the [What's New](./guides/whats-new.html) guide for a summary of recent changes to the Atlassian Connect framework.
+    Please see the [Release Notes](./resources/release-notes.html) guide for a summary of recent changes to the Atlassian Connect framework.
 </div>
 
 

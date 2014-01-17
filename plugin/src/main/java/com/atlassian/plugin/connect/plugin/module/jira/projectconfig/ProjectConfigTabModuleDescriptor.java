@@ -7,10 +7,10 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.*;
+import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
-import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
@@ -34,6 +34,7 @@ import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getServi
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Generates a project config tab with a servlet containing an iframe and a web item.
@@ -120,7 +121,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 
 	private class ProjectConfigTabPageBuilder
 	{
-		private Map<String, String> metaTagsContent = Maps.newHashMap();
+		private Map<String, String> metaTagsContent = newHashMap();
 
 		public ProjectConfigTabPageBuilder setWebItemContext(WebItemContext webItemContext)
 		{

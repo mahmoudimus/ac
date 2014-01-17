@@ -22,10 +22,11 @@ public class LicenseStatusBannerHelper
 {
     private static final String DISABLE_LICENSE_BANNER_PATH = "/rest/plugins/1.0/com.atlassian.support.stp-key/modules/stp-license-status-resources-key";
     private static final LicenseStatusBannerHelper INSTANCE = new LicenseStatusBannerHelper();
-
     private final AtomicBoolean licenseBannerRemoved = new AtomicBoolean(false);
 
-    private LicenseStatusBannerHelper() {}
+    private LicenseStatusBannerHelper()
+    {
+    }
 
     public static LicenseStatusBannerHelper instance()
     {
@@ -37,16 +38,12 @@ public class LicenseStatusBannerHelper
         if (!licenseBannerRemoved.get())
         {
             DefaultHttpClient client = new DefaultHttpClient();
-
             HttpPut request = new HttpPut(product.getProductInstance().getBaseUrl() + DISABLE_LICENSE_BANNER_PATH);
             request.setHeader("Content-Type", "application/vnd.atl.plugins.plugin.module+json");
             request.setEntity(new StringEntity(new JSONObject(ImmutableMap.<String, Object>of("enabled", "false")).toString()));
             request.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials(ADMIN_USERNAME, ADMIN_USERNAME), Charsets.UTF_8.toString(), false));
-
             client.execute(request, new BasicResponseHandler());
-
             licenseBannerRemoved.set(true);
         }
     }
-
 }
