@@ -41,6 +41,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
                         "adminPages",
                         newPageBean()
                                 .withName(new I18nProperty(PAGE_NAME, null))
+                                .withKey(GENERATED_PAGE_KEY)
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())

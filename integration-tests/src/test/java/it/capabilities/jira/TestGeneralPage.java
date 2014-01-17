@@ -30,6 +30,7 @@ import static org.junit.Assert.assertThat;
 public class TestGeneralPage extends JiraWebDriverTestBase
 {
     private static final String PLUGIN_KEY = "my-plugin";
+    public static final String KEY_MY_AWESOME_PAGE = "my-awesome-page";
 
     private static ConnectRunner remotePlugin;
 
@@ -41,6 +42,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
                         "generalPages",
                         newPageBean()
                                 .withName(new I18nProperty("My Awesome Page", null))
+                                .withKey(KEY_MY_AWESOME_PAGE)
                                 .withUrl("/pg?project_id={project.id}&project_key={project.key}")
                                 .withWeight(1234)
                                 .build())
@@ -64,7 +66,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
 
         product.visit(JiraViewProjectPage.class, project.getKey());
 
-        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, "my-awesome-page", "My Awesome Page");
+        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, "My Awesome Page");
 
         assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
 

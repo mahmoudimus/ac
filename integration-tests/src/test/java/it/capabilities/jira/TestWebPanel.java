@@ -28,6 +28,7 @@ public class TestWebPanel extends JiraWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
                 .addModule("webPanels", newWebPanelBean()
                         .withName(new I18nProperty("HipChat Discussions", "hipchat.discussions"))
+                        .withKey("hip-chat-discussions")
                         // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
                         .withUrl("/myWebPanelPage?issueId{issue.id}")
                         .withLocation("com.atlassian.jira.plugin.headernav.left.context")

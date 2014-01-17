@@ -26,6 +26,7 @@ import static org.junit.Assert.assertThat;
 public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 {
     private static final String REMOTE_PROJECT_CONFIG_TAB_NAME = "My Connect Project Config";
+    private static final String REMOTE_PROJECT_CONFIG_TAB_KEY = "my-connect-project-config";
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
@@ -34,6 +35,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addModule(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
                         .withName(new I18nProperty(REMOTE_PROJECT_CONFIG_TAB_NAME, null))
+                        .withKey(REMOTE_PROJECT_CONFIG_TAB_KEY)
                         .withUrl("/pct")
                         .withWeight(10)
                         .withLocation("projectgroup4")

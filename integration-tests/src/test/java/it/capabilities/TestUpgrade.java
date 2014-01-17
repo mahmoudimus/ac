@@ -20,6 +20,8 @@ import static org.junit.Assert.assertThat;
 public class TestUpgrade extends AbstractBrowserlessTest
 {
     private static final String PLUGIN_KEY = "my-upgraded-plugin";
+    public static final String KEY_PAGE_TWO = "page-two";
+    public static final String KEY_SERVLET_PAGE_TWO = "servlet-page-two";
 
     private ConnectRunner plugin0;
     private ConnectRunner plugin1;
@@ -49,6 +51,7 @@ public class TestUpgrade extends AbstractBrowserlessTest
                         "generalPages",
                         newPageBean()
                                 .withName(new I18nProperty("Page Two", null))
+                                .withKey(KEY_PAGE_TWO)
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())
@@ -58,8 +61,8 @@ public class TestUpgrade extends AbstractBrowserlessTest
         // check that the plugin only has two modules: a web item and servlet corresponding to the "Page Two" generalPage
         JSON pluginJson = JSON.parse(plugin1.getUpmPluginJson());
         Matcher<Iterable<? extends Value>> valMatcher = containsInAnyOrder(
-                hasProperty("key", "page-two"),
-                hasProperty("key", "servlet-page-two"));
+                hasProperty("key", KEY_PAGE_TWO),
+                hasProperty("key", KEY_SERVLET_PAGE_TWO));
         
         assertThat(pluginJson.get("modules"), isArrayMatching(valMatcher));
 
