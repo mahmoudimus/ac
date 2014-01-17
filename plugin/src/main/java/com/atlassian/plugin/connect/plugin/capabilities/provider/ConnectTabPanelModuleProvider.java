@@ -73,7 +73,7 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
         {
             if (FIELD_TO_HINTS.containsKey(jsonFieldName))
             {
-                // register a render strategy
+                // register a render strategy for tab panels
                 IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                         .addOn(plugin.getKey())
                         .module(bean.getKey())

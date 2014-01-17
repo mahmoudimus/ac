@@ -14,7 +14,7 @@ public interface IFrameRenderStrategy
 {
     void preProcessRequest(HttpServletRequest request);
 
-    void render(ModuleContextParameters moduleContextParameters, OutputStream outputStream) throws IOException;
-
     boolean shouldShow(Map<String, Object> conditionContext);
+
+    void render(ModuleContextParameters moduleContextParameters, OutputStream outputStream) throws IOException;
 }
