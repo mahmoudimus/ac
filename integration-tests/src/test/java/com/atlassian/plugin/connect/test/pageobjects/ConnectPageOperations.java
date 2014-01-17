@@ -75,4 +75,10 @@ public class ConnectPageOperations
         return findRemoteLinkedContent(ID, webItemId, dropDownMenuId, pageKey);
     }
 
+    public RemotePluginDialog findDialog(String key)
+    {
+        RemotePluginTestPage dialogContent = pageBinder.bind(RemotePluginTestPage.class, key);
+        return pageBinder.bind(RemotePluginDialog.class, dialogContent);
+    }
+
 }
