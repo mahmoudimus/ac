@@ -242,6 +242,13 @@ public class ModuleList extends BaseModuleBean
     private List<ConnectPageModuleBean> profilePages;
 
     /**
+     * The Space Tools Tab module allows you to add new tabs to the Space Tools area of Confluence.
+     * @schemaTitle Space Tools Tab
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider", products = {ProductFilter.CONFLUENCE})
+    private List<ConnectPageModuleBean> spaceToolsTabs;
+
+    /**
      * Static content macros allow you to add a macro into a Confluence page which is stored with the Confluence page
      * itself. The add-on is responsible for generating the rendered XHTML in
      * [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
@@ -250,13 +257,6 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.StaticContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<StaticContentMacroModuleBean> staticContentMacros;
-
-    /**
-     * The Space Tools Tab module allows you to add new tabs to the Space Tools area of Confluence.
-     * @schemaTitle Space Tools Tab
-     */
-    @ConnectModule(value = SpaceToolsTabModuleProvider.class, products = {ProductFilter.CONFLUENCE})
-    private List<ConnectPageModuleBean> spaceToolsTabs;
 
     public ModuleList()
     {
@@ -272,11 +272,11 @@ public class ModuleList extends BaseModuleBean
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.profilePages = newArrayList();
+        this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
-        this.spaceToolsTabs = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -343,13 +343,13 @@ public class ModuleList extends BaseModuleBean
         {
             this.dynamicContentMacros = newArrayList();
         }
-        if (null == staticContentMacros)
-        {
-            this.staticContentMacros = newArrayList();
-        }
         if (null == spaceToolsTabs)
         {
             this.spaceToolsTabs = newArrayList();
+        }
+        if (null == staticContentMacros)
+        {
+            this.staticContentMacros = newArrayList();
         }
     }
 
@@ -433,13 +433,13 @@ public class ModuleList extends BaseModuleBean
         return dynamicContentMacros;
     }
 
+    public List<ConnectPageModuleBean> getSpaceToolsTabs() {
+        return spaceToolsTabs;
+    }
+
     public List<StaticContentMacroModuleBean> getStaticContentMacros()
     {
         return staticContentMacros;
-    }
-
-    public List<ConnectPageModuleBean> getSpaceToolsTabs() {
-        return spaceToolsTabs;
     }
 
     // don't call super because BaseCapabilityBean has no data
@@ -472,8 +472,8 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
                 .append(profilePages, other.profilePages)
-                .append(staticContentMacros, other.staticContentMacros)
                 .append(spaceToolsTabs, other.spaceToolsTabs)
+                .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
                 .append(webPanels, webPanels)
@@ -498,8 +498,8 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
                 .append(profilePages)
-                .append(staticContentMacros)
                 .append(spaceToolsTabs)
+                .append(staticContentMacros)
                 .append(webhooks)
                 .append(webItems)
                 .append(webPanels)

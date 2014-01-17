@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.confluence;
 import com.atlassian.confluence.event.events.plugin.XWorkStateChangeEvent;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.module.XWorkPackageCreator;
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
 
 import com.opensymphony.webwork.dispatcher.VelocityResult;
@@ -32,20 +33,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith (MockitoJUnitRunner.class)
-public class SpaceToolsActionDescriptorTest
+public class XWorkActionDescriptorTest
 {
     @Mock private EventPublisher eventPublisher;
     @Mock private Plugin plugin;
     @Mock private SpaceToolsTabContext context;
+    @Mock private XWorkPackageCreator xWorkPackageCreator;
 
-    private SpaceToolsActionDescriptor descriptor;
+    private XWorkActionDescriptor descriptor;
 
     @Before
     public void setup()
     {
         ConfigurationManager.clearConfigurationProviders();
         assertEquals(1, ConfigurationManager.getConfigurationProviders().size());
-        descriptor = new SpaceToolsActionDescriptor(eventPublisher, plugin, "action-test-module", context, "/ac/test", "test-module");
+        descriptor = new XWorkActionDescriptor(eventPublisher, plugin, "action-test-module", xWorkPackageCreator);
     }
 
     @Test
@@ -71,28 +73,11 @@ public class SpaceToolsActionDescriptorTest
     }
 
     @Test
-    public void testXWorkConfiguration()
+    public void testInit()
     {
         Configuration configuration = mock(Configuration.class);
         descriptor.init(configuration);
 
-        ArgumentCaptor<PackageConfig> captor = ArgumentCaptor.forClass(PackageConfig.class);
-        verify(configuration).addPackageConfig(eq("action-test-module"), captor.capture());
-        PackageConfig packageConfig = captor.getValue();
-
-        assertEquals("/ac/test", packageConfig.getNamespace());
-        assertEquals("action-test-module", packageConfig.getName());
-
-        assertEquals(1, packageConfig.getActionConfigs().size());
-        ActionConfig actionConfig = (ActionConfig)packageConfig.getActionConfigs().values().iterator().next();
-        assertEquals(SpaceToolsIFrameAction.class.getName(), actionConfig.getClassName());
-        assertTrue(actionConfig.getParams().containsKey("context"));
-        assertSame(context, actionConfig.getParams().get("context"));
-
-        assertEquals(1, actionConfig.getResults().size());
-        ResultConfig resultConfig = (ResultConfig)actionConfig.getResults().get("success");
-        assertEquals(VelocityResult.class.getName(), resultConfig.getClassName());
-
-        assertThat(actionConfig.getInterceptors(), hasItem((Matcher)instanceOf(SpaceToolsContextInterceptor.class)));
+        verify(xWorkPackageCreator).createAndRegister(eq(configuration));
     }
 }
