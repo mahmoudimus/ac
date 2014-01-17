@@ -359,6 +359,10 @@
                             <groupId>com.atlassian.plugin</groupId>
                             <artifactId>atlassian-spring-scanner</artifactId>
                         </testBundleExclude>
+                        <testBundleExclude>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>atlassian-connect-modules</artifactId>
+                        </testBundleExclude>
                     </testBundleExcludes>
                     <instructions>
                         <!-- <Import-Package>
@@ -428,8 +432,8 @@
                             com.atlassian.plugin.connect.plugin.*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin.product*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin.product.*;version="${project.version}",
-                            com.atlassian.plugin.connect.modules.beans*,
-                            com.atlassian.plugin.connect.modules.beans.*
+                            com.atlassian.plugin.connect.modules*,
+                            com.atlassian.plugin.connect.modules*
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
