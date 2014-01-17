@@ -25,6 +25,6 @@
         }
     },
     "opts": {
-        "destination": "./public/javascript/"
+        "destination": "./target/gensrc/public/javascript/"
     }
 }
