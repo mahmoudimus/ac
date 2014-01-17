@@ -1,12 +1,9 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
-import com.atlassian.pageobjects.elements.ElementBy;
-import com.atlassian.pageobjects.elements.PageElement;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -17,17 +14,8 @@ public class ConfluenceMacroForm extends MacroForm
 {
     private static final String MACRO_PARAM = "macro-param-";
 
-    @ElementBy(className = "macro-input-fields")
-    private PageElement inputFieldForm;
-
     @FindBy(className = "macro-param-input")
     private List<WebElement> parameterInputs;
-
-    public boolean hasField(String parameterName)
-    {
-        PageElement field = inputFieldForm.find(By.id(MACRO_PARAM + parameterName));
-        return field.isPresent();
-    }
 
     public List<String> getParameterNames()
     {

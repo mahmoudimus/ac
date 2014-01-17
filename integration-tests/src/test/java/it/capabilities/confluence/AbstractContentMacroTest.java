@@ -243,13 +243,13 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         assertThat(macro, is(not(nullValue())));
     }
 
-    //@Test -- will only work once we're on 5.3-OD-15
+    @Test
     public void testAlias() throws Exception
     {
         CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
 
-        MacroList macroList = editorContent.autocompleteMacro(SIMPLE_MACRO_ALIAS);
+        MacroList macroList = editorContent.autoCompleteMacroList(SIMPLE_MACRO_ALIAS);
         assertThat(macroList.hasEntryWithKey(SIMPLE_MACRO_KEY), is(true));
     }
 
@@ -282,7 +282,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
     }
 
-    //@Test -- will only work in 5.3-OD-13 and later
+    @Test
     public void testImagePlaceholder() throws Exception
     {
         CreatePage editorPage = product.loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);

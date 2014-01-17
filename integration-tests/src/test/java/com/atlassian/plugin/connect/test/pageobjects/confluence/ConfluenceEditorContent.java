@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
 
 public class ConfluenceEditorContent extends EditorContent
 {
-    public MacroList autocompleteMacro(final String text)
+    public MacroList autoCompleteMacroList(final String text)
     {
         execute.onTinyMceIFrame(new Callable<Void>()
         {
