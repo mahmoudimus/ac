@@ -94,7 +94,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
                         .withName("space-context")
                         .withClazz(SpaceToolsContextInterceptor.class)
                         .build())
-                .withVelocityResult("success", "/velocity/space-tab-page.vm")
+                .withVelocityResult("success", "/velocity/confluence/space-tab-page.vm")
                 .build();
 
     }
