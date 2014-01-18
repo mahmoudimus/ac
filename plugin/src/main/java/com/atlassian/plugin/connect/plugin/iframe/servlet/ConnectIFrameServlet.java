@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameter
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -47,15 +46,10 @@ public class ConnectIFrameServlet extends HttpServlet
             if (renderStrategy != null)
             {
                 renderStrategy.preProcessRequest(req);
-
-                if (!renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
-                {
-                    throw new PermissionDeniedException(addOnKey, "Cannot render iframe for this page.");
-                }
-
+                renderStrategy.shouldShowOrThrow(Collections.<String, Object>emptyMap());
                 ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
                 resp.setContentType("text/html");
-                renderStrategy.render(moduleContextParameters, resp.getOutputStream());
+                renderStrategy.render(moduleContextParameters, resp.getWriter());
                 return;
             }
         }

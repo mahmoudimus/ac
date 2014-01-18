@@ -3,14 +3,14 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
@@ -203,7 +203,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @Override
-        public void render(final ModuleContextParameters moduleContextParameters, final OutputStream outputStream)
+        public void render(final ModuleContextParameters moduleContextParameters, final Writer writer)
                 throws IOException
         {
             String signedUri = iFrameUriBuilderFactory.builder()
@@ -223,13 +223,22 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .context("contextParams", moduleContextParameters)
                     .build();
 
-            templateRenderer.render(template, renderContext, new OutputStreamWriter(outputStream));
+            templateRenderer.render(template, renderContext, writer);
         }
 
         @Override
         public boolean shouldShow(Map<String, Object> conditionContext)
         {
             return condition == null || condition.shouldDisplay(conditionContext);
+        }
+
+        @Override
+        public void shouldShowOrThrow(final Map<String, Object> conditionContext)
+        {
+            if (!shouldShow(conditionContext))
+            {
+                throw new PermissionDeniedException(addOnKey, "Cannot render iframe for this page.");
+            }
         }
     }
 

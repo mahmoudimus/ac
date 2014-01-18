@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameter
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
  *
@@ -16,7 +17,7 @@ public class IFrameRenderStrategyUtil
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try
         {
-            iFrameRenderStrategy.render(moduleContextParameters, out);
+            iFrameRenderStrategy.render(moduleContextParameters, new OutputStreamWriter(out));
         }
         catch (IOException e)
         {

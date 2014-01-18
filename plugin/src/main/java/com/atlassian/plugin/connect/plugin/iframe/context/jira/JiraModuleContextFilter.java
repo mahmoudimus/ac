@@ -17,7 +17,7 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +104,7 @@ public class JiraModuleContextFilter implements ModuleContextFilter
 
     private Iterable<PermissionCheck> constructPermissionChecks()
     {
-        return Lists.newArrayList(
+        return ImmutableList.of(
                 new LongValuePermissionCheck()
                 {
                     @Override

@@ -3,7 +3,10 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebPanelConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,11 +19,17 @@ import java.util.List;
 public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelModuleBean>
 {
     private final WebPanelConnectModuleDescriptorFactory webPanelFactory;
+    private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
+    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     @Autowired
-    public WebPanelModuleProvider(WebPanelConnectModuleDescriptorFactory webPanelFactory)
+    public WebPanelModuleProvider(WebPanelConnectModuleDescriptorFactory webPanelFactory,
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
         this.webPanelFactory = webPanelFactory;
+        this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
+        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
     @Override
@@ -30,6 +39,17 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
 
         for (WebPanelModuleBean bean : beans)
         {
+            // register an iframe rendering strategy
+            IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                    .addOn(plugin.getKey())
+                    .module(bean.getKey())
+                    .genericPageTemplate()
+                    .urlTemplate(bean.getUrl())
+                    .title(bean.getDisplayName())
+                    .build();
+            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
+
+            // construct a module descriptor that will supply a web panel to the product
             descriptors.addAll(beanToDescriptors(plugin, addonBundleContext, bean));
         }
 

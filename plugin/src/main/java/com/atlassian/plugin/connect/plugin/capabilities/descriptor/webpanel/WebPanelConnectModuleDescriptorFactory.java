@@ -1,7 +1,9 @@
-package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean,WebPanelModuleDescriptor>
 {
-    public static final String REMOTE_WEB_PANEL_MODULE_PREFIX = "remote-web-panel-";
     private final ConnectAutowireUtil connectAutowireUtil;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
 
@@ -30,7 +31,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     @Override
     public WebPanelModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebPanelModuleBean bean)
     {
-        Element domElement = createDomElement(bean, REMOTE_WEB_PANEL_MODULE_PREFIX + bean.getKey(), plugin);
+        Element domElement = createDomElement(bean, bean.getKey(), plugin);
         final WebPanelModuleDescriptor descriptor = connectAutowireUtil.createBean(WebPanelConnectModuleDescriptor.class);
         descriptor.init(plugin, domElement);
         return descriptor;

@@ -13,7 +13,6 @@ public class ConfluenceModuleContextFilter implements ModuleContextFilter
     @Override
     public ModuleContextParameters filter(final ModuleContextParameters unfiltered)
     {
-        // TODO implement this
-        return unfiltered;
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 }
