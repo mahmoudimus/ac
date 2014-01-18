@@ -2,10 +2,11 @@ package it.capabilities.confluence;
 
 import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesPage;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedSpaceTemplatesPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
@@ -14,7 +15,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -67,5 +68,19 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
     }
 
-    // TODO: write test for space tools page.
+    @Test
+    public void spaceToolsShowsConnectTab()
+    {
+        loginAsAdmin();
+
+        SpaceTemplatesPage page = product.visit(FixedSpaceTemplatesPage.class, "ts");
+
+        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), "ac-space-tab");
+
+        RemotePluginEmbeddedTestPage addonContentsPage = addonPage.click();
+
+        assertThat(addonContentsPage.isLoaded(), equalTo(true));
+        assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
+
+    }
 }
