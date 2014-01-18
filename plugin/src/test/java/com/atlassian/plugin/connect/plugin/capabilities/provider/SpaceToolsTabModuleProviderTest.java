@@ -51,7 +51,7 @@ public class SpaceToolsTabModuleProviderTest
     @Before
     public void setup()
     {
-        provider = new SpaceToolsTabModuleProvider(webItemModuleDescriptorFactory, xWorkActionDescriptorFactory, productAccessor);
+        provider = new SpaceToolsTabModuleProvider(webItemModuleDescriptorFactory, xWorkActionDescriptorFactory, productAccessor, null);
         when(plugin.getKey()).thenReturn("my-plugin");
     }
 

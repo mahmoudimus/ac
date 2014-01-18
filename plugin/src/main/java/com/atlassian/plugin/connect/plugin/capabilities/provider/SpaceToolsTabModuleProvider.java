@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsContextIn
 import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsIFrameAction;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -50,14 +51,17 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final XWorkActionDescriptorFactory xWorkActionDescriptorFactory;
     private final ProductAccessor productAccessor;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Autowired
     public SpaceToolsTabModuleProvider(final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            final XWorkActionDescriptorFactory xWorkActionDescriptorFactory, ProductAccessor productAccessor)
+            final XWorkActionDescriptorFactory xWorkActionDescriptorFactory, ProductAccessor productAccessor,
+            final UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.xWorkActionDescriptorFactory = xWorkActionDescriptorFactory;
         this.productAccessor = productAccessor;
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
     }
 
     @Override
@@ -82,7 +86,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
     {
         PageInfo pageInfo = new PageInfo("", "", bean.getDisplayName(), null, Collections.EMPTY_MAP);
         String spaceAdminLegacyKey = bean.getKey() + SPACE_ADMIN_KEY_SUFFIX;
-        SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(plugin, bean.getUrl(), bean.getKey(), spaceAdminLegacyKey, pageInfo);
+        SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(plugin, urlVariableSubstitutor, bean.getUrl(), bean.getKey(), spaceAdminLegacyKey, pageInfo);
 
         return newXWorkActionBean()
                 .withName(bean.getName())

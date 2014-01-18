@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 
 /**
  * Container for all information required by invocations of {@link com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsIFrameAction}.
@@ -8,14 +9,16 @@ import com.atlassian.plugin.Plugin;
 public class SpaceToolsTabContext
 {
     private final Plugin plugin;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final String url;
     private final String spaceToolsWebItemKey;
     private final String spaceAdminWebItemKey;
     private final PageInfo pageInfo;
 
-    public SpaceToolsTabContext(Plugin plugin, String url, String spaceToolsWebItemKey, String spaceAdminWebItemKey, PageInfo pageInfo)
+    public SpaceToolsTabContext(Plugin plugin, final UrlVariableSubstitutor urlVariableSubstitutor, String url, String spaceToolsWebItemKey, String spaceAdminWebItemKey, PageInfo pageInfo)
     {
         this.plugin = plugin;
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.url = url;
         this.spaceToolsWebItemKey = spaceToolsWebItemKey;
         this.spaceAdminWebItemKey = spaceAdminWebItemKey;
@@ -34,6 +37,11 @@ public class SpaceToolsTabContext
     public Plugin getPlugin()
     {
         return plugin;
+    }
+
+    public UrlVariableSubstitutor getUrlVariableSubstitutor()
+    {
+        return urlVariableSubstitutor;
     }
 
     public String getUrl()
