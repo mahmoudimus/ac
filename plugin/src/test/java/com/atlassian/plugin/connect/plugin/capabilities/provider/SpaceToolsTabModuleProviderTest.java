@@ -3,9 +3,15 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.XWorkInterceptorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.XWorkActionDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsContextInterceptor;
+import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsIFrameAction;
+import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
@@ -20,6 +26,7 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -106,14 +113,51 @@ public class SpaceToolsTabModuleProviderTest
         assertEquals(SpaceToolsTabModuleProvider.SPACE_TOOLS_SECTION + "/" + SpaceToolsTabModuleProvider.DEFAULT_LOCATION, webItems.spaceTools.getLocation());
         assertEquals(SpaceToolsTabModuleProvider.SPACE_ADMIN_SECTION + "/" + SpaceToolsTabModuleProvider.LEGACY_LOCATION, webItems.spaceAdmin.getLocation());
     }
-//
-//    @Test
-//    public void testActionProperties()
-//    {
-//        provider.provideModules(plugin, bundleContext, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
-//
-//        verify(spaceToolsActionDescriptorFactory).create(plugin, "test-module", "test-module" + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX, "Test Module", "/test.destination");
-//    }
+
+    @Test
+    public void testAction()
+    {
+        provider.provideModules(plugin, bundleContext, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
+        XWorkActionModuleBean actionModuleBean = captureActionBean();
+
+        assertEquals("/plugins/atlassian-connect/my-plugin", actionModuleBean.getNamespace());
+        assertEquals("test-module", actionModuleBean.getKey());
+        assertEquals(SpaceToolsIFrameAction.class, actionModuleBean.getClazz());
+    }
+
+    @Test
+    public void testActionContextData()
+    {
+        provider.provideModules(plugin, bundleContext, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
+        XWorkActionModuleBean actionModuleBean = captureActionBean();
+
+        SpaceToolsTabContext context = (SpaceToolsTabContext) actionModuleBean.getParameters().get("context");
+        assertSame(plugin, context.getPlugin());
+        assertEquals(DEFAULTS_BEAN.getUrl(), context.getUrl());
+        assertEquals("test-module" + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX, context.getSpaceAdminWebItemKey());
+        assertEquals("test-module", context.getSpaceToolsWebItemKey());
+
+        PageInfo pageInfo = context.getPageInfo();
+        assertEquals(DEFAULTS_BEAN.getName().getValue(), pageInfo.getTitle());
+    }
+
+    @Test
+    public void testActionInterceptor()
+    {
+        provider.provideModules(plugin, bundleContext, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
+        XWorkActionModuleBean actionModuleBean = captureActionBean();
+
+        XWorkInterceptorBean interceptorBean = actionModuleBean.getInterceptorsBeans().get(0);
+        assertEquals("space-context", interceptorBean.getName());
+        assertEquals(SpaceToolsContextInterceptor.class, interceptorBean.getClazz());
+    }
+
+    private XWorkActionModuleBean captureActionBean()
+    {
+        ArgumentCaptor<XWorkActionModuleBean> captor = ArgumentCaptor.forClass(XWorkActionModuleBean.class);
+        verify(xWorkActionDescriptorFactory).create(eq(plugin), captor.capture());
+        return captor.getValue();
+    }
 
     private WebItemBeans captureWebItemBeans()
     {

@@ -42,7 +42,9 @@ public class XWorkPackageCreator
     {
         String namespace = actionModuleBean.getNamespace();
 
-        PackageConfig packageConfig = new PackageConfig(actionModuleBean.getKey(), namespace, false, null);
+        String packageName = "atlassian-connect-" + plugin.getKey() + "-" + actionModuleBean.getKey();
+
+        PackageConfig packageConfig = new PackageConfig(packageName, namespace, false, null);
 
         addParentPackages(packageConfig, configuration);
         addResultTypes(packageConfig, actionModuleBean);
