@@ -318,7 +318,7 @@ The claims set is a JSON object that looks like this example:
 
 Let's examine each of these claims.
 
-* "iss": The issuer identifier. Use your add-on's client key that you received in the "installed" lifecycle callback.
+* "iss": The issuer identifier. Use your add-on's `key` that you specified in your descriptor and received in the "installed" lifecycle callback.
 * "iat": Issued-at time. The UTC Unix time when your add-on constructed this token. Used for detecting tokens illegally issued "in the future" and potentially in debugging the replay of outrageously old tokens.
 * "exp" Expiration time. The UTC Unix time after which the receiver should NOT use this token. Used for limiting replays.
 * "qsh": Query hash. A custom Atlassian claim that prevents URL tampering (described [above](#qsh)).
