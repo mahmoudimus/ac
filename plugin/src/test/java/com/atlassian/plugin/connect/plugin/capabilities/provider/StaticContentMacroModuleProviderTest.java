@@ -28,14 +28,13 @@ public class StaticContentMacroModuleProviderTest extends AbstractContentMacroMo
     {
         StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new StaticContentMacroModuleDescriptorFactory(
                 absoluteAddOnUrlConverter,
-                i18nPropertiesPluginManager,
                 macroContentManager,
                 userManager,
                 remotablePluginAccessorFactoryForTests,
                 urlVariableSubstitutor);
 
         return new StaticContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory,
-                servletDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, relativeAddOnUrlConverter);
+                servletDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, relativeAddOnUrlConverter, i18nPropertiesPluginManager);
     }
 
     @Override

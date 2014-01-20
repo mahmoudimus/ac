@@ -28,14 +28,13 @@ public class DynamicContentMacroModuleProviderTest extends AbstractContentMacroM
     {
         DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new DynamicContentMacroModuleDescriptorFactory(
                 absoluteAddOnUrlConverter,
-                i18nPropertiesPluginManager,
                 iFrameRenderer,
                 userManager,
                 remotablePluginAccessorFactoryForTests,
                 urlVariableSubstitutor);
 
         return new DynamicContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory,
-                servletDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, relativeAddOnUrlConverter);
+                servletDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, relativeAddOnUrlConverter, i18nPropertiesPluginManager);
     }
 
     @Override
