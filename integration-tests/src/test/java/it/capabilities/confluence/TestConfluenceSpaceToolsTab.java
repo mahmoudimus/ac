@@ -34,6 +34,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addCapabilities("spaceToolsTabs", newPageBean()
                         .withName(new I18nProperty("AC Space Tab", null))
+                        .withKey("ac-space-tab")
                         .withLocation("contenttools")
                         .withWeight(1)
                         .withUrl("/pg")

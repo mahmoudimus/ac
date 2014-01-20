@@ -27,6 +27,7 @@ import java.util.List;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -69,13 +70,12 @@ public class SpaceToolsTabModuleProviderTest
 
         // Space Tools web item
         assertEquals("Test Module", webItems.spaceTools.getName().getValue());
-        assertEquals("test-module", webItems.spaceTools.getKey());
         assertEquals(666, webItems.spaceTools.getWeight());
         assertEquals(SpaceToolsTabModuleProvider.SPACE_TOOLS_SECTION + "/test-location", webItems.spaceTools.getLocation());
 
         // Space Admin web item
         assertEquals("Test Module", webItems.spaceAdmin.getName().getValue());
-        assertEquals("test-module" + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX, webItems.spaceAdmin.getKey());
+        assertTrue(webItems.spaceAdmin.getKey().endsWith(SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX));
         assertEquals(666, webItems.spaceAdmin.getWeight());
         // Space Admin should *always* be in the LEGACY_LOCATION, regardless of any specific location specified by the
         // Space Tab Module bean.
@@ -134,8 +134,7 @@ public class SpaceToolsTabModuleProviderTest
         SpaceToolsTabContext context = (SpaceToolsTabContext) actionModuleBean.getParameters().get("context");
         assertSame(plugin, context.getPlugin());
         assertEquals(DEFAULTS_BEAN.getUrl(), context.getUrl());
-        assertEquals("test-module" + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX, context.getSpaceAdminWebItemKey());
-        assertEquals("test-module", context.getSpaceToolsWebItemKey());
+        assertTrue(context.getSpaceAdminWebItemKey().endsWith(SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX));
 
         PageInfo pageInfo = context.getPageInfo();
         assertEquals(DEFAULTS_BEAN.getName().getValue(), pageInfo.getTitle());

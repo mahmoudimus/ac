@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConfluenceConditions;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.XWorkActionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsContextInterceptor;
@@ -92,6 +93,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
 
         return newXWorkActionBean()
                 .withName(bean.getName())
+                .withKey(ModuleKeyGenerator.nameToKey(bean.getName().getValue()))
                 .withNamespace("/plugins/atlassian-connect/" + plugin.getKey())
                 .withClazz(SpaceToolsIFrameAction.class)
                 .withParameter("context", spaceTabContext)

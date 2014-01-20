@@ -65,6 +65,7 @@ public class XWorkPackageCreatorTest
 
         XWorkActionModuleBean actionModuleBean = newXWorkActionBean()
                 .withName(new I18nProperty("Test Action", ""))
+                .withKey("test-action")
                 .withNamespace("/test/namespace")
                 .withClazz(TestAction.class)
                 .withDefaultValidatingInterceptorStack()
