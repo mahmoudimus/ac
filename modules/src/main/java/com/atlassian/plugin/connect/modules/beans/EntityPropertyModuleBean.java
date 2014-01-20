@@ -1,9 +1,9 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans;
+package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.EntityPropertyModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyType;
+import com.atlassian.plugin.connect.modules.beans.builder.EntityPropertyModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
+package com.atlassian.plugin.connect.modules.beans.nested;
 
 public enum EntityPropertyType
 {

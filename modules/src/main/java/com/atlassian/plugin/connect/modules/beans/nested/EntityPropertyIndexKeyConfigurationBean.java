@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
+package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
 import org.apache.commons.lang3.builder.EqualsBuilder;

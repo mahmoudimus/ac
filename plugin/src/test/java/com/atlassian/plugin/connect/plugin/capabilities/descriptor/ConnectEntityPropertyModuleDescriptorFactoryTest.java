@@ -8,12 +8,12 @@ import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescript
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
@@ -31,7 +31,7 @@ import java.util.List;
 
 import static com.atlassian.jira.index.IndexDocumentConfiguration.ExtractConfiguration;
 import static com.atlassian.jira.index.IndexDocumentConfiguration.KeyConfiguration;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;

@@ -1,6 +1,22 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.plugin.connect.modules.beans.nested.*;
+import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
+import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -9,10 +25,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean.newImagePlaceholderBean;

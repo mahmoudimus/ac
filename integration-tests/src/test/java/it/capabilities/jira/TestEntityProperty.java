@@ -11,11 +11,11 @@ import com.atlassian.jira.testkit.client.restclient.SearchResult;
 import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyIndexType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.EntityPropertyType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -29,7 +29,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static org.junit.Assert.assertThat;
 
 public class TestEntityProperty

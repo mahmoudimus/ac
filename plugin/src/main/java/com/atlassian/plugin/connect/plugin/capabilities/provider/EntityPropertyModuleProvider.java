@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.EntityPropertyModuleBean;
+import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectEntityPropertyModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
