@@ -15,7 +15,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -32,7 +32,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapabilities("spaceToolsTabs", newPageBean()
+                .addCapabilities("spaceToolsTabs", newSpaceToolsTabBean()
                         .withName(new I18nProperty("AC Space Tab", null))
                         .withKey("ac-space-tab")
                         .withLocation("contenttools")

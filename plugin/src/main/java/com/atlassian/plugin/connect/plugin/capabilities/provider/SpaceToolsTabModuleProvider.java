@@ -4,7 +4,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConfluenceConditions;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
@@ -38,7 +38,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * The other web item is for the legacy Space Admin section, which appears for Documentation Theme spaces.
  */
 @ConfluenceComponent
-public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<ConnectPageModuleBean>
+public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceToolsTabModuleBean>
 {
     @VisibleForTesting
     public static final String SPACE_TOOLS_SECTION = "system.space.tools";
@@ -68,10 +68,10 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<ConnectPageModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
     {
         List<ModuleDescriptor> modules = newArrayList();
-        for (ConnectPageModuleBean bean : beans)
+        for (SpaceToolsTabModuleBean bean : beans)
         {
             XWorkActionModuleBean actionBean = createActionBean(plugin, bean);
             modules.add(xWorkActionDescriptorFactory.create(plugin, actionBean));
@@ -85,7 +85,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
         return modules;
     }
 
-    private XWorkActionModuleBean createActionBean(Plugin plugin, ConnectPageModuleBean bean)
+    private XWorkActionModuleBean createActionBean(Plugin plugin, SpaceToolsTabModuleBean bean)
     {
         PageInfo pageInfo = new PageInfo("", "", bean.getDisplayName(), null, Collections.EMPTY_MAP);
         String spaceAdminLegacyKey = bean.getKey() + SPACE_ADMIN_KEY_SUFFIX;
@@ -107,7 +107,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
 
     }
 
-    private List<WebItemModuleBean> createWebItemBeans(ConnectPageModuleBean bean, String actionUrl)
+    private List<WebItemModuleBean> createWebItemBeans(SpaceToolsTabModuleBean bean, String actionUrl)
     {
         Integer weight = bean.getWeight() == null ? productAccessor.getPreferredGeneralWeight() : bean.getWeight();
         String location = isNullOrEmpty(bean.getLocation()) ? DEFAULT_LOCATION : bean.getLocation();

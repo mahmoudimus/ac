@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -24,7 +24,7 @@ import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 @RunWith (MockitoJUnitRunner.class)
 public class SpaceToolsTabModuleProviderTest
 {
-    private static final ConnectPageModuleBean DEFAULTS_BEAN = newPageBean()
+    private static final SpaceToolsTabModuleBean DEFAULTS_BEAN = newSpaceToolsTabBean()
             .withName(new I18nProperty("Test Module", null))
             .withUrl("/test.destination")
             .build();
@@ -59,7 +59,7 @@ public class SpaceToolsTabModuleProviderTest
     @Test
     public void testWebItemProperties()
     {
-        ConnectPageModuleBean bean = newPageBean(DEFAULTS_BEAN)
+        SpaceToolsTabModuleBean bean = newSpaceToolsTabBean(DEFAULTS_BEAN)
                 .withWeight(666)
                 .withLocation("test-location")
                 .build();

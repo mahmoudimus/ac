@@ -7,6 +7,12 @@ import com.atlassian.plugin.connect.modules.beans.nested.XWorkResultBean;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Models an XWork action contained in its own XWork Package. Includes support for modelling result types and
+ * interceptors.
+ *
+ * Note that this bean is not publicly exposed, and thus does not contain user-facing javadocs.
+ */
 public class XWorkActionModuleBean extends NameToKeyBean
 {
     private String namespace;

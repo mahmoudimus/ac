@@ -27,6 +27,8 @@ import static org.mockito.Mockito.when;
 @RunWith (MockitoJUnitRunner.class)
 public class SpaceToolsIFrameActionTest
 {
+    private static final String TEST_URL = "/test/url";
+
     @Mock private IFrameRenderer iFrameRenderer;
     @Mock private SpaceToolsTabContext context;
     @Mock private ConfluenceUser user;
@@ -55,7 +57,7 @@ public class SpaceToolsIFrameActionTest
     @Test
     public void testIFrameHtmlCallsRenderer() throws IOException
     {
-        when(context.getUrl()).thenReturn("/test/url");
+        when(context.getUrl()).thenReturn(TEST_URL);
         action.getIFrameHtml();
 
         verify(iFrameRenderer).render(any(IFrameContext.class), eq("testuser"));
@@ -64,21 +66,21 @@ public class SpaceToolsIFrameActionTest
     @Test
     public void testIFramePath() throws Exception
     {
-        when(context.getUrl()).thenReturn("/test/url");
+        when(context.getUrl()).thenReturn(TEST_URL);
         action.getIFrameHtml();
 
         IFrameContext context = captureIFrameContext();
 
-        assertEquals("/test/url", context.getIframePath());
+        assertEquals(TEST_URL, context.getIframePath());
     }
 
     @Test
     public void testIFramePathWithUrlSubstitution() throws Exception
     {
-        when(context.getUrl()).thenReturn("/test/url?key={space.key}");
+        when(context.getUrl()).thenReturn(TEST_URL + "?key={space.key}");
         action.getIFrameHtml();
         IFrameContext context = captureIFrameContext();
-        assertEquals("/test/url?key=SPC", context.getIframePath());
+        assertEquals(TEST_URL + "?key=SPC", context.getIframePath());
     }
 
     private IFrameContext captureIFrameContext() throws Exception

@@ -246,7 +246,7 @@ public class ModuleList extends BaseModuleBean
      * @schemaTitle Space Tools Tab
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider", products = {ProductFilter.CONFLUENCE})
-    private List<ConnectPageModuleBean> spaceToolsTabs;
+    private List<SpaceToolsTabModuleBean> spaceToolsTabs;
 
     /**
      * Static content macros allow you to add a macro into a Confluence page which is stored with the Confluence page
@@ -433,7 +433,7 @@ public class ModuleList extends BaseModuleBean
         return dynamicContentMacros;
     }
 
-    public List<ConnectPageModuleBean> getSpaceToolsTabs() {
+    public List<SpaceToolsTabModuleBean> getSpaceToolsTabs() {
         return spaceToolsTabs;
     }
 
