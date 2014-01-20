@@ -164,7 +164,7 @@ public class SpaceToolsTabModuleProviderTest
         ArgumentCaptor<WebItemModuleBean> captor = ArgumentCaptor.forClass(WebItemModuleBean.class);
         verify(webItemModuleDescriptorFactory, times(2)).createModuleDescriptor(eq(plugin), eq(bundleContext), captor.capture());
         List<WebItemModuleBean> beans = captor.getAllValues();
-        return new WebItemBeans(beans.remove(0), beans.remove(0));
+        return new WebItemBeans(beans.get(0), beans.get(1));
     }
 
     private class WebItemBeans

@@ -56,7 +56,7 @@ public class SpaceToolsIFrameActionTest
     public void testIFrameHtmlCallsRenderer() throws IOException
     {
         when(context.getUrl()).thenReturn("/test/url");
-        action.getIframeHtml();
+        action.getIFrameHtml();
 
         verify(iFrameRenderer).render(any(IFrameContext.class), eq("testuser"));
     }
@@ -65,7 +65,7 @@ public class SpaceToolsIFrameActionTest
     public void testIFramePath() throws Exception
     {
         when(context.getUrl()).thenReturn("/test/url");
-        action.getIframeHtml();
+        action.getIFrameHtml();
 
         IFrameContext context = captureIFrameContext();
 
@@ -76,7 +76,7 @@ public class SpaceToolsIFrameActionTest
     public void testIFramePathWithUrlSubstitution() throws Exception
     {
         when(context.getUrl()).thenReturn("/test/url?key={space.key}");
-        action.getIframeHtml();
+        action.getIFrameHtml();
         IFrameContext context = captureIFrameContext();
         assertEquals("/test/url?key=SPC", context.getIframePath());
     }

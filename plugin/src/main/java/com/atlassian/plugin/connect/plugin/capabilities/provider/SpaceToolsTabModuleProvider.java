@@ -15,11 +15,11 @@ import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,9 +32,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
- * Confluence "Space Tools" tabs are modelled as a web-item and an x-work action.
+ * Confluence "Space Tools" tabs are modelled as two web item sand an x-work action.
+ * One web item is for the aforementioned Space Tools section, which appears for Modern Theme (5.0+) spaces.
+ * The other web item is for the legacy Space Admin section, which appears for Documentation Theme spaces.
  */
-@Component
+@ConfluenceComponent
 public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<ConnectPageModuleBean>
 {
     @VisibleForTesting
@@ -74,7 +76,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
             modules.add(xWorkActionDescriptorFactory.create(plugin, actionBean));
 
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
-            for (WebItemModuleBean webItemModuleBean : createWebItemBeans(plugin, addonBundleContext, bean, actionUrl))
+            for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
             {
                 modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemModuleBean));
             }
@@ -103,8 +105,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
 
     }
 
-    private List<WebItemModuleBean> createWebItemBeans(Plugin plugin, BundleContext addonBundleContext,
-            ConnectPageModuleBean bean, String actionUrl)
+    private List<WebItemModuleBean> createWebItemBeans(ConnectPageModuleBean bean, String actionUrl)
     {
         Integer weight = bean.getWeight() == null ? productAccessor.getPreferredGeneralWeight() : bean.getWeight();
         String location = isNullOrEmpty(bean.getLocation()) ? DEFAULT_LOCATION : bean.getLocation();
@@ -115,26 +116,25 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<Connec
             conditions = newArrayList();
         }
 
-        WebItemModuleBean spaceToolsWebItemBean = newWebItemBean()
+        // These are the properties the standard and legacy web items have in common.
+        WebItemModuleBean baseWebItemBean = newWebItemBean()
                 .withName(bean.getName())
-                .withKey(bean.getKey())
                 .withUrl(actionUrl)
-                .withLocation(SPACE_TOOLS_SECTION + "/" + location)
-                .withWeight(weight)
                 .withConditions(conditions)
+                .withWeight(weight)
+                .build();
+
+        WebItemModuleBean spaceToolsWebItemBean = newWebItemBean(baseWebItemBean)
+                .withKey(bean.getKey())
+                .withLocation(SPACE_TOOLS_SECTION + "/" + location)
                 .withConditions(newSingleConditionBean()
                         .withCondition(ConfluenceConditions.SPACE_SIDEBAR)
                         .build())
                 .build();
 
-        String spaceAdminLegacyKey = bean.getKey() + SPACE_ADMIN_KEY_SUFFIX;
-        WebItemModuleBean spaceAdminWebItemBean = newWebItemBean()
-                .withName(bean.getName())
-                .withKey(spaceAdminLegacyKey)
-                .withUrl(actionUrl)
+        WebItemModuleBean spaceAdminWebItemBean = newWebItemBean(baseWebItemBean)
+                .withKey(bean.getKey() + SPACE_ADMIN_KEY_SUFFIX)
                 .withLocation(SPACE_ADMIN_SECTION + "/" + LEGACY_LOCATION)
-                .withWeight(weight)
-                .withConditions(conditions)
                 .withConditions(newSingleConditionBean()
                         .withCondition(ConfluenceConditions.SPACE_SIDEBAR)
                         .withInvert(true)

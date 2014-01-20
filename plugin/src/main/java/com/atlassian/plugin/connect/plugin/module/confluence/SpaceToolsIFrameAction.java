@@ -20,7 +20,7 @@ public class SpaceToolsIFrameAction extends SpaceAdminAction
 
     private SpaceToolsTabContext context;
 
-    public String getIframeHtml() throws IOException
+    public String getIFrameHtml() throws IOException
     {
         Map<String, Object> urlContext = buildUrlContext();
         String iframePath = context.getUrlVariableSubstitutor().replace(context.getUrl(), urlContext);

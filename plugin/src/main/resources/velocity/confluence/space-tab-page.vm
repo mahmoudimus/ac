@@ -18,7 +18,7 @@
             #decoratorParam ("selectedSpaceToolsWebItem" $spaceToolsWebItemKey)
             #decoratorParam("helper" $action.helper)
 
-            $iframeHtml
+            $iFrameHtml
     #end
 </body>
 #end
