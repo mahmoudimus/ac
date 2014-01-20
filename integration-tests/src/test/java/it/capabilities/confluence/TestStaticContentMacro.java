@@ -26,8 +26,13 @@ import static org.junit.Assert.assertThat;
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {
     private static final String STORAGE_FORMAT_MACRO_NAME = "Storage Format Macro";
+    private static final String STORAGE_FORMAT_MACRO_KEY = "storage-format-macro";
+
     private static final String POST_MACRO_NAME = "Post Macro";
+    private static final String POST_MACRO_KEY = "post-macro";
+
     private static final String POST_PARAM_MACRO_NAME = "Post Parameter Macro";
+    private static final String POST_PARAM_MACRO_KEY = "post-parameter-macro";
 
     private static ConnectRunner remotePlugin;
     private static EchoQueryParametersServlet parameterServlet;
@@ -47,17 +52,20 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
         StaticContentMacroModuleBean storageFormatMacro = newStaticContentMacroModuleBean()
                 .withUrl("/render-storage-format")
+                .withKey(STORAGE_FORMAT_MACRO_KEY)
                 .withName(new I18nProperty(STORAGE_FORMAT_MACRO_NAME, ""))
                 .build();
 
         StaticContentMacroModuleBean postMacro = newStaticContentMacroModuleBean()
                 .withUrl("/render-context")
+                .withKey(POST_MACRO_KEY)
                 .withMethod(MacroHttpMethod.POST)
                 .withName(new I18nProperty(POST_MACRO_NAME, ""))
                 .build();
 
         StaticContentMacroModuleBean postParameterMacro = newStaticContentMacroModuleBean()
                 .withUrl(DEFAULT_MACRO_URL)
+                .withKey(POST_PARAM_MACRO_KEY)
                 .withName(new I18nProperty(POST_PARAM_MACRO_NAME, ""))
                 .withMethod(MacroHttpMethod.POST)
                 .withParameters(newMacroParameterBean()

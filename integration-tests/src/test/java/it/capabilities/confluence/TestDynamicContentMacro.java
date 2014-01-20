@@ -44,6 +44,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/render-no-resize-macro")
+                .withKey(SMALL_INLINE_MACRO_KEY)
                 .withName(new I18nProperty(SMALL_INLINE_MACRO_NAME, ""))
                 .withOutputType(MacroOutputType.INLINE)
                 .withWidth("60px")
@@ -124,6 +125,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         editorContent.setPlainTextMacroBody(body);
 
         savedPage = editorPage.save();
+
         RenderedMacro renderedMacro = connectPageOperations.findMacro(LONG_BODY_MACRO_KEY, 0);
         String hash = renderedMacro.getFromQueryString("hash");
 
@@ -144,6 +146,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         macroBrowser.clickSave();
 
         savedPage = editorPage.save();
+
         RenderedMacro renderedMacro = connectPageOperations.findMacro(PARAMETER_MACRO_KEY, 0);
         String value = renderedMacro.getFromQueryString("param1");
 
