@@ -1,4 +1,4 @@
-### Context Parameters
+# Context Parameters
 
 Your Atlassian Connect add-on  can receive context parameters from the Atlassian application by using variable tokens
 in the URL attributes of your modules. The add-on can use this to present content specific to the context, for example,

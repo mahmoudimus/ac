@@ -54,6 +54,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                 .addCapabilities("webItems",
                         newWebItemBean()
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
+                                .withKey("ac-general-web-item")
                                 .withLocation("system.content.action")
                                 .withWeight(1)
                                 .withUrl("/irwi?page_id={page.id}")
@@ -61,6 +62,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.addon)
                                 .withName(new I18nProperty("AC Direct To Addon Web Item", "ac.dir"))
+                                .withKey("ac-direct-to-addon-web-item")
                                 .withLocation("system.content.action")
                                 .withWeight(1)
                                 .withUrl("/irwi?page_id={page.id}")
@@ -68,12 +70,14 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
                                 .withName(new I18nProperty("Quick page link", "ac.qp"))
+                                .withKey("quick-page-link")
                                 .withLocation("system.content.action")
                                 .withWeight(1)
                                 .withUrl("/pages/viewpage.action?pageId={page.id}")
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("google link", "ac.gl"))
+                                .withKey("google-link")
                                 .withLocation("system.content.action")
                                 .withWeight(1)
                                 .withUrl("http://www.google.com")
@@ -83,6 +87,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 ).build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("wikipedia link", "ac.ild"))
+                                .withKey("wikipedia-link")
                                 .withLocation("system.content.metadata")
                                 .withWeight(1)
                                 .withContext(AddOnUrlContext.addon)

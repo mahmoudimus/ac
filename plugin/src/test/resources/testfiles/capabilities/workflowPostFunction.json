@@ -3,6 +3,7 @@
         "value": "My function",
         "i18n": "my.function"
     },
+    "key":"my-function",
     "description": {
         "value": "My function explanation",
         "i18n": "my.function.desc"

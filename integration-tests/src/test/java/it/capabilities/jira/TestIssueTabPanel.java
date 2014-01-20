@@ -32,6 +32,7 @@ public class TestIssueTabPanel extends TestBase
         remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .addModule(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Issue Tab Panel", null))
+                        .withKey("issue-tab-panel")
                         .withUrl("/ipp?issue_id={issue.id}&project_id={project.id}&project_key={project.key}")
                         .withWeight(1234)
                         .build())

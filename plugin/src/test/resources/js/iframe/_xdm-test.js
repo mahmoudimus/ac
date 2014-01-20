@@ -44,7 +44,7 @@
                 ok(xdm.isHost, 'XDM is host');
             });
 
-            test('remoteOrigin is resolved to the iframe url', function() {
+            test('remoteOrigin is resolved to the iframe baseurl', function() {
                 var remoteUrl = 'http://www.example.com?oauth_consumer_key=jira:12345',
                 xdm = new XdmRpc($, {
                     remoteKey: 'myremotekey',
@@ -57,7 +57,7 @@
                     remote: {}
                 });
 
-                equal(xdm.remoteOrigin, remoteUrl);
+                equal(xdm.remoteOrigin, "http://www.example.com");
             });
 
             test('creates an iframe', function () {

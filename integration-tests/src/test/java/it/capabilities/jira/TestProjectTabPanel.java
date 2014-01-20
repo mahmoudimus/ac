@@ -30,6 +30,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addModule(ConnectTabPanelModuleProvider.PROJECT_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("AC Play Project Tab", null))
+                        .withKey("ac-play-project-tab")
                         .withUrl("/ptp")
                         .withWeight(1234)
                         .build())

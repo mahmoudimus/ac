@@ -36,6 +36,7 @@ public class AbstractPageTst extends ConnectWebDriverTestBase
     protected static void startConnectAddOn(String fieldName, ConnectPageModuleBeanBuilder pageBeanBuilder) throws Exception
     {
         pageBeanBuilder.withName(new I18nProperty(MY_AWESOME_PAGE, null))
+                .withKey(MY_AWESOME_PAGE_KEY)
                 .withUrl(URL)
                 .withWeight(1234);
 
