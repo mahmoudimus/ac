@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.confluence.context.extractor;
 
+import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.plugin.connect.plugin.module.confluence.context.serializer.SpaceSerializer;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SpaceContextMapParameterExtractor implements ContextMapParameterExtractor<Space>
 {
     private static final String SPACE_CONTEXT_PARAMETER = "space";
+    private static final String ACTION_PARAMETER = "action";
     private SpaceSerializer spaceSerializer;
 
     @Autowired
@@ -42,6 +44,11 @@ public class SpaceContextMapParameterExtractor implements ContextMapParameterExt
         else if (context.containsKey(SPACE_CONTEXT_PARAMETER) && context.get(SPACE_CONTEXT_PARAMETER) instanceof Space)
         {
             return Optional.of((Space) context.get(SPACE_CONTEXT_PARAMETER));
+        }
+        else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction)
+        {
+            AbstractPageAwareAction action = (AbstractPageAwareAction) context.get(ACTION_PARAMETER);
+            return Optional.fromNullable(action.getSpace());
         }
         return Optional.absent();
     }
