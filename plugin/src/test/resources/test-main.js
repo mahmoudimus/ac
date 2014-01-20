@@ -98,6 +98,11 @@ requirejs.config({
         'iframe/_amd'
       ]
     },
+    'iframe/_uri': {
+      deps: [
+      'iframe/_amd'
+      ]
+    },
     'iframe/_xdm': {
       deps: [
         'iframe/_uri',
