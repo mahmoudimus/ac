@@ -81,6 +81,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <resource type="download" name="_events.js" location="/js/iframe/_events.js" />
         <resource type="download" name="_xdm.js" location="/js/iframe/_xdm.js" />
+        <resource type="download" name="_uri.js" location="/js/iframe/_uri.js" />
         <resource type="download" name="_addons.js" location="/js/iframe/host/_addons.js" />
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content.js" location="/js/iframe/host/content.js" />

@@ -28,6 +28,7 @@ requirejs.config({
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
     'iframe/_events': '../src/main/resources/js/iframe/_events',
     'iframe/_xdm': '../src/main/resources/js/iframe/_xdm',
+    'iframe/_uri': '../src/main/resources/js/iframe/_uri',
     'iframe/host/main': '../src/main/resources/js/iframe/host/main'
   },
 
@@ -97,8 +98,14 @@ requirejs.config({
         'iframe/_amd'
       ]
     },
+    'iframe/_uri': {
+      deps: [
+      'iframe/_amd'
+      ]
+    },
     'iframe/_xdm': {
       deps: [
+        'iframe/_uri',
         'iframe/_events'
       ]
     },
