@@ -85,6 +85,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                 .withWeight(55)
                 .withUrl("http://search.example.com")
                 .withName(new I18nProperty("A Search Request View", null))
+                .withKey("a-search-request-view")
                 .withDescription(new I18nProperty("A description", null))
                 .withConditions(
                         newSingleConditionBean().withCondition("user_is_logged_in").build())

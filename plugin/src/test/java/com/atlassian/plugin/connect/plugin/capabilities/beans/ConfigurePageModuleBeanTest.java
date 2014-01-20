@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.modules.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
@@ -64,7 +64,7 @@ public class ConfigurePageModuleBeanTest
                 .withModule("configurePage",
                         newPageBean()
                                 .withName(new I18nProperty("Some page", "some.page.name"))
-                                .withKey("")
+                                .withKey("configure-page")
                                 .withLocation("")
                                 .withUrl("/my-page")
                                 .withIcon(newIconBean().withUrl("/mypage/icon.png").withHeight(80).withWidth(80).build())

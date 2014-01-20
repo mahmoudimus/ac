@@ -55,6 +55,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     {
         editorWebPanel = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("Editor Panel", "editor-panel"))
+                .withKey("editor-panel")
                 .withLocation("atl.editor")
                 .withUrl(IFRAME_URL_EDIT + IFRAME_URL_PARAMETERS)
                 .withLayout(new WebPanelLayout(px(IFRAME_WIDTH), px(IFRAME_EDIT_HEIGHT)))
@@ -63,6 +64,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 
         viewWebPanel = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("View Panel", "view-panel"))
+                .withKey("view-panel")
                 .withLocation("atl.general")
                 .withUrl(IFRAME_URL_VIEW + IFRAME_URL_PARAMETERS)
                 .withLayout(new WebPanelLayout(px(IFRAME_WIDTH), px(IFRAME_VIEW_HEIGHT)))
@@ -71,6 +73,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 
         profileWebPanel = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("Profile Panel", "profile-panel"))
+                .withKey("profile-panel")
                 .withLocation("atl.userprofile")
                 .withUrl(IFRAME_URL_PROFILE + IFRAME_URL_PARAMETERS)
                 .withLayout(new WebPanelLayout(px(IFRAME_WIDTH), px(IFRAME_PROFILE_HEIGHT)))
