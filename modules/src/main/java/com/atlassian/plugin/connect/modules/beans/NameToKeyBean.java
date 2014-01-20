@@ -37,6 +37,8 @@ public class NameToKeyBean extends BaseModuleBean
      */
     @Required
     private I18nProperty name;
+    
+    private transient String calculatedKey;
 
     public NameToKeyBean()
     {
@@ -60,12 +62,19 @@ public class NameToKeyBean extends BaseModuleBean
 
     public String getKey()
     {
-        if (!Strings.isNullOrEmpty(key))
+        if(Strings.isNullOrEmpty(calculatedKey))
         {
-            return cleanKey(key);
+            if (!Strings.isNullOrEmpty(key))
+            {
+                this.calculatedKey = cleanKey(key);
+            }
+            else
+            {
+                this.calculatedKey = randomName("acmodule-");
+            }
         }
 
-        return randomName("acmodule-");
+        return calculatedKey;
     }
 
     public I18nProperty getName()
