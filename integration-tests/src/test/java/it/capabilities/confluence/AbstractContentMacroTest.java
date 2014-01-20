@@ -17,20 +17,16 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroForm;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.MacroList;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriverTest
@@ -212,7 +208,6 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         product.getPageBinder().override(MacroBrowserDialog.class, ConfluenceMacroBrowserDialog.class);
         product.getPageBinder().override(EditorContent.class, ConfluenceEditorContent.class);
-        product.getPageBinder().override(MacroForm.class, ConfluenceMacroForm.class);
         product.getPageBinder().override(InsertMenu.class, ConfluenceInsertMenu.class);
     }
 
@@ -252,18 +247,15 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(ALL_PARAMETER_TYPES_MACRO_NAME);
-        ConfluenceMacroForm macroForm = (ConfluenceMacroForm) macro.select();
+        MacroForm macroForm = macro.select();
 
-        List<String> parameterNames = macroForm.getParameterNames();
-        assertThat(parameterNames, containsInAnyOrder(
-                "attachment",
-                "boolean",
-                "content",
-                "enum",
-                "spacekey",
-                "string",
-                "username"
-        ));
+        assertThat(macroForm.hasField("attachment").byDefaultTimeout(), is(true));
+        assertThat(macroForm.hasField("boolean").byDefaultTimeout(), is(true));
+        assertThat(macroForm.hasField("content").byDefaultTimeout(), is(true));
+        assertThat(macroForm.hasField("enum").byDefaultTimeout(), is(true));
+        assertThat(macroForm.hasField("spacekey").byDefaultTimeout(), is(true));
+        assertThat(macroForm.hasField("string").byDefaultTimeout(), is(true));
+        assertThat(macroForm.hasField("username").byDefaultTimeout(), is(true));
     }
 
     @Test
