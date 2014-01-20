@@ -37,8 +37,8 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static com.atlassian.plugin.connect.modules.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
-import static com.atlassian.plugin.connect.modules.beans.matchers.IFrameContextMatchers.hasIFramePath;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.IFrameContextMatchers.hasIFramePath;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -76,7 +76,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
         WebPanelConnectModuleDescriptor aDescriptor = new WebPanelConnectModuleDescriptor(hostContainer, webInterfaceManager, iFrameRenderer, contextMapURLSerializer, userManager, urlValidator);
         when(connectAutowireUtil.createBean(WebPanelConnectModuleDescriptor.class)).thenReturn(aDescriptor);
 
-        when(conditionModuleFragmentFactory.createFragment(eq("my-plugin"), anyList(), eq("#remote-web-panel-my-web-panel")))
+        when(conditionModuleFragmentFactory.createFragment(eq("my-plugin"), anyList(), anyString()))
                 .thenReturn(conditionElement());
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
         when(webFragmentHelper.loadCondition(eq(CONDITION_CLASSNAME), eq(plugin))).thenReturn(condition);
@@ -84,6 +84,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
 
         WebPanelModuleBean bean = newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", "my.webpanel"))
+                .withKey("my-web-panel")
                 .withUrl("http://www.google.com?my_project_id={project.id}&my_project_key={project.key}")
                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                 .withLayout(new WebPanelLayout("10px", "100%"))

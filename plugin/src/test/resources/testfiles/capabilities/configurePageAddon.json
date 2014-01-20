@@ -21,7 +21,9 @@
             "name": {
                 "value": "Some page",
                 "i18n": "some.page.name"
-            }
+            },
+            "key":"configure-page"
+            
         }
     },
     "scopes": []
