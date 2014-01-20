@@ -113,7 +113,7 @@ public class JsonSchemaDoclet
         
         for(AnnotationDesc annoDesc : fieldDoc.annotations())
         {
-            if(annoDesc.annotationType().asAnnotationTypeDoc().qualifiedTypeName().equals(annoClass.getName()) || annoDesc.annotationType().asAnnotationTypeDoc().qualifiedTypeName().equals(annoClass.getSimpleName()))
+            if(annoDesc.annotationType().typeName().equals(annoClass.getName()) || annoDesc.annotationType().simpleTypeName().equals(annoClass.getSimpleName()))
             {
                 foundAnnotation = true;
                 break;
