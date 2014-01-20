@@ -88,7 +88,7 @@ public class ConnectAddonBean extends BaseModuleBean
      * 
      * Vendors can accomplish this by listing a new private version of their add-on, with a new descriptor hosted at a new URL. 
      * 
-     * They use MPAC's access token facilities to share this version with customers (or for internal use). 
+     * They use the Atlassian Marketplace's access token facilities to share this version with customers (or for internal use). 
      * When this version is ready to be taken live, it can be transitioned from private to public, and all customers will be seamlessly updated.
      * 
      * It's important to note that this approach allows vendors to create new versions manually, despite the fact that in the common case, the versions are automatically created.
