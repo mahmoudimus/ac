@@ -13,10 +13,12 @@ import java.util.Map;
 public final class CustomMessageServlet extends ContextServlet
 {
     private final String message;
+    private Boolean resize;
 
-    public CustomMessageServlet(String message)
+    public CustomMessageServlet(String message, Boolean resize)
     {
         this.message = message;
+        this.resize = resize;
     }
 
     @Override
@@ -27,6 +29,7 @@ public final class CustomMessageServlet extends ContextServlet
                 ImmutableMap.<String, Object>builder()
                         .putAll(context)
                         .put("message", message)
+                        .put("resize", resize)
                         .build());
     }
 }

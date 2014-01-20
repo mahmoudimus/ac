@@ -1,25 +1,17 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
 import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
+import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
-import org.openqa.selenium.By;
 
 public class ConfluenceMacroBrowserDialog extends MacroBrowserDialog
 {
-    public void selectAndInsertMacro(String macroKey)
-    {
-        selectMacro(macroKey);
-        insertMacro();
-    }
+    @ElementBy(className = "ok")
+    private PageElement saveButton;
 
-    public void selectMacro(String macroKey)
+    public void clickSave()
     {
-        PageElement macro = pageElementFinder.find(By.id("macro-" + macroKey));
-        macro.click();
-    }
-
-    public void insertMacro()
-    {
+        saveButton.timed().isVisible().byDefaultTimeout();
         clickButton("ok", true);
     }
 }

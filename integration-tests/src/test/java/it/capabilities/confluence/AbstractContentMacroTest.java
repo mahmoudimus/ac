@@ -225,14 +225,6 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         }
     }
 
-    // Hack: With Chrome driver, the first test often fails in the macro editor selection dialog,
-    // which can be avoided by this warm-up method
-    protected static void warmup()
-    {
-        getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        getProduct().deleteAllCookies();
-    }
-
     @Test
     public void testMacroIsListed() throws Exception
     {
@@ -257,6 +249,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testParameterTypes() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(ALL_PARAMETER_TYPES_MACRO_NAME);
         ConfluenceMacroForm macroForm = (ConfluenceMacroForm) macro.select();
@@ -288,8 +281,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Image Placeholder Macro");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        macroBrowser.selectAndInsertMacro(IMAGE_PLACEHOLDER_MACRO_KEY);
+        selectMacro(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
 
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
         String url = editorContent.getImagePlaceholderUrl();
@@ -303,8 +295,10 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testMacroEditor() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        macroBrowser.selectMacro(EDITOR_MACRO_KEY);
+
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
+        macro.select();
 
         RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
 
@@ -316,9 +310,11 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
     protected abstract String getAddonBaseUrl();
 
-    protected void selectSimpleMacro(CreatePage editorPage)
+    protected void selectMacro(CreatePage editorPage, String macroName)
     {
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        macroBrowser.selectAndInsertMacro(SIMPLE_MACRO_KEY);
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        MacroItem macro = macroBrowser.searchForFirst(macroName);
+        macro.select();
+        macroBrowser.clickSave();
     }
 }

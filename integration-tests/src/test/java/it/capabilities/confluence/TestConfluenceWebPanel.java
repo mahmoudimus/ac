@@ -81,9 +81,9 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .addModule(WEB_PANELS, editorWebPanel)
                 .addModule(WEB_PANELS, viewWebPanel)
                 .addModule(WEB_PANELS, profileWebPanel)
-                .addRoute(IFRAME_URL_EDIT, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_EDIT))
-                .addRoute(IFRAME_URL_VIEW, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_VIEW))
-                .addRoute(IFRAME_URL_PROFILE, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_PROFILE))
+                .addRoute(IFRAME_URL_EDIT, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_EDIT, false))
+                .addRoute(IFRAME_URL_VIEW, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_VIEW, false))
+                .addRoute(IFRAME_URL_PROFILE, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_PROFILE, false))
                 .start();
     }
 

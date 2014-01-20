@@ -1,12 +1,12 @@
 package it.capabilities.confluence;
 
+import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroHttpMethod;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroForm;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
@@ -16,7 +16,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
@@ -24,17 +23,11 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBe
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-@Ignore
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {
     private static final String STORAGE_FORMAT_MACRO_NAME = "Storage Format Macro";
-    private static final String STORAGE_FORMAT_MACRO_KEY = "storage-format-macro";
-
     private static final String POST_MACRO_NAME = "Post Macro";
-    private static final String POST_MACRO_KEY = "post-macro";
-
     private static final String POST_PARAM_MACRO_NAME = "Post Parameter Macro";
-    private static final String POST_PARAM_MACRO_KEY = "post-parameter-macro";
 
     private static ConnectRunner remotePlugin;
     private static EchoQueryParametersServlet parameterServlet;
@@ -53,13 +46,11 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         StaticContentMacroModuleBean editorMacro = createEditorMacro(newStaticContentMacroModuleBean());
 
         StaticContentMacroModuleBean storageFormatMacro = newStaticContentMacroModuleBean()
-                .withKey(STORAGE_FORMAT_MACRO_KEY)
                 .withUrl("/render-storage-format")
                 .withName(new I18nProperty(STORAGE_FORMAT_MACRO_NAME, ""))
                 .build();
 
         StaticContentMacroModuleBean postMacro = newStaticContentMacroModuleBean()
-                .withKey(POST_MACRO_KEY)
                 .withUrl("/render-context")
                 .withMethod(MacroHttpMethod.POST)
                 .withName(new I18nProperty(POST_MACRO_NAME, ""))
@@ -67,7 +58,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
         StaticContentMacroModuleBean postParameterMacro = newStaticContentMacroModuleBean()
                 .withUrl(DEFAULT_MACRO_URL)
-                .withKey(POST_PARAM_MACRO_KEY)
                 .withName(new I18nProperty(POST_PARAM_MACRO_NAME, ""))
                 .withMethod(MacroHttpMethod.POST)
                 .withParameters(newMacroParameterBean()
@@ -101,7 +91,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/render-storage-format", ConnectAppServlets.resourceServlet("confluence/test-static-content-macro.xhtml", "application/xhtml+xml"))
                 .start();
-        warmup();
     }
 
     @AfterClass
@@ -119,8 +108,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Simple Macro on Page");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        macroBrowser.selectAndInsertMacro(STORAGE_FORMAT_MACRO_KEY);
+        selectMacro(editorPage, STORAGE_FORMAT_MACRO_NAME);
 
         savedPage = editorPage.save();
 
@@ -135,8 +123,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("HTTP POST Macro");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        macroBrowser.selectAndInsertMacro(POST_MACRO_KEY);
+        selectMacro(editorPage, POST_MACRO_NAME);
 
         savedPage = editorPage.save();
 
@@ -149,8 +136,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Short Body Macro");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        macroBrowser.selectAndInsertMacro(SHORT_BODY_MACRO_KEY);
+        selectMacro(editorPage, SHORT_BODY_MACRO_NAME);
 
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
         editorContent.setRichTextMacroBody("a short body");
@@ -167,8 +153,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Long Body Macro");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        macroBrowser.selectAndInsertMacro(LONG_BODY_MACRO_KEY);
+        selectMacro(editorPage, LONG_BODY_MACRO_NAME);
 
         String body = StringUtils.repeat("x ", 200);
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
@@ -186,12 +171,12 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Parameter Page");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);
         ConfluenceMacroForm macroForm = (ConfluenceMacroForm) macro.select();
 
         macroForm.getAutocompleteField("param1").setValue("param value");
-        macroBrowser.insertMacro();
+        macroBrowser.clickSave();
 
         savedPage = editorPage.save();
 
@@ -205,12 +190,12 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("HTTP POST Parameter Page");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(POST_PARAM_MACRO_NAME);
         ConfluenceMacroForm macroForm = (ConfluenceMacroForm) macro.select();
 
         macroForm.getAutocompleteField("param1").setValue("param value");
-        macroBrowser.insertMacro();
+        macroBrowser.clickSave();
 
         savedPage = editorPage.save();
 

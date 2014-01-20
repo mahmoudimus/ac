@@ -1,12 +1,12 @@
 package it.capabilities.confluence;
 
+import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroForm;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -15,7 +15,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -24,7 +23,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.assertThat;
 
-@Ignore
 public class TestDynamicContentMacro extends AbstractContentMacroTest
 {
     private static final String SMALL_INLINE_MACRO_NAME = "Small Inline Macro";
@@ -69,7 +67,6 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .addRoute("/render-no-resize-macro", ConnectAppServlets.noResizeServlet())
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .start();
-        warmup();
     }
 
     @AfterClass
@@ -87,7 +84,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Simple Macro on Page");
 
-        selectSimpleMacro(editorPage);
+        selectMacro(editorPage, SIMPLE_MACRO_NAME);
 
         savedPage = editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacro(SIMPLE_MACRO_KEY, 0);
@@ -102,8 +99,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Short Body Macro");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        macroBrowser.selectAndInsertMacro(SHORT_BODY_MACRO_KEY);
+        selectMacro(editorPage, SHORT_BODY_MACRO_NAME);
 
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
         editorContent.setRichTextMacroBody("a short body");
@@ -121,8 +117,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Long Body Macro");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        macroBrowser.selectAndInsertMacro(LONG_BODY_MACRO_KEY);
+        selectMacro(editorPage, LONG_BODY_MACRO_NAME);
 
         String body = StringUtils.repeat("x ", 200);
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
@@ -141,12 +136,12 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Parameter Page");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);
         ConfluenceMacroForm macroForm = (ConfluenceMacroForm) macro.select();
 
         macroForm.getAutocompleteField("param1").setValue("param value");
-        macroBrowser.insertMacro();
+        macroBrowser.clickSave();
 
         savedPage = editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacro(PARAMETER_MACRO_KEY, 0);
@@ -161,8 +156,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Multiple Macros");
 
-        selectSimpleMacro(editorPage);
-        selectSimpleMacro(editorPage);
+        selectMacro(editorPage, SIMPLE_MACRO_NAME);
+        selectMacro(editorPage, SIMPLE_MACRO_NAME);
 
         savedPage = editorPage.save();
 
@@ -181,8 +176,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         editorPage.setTitle("Small Inline Macro");
 
-        ConfluenceMacroBrowserDialog macroBrowser = (ConfluenceMacroBrowserDialog) editorPage.openMacroBrowser();
-        macroBrowser.selectAndInsertMacro(SMALL_INLINE_MACRO_KEY);
+        selectMacro(editorPage, SMALL_INLINE_MACRO_NAME);
 
         savedPage = editorPage.save();
 
