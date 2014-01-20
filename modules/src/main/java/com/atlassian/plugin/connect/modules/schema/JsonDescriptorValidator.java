@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Named;
 import java.io.IOException;
 
-@Named
 public class JsonDescriptorValidator implements ConnectDescriptorValidator
 {
     private static final Logger log = LoggerFactory.getLogger(JsonDescriptorValidator.class);

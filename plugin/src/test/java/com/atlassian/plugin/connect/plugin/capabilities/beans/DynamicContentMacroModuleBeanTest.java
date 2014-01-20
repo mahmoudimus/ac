@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
-import static com.atlassian.plugin.connect.modules.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean.newImagePlaceholderBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.newMacroEditorBean;
@@ -68,7 +68,7 @@ public class DynamicContentMacroModuleBeanTest
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .withModule("dynamicContentMacros", newDynamicContentMacroModuleBean()
                         .withName(new I18nProperty("Some Macro", "some.macro.name"))
-                        .withKey("")
+                        .withKey("dynamic-content-macro")
                         .withUrl("/my-macro")
                         .withAliases("some-alias")
                         .withBodyType(MacroBodyType.PLAIN_TEXT)

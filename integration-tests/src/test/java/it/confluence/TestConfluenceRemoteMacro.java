@@ -349,7 +349,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     {
         private static final long ONE_YEAR_SECONDS = 60L * 60L * 24L * 365L;
         private static final long ONE_YEAR_MILLISECONDS = 1000 * ONE_YEAR_SECONDS;
-        private static final int INITIAL_VALUE = 1;
+        private static final int INITIAL_VALUE = 0;
         private int counter = INITIAL_VALUE;
 
         @Override

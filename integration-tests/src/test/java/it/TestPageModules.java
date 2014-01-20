@@ -31,7 +31,7 @@ import static java.lang.String.valueOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-public class TestPageModules extends AbstractRemotablePluginTest
+public class TestPageModules extends ConnectWebDriverTestBase
 {
     private static AtlassianConnectAddOnRunner remotePlugin;
 
@@ -182,16 +182,16 @@ public class TestPageModules extends AbstractRemotablePluginTest
                                                             .name("Page")
                                                             .path("/page")
                                                             .resource(ConnectAppServlets.helloWorldServlet());
-        
+
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "configurePage");
-        
+
                 runner.add(configPage);
                 runner.start();
 
         // fixme: jira page objects don't redirect properly to next page
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         final PluginManagerPage upm = product.visit(PluginManagerPage.class);
-        
+
         final RemotePluginTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", RemotePluginTestPage.class);
         assertTrue(remotePluginTestPage.isLoaded());
 

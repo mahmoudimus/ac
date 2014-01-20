@@ -21,22 +21,28 @@
             <%- partial('_sidebar_list.ejs', { category: 'concepts' }) %>
 
             <div class="aui-nav-heading">
+                <strong>Developing and Deploying</strong>
+            </div>
+            <%- partial('_sidebar_list.ejs', { category: 'developing' }) %>
+
+            <div class="aui-nav-heading">
                 <a href="<%= relDocRoot %>modules/">AddOn Descriptor</a>
             </div>
             <ul class="aui-nav">
                 <li <%= selected('modules/authentication') %>>
-                    <a href="<%= relDocRoot %>modules/authentication">Authentication</a>
+                    <a href="<%= relDocRoot %>modules/authentication.html">Authentication</a>
                 </li>
                 <li <%= selected('modules/lifecycle') %>>
-                    <a href="<%= relDocRoot %>modules/lifecycle">Lifecycle</a>
+                    <a href="<%= relDocRoot %>modules/lifecycle.html">Lifecycle</a>
                 </li>
                 <li <%= selected('modules/plugin-vendor') %>>
-                    <a href="<%= relDocRoot %>modules/plugin-vendor">Plugin Vendor</a>
+                    <a href="<%= relDocRoot %>modules/plugin-vendor.html">Plugin Vendor</a>
                 </li>
             </ul>
 
             <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira, relDocRoot: relDocRoot }) %>
             <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence, relDocRoot: relDocRoot }) %>
+            <%- partial('_module_list.ejs', { title: "Javascript API", modules: public.javascript._data, relDocRoot: relDocRoot }) %>
 
             <div class="aui-nav-heading">
                 <strong>Product APIs</strong>
@@ -45,6 +51,7 @@
             <%- partial('_sidebar_list.ejs', { category: 'rest-apis' }) %>
 
             <%- partial('_sidebar_list.ejs', { category: 'resources' }) %>
+
         </div>
     </nav>
 </div>

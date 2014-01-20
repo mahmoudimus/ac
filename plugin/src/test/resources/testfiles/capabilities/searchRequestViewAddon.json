@@ -21,6 +21,7 @@
                     "i18n": "my.searchRequestView",
                     "value": "My Search Request View"
                 },
+                "key":"jira-search-request-view",
                 "params": {
                     "delimiter": ","
                 },

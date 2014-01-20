@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
@@ -38,6 +39,11 @@ public class ConnectPageOperations
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownLinkId);
     }
 
+    public RenderedMacro findMacro(String macroKey, int count)
+    {
+        return pageBinder.bind(RenderedMacro.class, macroKey, count);
+    }
+
     public Boolean webItemDoesNotExist(String webItemId)
     {
 //        Check.elementExists(By.id(webItemId));
@@ -67,6 +73,12 @@ public class ConnectPageOperations
     private LinkedRemoteContent findRemoteLinkedContent(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(ID, webItemId, dropDownMenuId, pageKey);
+    }
+
+    public RemotePluginDialog findDialog(String key)
+    {
+        RemotePluginTestPage dialogContent = pageBinder.bind(RemotePluginTestPage.class, key);
+        return pageBinder.bind(RemotePluginDialog.class, dialogContent);
     }
 
 }

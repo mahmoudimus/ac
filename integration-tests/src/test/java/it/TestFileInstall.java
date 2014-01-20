@@ -18,7 +18,7 @@ import static it.TestConstants.BETTY_USERNAME;
 import static org.apache.commons.io.FileUtils.cleanDirectory;
 import static org.junit.Assert.assertTrue;
 
-public class TestFileInstall extends AbstractRemotablePluginTest
+public class TestFileInstall extends ConnectWebDriverTestBase
 {
     @Test
     @Ignore

@@ -18,7 +18,7 @@ The `atlassian-plugin.xml` descriptor format is deprecated in favour of the new 
         <h5>OnDemand removal</h5>
     </div>
     <div class="aui-item">
-        10th February, 2014
+        __28th February, 2014__
     </div>
 </div>
 <div class="aui-group">
@@ -49,7 +49,7 @@ Atlassian Connect is replacing the OAuth 1.0 2LO implementation with JWT.
         <h5>OnDemand removal</h5>
     </div>
     <div class="aui-item">
-        May, 2014
+        __May, 2014__
     </div>
 </div>
 <div class="aui-group">
@@ -81,7 +81,7 @@ Atlassian Connect will no longer provide a REST endpoint allowing add-ons to sen
         <h5>OnDemand removal</h5>
     </div>
     <div class="aui-item">
-        10th February, 2014
+        __10th February, 2014__
     </div>
 </div>
 <div class="aui-group">

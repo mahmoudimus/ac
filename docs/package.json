@@ -9,7 +9,8 @@
     "markdown-js": "*",
     "chokidar": "*",
     "JSONPath": "*",
-    "commander": "*"
+    "commander": "*",
+    "jsdoc": "*"
   },
   "scripts": {
     "start": "./build.js --serve",

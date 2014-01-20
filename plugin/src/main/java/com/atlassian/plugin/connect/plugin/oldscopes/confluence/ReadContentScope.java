@@ -72,7 +72,8 @@ public final class ReadContentScope extends ConfluenceScope
                         new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/attachment", asList("get")),
                         new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/breadcrumb", asList("get")),
                         new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/space", asList("get")),
-                        new RestApiScopeHelper.RestScope("ui", asList("1", "1.0", "latest"), "/content", asList("get"))
+                        new RestApiScopeHelper.RestScope("ui", asList("1", "1.0", "latest"), "/content", asList("get")),
+                        new RestApiScopeHelper.RestScope("api", asList("1", "1.0", "latest"), "/content", asList("get"))
                 ),
                 new DownloadScopeHelper("/download/temp/")
         );

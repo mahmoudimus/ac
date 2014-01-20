@@ -48,7 +48,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * and automatically installing the available update. See [Upgrades](../concepts/upgrades.html) for more details.
  * <p/>
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_EXAMPLE}
  * @exampleJson Kitchen Sink: <p class="expandNextPre"></p>{@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_COMPLETE_EXAMPLE}
@@ -75,8 +75,27 @@ public class ConnectAddonBean extends BaseModuleBean
 
     /**
      * The version of the add-on
+     * 
+     * @deprecated This field will be going away soon as marketplace will generate and provide versions
      */
     private String version;
+
+    /**
+     * The API version is an OPTIONAL integer. If omitted we will infer an API version of 1.
+     * 
+     * The intention behind the API version is to allow vendors the ability to beta test a major revision to their Connect add-on as a private version,
+     * and have a seamless transition for those beta customers (and existing customers) once the major revision is launched. 
+     * 
+     * Vendors can accomplish this by listing a new private version of their add-on, with a new descriptor hosted at a new URL. 
+     * 
+     * They use the Atlassian Marketplace's access token facilities to share this version with customers (or for internal use). 
+     * When this version is ready to be taken live, it can be transitioned from private to public, and all customers will be seamlessly updated.
+     * 
+     * It's important to note that this approach allows vendors to create new versions manually, despite the fact that in the common case, the versions are automatically created.
+     * This has a few benefits-- for example, it gives vendors the ability to change their descriptor URL if they need to 
+     * (the descriptor URL will be immutable for existing versions)
+     */
+    private Integer apiVersion;
 
     /**
      * A human readable description of what the add-on does. The description will be visible in the `Manage Add-ons`
@@ -215,6 +234,11 @@ public class ConnectAddonBean extends BaseModuleBean
         return version;
     }
 
+    public Integer getApiVersion()
+    {
+        return (null != apiVersion && apiVersion > 0) ? apiVersion : 1;
+    }
+
     public String getDescription()
     {
         return description;
@@ -310,6 +334,7 @@ public class ConnectAddonBean extends BaseModuleBean
                 .append(key, other.key)
                 .append(name, other.name)
                 .append(version, other.version)
+                .append(apiVersion, other.apiVersion)
                 .append(description, other.description)
                 .append(vendor, other.vendor)
                 .append(links, other.links)
@@ -330,6 +355,7 @@ public class ConnectAddonBean extends BaseModuleBean
                 .append(key)
                 .append(name)
                 .append(version)
+                .append(apiVersion)
                 .append(description)
                 .append(vendor)
                 .append(links)

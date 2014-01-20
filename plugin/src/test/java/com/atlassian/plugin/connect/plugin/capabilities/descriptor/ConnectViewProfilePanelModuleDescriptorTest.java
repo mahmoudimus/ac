@@ -19,7 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.modules.beans.matchers.IFrameContextMatchers.hasIFramePath;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.IFrameContextMatchers.hasIFramePath;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
