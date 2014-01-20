@@ -1,6 +1,11 @@
 
 # Release Notes
 
+## [1.0-m29](../release-notes/1-0-m29.html)
+* Tabs can now be added to Confluence Space Tools section. Check out [Space Tools Tab](modules/confluence/space-tools-tab.html) documentation for more information.
+
+Read the [1.0-m29 release notes](../release-notes/1-0-m29.html).
+
 ## [1.0-m28](../release-notes/1-0-m28.html)
 * New documentation for the Atlassian Connect Javascript API
 * Java 7 is no longer required at runtime (change in atlassian-jwt 1.0-m8)

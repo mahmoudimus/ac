@@ -242,6 +242,13 @@ public class ModuleList extends BaseModuleBean
     private List<ConnectPageModuleBean> profilePages;
 
     /**
+     * The Space Tools Tab module allows you to add new tabs to the Space Tools area of Confluence.
+     * @schemaTitle Space Tools Tab
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider", products = {ProductFilter.CONFLUENCE})
+    private List<SpaceToolsTabModuleBean> spaceToolsTabs;
+
+    /**
      * Static content macros allow you to add a macro into a Confluence page which is stored with the Confluence page
      * itself. The add-on is responsible for generating the rendered XHTML in
      * [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
@@ -265,6 +272,7 @@ public class ModuleList extends BaseModuleBean
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.profilePages = newArrayList();
+        this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
@@ -334,6 +342,10 @@ public class ModuleList extends BaseModuleBean
         if (null == dynamicContentMacros)
         {
             this.dynamicContentMacros = newArrayList();
+        }
+        if (null == spaceToolsTabs)
+        {
+            this.spaceToolsTabs = newArrayList();
         }
         if (null == staticContentMacros)
         {
@@ -421,6 +433,10 @@ public class ModuleList extends BaseModuleBean
         return dynamicContentMacros;
     }
 
+    public List<SpaceToolsTabModuleBean> getSpaceToolsTabs() {
+        return spaceToolsTabs;
+    }
+
     public List<StaticContentMacroModuleBean> getStaticContentMacros()
     {
         return staticContentMacros;
@@ -456,6 +472,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
                 .append(profilePages, other.profilePages)
+                .append(spaceToolsTabs, other.spaceToolsTabs)
                 .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
@@ -481,6 +498,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
                 .append(profilePages)
+                .append(spaceToolsTabs)
                 .append(staticContentMacros)
                 .append(webhooks)
                 .append(webItems)

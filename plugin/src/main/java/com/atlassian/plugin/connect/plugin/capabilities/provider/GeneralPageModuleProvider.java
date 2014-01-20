@@ -13,7 +13,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.provider.Abstract
 @Component
 public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
 {
-    private static final String GENERAL_PAGE_DECORATOR = "atl.general";
+    public static final String GENERAL_PAGE_DECORATOR = "atl.general";
 
     @Autowired
     public GeneralPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
