@@ -81,6 +81,11 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
 
         for (Field propField : ReflectionUtil.getPropertiesForJson(clazz))
         {
+            if(propField.isAnnotationPresent(SchemaIgnore.class))
+            {
+                continue;
+            }
+            
             String defaultArrayTitle = getFieldTitle(clazz,propField);
             JsonSchema fieldSchema = generateSchemaForField(clazz, propField, ifaces, defaultArrayTitle);
 

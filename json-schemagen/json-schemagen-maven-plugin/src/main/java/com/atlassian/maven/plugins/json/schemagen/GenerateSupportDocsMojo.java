@@ -6,6 +6,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.twdata.maven.mojoexecutor.MojoExecutor;
 
 import java.io.File;
 import java.util.regex.Matcher;
@@ -47,6 +48,17 @@ public class GenerateSupportDocsMojo extends AbstractSchemaGenMojo
         
         String packagePath = "**" + File.separator + basePackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator)) + File.separator + "**" + File.separator + "*.java";
 
+        MojoExecutor.Element jflags = null;
+        
+        if(debug)
+        {
+            jflags = element(name("additionalJOptions"),
+                        element(name("additionalJOption"),"-J-Xdebug")
+                        ,element(name("additionalJOption"),"-J-Xnoagent")
+                        ,element(name("additionalJOption"),"-J-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005")
+                    );    
+        }
+        
         executeMojo(
                 plugin(
                         groupId("org.apache.maven.plugins"),
@@ -54,7 +66,7 @@ public class GenerateSupportDocsMojo extends AbstractSchemaGenMojo
                         version("2.9.1")
                 ),
                 goal("javadoc"),
-                configuration(
+                configurationWithoutNullElements(
                         element(name("maxmemory"),"1024m"),
                         element(name("doclet"), JsonSchemaDoclet.class.getName()),
                         element(name("docletPath"), getClasspath()),
@@ -63,7 +75,8 @@ public class GenerateSupportDocsMojo extends AbstractSchemaGenMojo
                         element(name("sourcepath"),sourcepath),
                         element(name("quiet"),"true"),
                         element(name("show"),"private"),
-                        element(name("useStandardDocletOptions"),"false")
+                        element(name("useStandardDocletOptions"),"false"),
+                        jflags
                         
                 ),
                 executionEnvironment()
