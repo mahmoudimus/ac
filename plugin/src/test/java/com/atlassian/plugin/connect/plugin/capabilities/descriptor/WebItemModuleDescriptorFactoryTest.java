@@ -241,6 +241,7 @@ public class WebItemModuleDescriptorFactoryTest
     {
         return newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
+                .withKey("my-web-item")
                 .withUrl("http://www.google.com?my_project_id={project.id}&my_project_key={project.key}")
                 .withLocation("atl.admin/menu")
                 .withWeight(123);

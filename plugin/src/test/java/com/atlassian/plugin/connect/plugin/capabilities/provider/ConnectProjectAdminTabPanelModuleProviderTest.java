@@ -55,7 +55,7 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
     private static final String EXPECTED_LOCATION = "atl.jira.proj.config/a-location";
     private static final String EXPECTED_DECORATOR = "";
     private static final String EXPECTED_TEMPLATE_SUFFIX = "-project-admin";
-    private static final Map<String, String> EXPECTED_META_TAGS = ImmutableMap.of("adminActiveTab", ADDON_KEY);
+    private static final Map<String, String> EXPECTED_META_TAGS = ImmutableMap.of("adminActiveTab", ADDON_KEY.toLowerCase());
 
     @Mock
     private Plugin plugin;
@@ -111,7 +111,7 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
     @Test
     public void moduleBeanHasCorrectKey()
     {
-        verify(webItemModuleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasAddonKeyValue(ADDON_KEY)));
+        verify(webItemModuleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasAddonKeyValue(ADDON_KEY.toLowerCase())));
     }
 
     @Test

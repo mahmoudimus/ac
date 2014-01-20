@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m28-SNAPSHOT</version>
+        <version>1.0-m28-RC-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -349,16 +349,6 @@
                                     <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-
-                            <bundledArtifacts>
-                                <!-- TODO: remove this once UPM 2.13 is bundled with products -->
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
-                                </bundledArtifact>
-                            </bundledArtifacts>
-
                         </product>
                         <product>
                             <id>confluence</id>

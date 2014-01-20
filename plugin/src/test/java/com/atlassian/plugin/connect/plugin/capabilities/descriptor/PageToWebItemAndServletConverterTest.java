@@ -66,7 +66,7 @@ public class PageToWebItemAndServletConverterTest
     @Test
     public void createsWebItemWithSameKeyAsPageBean()
     {
-        assertThat(webItem(), hasProperty("key", is(PAGE_BEAN_KEY)));
+        assertThat(webItem(), hasProperty("key", is(PAGE_BEAN_KEY.toLowerCase())));
     }
 
     @Test

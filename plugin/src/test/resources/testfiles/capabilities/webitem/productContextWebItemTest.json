@@ -30,6 +30,7 @@
                 "value": "My Web Item",
                 "i18n": "my.webItem"
             },
+            "key":"my-web-item",
             "tooltip": {
                 "value": "Does batman even need robin?",
                 "i18n": "batman.robin"

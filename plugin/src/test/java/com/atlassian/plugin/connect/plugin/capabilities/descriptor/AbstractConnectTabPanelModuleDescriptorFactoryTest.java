@@ -77,10 +77,11 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
         return new ConnectTabPanelModuleDescriptorFactory(mock(ConditionModuleFragmentFactory.class),connectAutowireUtil);
     }
 
-    protected ConnectTabPanelModuleBean createModuleBean(String name, String i18NameKey, String url, int weight)
+    protected ConnectTabPanelModuleBean createModuleBean(String name, String i18NameKey, String key, String url, int weight)
     {
         return newTabPanelBean()
                 .withName(new I18nProperty(name, i18NameKey))
+                .withKey(key)
                 .withUrl(url)
                 .withWeight(weight)
                 .build();
@@ -88,7 +89,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
 
     private ConnectTabPanelModuleBean createModuleDescriptor()
     {
-        ConnectTabPanelModuleBean bean = createModuleBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_URL, ADDON_WEIGHT);
+        ConnectTabPanelModuleBean bean = createModuleBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_NAME_KEY, ADDON_URL, ADDON_WEIGHT);
         connectTabPanelModuleDescriptor = tabPanelModuleDescriptorFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean, descriptorHints);
         return bean;
     }
