@@ -138,7 +138,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
         selectMacro(editorPage, SHORT_BODY_MACRO_NAME);
 
-        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
+        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
         editorContent.setRichTextMacroBody("a short body");
 
         savedPage = editorPage.save();
@@ -156,7 +156,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         selectMacro(editorPage, LONG_BODY_MACRO_NAME);
 
         String body = StringUtils.repeat("x ", 200);
-        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
+        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
         editorContent.setPlainTextMacroBody(body);
 
         savedPage = editorPage.save();

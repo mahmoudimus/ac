@@ -234,7 +234,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testAlias() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
+        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
 
         MacroList macroList = editorContent.autoCompleteMacroList(SIMPLE_MACRO_ALIAS);
         assertThat(macroList.hasEntryWithKey(SIMPLE_MACRO_KEY), is(true));
@@ -275,7 +275,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
         selectMacro(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
 
-        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getContent();
+        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
         String url = editorContent.getImagePlaceholderUrl();
 
         editorPage.cancel();
