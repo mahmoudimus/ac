@@ -43,7 +43,9 @@ import java.util.Set;
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Iterables.*;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
 import static java.lang.String.format;
 
 /**
@@ -122,7 +124,8 @@ public final class PermissionManagerImpl implements PermissionManager
         // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
         if (!isInScopes && isDevModeService.isDevMode() && jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey))
         {
-            log.warn(String.format("Dev mode: allowing plugin '%s' to access '%s' for user '%s'", pluginKey, req.getRequestURI(), user.getStringValue()));
+            log.warn(String.format("Dev mode: allowing plugin '%s' to access '%s' for user '%s'",
+                    pluginKey, req.getRequestURI(), null == user ? "anonymous" : user.getStringValue()));
             isInScopes = true;
         }
 

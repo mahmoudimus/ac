@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBeans;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 
@@ -26,7 +27,10 @@ public class StaticAddOnScopes
      */
     public static Collection<AddOnScope> buildForConfluence() throws IOException
     {
-        return buildFor("confluence");
+        ArrayList<AddOnScope> addOnScopes = Lists.newArrayList();
+        addOnScopes.addAll(buildFor("confluence"));
+        addOnScopes.addAll(buildFor("common"));
+        return addOnScopes;
     }
 
     /**
@@ -38,7 +42,10 @@ public class StaticAddOnScopes
      */
     public static Collection<AddOnScope> buildForJira() throws IOException
     {
-        return buildFor("jira");
+        ArrayList<AddOnScope> addOnScopes = Lists.newArrayList();
+        addOnScopes.addAll(buildFor("jira"));
+        addOnScopes.addAll(buildFor("common"));
+        return addOnScopes;
     }
 
     /**
