@@ -20,7 +20,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModule
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilder;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -67,6 +69,10 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
     protected IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     @Mock
     protected IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    @Mock
+    protected IFrameRenderStrategyBuilder iFrameRenderStrategyBuilder;
+    @Mock
+    
 
     protected Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     protected RemotablePluginAccessorFactory remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
@@ -84,6 +90,8 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
     {
         when(webItemModuleDescriptorFactory.createModuleDescriptor(any(Plugin.class), any(BundleContext.class), any(WebItemModuleBean.class)))
                 .thenReturn(mock(WebItemModuleDescriptor.class));
+        
+        when(iFrameRenderStrategyBuilderFactory.builder()).thenReturn(iFrameRenderStrategyBuilder);
 
         moduleProvider = createModuleProvider();
     }

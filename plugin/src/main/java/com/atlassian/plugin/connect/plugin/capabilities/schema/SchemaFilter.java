@@ -1,16 +1,18 @@
 package com.atlassian.plugin.connect.plugin.capabilities.schema;
 
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.util.ProductFilter;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.util.ProductFilter;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SchemaFilter implements Filter
 {

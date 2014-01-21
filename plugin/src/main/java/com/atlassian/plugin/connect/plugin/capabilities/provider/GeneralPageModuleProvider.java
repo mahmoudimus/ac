@@ -1,13 +1,14 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
+import java.util.Map;
+
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider

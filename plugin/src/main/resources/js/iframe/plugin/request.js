@@ -40,22 +40,35 @@ AP.define("request", ["_dollar", "_rpc"], function ($, rpc) {
     });
   }
 
+  /**
+  * @name RequestProperties
+  * @description An object containing the options of a {@link Request}
+  * @class
+  * @property {String}  url         the url to request from the host application, relative to the host's context path
+  * @property {String}  type        the HTTP method name; defaults to 'GET'
+  * @property {String}  data        the string entity body of the request; required if type is 'POST' or 'PUT'
+  * @property {String}  contentType the content-type string value of the entity body, above; required when data is supplied
+  * @property {Object}  headers     an object containing headers to set; supported headers are: Accept
+  */
+
+
   var apis = rpc.extend(function (remote) {
 
     return {
 
+      /**
+      * @exports request
+      */
       apis: {
 
-        // execute an XMLHttpRequest in the context of the host application
-        //
-        // @param url     either the URI to request or an options object (as below) containing at least a 'url' property;
-        //          this value should be relative to the context path of the host application
-        // @param options   an options object containing one or more of the following properties:
-        //          - url       the url to request from the host application, relative to the host's context path; required
-        //          - type      the HTTP method name; defaults to 'GET'
-        //          - data      the string entity body of the request; required if type is 'POST' or 'PUT'
-        //          - contentType   the content-type string value of the entity body, above; required when data is supplied
-        //          - headers   an object containing headers to set; supported headers are: Accept
+        /**
+        * execute an XMLHttpRequest in the context of the host application
+        *
+        * @param {String} url either the URI to request or an options object (as below) containing at least a 'url' property;<br />
+        *                     this value should be relative to the context path of the host application.
+        * @param {RequestProperties} options an RequestProperties object.
+        */
+
         request: function (url, options) {
           var success, error;
           // unpacks bridged success args into local success args

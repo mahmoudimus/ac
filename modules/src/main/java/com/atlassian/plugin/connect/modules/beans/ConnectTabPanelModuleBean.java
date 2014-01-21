@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * The tab panel module takes care of integrating the add-on content into the application for you. The add-on content
  * automatically gets the tab panel styles and decorators from the host application.
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#COMPONENT_TAB_PANEL_EXAMPLE}
  * @since 1.0

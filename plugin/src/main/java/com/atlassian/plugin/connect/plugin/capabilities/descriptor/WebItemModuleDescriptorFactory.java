@@ -1,12 +1,16 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.util.List;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+
 import com.google.common.base.Joiner;
+
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
@@ -14,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;

@@ -255,6 +255,8 @@ function rebuildHarpSite() {
 
     fs.deleteSync(buildDir);
 
+    compileJsDocs();
+
     var schemas = {
         jira: fs.readJsonSync(jiraSchemaPath),
         confluence: fs.readJsonSync(confluenceSchemaPath)
@@ -345,6 +347,9 @@ function compileHarpSources() {
     fork('./node_modules/harp/bin/harp', ["-o", "../www", "compile"], {'cwd': genSrcPrefix});
 }
 
+function compileJsDocs() {
+    fork('./node_modules/.bin/jsdoc', ["-c", "jsdoc-conf.json", "-t", "jsdoc-template"]);
+}
 rebuildHarpSite();
 
 if (program.serve) {

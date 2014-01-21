@@ -5,59 +5,93 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
   var apis = rpc.extend(function (remote) {
 
     return {
-
+      /**
+      * @exports AP
+      * Utility methods that are available without requiring additional modules.
+      */
       apis: {
 
-        // get the location of the host page
-        //
-        // @param callback  function (location) {...}
+        /**
+        * get the location of the host page
+        *
+        * @param {Function} callback function (location) {...}
+        * @example
+        * AP.getLocation(function(location){
+        *   alert(location); 
+        * });
+        */
         getLocation: function (callback) {
           remote.getLocation(callback);
         },
 
-        // get a user object containing the user's id and full name
-        //
-        // @param callback  function (user) {...}
+        /**
+        * get a user object containing the user's id and full name
+        *
+        * @param {Function} callback  function (user) {...}
+        * @example
+        * AP.getUser(function(user){ 
+        *   console.log(user);
+        * });
+        */
         getUser: function (callback) {
           remote.getUser(callback);
         },
 
-        // get current timezone - if user is logged in then this will retrieve user's timezone
-        // the default (application/server) timezone will be used for unauthorized user
-        //
-        // @param callback  function (user) {...}
+        /**
+        * get current timezone - if user is logged in then this will retrieve user's timezone
+        * the default (application/server) timezone will be used for unauthorized user
+        *
+        * @param {Function} callback  function (user) {...}
+        * @example
+        * AP.getTimeZone(function(timezone){
+        *   console.log(timezone);
+        * });
+        */
         getTimeZone: function (callback) {
           remote.getTimeZone(callback);
         },
 
-        // fire an analytics event
-        //
-        // @param id  the event id.  Will be prepended with the prefix "p3.iframe."
-        // @param props the event properties
+        /**
+        * fire an analytics event
+        *
+        * @param id  the event id.  Will be prepended with the prefix "p3.iframe."
+        * @param props the event properties
+        * @deprecated
+        */
         fireEvent: function (id, props) {
           console.log("AP.fireEvent deprecated; will be removed in future version");
         },
 
-        // shows a message with body and title by id in the host application
-        //
-        // @param id    the message id
-        // @param title   the message title
-        // @param body    the message body
+        /**
+        * shows a message with body and title by id in the host application
+        *
+        * @param {String} id    the message id
+        * @param {String} title   the message title
+        * @param {string} body    the message body
+        * @example
+        * AP.showMessage('123', 'Hello world title', 'Hello world body');
+        */
         showMessage: function (id, title, body) {
           remote.showMessage(id, title, body);
         },
 
-        // clears a message by id in the host application
-        //
-        // @param id    the message id
+        /**
+        * clears a message by id in the host application
+        *
+        * @param {String} id    the message id
+        * @example
+        * AP.clearMessage('123');
+        */
         clearMessage: function (id) {
           remote.clearMessage(id);
         },
 
-        // resize this iframe
-        //
-        // @param width   the desired width
-        // @param height  the desired height
+        /**
+        * resize this iframe
+        * @method
+        * @param {String} width   the desired width
+        * @param {String} height  the desired height
+        */
         resize: $.debounce(function (width, height) {
           var dim = apis.size(width, height, apis.container());
           remote.resize(dim.w, dim.h);

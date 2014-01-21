@@ -2,11 +2,11 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPathBuilder;
-import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.spi.permission.Permission;

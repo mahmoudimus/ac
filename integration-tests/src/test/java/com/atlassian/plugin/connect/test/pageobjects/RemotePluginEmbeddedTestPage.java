@@ -88,4 +88,17 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
             }
         });
     }
+
+    public String getValueById(final String id)
+    {
+        return runInFrame(new Callable<String>()
+        {
+
+            @Override
+            public String call() throws Exception
+            {
+                return driver.findElement(By.id(id)).getText();
+            }
+        });
+    }
 }

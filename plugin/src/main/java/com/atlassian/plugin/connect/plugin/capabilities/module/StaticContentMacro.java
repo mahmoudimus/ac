@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Map;
+
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.Format;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFormat;
@@ -12,12 +16,9 @@ import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.uri.Uri;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.Map;
 
 public class StaticContentMacro extends AbstractContentMacro
 {

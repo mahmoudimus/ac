@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
-import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
+import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 
 import java.util.ArrayList;

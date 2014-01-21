@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m28-SNAPSHOT</version>
+        <version>1.0-m29-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -161,6 +161,22 @@
                 <exclusion>
                     <groupId>com.atlassian.jira.tests</groupId>
                     <artifactId>jira-testkit-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira.tests</groupId>
+            <artifactId>jira-testkit-client</artifactId>
+            <version>${atlassian.jira.testkit.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-library</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -333,16 +349,6 @@
                                     <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-
-                            <bundledArtifacts>
-                                <!-- TODO: remove this once UPM 2.13 is bundled with products -->
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
-                                </bundledArtifact>
-                            </bundledArtifacts>
-
                         </product>
                         <product>
                             <id>confluence</id>
@@ -441,7 +447,7 @@
     </build>
 
     <properties>
-        <testkit.version>6.0.45</testkit.version>
+        <testkit.version>${atlassian.jira.testkit.version}</testkit.version>
         <jetty.version>8.1.7.v20120910</jetty.version>
         <functest.version>0.7.1</functest.version>
         <functestbasics.version>1.9.7</functestbasics.version>

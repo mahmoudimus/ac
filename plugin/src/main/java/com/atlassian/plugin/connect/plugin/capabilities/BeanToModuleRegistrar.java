@@ -1,5 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.Nullable;
+
 import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -21,20 +28,16 @@ import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
 import com.atlassian.sal.api.ApplicationProperties;
+
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;

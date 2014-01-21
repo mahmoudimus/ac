@@ -6,13 +6,13 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.StaticContentMacro;
-import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserManager;
+
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,14 +27,13 @@ public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMa
     @Autowired
     public StaticContentMacroModuleDescriptorFactory(
             AbsoluteAddOnUrlConverter urlConverter,
-            I18nPropertiesPluginManager i18nPropertiesPluginManager,
             MacroContentManager macroContentManager,
             UserManager userManager,
             RemotablePluginAccessorFactory remotablePluginAccessorFactory,
             UrlVariableSubstitutor urlVariableSubstitutor
     )
     {
-        super(urlConverter, i18nPropertiesPluginManager);
+        super(urlConverter);
         this.macroContentManager = macroContentManager;
         this.userManager = userManager;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;

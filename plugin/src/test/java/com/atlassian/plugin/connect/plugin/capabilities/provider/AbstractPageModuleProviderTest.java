@@ -14,6 +14,7 @@ import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -28,7 +29,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-
+@Ignore("Replace with wired tests")
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPageModuleProvider>
 {
@@ -37,7 +38,6 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     @Mock protected WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     @Mock protected IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     @Mock protected IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    @Mock protected IFramePageServletDescriptorFactory servletDescriptorFactory;
     @Mock protected BundleContext bundleContext;
     @Mock protected ProductAccessor productAccessor;
 
@@ -55,8 +55,6 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
         moduleProvider = createPageModuleProvider();
         when(webItemModuleDescriptorFactory.createModuleDescriptor(any(Plugin.class), any(BundleContext.class),
                 any(WebItemModuleBean.class))).thenReturn(mock(WebItemModuleDescriptor.class));
-        when(servletDescriptorFactory.createIFrameServletDescriptor(any(Plugin.class), any(IFrameServletBean.class)))
-                .thenReturn(mock(ServletModuleDescriptor.class));
     }
 
     protected abstract T createPageModuleProvider();
@@ -81,18 +79,6 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     {
         verify(webItemModuleDescriptorFactory()).createModuleDescriptor(any(Plugin.class), any(BundleContext.class),
                 argThat(hasUrlValue("/plugins/servlet/ac/pluginKey/")));
-    }
-
-    @Test
-    public void callsServletDescriptorFactoryWithProvidedPlugin()
-    {
-        verify(servletDescriptorFactory()).createIFrameServletDescriptor(eq(plugin), any(IFrameServletBean.class));
-    }
-
-    protected IFramePageServletDescriptorFactory servletDescriptorFactory()
-    {
-        provideModules();
-        return servletDescriptorFactory;
     }
 
     private WebItemModuleDescriptorFactory webItemModuleDescriptorFactory()

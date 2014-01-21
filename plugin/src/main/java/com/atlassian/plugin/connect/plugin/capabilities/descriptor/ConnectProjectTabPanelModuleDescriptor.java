@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.web.Condition;
+
 import org.dom4j.Element;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;

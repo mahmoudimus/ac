@@ -5,7 +5,9 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
+
 import com.google.common.base.Function;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;

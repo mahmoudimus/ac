@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.Conn
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
+
 import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,14 +33,15 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     private static final String ADDON_NAME = "My Plugin";
     private static final String ADDON_NAME_KEY = "my-tab-page";
     private static final String ADDON_MODULE_NAME = "My Tab Page";
+    private static final String ADDON_MODULE_KEY = "my-tab-page";
     private static final String ADDON_URL = "http://www.google.com";
     private static final int ADDON_WEIGHT = 99;
     private static final String ADDON_WEIGHT_STR = Integer.toString(ADDON_WEIGHT);
     private static final String ADDON_LABEL_KEY = "my.tabpage";
     private final TabPanelDescriptorHints descriptorHints;
     private ConnectTabPanelModuleDescriptorFactory tabPanelModuleDescriptorFactory;
-    
-    
+
+
     @Mock
     private ContainerManagedPlugin plugin;
 
@@ -60,27 +62,29 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
         when(plugin.getKey()).thenReturn(ADDON_KEY);
         when(plugin.getName()).thenReturn(ADDON_NAME);
 
-        when(connectAutowireUtil.createBean(any(Class.class))).thenAnswer(new Answer<Object>() {
+        when(connectAutowireUtil.createBean(any(Class.class))).thenAnswer(new Answer<Object>()
+        {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable
             {
-                return mock((Class)invocation.getArguments()[0]);
+                return mock((Class) invocation.getArguments()[0]);
             }
         });
-        
+
         tabPanelModuleDescriptorFactory = createDescriptorFactory(connectAutowireUtil);
         createModuleDescriptor();
     }
 
     protected ConnectTabPanelModuleDescriptorFactory createDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        return new ConnectTabPanelModuleDescriptorFactory(mock(ConditionModuleFragmentFactory.class),connectAutowireUtil);
+        return new ConnectTabPanelModuleDescriptorFactory(mock(ConditionModuleFragmentFactory.class), connectAutowireUtil);
     }
 
-    protected ConnectTabPanelModuleBean createModuleBean(String name, String i18NameKey, String url, int weight)
+    protected ConnectTabPanelModuleBean createModuleBean(String name, String i18NameKey, String key, String url, int weight)
     {
         return newTabPanelBean()
                 .withName(new I18nProperty(name, i18NameKey))
+                .withKey(key)
                 .withUrl(url)
                 .withWeight(weight)
                 .build();
@@ -88,9 +92,15 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
 
     private ConnectTabPanelModuleBean createModuleDescriptor()
     {
-        ConnectTabPanelModuleBean bean = createModuleBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_URL, ADDON_WEIGHT);
+        ConnectTabPanelModuleBean bean = createModuleBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_MODULE_KEY, ADDON_URL, ADDON_WEIGHT);
         connectTabPanelModuleDescriptor = tabPanelModuleDescriptorFactory.createModuleDescriptor(plugin, bean, descriptorHints);
         return bean;
+    }
+
+    @Test
+    public void createsElementWithCorrectKey()
+    {
+        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementKey(ADDON_MODULE_KEY)));
     }
 
     @Test
@@ -128,7 +138,6 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     {
         verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementLabelKey(ADDON_LABEL_KEY)));
     }
-
 
 
     private static ArgumentMatcher<Element> hasElementKey(String expectedValue)

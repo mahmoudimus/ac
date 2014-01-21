@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
@@ -12,10 +16,6 @@ import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.uri.Uri;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
 
 public final class DynamicContentMacro extends AbstractContentMacro
 {

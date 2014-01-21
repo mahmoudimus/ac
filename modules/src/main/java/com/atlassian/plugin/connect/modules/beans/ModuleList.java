@@ -72,7 +72,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * In this case, we're declaring a `dialog-page` webItem. This declaration adds a dialog box to JIRA that users can open
  * by clicking a "Create Sub-Tasks" link on an issue.
  * <p/>
- * ### Conditions
+ *### Conditions
  * <p/>
  * You can specify the conditions in which the link (and therefore access to this page) appears. The Atlassian application
  * ensures that the link only appears if it is appropriate for it to do so. In the example, the module should only appear
@@ -80,7 +80,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * must be true for the module to be in effect. Note, the condition only applies to the presence or absence of the link.
  * You should still permission the URL that the link references if appropriate.
  * <p/>
- * ### URLs
+ *### URLs
  * <p/>
  * All module declarations must have a `url` attribute. The url attribute identifies the path on the add-on host to the
  * resource that implements the module. The URL value must be valid relative to the `baseUrl` value in the add-on descriptor.
@@ -242,6 +242,13 @@ public class ModuleList extends BaseModuleBean
     private List<ConnectPageModuleBean> profilePages;
 
     /**
+     * The Space Tools Tab module allows you to add new tabs to the Space Tools area of Confluence.
+     * @schemaTitle Space Tools Tab
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider", products = {ProductFilter.CONFLUENCE})
+    private List<SpaceToolsTabModuleBean> spaceToolsTabs;
+
+    /**
      * Static content macros allow you to add a macro into a Confluence page which is stored with the Confluence page
      * itself. The add-on is responsible for generating the rendered XHTML in
      * [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
@@ -265,6 +272,7 @@ public class ModuleList extends BaseModuleBean
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.profilePages = newArrayList();
+        this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
@@ -334,6 +342,10 @@ public class ModuleList extends BaseModuleBean
         if (null == dynamicContentMacros)
         {
             this.dynamicContentMacros = newArrayList();
+        }
+        if (null == spaceToolsTabs)
+        {
+            this.spaceToolsTabs = newArrayList();
         }
         if (null == staticContentMacros)
         {
@@ -421,6 +433,10 @@ public class ModuleList extends BaseModuleBean
         return dynamicContentMacros;
     }
 
+    public List<SpaceToolsTabModuleBean> getSpaceToolsTabs() {
+        return spaceToolsTabs;
+    }
+
     public List<StaticContentMacroModuleBean> getStaticContentMacros()
     {
         return staticContentMacros;
@@ -456,6 +472,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
                 .append(profilePages, other.profilePages)
+                .append(spaceToolsTabs, other.spaceToolsTabs)
                 .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
@@ -481,6 +498,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
                 .append(profilePages)
+                .append(spaceToolsTabs)
                 .append(staticContentMacros)
                 .append(webhooks)
                 .append(webItems)

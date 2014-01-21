@@ -1,4 +1,4 @@
-(this.AP || this._AP).define("_xdm", ["_events", "_base64"], function (events, base64) {
+(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri"], function (events, base64, uri) {
 
   "use strict";
 
@@ -331,26 +331,21 @@
 
     // Crudely extracts a query param value from a url by name
     function param(url, name) {
-        var match = RegExp(name + "=([^&]+)").exec(url);
-        return match && match.length > 0 ? decodeURIComponent(match[1]) : null;
+      return new uri.init(url).getQueryParamValue(name);
     }
 
     // Determines a base url consisting of protocol+domain+port from a given url string
     function getBaseUrl(url) {
-      var m = url.toLowerCase().match(/^((http.?:)\/\/([^:\/\s]+)(:\d+)*)/),
-        proto = m[2], domain = m[3], port = m[4] || "";
-      if ((proto === "http:" && port === ":80") || (proto === "https:" && port === ":443")) port = "";
-      return proto + "//" + domain + port;
+      return new uri.init(url).origin();
     }
 
     // Appends a map of query parameters to a base url
     function toUrl(base, params) {
-      var url = base, sep = /\?/.test(base) ? "&" : "?";
+      var url = new uri.init(base);
       $.each(params, function (k, v) {
-        url += sep + encodeURIComponent(k) + "=" + encodeURIComponent(v);
-        sep = "&";
+        url.addQueryParam(k,v);
       });
-      return url;
+      return url.toString();
     }
 
     // Creates an iframe element from a config option consisting of the following values:

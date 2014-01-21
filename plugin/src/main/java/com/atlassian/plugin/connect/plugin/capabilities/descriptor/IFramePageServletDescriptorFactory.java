@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServlet;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -20,16 +24,15 @@ import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServlet;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getService;
 

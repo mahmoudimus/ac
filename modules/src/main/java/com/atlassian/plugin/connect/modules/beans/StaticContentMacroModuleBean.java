@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroHttpMethod;
  * Please consult [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
  * for additional information about how to construct valid storage format XML.
  * <p/>
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#STATIC_MACRO_EXAMPLE}
  * @schemaTitle Static Content Macro

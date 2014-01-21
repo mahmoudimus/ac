@@ -4,14 +4,14 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DynamicContentMacroModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,9 +26,10 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
                                              HostContainer hostContainer,
                                              AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
                                              IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
+                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+										     I18nPropertiesPluginManager i18nPropertiesPluginManager)
     {
-        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
+        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, i18nPropertiesPluginManager);
         this.dynamicContentMacroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 

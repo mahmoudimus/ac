@@ -1,8 +1,5 @@
 package it.jira;
 
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
-
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.ConnectWebDriverTestBase;
@@ -10,13 +7,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
+
 public class JiraWebDriverTestBase extends ConnectWebDriverTestBase
 {
     protected static JiraOps jiraOps;
     protected RemoteProject project;
 
     @BeforeClass
-    public static void setup() throws RemoteException
+    public static void setup()
     {
         jiraOps = new JiraOps(product.getProductInstance());
     }

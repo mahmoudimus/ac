@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
+import java.util.Map;
+
 import com.atlassian.confluence.macro.Macro;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
@@ -9,8 +11,6 @@ import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
-
-import java.util.Map;
 
 public abstract class AbstractContentMacro implements Macro
 {

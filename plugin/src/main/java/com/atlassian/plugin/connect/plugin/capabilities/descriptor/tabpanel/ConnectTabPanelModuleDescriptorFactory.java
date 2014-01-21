@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

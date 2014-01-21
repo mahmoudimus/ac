@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
@@ -7,13 +11,10 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebP
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Component
 public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelModuleBean>

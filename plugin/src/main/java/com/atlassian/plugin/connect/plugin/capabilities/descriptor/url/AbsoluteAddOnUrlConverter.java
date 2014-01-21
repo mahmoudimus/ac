@@ -1,13 +1,14 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.url;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.uri.UriBuilder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Converts URLs specified by Add-On descriptors into absolute URLs.

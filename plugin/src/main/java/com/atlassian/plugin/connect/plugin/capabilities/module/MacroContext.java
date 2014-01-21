@@ -1,15 +1,17 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
+import java.util.Map;
+
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.common.collect.ImmutableMap;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-
-import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 

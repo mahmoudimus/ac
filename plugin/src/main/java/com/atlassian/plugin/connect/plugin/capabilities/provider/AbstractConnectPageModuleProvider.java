@@ -1,21 +1,23 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.web.Condition;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import org.osgi.framework.BundleContext;
 
-import java.util.List;
-import java.util.Map;
+import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;

@@ -1,14 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectComponentTabPanelModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectIssueTabPanelModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectProjectTabPanelModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectVersionTabPanelModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectViewProfilePanelModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.*;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -18,13 +17,12 @@ import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrame
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameProjectTabPanel;
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameVersionTabPanel;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.Map;
 
 @JiraComponent
 public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<ConnectTabPanelModuleBean>

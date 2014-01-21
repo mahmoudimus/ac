@@ -7,7 +7,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModule
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
+
 import com.google.common.base.Strings;
+
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
@@ -52,7 +54,8 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
 
         if (!bean.getConditions().isEmpty())
         {
-            webPanelElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions(), "#" + webPanelKey));
+            DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions(), "#" + webPanelKey);
+            webPanelElement.add(conditionFragment);
         }
 
         webPanelElement.addElement("label").addAttribute("key", i18nKeyOrName);

@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WorkflowPostFunctionModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @JiraComponent
 public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider<WorkflowPostFunctionModuleBean>

@@ -13,6 +13,7 @@ requirejs.config({
 
     paths: {
         'iframe/_events': '../_events',
+        'iframe/_uri': '../_uri',
         '_events': '../_events'
     },
     // ask Require.js to load these files (all our tests)

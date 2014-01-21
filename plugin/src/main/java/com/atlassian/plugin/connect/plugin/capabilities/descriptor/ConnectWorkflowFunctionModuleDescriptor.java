@@ -1,5 +1,14 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
+
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
@@ -27,25 +36,18 @@ import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.FunctionProvider;
 import com.opensymphony.workflow.TypeResolver;
 import com.opensymphony.workflow.WorkflowException;
+
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;

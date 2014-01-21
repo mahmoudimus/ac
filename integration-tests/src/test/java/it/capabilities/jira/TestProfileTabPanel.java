@@ -32,6 +32,7 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
                 .addModule("jiraProfileTabPanels",
                         newTabPanelBean()
                                 .withName(new I18nProperty("Profile Tab Panel", null))
+                                .withKey("profile-tab-panel")
                                 .withUrl("/myProfileAddon")
                                 .withWeight(1234)
                                 .build())

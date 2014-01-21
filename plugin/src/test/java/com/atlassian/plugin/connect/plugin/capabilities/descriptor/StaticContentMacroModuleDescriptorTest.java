@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModu
 import com.atlassian.plugin.connect.modules.beans.nested.MacroHttpMethod;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
-import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.sal.api.user.UserManager;
@@ -26,8 +25,6 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
     @Mock
     private UserManager userManager;
     @Mock
-    private I18nPropertiesPluginManager i18nPropertiesPluginManager;
-    @Mock
     private UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Override
@@ -37,7 +34,6 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
 
         StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new StaticContentMacroModuleDescriptorFactory(
                 new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
-                i18nPropertiesPluginManager,
                 macroContentManager,
                 userManager,
                 remotablePluginAccessorFactoryForTests,

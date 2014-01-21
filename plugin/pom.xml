@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m28-SNAPSHOT</version>
+        <version>1.0-m29-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -359,6 +359,10 @@
                             <groupId>com.atlassian.plugin</groupId>
                             <artifactId>atlassian-spring-scanner</artifactId>
                         </testBundleExclude>
+                        <testBundleExclude>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>atlassian-connect-modules</artifactId>
+                        </testBundleExclude>
                     </testBundleExcludes>
                     <instructions>
                         <!-- <Import-Package>
@@ -428,8 +432,8 @@
                             com.atlassian.plugin.connect.plugin.*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin.product*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin.product.*;version="${project.version}",
-                            com.atlassian.plugin.connect.modules.beans*,
-                            com.atlassian.plugin.connect.modules.beans.*
+                            com.atlassian.plugin.connect.modules*,
+                            com.atlassian.plugin.connect.modules*
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
@@ -490,12 +494,6 @@
                             </pluginArtifacts>
 
                             <bundledArtifacts>
-                                <!-- TODO: remove this once UPM 2.13 is bundled with products -->
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
-                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                         <product>
@@ -530,12 +528,6 @@
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <bundledArtifacts>
-                                <!-- TODO: remove this once UPM 2.13 is bundled with products -->
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
-                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                     </products>
