@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.module.jira.projectconfig;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
-import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
@@ -38,12 +37,12 @@ public class IFrameProjectConfigTabServlet extends IFramePageServlet
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
 	{
-        final Project project = getProject(req);
-        req.setAttribute("com.atlassian.jira.projectconfig.util.ServletRequestProjectConfigRequestCache:project", project);
-
-        // This is a workaround for JRA-26407.
-        ((IsProjectAdminCondition)pageInfo.getCondition()).setProject(project);
-
+//        final Project project = getProject(req);
+//        req.setAttribute("com.atlassian.jira.projectconfig.util.ServletRequestProjectConfigRequestCache:project", project);
+//
+//        // This is a workaround for JRA-26407.
+//        ((IsProjectAdminCondition)pageInfo.getCondition()).setProject(project);
+//
         super.doGet(req, resp);
 	}
 

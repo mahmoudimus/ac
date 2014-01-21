@@ -1,18 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.project.Project;
-import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRequestProcessor;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;
@@ -20,7 +17,6 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextFilter.PROJECT_KEY;
@@ -41,15 +37,14 @@ public class ConnectProjectAdminTabPanelModuleProvider
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private final JiraAuthenticationContext authenticationContext;
+    private final ConnectAutowireUtil connectAutowireUtil;
 
     @Autowired
     public ConnectProjectAdminTabPanelModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            JiraAuthenticationContext authenticationContext,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, ConnectAutowireUtil connectAutowireUtil)
     {
-        this.authenticationContext = authenticationContext;
+        this.connectAutowireUtil = connectAutowireUtil;
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
@@ -78,16 +73,14 @@ public class ConnectProjectAdminTabPanelModuleProvider
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemModuleBean));
 
             // register a render strategy for the servlet backing our iframe tab
-            IsProjectAdminCondition projectAdminCondition = new IsProjectAdminCondition(checkNotNull(authenticationContext));
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(plugin.getKey())
                     .module(bean.getKey())
                     .projectAdminTabTemplate()
                     .urlTemplate(bean.getUrl())
                     .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey())
-                    .condition(projectAdminCondition)
+                    .condition(connectAutowireUtil.createBean(IsProjectAdminCondition.class))
                     .title(bean.getDisplayName())
-                    .requestPreprocessor(new JRA26407Workaround(projectAdminCondition))
                     .build();
 
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
@@ -99,37 +92,6 @@ public class ConnectProjectAdminTabPanelModuleProvider
     private String appendProjectKeyParam(final String relativeUri)
     {
         return String.format("%s?%s={%s}", relativeUri, PROJECT_KEY, PROJECT_KEY);
-    }
-
-    private static class JRA26407Workaround implements IFrameRequestProcessor
-    {
-        private final IsProjectAdminCondition projectAdminCondition;
-
-        private JRA26407Workaround(IsProjectAdminCondition projectAdminCondition)
-        {
-            this.projectAdminCondition = projectAdminCondition;
-        }
-
-        @Override
-        public void process(final HttpServletRequest req)
-        {
-            final Project project = getProject(req);
-            req.setAttribute("com.atlassian.jira.projectconfig.util.ServletRequestProjectConfigRequestCache:project", project);
-
-            // This is a workaround for JRA-26407.
-            projectAdminCondition.setProject(project);
-        }
-
-        private Project getProject(final HttpServletRequest request)
-        {
-            Object projectKey = request.getParameterMap().get(PROJECT_KEY);
-            if (projectKey instanceof String[])
-            {
-                final String key = ((String[]) projectKey)[0];
-                return ComponentAccessor.getProjectManager().getProjectObjByKey(key);
-            }
-            throw new IllegalStateException("No " + PROJECT_KEY + " parameter found in the query string!");
-        }
     }
 
 }

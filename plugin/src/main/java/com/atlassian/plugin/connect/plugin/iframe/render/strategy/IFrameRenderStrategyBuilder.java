@@ -33,7 +33,6 @@ public interface IFrameRenderStrategyBuilder
         InitializedBuilder condition(Condition condition);
         InitializedBuilder title(String title);
         InitializedBuilder decorator(String decorator);
-        InitializedBuilder requestPreprocessor(IFrameRequestProcessor requestProcessor);
         InitializedBuilder additionalRenderContext(String key, Object object);
         InitializedBuilder additionalRenderContext(Map<String, Object> additionalRenderContext);
         IFrameRenderStrategy build();

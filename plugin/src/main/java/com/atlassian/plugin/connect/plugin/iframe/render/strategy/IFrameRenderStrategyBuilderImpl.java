@@ -6,15 +6,11 @@ import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFac
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,7 +31,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private final TemplateRenderer templateRenderer;
 
     private final Map<String, Object> additionalRenderContext = Maps.newHashMap();
-    private final List<IFrameRequestProcessor> requestPreprocessors = Lists.newArrayList();
 
     private String addOnKey;
     private String moduleKey;
@@ -137,21 +132,11 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public InitializedBuilder requestPreprocessor(final IFrameRequestProcessor requestProcessor)
-    {
-        if (requestProcessor != null)
-        {
-            this.requestPreprocessors.add(requestProcessor);
-        }
-        return this;
-    }
-
-    @Override
     public IFrameRenderStrategy build()
     {
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, urlTemplate, title, decorator, condition,
-                additionalRenderContext, requestPreprocessors
+                additionalRenderContext
         );
     }
 
@@ -163,7 +148,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final TemplateRenderer templateRenderer;
 
         private final Map<String, Object> additionalRenderContext;
-        private final List<IFrameRequestProcessor> requestPreprocessors;
         private final String addOnKey;
         private final String moduleKey;
         private final String template;
@@ -176,8 +160,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                 final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
                 final TemplateRenderer templateRenderer, final String addOnKey, final String moduleKey,
                 final String template, final String urlTemplate, final String title, final String decorator,
-                final Condition condition, final Map<String, Object> additionalRenderContext,
-                final List<IFrameRequestProcessor> requestPreprocessors)
+                final Condition condition, final Map<String, Object> additionalRenderContext)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -190,16 +173,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.decorator = decorator;
             this.condition = condition;
             this.additionalRenderContext = additionalRenderContext;
-            this.requestPreprocessors = requestPreprocessors;
-        }
-
-        @Override
-        public void preProcessRequest(final HttpServletRequest request)
-        {
-            for (IFrameRequestProcessor requestProcessor : requestPreprocessors)
-            {
-                requestProcessor.process(request);
-            }
         }
 
         @Override

@@ -4,6 +4,7 @@ import com.atlassian.jira.bc.project.ProjectAction;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import org.junit.Before;
@@ -26,6 +27,7 @@ public class IsProjectAdminConditionTest
     private static Map<String, Object> CONTEXT = Collections.emptyMap();
 
     @Mock private JiraAuthenticationContext jiraAuthenticationContext;
+    @Mock private ProjectManager projectManager;
     @Mock private Project project;
     @Mock private ApplicationUser user;
     @Mock private ProjectService projectService;
@@ -38,8 +40,7 @@ public class IsProjectAdminConditionTest
         when(jiraAuthenticationContext.getUser()).thenReturn(user);
         when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
         when(getProjectResult.isValid()).thenReturn(true);
-        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext);
-        condition.setProject(project);
+        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(true));
     }
 
@@ -50,8 +51,7 @@ public class IsProjectAdminConditionTest
         when(jiraAuthenticationContext.getUser()).thenReturn(user);
         when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
         when(getProjectResult.isValid()).thenReturn(false);
-        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext);
-        condition.setProject(project);
+        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(false));
     }
 
@@ -61,7 +61,7 @@ public class IsProjectAdminConditionTest
         when(jiraAuthenticationContext.getUser()).thenReturn(user);
         when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
         when(getProjectResult.isValid()).thenReturn(true);
-        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext);
+        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(false));
     }
 
@@ -72,8 +72,7 @@ public class IsProjectAdminConditionTest
         when(jiraAuthenticationContext.getUser()).thenReturn(user);
         when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
         when(getProjectResult.isValid()).thenReturn(true);
-        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext);
-        condition.setProject(project);
+        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(false));
     }
 
@@ -84,8 +83,7 @@ public class IsProjectAdminConditionTest
         when(jiraAuthenticationContext.getUser()).thenReturn(user);
         when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(null);
         when(getProjectResult.isValid()).thenReturn(true);
-        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext);
-        condition.setProject(project);
+        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(false));
     }
 
@@ -95,8 +93,7 @@ public class IsProjectAdminConditionTest
         when(project.getKey()).thenReturn("key");
         when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
         when(getProjectResult.isValid()).thenReturn(true);
-        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext);
-        condition.setProject(project);
+        IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(false));
     }
 

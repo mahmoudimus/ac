@@ -45,7 +45,6 @@ public class ConnectIFrameServlet extends HttpServlet
             IFrameRenderStrategy renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey);
             if (renderStrategy != null)
             {
-                renderStrategy.preProcessRequest(req);
                 renderStrategy.shouldShowOrThrow(Collections.<String, Object>emptyMap());
                 ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
                 resp.setContentType("text/html");
