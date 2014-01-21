@@ -1,14 +1,13 @@
+.ap-stats {
+  position:absolute;
+  width:100%;
+}
 .ap-status small {
   color: #707070;
 }
 
-.ap-dialog-loading {
-  background: url(loading.gif) center center no-repeat;
-}
-
 .ap-loading, .ap-load-timeout {
-  background: url(loading.gif) left center no-repeat;
-  padding-left: 34px;
+  padding-left: 20px;
 }
 
 .ap-dialog-content {
@@ -33,4 +32,16 @@
 
 .ap-container iframe.full-size-general-page {
   border-bottom: 1px solid #ccc;
+}
+
+.ap-stats .ap-loading, .ap-stats .ap-load-timeout {
+  text-indent:14px;
+}
+
+.ap-stats .small-spinner {
+  position: absolute;
+  bottom: 10px;
+}
+.dialog-panel-body .ap-stats .small-spinner {
+  bottom: 14px;
 }
