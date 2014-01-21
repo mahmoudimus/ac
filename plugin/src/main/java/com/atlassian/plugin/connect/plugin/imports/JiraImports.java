@@ -44,37 +44,6 @@ import javax.inject.Inject;
 @JiraComponent
 public class JiraImports
 {
-    private final ApplicationProperties jiraApplicationProperties;
-    private final AttachmentService attachmentService;
-    private final FieldManager fieldManager;
-    private final FieldVisibilityManager fieldVisibilityManager;
-    private final InternalWebSudoManager internalWebSudoManager;
-    private final IssueLinkTypeManager issueLinkTypeManager;
-    private final IssueManager issueManager;
-    private final IssueToSubTaskConversionService issueToSubTaskConversionService;
-    private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final JiraBaseUrls jiraBaseUrls;
-    private final MailQueue mailQueue;
-    private final PermissionManager jiraPermissionManager;
-    private final ProjectComponentManager projectComponentManager;
-    private final ProjectRoleManager projectRoleManager;
-    private final ProjectService projectService;
-    private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
-    private final SessionSearchObjectManagerFactory sessionSearchObjectManagerFactory;
-    private final SubTaskManager subTaskManager;
-    private final SubTaskToIssueConversionService subTaskToIssueConversionService;
-    private final TimeZoneService timeZoneService;
-    private final UserIssueHistoryManager userIssueHistoryManager;
-    private final UserManager userManager;
-    private final UserPreferencesManager userPreferencesManager;
-    private final UserUtil userUtil;
-    private final VelocityRequestContextFactory velocityRequestContextFactory;
-    private final VersionManager versionManager;
-    private final VoteManager voteManager;
-    private final WatcherManager watcherManager;
-    private final WebFragmentHelper webFragmentHelper;
-    private final WorklogService worklogService;
-
     @Inject
     public JiraImports(
             @JiraImport ("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
@@ -88,7 +57,7 @@ public class JiraImports
             @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
             @JiraImport JiraBaseUrls jiraBaseUrls,
             @JiraImport MailQueue mailQueue,
-            @JiraImport PermissionManager jiraPermissionManager,
+            @JiraImport ("jiraPermissionManager") PermissionManager jiraPermissionManager,
             @JiraImport ProjectComponentManager projectComponentManager,
             @JiraImport ProjectRoleManager projectRoleManager,
             @JiraImport ProjectService projectService,
@@ -109,35 +78,5 @@ public class JiraImports
             @JiraImport WorklogService worklogService
     )
     {
-        this.attachmentService = attachmentService;
-        this.fieldManager = fieldManager;
-        this.fieldVisibilityManager = fieldVisibilityManager;
-        this.internalWebSudoManager = internalWebSudoManager;
-        this.issueLinkTypeManager = issueLinkTypeManager;
-        this.issueManager = issueManager;
-        this.issueToSubTaskConversionService = issueToSubTaskConversionService;
-        this.jiraApplicationProperties = jiraApplicationProperties;
-        this.jiraAuthenticationContext = jiraAuthenticationContext;
-        this.jiraBaseUrls = jiraBaseUrls;
-        this.jiraPermissionManager = jiraPermissionManager;
-        this.mailQueue = mailQueue;
-        this.projectComponentManager = projectComponentManager;
-        this.projectRoleManager = projectRoleManager;
-        this.projectService = projectService;
-        this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
-        this.sessionSearchObjectManagerFactory = sessionSearchObjectManagerFactory;
-        this.subTaskManager = subTaskManager;
-        this.subTaskToIssueConversionService = subTaskToIssueConversionService;
-        this.timeZoneService = timeZoneService;
-        this.userIssueHistoryManager = userIssueHistoryManager;
-        this.userManager = userManager;
-        this.userPreferencesManager = userPreferencesManager;
-        this.userUtil = userUtil;
-        this.velocityRequestContextFactory = velocityRequestContextFactory;
-        this.versionManager = versionManager;
-        this.voteManager = voteManager;
-        this.watcherManager = watcherManager;
-        this.webFragmentHelper = webFragmentHelper;
-        this.worklogService = worklogService;
     }
 }

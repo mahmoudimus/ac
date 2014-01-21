@@ -44,7 +44,7 @@ public class JiraWebPanelModuleContextExtractor implements WebPanelModuleContext
                 if (type.isAssignableFrom(obj.getClass()))
                 {
                     // the cast is safe due to the isAssignableFrom check above
-                    extractor.addToContext(moduleContext, extractor.getExpectedType().cast(obj));
+                    extractor.addToContext(moduleContext, obj);
                 }
                 else
                 {
@@ -138,6 +138,5 @@ public class JiraWebPanelModuleContextExtractor implements WebPanelModuleContext
                 }
         );
     }
-
 
 }
