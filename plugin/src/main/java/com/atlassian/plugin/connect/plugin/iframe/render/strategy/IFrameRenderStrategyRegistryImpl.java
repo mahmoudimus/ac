@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -36,7 +37,14 @@ public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyReg
         }
     }
 
+    @Override
     public void register(final String addonKey, final String moduleKey, final IFrameRenderStrategy strategy)
+    {
+        register(addonKey, moduleKey, null, strategy);
+    }
+
+    @Override
+    public void register(final String addonKey, final String moduleKey, final String classifier, final IFrameRenderStrategy strategy)
     {
         synchronized (store) {
             Map<String, IFrameRenderStrategy> addonMap = store.get(addonKey);
@@ -44,25 +52,38 @@ public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyReg
                 addonMap = Maps.newConcurrentMap();
                 store.put(addonKey, addonMap);
             }
-            addonMap.put(moduleKey, strategy);
+            addonMap.put(composeKey(moduleKey, classifier), strategy);
         }
     }
 
     @Override
     public IFrameRenderStrategy get(final String addonKey, final String moduleKey)
     {
+        return get(addonKey, moduleKey, null);
+    }
+
+    @Override
+    public IFrameRenderStrategy get(final String addonKey, final String moduleKey, final String classifier)
+    {
         Map<String, IFrameRenderStrategy> addonEndpoints = store.get(addonKey);
-        return addonEndpoints == null ? null : addonEndpoints.get(moduleKey);
+        return addonEndpoints == null ? null : addonEndpoints.get(composeKey(moduleKey, classifier));
     }
 
     @Override
     public IFrameRenderStrategy getOrThrow(final String addonKey, final String moduleKey) throws IllegalStateException
     {
-        IFrameRenderStrategy strategy = get(addonKey, moduleKey);
+        return getOrThrow(addonKey, moduleKey, null);
+    }
+
+    @Override
+    public IFrameRenderStrategy getOrThrow(final String addonKey, final String moduleKey, final String classifier)
+            throws IllegalStateException
+    {
+        IFrameRenderStrategy strategy = get(addonKey, moduleKey, classifier);
         if (strategy == null)
         {
             throw new IllegalStateException(String.format("No %s registered for %s:%s",
-                    IFrameRenderStrategy.class.getSimpleName(), addonKey, moduleKey));
+                    IFrameRenderStrategy.class.getSimpleName(), addonKey, composeKey(moduleKey, classifier)));
         }
         return strategy;
     }
@@ -83,5 +104,10 @@ public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyReg
     public void destroy() throws Exception
     {
         eventPublisher.unregister(this);
+    }
+
+    private String composeKey(String moduleKey, String classifier)
+    {
+        return moduleKey + (Strings.isNullOrEmpty(classifier) ? "" : "|" + classifier);
     }
 }
