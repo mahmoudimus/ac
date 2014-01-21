@@ -606,6 +606,7 @@
                                         <include>js/iframe-min/plugin/_dollar-min.js</include>
                                         <include>js/iframe-min/_events-min.js</include>
                                         <include>js/iframe-min/_base64-min.js</include>
+                                        <include>js/iframe-min/_uri-min.js</include>
                                         <include>js/iframe-min/_xdm-min.js</include>
                                         <include>js/iframe-min/plugin/_rpc-min.js</include>
                                         <include>js/iframe-min/plugin/events-min.js</include>
