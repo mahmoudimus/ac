@@ -8,6 +8,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageSer
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.osgi.framework.BundleContext;
@@ -21,12 +23,12 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     @Autowired
     public DynamicContentMacroModuleProvider(DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory,
                                              WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                             IFramePageServletDescriptorFactory servletDescriptorFactory,
                                              HostContainer hostContainer,
                                              AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
-                                             RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+                                             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
     {
-        super(webItemModuleDescriptorFactory, servletDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, relativeAddOnUrlConverter);
+        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
         this.dynamicContentMacroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 

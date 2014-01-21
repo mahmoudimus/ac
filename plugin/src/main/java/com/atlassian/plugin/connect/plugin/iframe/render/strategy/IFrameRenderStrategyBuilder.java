@@ -32,6 +32,7 @@ public interface IFrameRenderStrategyBuilder
     {
         InitializedBuilder condition(Condition condition);
         InitializedBuilder title(String title);
+        InitializedBuilder dimensions(String width, String height);
         InitializedBuilder decorator(String decorator);
         InitializedBuilder additionalRenderContext(String key, Object object);
         InitializedBuilder additionalRenderContext(Map<String, Object> additionalRenderContext);

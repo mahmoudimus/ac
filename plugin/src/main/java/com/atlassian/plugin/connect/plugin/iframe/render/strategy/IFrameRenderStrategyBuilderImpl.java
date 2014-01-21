@@ -39,6 +39,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private String title;
     private String decorator;
     private Condition condition;
+    private String width;
+    private String height;
 
     public IFrameRenderStrategyBuilderImpl(
             final IFrameUriBuilderFactory iFrameUriBuilderFactory,
@@ -115,6 +117,14 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
+    public InitializedBuilder dimensions(String width, String height)
+    {
+        this.width = width;
+        this.height = height;
+        return this;
+    }
+
+    @Override
     public InitializedBuilder additionalRenderContext(final String key, final Object object)
     {
         this.additionalRenderContext.put(key, object);
@@ -136,8 +146,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     {
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, urlTemplate, title, decorator, condition,
-                additionalRenderContext
-        );
+                additionalRenderContext,
+                width, height);
     }
 
     private static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
@@ -153,14 +163,16 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final String template;
         private final String urlTemplate;
         private final String title;
+        private final String width;
+        private final String height;
         private final String decorator;
         private final Condition condition;
 
         private IFrameRenderStrategyImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
-                final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
-                final TemplateRenderer templateRenderer, final String addOnKey, final String moduleKey,
-                final String template, final String urlTemplate, final String title, final String decorator,
-                final Condition condition, final Map<String, Object> additionalRenderContext)
+                                         final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
+                                         final TemplateRenderer templateRenderer, final String addOnKey, final String moduleKey,
+                                         final String template, final String urlTemplate, final String title, final String decorator,
+                                         final Condition condition, final Map<String, Object> additionalRenderContext, String width, String height)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -173,6 +185,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.decorator = decorator;
             this.condition = condition;
             this.additionalRenderContext = additionalRenderContext;
+            this.width = width;
+            this.height = height;
         }
 
         @Override
@@ -194,6 +208,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .title(title)
                     .context(additionalRenderContext)
                     .context("contextParams", moduleContextParameters)
+                    .context("width",width)
+                    .context("height",height)
                     .build();
 
             templateRenderer.render(template, renderContext, writer);

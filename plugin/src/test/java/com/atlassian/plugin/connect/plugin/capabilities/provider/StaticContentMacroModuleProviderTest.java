@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.StaticContent
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.sal.api.user.UserManager;
+
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -35,7 +36,7 @@ public class StaticContentMacroModuleProviderTest extends AbstractContentMacroMo
                 urlVariableSubstitutor);
 
         return new StaticContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory,
-                servletDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, relativeAddOnUrlConverter);
+                hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
     }
 
     @Override
