@@ -7,6 +7,7 @@ import com.atlassian.jwt.core.TimeUtil;
 import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
 import com.atlassian.jwt.core.writer.JwtClaimsBuilder;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import com.atlassian.jwt.httpclient.CanonicalRequestUtil;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
@@ -18,6 +19,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.util.CharArrayBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -43,6 +46,8 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
      */
     private static final int JWT_EXPIRY_WINDOW_SECONDS_DEFAULT = 60 * 3;
     private static final int JWT_EXPIRY_WINDOW_SECONDS = ConfigurationUtils.getIntSystemProperty(JWT_EXPIRY_SECONDS_PROPERTY, JWT_EXPIRY_WINDOW_SECONDS_DEFAULT);
+
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationGenerator.class);
 
     private final JwtService jwtService;
     private final ApplicationLink applicationLink;
@@ -96,7 +101,10 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
                 completeParams.putAll(constructParameterMap(targetPath));
             }
 
-            JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, new CanonicalHttpUriRequest(httpMethod.toString(), targetPath.getPath(), "", completeParams));
+            CanonicalHttpUriRequest request = new CanonicalHttpUriRequest(httpMethod.toString(), targetPath.getPath(), "", completeParams);
+            log.debug("Canonical request is: " + CanonicalRequestUtil.toVerboseString(request));
+
+            JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, request);
         }
         catch (UnsupportedEncodingException e)
         {
