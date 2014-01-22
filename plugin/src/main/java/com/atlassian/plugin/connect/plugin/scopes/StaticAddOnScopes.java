@@ -55,7 +55,7 @@ public class StaticAddOnScopes
         return buildFromBeans(scopeBeans, scopesFileResourceName);
     }
 
-    public static Collection<AddOnScope> buildFromBeans(AddOnScopeBeans scopeBeans, String scopesFileResourceName)
+    private static Collection<AddOnScope> buildFromBeans(AddOnScopeBeans scopeBeans, String scopesFileResourceName)
     {
         Map<ScopeName, AddOnScope> keyToScope = new HashMap<ScopeName, AddOnScope>(scopeBeans.getScopes().size());
 
