@@ -128,7 +128,6 @@
     </web-resource>
 
     <web-resource key="iframe-host-css">
-        <resource type="download" name="loading.gif" location="/css/iframe/loading.gif" />
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
     </web-resource>
 

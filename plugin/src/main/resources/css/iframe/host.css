@@ -2,13 +2,8 @@
   color: #707070;
 }
 
-.ap-dialog-loading {
-  background: url(loading.gif) center center no-repeat;
-}
-
 .ap-loading, .ap-load-timeout {
-  background: url(loading.gif) left center no-repeat;
-  padding-left: 34px;
+  padding-left: 4px;
 }
 
 .ap-dialog-content {
@@ -33,4 +28,15 @@
 
 .ap-container iframe.full-size-general-page {
   border-bottom: 1px solid #ccc;
+}
+
+.ap-stats .small-spinner {
+  width: 20px;
+  height: 20px;
+  float: left;
+  margin-right: 4px;
+}
+
+.aui-inline-dialog .ap-stats, .ap-dialog-content .ap-stats {
+  display: block;
 }
