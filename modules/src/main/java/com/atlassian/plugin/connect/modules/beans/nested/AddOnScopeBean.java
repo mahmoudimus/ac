@@ -1,22 +1,25 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class AddOnScopeBean
 {
     private String key; // set by gson
     private Collection<String> restPaths; // set by gson
+    private Collection<String> soapRpcPaths; // set by gson
     private Collection<String> methods; // set by gson
 
     public AddOnScopeBean()
     {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
-    public AddOnScopeBean(String key, Collection<String> restPaths, Collection<String> methods)
+    public AddOnScopeBean(String key, Collection<String> restPaths, Collection<String> soapRpcPaths, Collection<String> methods)
     {
         this.key = key;
         this.restPaths = restPaths;
+        this.soapRpcPaths = soapRpcPaths;
         this.methods = methods;
     }
 
@@ -27,7 +30,12 @@ public class AddOnScopeBean
 
     public Collection<String> getRestPaths()
     {
-        return restPaths;
+        return null == restPaths ? Collections.<String>emptySet() : restPaths;
+    }
+
+    public Collection<String> getSoapRpcPaths()
+    {
+        return null == soapRpcPaths ? Collections.<String>emptySet() : soapRpcPaths;
     }
 
     public Collection<String> getMethods()
@@ -76,6 +84,40 @@ public class AddOnScopeBean
         public Collection<String> getVersions()
         {
             return versions;
+        }
+    }
+
+    public static class SoapRpcPathBean
+    {
+        private String key; // set by gson, must be unique within the JSON scopes file
+        private String path; // set by gson
+        private Collection<String> rpcMethods; // set by gson
+
+        public SoapRpcPathBean()
+        {
+            this(null, null, null);
+        }
+
+        public SoapRpcPathBean(String key, String path, Collection<String> rpcMethods)
+        {
+            this.key = key;
+            this.path = path;
+            this.rpcMethods = rpcMethods;
+        }
+
+        public String getKey()
+        {
+            return key;
+        }
+
+        public String getPath()
+        {
+            return path;
+        }
+
+        public Collection<String> getRpcMethods()
+        {
+            return rpcMethods;
         }
     }
 }

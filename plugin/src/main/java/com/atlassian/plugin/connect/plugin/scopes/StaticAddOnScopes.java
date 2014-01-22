@@ -57,14 +57,14 @@ public class StaticAddOnScopes
 
     private static Collection<AddOnScope> buildFromBeans(AddOnScopeBeans scopeBeans, String scopesFileResourceName)
     {
-        Collection<AddOnScope> scopes = new ArrayList<AddOnScope>();
+        Map<ScopeName, AddOnScope> keyToScope = new HashMap<ScopeName, AddOnScope>(scopeBeans.getScopes().size());
 
         for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
         {
-            constructAndAddScope(scopes, scopesFileResourceName, scopeBeans, scopeBean);
+            constructAndAddScope(keyToScope, scopesFileResourceName, scopeBeans, scopeBean);
         }
 
-        return scopes;
+        return keyToScope.values();
     }
 
     private static AddOnScopeBeans parseScopeBeans(String scopesFileResourceName) throws IOException
@@ -80,11 +80,57 @@ public class StaticAddOnScopes
         return new GsonBuilder().create().fromJson(rawJson, AddOnScopeBeans.class);
     }
 
-    private static void constructAndAddScope(Collection<AddOnScope> scopes, String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean)
+    private static void constructAndAddScope(Map<ScopeName, AddOnScope> keyToScope, String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean)
     {
         checkScopeName(scopeBean); // scope names must be valid
         AddOnScopeApiPathBuilder pathsBuilder = new AddOnScopeApiPathBuilder();
+        ScopeName scopeName = ScopeName.valueOf(scopeBean.getKey());
+        AddOnScope existingScope = keyToScope.get(scopeName);
 
+        if (null != existingScope)
+        {
+            pathsBuilder = pathsBuilder.withPaths(existingScope.getPaths());
+        }
+
+        addRestPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
+        addSoapRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
+        keyToScope.put(scopeName, new AddOnScope(scopeBean.getKey(), pathsBuilder.build()));
+    }
+
+    private static void addSoapRpcPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
+    {
+        for (String soapRpcPathKey : scopeBean.getSoapRpcPaths())
+        {
+            boolean found = false;
+            int soapPathIndex = 0;
+
+            for (AddOnScopeBean.SoapRpcPathBean soapRpcPathBean : scopeBeans.getSoapRpcPaths())
+            {
+                if (null == soapRpcPathBean.getKey())
+                {
+                    throw new IllegalArgumentException(String.format("restPath index %d in scopes file '%s' has a null or missing 'key': please add a key", soapPathIndex, scopesFileResourceName));
+                }
+
+                if (soapRpcPathBean.getKey().equals(soapRpcPathKey))
+                {
+                    found = true;
+                    pathsBuilder.withSoapRpcResources(soapRpcPathBean);
+                    break;
+                }
+
+                ++soapPathIndex;
+            }
+
+            if (!found)
+            {
+                throw new IllegalArgumentException(String.format("restPath key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
+                        soapRpcPathKey, scopeBean.getKey(), scopesFileResourceName));
+            }
+        }
+    }
+
+    private static void addRestPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
+    {
         for (String restPathKey : scopeBean.getRestPaths())
         {
             boolean found = false;
@@ -113,8 +159,6 @@ public class StaticAddOnScopes
                                                                  restPathKey, scopeBean.getKey(), scopesFileResourceName));
             }
         }
-
-        scopes.add(new AddOnScope(scopeBean.getKey(), pathsBuilder.build()));
     }
 
     private static void checkScopeName(AddOnScopeBean scopeBean)

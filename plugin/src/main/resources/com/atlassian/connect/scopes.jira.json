@@ -6,9 +6,19 @@
             "methods": ["GET"]
         },
         {
+            "key": "READ",
+            "soapRpcPaths": ["jirasoapservice-v2-read"],
+            "methods": ["POST"]
+        },
+        {
             "key": "WRITE",
             "restPaths": ["issue", "attachment", "version", "component", "search", "priority", "comment", "worklog", "customFieldOption"],
             "methods": ["POST", "PUT"]
+        },
+        {
+            "key": "WRITE",
+            "soapRpcPaths": ["jirasoapservice-v2-write"],
+            "methods": ["POST"]
         },
         {
             "key": "DELETE",
@@ -213,6 +223,18 @@
             "name": "api",
             "basePaths": ["/workflowscheme($|/.*)"],
             "versions": ["2", "latest"]
+        }
+    ],
+    "soapRpcPaths": [
+        {
+            "key": "jirasoapservice-v2-read",
+            "path": "/jirasoapservice-v2",
+            "rpcMethods": ["getIssuesFromJqlSearch", "getIssue", "getVersions", "getIssuesFromTextSearchWithProject", "getSecurityLevels", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getGroup", "getAttachmentsFromIssue", "getProjectAvatar", "getFieldsForEdit", "getUser", "getIssueById", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getFieldsForCreate", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
+        },
+        {
+            "key": "jirasoapservice-v2-write",
+            "path": "/jirasoapservice-v2",
+            "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
         }
     ]
 }

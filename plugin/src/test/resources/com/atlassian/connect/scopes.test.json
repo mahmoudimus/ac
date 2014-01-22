@@ -5,8 +5,12 @@
         "restPaths" : ["mywork", "mywork status", "prototype", "prototype content", "ui"]
     }, {
         "key": "WRITE",
+        "methods": ["post"],
+        "restPaths": ["mywork", "mywork action"]
+    }, {
+        "key": "WRITE",
         "methods": ["post", "put"],
-        "restPaths": ["mywork", "mywork action", "prototype content", "ui"]
+        "restPaths": ["prototype content", "ui"]
     }],
     "restPaths" : [{
         "key" : "mywork",
