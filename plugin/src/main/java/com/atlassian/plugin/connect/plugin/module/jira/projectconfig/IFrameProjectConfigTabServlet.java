@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+import com.google.common.annotations.VisibleForTesting;
+
 
 /**
  * A servlet that loads a plugin config tab from a remote plugin's iframe.
@@ -35,7 +37,8 @@ public class IFrameProjectConfigTabServlet extends IFramePageServlet
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    @VisibleForTesting
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
 	{
 //        final Project project = getProject(req);
 //        req.setAttribute("com.atlassian.jira.projectconfig.util.ServletRequestProjectConfigRequestCache:project", project);

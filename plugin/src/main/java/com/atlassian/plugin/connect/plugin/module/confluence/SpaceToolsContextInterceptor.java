@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.opensymphony.xwork.Action;
 import com.opensymphony.xwork.ActionInvocation;
 import com.opensymphony.xwork.interceptor.AroundInterceptor;
@@ -15,7 +17,8 @@ public class SpaceToolsContextInterceptor extends AroundInterceptor
     }
 
     @Override
-    protected void before(ActionInvocation actionInvocation) throws Exception
+    @VisibleForTesting
+    public void before(ActionInvocation actionInvocation) throws Exception
     {
         Action action = actionInvocation.getAction();
         if (action instanceof SpaceToolsIFrameAction)

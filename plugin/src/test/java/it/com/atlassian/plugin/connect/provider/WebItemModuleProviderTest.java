@@ -10,13 +10,12 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
@@ -32,12 +31,10 @@ public class WebItemModuleProviderTest
     public static final String MODULE_KEY = "my-web-item";
 
     private final WebItemModuleProvider webItemModuleProvider;
-    private final BundleContext bundleContext;
 
-    public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, BundleContext bundleContext) 
+    public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider)
     {
         this.webItemModuleProvider = webItemModuleProvider;
-        this.bundleContext = bundleContext;
     }
 
     @Test
@@ -51,7 +48,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems",newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 

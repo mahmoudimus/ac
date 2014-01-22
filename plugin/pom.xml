@@ -433,11 +433,12 @@
                             com.atlassian.plugin.connect.plugin.product*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin.product.*;version="${project.version}",
                             com.atlassian.plugin.connect.modules*,
-                            com.atlassian.plugin.connect.modules*
+                            com.atlassian.plugin.connect.modules.*,
+                            com.atlassian.plugin.connect.modules.beans*,
+                            com.atlassian.plugin.connect.modules.beans.*
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
-                        <!-- DO NOT put Atlassian-Plugin-Key here!! it will bypass all transforms and component-imports will break -->
                     </instructions>
                     <systemPropertyVariables>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>

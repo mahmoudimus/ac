@@ -20,6 +20,8 @@ import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserKey;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -79,7 +81,8 @@ public final class PermissionManagerImpl implements PermissionManager
                 scopeService);
     }
 
-    PermissionManagerImpl(
+    @VisibleForTesting
+    public PermissionManagerImpl(
             PluginAccessor pluginAccessor,
             PermissionsReader permissionsReader,
             IsDevModeService isDevModeService,

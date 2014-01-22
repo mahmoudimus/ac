@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.plugin.scopes;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.sal.api.user.UserKey;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -23,7 +25,8 @@ public interface AddOnScopeApiPath
         private final Collection<RestApiScopeHelper.RestScope> resources;
         private final RestApiScopeHelper restApiScopeHelper;
 
-        RestApiPath(Collection<RestApiScopeHelper.RestScope> resources)
+        @VisibleForTesting
+        public RestApiPath(Collection<RestApiScopeHelper.RestScope> resources)
         {
             this.resources = resources;
             this.restApiScopeHelper = new RestApiScopeHelper(Preconditions.checkNotNull(resources));
