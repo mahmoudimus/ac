@@ -22,8 +22,6 @@ import com.opensymphony.workflow.spi.WorkflowStore;
 
 import org.json.JSONObject;
 
-import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;
-
 /**
  * Workflow post-function executed when the transition is fired. Builds a JSON of an issue and transition and
  * publishes an webhook event.
@@ -73,7 +71,8 @@ public class RemoteWorkflowPostFunctionProvider extends AbstractJiraFunctionProv
 
         final JSONObject transitionJSON = new JSONObject(transitionBuilder.build());
         final JSONObject issueJSON = beanMarshaler.getRemoteIssue(issue);
-        final JSONObject configuration = new JSONObject(ImmutableMap.of("value", args.get(POST_FUNCTION_CONFIGURATION)));
+        String configJson = (String) args.get(RemoteWorkflowFunctionPluginFactory.STORED_POSTFUNCTION_CONFIG);
+        final JSONObject configuration = new JSONObject(ImmutableMap.of("value", configJson));
         return new JSONObject(ImmutableMap.of("issue", issueJSON, "transition", transitionJSON, "configuration", configuration));
     }
 

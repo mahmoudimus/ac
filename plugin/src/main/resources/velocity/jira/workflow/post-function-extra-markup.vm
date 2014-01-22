@@ -1,3 +1,13 @@
-<input id="remoteWorkflowPostFunctionConfiguration-$remoteWorkflowPostFunctionUUID" name="remoteWorkflowPostFunctionConfiguration-$remoteWorkflowPostFunctionUUID" value="$remoteWorkflowPostFunctionConfiguration" type="hidden"/>
-<input name="remoteWorkflowPostFunctionUUID" value="$remoteWorkflowPostFunctionUUID" type="hidden" />
-<script src="$scriptUrl"></script>
+#set ($uuid = $contextParams.get('postFunction.id'))
+#set ($config = $contextParams.get('postFunction.config'))
+
+<input id="postFunction.config-$uuid"
+       name="postFunction.config-$uuid"
+       value="$!config" type="hidden"/>
+<input name="postFunction.id" value="$uuid"
+       type="hidden" />
+
+## WHY ???
+#foreach ($scriptUrl in $dialogScriptUrls)
+    <script src="$scriptUrl"></script>
+#end

@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
  */
 public class UrlBean
 {
-    @StringSchemaAttributes(format = "uri")
+    @StringSchemaAttributes(format = "uri-template")
     @Required
     private String url;
 

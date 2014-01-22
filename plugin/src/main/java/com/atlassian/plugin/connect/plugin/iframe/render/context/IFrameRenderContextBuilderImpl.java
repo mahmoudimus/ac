@@ -12,6 +12,7 @@ import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.util.EncodingUtils.escapeQuotes;
@@ -26,17 +27,20 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
     private final UserManager userManager;
     private final HostApplicationInfo hostApplicationInfo;
     private final UserPreferencesRetriever userPreferencesRetriever;
+    private final List<String> dialogScriptUrls;
 
     private String addonKey;
     private String moduleKey;
 
     public IFrameRenderContextBuilderImpl(final RemotablePluginAccessorFactory pluginAccessorFactory,
                                           final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
-                                          final UserPreferencesRetriever userPreferencesRetriever) {
+                                          final UserPreferencesRetriever userPreferencesRetriever,
+                                          final List<String> dialogScriptUrls) {
         this.pluginAccessorFactory = pluginAccessorFactory;
         this.userManager = userManager;
         this.hostApplicationInfo = hostApplicationInfo;
         this.userPreferencesRetriever = userPreferencesRetriever;
+        this.dialogScriptUrls = dialogScriptUrls;
     }
 
     @Override
@@ -171,6 +175,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             defaultContext.put("userId", username);
             defaultContext.put("userKey", userKey);
             defaultContext.put("data", ImmutableMap.of("timeZone", timeZone));
+            defaultContext.put("dialogScriptUrls", dialogScriptUrls);
 
             return defaultContext;
         }

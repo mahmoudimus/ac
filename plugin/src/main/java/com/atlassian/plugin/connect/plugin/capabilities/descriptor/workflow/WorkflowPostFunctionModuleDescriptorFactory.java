@@ -1,8 +1,9 @@
-package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow;
 
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
@@ -14,7 +15,7 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
-import static com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWorkflowFunctionModuleDescriptor.TRIGGERED_URL;
+import static com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow.ConnectWorkflowFunctionModuleDescriptor.TRIGGERED_URL;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**

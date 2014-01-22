@@ -18,11 +18,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  */
 public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuilder,
-        IFrameRenderStrategyBuilder.AddOnUriBuilder, IFrameRenderStrategyBuilder.ModuleUriBuilder, IFrameRenderStrategyBuilder.TemplatedBuilder,
-        IFrameRenderStrategyBuilder.InitializedBuilder
+        IFrameRenderStrategyBuilder.AddOnUriBuilder, IFrameRenderStrategyBuilder.ModuleUriBuilder,
+        IFrameRenderStrategyBuilder.TemplatedBuilder, IFrameRenderStrategyBuilder.InitializedBuilder
 {
     private static final String TEMPLATE_PATH = "velocity/";
-    private static final String TEMPLATE_GENERIC = TEMPLATE_PATH + "iframe-page.vm";
+    private static final String TEMPLATE_GENERIC_BODY = TEMPLATE_PATH + "iframe-body.vm";
+    private static final String TEMPLATE_GENERIC_PAGE = TEMPLATE_PATH + "iframe-page.vm";
     private static final String TEMPLATE_PROJECT_ADMIN_TAB = TEMPLATE_PATH + "iframe-page-project-admin.vm";
     private static final String TEMPLATE_DIALOG = TEMPLATE_PATH + "iframe-page-dialog.vm";
 
@@ -70,7 +71,14 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     @Override
     public TemplatedBuilder genericPageTemplate()
     {
-        template = TEMPLATE_GENERIC;
+        template = TEMPLATE_GENERIC_PAGE;
+        return this;
+    }
+
+    @Override
+    public TemplatedBuilder genericBodyTemplate()
+    {
+        template = TEMPLATE_GENERIC_BODY;
         return this;
     }
 
@@ -146,8 +154,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     {
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, urlTemplate, title, decorator, condition,
-                additionalRenderContext,
-                width, height);
+                additionalRenderContext, width, height);
     }
 
     private static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
@@ -169,10 +176,11 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final Condition condition;
 
         private IFrameRenderStrategyImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
-                                         final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
-                                         final TemplateRenderer templateRenderer, final String addOnKey, final String moduleKey,
-                                         final String template, final String urlTemplate, final String title, final String decorator,
-                                         final Condition condition, final Map<String, Object> additionalRenderContext, String width, String height)
+                final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
+                final TemplateRenderer templateRenderer, final String addOnKey, final String moduleKey,
+                final String template, final String urlTemplate, final String title, final String decorator,
+                final Condition condition, final Map<String, Object> additionalRenderContext, String width,
+                String height)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -208,8 +216,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .title(title)
                     .context(additionalRenderContext)
                     .context("contextParams", moduleContextParameters)
-                    .context("width",width)
-                    .context("height",height)
+                    .context("width", width)
+                    .context("height", height)
                     .build();
 
             templateRenderer.render(template, renderContext, writer);

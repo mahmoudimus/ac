@@ -27,14 +27,16 @@ public class JiraModuleContextFilter implements ModuleContextFilter
 {
     private static final Logger log = LoggerFactory.getLogger(JiraModuleContextFilter.class);
 
-    public static final String ISSUE_ID        = "issue.id";
-    public static final String ISSUE_KEY       = "issue.key";
-    public static final String PROJECT_ID      = "project.id";
-    public static final String PROJECT_KEY     = "project.key";
-    public static final String VERSION_ID      = "version.id";
-    public static final String COMPONENT_ID    = "component.id";
-    public static final String PROFILE_NAME    = "profileUser.name";
-    public static final String PROFILE_KEY     = "profileUser.key";
+    public static final String ISSUE_ID             = "issue.id";
+    public static final String ISSUE_KEY            = "issue.key";
+    public static final String PROJECT_ID           = "project.id";
+    public static final String PROJECT_KEY          = "project.key";
+    public static final String VERSION_ID           = "version.id";
+    public static final String COMPONENT_ID         = "component.id";
+    public static final String PROFILE_NAME         = "profileUser.name";
+    public static final String PROFILE_KEY          = "profileUser.key";
+    public static final String POSTFUNCTION_ID      = "postFunction.id";
+    public static final String POSTFUNCTION_CONFIG  = "postFunction.config";
 
     private final PermissionManager permissionManager;
     private final ProjectService projectService;
@@ -100,6 +102,28 @@ public class JiraModuleContextFilter implements ModuleContextFilter
         }
 
         abstract boolean hasPermission(long value, ApplicationUser user);
+    }
+
+    private static class AlwaysAllowedPermissionCheck implements PermissionCheck
+    {
+        private final String parameterName;
+
+        private AlwaysAllowedPermissionCheck(String parameterName)
+        {
+            this.parameterName = parameterName;
+        }
+
+        @Override
+        public String getParameterName()
+        {
+            return parameterName;
+        }
+
+        @Override
+        public boolean hasPermission(final String value, final ApplicationUser user)
+        {
+            return true;
+        }
     }
 
     private Iterable<PermissionCheck> constructPermissionChecks()
@@ -231,7 +255,10 @@ public class JiraModuleContextFilter implements ModuleContextFilter
                         // TODO determine what permissions are needed to view a user's profile
                         return true;
                     }
-                }
+                },
+                // post-functions are not explicitly protected, the context user will have project admin privileges
+                new AlwaysAllowedPermissionCheck(POSTFUNCTION_ID),
+                new AlwaysAllowedPermissionCheck(POSTFUNCTION_CONFIG)
         );
     }
 
