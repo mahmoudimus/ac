@@ -143,8 +143,7 @@ public abstract class RemoteWebItemModuleDescriptorTestBase
         static String url = null;
 
         @Override
-        public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String moduleKey, boolean absolute,
-                                                                     AddOnUrlContext addOnUrlContext, RemotablePluginAccessor remotablePluginAccessor)
+        public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
         {
             if (null != MyWebItemModuleDescriptorFactory.url && !MyWebItemModuleDescriptorFactory.url.equals(url))
             {

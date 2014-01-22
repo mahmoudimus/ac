@@ -3,12 +3,13 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebItemModuleDescriptor;
 import com.atlassian.confluence.plugin.descriptor.web.model.ConfluenceWebLink;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebPanelModuleContextExtractor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -19,55 +20,66 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @ConfluenceComponent
 public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecificWebItemModuleDescriptorFactory
 {
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final ContextMapURLSerializer contextMapURLSerializer;
     private final WebFragmentHelper webFragmentHelper;
+    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+    private final ModuleContextFilter moduleContextFilter;
 
     @Autowired
     public ConfluenceWebItemModuleDescriptorFactory(
-            UrlVariableSubstitutor urlVariableSubstitutor,
-            ContextMapURLSerializer contextMapURLSerializer,
-            WebFragmentHelper webFragmentHelper)
+            WebFragmentHelper webFragmentHelper,
+            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            WebPanelModuleContextExtractor webPanelModuleContextExtractor,
+            ModuleContextFilter moduleContextFilter)
     {
+        this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
+        this.webPanelModuleContextExtractor = checkNotNull(webPanelModuleContextExtractor);
+        this.moduleContextFilter = checkNotNull(moduleContextFilter);
         this.webFragmentHelper = checkNotNull(webFragmentHelper);
-        this.contextMapURLSerializer = checkNotNull(contextMapURLSerializer);
-        this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute, AddOnUrlContext addOnUrlContext,
-                                                                 RemotablePluginAccessor remotablePluginAccessor)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
     {
-        return new RemoteConfluenceWebItemModuleDescriptor(urlVariableSubstitutor, contextMapURLSerializer, webFragmentHelper,
-                remotablePluginAccessor, url, linkId, absolute, addOnUrlContext);
+        return new RemoteConfluenceWebItemModuleDescriptor(
+                webFragmentHelper
+                , iFrameUriBuilderFactory
+                , webPanelModuleContextExtractor
+                , moduleContextFilter
+                , url
+                , pluginKey
+                , moduleKey
+                , absolute
+                , addOnUrlContext
+        );
     }
+
 
     private static final class RemoteConfluenceWebItemModuleDescriptor extends ConfluenceWebItemModuleDescriptor
     {
-        private final UrlVariableSubstitutor urlVariableSubstitutor;
-        private final ContextMapURLSerializer contextMapURLSerializer;
         private final WebFragmentHelper webFragmentHelper;
-        private final RemotablePluginAccessor remotablePluginAccessor;
+        private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+        private final WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+        private final ModuleContextFilter moduleContextFilter;
         private final String url;
-        private final String linkId;
+        private final String pluginKey;
+        private final String moduleKey;
         private final boolean absolute;
         private final AddOnUrlContext addOnUrlContext;
 
         private RemoteConfluenceWebItemModuleDescriptor(
-                UrlVariableSubstitutor urlVariableSubstitutor,
-                ContextMapURLSerializer contextMapURLSerializer,
                 WebFragmentHelper webFragmentHelper,
-                RemotablePluginAccessor remotablePluginAccessor,
-                String url,
-                String linkId,
-                boolean absolute, AddOnUrlContext addOnUrlContext)
+                IFrameUriBuilderFactory iFrameUriBuilderFactory, WebPanelModuleContextExtractor webPanelModuleContextExtractor, ModuleContextFilter moduleContextFilter, String url,
+                String pluginKey, String moduleKey, boolean absolute,
+                AddOnUrlContext addOnUrlContext)
         {
-            this.urlVariableSubstitutor = urlVariableSubstitutor;
-            this.contextMapURLSerializer = contextMapURLSerializer;
+            this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+            this.webPanelModuleContextExtractor = webPanelModuleContextExtractor;
+            this.moduleContextFilter = moduleContextFilter;
+            this.pluginKey = pluginKey;
+            this.moduleKey = moduleKey;
             this.webFragmentHelper = webFragmentHelper;
-            this.remotablePluginAccessor = remotablePluginAccessor;
             this.url = url;
-            this.linkId = linkId;
             this.absolute = absolute;
             this.addOnUrlContext = addOnUrlContext;
         }
@@ -75,8 +87,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         @Override
         public ConfluenceWebLink getLink()
         {
-            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer,
-                    remotablePluginAccessor, url, linkId, absolute, addOnUrlContext));
+            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext));
         }
 
         @Override

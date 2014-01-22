@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,12 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 public class WebItemModuleProvider implements ConnectModuleProvider<WebItemModuleBean>
 {
     private final WebItemModuleDescriptorFactory webItemFactory;
-    private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
+    
 
     @Autowired
-    public WebItemModuleProvider(WebItemModuleDescriptorFactory webItemFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+    public WebItemModuleProvider(WebItemModuleDescriptorFactory webItemFactory)
     {
         this.webItemFactory = webItemFactory;
-        this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
     }
 
     @Override
@@ -54,28 +54,9 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemModul
         }
         else
         {
-            RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
-            
-            WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl.getRelativeUri()).build();
+            String localUrl = ConnectIFrameServlet.iFrameServletPath(plugin.getKey(),bean.getUrl());
+            WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl).build();
             descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
-
-            //todo: make sure we do something to actually look up condition and metaTags map
-            //ONLY create the servlet if one doesn't already exist!!!
-//            List<ServletModuleDescriptor> servletDescriptors = pluginAccessor.getEnabledModuleDescriptorsByClass(ServletModuleDescriptor.class);
-//            boolean servletExists = false;
-//            for(ServletModuleDescriptor servletDescriptor : servletDescriptors)
-//            {
-//                if(servletDescriptor.getPaths().contains(localUrl))
-//                {
-//                    servletExists = true;
-//                    break;
-//                }
-//            }
-//            
-//            if(!servletExists)
-//            {
-//                descriptors.add(iframePageFactory.createIFrameServletDescriptor(plugin,newBean,localUrl,bean.getUrl(),"atl.general","", new AlwaysDisplayCondition(),new HashMap<String, String>()));
-//            }
         }
 
         return descriptors;

@@ -9,6 +9,11 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
  */
 public interface ProductSpecificWebItemModuleDescriptorFactory
 {
-    WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute,
-                                                          AddOnUrlContext addOnUrlContext, RemotablePluginAccessor remotablePluginAccessor);
+    WebItemModuleDescriptor createWebItemModuleDescriptor(
+            String url
+            , String pluginKey
+            , String moduleKey
+            , boolean absolute
+            ,AddOnUrlContext addOnUrlContext
+    );
 }

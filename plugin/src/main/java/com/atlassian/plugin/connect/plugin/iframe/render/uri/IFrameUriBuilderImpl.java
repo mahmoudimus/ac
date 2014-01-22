@@ -109,6 +109,12 @@ public class IFrameUriBuilderImpl
             return pluginAccessorFactory.getOrThrow(addonKey).signGetUrl(uri, ImmutableMap.<String, String[]>of());
         }
 
+        @Override
+        public String buildUnsigned()
+        {
+            return uriBuilder.toUri().toString();
+        }
+
         /**
          * Append query parameters common to all remote iframes.
          */

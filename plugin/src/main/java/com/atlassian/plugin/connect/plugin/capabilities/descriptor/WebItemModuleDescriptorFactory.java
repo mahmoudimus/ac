@@ -105,13 +105,18 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
         return createWebItemDescriptor(plugin, webItemElement, webItemKey, bean.getUrl(), bean.isAbsolute(), bean.getContext());
     }
 
-    private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String key, String url,
+    private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String moduleKey, String url,
                                                             boolean absolute, AddOnUrlContext urlContext)
     {
         webItemElement.addAttribute("system", "true");
 
-        final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(url, key,
-                absolute, urlContext, remotablePluginAccessorFactory.get(plugin.getKey()));
+        final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(
+                url
+                ,plugin.getKey()
+                ,moduleKey
+                ,absolute
+                ,urlContext
+        );
 
         descriptor.init(plugin, webItemElement);
 

@@ -1,53 +1,51 @@
 package com.atlassian.plugin.connect.plugin.module.webitem;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.InvalidAddonConfigurationException;
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
-import com.atlassian.plugin.connect.plugin.module.webfragment.HideousParameterContextThingy;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebPanelModuleContextExtractor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebItem;
 import com.atlassian.plugin.web.model.WebLink;
 
-import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Link which points to the dialog, inline-dialog or general page coming from the add-on.
  */
 public class RemoteWebLink extends AbstractWebItem implements WebLink
 {
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final ContextMapURLSerializer urlParametersSerializer;
-    private final RemotablePluginAccessor remotablePluginAccessor;
+    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+    private final ModuleContextFilter moduleContextFilter;
     private final String url;
-    private final String id;
+    private final String pluginKey;
+    private final String moduleKey;
     private final boolean absolute;
     private final AddOnUrlContext addOnUrlContext;
 
     public RemoteWebLink(
             WebFragmentModuleDescriptor webFragmentModuleDescriptor,
             WebFragmentHelper webFragmentHelper,
-            UrlVariableSubstitutor urlVariableSubstitutor,
-            ContextMapURLSerializer urlParametersSerializer,
-            RemotablePluginAccessor remotablePluginAccessor,
-            String url,
-            String id,
+            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            WebPanelModuleContextExtractor webPanelModuleContextExtractor, ModuleContextFilter moduleContextFilter, String url,
+            String pluginKey,
+            String moduleKey,
             boolean absolute, AddOnUrlContext addOnUrlContext)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.urlParametersSerializer = urlParametersSerializer;
-        this.remotablePluginAccessor = checkNotNull(remotablePluginAccessor);
+        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+        this.webPanelModuleContextExtractor = webPanelModuleContextExtractor;
+        this.moduleContextFilter = moduleContextFilter;
         this.url = url;
-        this.id = id;
+        this.pluginKey = pluginKey;
+        this.moduleKey = moduleKey;
         this.absolute = absolute;
         this.addOnUrlContext = addOnUrlContext;
     }
@@ -55,41 +53,41 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     @Override
     public String getRenderedUrl(final Map<String, Object> context)
     {
-        final Map<String, Object> extractedWebLinkParameters = urlParametersSerializer.getExtractedWebPanelParameters(context);
-        return getRenderedUrlFromParams(extractedWebLinkParameters);
-    }
+        ModuleContextParameters moduleParams = webPanelModuleContextExtractor.extractParameters(context);
+        moduleParams = moduleContextFilter.filter(moduleParams);
 
-    private String getRenderedUrlFromParams(final Map<String, Object> params)
-    {
-        return urlVariableSubstitutor.replace(url, params);
+        return iFrameUriBuilderFactory.builder()
+                                      .addOn(pluginKey)
+                                      .module(moduleKey)
+                                      .urlTemplate(url)
+                                      .context(moduleParams)
+                                      .buildUnsigned();
     }
 
     @Override
     public String getDisplayableUrl(final HttpServletRequest req, final Map<String, Object> context)
     {
-        final Map<String, Object> extractedWebLinkParameters = urlParametersSerializer.getExtractedWebPanelParameters(context);
-        String renderedUrl = getRenderedUrlFromParams(extractedWebLinkParameters);
-
         if (absolute)
         {
-            return renderedUrl;
+            return getRenderedUrl(context);
         }
         else
         {
             if (addOnUrlContext == addon)
             {
-                try
-                {
-                    return remotablePluginAccessor.signGetUrl(new URI(renderedUrl), HideousParameterContextThingy.transformToPathForm(extractedWebLinkParameters));
-                }
-                catch (URISyntaxException e)
-                {
-                    throw new InvalidAddonConfigurationException("invalid addon url " + url, e);
-                }
+                ModuleContextParameters moduleParams = webPanelModuleContextExtractor.extractParameters(context);
+                moduleParams = moduleContextFilter.filter(moduleParams);
+
+                return iFrameUriBuilderFactory.builder()
+                                              .addOn(pluginKey)
+                                              .module(moduleKey)
+                                              .urlTemplate(url)
+                                              .context(moduleParams)
+                                              .signAndBuild();
             }
             else
             {
-                return req.getContextPath() + renderedUrl;
+                return req.getContextPath() + getRenderedUrl(context);
             }
         }
     }
@@ -109,6 +107,6 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     @Override
     public String getId()
     {
-        return id;
+        return moduleKey;
     }
 }

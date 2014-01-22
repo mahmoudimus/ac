@@ -28,5 +28,7 @@ public interface IFrameUriBuilder
     {
         InitializedBuilder param(String key, String value);
         String signAndBuild();
+
+        String buildUnsigned();
     }
 }

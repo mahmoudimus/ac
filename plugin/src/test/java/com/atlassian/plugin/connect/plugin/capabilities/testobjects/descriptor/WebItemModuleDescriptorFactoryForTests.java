@@ -20,8 +20,7 @@ public class WebItemModuleDescriptorFactoryForTests implements ProductSpecificWe
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute,
-                                                                 AddOnUrlContext addOnUrlContext, RemotablePluginAccessor remotablePluginAccessor)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
     {
         return new DefaultWebItemModuleDescriptor(webInterfaceManager);
     }
