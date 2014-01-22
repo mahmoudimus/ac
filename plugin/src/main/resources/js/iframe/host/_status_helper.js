@@ -18,11 +18,9 @@ _AP.define("host/_status_helper", ["_dollar"], function ($) {
         }
     };
 
-
     function hideStatuses($home){
         $home.find(".ap-status").addClass("hidden");
     }
-
 
     function showStatus($home, status){
         hideStatuses($home);
