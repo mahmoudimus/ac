@@ -18,6 +18,7 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -29,6 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.when;
 
+@Ignore("convert to wired test")
 @RunWith(MockitoJUnitRunner.class)
 public class JiraWebItemModuleDescriptorFactoryTest
 {

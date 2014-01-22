@@ -12,6 +12,7 @@ import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.google.common.collect.ImmutableMap;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+@Ignore("convert to wire test")
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteWebLinkTest
 {
