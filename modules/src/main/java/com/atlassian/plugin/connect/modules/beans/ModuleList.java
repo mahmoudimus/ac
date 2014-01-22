@@ -121,7 +121,7 @@ public class ModuleList extends BaseModuleBean
     private List<WebPanelModuleBean> webPanels;
 
     /**
-     * Web Section plugin module allows you to define new sections in application menus.
+     * The Web Section plugin module allows you to define new sections in application menus.
      *
      * @schemaTitle Web Section
      */
