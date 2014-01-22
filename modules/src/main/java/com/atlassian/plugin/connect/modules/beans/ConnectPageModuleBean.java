@@ -175,7 +175,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     public int hashCode()
     {
         return new HashCodeBuilder(11, 23)
-                .append(super.hashCode())
+                .appendSuper(super.hashCode())
                 .append(url)
                 .append(weight)
                 .append(icon)
