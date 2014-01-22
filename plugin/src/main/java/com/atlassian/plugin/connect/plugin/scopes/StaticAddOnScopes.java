@@ -98,7 +98,40 @@ public class StaticAddOnScopes
 
         addRestPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
         addSoapRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
+        addJsonRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
         keyToScope.put(scopeName, new AddOnScope(scopeBean.getKey(), pathsBuilder.build()));
+    }
+
+    private static void addJsonRpcPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
+    {
+        for (String jsonRpcPathKey : scopeBean.getJsonRpcPathKeys())
+        {
+            boolean found = false;
+            int jsonPathIndex = 0;
+
+            for (AddOnScopeBean.JsonRpcPathBean jsonRpcPathBean : scopeBeans.getJsonRpcPaths())
+            {
+                if (null == jsonRpcPathBean.getKey())
+                {
+                    throw new IllegalArgumentException(String.format("JSON path index %d in scopes file '%s' has a null or missing 'key': please add a key", jsonPathIndex, scopesFileResourceName));
+                }
+
+                if (jsonRpcPathBean.getKey().equals(jsonRpcPathKey))
+                {
+                    found = true;
+                    pathsBuilder.withJsonRpcResources(jsonRpcPathBean);
+                    break;
+                }
+
+                ++jsonPathIndex;
+            }
+
+            if (!found)
+            {
+                throw new IllegalArgumentException(String.format("JSON path key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
+                        jsonRpcPathKey, scopeBean.getKey(), scopesFileResourceName));
+            }
+        }
     }
 
     private static void addSoapRpcPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
@@ -112,7 +145,7 @@ public class StaticAddOnScopes
             {
                 if (null == soapRpcPathBean.getKey())
                 {
-                    throw new IllegalArgumentException(String.format("restPath index %d in scopes file '%s' has a null or missing 'key': please add a key", soapPathIndex, scopesFileResourceName));
+                    throw new IllegalArgumentException(String.format("SOAP path index %d in scopes file '%s' has a null or missing 'key': please add a key", soapPathIndex, scopesFileResourceName));
                 }
 
                 if (soapRpcPathBean.getKey().equals(soapRpcPathKey))
@@ -127,7 +160,7 @@ public class StaticAddOnScopes
 
             if (!found)
             {
-                throw new IllegalArgumentException(String.format("restPath key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
+                throw new IllegalArgumentException(String.format("SOAP path key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
                         soapRpcPathKey, scopeBean.getKey(), scopesFileResourceName));
             }
         }
