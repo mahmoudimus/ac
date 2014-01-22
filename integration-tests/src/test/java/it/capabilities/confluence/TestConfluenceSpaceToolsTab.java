@@ -32,7 +32,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapabilities("spaceToolsTabs", newSpaceToolsTabBean()
+                .addModules("spaceToolsTabs", newSpaceToolsTabBean()
                         .withName(new I18nProperty("AC Space Tab", null))
                         .withKey("ac-space-tab")
                         .withLocation("contenttools")

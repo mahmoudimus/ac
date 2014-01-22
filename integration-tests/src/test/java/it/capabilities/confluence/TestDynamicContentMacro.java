@@ -52,7 +52,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .build();
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapabilities("dynamicContentMacros",
+                .addModules("dynamicContentMacros",
                         simpleMacro,
                         allParameterTypesMacro,
                         longBodyMacro,

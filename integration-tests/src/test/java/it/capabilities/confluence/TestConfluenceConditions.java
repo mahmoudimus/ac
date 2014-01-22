@@ -34,7 +34,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
-                .addCapabilities("webItems",newWebItemBean()
+                .addModules("webItems", newWebItemBean()
                         .withName(new I18nProperty("Only Betty", ONLY_BETTY_WEBITEM))
                         .withKey("only-betty")
                         .withLocation("system.browse")
@@ -42,10 +42,10 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                         .withUrl("http://www.google.com")
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_logged_in").build()
-                                ,newSingleConditionBean().withCondition("/onlyBettyCondition").build()
+                                , newSingleConditionBean().withCondition("/onlyBettyCondition").build()
                         )
                         .build()
-                        ,newWebItemBean()
+                        , newWebItemBean()
                         .withName(new I18nProperty("Betty And Barney", BETTY_AND_BARNEY_WEBITEM))
                         .withKey("betty-and-barney")
                         .withLocation("system.browse")
@@ -61,7 +61,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                                 ).build()
                         )
                         .build()
-                        ,newWebItemBean()
+                        , newWebItemBean()
                         .withName(new I18nProperty("Admin Rights", ADMIN_RIGHTS_WEBITEM))
                         .withKey("admin-rights")
                         .withLocation("system.browse")
