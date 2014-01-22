@@ -49,7 +49,7 @@ public abstract class AbstractPermission implements Permission
     }
 
     @Override
-    public final boolean equals(Object o)
+    public boolean equals(Object o)
     {
         if (this == o)
         {
@@ -66,7 +66,7 @@ public abstract class AbstractPermission implements Permission
     }
 
     @Override
-    public final int hashCode()
+    public int hashCode()
     {
         return key.hashCode();
     }

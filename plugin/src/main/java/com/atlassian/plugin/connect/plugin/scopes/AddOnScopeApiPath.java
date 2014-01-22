@@ -159,7 +159,7 @@ public interface AddOnScopeApiPath
         @Override
         public String toString()
         {
-            return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                     .append("soapRpcResources", soapRpcResources)
                     .toString();
         }

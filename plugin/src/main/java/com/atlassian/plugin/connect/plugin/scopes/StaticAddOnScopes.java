@@ -64,7 +64,11 @@ public class StaticAddOnScopes
             constructAndAddScope(keyToScope, scopesFileResourceName, scopeBeans, scopeBean);
         }
 
-        return keyToScope.values();
+        // copy element references into an ArrayList so that equals() comparisons work
+        // sort to protect against ordering throwing off ArrayList.equals() and to make toString() look nicer
+        ArrayList<AddOnScope> addOnScopes = new ArrayList<AddOnScope>(keyToScope.values());
+        Collections.sort(addOnScopes);
+        return addOnScopes;
     }
 
     private static AddOnScopeBeans parseScopeBeans(String scopesFileResourceName) throws IOException
