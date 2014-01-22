@@ -3,7 +3,8 @@ package com.atlassian.plugin.connect.plugin.scopes;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBeans;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
@@ -12,9 +13,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
-
-import static com.google.common.collect.Collections2.transform;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 public class StaticAddOnScopes
 {
@@ -140,51 +142,34 @@ public class StaticAddOnScopes
      * Turn lightweight references to scopes into the scopes themselves.
      * @param scopes {@link AddOnScope}s previously read from static configuration
      * @param scopeKeys lightweight references to scopes
-     * @return the {@link AddOnScope}s referenced by the {@link String}s
-     * @throws IllegalArgumentException if any of the scopeKeys do not appear amongst the static scopes
+     * @return the {@link AddOnScope}s referenced by the {@link ScopeName}s
+     * @throws IllegalArgumentException if any of the scopeKeys is null
      */
     public static Collection<AddOnScope> dereference(Collection<AddOnScope> scopes, @Nonnull final Collection<ScopeName> scopeKeys)
     {
         // avoid loading scopes from file if unnecessary
         if (scopeKeys.isEmpty())
         {
-            return Collections.<AddOnScope>emptySet();
+            return Collections.emptySet();
         }
 
-        final Map<ScopeName, AddOnScope> scopeKeyToScope = new HashMap<ScopeName, AddOnScope>(scopes.size());
-
-        for (AddOnScope scope : scopes)
+        for (ScopeName scopeKey : scopeKeys)
         {
-            ScopeName scopeName = ScopeName.valueOf(scope.getKey());
-
-            if (scopeKeyToScope.containsKey(scopeName))
+            if (null == scopeKey)
             {
-                throw new IllegalArgumentException(String.format("Scope name '%s' is specified multiple times.", scope.getKey()));
+                throw new IllegalArgumentException("Scope keys must not contain null");
             }
-
-            scopeKeyToScope.put(scopeName, scope);
         }
 
-        if (!scopeKeyToScope.keySet().containsAll(scopeKeys))
-        {
-            Set<ScopeName> badKeys = new HashSet<ScopeName>(scopeKeys);
-            badKeys.removeAll(scopeKeyToScope.keySet());
-            throw new IllegalArgumentException(String.format("Scope keys %s do not exist. Valid values are: %s.", badKeys, scopeKeyToScope.keySet()));
-        }
-
-        return transform(scopeKeys, new Function<ScopeName, AddOnScope>()
+        return Lists.newArrayList(Iterables.filter(scopes, new Predicate<AddOnScope>()
         {
             @Override
-            public AddOnScope apply(@Nullable ScopeName scopeKey)
+            public boolean apply(@Nullable AddOnScope scope)
             {
-                if (null == scopeKey)
-                {
-                    return null;
-                }
-
-                return scopeKeyToScope.get(scopeKey);
+                ScopeName scopeName = ScopeName.valueOf(scope.getKey());
+                return scopeKeys.contains(scopeName);
             }
-        });
+        }));
     }
 
     /**

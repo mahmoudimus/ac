@@ -26,7 +26,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,30 +129,6 @@ public final class PermissionManagerImpl implements PermissionManager
         }
 
         return isInScopes;
-    }
-
-    private static Collection<AddOnScope> buildScopes(String applicationDisplayName) throws IOException
-    {
-        if (StringUtils.isEmpty(applicationDisplayName))
-        {
-            throw new IllegalArgumentException("Application display name can be neither null nor blank");
-        }
-
-        String lowerCaseDisplayName = applicationDisplayName.toLowerCase();
-
-        if (lowerCaseDisplayName.contains("confluence"))
-        {
-            return StaticAddOnScopes.buildForConfluence();
-        }
-
-        if (lowerCaseDisplayName.contains("jira"))
-        {
-            return StaticAddOnScopes.buildForJira();
-        }
-
-        // alternately we could send the display name straight through to StaticAddOnScopes.buildFor(String)
-        // but with a name like "display name" I'm not confident that it won't contain formatting or extra characters
-        throw new IllegalArgumentException(String.format("Application display name '%s' is not recognised as either Confluence or JIRA. Please set it to a value that when converted to lower case contains either 'confluence' or 'jira'.", applicationDisplayName));
     }
 
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String pluginKey)
