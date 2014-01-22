@@ -1,8 +1,6 @@
 package it.jira;
 
-
 import com.atlassian.jira.pageobjects.components.menu.JiraAuiDropdownMenu;
-import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
@@ -13,17 +11,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
-import java.rmi.RemoteException;
-
-import javax.inject.Inject;
-
-import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -94,7 +85,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testWebItemFoundWithinWebSection() throws RemoteException
+    public void testWebItemFoundWithinWebSection()
     {
         product.visit(JiraViewProjectPage.class, project.getKey());
 
