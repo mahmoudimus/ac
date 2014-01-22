@@ -17,9 +17,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Test of remote web items in JIRA.
- */
 public class TestWebSection extends JiraWebDriverTestBase
 {
     private static final String PLUGIN_KEY = "websection-test";

@@ -22,9 +22,6 @@ import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.ne
 import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Test of remote web items in JIRA.
- */
 public class TestWebSection extends ConfluenceWebDriverTestBase
 {
     private static final String PLUGIN_KEY = "websection-test";
