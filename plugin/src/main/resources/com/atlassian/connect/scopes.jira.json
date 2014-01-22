@@ -2,22 +2,32 @@
     "scopes": [
         {
             "key": "READ",
-            "restPaths": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "entities", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow"],
+            "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "license", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "entities", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow"],
             "methods": ["GET"]
         },
         {
+            "key": "READ",
+            "soapRpcPathKeys": ["jirasoapservice-v2-read"],
+            "methods": ["POST"]
+        },
+        {
             "key": "WRITE",
-            "restPaths": ["issue", "attachment", "version", "component", "search", "priority", "comment", "worklog", "customFieldOption"],
+            "restPathKeys": ["issue", "attachment", "version", "component", "search", "priority", "comment", "worklog", "customFieldOption"],
             "methods": ["POST", "PUT"]
         },
         {
+            "key": "WRITE",
+            "soapRpcPathKeys": ["jirasoapservice-v2-write"],
+            "methods": ["POST"]
+        },
+        {
             "key": "DELETE",
-            "restPaths": ["component", "priority", "issue", "attachment", "comment", "worklog", "customFieldOption", "version"],
+            "restPathKeys": ["component", "priority", "issue", "attachment", "comment", "worklog", "customFieldOption", "version"],
             "methods": ["DELETE"]
         },
         {
             "key": "ADMIN",
-            "restPaths": ["applicationlink", "applicationlinkInfo", "listApplicationLinks", "entitylink", "entitylink_primary", "manifest", "type_entity", "workflowscheme"],
+            "restPathKeys": ["applicationlink", "applicationlinkInfo", "listApplicationLinks", "entitylink", "entitylink_primary", "manifest", "type_entity", "workflowscheme"],
             "methods": ["GET", "POST", "PUT", "DELETE"]
         }
     ],
@@ -213,6 +223,18 @@
             "name": "api",
             "basePaths": ["/workflowscheme($|/.*)"],
             "versions": ["2", "latest"]
+        }
+    ],
+    "soapRpcPaths": [
+        {
+            "key": "jirasoapservice-v2-read",
+            "path": "/jirasoapservice-v2",
+            "rpcMethods": ["getIssuesFromJqlSearch", "getIssue", "getVersions", "getIssuesFromTextSearchWithProject", "getSecurityLevels", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getGroup", "getAttachmentsFromIssue", "getProjectAvatar", "getFieldsForEdit", "getUser", "getIssueById", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getFieldsForCreate", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
+        },
+        {
+            "key": "jirasoapservice-v2-write",
+            "path": "/jirasoapservice-v2",
+            "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
         }
     ]
 }
