@@ -50,6 +50,13 @@ public class ConfluenceRestScopesTest extends AbstractScopesTest
 
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/prototype/1/user/current", true},
                 {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/prototype/1/user/current", false},
+
+                {null, HttpMethod.GET, "/confluence/rest/searchv3/1.0/search", false},
+                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/searchv3/1.0/search", true},
+
+                {ScopeName.READ, HttpMethod.POST, "/confluence/rest/api/1/contentbody/convert/", true},
+
+                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/1/space/test/content", true},
         });
     }
 

@@ -2,25 +2,84 @@
   "scopes": [
     {
       "key": "READ",
-      "restPaths": ["status", "task", "attachment", "space", "breadcrumb", "content-api", "content-prototype", "content-ui", "search", "notification", "buildInfo", "user"],
+      "restPaths": [
+        "attachment",
+        "breadcrumb",
+        "buildInfo",
+        "content-api",
+        "content-prototype",
+        "content-ui",
+        "notification",
+        "search",
+        "searchv3",
+        "space",
+        "space-api",
+        "status",
+        "task",
+        "user"
+      ],
       "methods": ["GET"]
     },
     {
+      "key": "READ",
+      "restPaths": ["contentbody"],
+      "methods": ["POST"]
+    },
+    {
       "key": "WRITE",
-      "restPaths": ["content-api", "content-prototype", "content-ui", "task", "action", "notification"],
+      "restPaths": [
+        "action",
+        "content-api",
+        "content-prototype",
+        "content-ui",
+        "notification",
+        "task"
+      ],
       "methods": ["POST", "PUT"]
     },
     {
       "key": "DELETE",
-      "restPaths": ["content-api", "content-prototype", "content-ui", "macro", "task", "action", "notification"],
+      "restPaths": [
+        "action",
+        "content-api",
+        "content-prototype",
+        "content-ui",
+        "macro",
+        "notification",
+        "task"
+      ],
       "methods": ["DELETE"]
     }
   ],
   "restPaths": [
     {
+      "key": "content-api",
+      "name": "api",
+      "basePaths": ["/content($|/.*)"],
+      "versions": ["1", "1.0", "latest"]
+    },
+    {
+      "key": "contentbody",
+      "name": "api",
+      "basePaths": ["/contentbody($|/.*)"],
+      "versions": ["1", "1.0", "latest"]
+    },
+    {
+      "key": "space-api",
+      "name": "api",
+      "basePaths": ["/space($|/.*)"],
+      "versions": ["1", "1.0", "latest"]
+    },
+    {
       "key": "macro",
       "name": "atlassian-connect",
       "basePaths": ["/macro($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "action",
+      "name": "mywork",
+      "basePaths": ["/action($|/.*)"],
       "versions": ["1", "latest"]
     },
     {
@@ -42,24 +101,6 @@
       "versions": ["1", "latest"]
     },
     {
-      "key": "action",
-      "name": "mywork",
-      "basePaths": ["/action($|/.*)"],
-      "versions": ["1", "latest"]
-    },
-    {
-      "key": "search",
-      "name": "prototype",
-      "basePaths": ["/search($|/.*)"],
-      "versions": ["1", "latest"]
-    },
-    {
-      "key": "content-prototype",
-      "name": "prototype",
-      "basePaths": ["/content($|/.*)"],
-      "versions": ["1", "latest"]
-    },
-    {
       "key": "attachment",
       "name": "prototype",
       "basePaths": ["/attachment($|/.*)"],
@@ -69,6 +110,24 @@
       "key": "breadcrumb",
       "name": "prototype",
       "basePaths": ["/breadcrumb($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "buildInfo",
+      "name": "prototype",
+      "basePaths": ["/buildInfo($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "content-prototype",
+      "name": "prototype",
+      "basePaths": ["/content($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "search",
+      "name": "prototype",
+      "basePaths": ["/search($|/.*)"],
       "versions": ["1", "latest"]
     },
     {
@@ -84,20 +143,14 @@
       "versions": ["1", "latest"]
     },
     {
-      "key": "buildInfo",
-      "name": "prototype",
-      "basePaths": ["/buildInfo($|/.*)"],
-      "versions": ["1", "latest"]
+      "key": "searchv3",
+      "name": "searchv3",
+      "basePaths": ["/search($|/.*)"],
+      "versions": ["1", "1.0", "latest"]
     },
     {
       "key": "content-ui",
       "name": "ui",
-      "basePaths": ["/content($|/.*)"],
-      "versions": ["1", "1.0", "latest"]
-    },
-    {
-      "key": "content-api",
-      "name": "api",
       "basePaths": ["/content($|/.*)"],
       "versions": ["1", "1.0", "latest"]
     }
