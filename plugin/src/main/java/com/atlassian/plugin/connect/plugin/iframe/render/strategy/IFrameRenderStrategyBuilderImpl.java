@@ -26,6 +26,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private static final String TEMPLATE_GENERIC_PAGE = TEMPLATE_PATH + "iframe-page.vm";
     private static final String TEMPLATE_PROJECT_ADMIN_TAB = TEMPLATE_PATH + "iframe-page-project-admin.vm";
     private static final String TEMPLATE_DIALOG = TEMPLATE_PATH + "iframe-page-dialog.vm";
+    private static final String TEMPLATE_WORKFLOW_POSTFUNCTION = TEMPLATE_PATH + "jira/workflow/iframe-post-function.vm";
 
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
@@ -93,6 +94,13 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     public TemplatedBuilder projectAdminTabTemplate()
     {
         template = TEMPLATE_PROJECT_ADMIN_TAB;
+        return this;
+    }
+
+    @Override
+    public TemplatedBuilder workflowPostFunctionTemplate()
+    {
+        template = TEMPLATE_WORKFLOW_POSTFUNCTION;
         return this;
     }
 

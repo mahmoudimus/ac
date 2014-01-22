@@ -1,10 +1,5 @@
 <div class="ap-container" id="ap-$namespace">
 
-  #if ($contextParams.get('postFunction.id'))
-    ## include extra markup containing JIRA workflow post-function configuration and scripts
-    #parse("velocity/jira/workflow/post-function-extra-markup.vm")
-  #end
-
   <div class="ap-content" id="embedded-$namespace"></div>
   <div class="ap-stats hidden">
     <div class="ap-loading ap-status">

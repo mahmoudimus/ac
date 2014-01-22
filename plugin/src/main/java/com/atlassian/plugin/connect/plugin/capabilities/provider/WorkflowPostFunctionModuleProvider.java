@@ -70,7 +70,7 @@ public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(plugin.getKey())
                 .module(bean.getKey())
-                .genericBodyTemplate()
+                .workflowPostFunctionTemplate()
                 .urlTemplate(urlBean.getUrl())
                 .build();
 

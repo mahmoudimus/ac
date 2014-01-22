@@ -58,7 +58,7 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends ConnectWorkflowF
         IFrameRenderStrategy strategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(getPluginKey())
                 .module(getKey())
-                .genericBodyTemplate()
+                .workflowPostFunctionTemplate()
                 .urlTemplate(urlElement.attributeValue("url"))
                 .build();
 
