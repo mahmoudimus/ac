@@ -6,7 +6,7 @@ import java.util.Map;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectProjectTabPanelModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectProjectTabPanelModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.*;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
