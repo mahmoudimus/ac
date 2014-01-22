@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Web Section plugin modules allows add-ons to define new sections in application menus. Each section can contain one or
- * more links. To insert the links themselves, see the [Web Item Module](../web-item.html).
+ * more links. To insert the links themselves, see the [Web Item Module](./web-item.html).
  * <p/>
  *#### Example
  *
@@ -104,6 +104,8 @@ public class WebSectionModuleBean extends BeanWithKeyAndParamsAndConditions
                 .add("location", getLocation())
                 .add("weight", getWeight())
                 .add("tooltip", getTooltip())
+                .add("conditions", getConditions())
+                .add("params", getParams())
                 .toString();
     }
 
@@ -133,6 +135,7 @@ public class WebSectionModuleBean extends BeanWithKeyAndParamsAndConditions
     public int hashCode()
     {
         return new HashCodeBuilder(13, 61)
+                .appendSuper(super.hashCode())
                 .append(location)
                 .append(weight)
                 .append(tooltip)
