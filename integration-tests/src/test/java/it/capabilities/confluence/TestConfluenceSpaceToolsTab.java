@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabMo
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedSpaceTemplatesPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -59,7 +58,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         loginAsAdmin();
 
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
-        SpaceTemplatesPage page = product.visit(FixedSpaceTemplatesPage.class, "ds");
+        SpaceTemplatesPage page = product.visit(SpaceTemplatesPage.class, "ds");
 
         LinkedRemoteContent addonPage = connectPageOperations.findTabPanel("ac-space-tab" + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX, Option.<String>none(), "ac-space-tab");
 
@@ -74,7 +73,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
 
-        SpaceTemplatesPage page = product.visit(FixedSpaceTemplatesPage.class, "ts");
+        SpaceTemplatesPage page = product.visit(SpaceTemplatesPage.class, "ts");
 
         LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), "ac-space-tab");
 
