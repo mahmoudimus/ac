@@ -5,7 +5,9 @@ import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
@@ -36,6 +38,14 @@ public class StaticAddOnScopesTest
     public void readingABadResourceNameResultsInException() throws IOException
     {
         StaticAddOnScopes.buildFor("bad_name");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void scopesWithDuplicateKeysResultsInAnException() throws IOException
+    {
+        List<AddOnScope> scopes = new ArrayList<AddOnScope>(getTestScopes());
+        scopes.addAll(getTestScopes());
+        StaticAddOnScopes.dereference(scopes, asList(ScopeName.READ));
     }
 
     private Collection<AddOnScope> getTestScopes() throws IOException

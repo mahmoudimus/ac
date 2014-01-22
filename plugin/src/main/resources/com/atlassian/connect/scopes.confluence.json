@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPaths": [
+      "restPathKeys": [
         "attachment",
         "breadcrumb",
         "buildInfo",
@@ -22,12 +22,12 @@
     },
     {
       "key": "READ",
-      "restPaths": ["contentbody"],
+      "restPathKeys": ["contentbody"],
       "methods": ["POST"]
     },
     {
       "key": "WRITE",
-      "restPaths": [
+      "restPathKeys": [
         "action",
         "content-api",
         "content-prototype",
@@ -39,7 +39,7 @@
     },
     {
       "key": "DELETE",
-      "restPaths": [
+      "restPathKeys": [
         "action",
         "content-api",
         "content-prototype",
@@ -156,3 +156,4 @@
     }
   ]
 }
+
