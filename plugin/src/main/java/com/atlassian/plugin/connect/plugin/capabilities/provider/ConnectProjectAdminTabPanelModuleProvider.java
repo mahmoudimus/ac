@@ -17,7 +17,6 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 import com.google.common.collect.ImmutableList;
 
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -53,7 +52,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
@@ -72,7 +71,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
                     .withWeight(bean.getWeight())
                     .build();
 
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemModuleBean));
+            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemModuleBean));
 
             // register a render strategy for the servlet backing our iframe tab
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()

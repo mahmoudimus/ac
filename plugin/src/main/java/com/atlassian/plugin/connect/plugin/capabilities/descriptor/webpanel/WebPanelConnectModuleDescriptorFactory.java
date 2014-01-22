@@ -12,7 +12,6 @@ import com.google.common.base.Strings;
 
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +30,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     }
 
     @Override
-    public WebPanelModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebPanelModuleBean bean)
+    public WebPanelModuleDescriptor createModuleDescriptor(Plugin plugin, WebPanelModuleBean bean)
     {
         Element domElement = createDomElement(bean, bean.getKey(), plugin);
         final WebPanelModuleDescriptor descriptor = connectAutowireUtil.createBean(WebPanelConnectModuleDescriptor.class);

@@ -3,14 +3,11 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
@@ -53,7 +50,7 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     public void init()
     {
         moduleProvider = createPageModuleProvider();
-        when(webItemModuleDescriptorFactory.createModuleDescriptor(any(Plugin.class), any(BundleContext.class),
+        when(webItemModuleDescriptorFactory.createModuleDescriptor(any(Plugin.class),
                 any(WebItemModuleBean.class))).thenReturn(mock(WebItemModuleDescriptor.class));
     }
 
@@ -62,14 +59,14 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     @Test
     public void callsWebItemModuleDescriptorFactoryWithProvidedPlugin()
     {
-        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(eq(plugin), any(BundleContext.class),
+        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(eq(plugin),
                 any(WebItemModuleBean.class));
     }
 
     @Test
     public void callsWebItemModuleDescriptorFactoryWithProvidedBundleContext()
     {
-        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(any(Plugin.class), eq(bundleContext),
+        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(any(Plugin.class),
                 any(WebItemModuleBean.class));
     }
 
@@ -77,7 +74,7 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     @Test
     public void callsWebItemModuleDescriptorFactoryWithWebItemUrlThatContainsPluginKey()
     {
-        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(any(Plugin.class), any(BundleContext.class),
+        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(any(Plugin.class),
                 argThat(hasUrlValue("/plugins/servlet/ac/pluginKey/")));
     }
 
@@ -89,6 +86,6 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
 
     private void provideModules()
     {
-        moduleProvider.provideModules(plugin, bundleContext, "thePageField", beans);
+        moduleProvider.provideModules(plugin, "thePageField", beans);
     }
 }

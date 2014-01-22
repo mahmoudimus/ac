@@ -13,7 +13,6 @@ import com.google.common.base.Joiner;
 
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
     }
 
     @Override
-    public WebItemModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebItemModuleBean bean)
+    public WebItemModuleDescriptor createModuleDescriptor(Plugin plugin, WebItemModuleBean bean)
     {
         Element webItemElement = new DOMElement("web-item");
 

@@ -12,7 +12,6 @@ import com.atlassian.sal.api.user.UserManager;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static org.mockito.Mockito.mock;
@@ -43,7 +42,7 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
                 .withMethod(MacroHttpMethod.POST)
                 .build();
 
-        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, bean);
     }
 
     @Override

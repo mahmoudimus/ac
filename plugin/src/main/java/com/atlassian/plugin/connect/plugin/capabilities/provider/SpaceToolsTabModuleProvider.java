@@ -20,7 +20,6 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -66,7 +65,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
     {
         List<ModuleDescriptor> modules = newArrayList();
         for (SpaceToolsTabModuleBean bean : beans)
@@ -77,7 +76,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
             for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
             {
-                modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemModuleBean));
+                modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemModuleBean));
             }
         }
         return modules;

@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPlu
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
@@ -34,8 +33,8 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
     }
 
     @Override
-    protected ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, BundleContext bundleContext, StaticContentMacroModuleBean macroBean)
+    protected ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, StaticContentMacroModuleBean macroBean)
     {
-        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, bundleContext, macroBean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, macroBean);
     }
 }

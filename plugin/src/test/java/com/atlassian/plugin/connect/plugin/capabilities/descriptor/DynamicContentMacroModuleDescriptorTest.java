@@ -11,7 +11,6 @@ import com.atlassian.sal.api.user.UserManager;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static org.mockito.Mockito.mock;
@@ -40,7 +39,7 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
 
         DynamicContentMacroModuleBean bean = createBeanBuilder().build();
 
-        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, bean);
     }
 
     @Override

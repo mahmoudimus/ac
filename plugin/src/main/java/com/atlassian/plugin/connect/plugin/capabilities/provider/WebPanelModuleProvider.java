@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +33,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<WebPanelModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
@@ -51,17 +50,17 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
 
             // construct a module descriptor that will supply a web panel to the product
-            descriptors.addAll(beanToDescriptors(plugin, addonBundleContext, bean));
+            descriptors.addAll(beanToDescriptors(plugin, bean));
         }
 
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WebPanelModuleBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, WebPanelModuleBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        descriptors.add(webPanelFactory.createModuleDescriptor(plugin, addonBundleContext, bean));
+        descriptors.add(webPanelFactory.createModuleDescriptor(plugin, bean));
 
         return descriptors;
     }

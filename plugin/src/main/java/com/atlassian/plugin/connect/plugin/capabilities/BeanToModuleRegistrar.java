@@ -189,7 +189,7 @@ public class BeanToModuleRegistrar
             if (!providers.isEmpty())
             {
                 ConnectModuleProvider provider = providers.iterator().next();
-                return Lists.transform(provider.provideModules(ctx.getConnectAutowiringPlugin(), ctx.getAddonBundleContext(), jsonFieldName, beans), new Function<ModuleDescriptor, DescriptorToRegister>()
+                return Lists.transform(provider.provideModules(ctx.getConnectAutowiringPlugin(), jsonFieldName, beans), new Function<ModuleDescriptor, DescriptorToRegister>()
                 {
                     @Override
                     public DescriptorToRegister apply(@Nullable ModuleDescriptor input)

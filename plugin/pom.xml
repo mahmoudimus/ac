@@ -533,6 +533,39 @@
                             </bundledArtifacts>
                         </product>
                     </products>
+
+                    <testGroups>
+                        <testGroup>
+                            <id>confluence</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <excludes>
+                                <exclude>it/jira/*.java</exclude>
+                                <exclude>it/*/jira/*.java</exclude>
+                            </excludes>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <excludes>
+                                <exclude>it/confluence/*.java</exclude>
+                                <exclude>it/*/confluence/*.java</exclude>
+                            </excludes>
+                        </testGroup>
+                    </testGroups>
                 </configuration>
             </plugin>
 

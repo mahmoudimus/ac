@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -13,7 +14,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
@@ -34,7 +34,7 @@ public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WorkflowPostFunctionModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<WorkflowPostFunctionModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
@@ -54,15 +54,15 @@ public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider
                 registerIFrameRenderStrategy(plugin, bean, JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW, bean.getView());
             }
 
-            descriptors.add(beanToDescriptor(plugin, addonBundleContext, bean));
+            descriptors.add(beanToDescriptor(plugin, bean));
         }
 
         return descriptors;
     }
 
-    private ModuleDescriptor beanToDescriptor(Plugin plugin, BundleContext addonBundleContext, WorkflowPostFunctionModuleBean bean)
+    private ModuleDescriptor beanToDescriptor(Plugin plugin, WorkflowPostFunctionModuleBean bean)
     {
-        return workflowPostFunctionFactory.createModuleDescriptor(plugin, addonBundleContext, bean);
+        return workflowPostFunctionFactory.createModuleDescriptor(plugin, bean);
     }
 
     private void registerIFrameRenderStrategy(Plugin plugin, WorkflowPostFunctionModuleBean bean, String classifier, UrlBean urlBean)

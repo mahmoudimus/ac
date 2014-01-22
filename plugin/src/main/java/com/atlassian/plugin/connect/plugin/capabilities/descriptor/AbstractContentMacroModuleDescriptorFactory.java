@@ -22,7 +22,6 @@ import com.atlassian.uri.Uri;
 
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
 
@@ -39,7 +38,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     protected abstract ModuleFactory createModuleFactory(Plugin plugin, DOMElement element, B bean);
 
     @Override
-    public XhtmlMacroModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, B bean)
+    public XhtmlMacroModuleDescriptor createModuleDescriptor(Plugin plugin, B bean)
     {
         DOMElement element = createDOMElement(plugin, bean);
         ModuleFactory moduleFactory = createModuleFactory(plugin, element, bean);

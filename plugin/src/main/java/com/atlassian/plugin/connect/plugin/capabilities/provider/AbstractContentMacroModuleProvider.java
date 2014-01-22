@@ -30,7 +30,6 @@ import com.google.common.collect.Maps;
 
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
@@ -55,16 +54,16 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
     }
 
-    protected abstract ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, BundleContext bundleContext, T macroBean);
+    protected abstract ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, T macroBean);
 
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<T> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<T> beans)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
         MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(plugin.getKey());
 
         for (T bean : beans)
         {
-            moduleDescriptors.addAll(createModuleDescriptors(plugin, addonBundleContext, bean));
+            moduleDescriptors.addAll(createModuleDescriptors(plugin, bean));
             i18nBuilder.add(bean);
         }
 
@@ -73,18 +72,18 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         return moduleDescriptors;
     }
 
-    protected List<ModuleDescriptor> createModuleDescriptors(Plugin plugin, BundleContext bundleContext, T macroBean)
+    protected List<ModuleDescriptor> createModuleDescriptors(Plugin plugin, T macroBean)
     {
         List<ModuleDescriptor> descriptors = newArrayList();
 
         // The actual Macro module descriptor
-        descriptors.add(createMacroModuleDescriptor(plugin, bundleContext, macroBean));
+        descriptors.add(createMacroModuleDescriptor(plugin, macroBean));
 
         // Add a web item if the Macro is featured
         if (macroBean.isFeatured())
         {
             WebItemModuleBean featuredWebItem = createFeaturedWebItem(plugin, macroBean);
-            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, bundleContext, featuredWebItem));
+            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, featuredWebItem));
 
             // Add a featured icon web resource
             if (macroBean.hasIcon())

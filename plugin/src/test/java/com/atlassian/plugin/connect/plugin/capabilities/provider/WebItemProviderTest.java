@@ -28,7 +28,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.ConnectAsserts.assertURIEquals;
@@ -95,9 +94,9 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory);
+        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -117,9 +116,9 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.decorated)
                 .build();
 
-        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory);
+        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -139,9 +138,9 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory);
+        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -160,9 +159,9 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory);
+        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -182,9 +181,9 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.decorated)
                 .build();
 
-        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory);
+        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -204,9 +203,9 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory);
+        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -231,9 +230,9 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvider = new WebItemModuleProvider(webItemFactory);
+        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean, bean2));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean, bean2));
 
         assertEquals(2, descriptors.size());
 

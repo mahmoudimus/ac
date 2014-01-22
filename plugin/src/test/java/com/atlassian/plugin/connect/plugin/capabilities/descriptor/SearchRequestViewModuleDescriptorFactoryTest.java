@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static org.hamcrest.CoreMatchers.*;
@@ -91,7 +90,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                         newSingleConditionBean().withCondition("user_is_logged_in").build())
                 .build();
 
-        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(plugin, bean);
         this.descriptor.enabled();
     }
 

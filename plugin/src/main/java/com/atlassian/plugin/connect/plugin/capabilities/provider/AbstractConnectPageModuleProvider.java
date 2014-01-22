@@ -17,8 +17,6 @@ import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
-import org.osgi.framework.BundleContext;
-
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -44,8 +42,8 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName,
-            List<ConnectPageModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName,
+                                                 List<ConnectPageModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
@@ -84,7 +82,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                         .withConditions(bean.getConditions())
                         .build();
 
-                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemBean));
+                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemBean));
             }
         }
 
