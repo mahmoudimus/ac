@@ -7,16 +7,10 @@ _AP.define("host/_status_helper", ["_dollar"], function ($) {
 
     var statuses = {
         loading: {
-            descriptionHtml: '<div class="small-spinner"></div>Loading add-on...',
-            callback: function(){
-                AJS.$('.small-spinner').spin();
-            }
+            descriptionHtml: '<div class="small-spinner"></div>Loading add-on...'
         },
         "load-timeout": {
-            descriptionHtml: '<div class="small-spinner"></div>Add-on is not responding. Wait or <a href="#" class="ap-btn-cancel">cancel</a>?',
-            callback: function(){
-                AJS.$('.small-spinner').spin();
-            }
+            descriptionHtml: '<div class="small-spinner"></div>Add-on is not responding. Wait or <a href="#" class="ap-btn-cancel">cancel</a>?'
         },
 
         "load-error": {
@@ -29,12 +23,17 @@ _AP.define("host/_status_helper", ["_dollar"], function ($) {
         $home.find(".ap-status").addClass("hidden");
     }
 
+
     function showStatus($home, status){
         hideStatuses($home);
         $home.find('.ap-' + status).removeClass('hidden');
-        if(statuses[status].callback){
-            statuses[status].callback();
-        }
+        /* setTimout fixes bug in AUI spinner positioning */
+        setTimeout(function(){
+            var spinner = AJS.$('.small-spinner', '.ap-' + status);
+            if(spinner.length){
+                spinner.spin();
+            }
+        }, 10);
     }
 
     //when an addon has loaded. Hide the status bar.

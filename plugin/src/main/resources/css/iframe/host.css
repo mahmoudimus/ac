@@ -1,13 +1,9 @@
-.ap-stats {
-  position:absolute;
-  width:100%;
-}
 .ap-status small {
   color: #707070;
 }
 
 .ap-loading, .ap-load-timeout {
-  padding-left: 20px;
+  padding-left: 4px;
 }
 
 .ap-dialog-content {
@@ -34,14 +30,14 @@
   border-bottom: 1px solid #ccc;
 }
 
-.ap-stats .ap-loading, .ap-stats .ap-load-timeout {
-  text-indent:14px;
+.ap-stats .small-spinner {
+  width:20px;
+  height:20px;
+  float: left;
+  margin-right: 4px;
 }
 
-.ap-stats .small-spinner {
-  position: absolute;
-  bottom: 10px;
-}
-.dialog-panel-body .ap-stats .small-spinner {
-  bottom: 14px;
+
+.aui-inline-dialog .ap-stats, .ap-dialog-content .ap-stats {
+  display:block;
 }

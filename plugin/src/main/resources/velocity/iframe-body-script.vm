@@ -8,5 +8,4 @@
             }
         })
     });
-    AJS.$('.small-spinner').spin();
 </script>
