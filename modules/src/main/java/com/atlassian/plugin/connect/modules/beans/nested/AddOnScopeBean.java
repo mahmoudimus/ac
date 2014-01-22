@@ -6,8 +6,8 @@ import java.util.Collections;
 public class AddOnScopeBean
 {
     private String key; // set by gson
-    private Collection<String> restPaths; // set by gson
-    private Collection<String> soapRpcPaths; // set by gson
+    private Collection<String> restPathKeys; // set by gson
+    private Collection<String> soapRpcPathKeys; // set by gson
     private Collection<String> methods; // set by gson
 
     public AddOnScopeBean()
@@ -15,11 +15,11 @@ public class AddOnScopeBean
         this(null, null, null, null);
     }
 
-    public AddOnScopeBean(String key, Collection<String> restPaths, Collection<String> soapRpcPaths, Collection<String> methods)
+    public AddOnScopeBean(String key, Collection<String> restPathKeys, Collection<String> soapRpcPathKeys, Collection<String> methods)
     {
         this.key = key;
-        this.restPaths = restPaths;
-        this.soapRpcPaths = soapRpcPaths;
+        this.restPathKeys = restPathKeys;
+        this.soapRpcPathKeys = soapRpcPathKeys;
         this.methods = methods;
     }
 
@@ -28,14 +28,14 @@ public class AddOnScopeBean
         return key;
     }
 
-    public Collection<String> getRestPaths()
+    public Collection<String> getRestPathKeys()
     {
-        return null == restPaths ? Collections.<String>emptySet() : restPaths;
+        return null == restPathKeys ? Collections.<String>emptySet() : restPathKeys;
     }
 
-    public Collection<String> getSoapRpcPaths()
+    public Collection<String> getSoapRpcPathKeys()
     {
-        return null == soapRpcPaths ? Collections.<String>emptySet() : soapRpcPaths;
+        return null == soapRpcPathKeys ? Collections.<String>emptySet() : soapRpcPathKeys;
     }
 
     public Collection<String> getMethods()

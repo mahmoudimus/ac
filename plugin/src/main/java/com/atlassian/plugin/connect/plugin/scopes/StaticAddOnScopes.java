@@ -55,7 +55,7 @@ public class StaticAddOnScopes
         return buildFromBeans(scopeBeans, scopesFileResourceName);
     }
 
-    private static Collection<AddOnScope> buildFromBeans(AddOnScopeBeans scopeBeans, String scopesFileResourceName)
+    public static Collection<AddOnScope> buildFromBeans(AddOnScopeBeans scopeBeans, String scopesFileResourceName)
     {
         Map<ScopeName, AddOnScope> keyToScope = new HashMap<ScopeName, AddOnScope>(scopeBeans.getScopes().size());
 
@@ -103,7 +103,7 @@ public class StaticAddOnScopes
 
     private static void addSoapRpcPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
     {
-        for (String soapRpcPathKey : scopeBean.getSoapRpcPaths())
+        for (String soapRpcPathKey : scopeBean.getSoapRpcPathKeys())
         {
             boolean found = false;
             int soapPathIndex = 0;
@@ -135,7 +135,7 @@ public class StaticAddOnScopes
 
     private static void addRestPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
     {
-        for (String restPathKey : scopeBean.getRestPaths())
+        for (String restPathKey : scopeBean.getRestPathKeys())
         {
             boolean found = false;
             int restPathIndex = 0;

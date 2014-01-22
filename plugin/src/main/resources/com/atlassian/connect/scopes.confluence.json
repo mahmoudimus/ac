@@ -2,7 +2,7 @@
     "scopes" : [{
         "key" : "READ",
         "methods" : ["get"],
-        "restPaths": ["mywork", "prototype", "ui"]
+        "restPathKeys": ["mywork", "prototype", "ui"]
     }],
     "restPaths" : [{
         "key" : "mywork",

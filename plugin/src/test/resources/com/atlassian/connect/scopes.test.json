@@ -2,15 +2,15 @@
     "scopes" : [{
         "key" : "READ",
         "methods": ["get"],
-        "restPaths" : ["mywork", "mywork status", "prototype", "prototype content", "ui"]
+        "restPathKeys" : ["mywork", "mywork status", "prototype", "prototype content", "ui"]
     }, {
         "key": "WRITE",
         "methods": ["post"],
-        "restPaths": ["mywork", "mywork action"]
+        "restPathKeys": ["mywork", "mywork action"]
     }, {
         "key": "WRITE",
         "methods": ["post", "put"],
-        "restPaths": ["prototype content", "ui"]
+        "restPathKeys": ["prototype content", "ui"]
     }],
     "restPaths" : [{
         "key" : "mywork",
