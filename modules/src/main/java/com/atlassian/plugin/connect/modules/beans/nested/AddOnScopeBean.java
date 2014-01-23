@@ -94,18 +94,18 @@ public class AddOnScopeBean
         }
     }
 
-    public static class SoapRpcPathBean
+    public static class RpcPathBean
     {
         private String key; // set by gson, must be unique within the JSON scopes file
         private String path; // set by gson
         private Collection<String> rpcMethods; // set by gson
 
-        public SoapRpcPathBean()
+        public RpcPathBean()
         {
             this(null, null, null);
         }
 
-        public SoapRpcPathBean(String key, String path, Collection<String> rpcMethods)
+        public RpcPathBean(String key, String path, Collection<String> rpcMethods)
         {
             this.key = key;
             this.path = path;
@@ -128,37 +128,29 @@ public class AddOnScopeBean
         }
     }
 
-    public static class JsonRpcPathBean
+    public static class SoapRpcPathBean extends RpcPathBean
     {
-        private String key; // set by gson, must be unique within the JSON scopes file
-        private String path; // set by gson
-        private Collection<String> rpcMethods; // set by gson
+        public SoapRpcPathBean()
+        {
+            super();
+        }
 
+        public SoapRpcPathBean(String key, String path, Collection<String> rpcMethods)
+        {
+            super(key, path, rpcMethods);
+        }
+    }
+
+    public static class JsonRpcPathBean extends RpcPathBean
+    {
         public JsonRpcPathBean()
         {
-            this(null, null, null);
+            super();
         }
 
         public JsonRpcPathBean(String key, String path, Collection<String> rpcMethods)
         {
-            this.key = key;
-            this.path = path;
-            this.rpcMethods = rpcMethods;
-        }
-
-        public String getKey()
-        {
-            return key;
-        }
-
-        public String getPath()
-        {
-            return path;
-        }
-
-        public Collection<String> getRpcMethods()
-        {
-            return rpcMethods;
+            super(key, path, rpcMethods);
         }
     }
 }
