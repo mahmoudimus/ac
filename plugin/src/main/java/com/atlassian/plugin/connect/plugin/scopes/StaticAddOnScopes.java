@@ -11,7 +11,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
 
@@ -21,47 +28,49 @@ public class StaticAddOnScopes
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * Reads Confluence configuration.
      * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
+     *
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
     public static Collection<AddOnScope> buildForConfluence() throws IOException
     {
-        return buildFor("confluence");
+        return buildFor("confluence", "common");
     }
 
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * Reads JIRA configuration.
      * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
+     *
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
     public static Collection<AddOnScope> buildForJira() throws IOException
     {
-        return buildFor("jira");
+        return buildFor("jira", "common");
     }
 
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
-     * @param product product name in lower case e.g. "confluence" or "jira"
+     *
+     * @param products product names in lower case e.g. "confluence" or "jira"
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
-    static Collection<AddOnScope> buildFor(String product) throws IOException
+    static Collection<AddOnScope> buildFor(String... products) throws IOException
     {
-        String scopesFileResourceName = resourceLocation(product);
-        AddOnScopeBeans scopeBeans = parseScopeBeans(scopesFileResourceName);
-        return buildFromBeans(scopeBeans, scopesFileResourceName);
-    }
+        Map<ScopeName, AddOnScope> keyToScope = new HashMap<ScopeName, AddOnScope>();
 
-    private static Collection<AddOnScope> buildFromBeans(AddOnScopeBeans scopeBeans, String scopesFileResourceName)
-    {
-        Map<ScopeName, AddOnScope> keyToScope = new HashMap<ScopeName, AddOnScope>(scopeBeans.getScopes().size());
-
-        for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
+        for (String product : products)
         {
-            constructAndAddScope(keyToScope, scopesFileResourceName, scopeBeans, scopeBean);
+            String scopesFileResourceName = resourceLocation(product);
+            AddOnScopeBeans scopeBeans = parseScopeBeans(scopesFileResourceName);
+
+            for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
+            {
+                constructAndAddScope(keyToScope, scopesFileResourceName, scopeBeans, scopeBean);
+            }
         }
 
         // copy element references into an ArrayList so that equals() comparisons work
@@ -193,7 +202,7 @@ public class StaticAddOnScopes
             if (!found)
             {
                 throw new IllegalArgumentException(String.format("restPath key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
-                                                                 restPathKey, scopeBean.getKey(), scopesFileResourceName));
+                        restPathKey, scopeBean.getKey(), scopesFileResourceName));
             }
         }
     }
@@ -212,7 +221,8 @@ public class StaticAddOnScopes
 
     /**
      * Turn lightweight references to scopes into the scopes themselves.
-     * @param scopes {@link AddOnScope}s previously read from static configuration
+     *
+     * @param scopes    {@link AddOnScope}s previously read from static configuration
      * @param scopeKeys lightweight references to scopes
      * @return the {@link AddOnScope}s referenced by the {@link String}s
      * @throws IllegalArgumentException if any of the scopeKeys do not appear amongst the static scopes
@@ -222,7 +232,7 @@ public class StaticAddOnScopes
         // avoid loading scopes from file if unnecessary
         if (scopeKeys.isEmpty())
         {
-            return Collections.<AddOnScope>emptySet();
+            return Collections.emptySet();
         }
 
         final Map<ScopeName, AddOnScope> scopeKeyToScope = new HashMap<ScopeName, AddOnScope>(scopes.size());
@@ -246,7 +256,7 @@ public class StaticAddOnScopes
             throw new IllegalArgumentException(String.format("Scope keys %s do not exist. Valid values are: %s.", badKeys, scopeKeyToScope.keySet()));
         }
 
-        return transform(scopeKeys, new Function<ScopeName, AddOnScope>()
+        return transform(addImpliedScopesTo(scopeKeys), new Function<ScopeName, AddOnScope>()
         {
             @Override
             public AddOnScope apply(@Nullable ScopeName scopeKey)
@@ -259,6 +269,18 @@ public class StaticAddOnScopes
                 return scopeKeyToScope.get(scopeKey);
             }
         });
+    }
+
+    private static Collection<ScopeName> addImpliedScopesTo(Collection<ScopeName> scopeReferences)
+    {
+        Set<ScopeName> allScopeReferences = new HashSet<ScopeName>(scopeReferences);
+
+        for (ScopeName scopeReference : scopeReferences)
+        {
+            allScopeReferences.addAll(scopeReference.getImplied());
+        }
+
+        return allScopeReferences;
     }
 
     /**
