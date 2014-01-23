@@ -24,7 +24,8 @@
     {
       "key": "READ",
       "restPathKeys": ["contentbody"],
-      "jsonRpcPathKeys": ["confluenceservice-read"],
+      "jsonRpcPathKeys": ["confluenceservice-json-rpc-read"],
+      "xmlRpcPathKeys": ["confluenceservice-xml-rpc-read"],
       "methods": ["POST"]
     },
     {
@@ -42,7 +43,8 @@
     },
     {
       "key": "WRITE",
-      "jsonRpcPathKeys": ["confluenceservice-write"],
+      "jsonRpcPathKeys": ["confluenceservice-json-rpc-write"],
+      "xmlRpcPathKeys": ["confluenceservice-xml-rpc-write"],
       "methods": ["POST"]
     },
     {
@@ -61,17 +63,20 @@
     },
     {
       "key": "DELETE",
-      "jsonRpcPathKeys": ["confluenceservice-delete"],
+      "jsonRpcPathKeys": ["confluenceservice-json-rpc-delete"],
+      "xmlRpcPathKeys": ["confluenceservice-xml-rpc-delete"],
       "methods": ["POST"]
     },
     {
       "key": "SPACE_ADMIN",
-      "jsonRpcPathKeys": ["confluenceservice-space-admin"],
+      "jsonRpcPathKeys": ["confluenceservice-json-rpc-space-admin"],
+      "xmlRpcPathKeys": ["confluenceservice-xml-rpc-space-admin"],
       "methods": ["POST"]
     },
     {
       "key": "ADMIN",
-      "jsonRpcPathKeys": ["confluenceservice-admin"],
+      "jsonRpcPathKeys": ["confluenceservice-json-rpc-admin"],
+      "xmlRpcPathKeys": ["confluenceservice-xml-rpc-admin"],
       "methods": ["POST"]
     }
   ],
@@ -187,7 +192,7 @@
   ],
   "jsonRpcPaths": [
     {
-      "key": "confluenceservice-read",
+      "key": "confluenceservice-json-rpc-read",
       "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
       "rpcMethods": [
         "convertWikiToStorageFormat",
@@ -260,7 +265,7 @@
       ]
     },
     {
-      "key": "confluenceservice-write",
+      "key": "confluenceservice-json-rpc-write",
       "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
       "rpcMethods": [
         "addAttachment",
@@ -296,7 +301,7 @@
       ]
     },
     {
-      "key": "confluenceservice-delete",
+      "key": "confluenceservice-json-rpc-delete",
       "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
       "rpcMethods": [
         "emptyTrash",
@@ -318,7 +323,7 @@
       ]
     },
     {
-      "key": "confluenceservice-space-admin",
+      "key": "confluenceservice-json-rpc-space-admin",
       "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
       "rpcMethods": [
         "addAnonymousPermissionToSpace",
@@ -330,8 +335,186 @@
       ]
     },
     {
-      "key": "confluenceservice-admin",
+      "key": "confluenceservice-json-rpc-admin",
       "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
+      "rpcMethods": [
+        "addAnonymousUsePermission",
+        "addAnonymousViewUserProfilePermission",
+        "addGlobalPermission",
+        "addGlobalPermissions",
+        "addGroup",
+        "addUser",
+        "addUserToGroup",
+        "clearIndexQueue",
+        "deactivateUser",
+        "editUser",
+        "exportSite",
+        "exportSpace",
+        "flushIndexQueue",
+        "importSpace",
+        "isPluginEnabled",
+        "isPluginInstalled",
+        "reactivateUser",
+        "removeAllPermissionsForGroup",
+        "removeAnonymousUsePermission",
+        "removeAnonymousViewUserProfilePermission",
+        "removeGlobalPermission",
+        "removeGroup",
+        "removeUser",
+        "removeUserFromGroup",
+        "renameUser",
+        "renameUsers",
+        "setEnableAnonymousAccess"
+      ]
+    }
+  ],
+  "xmlRpcPaths": [
+    {
+      "key": "confluenceservice-xml-rpc-read",
+      "prefixes": ["confluence1", "confluence2"],
+      "rpcMethods": [
+        "convertWikiToStorageFormat",
+        "getActiveUsers",
+        "getAncestors",
+        "getAttachment",
+        "getAttachmentData",
+        "getAttachments",
+        "getBlogEntries",
+        "getBlogEntry",
+        "getBlogEntryByDateAndTitle",
+        "getBlogEntryByDayAndTitle",
+        "getChildren",
+        "getClusterInformation",
+        "getClusterNodeStatuses",
+        "getComment",
+        "getComments",
+        "getContentPermissionSet",
+        "getContentPermissionSets",
+        "getDescendents",
+        "getGroups",
+        "getLabelContentById",
+        "getLabelContentByName",
+        "getLabelContentByObject",
+        "getLabelsByDetail",
+        "getLabelsById",
+        "getMostPopularLabels",
+        "getMostPopularLabelsInSpace",
+        "getPage",
+        "getPageHistory",
+        "getPagePermissions",
+        "getPageSummary",
+        "getPages",
+        "getPermissions",
+        "getPermissionsForUser",
+        "getRecentlyUsedLabels",
+        "getRecentlyUsedLabelsInSpace",
+        "getRelatedLabels",
+        "getRelatedLabelsInSpace",
+        "getServerInfo",
+        "getSpace",
+        "getSpaceGroup",
+        "getSpaceGroups",
+        "getSpaceLevelPermissions",
+        "getSpaceStatus",
+        "getSpaces",
+        "getSpacesContainingContentWithLabel",
+        "getSpacesInGroup",
+        "getSpacesWithLabel",
+        "getTopLevelPages",
+        "getTrashContents",
+        "getUser",
+        "getUserByKey",
+        "getUserByName",
+        "getUserGroups",
+        "getUserInformation",
+        "getUserPreferenceBoolean",
+        "getUserPreferenceLong",
+        "getUserPreferenceString",
+        "getWatchersForPage",
+        "getWatchersForSpace",
+        "hasGroup",
+        "hasUser",
+        "isActiveUser",
+        "isWatchingPage",
+        "isWatchingSpace",
+        "isWatchingSpaceForType",
+        "renderContent",
+        "search"
+      ]
+    },
+    {
+      "key": "confluenceservice-xml-rpc-write",
+      "prefixes": ["confluence1", "confluence2"],
+      "rpcMethods": [
+        "addAttachment",
+        "addComment",
+        "addLabelById",
+        "addLabelByName",
+        "addLabelByNameToSpace",
+        "addLabelByObject",
+        "addPersonalSpace",
+        "addPersonalSpaceWithDefaultPermissions",
+        "addProfilePicture",
+        "addSpace",
+        "addSpaceGroup",
+        "addSpaceWithDefaultPermissions",
+        "editComment",
+        "moveAttachment",
+        "movePage",
+        "movePageToTopLevel",
+        "setContentPermissions",
+        "setEnableWysiwyg",
+        "setSpaceStatus",
+        "setUserInformation",
+        "setUserPreferenceBoolean",
+        "setUserPreferenceLong",
+        "setUserPreferenceString",
+        "storeBlogEntry",
+        "storePage",
+        "storeSpace",
+        "updatePage",
+        "watchPage",
+        "watchPageForUser",
+        "watchSpace"
+      ]
+    },
+    {
+      "key": "confluenceservice-xml-rpc-delete",
+      "prefixes": ["confluence1", "confluence2"],
+      "rpcMethods": [
+        "emptyTrash",
+        "purgeFromTrash",
+        "removeAttachment",
+        "removeComment",
+        "removeLabelById",
+        "removeLabelByName",
+        "removeLabelByNameFromSpace",
+        "removeLabelByObject",
+        "removePage",
+        "removePageVersionById",
+        "removePageVersionByVersion",
+        "removePageWatch",
+        "removePageWatchForUser",
+        "removeSpace",
+        "removeSpaceGroup",
+        "removeSpaceWatch"
+      ]
+    },
+    {
+      "key": "confluenceservice-xml-rpc-space-admin",
+      "prefixes": ["confluence1", "confluence2"],
+      "rpcMethods": [
+        "addAnonymousPermissionToSpace",
+        "addAnonymousPermissionsToSpace",
+        "addPermissionToSpace",
+        "addPermissionsToSpace",
+        "removeAnonymousPermissionFromSpace",
+        "removePermissionFromSpace"
+      ]
+    },
+    {
+      "key": "confluenceservice-xml-rpc-admin",
+      "prefixes": ["confluence1", "confluence2"],
       "rpcMethods": [
         "addAnonymousUsePermission",
         "addAnonymousViewUserProfilePermission",

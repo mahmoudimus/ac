@@ -108,6 +108,7 @@ public class StaticAddOnScopes
         addRestPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
         addSoapRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
         addJsonRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
+        addXmlRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
         keyToScope.put(scopeName, new AddOnScope(scopeBean.getKey(), pathsBuilder.build()));
     }
 
@@ -139,6 +140,38 @@ public class StaticAddOnScopes
             {
                 throw new IllegalArgumentException(String.format("JSON path key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
                         jsonRpcPathKey, scopeBean.getKey(), scopesFileResourceName));
+            }
+        }
+    }
+
+    private static void addXmlRpcPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
+    {
+        for (String xmlRpcPathKey : scopeBean.getXmlRpcPathKeys())
+        {
+            boolean found = false;
+            int xmlPathIndex = 0;
+
+            for (AddOnScopeBean.XmlRpcBean xmlRpcBean : scopeBeans.getXmlRpcPaths())
+            {
+                if (null == xmlRpcBean.getKey())
+                {
+                    throw new IllegalArgumentException(String.format("XML-RPC path index %d in scopes file '%s' has a null or missing 'key': please add a key", xmlPathIndex, scopesFileResourceName));
+                }
+
+                if (xmlRpcBean.getKey().equals(xmlRpcPathKey))
+                {
+                    found = true;
+                    pathsBuilder.withXmlRpcResources(xmlRpcBean);
+                    break;
+                }
+
+                ++xmlPathIndex;
+            }
+
+            if (!found)
+            {
+                throw new IllegalArgumentException(String.format("XML-RPC path key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
+                        xmlRpcPathKey, scopeBean.getKey(), scopesFileResourceName));
             }
         }
     }
