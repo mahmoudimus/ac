@@ -31,7 +31,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Connect implementation of module descriptor for web panels.<p>
- * Presents a {@link WebPanel} that draws its content from an iframe pointing at an artibrary URL as defined by a Connect add-on.
+ * Presents a {@link WebPanel} that draws its content from an iframe pointing at an arbitrary URL as defined by a Connect add-on.
  */
 public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescriptor
 {

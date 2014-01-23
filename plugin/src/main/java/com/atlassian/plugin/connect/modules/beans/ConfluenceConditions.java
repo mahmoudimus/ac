@@ -57,6 +57,7 @@ public class ConfluenceConditions extends ConditionsProvider
     public static final String USER_LOGGED_IN_EDITABLE = "user_logged_in_editable";
     public static final String USER_WATCHING_PAGE = "user_watching_page";
     public static final String FAVOURITE_SPACE = "favourite_space";
+    public static final String SPACE_SIDEBAR = "space_sidebar";
 
     public ConfluenceConditions()
     {
@@ -108,7 +109,8 @@ public class ConfluenceConditions extends ConditionsProvider
         conditionMap.put(USER_LOGGED_IN_EDITABLE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserLoggedInEditableCondition.class);
         conditionMap.put(USER_WATCHING_PAGE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingPageCondition.class);
         conditionMap.put(FAVOURITE_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouriteSpaceCondition.class);
-        
+        conditionMap.put(SPACE_SIDEBAR, com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition.class);
+
         return conditionMap;
     }
 

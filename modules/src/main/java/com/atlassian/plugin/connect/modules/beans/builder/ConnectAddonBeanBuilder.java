@@ -23,6 +23,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private String key;
     private String name;
     private String version;
+    private Integer apiVersion;
     private String description;
     private VendorBean vendor;
     private Map<String, String> links;
@@ -42,6 +43,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.key = defaultBean.getKey();
         this.name = defaultBean.getName();
         this.version = defaultBean.getVersion();
+        this.apiVersion = defaultBean.getApiVersion();
         this.description = defaultBean.getDescription();
         this.vendor = defaultBean.getVendor();
         this.links = defaultBean.getLinks();
@@ -68,6 +70,12 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     public T withVersion(String version)
     {
         this.version = version;
+        return (T) this;
+    }
+
+    public T withApiVersion(Integer version)
+    {
+        this.apiVersion = version;
         return (T) this;
     }
 

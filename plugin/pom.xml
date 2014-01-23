@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m28-SNAPSHOT</version>
+        <version>1.0-m29-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -484,7 +484,7 @@
                             com.atlassian.plugin.connect.modules*
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
-                        <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
+                        <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>
                         <!-- DO NOT put Atlassian-Plugin-Key here!! it will bypass all transforms and component-imports will break -->
                     </instructions>
                     <systemPropertyVariables>
@@ -574,6 +574,11 @@
                                     <groupId>com.atlassian.bundles</groupId>
                                     <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.confluence.plugins</groupId>
+                                    <artifactId>confluence-scriptsfinished-plugin</artifactId>
+                                    <version>${atlassian.confluence.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                             <bundledArtifacts>
                             </bundledArtifacts>
@@ -654,12 +659,14 @@
                                         <include>js/iframe-min/plugin/_dollar-min.js</include>
                                         <include>js/iframe-min/_events-min.js</include>
                                         <include>js/iframe-min/_base64-min.js</include>
+                                        <include>js/iframe-min/_uri-min.js</include>
                                         <include>js/iframe-min/_xdm-min.js</include>
                                         <include>js/iframe-min/plugin/_rpc-min.js</include>
                                         <include>js/iframe-min/plugin/events-min.js</include>
                                         <include>js/iframe-min/plugin/env-min.js</include>
                                         <include>js/iframe-min/plugin/request-min.js</include>
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
+                                        <include>js/iframe-min/plugin/inline-dialog-min.js</include>
                                         <include>js/iframe-min/plugin/_resize_listener-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>

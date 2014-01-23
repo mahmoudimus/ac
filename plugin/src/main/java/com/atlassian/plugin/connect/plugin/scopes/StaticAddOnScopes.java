@@ -11,7 +11,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
 
@@ -21,50 +28,56 @@ public class StaticAddOnScopes
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * Reads Confluence configuration.
      * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
+     *
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
     public static Collection<AddOnScope> buildForConfluence() throws IOException
     {
-        return buildFor("confluence");
+        return buildFor("confluence", "common");
     }
 
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * Reads JIRA configuration.
      * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
+     *
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
     public static Collection<AddOnScope> buildForJira() throws IOException
     {
-        return buildFor("jira");
+        return buildFor("jira", "common");
     }
 
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
-     * @param product product name in lower case e.g. "confluence" or "jira"
+     *
+     * @param products product names in lower case e.g. "confluence" or "jira"
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
-    static Collection<AddOnScope> buildFor(String product) throws IOException
+    static Collection<AddOnScope> buildFor(String... products) throws IOException
     {
-        String scopesFileResourceName = resourceLocation(product);
-        AddOnScopeBeans scopeBeans = parseScopeBeans(scopesFileResourceName);
-        return buildFromBeans(scopeBeans, scopesFileResourceName);
-    }
+        Map<ScopeName, AddOnScope> keyToScope = new HashMap<ScopeName, AddOnScope>();
 
-    private static Collection<AddOnScope> buildFromBeans(AddOnScopeBeans scopeBeans, String scopesFileResourceName)
-    {
-        Collection<AddOnScope> scopes = new ArrayList<AddOnScope>();
-
-        for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
+        for (String product : products)
         {
-            constructAndAddScope(scopes, scopesFileResourceName, scopeBeans, scopeBean);
+            String scopesFileResourceName = resourceLocation(product);
+            AddOnScopeBeans scopeBeans = parseScopeBeans(scopesFileResourceName);
+
+            for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
+            {
+                constructAndAddScope(keyToScope, scopesFileResourceName, scopeBeans, scopeBean);
+            }
         }
 
-        return scopes;
+        // copy element references into an ArrayList so that equals() comparisons work
+        // sort to protect against ordering throwing off ArrayList.equals() and to make toString() look nicer
+        ArrayList<AddOnScope> addOnScopes = new ArrayList<AddOnScope>(keyToScope.values());
+        Collections.sort(addOnScopes);
+        return addOnScopes;
     }
 
     private static AddOnScopeBeans parseScopeBeans(String scopesFileResourceName) throws IOException
@@ -80,12 +93,91 @@ public class StaticAddOnScopes
         return new GsonBuilder().create().fromJson(rawJson, AddOnScopeBeans.class);
     }
 
-    private static void constructAndAddScope(Collection<AddOnScope> scopes, String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean)
+    private static void constructAndAddScope(Map<ScopeName, AddOnScope> keyToScope, String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean)
     {
         checkScopeName(scopeBean); // scope names must be valid
         AddOnScopeApiPathBuilder pathsBuilder = new AddOnScopeApiPathBuilder();
+        ScopeName scopeName = ScopeName.valueOf(scopeBean.getKey());
+        AddOnScope existingScope = keyToScope.get(scopeName);
 
-        for (String restPathKey : scopeBean.getRestPaths())
+        if (null != existingScope)
+        {
+            pathsBuilder = pathsBuilder.withPaths(existingScope.getPaths());
+        }
+
+        addRestPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
+        addSoapRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
+        addJsonRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
+        keyToScope.put(scopeName, new AddOnScope(scopeBean.getKey(), pathsBuilder.build()));
+    }
+
+    private static void addJsonRpcPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
+    {
+        for (String jsonRpcPathKey : scopeBean.getJsonRpcPathKeys())
+        {
+            boolean found = false;
+            int jsonPathIndex = 0;
+
+            for (AddOnScopeBean.JsonRpcPathBean jsonRpcPathBean : scopeBeans.getJsonRpcPaths())
+            {
+                if (null == jsonRpcPathBean.getKey())
+                {
+                    throw new IllegalArgumentException(String.format("JSON path index %d in scopes file '%s' has a null or missing 'key': please add a key", jsonPathIndex, scopesFileResourceName));
+                }
+
+                if (jsonRpcPathBean.getKey().equals(jsonRpcPathKey))
+                {
+                    found = true;
+                    pathsBuilder.withJsonRpcResources(jsonRpcPathBean);
+                    break;
+                }
+
+                ++jsonPathIndex;
+            }
+
+            if (!found)
+            {
+                throw new IllegalArgumentException(String.format("JSON path key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
+                        jsonRpcPathKey, scopeBean.getKey(), scopesFileResourceName));
+            }
+        }
+    }
+
+    private static void addSoapRpcPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
+    {
+        for (String soapRpcPathKey : scopeBean.getSoapRpcPathKeys())
+        {
+            boolean found = false;
+            int soapPathIndex = 0;
+
+            for (AddOnScopeBean.SoapRpcPathBean soapRpcPathBean : scopeBeans.getSoapRpcPaths())
+            {
+                if (null == soapRpcPathBean.getKey())
+                {
+                    throw new IllegalArgumentException(String.format("SOAP path index %d in scopes file '%s' has a null or missing 'key': please add a key", soapPathIndex, scopesFileResourceName));
+                }
+
+                if (soapRpcPathBean.getKey().equals(soapRpcPathKey))
+                {
+                    found = true;
+                    pathsBuilder.withSoapRpcResources(soapRpcPathBean);
+                    break;
+                }
+
+                ++soapPathIndex;
+            }
+
+            if (!found)
+            {
+                throw new IllegalArgumentException(String.format("SOAP path key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
+                        soapRpcPathKey, scopeBean.getKey(), scopesFileResourceName));
+            }
+        }
+    }
+
+    private static void addRestPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
+    {
+        for (String restPathKey : scopeBean.getRestPathKeys())
         {
             boolean found = false;
             int restPathIndex = 0;
@@ -110,11 +202,9 @@ public class StaticAddOnScopes
             if (!found)
             {
                 throw new IllegalArgumentException(String.format("restPath key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
-                                                                 restPathKey, scopeBean.getKey(), scopesFileResourceName));
+                        restPathKey, scopeBean.getKey(), scopesFileResourceName));
             }
         }
-
-        scopes.add(new AddOnScope(scopeBean.getKey(), pathsBuilder.build()));
     }
 
     private static void checkScopeName(AddOnScopeBean scopeBean)
@@ -131,7 +221,8 @@ public class StaticAddOnScopes
 
     /**
      * Turn lightweight references to scopes into the scopes themselves.
-     * @param scopes {@link AddOnScope}s previously read from static configuration
+     *
+     * @param scopes    {@link AddOnScope}s previously read from static configuration
      * @param scopeKeys lightweight references to scopes
      * @return the {@link AddOnScope}s referenced by the {@link String}s
      * @throws IllegalArgumentException if any of the scopeKeys do not appear amongst the static scopes
@@ -141,7 +232,7 @@ public class StaticAddOnScopes
         // avoid loading scopes from file if unnecessary
         if (scopeKeys.isEmpty())
         {
-            return Collections.<AddOnScope>emptySet();
+            return Collections.emptySet();
         }
 
         final Map<ScopeName, AddOnScope> scopeKeyToScope = new HashMap<ScopeName, AddOnScope>(scopes.size());
@@ -165,7 +256,7 @@ public class StaticAddOnScopes
             throw new IllegalArgumentException(String.format("Scope keys %s do not exist. Valid values are: %s.", badKeys, scopeKeyToScope.keySet()));
         }
 
-        return transform(scopeKeys, new Function<ScopeName, AddOnScope>()
+        return transform(addImpliedScopesTo(scopeKeys), new Function<ScopeName, AddOnScope>()
         {
             @Override
             public AddOnScope apply(@Nullable ScopeName scopeKey)
@@ -178,6 +269,18 @@ public class StaticAddOnScopes
                 return scopeKeyToScope.get(scopeKey);
             }
         });
+    }
+
+    private static Collection<ScopeName> addImpliedScopesTo(Collection<ScopeName> scopeReferences)
+    {
+        Set<ScopeName> allScopeReferences = new HashSet<ScopeName>(scopeReferences);
+
+        for (ScopeName scopeReference : scopeReferences)
+        {
+            allScopeReferences.addAll(scopeReference.getImplied());
+        }
+
+        return allScopeReferences;
     }
 
     /**

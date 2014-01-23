@@ -1,23 +1,168 @@
 {
-    "scopes" : [{
-        "key" : "READ",
-        "methods" : ["get"],
-        "restPaths": ["mywork", "prototype", "ui"]
-    }],
-    "restPaths" : [{
-        "key" : "mywork",
-        "name" : "mywork",
-        "basePaths" : ["/notification", "/status", "/task"],
-        "versions" : ["1", "latest"]
-    },{
-        "key" : "prototype",
-        "name" : "prototype",
-        "basePaths" : ["/search", "/content", "/attachment", "/breadcrumb", "/space"],
-        "versions" : ["1", "latest"]
-    },{
-        "key" : "ui",
-        "name" : "ui",
-        "basePaths" : ["/content"],
-        "versions" : ["1", "1.0", "latest"]
-    }]
+  "scopes": [
+    {
+      "key": "READ",
+      "restPathKeys": [
+        "attachment",
+        "breadcrumb",
+        "buildInfo",
+        "content-api",
+        "content-prototype",
+        "content-ui",
+        "label",
+        "notification",
+        "search",
+        "searchv3",
+        "space",
+        "space-api",
+        "status",
+        "task",
+        "user"
+      ],
+      "methods": ["GET"]
+    },
+    {
+      "key": "READ",
+      "restPathKeys": ["contentbody"],
+      "methods": ["POST"]
+    },
+    {
+      "key": "WRITE",
+      "restPathKeys": [
+        "action",
+        "content-api",
+        "content-prototype",
+        "content-ui",
+        "label",
+        "notification",
+        "task"
+      ],
+      "methods": ["POST", "PUT"]
+    },
+    {
+      "key": "DELETE",
+      "restPathKeys": [
+        "action",
+        "content-api",
+        "content-prototype",
+        "content-ui",
+        "label",
+        "macro",
+        "notification",
+        "task"
+      ],
+      "methods": ["DELETE"]
+    }
+  ],
+  "restPaths": [
+    {
+      "key": "content-api",
+      "name": "api",
+      "basePaths": ["/content($|/.*)"],
+      "versions": ["1", "1.0", "latest"]
+    },
+    {
+      "key": "contentbody",
+      "name": "api",
+      "basePaths": ["/contentbody($|/.*)"],
+      "versions": ["1", "1.0", "latest"]
+    },
+    {
+      "key": "space-api",
+      "name": "api",
+      "basePaths": ["/space($|/.*)"],
+      "versions": ["1", "1.0", "latest"]
+    },
+    {
+      "key": "macro",
+      "name": "atlassian-connect",
+      "basePaths": ["/macro($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "action",
+      "name": "mywork",
+      "basePaths": ["/action($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "notification",
+      "name": "mywork",
+      "basePaths": ["/notification($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "status",
+      "name": "mywork",
+      "basePaths": ["/status($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "task",
+      "name": "mywork",
+      "basePaths": ["/task($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "attachment",
+      "name": "prototype",
+      "basePaths": ["/attachment($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "breadcrumb",
+      "name": "prototype",
+      "basePaths": ["/breadcrumb($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "buildInfo",
+      "name": "prototype",
+      "basePaths": ["/buildInfo($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "content-prototype",
+      "name": "prototype",
+      "basePaths": ["/content($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "search",
+      "name": "prototype",
+      "basePaths": ["/search($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "space",
+      "name": "prototype",
+      "basePaths": ["/space($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "user",
+      "name": "prototype",
+      "basePaths": ["/user($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "label",
+      "name": "prototype",
+      "basePaths": ["/label($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "searchv3",
+      "name": "searchv3",
+      "basePaths": ["/search($|/.*)"],
+      "versions": ["1", "1.0", "latest"]
+    },
+    {
+      "key": "content-ui",
+      "name": "ui",
+      "basePaths": ["/content($|/.*)"],
+      "versions": ["1", "1.0", "latest"]
+    }
+  ]
 }
+

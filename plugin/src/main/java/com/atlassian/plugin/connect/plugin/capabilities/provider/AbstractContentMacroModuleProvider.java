@@ -12,12 +12,12 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.MacroI18nBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.hostcontainer.HostContainer;
@@ -43,17 +43,20 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private final HostContainer hostContainer;
     private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
     private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
+    private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
 
     public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                               IFramePageServletDescriptorFactory servletDescriptorFactory,
                                               HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
-                                              RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+                                              RelativeAddOnUrlConverter relativeAddOnUrlConverter,
+                                              I18nPropertiesPluginManager i18nPropertiesPluginManager)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.servletDescriptorFactory = servletDescriptorFactory;
         this.hostContainer = hostContainer;
         this.absoluteAddOnUrlConverter = absoluteAddOnUrlConverter;
         this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
+        this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
     }
 
     protected abstract ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, BundleContext bundleContext, T macroBean);
@@ -61,11 +64,15 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<T> beans)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
+        MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(plugin.getKey());
 
         for (T bean : beans)
         {
             moduleDescriptors.addAll(createModuleDescriptors(plugin, addonBundleContext, bean));
+            i18nBuilder.add(bean);
         }
+
+        i18nPropertiesPluginManager.add(plugin.getKey(), i18nBuilder.getI18nProperties());
 
         return moduleDescriptors;
     }
@@ -97,8 +104,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             descriptors.add(servletDescriptor);
             descriptors.add(createEditorWebResource(plugin, macroBean));
         }
-
-        // TODO: Add Image Placeholder --> ACDEV-678
 
         return ImmutableList.copyOf(descriptors);
     }

@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -46,6 +48,36 @@ public final class ApiResourceInfo
                 .append("path", path)
                 .append("httpMethod", httpMethod)
                 .append("rpcMethod", rpcMethod)
+                .build();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        ApiResourceInfo that = (ApiResourceInfo) o;
+        return new EqualsBuilder()
+                .append(path, that.path)
+                .append(httpMethod, that.httpMethod)
+                .append(rpcMethod, that.rpcMethod)
+                .build();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(7, 41)
+                .append(path)
+                .append(httpMethod)
+                .append(rpcMethod)
                 .build();
     }
 }

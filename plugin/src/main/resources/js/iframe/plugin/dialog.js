@@ -24,12 +24,21 @@ AP.define("dialog", ["_dollar", "_rpc"],
     exports = {
       /**
       * Creates a dialog for a module key
+      * @param {DialogOptions} options configuration object of dialog options.
       * @example
       * AP.require('dialog', function(dialog){
       *   dialog.create('mydialog');
       * });
       */
       create: function(options) {
+        /**
+        * @name DialogOptions
+        * @class
+        * @property {String} key The module key of the page you want to open as a dialog
+        * @property {String} size Opens the dialog at a preset size: small, medium, large, x-large or maximum (full screen).
+        * @property {Number|String} width overrides size, define the width as a percentage (append a % to the number) or pixels.
+        * @property {Number|String} height overrides size, define the height as a percentage (append a % to the number) or pixels.
+        */
         remote.createDialog(options);
         return {
           on: function (event, callback) {

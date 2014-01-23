@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.modules.beans.matchers.IFrameContextMatchers.hasIFramePath;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.IFrameContextMatchers.hasIFramePath;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.verify;

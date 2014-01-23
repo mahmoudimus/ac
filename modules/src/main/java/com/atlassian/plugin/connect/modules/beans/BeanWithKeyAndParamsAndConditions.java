@@ -59,7 +59,7 @@ public class BeanWithKeyAndParamsAndConditions extends BeanWithKeyAndParams
     public int hashCode()
     {
         return new HashCodeBuilder(59, 29)
-                .append(super.hashCode())
+                .appendSuper(super.hashCode())
                 .append(conditions)
                 .build();
     }

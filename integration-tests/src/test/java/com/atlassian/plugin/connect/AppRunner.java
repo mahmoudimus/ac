@@ -63,7 +63,7 @@ public class AppRunner
 
 
 //            ConnectRunner remotePlugin = new ConnectRunner(JIRA,"my-plugin")
-//                    .addCapabilities("webItems",
+//                    .addModules("webItems",
 //                            newWebItemBean()
 //                                .withName(new I18nProperty("AC General Web Item", "ac.gen"))
 //                                .withLocation("system.top.navigation.bar")
@@ -86,7 +86,7 @@ public class AppRunner
 //                                        newSingleConditionBean().withCondition("user_is_logged_in").build(),
 //                                        newSingleConditionBean().withCondition("/onlyBettyCondition").build()
 //                                ).build())
-//                    .addCapabilities("webPanels",
+//                    .addModules("webPanels",
 //                            newWebPanelBean()
 //                                    .withName(new I18nProperty("clock", "ac.clock"))
 //                                    .withLocation("atl.jira.view.issue.right.context")
@@ -104,7 +104,7 @@ public class AppRunner
 //                                    .withUrl("http://free.timeanddate.com/clock/i3w2e3ys/n109/szw110/szh110/hocf00/hbw0/hfcc00/cf100/hnca32/fas20/facfff/fdi86/mqcfff/mqs2/mql3/mqw4/mqd70/mhcfff/mhs2/mhl3/mhw4/mhd70/mmv0/hhcfff/hhs2/hmcfff/hms2/hsv0")
 //                                    .build()
 //                    )
-//                    .addCapabilities("generalPages",
+//                    .addModules("generalPages",
 //                            newPageBean()
 //                                    .withName(new I18nProperty("My Awesome Page", "my.awesome.page"))
 //                                    .withUrl("/pg?page_id={page.id}")
@@ -115,7 +115,7 @@ public class AppRunner
 //                                    .withUrl("/pg?page_id={page.id}")
 //                                    .withWeight(1234)
 //                                    .build())
-//                    .addCapabilities("adminPages",
+//                    .addModules("adminPages",
 //                            newPageBean()
 //                                    .withName(new I18nProperty("My Admin Page", "my.admin.page"))
 //                                    .withUrl("/pg")

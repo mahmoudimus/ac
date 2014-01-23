@@ -16,7 +16,7 @@ import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newA
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.modules.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertThat;
@@ -117,6 +117,7 @@ public class WebItemModuleBeanTest
     {
         return newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webItem"))
+                .withKey("my-web-item")
                 .withUrl("/my-general-page")
                 .withLocation("system.preset.filters")
                 .withIcon(IconBean.newIconBean()

@@ -1,10 +1,10 @@
 package it.capabilities.confluence;
 
+import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.TestConstants;
 import it.confluence.ConfluenceWebDriverTestBase;
@@ -41,6 +41,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
                         "adminPages",
                         newPageBean()
                                 .withName(new I18nProperty(PAGE_NAME, null))
+                                .withKey(GENERATED_PAGE_KEY)
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())
@@ -61,7 +62,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     public void canClickOnPageLinkAndSeeAddonContents() throws Exception
     {
         loginAsAdmin();
-        product.visit(FixedConfluenceAdminHomePage.class);
+        product.visit(ConfluenceAdminHomePage.class);
 
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, GENERATED_PAGE_KEY);
 

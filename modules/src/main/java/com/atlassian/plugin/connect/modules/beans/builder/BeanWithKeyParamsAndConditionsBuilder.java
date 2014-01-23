@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 import com.atlassian.plugin.connect.modules.beans.BeanWithKeyAndParamsAndConditions;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.google.common.collect.Lists;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +25,7 @@ public class BeanWithKeyParamsAndConditionsBuilder<T extends BeanWithKeyParamsAn
     {
         super(defaultBean);
 
-        this.conditions = defaultBean.getConditions();
+        this.conditions = newArrayList(defaultBean.getConditions());
     }
 
     public T withConditions(ConditionalBean... beans)

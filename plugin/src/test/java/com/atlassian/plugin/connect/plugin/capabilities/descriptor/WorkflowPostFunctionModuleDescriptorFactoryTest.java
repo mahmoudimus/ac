@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
-import static com.atlassian.plugin.connect.modules.beans.matchers.IFrameContextMatchers.hasIFramePath;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.IFrameContextMatchers.hasIFramePath;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
@@ -101,6 +101,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withName(new I18nProperty("My Post Function", null))
+                .withKey("my-post-function")
                 .withTriggered(new UrlBean("/callme"))
                 .build();
 

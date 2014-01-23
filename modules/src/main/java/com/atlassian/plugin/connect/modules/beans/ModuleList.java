@@ -112,13 +112,21 @@ public class ModuleList extends BaseModuleBean
     private List<WebItemModuleBean> webItems;
 
     /**
-     * The Web Panel module allows you  to define panels, or sections, on an HTML page.
+     * The Web Panel module allows you to define panels, or sections, on an HTML page.
      * A panel is an iFrame that will be inserted into a page.
      *
      * @schemaTitle Web Panel
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider")
     private List<WebPanelModuleBean> webPanels;
+
+    /**
+     * The Web Section plugin module allows you to define new sections in application menus.
+     *
+     * @schemaTitle Web Section
+     */
+    @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebSectionModuleProvider")
+    private List<WebSectionModuleBean> webSections;
 
     /**
      * The Web Hook module allows you be notified of key events that occur in the host product
@@ -249,6 +257,13 @@ public class ModuleList extends BaseModuleBean
     private List<ConnectPageModuleBean> profilePages;
 
     /**
+     * The Space Tools Tab module allows you to add new tabs to the Space Tools area of Confluence.
+     * @schemaTitle Space Tools Tab
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider", products = {ProductFilter.CONFLUENCE})
+    private List<SpaceToolsTabModuleBean> spaceToolsTabs;
+
+    /**
      * Static content macros allow you to add a macro into a Confluence page which is stored with the Confluence page
      * itself. The add-on is responsible for generating the rendered XHTML in
      * [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
@@ -273,10 +288,12 @@ public class ModuleList extends BaseModuleBean
         this.jiraWorkflowPostFunctions = newArrayList();
         this.jiraEntityProperties = newArrayList();
         this.profilePages = newArrayList();
+        this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
+        this.webSections = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -319,6 +336,10 @@ public class ModuleList extends BaseModuleBean
         {
             this.webPanels = newArrayList();
         }
+        if (null == webSections)
+        {
+            this.webSections = newArrayList();
+        }
         if (null == generalPages)
         {
             this.generalPages = newArrayList();
@@ -346,6 +367,10 @@ public class ModuleList extends BaseModuleBean
         if (null == dynamicContentMacros)
         {
             this.dynamicContentMacros = newArrayList();
+        }
+        if (null == spaceToolsTabs)
+        {
+            this.spaceToolsTabs = newArrayList();
         }
         if (null == staticContentMacros)
         {
@@ -393,6 +418,11 @@ public class ModuleList extends BaseModuleBean
         return webPanels;
     }
 
+    public List<WebSectionModuleBean> getWebSections()
+    {
+        return webSections;
+    }
+
     public List<WorkflowPostFunctionModuleBean> getJiraWorkflowPostFunctions()
     {
         return jiraWorkflowPostFunctions;
@@ -438,6 +468,10 @@ public class ModuleList extends BaseModuleBean
         return dynamicContentMacros;
     }
 
+    public List<SpaceToolsTabModuleBean> getSpaceToolsTabs() {
+        return spaceToolsTabs;
+    }
+
     public List<StaticContentMacroModuleBean> getStaticContentMacros()
     {
         return staticContentMacros;
@@ -474,10 +508,12 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
                 .append(jiraEntityProperties, other.jiraEntityProperties)
                 .append(profilePages, other.profilePages)
+                .append(spaceToolsTabs, other.spaceToolsTabs)
                 .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
                 .append(webPanels, webPanels)
+                .append(webSections, webSections)
                 .build();
     }
 
@@ -500,10 +536,12 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraWorkflowPostFunctions)
                 .append(jiraEntityProperties)
                 .append(profilePages)
+                .append(spaceToolsTabs)
                 .append(staticContentMacros)
                 .append(webhooks)
                 .append(webItems)
                 .append(webPanels)
+                .append(webSections)
                 .build();
     }
 }

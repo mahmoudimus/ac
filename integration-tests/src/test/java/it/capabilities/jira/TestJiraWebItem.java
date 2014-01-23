@@ -44,10 +44,11 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapabilities("webItems",
+                .addModules("webItems",
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.decorated)
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
+                                .withKey("ac-general-web-item")
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
                                 .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
@@ -55,6 +56,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.addon)
                                 .withName(new I18nProperty("AC Direct To Addon Web Item", "ac.dir"))
+                                .withKey("ac-direct-to-addon-web-item")
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
                                 .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
@@ -62,12 +64,14 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
                                 .withName(new I18nProperty("Quick project link", "ac.qp"))
+                                .withKey("quick-project-link")
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
                                 .withUrl("/browse/ACDEV-1234?project_key={project.key}")
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("google link", "ac.gl"))
+                                .withKey("google-link")
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
                                 .withUrl("http://www.google.com")
@@ -78,14 +82,15 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("wikipedia link", "ac.ild"))
+                                .withKey("wikipedia-link")
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
                                 .withContext(AddOnUrlContext.addon)
                                 .withUrl("http://www.wikipedia.org")
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
-                                        .withParam("onHover", "true")
-                                        .build()
+                                                .withParam("onHover", "true")
+                                                .build()
                                 )
                                 .build()
                 )

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.confluence.context.extractor;
 
 import com.atlassian.confluence.pages.AbstractPage;
+import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.plugin.connect.plugin.module.confluence.context.serializer.PageSerializer;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class PageContextMapParameterExtractor implements ContextMapParameterExtractor<AbstractPage>
 {
     private static final String PAGE_CONTEXT_PARAMETER = "page";
+    private static final String ACTION_PARAMETER = "action";
     private final PageSerializer pageSerializer;
 
     @Autowired
@@ -44,6 +46,11 @@ public class PageContextMapParameterExtractor implements ContextMapParameterExtr
         else if (context.containsKey(PAGE_CONTEXT_PARAMETER) && context.get(PAGE_CONTEXT_PARAMETER) instanceof AbstractPage)
         {
             return Optional.of((AbstractPage) context.get(PAGE_CONTEXT_PARAMETER));
+        }
+        else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction)
+        {
+            AbstractPageAwareAction action = (AbstractPageAwareAction) context.get(ACTION_PARAMETER);
+            return Optional.fromNullable(action.getPage());
         }
         return Optional.absent();
     }
