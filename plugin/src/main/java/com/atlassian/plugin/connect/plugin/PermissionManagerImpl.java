@@ -217,6 +217,10 @@ public final class PermissionManagerImpl implements PermissionManager
         @Override
         public boolean apply(ApiScope scope)
         {
+            if (null == scope)
+            {
+                return false;
+            }
             return scope.allow(request, user);
         }
     }
