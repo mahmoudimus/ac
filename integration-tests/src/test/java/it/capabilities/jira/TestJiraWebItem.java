@@ -46,7 +46,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addCapabilities("webItems",
                         newWebItemBean()
-                                .withContext(AddOnUrlContext.decorated)
+                                .withContext(AddOnUrlContext.page)
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                                 .withKey("ac-general-web-item")
                                 .withLocation("system.top.navigation.bar")

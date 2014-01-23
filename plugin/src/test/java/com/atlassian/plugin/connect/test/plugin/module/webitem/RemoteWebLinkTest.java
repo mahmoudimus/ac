@@ -67,7 +67,7 @@ public class RemoteWebLinkTest
     @Test
     public void productUrlsRelativeToHost()
     {
-        // TODO: need to distinguish product vs decorated. Or maybe that happens further up the chain
+        // TODO: need to distinguish product vs page. Or maybe that happens further up the chain
         assertThat(getDisplayableUrl(product, false), equalTo(HOST_CONTEXT + SUBSTITUTED_URL));
     }
 
@@ -75,7 +75,7 @@ public class RemoteWebLinkTest
     public void absoluteUrlsUnmolested()
     {
         assertThat(getDisplayableUrl(product, true), equalTo(SUBSTITUTED_URL));
-        assertThat(getDisplayableUrl(decorated, true), equalTo(SUBSTITUTED_URL));
+        assertThat(getDisplayableUrl(page, true), equalTo(SUBSTITUTED_URL));
         assertThat(getDisplayableUrl(null, true), equalTo(SUBSTITUTED_URL));
     }
 

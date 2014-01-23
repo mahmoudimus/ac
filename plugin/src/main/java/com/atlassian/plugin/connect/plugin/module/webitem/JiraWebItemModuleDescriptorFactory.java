@@ -79,8 +79,8 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
                 WebPanelModuleContextExtractor webPanelModuleContextExtractor, 
                 ModuleContextFilter moduleContextFilter, 
                 String url,
-                String moduleKey,
                 String pluginKey,
+                String moduleKey,
                 boolean absolute, AddOnUrlContext addOnUrlContext)
         {
             super(jiraAuthenticationContext, webInterfaceManager);
