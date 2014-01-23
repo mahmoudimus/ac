@@ -36,6 +36,11 @@
     width: 980px;
 }
 
+.ap-aui-dialog2-maximum.ap-aui-dialog2.ap-aui-layer {
+    top: 0;
+    height: 100%;
+}
+
 .ap-aui-dialog2-small .ap-aui-dialog2-content {
     min-height: 93px; /* 200px minus header and footer */
 }
