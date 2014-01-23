@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Web Section plugin modules allows add-ons to define new sections in application menus. Each section can contain one or
+ * The Web Section plugin module allows add-ons to define new sections in application menus. Each section can contain one or
  * more links. To insert the links themselves, see the [Web Item Module](./web-item.html).
  * <p/>
  *#### Example
