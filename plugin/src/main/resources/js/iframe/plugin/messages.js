@@ -8,6 +8,13 @@ AP.define("messages", ["_dollar", "_rpc"],
 function ($, rpc) {
     "use strict";
 
+    var messageId = 0;
+
+    function getMessageId(){
+        messageId++;
+        return 'ap-message-' + messageId;
+    }
+
     return rpc.extend(function (remote) {
 
         var apis = {};
@@ -19,7 +26,10 @@ function ($, rpc) {
             * @returns  {String}    The id to be used when clearing the message
             */
             apis[name] = function (title, body, options) {
-                return remote.showMessage(name, title, body, options);
+                options = options || {};
+                options.id = getMessageId();
+                remote.showMessage(name, title, body, options);
+                return options.id;
             };
         });
 

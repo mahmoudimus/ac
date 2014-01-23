@@ -2,11 +2,8 @@ _AP.define("messages/main", ["_dollar"], function($) {
 	var MESSAGE_BAR_SELECTOR = 'aui-message-bar',
 		MESSAGE_TYPES = ["generic", "error", "warning", "success", "info", "hint"];
 
-	var messageId = 0;
-
-	function getMessageId(){
-		messageId++;
-		return 'ap-message-' + messageId;
+	function validateMessageId(msgId){
+		return msgId.search(/^ap\-message\-[0-9]+$/) == 0;
 	}
 
 	//put the bar in a good place depending on the page.
@@ -17,24 +14,23 @@ _AP.define("messages/main", ["_dollar"], function($) {
 	}
 	function filterMessageOptions(options){
 		//UNDERSCORE RELIANCE!!!
-		return _.pick(options, 'closeable', 'fadeout', 'delay', 'duration');
+		return _.pick(options, 'closeable', 'fadeout', 'delay', 'duration', 'id');
 	}
-    return {
+
+	return {
         showMessage: function (name, title, body, options) {
         	if($('#' + MESSAGE_BAR_SELECTOR).length < 1){
         		createMessageBar();
         	}
-        	var opts = (options) ? filterMessageOptions(options) : {};
-
-        	$.extend(opts, {title: title, body: body, id: getMessageId()});
+        	options = filterMessageOptions(options);
+        	$.extend(options, {title: title, body: body });
 
         	if($.inArray(name, MESSAGE_TYPES) < 0){
         		throw "Invalid message type";
         	}
-
-			AJS.messages[name](opts);
-			console.log(opts.id);
-			return opts.id;
+        	if(validateMessageId(options.id)){
+        		AJS.messages[name](options);
+        	}
         },
         clearMessage: function () {
             console.log('in server side of clearMessage');
