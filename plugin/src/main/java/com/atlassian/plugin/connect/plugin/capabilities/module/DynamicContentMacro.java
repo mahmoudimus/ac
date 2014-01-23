@@ -1,101 +1,32 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.plugin.connect.spi.module.IFrameParams;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.uri.Uri;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil;
 
-public final class DynamicContentMacro extends AbstractContentMacro
+import java.util.Map;
+
+public final class DynamicContentMacro extends AbstractMacro
 {
-    private final DynamicContentMacroModuleBean macroBean;
-    private final IFrameRenderer iFrameRenderer;
+    private final IFrameRenderStrategy iFrameRenderStrategy;
+    private final MacroModuleContextExtractor macroModuleContextExtractor;
 
-    public DynamicContentMacro(String pluginKey,
-                               DynamicContentMacroModuleBean macroBean,
-                               UserManager userManager,
-                               IFrameRenderer iFrameRenderer,
-                               RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                               UrlVariableSubstitutor urlVariableSubstitutor)
+    public DynamicContentMacro(BodyType bodyType, OutputType outputType, IFrameRenderStrategy iFrameRenderStrategy,
+            MacroModuleContextExtractor macroModuleContextExtractor)
     {
-        super(pluginKey, macroBean, userManager, remotablePluginAccessorFactory, urlVariableSubstitutor);
-        this.macroBean = macroBean;
-        this.iFrameRenderer = iFrameRenderer;
+        super(bodyType, outputType);
+        this.iFrameRenderStrategy = iFrameRenderStrategy;
+        this.macroModuleContextExtractor = macroModuleContextExtractor;
     }
 
     @Override
-    public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
+    public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
+            throws MacroExecutionException
     {
-        String counter = incrementCounter(conversionContext);
-        try
-        {
-            MacroContext macroContext = new MacroContext(conversionContext, storageFormatBody, getUser());
-            Uri uri = resolveUrlTemplate(macroContext.getParameters());
-
-            IFrameContext iFrameContext = new IFrameContextImpl(getPluginKey(), uri.getPath(), getNamespace(counter), getIFrameParams());
-            MacroRequestParameters macroParameters = new MacroRequestParameters.Builder()
-                    .withMacroParameters(parameters)
-                    .withURLParameters(uri.getQueryParameters())
-                    .build();
-
-            if (getOutputType().equals(OutputType.INLINE))
-            {
-                return iFrameRenderer.renderInline(iFrameContext, "", macroParameters.getQueryParameters(),
-                        getUsername(), Collections.<String, Object>emptyMap());
-            }
-            else
-            {
-                return iFrameRenderer.render(iFrameContext, "", macroParameters.getQueryParameters(),
-                        getUsername(), Collections.<String, Object>emptyMap());
-            }
-        }
-        catch (IOException e)
-        {
-            throw new MacroExecutionException(e);
-        }
-        catch (Uri.UriException e)
-        {
-            throw new MacroExecutionException(e);
-        }
+        ModuleContextParameters moduleContext = macroModuleContextExtractor.extractParameters(storageFormatBody, conversionContext);
+        return IFrameRenderStrategyUtil.renderToString(moduleContext, iFrameRenderStrategy);
     }
 
-    private String getNamespace(String counter)
-    {
-        return macroBean.getKey() + "-" + counter;
-    }
-
-    private IFrameParams getIFrameParams()
-    {
-        IFrameParams iFrameParams = new IFrameParamsImpl();
-        if (null != macroBean.getWidth())
-        {
-            iFrameParams.setParam("width", macroBean.getWidth());
-        }
-        if (null != macroBean.getHeight())
-        {
-            iFrameParams.setParam("height", macroBean.getHeight());
-        }
-        return iFrameParams;
-    }
-
-    private String incrementCounter(ConversionContext ctx)
-    {
-        String key = "__counter_" + macroBean.getKey();
-        Integer counter = (Integer) ctx.getProperty(key);
-        counter = null == counter ? 0 : counter + 1;
-        ctx.setProperty(key, counter);
-
-        return counter.toString();
-    }
 }

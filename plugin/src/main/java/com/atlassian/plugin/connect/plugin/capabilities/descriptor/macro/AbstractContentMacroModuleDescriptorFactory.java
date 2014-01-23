@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro;
 
 import java.net.URISyntaxException;
 
@@ -11,6 +11,8 @@ import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocumentationBeanFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceholderMacro;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.MacroI18nBuilder;
@@ -126,7 +128,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         }
     }
 
-    protected MacroMetadataParser createMacroMetaDataParser(Plugin plugin, B bean)
+    private MacroMetadataParser createMacroMetaDataParser(Plugin plugin, B bean)
     {
         ConnectDocumentationBeanFactory docBeanFactory = new ConnectDocumentationBeanFactory(makeAbsolute(plugin, bean.getDocumentation()));
         return new MacroMetadataParser(docBeanFactory);

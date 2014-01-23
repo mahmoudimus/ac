@@ -73,7 +73,7 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
                 IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                         .addOn(plugin.getKey())
                         .module(bean.getKey())
-                        .genericPageTemplate()
+                        .pageTemplate()
                         .urlTemplate(bean.getUrl())
                         .title(bean.getDisplayName())
                         .build();

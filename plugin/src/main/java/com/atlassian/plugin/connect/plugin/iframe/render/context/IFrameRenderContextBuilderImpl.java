@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.context;
 
 import com.atlassian.html.encode.JavascriptEncoder;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -68,6 +69,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         private final String addonKey;
         private final String moduleKey;
         private final String iframeUri;
+        private boolean uniqueNamespace;
 
         private final Map<String, Object> additionalContext = Maps.newHashMap();
 
@@ -109,6 +111,13 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         public InitializedBuilder title(final String title)
         {
             putIfNotNull("title", title);
+            return this;
+        }
+
+        @Override
+        public InitializedBuilder ensureUniqueNamespace()
+        {
+            uniqueNamespace = true;
             return this;
         }
 
@@ -163,14 +172,15 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             Map<String, Object> defaultContext = Maps.newHashMap();
 
             UserProfile profile = userManager.getRemoteUser();
-
             String username = nullToEmpty(profile == null ? "" : profile.getUsername());
             String userKey = nullToEmpty(profile == null ? "" : profile.getUserKey().getStringValue());
             String timeZone = userPreferencesRetriever.getTimeZoneFor(username).getID();
 
+            String namespace = uniqueNamespace ? ModuleKeyGenerator.randomName(moduleKey) : moduleKey;
+
             defaultContext.put("iframeSrcHtml", escapeQuotes(iframeUri));
             defaultContext.put("plugin", pluginAccessorFactory.getOrThrow(addonKey));
-            defaultContext.put("namespace", moduleKey);
+            defaultContext.put("namespace", namespace);
             defaultContext.put("contextPath", hostApplicationInfo.getContextPath());
             defaultContext.put("userId", username);
             defaultContext.put("userKey", userKey);

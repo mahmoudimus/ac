@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -22,19 +18,19 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
-import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
-
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
+
+import java.net.URISyntaxException;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
 
-public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean> implements ConnectModuleProvider<T>
+public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
+        implements ConnectModuleProvider<T>
 {
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
@@ -44,7 +40,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
 
     public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                              HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, I18nPropertiesPluginManager i18nPropertiesPluginManager)
+            HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, I18nPropertiesPluginManager i18nPropertiesPluginManager)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
@@ -114,10 +110,10 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         if (bean.hasIcon())
         {
             webItemBean.withIcon(IconBean.newIconBean()
-                                         .withUrl(bean.getIcon().getUrl())
-                                         .withWidth(16)
-                                         .withHeight(16)
-                                         .build());
+                    .withUrl(bean.getIcon().getUrl())
+                    .withWidth(16)
+                    .withHeight(16)
+                    .build());
         }
         return webItemBean.build();
     }
@@ -131,24 +127,24 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("key", macroKey + "-featured-macro-resources");
 
         webResource.addElement("resource")
-                   .addAttribute("type", "download")
-                   .addAttribute("name", macroKey + "-icon.css")
-                   .addAttribute("location", "css/confluence/macro/featured-macro-icon.css");
+                .addAttribute("type", "download")
+                .addAttribute("name", macroKey + "-icon.css")
+                .addAttribute("location", "css/confluence/macro/featured-macro-icon.css");
 
         webResource.addElement("context")
-                   .setText("editor");
+                .setText("editor");
 
         Element transformation = webResource.addElement("transformation")
-                                            .addAttribute("extension", "css");
+                .addAttribute("extension", "css");
 
         transformation.addElement("transformer")
-                      .addAttribute("key", "confluence-macroVariableTransformer")
-                      .addElement("var")
-                      .addAttribute("name", "KEY")
-                      .addAttribute("value", macroKey).getParent()
-                      .addElement("var")
-                      .addAttribute("name", "ICON_URL")
-                      .addAttribute("value", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
+                .addAttribute("key", "confluence-macroVariableTransformer")
+                .addElement("var")
+                .addAttribute("name", "KEY")
+                .addAttribute("value", macroKey).getParent()
+                .addElement("var")
+                .addAttribute("name", "ICON_URL")
+                .addAttribute("value", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
         jsDescriptor.init(plugin, webResource);
@@ -159,19 +155,15 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private void createEditorIFrame(Plugin plugin, T macroBean)
     {
         MacroEditorBean editor = macroBean.getEditor();
-        // register a render strategy for our iframe page
-        Map<String, Object> additionalRenderContext = Maps.newHashMap();
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                                                                                .addOn(plugin.getKey())
-                                                                                .module(macroBean.getKey())
-                                                                                .dialogTemplate()
-                                                                                .urlTemplate(editor.getUrl())
-                                                                                .condition(new AlwaysDisplayCondition())
-                                                                                .title(macroBean.getDisplayName())
-                                                                                .dimensions(editor.getWidth(), editor.getHeight())
-                                                                                .additionalRenderContext(additionalRenderContext)
-                                                                                .build();
+                .addOn(plugin.getKey())
+                .module(macroBean.getKey())
+                .dialogTemplate()
+                .urlTemplate(editor.getUrl())
+                .title(macroBean.getDisplayName())
+                .dimensions(editor.getWidth(), editor.getHeight())
+                .build();
 
         iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), renderStrategy);
     }
@@ -189,18 +181,18 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("key", macroKey + "-macro-editor-resources");
 
         webResource.addElement("resource")
-                   .addAttribute("type", "download")
-                   .addAttribute("name", "override.js")
-                   .addAttribute("location", "js/confluence/macro/override.js");
+                .addAttribute("type", "download")
+                .addAttribute("name", "override.js")
+                .addAttribute("location", "js/confluence/macro/override.js");
 
         webResource.addElement("dependency")
-                   .setText(ConnectPluginInfo.getPluginKey() + ":ap-amd");
+                .setText(ConnectPluginInfo.getPluginKey() + ":ap-amd");
 
         webResource.addElement("context")
-                   .setText("editor");
+                .setText("editor");
 
         Element transformation = webResource.addElement("transformation")
-                                            .addAttribute("extension", "js");
+                .addAttribute("extension", "js");
 
         transformation
                 .addElement("transformer")

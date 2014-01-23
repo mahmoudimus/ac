@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.module;
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.module.AbstractContentMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.module.AbstractMacro;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.ContentEntityForTests;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
-public abstract class AbstractContentMacroUrlTemplateTest<B extends BaseContentMacroModuleBean, M extends AbstractContentMacro, T extends BaseContentMacroModuleBeanBuilder<T, B>>
+public abstract class AbstractContentMacroUrlTemplateTest<B extends BaseContentMacroModuleBean, M extends AbstractMacro, T extends BaseContentMacroModuleBeanBuilder<T, B>>
 {
     public static final String BODY = "some macro content";
     public static final String HASH = DigestUtils.md5Hex(BODY);

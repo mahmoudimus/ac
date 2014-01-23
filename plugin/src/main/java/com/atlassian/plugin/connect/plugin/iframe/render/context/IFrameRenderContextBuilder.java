@@ -28,6 +28,11 @@ public interface IFrameRenderContextBuilder
         InitializedBuilder title(String title);
         InitializedBuilder context(String key, Object value);
         InitializedBuilder context(Map<String, Object> additionalContext);
+        /**
+         * Appends a random String to the iframe's default namespace (usually just the module key). This is useful when
+         * rendering multiple iframes for the same module on the same page (which can be the case for macros).
+         */
+        InitializedBuilder ensureUniqueNamespace();
         Map<String, Object> build();
     }
 }

@@ -6,7 +6,6 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroHttpMethod;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
@@ -59,7 +58,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         StaticContentMacroModuleBean postMacro = newStaticContentMacroModuleBean()
                 .withUrl("/render-context")
                 .withKey(POST_MACRO_KEY)
-                .withMethod(MacroHttpMethod.POST)
                 .withName(new I18nProperty(POST_MACRO_NAME, ""))
                 .build();
 
@@ -67,7 +65,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                 .withUrl(DEFAULT_MACRO_URL)
                 .withKey(POST_PARAM_MACRO_KEY)
                 .withName(new I18nProperty(POST_PARAM_MACRO_NAME, ""))
-                .withMethod(MacroHttpMethod.POST)
                 .withParameters(newMacroParameterBean()
                         .withIdentifier("param1")
                         .withName(new I18nProperty("Param 1", ""))

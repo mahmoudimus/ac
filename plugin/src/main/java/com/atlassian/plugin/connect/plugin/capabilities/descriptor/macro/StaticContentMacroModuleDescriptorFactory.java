@@ -1,17 +1,18 @@
-package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.module.StaticContentMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
+import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.sal.api.user.UserManager;
 
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,24 +21,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<StaticContentMacroModuleBean>
 {
     private final MacroContentManager macroContentManager;
-    private final UserManager userManager;
+    private final MacroModuleContextExtractor macroModuleContextExtractor;
+    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Autowired
-    public StaticContentMacroModuleDescriptorFactory(
-            AbsoluteAddOnUrlConverter urlConverter,
-            MacroContentManager macroContentManager,
-            UserManager userManager,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            UrlVariableSubstitutor urlVariableSubstitutor
-    )
+    public StaticContentMacroModuleDescriptorFactory(AbsoluteAddOnUrlConverter urlConverter,
+            MacroContentManager macroContentManager, MacroModuleContextExtractor macroModuleContextExtractor,
+            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         super(urlConverter);
         this.macroContentManager = macroContentManager;
-        this.userManager = userManager;
+        this.macroModuleContextExtractor = macroModuleContextExtractor;
+        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
     }
 
     protected ModuleFactory createModuleFactory(final Plugin plugin, final DOMElement element, final StaticContentMacroModuleBean bean)
@@ -47,8 +45,12 @@ public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMa
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                StaticContentMacro macro = new StaticContentMacro(plugin.getKey(), bean, userManager, macroContentManager,
-                        remotablePluginAccessorFactory, urlVariableSubstitutor);
+                StaticContentMacro macro = new StaticContentMacro(
+                        plugin.getKey(), bean.getKey(), bean.getUrl(),
+                        MacroEnumMapper.map(bean.getBodyType()), MacroEnumMapper.map(bean.getOutputType()),
+                        iFrameUriBuilderFactory, macroModuleContextExtractor, macroContentManager,
+                        remotablePluginAccessorFactory);
+
                 if (bean.hasImagePlaceholder())
                 {
                     return (T) decorateWithImagePlaceHolder(plugin, macro, bean.getImagePlaceholder());

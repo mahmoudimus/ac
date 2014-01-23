@@ -23,7 +23,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 {
     private static final String TEMPLATE_PATH = "velocity/";
     private static final String TEMPLATE_GENERIC_BODY = TEMPLATE_PATH + "iframe-body.vm";
-    private static final String TEMPLATE_GENERIC_PAGE = TEMPLATE_PATH + "iframe-page.vm";
+    private static final String TEMPLATE_GENERIC_INLINE = TEMPLATE_PATH + "iframe-body-inline.vm";
+    private static final String TEMPLATE_PAGE = TEMPLATE_PATH + "iframe-page.vm";
     private static final String TEMPLATE_PROJECT_ADMIN_TAB = TEMPLATE_PATH + "iframe-page-project-admin.vm";
     private static final String TEMPLATE_DIALOG = TEMPLATE_PATH + "iframe-page-dialog.vm";
     private static final String TEMPLATE_WORKFLOW_POSTFUNCTION = TEMPLATE_PATH + "jira/workflow/iframe-post-function.vm";
@@ -70,9 +71,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public TemplatedBuilder genericPageTemplate()
+    public TemplatedBuilder pageTemplate()
     {
-        template = TEMPLATE_GENERIC_PAGE;
+        template = TEMPLATE_PAGE;
         return this;
     }
 
@@ -80,6 +81,13 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     public TemplatedBuilder genericBodyTemplate()
     {
         template = TEMPLATE_GENERIC_BODY;
+        return this;
+    }
+
+    @Override
+    public TemplatedBuilder genericInlineTemplate()
+    {
+        template = TEMPLATE_GENERIC_INLINE;
         return this;
     }
 

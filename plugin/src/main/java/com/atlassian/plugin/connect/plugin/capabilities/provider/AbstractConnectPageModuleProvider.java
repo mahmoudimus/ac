@@ -55,7 +55,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(plugin.getKey())
                     .module(bean.getKey())
-                    .genericPageTemplate()
+                    .pageTemplate()
                     .urlTemplate(bean.getUrl())
                     .decorator(getDecorator())
                     .condition(getCondition())

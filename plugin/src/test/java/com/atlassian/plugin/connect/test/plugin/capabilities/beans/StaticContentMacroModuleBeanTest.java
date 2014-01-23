@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.gson.Gson;
@@ -57,16 +56,6 @@ public class StaticContentMacroModuleBeanTest
         assertThat(deserializedBean, sameDeepPropertyValuesAs(originalBean));
     }
 
-    @Test
-    public void verifyDefaultMethod()
-    {
-        Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = "{}";
-        StaticContentMacroModuleBean deserializedBean = gson.fromJson(json, StaticContentMacroModuleBean.class);
-
-        assertThat(deserializedBean.getMethod(), is(MacroHttpMethod.GET));
-    }
-
     private static ConnectAddonBean createBean()
     {
         return newConnectAddonBean()
@@ -80,7 +69,6 @@ public class StaticContentMacroModuleBeanTest
                         .withKey("static-content-macro")
                         .withUrl("/my-macro")
                         .withAliases("some-alias")
-                        .withMethod(MacroHttpMethod.POST)
                         .withBodyType(MacroBodyType.PLAIN_TEXT)
                         .withOutputType(MacroOutputType.BLOCK)
                         .withCategories("hidden-macros")

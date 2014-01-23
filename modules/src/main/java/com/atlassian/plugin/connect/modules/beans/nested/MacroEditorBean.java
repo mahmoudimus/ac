@@ -24,7 +24,7 @@ public class MacroEditorBean extends BaseModuleBean
      * The URL to the macro configuration page in the add-on.
      */
     @Required
-    @StringSchemaAttributes(format = "uri")
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
     /**

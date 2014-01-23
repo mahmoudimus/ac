@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -6,12 +6,12 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.DynamicContentMacro;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.sal.api.user.UserManager;
 
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ConfluenceComponent
 public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<DynamicContentMacroModuleBean>
 {
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final IFrameRenderer iFrameRenderer;
-    private final UserManager userManager;
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
+    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private final MacroModuleContextExtractor macroModuleContextExtractor;
 
     @Autowired
-    public DynamicContentMacroModuleDescriptorFactory(
-            AbsoluteAddOnUrlConverter urlConverter,
-            IFrameRenderer iFrameRenderer,
-            UserManager userManager,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            UrlVariableSubstitutor urlVariableSubstitutor)
+    public DynamicContentMacroModuleDescriptorFactory(final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            AbsoluteAddOnUrlConverter urlConverter, MacroModuleContextExtractor macroModuleContextExtractor)
     {
         super(urlConverter);
-        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-        this.iFrameRenderer = iFrameRenderer;
-        this.userManager = userManager;
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+        this.macroModuleContextExtractor = macroModuleContextExtractor;
     }
 
     @Override
@@ -63,8 +55,9 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                DynamicContentMacro macro = new DynamicContentMacro(plugin.getKey(), bean, userManager, iFrameRenderer,
-                        remotablePluginAccessorFactory, urlVariableSubstitutor);
+                IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(plugin.getKey(), bean.getKey());
+                DynamicContentMacro macro = new DynamicContentMacro(MacroEnumMapper.map(bean.getBodyType()),
+                        MacroEnumMapper.map(bean.getOutputType()), renderStrategy, macroModuleContextExtractor);
 
                 if (bean.hasImagePlaceholder())
                 {
