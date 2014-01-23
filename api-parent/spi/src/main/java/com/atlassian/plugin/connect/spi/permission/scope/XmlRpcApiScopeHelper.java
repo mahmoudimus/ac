@@ -3,6 +3,11 @@ package com.atlassian.plugin.connect.spi.permission.scope;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.dom4j.Document;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +28,11 @@ public class XmlRpcApiScopeHelper
     public XmlRpcApiScopeHelper(final String path, Collection<String> methods)
     {
         this.path = path;
-        this.methods = methods;
+        // This is horrific: for transformed collections being passed in,
+        // EqualsBuilder will no longer return true, even though
+        // inspection or 'toString' show exactly the same contents for both sides of the comparison...
+        // So copying the collection to make EqualsBuilder happy.
+        this.methods = Lists.newArrayList(methods);
         this.apiResourceInfo = transform(methods, new Function<String, ApiResourceInfo>()
         {
             @Override
@@ -56,5 +65,45 @@ public class XmlRpcApiScopeHelper
     public Iterable<ApiResourceInfo> getApiResourceInfos()
     {
         return apiResourceInfo;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        XmlRpcApiScopeHelper that = (XmlRpcApiScopeHelper) o;
+        // don't consider apiResourceInfo as it is built from path and methods
+        return new EqualsBuilder()
+                .append(path, that.path)
+                .append(methods, that.methods)
+                .build();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        // don't consider apiResourceInfo as it is built from path and methods
+        return new HashCodeBuilder(19, 71)
+                .append(path)
+                .append(methods)
+                .build();
+    }
+
+    @Override
+    public String toString()
+    {
+        // don't consider apiResourceInfo as it is built from path and methods
+        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
+                .append("path", path)
+                .append("methods", methods)
+                .toString();
     }
 }

@@ -67,7 +67,7 @@ public class ConfluenceRestScopesTest extends AbstractScopesTest
 
     public ConfluenceRestScopesTest(ScopeName scope, HttpMethod method, String path, boolean expectedOutcome)
     {
-        super(scope, method, path, expectedOutcome, "/confluence", "Confluence");
+        super(scope, method, path, "", expectedOutcome, "/confluence", "Confluence");
     }
 
 }

@@ -60,7 +60,7 @@ public class AddOnScopeApiPathBuilder
     {
         for (AddOnScopeApiPath path : paths)
         {
-            path.addTo(restResources, soapResources, jsonResources);
+            path.addTo(restResources, soapResources, jsonResources, xmlResources);
         }
 
         return this;
@@ -83,6 +83,11 @@ public class AddOnScopeApiPathBuilder
         if (!jsonResources.isEmpty())
         {
             paths.add(new AddOnScopeApiPath.JsonRpcApiPath(jsonResources));
+        }
+
+        if (!xmlResources.isEmpty())
+        {
+            paths.add(new AddOnScopeApiPath.XmlRpcApiPath(xmlResources));
         }
 
         return paths;
