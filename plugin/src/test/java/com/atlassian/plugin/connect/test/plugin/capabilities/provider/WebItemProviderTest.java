@@ -15,13 +15,12 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IconModuleFra
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.descriptor.WebItemModuleDescriptorFactoryForTests;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.connect.test.plugin.capabilities.ConnectAsserts;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.descriptor.WebItemModuleDescriptorFactoryForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -96,7 +95,7 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -115,10 +114,10 @@ public class WebItemProviderTest
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withUrl("http://www.google.com")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.decorated)
+                .withContext(AddOnUrlContext.page)
                 .build();
 
-        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -140,7 +139,7 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -161,7 +160,7 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -180,10 +179,10 @@ public class WebItemProviderTest
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withUrl("/some/admin")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.decorated)
+                .withContext(AddOnUrlContext.page)
                 .build();
 
-        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -205,7 +204,7 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -232,7 +231,7 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean, bean2));
 
