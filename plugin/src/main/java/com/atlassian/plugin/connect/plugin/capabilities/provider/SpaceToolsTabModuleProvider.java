@@ -6,7 +6,6 @@ import java.util.List;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.*;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.XWorkActionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsContextInterceptor;
@@ -84,13 +83,12 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
 
     private XWorkActionModuleBean createActionBean(Plugin plugin, SpaceToolsTabModuleBean bean)
     {
-        PageInfo pageInfo = new PageInfo("", "", bean.getDisplayName(), null, Collections.EMPTY_MAP);
+        PageInfo pageInfo = new PageInfo("", "", bean.getDisplayName(), null, Collections.<String, String>emptyMap());
         String spaceAdminLegacyKey = bean.getKey() + SPACE_ADMIN_KEY_SUFFIX;
         SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(plugin, urlVariableSubstitutor, bean.getUrl(), bean.getKey(), spaceAdminLegacyKey, pageInfo);
 
         return newXWorkActionBean()
                 .withName(bean.getName())
-                .withKey(ModuleKeyGenerator.nameToKey(bean.getName().getValue()))
                 .withNamespace("/plugins/atlassian-connect/" + plugin.getKey())
                 .withClazz(SpaceToolsIFrameAction.class)
                 .withParameter("context", spaceTabContext)

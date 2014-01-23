@@ -12,7 +12,6 @@ import java.security.SecureRandom;
 public class ModuleKeyGenerator
 {
     private static final SecureRandom random = new SecureRandom();
-    public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<>_]";
 
     /**
      * Generates a key using the given prefix and a random number.
@@ -22,38 +21,16 @@ public class ModuleKeyGenerator
      */
     public static String generateKey(String prefix)
     {
-        return randomName(camelCaseOrSpaceToDashed(prefix) + "-");
+        return randomName(camelCaseOrSpaceToDashed(cleanKey(prefix)) + "-");
     }
 
     /**
-     * Converts a name to a key by replacing all whitespace with dashes and lowercasing the whole string
-     *
-     * @param name
-     * @return "My Module" -> my-module
-     */
-    public static String nameToKey(String name)
-    {
-        return camelCaseOrSpaceToDashed(name);
-    }
-
-    /**
-     * Converts a name to a key using the given prefix, replacing all whitespace with dashes and lowercasing the whole string
-     *
-     * @param prefix
-     * @param name
-     * @return "web-item","My Module" -> web-item
-     */
-    public static String nameToKey(String prefix, String name)
-    {
-        return camelCaseOrSpaceToDashed(prefix) + "-" + camelCaseOrSpaceToDashed(name);
-    }
-
-    /**
-     * Replaces any special characters in a key with '-' and lowercases the entire key.
+     * Collapses CamelCase into dashes, replaces any special characters in a key with dashes and lowercases the entire
+     * key.x
      */
     public static String cleanKey(String originalKey)
     {
-        return originalKey.replaceAll(CLEAN_FILENAME_PATTERN, "-").toLowerCase();
+        return camelCaseOrSpaceToDashed(originalKey).replaceAll("[^a-zA-Z0-9\\-]", "-");
     }
 
     public static String camelCaseOrSpaceToDashed(String s)
