@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.atlassian.fugue.Option.option;
@@ -134,7 +133,7 @@ public final class PermissionManagerImpl implements PermissionManager
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String pluginKey)
     {
         return jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey)
-                ? StaticAddOnScopes.dereference(allScopes, addImpliedScopesTo(getScopeReferences(pluginKey)))
+                ? StaticAddOnScopes.dereference(allScopes, getScopeReferences(pluginKey))
                 : Iterables.concat(DEFAULT_OLD_API_SCOPES, getApiScopesForPermissions(getOldStylePermissionsForPlugin(pluginKey)));
     }
 
@@ -154,18 +153,6 @@ public final class PermissionManagerImpl implements PermissionManager
     private Iterable<Permission> getApiScopesForPermissionsAsPermissions(Set<String> permissions)
     {
         return filter(permissionTracker.getModules(), Predicates.and(new IsApiScope(), new IsInPermissions(permissions)));
-    }
-
-    private static Collection<ScopeName> addImpliedScopesTo(Set<ScopeName> scopeReferences)
-    {
-        Set<ScopeName> allScopeReferences = new HashSet<ScopeName>(scopeReferences);
-
-        for (ScopeName scopeReference : scopeReferences)
-        {
-            allScopeReferences.addAll(scopeReference.getImplied());
-        }
-
-        return allScopeReferences;
     }
 
     private Set<ScopeName> getScopeReferences(String pluginKey)

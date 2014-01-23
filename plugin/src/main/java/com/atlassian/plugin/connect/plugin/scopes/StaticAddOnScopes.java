@@ -196,11 +196,6 @@ public class StaticAddOnScopes
      */
     public static Collection<AddOnScope> dereference(Collection<AddOnScope> scopes, @Nonnull final Collection<ScopeName> scopeKeys)
     {
-        if (scopeKeys.contains(null))
-        {
-            throw new IllegalArgumentException("Scope keys must not contain null");
-        }
-
         // avoid loading scopes from file if unnecessary
         if (scopeKeys.isEmpty())
         {
@@ -221,7 +216,14 @@ public class StaticAddOnScopes
             scopeKeyToScope.put(scopeName, scope);
         }
 
-        return transform(scopeKeys, new Function<ScopeName, AddOnScope>()
+        if (!scopeKeyToScope.keySet().containsAll(scopeKeys))
+        {
+            Set<ScopeName> badKeys = new HashSet<ScopeName>(scopeKeys);
+            badKeys.removeAll(scopeKeyToScope.keySet());
+            throw new IllegalArgumentException(String.format("Scope keys %s do not exist. Valid values are: %s.", badKeys, scopeKeyToScope.keySet()));
+        }
+
+        return transform(addImpliedScopesTo(scopeKeys), new Function<ScopeName, AddOnScope>()
         {
             @Override
             public AddOnScope apply(@Nullable ScopeName scopeKey)
@@ -234,6 +236,18 @@ public class StaticAddOnScopes
                 return scopeKeyToScope.get(scopeKey);
             }
         });
+    }
+
+    private static Collection<ScopeName> addImpliedScopesTo(Collection<ScopeName> scopeReferences)
+    {
+        Set<ScopeName> allScopeReferences = new HashSet<ScopeName>(scopeReferences);
+
+        for (ScopeName scopeReference : scopeReferences)
+        {
+            allScopeReferences.addAll(scopeReference.getImplied());
+        }
+
+        return allScopeReferences;
     }
 
     /**
