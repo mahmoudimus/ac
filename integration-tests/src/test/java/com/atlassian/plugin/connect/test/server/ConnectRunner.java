@@ -177,7 +177,7 @@ public class ConnectRunner
         return this;
     }
 
-    public ConnectRunner addCapabilities(String fieldName, ModuleBean... beans)
+    public ConnectRunner addModules(String fieldName, ModuleBean... beans)
     {
         addonBuilder.withModules(fieldName, beans);
         return this;

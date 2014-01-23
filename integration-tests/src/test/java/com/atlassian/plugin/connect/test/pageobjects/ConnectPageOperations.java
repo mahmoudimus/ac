@@ -81,4 +81,8 @@ public class ConnectPageOperations
         return pageBinder.bind(RemotePluginDialog.class, dialogContent);
     }
 
+    public PageBinder getPageBinder()
+    {
+        return pageBinder;
+    }
 }

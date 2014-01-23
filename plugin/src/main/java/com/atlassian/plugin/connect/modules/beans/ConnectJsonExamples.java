@@ -52,6 +52,7 @@ public class ConnectJsonExamples
     public static final String WEBITEM_EXAMPLE = createWebItemExample();
     public static final String WEBITEM_TARGET_EXAMPLE = createWebitemTargetExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
+    public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
     public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
     public static final String IMAGE_PLACEHOLDER_EXAMPLE = createImagePlaceholderExample();
     public static final String SPACE_TOOLS_TAB_EXAMPLE = createSpaceToolsTabExample();
@@ -187,6 +188,17 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("webPanels", webPanelModuleBean));
+    }
+
+    private static String createWebSectionExample()
+    {
+        WebSectionModuleBean webSectionModuleBean = WebSectionModuleBean.newWebSectionBean()
+                .withName(new I18nProperty("My Web Section", ""))
+                .withLocation("com.atlassian.jira.plugin.headernav.left.context")
+                .withWeight(50)
+                .build();
+
+        return gson.toJson(createModuleArray("webSections", webSectionModuleBean));
     }
 
     public static String createComponentTabPanelExample()
