@@ -125,6 +125,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
                 .withKeyConfiguration(keyConfigurationBean)
                 .withEntityType(EntityPropertyType.issue)
                 .withName(new I18nProperty("Attachment Indexing", I18N_KEY))
+                .withKey("attachment-indexing")
                 .build();
     }
 }
