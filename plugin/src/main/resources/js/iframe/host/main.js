@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper"], function ($, XdmRpc, addons, statusHelper) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main"], function ($, XdmRpc, addons, statusHelper, messages) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -139,19 +139,8 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         getTimeZone: function () {
           return options.data.timeZone;
         },
-        showMessage: function (id, title, body) {
-          // init message bar if necessary
-          if ($("#aui-message-bar").length === 0) {
-            // @todo adding #aui-message-bar only works for the view-issue page for now
-            $.html("div").attr("id", "aui-message-bar").prependTo("#details-module");
-          }
-          this.clearMessage(id);
-          AJS.messages.info({
-            title: title,
-            body: "<p>" + $("<div/>").text(body).html() + "<p>",
-            id: id,
-            closeable: false
-          });
+        showMessage: function (name, title, body, options) {
+          return messages.showMessage(name, title, body, options);
         },
         clearMessage: function (id) {
           var selector = $(".aui-message#" + id).first();
@@ -185,6 +174,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
                 inlineDialog.hideInlineDialog($content, $nexus);
             });
         },
+
         request: function (args, success, error) {
           // add the context path to the request url
           var url = options.cp + args.url;
