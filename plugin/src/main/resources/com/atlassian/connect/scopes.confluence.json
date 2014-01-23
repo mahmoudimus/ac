@@ -9,6 +9,7 @@
         "content-api",
         "content-prototype",
         "content-ui",
+        "label",
         "notification",
         "search",
         "searchv3",
@@ -32,6 +33,7 @@
         "content-api",
         "content-prototype",
         "content-ui",
+        "label",
         "notification",
         "task"
       ],
@@ -44,6 +46,7 @@
         "content-api",
         "content-prototype",
         "content-ui",
+        "label",
         "macro",
         "notification",
         "task"
@@ -140,6 +143,12 @@
       "key": "user",
       "name": "prototype",
       "basePaths": ["/user($|/.*)"],
+      "versions": ["1", "latest"]
+    },
+    {
+      "key": "label",
+      "name": "prototype",
+      "basePaths": ["/label($|/.*)"],
       "versions": ["1", "latest"]
     },
     {

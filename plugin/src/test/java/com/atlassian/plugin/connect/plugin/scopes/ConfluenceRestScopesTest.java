@@ -57,6 +57,11 @@ public class ConfluenceRestScopesTest extends AbstractScopesTest
                 {ScopeName.READ, HttpMethod.POST, "/confluence/rest/api/1/contentbody/convert/", true},
 
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/1/space/test/content", true},
+
+                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/prototype/1/label/44/watches", true},
+                {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/prototype/1/label/44/watches", true},
+                {ScopeName.DELETE, HttpMethod.DELETE, "/confluence/rest/prototype/1/label/44/watches", true},
+                {ScopeName.WRITE, HttpMethod.DELETE, "/confluence/rest/prototype/1/label/44/watches", false},
         });
     }
 
