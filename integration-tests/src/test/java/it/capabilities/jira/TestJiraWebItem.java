@@ -44,7 +44,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapabilities("webItems",
+                .addModules("webItems",
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.decorated)
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
@@ -89,8 +89,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withUrl("http://www.wikipedia.org")
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
-                                        .withParam("onHover", "true")
-                                        .build()
+                                                .withParam("onHover", "true")
+                                                .build()
                                 )
                                 .build()
                 )

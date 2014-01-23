@@ -1,0 +1,70 @@
+{
+  "scopes": [
+    {
+      "key": "READ",
+      "restPathKeys": ["entities", "license"],
+      "methods": ["GET"]
+    },
+    {
+      "key": "ADMIN",
+      "restPathKeys": ["applicationlink", "applicationlinkInfo", "listApplicationLinks", "entitylink", "entitylink_primary", "manifest", "type_entity"],
+      "methods": ["GET", "POST", "PUT", "DELETE"]
+    }
+  ],
+  "restPaths": [
+    {
+      "key": "applicationlink",
+      "name": "applinks",
+      "basePaths": ["/applicationlink($|/.*)"],
+      "versions": ["1.0", "2.0", "latest"]
+    },
+    {
+      "key": "applicationlinkInfo",
+      "name": "applinks",
+      "basePaths": ["/applicationlinkInfo($|/.*)"],
+      "versions": ["1.0", "2.0", "latest"]
+    },
+    {
+      "key": "entities",
+      "name": "applinks",
+      "basePaths": ["/entities($|/.*)"],
+      "versions": ["1.0", "2.0", "latest"]
+    },
+    {
+      "key": "entitylink",
+      "name": "applinks",
+      "basePaths": ["/entitylink($|/.*)"],
+      "versions": ["1.0", "2.0", "latest"]
+    },
+    {
+      "key": "listApplicationLinks",
+      "name": "applinks",
+      "basePaths": ["/listApplicationLinks($|/.*)"],
+      "versions": ["1.0", "2.0", "latest"]
+    },
+    {
+      "key": "manifest",
+      "name": "applinks",
+      "basePaths": ["/manifest($|/.*)"],
+      "versions": ["1.0", "2.0", "latest"]
+    },
+    {
+      "key": "type_entity",
+      "name": "applinks",
+      "basePaths": ["/type/entity($|/.*)"],
+      "versions": ["1.0", "2.0", "latest"]
+    },
+    {
+      "key": "entitylink_primary",
+      "name": "applinks",
+      "basePaths": ["/entitylink/primary($|/.*)"],
+      "versions": ["1.0", "2.0", "latest"]
+    },
+    {
+      "key": "license",
+      "name": "atlassian-connect",
+      "basePaths": ["/license($|/.*)"],
+      "versions": ["1", "latest"]
+    }
+  ]
+}

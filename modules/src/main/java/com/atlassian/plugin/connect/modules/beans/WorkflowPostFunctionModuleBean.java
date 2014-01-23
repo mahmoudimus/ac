@@ -4,6 +4,8 @@ import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.WorkflowPostFunctionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Post functions carry out any additional processing required *after* a JIRA workflow transition is executed, such as:
@@ -165,7 +167,8 @@ public class WorkflowPostFunctionModuleBean extends NameToKeyBean
     private I18nProperty description;
 
     /**
-     * The relative URL to the add-on page that shows the read-only configuration or summary of the workflow post function.
+     * The relative URL to the add-on page that shows the read-only configuration or summary of the workflow post
+     * function.
      */
     private UrlBean view;
 
@@ -257,5 +260,42 @@ public class WorkflowPostFunctionModuleBean extends NameToKeyBean
     public static WorkflowPostFunctionModuleBeanBuilder newWorkflowPostFunctionBean(WorkflowPostFunctionModuleBean defaultBean)
     {
         return new WorkflowPostFunctionModuleBeanBuilder(defaultBean);
+    }
+
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof WorkflowPostFunctionModuleBean && super.equals(otherObj)))
+        {
+            return false;
+        }
+
+        WorkflowPostFunctionModuleBean other = (WorkflowPostFunctionModuleBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(description, other.description)
+                .append(view, other.view)
+                .append(edit, other.edit)
+                .append(create, other.create)
+                .append(triggered, other.triggered)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(13, 61)
+                .appendSuper(super.hashCode())
+                .append(description)
+                .append(view)
+                .append(edit)
+                .append(create)
+                .append(triggered)
+                .build();
     }
 }

@@ -7,8 +7,8 @@ import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.*;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminSummaryPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
 
@@ -47,9 +47,6 @@ public class OwnerOfTestedProduct
         else if (INSTANCE instanceof ConfluenceTestedProduct)
         {
             INSTANCE.getPageBinder().override(GeneralPage.class, ConfluenceGeneralPage.class);
-            INSTANCE.getPageBinder().override(LoginPage.class, FixedConfluenceLoginPage.class);
-            INSTANCE.getPageBinder().override(AdminHomePage.class, FixedConfluenceAdminHomePage.class);
-            INSTANCE.getPageBinder().override(HomePage.class, FixedConfluenceDashboardPage.class);
         }
     }
 }

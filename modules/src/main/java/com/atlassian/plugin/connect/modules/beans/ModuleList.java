@@ -112,13 +112,21 @@ public class ModuleList extends BaseModuleBean
     private List<WebItemModuleBean> webItems;
 
     /**
-     * The Web Panel module allows you  to define panels, or sections, on an HTML page.
+     * The Web Panel module allows you to define panels, or sections, on an HTML page.
      * A panel is an iFrame that will be inserted into a page.
      *
      * @schemaTitle Web Panel
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider")
     private List<WebPanelModuleBean> webPanels;
+
+    /**
+     * The Web Section plugin module allows you to define new sections in application menus.
+     *
+     * @schemaTitle Web Section
+     */
+    @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebSectionModuleProvider")
+    private List<WebSectionModuleBean> webSections;
 
     /**
      * The Web Hook module allows you be notified of key events that occur in the host product
@@ -277,6 +285,7 @@ public class ModuleList extends BaseModuleBean
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
+        this.webSections = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -314,6 +323,10 @@ public class ModuleList extends BaseModuleBean
         if (null == webPanels)
         {
             this.webPanels = newArrayList();
+        }
+        if (null == webSections)
+        {
+            this.webSections = newArrayList();
         }
         if (null == generalPages)
         {
@@ -391,6 +404,11 @@ public class ModuleList extends BaseModuleBean
     public List<WebPanelModuleBean> getWebPanels()
     {
         return webPanels;
+    }
+
+    public List<WebSectionModuleBean> getWebSections()
+    {
+        return webSections;
     }
 
     public List<WorkflowPostFunctionModuleBean> getJiraWorkflowPostFunctions()
@@ -477,6 +495,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
                 .append(webPanels, webPanels)
+                .append(webSections, webSections)
                 .build();
     }
 
@@ -503,6 +522,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webhooks)
                 .append(webItems)
                 .append(webPanels)
+                .append(webSections)
                 .build();
     }
 }

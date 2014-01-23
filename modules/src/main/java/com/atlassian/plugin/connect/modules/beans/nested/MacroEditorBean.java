@@ -8,10 +8,28 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder
 /**
  * Macro Parameters go a long way when it comes to macro configuration, but there are cases
  * when a macro add-on needs more control over the UI.
- * <p/>
+ *
  * Defining a Macro Editor allows you to implement a custom UI for the macro, by specifying a
- * URL to a page in your add-on which will be shown in the dialog iframe.
- * <p/>
+ * URL to a page in your add-on which will be shown in the dialog iFrame.
+ *
+ * In order to persist custom data in your macro editor, use the Javascript
+ * [Confluence API](../../javascript/module-confluence.html) and the [Dialog API](../../javascript/module-dialog.html).
+ * For example:
+ *
+ *
+ *    AP.require(["confluence", "dialog"], function (confluence, dialog) {
+ *        function onSubmit() {
+ *            var macroParams = {
+ *                key: value
+ *            };
+ *            confluence.saveMacro(macroParams);
+ *            confluence.closeMacroEditor();
+ *            return true;
+ *         }
+ *
+ *         dialog.getButton("submit").bind(onSubmit);
+ *     }
+ *
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}

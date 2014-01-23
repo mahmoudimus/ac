@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Map;
 
@@ -178,5 +180,59 @@ public class ConnectAddonEventData extends BaseModuleBean
     public static ConnectAddonEventDataBuilder newConnectAddonEventData(ConnectAddonEventData defaultBean)
     {
         return new ConnectAddonEventDataBuilder(defaultBean);
+    }
+
+    // don't call super because BaseModuleBean has no data
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof ConnectAddonEventData))
+        {
+            return false;
+        }
+
+        ConnectAddonEventData other = (ConnectAddonEventData) otherObj;
+
+        return new EqualsBuilder()
+                .append(key, other.key)
+                .append(links, other.links)
+                .append(clientKey, other.clientKey)
+                .append(publicKey, other.publicKey)
+                .append(sharedSecret, other.sharedSecret)
+                .append(serverVersion, other.serverVersion)
+                .append(pluginsVersion, other.pluginsVersion)
+                .append(baseUrl, other.baseUrl)
+                .append(productType, other.productType)
+                .append(description, other.description)
+                .append(userKey, other.userKey)
+                .append(serviceEntitlementNumber, other.serviceEntitlementNumber)
+                .append(eventType, other.eventType)
+                .isEquals();
+    }
+
+    // don't call super because BaseAddonBean has no data
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(41, 7)
+                .append(key)
+                .append(links)
+                .append(clientKey)
+                .append(publicKey)
+                .append(sharedSecret)
+                .append(serverVersion)
+                .append(pluginsVersion)
+                .append(baseUrl)
+                .append(productType)
+                .append(description)
+                .append(userKey)
+                .append(serviceEntitlementNumber)
+                .append(eventType)
+                .build();
     }
 }

@@ -1,7 +1,7 @@
 package it.capabilities.confluence;
 
+import com.atlassian.confluence.pageobjects.page.SearchResultPage;
 import com.atlassian.pageobjects.elements.query.Poller;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceSearchResultPage;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
@@ -17,20 +17,19 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
 {
     public static final String SEARCH_TERMS = "connect";
 
-    private FixedConfluenceSearchResultPage searchResultPage;
+    private SearchResultPage searchResultPage;
 
     @Before
     public void setupSearchPage() throws Exception
     {
         loginAsAdmin();
 
-        searchResultPage = product.visit(FixedConfluenceSearchResultPage.class);
-        searchResultPage.setSearchField(SEARCH_TERMS);
+        searchResultPage = product.visit(SearchResultPage.class);
     }
 
-    private void clickSearchButton() throws Exception
+    private void search(String terms) throws Exception
     {
-        searchResultPage.clickSearchButton();
+        searchResultPage.doResultsSearch(terms);
         Poller.waitUntilTrue(searchResultPage.hasMatchingResults());
     }
 
@@ -42,7 +41,7 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                clickSearchButton();
+                search(SEARCH_TERMS);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
             }
@@ -57,7 +56,7 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                clickSearchButton();
+                search(SEARCH_TERMS);
                 final WebHookBody body = waiter.waitForHook();
                 Assert.assertEquals(SEARCH_TERMS, body.find("query"));
             }
@@ -72,7 +71,7 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                clickSearchButton();
+                search(SEARCH_TERMS);
                 final WebHookBody body = waiter.waitForHook();
                 Assert.assertEquals(searchResultPage.getMatchingResults(), Integer.parseInt(body.find("results")));
             }
@@ -87,7 +86,7 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                clickSearchButton();
+                search(SEARCH_TERMS);
                 final WebHookBody body = waiter.waitForHook();
                 Assert.assertEquals("admin", body.find("user"));
             }
@@ -102,7 +101,7 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                clickSearchButton();
+                search(SEARCH_TERMS);
                 final WebHookBody body = waiter.waitForHook();
                 Assert.assertEquals("conf_all", body.find("spaceCategories[0]"));
             }

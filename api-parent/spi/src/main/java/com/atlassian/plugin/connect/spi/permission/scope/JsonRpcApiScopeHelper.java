@@ -4,6 +4,10 @@ import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -22,7 +26,7 @@ public final class JsonRpcApiScopeHelper
 {
     private final Collection<String> methods;
     private final String path;
-    private final Iterable<ApiResourceInfo> apiResourceInfo;
+    private transient final Iterable<ApiResourceInfo> apiResourceInfo;
 
     public JsonRpcApiScopeHelper(final String path, Collection<String> methods)
     {
@@ -86,5 +90,45 @@ public final class JsonRpcApiScopeHelper
         {
             IOUtils.closeQuietly(in);
         }
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        JsonRpcApiScopeHelper that = (JsonRpcApiScopeHelper) o;
+        // don't consider apiResourceInfo as it is built from path and methods
+        return new EqualsBuilder()
+                .append(path, that.path)
+                .append(methods, that.methods)
+                .build();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        // don't consider apiResourceInfo as it is built from path and methods
+        return new HashCodeBuilder(19, 71)
+                .append(path)
+                .append(methods)
+                .build();
+    }
+
+    @Override
+    public String toString()
+    {
+        // don't consider apiResourceInfo as it is built from path and methods
+        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
+                .append("path", path)
+                .append("methods", methods)
+                .toString();
     }
 }
