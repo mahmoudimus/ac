@@ -24,6 +24,7 @@
     {
       "key": "READ",
       "restPathKeys": ["contentbody"],
+      "jsonRpcPathKeys": ["confluenceservice-read"],
       "methods": ["POST"]
     },
     {
@@ -40,6 +41,11 @@
       "methods": ["POST", "PUT"]
     },
     {
+      "key": "WRITE",
+      "jsonRpcPathKeys": ["confluenceservice-write"],
+      "methods": ["POST"]
+    },
+    {
       "key": "DELETE",
       "restPathKeys": [
         "action",
@@ -52,6 +58,21 @@
         "task"
       ],
       "methods": ["DELETE"]
+    },
+    {
+      "key": "DELETE",
+      "jsonRpcPathKeys": ["confluenceservice-delete"],
+      "methods": ["POST"]
+    },
+    {
+      "key": "SPACE_ADMIN",
+      "jsonRpcPathKeys": ["confluenceservice-space-admin"],
+      "methods": ["POST"]
+    },
+    {
+      "key": "ADMIN",
+      "jsonRpcPathKeys": ["confluenceservice-admin"],
+      "methods": ["POST"]
     }
   ],
   "restPaths": [
@@ -162,6 +183,184 @@
       "name": "ui",
       "basePaths": ["/content($|/.*)"],
       "versions": ["1", "1.0", "latest"]
+    }
+  ],
+  "jsonRpcPaths": [
+    {
+      "key": "confluenceservice-read",
+      "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
+      "rpcMethods": [
+        "convertWikiToStorageFormat",
+        "getActiveUsers",
+        "getAncestors",
+        "getAttachment",
+        "getAttachmentData",
+        "getAttachments",
+        "getBlogEntries",
+        "getBlogEntry",
+        "getBlogEntryByDateAndTitle",
+        "getBlogEntryByDayAndTitle",
+        "getChildren",
+        "getClusterInformation",
+        "getClusterNodeStatuses",
+        "getComment",
+        "getComments",
+        "getContentPermissionSet",
+        "getContentPermissionSets",
+        "getDescendents",
+        "getGroups",
+        "getLabelContentById",
+        "getLabelContentByName",
+        "getLabelContentByObject",
+        "getLabelsByDetail",
+        "getLabelsById",
+        "getMostPopularLabels",
+        "getMostPopularLabelsInSpace",
+        "getPage",
+        "getPageHistory",
+        "getPagePermissions",
+        "getPageSummary",
+        "getPages",
+        "getPermissions",
+        "getPermissionsForUser",
+        "getRecentlyUsedLabels",
+        "getRecentlyUsedLabelsInSpace",
+        "getRelatedLabels",
+        "getRelatedLabelsInSpace",
+        "getServerInfo",
+        "getSpace",
+        "getSpaceGroup",
+        "getSpaceGroups",
+        "getSpaceLevelPermissions",
+        "getSpaceStatus",
+        "getSpaces",
+        "getSpacesContainingContentWithLabel",
+        "getSpacesInGroup",
+        "getSpacesWithLabel",
+        "getTopLevelPages",
+        "getTrashContents",
+        "getUser",
+        "getUserByKey",
+        "getUserByName",
+        "getUserGroups",
+        "getUserInformation",
+        "getUserPreferenceBoolean",
+        "getUserPreferenceLong",
+        "getUserPreferenceString",
+        "getWatchersForPage",
+        "getWatchersForSpace",
+        "hasGroup",
+        "hasUser",
+        "isActiveUser",
+        "isWatchingPage",
+        "isWatchingSpace",
+        "isWatchingSpaceForType",
+        "renderContent",
+        "search"
+      ]
+    },
+    {
+      "key": "confluenceservice-write",
+      "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
+      "rpcMethods": [
+        "addAttachment",
+        "addComment",
+        "addLabelById",
+        "addLabelByName",
+        "addLabelByNameToSpace",
+        "addLabelByObject",
+        "addPersonalSpace",
+        "addPersonalSpaceWithDefaultPermissions",
+        "addProfilePicture",
+        "addSpace",
+        "addSpaceGroup",
+        "addSpaceWithDefaultPermissions",
+        "editComment",
+        "moveAttachment",
+        "movePage",
+        "movePageToTopLevel",
+        "setContentPermissions",
+        "setEnableWysiwyg",
+        "setSpaceStatus",
+        "setUserInformation",
+        "setUserPreferenceBoolean",
+        "setUserPreferenceLong",
+        "setUserPreferenceString",
+        "storeBlogEntry",
+        "storePage",
+        "storeSpace",
+        "updatePage",
+        "watchPage",
+        "watchPageForUser",
+        "watchSpace"
+      ]
+    },
+    {
+      "key": "confluenceservice-delete",
+      "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
+      "rpcMethods": [
+        "emptyTrash",
+        "purgeFromTrash",
+        "removeAttachment",
+        "removeComment",
+        "removeLabelById",
+        "removeLabelByName",
+        "removeLabelByNameFromSpace",
+        "removeLabelByObject",
+        "removePage",
+        "removePageVersionById",
+        "removePageVersionByVersion",
+        "removePageWatch",
+        "removePageWatchForUser",
+        "removeSpace",
+        "removeSpaceGroup",
+        "removeSpaceWatch"
+      ]
+    },
+    {
+      "key": "confluenceservice-space-admin",
+      "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
+      "rpcMethods": [
+        "addAnonymousPermissionToSpace",
+        "addAnonymousPermissionsToSpace",
+        "addPermissionToSpace",
+        "addPermissionsToSpace",
+        "removeAnonymousPermissionFromSpace",
+        "removePermissionFromSpace"
+      ]
+    },
+    {
+      "key": "confluenceservice-admin",
+      "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
+      "rpcMethods": [
+        "addAnonymousUsePermission",
+        "addAnonymousViewUserProfilePermission",
+        "addGlobalPermission",
+        "addGlobalPermissions",
+        "addGroup",
+        "addUser",
+        "addUserToGroup",
+        "clearIndexQueue",
+        "deactivateUser",
+        "editUser",
+        "exportSite",
+        "exportSpace",
+        "flushIndexQueue",
+        "importSpace",
+        "isPluginEnabled",
+        "isPluginInstalled",
+        "reactivateUser",
+        "removeAllPermissionsForGroup",
+        "removeAnonymousUsePermission",
+        "removeAnonymousViewUserProfilePermission",
+        "removeGlobalPermission",
+        "removeGroup",
+        "removeUser",
+        "removeUserFromGroup",
+        "renameUser",
+        "renameUsers",
+        "setEnableAnonymousAccess"
+      ]
     }
   ]
 }

@@ -97,7 +97,7 @@ public class AddOnScopeBean
     public static class RpcPathBean
     {
         private String key; // set by gson, must be unique within the JSON scopes file
-        private String path; // set by gson
+        private Collection<String> paths; // set by gson
         private Collection<String> rpcMethods; // set by gson
 
         public RpcPathBean()
@@ -105,10 +105,10 @@ public class AddOnScopeBean
             this(null, null, null);
         }
 
-        public RpcPathBean(String key, String path, Collection<String> rpcMethods)
+        public RpcPathBean(String key, Collection<String> paths, Collection<String> rpcMethods)
         {
             this.key = key;
-            this.path = path;
+            this.paths = paths;
             this.rpcMethods = rpcMethods;
         }
 
@@ -117,9 +117,9 @@ public class AddOnScopeBean
             return key;
         }
 
-        public String getPath()
+        public Collection<String> getPaths()
         {
-            return path;
+            return paths;
         }
 
         public Collection<String> getRpcMethods()
@@ -135,9 +135,9 @@ public class AddOnScopeBean
             super();
         }
 
-        public SoapRpcPathBean(String key, String path, Collection<String> rpcMethods)
+        public SoapRpcPathBean(String key, Collection<String> paths, Collection<String> rpcMethods)
         {
-            super(key, path, rpcMethods);
+            super(key, paths, rpcMethods);
         }
     }
 
@@ -148,9 +148,9 @@ public class AddOnScopeBean
             super();
         }
 
-        public JsonRpcPathBean(String key, String path, Collection<String> rpcMethods)
+        public JsonRpcPathBean(String key, Collection<String> paths, Collection<String> rpcMethods)
         {
-            super(key, path, rpcMethods);
+            super(key, paths, rpcMethods);
         }
     }
 }
