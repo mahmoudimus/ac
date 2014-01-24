@@ -36,62 +36,65 @@ import static com.google.common.collect.Lists.newArrayList;
  * Modules are UI extension points that add-ons can use to insert content into various areas of the host application's
  * interface. You implement a page module (along with others type of module you can use with Atlassian Connect, like
  * webhooks) by declaring it in the add-on descriptor and implementing the add-on code that composes it.
- * <p/>
+ *
  * Each application has module types that are specific for it, but there are some common types as well. For instance,
  * both JIRA and Confluence support the `generalPages` module, but only Confluence has `profilePage`.
- * <p/>
+ *
  * An add-on can implement as many modules as needed. For example, a typical add-on would likely provide modules for at
  * least one lifecycle element, a configuration page, and possibly multiple general pages.
- * <p/>
+ *
  * Here's an example of a module declaration:
- * <p/>
- * {
- * "name": "My Addon",
- * "modules": {
- * "webItems": [{
- * "conditions": [
- * {
- * "condition": "sub_tasks_enabled"
- * },
- * {
- * "condition": "is_issue_editable"
- * },
- * {
- * "condition": "is_issue_unresolved"
- * }
- * ],
- * "location": "operations-subtasks",
- * "url": "/dialog",
- * "name": {
- * "value": "Create Sub-Tasks"
- * }
- * }]
- * }
- * }
- * <p/>
- * In this case, we're declaring a `dialog-page` webItem. This declaration adds a dialog box to JIRA that users can open
- * by clicking a "Create Sub-Tasks" link on an issue.
- * <p/>
+ *
+ *    {
+ *        "name": "My Addon",
+ *        "modules": {
+ *            "webItems": [{
+ *                "conditions": [
+ *                    {
+ *                        "condition": "sub_tasks_enabled"
+ *                    },
+ *                    {
+ *                        "condition": "is_issue_editable"
+ *                    },
+ *                    {
+ *                        "condition": "is_issue_unresolved"
+ *                    }
+ *                ],
+ *                "location": "operations-subtasks",
+ *                "url": "/dialog",
+ *                "name": {
+ *                    "value": "Create Sub-Tasks"
+ *                },
+ *                "target": {
+ *                    "type": "dialog"
+ *                }
+ *            }]
+ *        }
+ *    }
+ *
+ * In this case, we're declaring a web item which opens as a dialog. This declaration adds a dialog box to JIRA that
+ * users can open by clicking a "Create Sub-Tasks" link on an issue.
+ *
  *### Conditions
- * <p/>
+ *
  * You can specify the conditions in which the link (and therefore access to this page) appears. The Atlassian application
  * ensures that the link only appears if it is appropriate for it to do so. In the example, the module should only appear
  * if subtasks are enabled and the issue is both editable and unresolved.. The condition elements state conditions that
  * must be true for the module to be in effect. Note, the condition only applies to the presence or absence of the link.
  * You should still permission the URL that the link references if appropriate.
- * <p/>
+ *
  *### URLs
- * <p/>
+ *
  * All module declarations must have a `url` attribute. The url attribute identifies the path on the add-on host to the
  * resource that implements the module. The URL value must be valid relative to the `baseUrl` value in the add-on descriptor.
- * <p/>
+ *
  * The url value in our example is `/dialog`. This must be a resource that is accessible on your server (relative to the
  * base URL of the add-on). It presents the content that appears in the iframe dialog; in other words, the HTML,
  * JavaScript, or other type of web content source that composes the iframe content.
- * <p/>
+ *
  * Note: for a webhook, the URL should be the address to which the Atlassian application posts notifications. For other
  * modules, such as `generalPages` or `webItems`, the URL identifies the web content to be used to compose the page.
- * <p/>
+ *
  * You can request certain pieces of contextual data, such as a project or space key, to be included in the URLs
  * requested from your add-on. See passing [Context Parameters](../../concepts/context-parameters.html).
  */
