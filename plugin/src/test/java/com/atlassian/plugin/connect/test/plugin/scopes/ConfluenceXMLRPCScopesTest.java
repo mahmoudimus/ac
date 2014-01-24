@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.scopes;
+package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
