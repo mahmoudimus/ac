@@ -44,7 +44,7 @@ public class ConfluenceJSONRPCScopesTest extends AbstractScopesTest
 
     public ConfluenceJSONRPCScopesTest(ScopeName scope, HttpMethod method, String path, boolean expectedOutcome)
     {
-        super(scope, method, path, expectedOutcome, "/confluence", "Confluence");
+        super(scope, method, path, "", expectedOutcome, "/confluence", "Confluence");
     }
 
 }
