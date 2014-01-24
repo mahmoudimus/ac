@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.permission.scope.PathScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
 
@@ -13,6 +14,7 @@ public class AddOnScopeApiPathBuilder
     Collection<RestApiScopeHelper.RestScope> restResources = new ArrayList<RestApiScopeHelper.RestScope>();
     Collection<RpcEncodedSoapApiScopeHelper> soapResources = new ArrayList<RpcEncodedSoapApiScopeHelper>();
     Collection<JsonRpcApiScopeHelper>        jsonResources = new ArrayList<JsonRpcApiScopeHelper>();
+    Collection<PathScopeHelper>              paths         = new ArrayList<PathScopeHelper>();
 
     public AddOnScopeApiPathBuilder withRestPaths(AddOnScopeBean.RestPathBean restPathBean, Collection<String> methods)
     {
@@ -36,11 +38,17 @@ public class AddOnScopeApiPathBuilder
         return this;
     }
 
+    public AddOnScopeApiPathBuilder withPaths(AddOnScopeBean.PathBean path)
+    {
+        paths.add(new PathScopeHelper(true, path.getPaths()));
+        return this;
+    }
+
     public AddOnScopeApiPathBuilder withPaths(Iterable<AddOnScopeApiPath> paths)
     {
         for (AddOnScopeApiPath path : paths)
         {
-            path.addTo(restResources, soapResources, jsonResources);
+            path.addTo(restResources, soapResources, jsonResources, this.paths);
         }
 
         return this;
@@ -63,6 +71,11 @@ public class AddOnScopeApiPathBuilder
         if (!jsonResources.isEmpty())
         {
             paths.add(new AddOnScopeApiPath.JsonRpcApiPath(jsonResources));
+        }
+
+        if (!this.paths.isEmpty())
+        {
+            paths.add(new AddOnScopeApiPath.ApiPath(this.paths));
         }
 
         return paths;
