@@ -1,0 +1,22 @@
+{
+  "confluence-rest": {
+    "heading": "Confluence REST API",
+    "apis": [
+      {
+        "path": "/rest/atlassian-connect/{version}/license",
+        "versions" : ["1", "1.0", "latest"],
+        "scopes": {
+          "READ": ["GET"]
+        }
+      },
+      {
+        "path": "/rest/api/{version}/content",
+        "versions" : ["2", "2.0"],
+        "scopes": {
+          "READ": ["GET"],
+          "WRITE": ["POST", "PUT"]
+        }
+      }
+    ]
+  }
+}
