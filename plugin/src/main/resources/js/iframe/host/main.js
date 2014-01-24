@@ -143,12 +143,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           return messages.showMessage(name, title, body, options);
         },
         clearMessage: function (id) {
-          var selector = $(".aui-message#" + id).first();
-          if(selector.length === 1 && selector.hasClass("aui-message")){
-            selector.remove();
-          } else {
-            log("Unable to clear message");
-          }
+          return messages.clearMessage(id);
         },
         setDialogButtonEnabled: function (name, enabled) {
           var button = getDialogButton(name);

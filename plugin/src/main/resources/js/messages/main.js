@@ -1,39 +1,56 @@
 _AP.define("messages/main", ["_dollar"], function($) {
-	var MESSAGE_BAR_SELECTOR = 'aui-message-bar',
-		MESSAGE_TYPES = ["generic", "error", "warning", "success", "info", "hint"];
+    var MESSAGE_BAR_ID = 'ac-message-container',
+        MESSAGE_TYPES = ["generic", "error", "warning", "success", "info", "hint"];
 
-	function validateMessageId(msgId){
-		return msgId.search(/^ap\-message\-[0-9]+$/) == 0;
-	}
+    function validateMessageId(msgId){
+        return msgId.search(/^ap\-message\-[0-9]+$/) == 0;
+    }
 
-	//put the bar in a good place depending on the page.
-	function createMessageBar(){
-		//generalPage
-		$('<div id="' + MESSAGE_BAR_SELECTOR + '" />').appendTo('#main-header');
+    //put the bar in a good place depending on the page.
+    function getMessageBar(){
+        var msgBar = $('.' + MESSAGE_BAR_ID);
 
-	}
-	function filterMessageOptions(options){
-		//UNDERSCORE RELIANCE!!!
-		return _.pick(options, 'closeable', 'fadeout', 'delay', 'duration', 'id');
-	}
+        if(msgBar.length < 1){
+            msgBar = $('<div id="' + MESSAGE_BAR_ID + '" />').appendTo('body');
+        }
+        return msgBar;
+    }
 
-	return {
+    function filterMessageOptions(options){
+        var i,
+        key,
+        copy = {},
+        allowed = ['closeable', 'fadeout', 'delay', 'duration', 'id'];
+
+        for (i in allowed){
+            key = allowed[i];
+            if (key in options){
+                copy[key] = options[key];
+            }
+        }
+
+        return copy;
+    }
+
+    return {
         showMessage: function (name, title, body, options) {
-        	if($('#' + MESSAGE_BAR_SELECTOR).length < 1){
-        		createMessageBar();
-        	}
-        	options = filterMessageOptions(options);
-        	$.extend(options, {title: title, body: body });
+            var msgBar = getMessageBar();
 
-        	if($.inArray(name, MESSAGE_TYPES) < 0){
-        		throw "Invalid message type";
-        	}
-        	if(validateMessageId(options.id)){
-        		AJS.messages[name](options);
-        	}
+            options = filterMessageOptions(options);
+            $.extend(options, {title: title, body: body });
+
+            if($.inArray(name, MESSAGE_TYPES) < 0){
+                throw "Invalid message type";
+            }
+            if(validateMessageId(options.id)){
+                AJS.messages[name](msgBar, options);
+                msgBar.css('margin-left', '-' + msgBar.innerWidth()/2 + 'px');
+            }
         },
-        clearMessage: function () {
-            console.log('in server side of clearMessage');
+        clearMessage: function (id) {
+            if(validateMessageId(id)){
+                $('#' + id).remove();
+            }
         }
     }
 });

@@ -128,6 +128,7 @@
     </web-resource>
 
     <web-resource key="messages">
+        <resource type="download" name="messages-main.css" location="css/messages/main.css" />
         <resource type="download" name="messages-main.js" location="js/messages/main.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
