@@ -10,7 +10,6 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectIssueTabPanelModuleDescriptor;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
@@ -18,6 +17,7 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstit
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.IFrameContextMatchers;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableMap;
 import org.dom4j.Element;

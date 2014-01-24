@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.dom4j.Document;

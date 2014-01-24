@@ -1,10 +1,7 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
-import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
-import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
-import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
-import com.atlassian.plugin.connect.spi.permission.scope.XmlRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.permission.scope.*;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
@@ -18,6 +15,7 @@ public class AddOnScopeApiPathBuilder
     Collection<RpcEncodedSoapApiScopeHelper> soapResources = new ArrayList<RpcEncodedSoapApiScopeHelper>();
     Collection<JsonRpcApiScopeHelper>        jsonResources = new ArrayList<JsonRpcApiScopeHelper>();
     Collection<XmlRpcApiScopeHelper>         xmlResources = new ArrayList<XmlRpcApiScopeHelper>();
+    Collection<PathScopeHelper>              paths         = new ArrayList<PathScopeHelper>();
 
     public AddOnScopeApiPathBuilder withRestPaths(AddOnScopeBean.RestPathBean restPathBean, Collection<String> methods)
     {
@@ -56,11 +54,17 @@ public class AddOnScopeApiPathBuilder
         return this;
     }
 
+    public AddOnScopeApiPathBuilder withPaths(AddOnScopeBean.PathBean path)
+    {
+        paths.add(new PathScopeHelper(true, path.getPaths()));
+        return this;
+    }
+
     public AddOnScopeApiPathBuilder withPaths(Iterable<AddOnScopeApiPath> paths)
     {
         for (AddOnScopeApiPath path : paths)
         {
-            path.addTo(restResources, soapResources, jsonResources, xmlResources);
+            path.addTo(restResources, soapResources, jsonResources, xmlResources, this.paths);
         }
 
         return this;
@@ -88,6 +92,11 @@ public class AddOnScopeApiPathBuilder
         if (!xmlResources.isEmpty())
         {
             paths.add(new AddOnScopeApiPath.XmlRpcApiPath(xmlResources));
+        }
+
+        if (!this.paths.isEmpty())
+        {
+            paths.add(new AddOnScopeApiPath.ApiPath(this.paths));
         }
 
         return paths;

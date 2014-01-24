@@ -17,9 +17,9 @@ import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newA
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static org.junit.Assert.assertThat;
 
 public class WebItemModuleBeanTest

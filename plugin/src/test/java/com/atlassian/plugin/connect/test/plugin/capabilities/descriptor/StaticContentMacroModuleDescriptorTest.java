@@ -6,9 +6,9 @@ import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModu
 import com.atlassian.plugin.connect.modules.beans.nested.MacroHttpMethod;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.StaticContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.sal.api.user.UserManager;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

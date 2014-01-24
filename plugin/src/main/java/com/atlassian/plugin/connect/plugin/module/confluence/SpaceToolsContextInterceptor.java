@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.opensymphony.xwork.Action;
 import com.opensymphony.xwork.ActionInvocation;

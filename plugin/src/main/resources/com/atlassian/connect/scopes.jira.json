@@ -3,6 +3,7 @@
     {
       "key": "READ",
       "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow"],
+      "pathKeys": ["download attachments"],
       "methods": ["GET"]
     },
     {
@@ -196,5 +197,11 @@
       "paths": ["/jirasoapservice-v2($|/.*)"],
       "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
     }
+  ],
+  "paths": [
+      {
+        "key": "download attachments",
+        "paths": ["/secure/attachment($|/.*)"]
+      }
   ]
 }

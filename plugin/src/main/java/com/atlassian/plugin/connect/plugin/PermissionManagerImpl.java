@@ -20,7 +20,6 @@ import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserKey;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -43,9 +42,7 @@ import java.util.Set;
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterables.*;
 import static java.lang.String.format;
 
 /**

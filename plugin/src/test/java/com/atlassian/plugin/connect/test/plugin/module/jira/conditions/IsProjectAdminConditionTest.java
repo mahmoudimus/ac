@@ -7,7 +7,6 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

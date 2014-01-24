@@ -10,21 +10,24 @@ public class AddOnScopeBean
     private Collection<String> soapRpcPathKeys; // set by gson
     private Collection<String> jsonRpcPathKeys; // set by gson
     private Collection<String> xmlRpcPathKeys; // set by gson
+    private Collection<String> pathKeys; // set by gson
     private Collection<String> methods; // set by gson
 
     public AddOnScopeBean()
     {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     public AddOnScopeBean(String key, Collection<String> restPathKeys, Collection<String> soapRpcPathKeys,
-                          Collection<String> jsonRpcPathKeys, Collection<String> xmlRpcPathKeys, Collection<String> methods)
+                          Collection<String> jsonRpcPathKeys, Collection<String> xmlRpcPathKeys, Collection<String> pathKeys,
+                          Collection<String> methods)
     {
         this.key = key;
         this.restPathKeys = restPathKeys;
         this.soapRpcPathKeys = soapRpcPathKeys;
         this.jsonRpcPathKeys = jsonRpcPathKeys;
         this.xmlRpcPathKeys = jsonRpcPathKeys;
+        this.pathKeys = pathKeys;
         this.methods = methods;
     }
 
@@ -51,6 +54,11 @@ public class AddOnScopeBean
     public Collection<String> getXmlRpcPathKeys()
     {
         return null == xmlRpcPathKeys ? Collections.<String>emptySet() : xmlRpcPathKeys;
+    }
+
+    public Collection<String> getPathKeys()
+    {
+        return null == pathKeys ? Collections.<String>emptySet() : pathKeys;
     }
 
     public Collection<String> getMethods()
@@ -194,6 +202,33 @@ public class AddOnScopeBean
         public Collection<String> getPrefixes()
         {
             return prefixes;
+        }
+    }
+
+    public static class PathBean
+    {
+        private String key; // set by gson, must be unique within paths within the JSON scopes file
+        private Collection<String> paths; // set by gson
+
+        public PathBean()
+        {
+            this(null, null);
+        }
+
+        public PathBean(String key, Collection<String> paths)
+        {
+            this.key = key;
+            this.paths = paths;
+        }
+
+        public String getKey()
+        {
+            return key;
+        }
+
+        public Collection<String> getPaths()
+        {
+            return paths;
         }
     }
 }
