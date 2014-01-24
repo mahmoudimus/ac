@@ -6,7 +6,6 @@ _AP.define("messages/main", ["_dollar"], function($) {
         return msgId.search(/^ap\-message\-[0-9]+$/) == 0;
     }
 
-    //put the bar in a good place depending on the page.
     function getMessageBar(){
         var msgBar = $('.' + MESSAGE_BAR_ID);
 
@@ -44,6 +43,7 @@ _AP.define("messages/main", ["_dollar"], function($) {
             }
             if(validateMessageId(options.id)){
                 AJS.messages[name](msgBar, options);
+                // center the message bar
                 msgBar.css('margin-left', '-' + msgBar.innerWidth()/2 + 'px');
             }
         },
