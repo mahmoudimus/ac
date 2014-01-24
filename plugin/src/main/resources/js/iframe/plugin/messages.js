@@ -1,8 +1,17 @@
 AP.define("messages", ["_dollar", "_rpc"],
 
 /**
+* Messages are the primary method for providing system feedback in the product user interface.
+* Messages include notifications of various kinds: alerts, confirmations, notices, warnings, info and errors.
+* For visual examples of each kind please see the [ADG guide](https://developer.atlassian.com/design/latest/communicators/messages/).
+* ### Example ###
+* ```
+* AP.require("messages", function(messages){
+*   //create a message
+*   var message = messages.info('title', 'body');
+* });
+* ```
 * @exports messages
-* @see https://docs.atlassian.com/aui/5.4.1/docs/messages.html
 */
 
 function ($, rpc) {
@@ -19,12 +28,6 @@ function ($, rpc) {
 
         var apis = {};
         $.each(["generic", "error", "warning", "success", "info", "hint"], function (_, name) {
-            /**
-            * @param    {String}            title       Sets the title text of the message.
-            * @param    {String}            body        The main content of the message.
-            * @param    {MessageOptions}    options     Message Options
-            * @returns  {String}    The id to be used when clearing the message
-            */
             apis[name] = function (title, body, options) {
                 options = options || {};
                 options.id = getMessageId();
@@ -33,11 +36,91 @@ function ($, rpc) {
             };
         });
 
+        /**
+        * clear a message
+        * @name clear
+        * @method
+        * @memberof module:messages#
+        * @param    {String}    id  The id that was returned when the message was created.
+        * @example
+        * AP.require("messages", function(messages){
+        *   //create a message
+        *   var message = messages.info('title', 'body');
+        *   messages.clear(message);
+        * });
+        */
+
         apis.clear = function(id){
-            return remote.clearMessage(id);
+            remote.clearMessage(id);
         }
 
         return {
+            /**
+            * Show a generic message
+            * @name generic
+            * @method
+            * @memberof module:messages#
+            * @param    {String}            title       Sets the title text of the message.
+            * @param    {String}            body        The main content of the message.
+            * @param    {MessageOptions}    options     Message Options
+            * @returns  {String}    The id to be used when clearing the message
+            */
+
+            /**
+            * Show an error message
+            * @name error
+            * @method
+            * @memberof module:messages#
+            * @param    {String}            title       Sets the title text of the message.
+            * @param    {String}            body        The main content of the message.
+            * @param    {MessageOptions}    options     Message Options
+            * @returns  {String}    The id to be used when clearing the message
+            */
+
+            /**
+            * Show a warning message
+            * @name warning
+            * @method
+            * @memberof module:messages#
+            * @param    {String}            title       Sets the title text of the message.
+            * @param    {String}            body        The main content of the message.
+            * @param    {MessageOptions}    options     Message Options
+            * @returns  {String}    The id to be used when clearing the message
+            */
+
+            /**
+            * Show a success message
+            * @name success
+            * @method
+            * @memberof module:messages#
+            * @param    {String}            title       Sets the title text of the message.
+            * @param    {String}            body        The main content of the message.
+            * @param    {MessageOptions}    options     Message Options
+            * @returns  {String}    The id to be used when clearing the message
+            */
+
+            /**
+            * Show an info message
+            * @name info
+            * @method
+            * @memberof module:messages#
+            * @param    {String}            title       Sets the title text of the message.
+            * @param    {String}            body        The main content of the message.
+            * @param    {MessageOptions}    options     Message Options
+            * @returns  {String}    The id to be used when clearing the message
+            */
+
+            /**
+            * Show a hint message
+            * @name hint
+            * @method
+            * @memberof module:messages#
+            * @param    {String}            title       Sets the title text of the message.
+            * @param    {String}            body        The main content of the message.
+            * @param    {MessageOptions}    options     Message Options
+            * @returns  {String}    The id to be used when clearing the message
+            */
+
             apis: apis,
             stubs: ['showMessage', 'clearMessage']
         };
