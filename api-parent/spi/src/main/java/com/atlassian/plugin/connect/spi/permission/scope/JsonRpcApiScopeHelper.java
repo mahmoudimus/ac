@@ -45,7 +45,7 @@ public final class JsonRpcApiScopeHelper
             @Override
             public ApiResourceInfo apply(String from)
             {
-                return new ApiResourceInfo(path, httpMethod, from);
+                return new ApiResourceInfo(path, JsonRpcApiScopeHelper.this.httpMethod, from);
             }
         });
     }

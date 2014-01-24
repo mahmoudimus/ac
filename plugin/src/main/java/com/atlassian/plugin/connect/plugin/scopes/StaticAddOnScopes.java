@@ -221,7 +221,7 @@ public class StaticAddOnScopes
                 if (soapRpcPathBean.getKey().equals(soapRpcPathKey))
                 {
                     found = true;
-                    pathsBuilder.withSoapRpcResources(soapRpcPathBean);
+                    pathsBuilder.withSoapRpcResources(soapRpcPathBean, scopeBean.getMethods());
                     break;
                 }
 

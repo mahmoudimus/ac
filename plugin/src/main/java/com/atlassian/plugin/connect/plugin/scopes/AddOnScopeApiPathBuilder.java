@@ -27,11 +27,14 @@ public class AddOnScopeApiPathBuilder
         return this;
     }
 
-    public AddOnScopeApiPathBuilder withSoapRpcResources(AddOnScopeBean.SoapRpcPathBean soapRpcPathBean)
+    public AddOnScopeApiPathBuilder withSoapRpcResources(AddOnScopeBean.SoapRpcPathBean soapRpcPathBean, Collection<String> httpMethods)
     {
         for (String path : soapRpcPathBean.getPaths())
         {
-            soapResources.add(new RpcEncodedSoapApiScopeHelper("/rpc/soap" + prefixWithSlash(path), "http://soap.rpc.jira.atlassian.com", soapRpcPathBean.getRpcMethods()));
+            for (String httpMethod : httpMethods)
+            {
+                soapResources.add(new RpcEncodedSoapApiScopeHelper("/rpc/soap" + prefixWithSlash(path), "http://soap.rpc.jira.atlassian.com", soapRpcPathBean.getRpcMethods(), httpMethod));
+            }
         }
         return this;
     }
