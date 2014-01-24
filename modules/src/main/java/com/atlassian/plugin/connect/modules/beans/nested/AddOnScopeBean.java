@@ -9,20 +9,24 @@ public class AddOnScopeBean
     private Collection<String> restPathKeys; // set by gson
     private Collection<String> soapRpcPathKeys; // set by gson
     private Collection<String> jsonRpcPathKeys; // set by gson
+    private Collection<String> xmlRpcPathKeys; // set by gson
     private Collection<String> pathKeys; // set by gson
     private Collection<String> methods; // set by gson
 
     public AddOnScopeBean()
     {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
-    public AddOnScopeBean(String key, Collection<String> restPathKeys, Collection<String> soapRpcPathKeys, Collection<String> jsonRpcPathKeys, Collection<String> pathKeys, Collection<String> methods)
+    public AddOnScopeBean(String key, Collection<String> restPathKeys, Collection<String> soapRpcPathKeys,
+                          Collection<String> jsonRpcPathKeys, Collection<String> xmlRpcPathKeys, Collection<String> pathKeys,
+                          Collection<String> methods)
     {
         this.key = key;
         this.restPathKeys = restPathKeys;
         this.soapRpcPathKeys = soapRpcPathKeys;
         this.jsonRpcPathKeys = jsonRpcPathKeys;
+        this.xmlRpcPathKeys = jsonRpcPathKeys;
         this.pathKeys = pathKeys;
         this.methods = methods;
     }
@@ -45,6 +49,11 @@ public class AddOnScopeBean
     public Collection<String> getJsonRpcPathKeys()
     {
         return null == jsonRpcPathKeys ? Collections.<String>emptySet() : jsonRpcPathKeys;
+    }
+
+    public Collection<String> getXmlRpcPathKeys()
+    {
+        return null == xmlRpcPathKeys ? Collections.<String>emptySet() : xmlRpcPathKeys;
     }
 
     public Collection<String> getPathKeys()
@@ -101,21 +110,19 @@ public class AddOnScopeBean
         }
     }
 
-    public static class RpcPathBean
+    public static class RpcBean
     {
         private String key; // set by gson, must be unique within the JSON scopes file
-        private String path; // set by gson
         private Collection<String> rpcMethods; // set by gson
 
-        public RpcPathBean()
+        public RpcBean()
         {
-            this(null, null, null);
+            this(null, null);
         }
 
-        public RpcPathBean(String key, String path, Collection<String> rpcMethods)
+        public RpcBean(String key, Collection<String> rpcMethods)
         {
             this.key = key;
-            this.path = path;
             this.rpcMethods = rpcMethods;
         }
 
@@ -124,14 +131,30 @@ public class AddOnScopeBean
             return key;
         }
 
-        public String getPath()
-        {
-            return path;
-        }
-
         public Collection<String> getRpcMethods()
         {
             return rpcMethods;
+        }
+    }
+
+    public static class RpcPathBean extends RpcBean
+    {
+        private Collection<String> paths; // set by gson
+
+        public RpcPathBean()
+        {
+            this(null, null, null);
+        }
+
+        public RpcPathBean(String key, Collection<String> paths, Collection<String> rpcMethods)
+        {
+            super(key, rpcMethods);
+            this.paths = paths;
+        }
+
+        public Collection<String> getPaths()
+        {
+            return paths;
         }
     }
 
@@ -142,9 +165,9 @@ public class AddOnScopeBean
             super();
         }
 
-        public SoapRpcPathBean(String key, String path, Collection<String> rpcMethods)
+        public SoapRpcPathBean(String key, Collection<String> paths, Collection<String> rpcMethods)
         {
-            super(key, path, rpcMethods);
+            super(key, paths, rpcMethods);
         }
     }
 
@@ -155,9 +178,30 @@ public class AddOnScopeBean
             super();
         }
 
-        public JsonRpcPathBean(String key, String path, Collection<String> rpcMethods)
+        public JsonRpcPathBean(String key, Collection<String> paths, Collection<String> rpcMethods)
         {
-            super(key, path, rpcMethods);
+            super(key, paths, rpcMethods);
+        }
+    }
+
+    public static class XmlRpcBean extends RpcBean
+    {
+        private Collection<String> prefixes; // set by gson
+
+        public XmlRpcBean()
+        {
+            this(null, null, null);
+        }
+
+        public XmlRpcBean(String key, Collection<String> prefixes, Collection<String> rpcMethods)
+        {
+            super(key, rpcMethods);
+            this.prefixes = prefixes;
+        }
+
+        public Collection<String> getPrefixes()
+        {
+            return prefixes;
         }
     }
 

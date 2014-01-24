@@ -5,7 +5,11 @@ import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.PathScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
+import com.atlassian.plugin.connect.spi.permission.scope.XmlRpcApiScopeHelper;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -14,6 +18,7 @@ public class AddOnScopeApiPathBuilder
     Collection<RestApiScopeHelper.RestScope> restResources = new ArrayList<RestApiScopeHelper.RestScope>();
     Collection<RpcEncodedSoapApiScopeHelper> soapResources = new ArrayList<RpcEncodedSoapApiScopeHelper>();
     Collection<JsonRpcApiScopeHelper>        jsonResources = new ArrayList<JsonRpcApiScopeHelper>();
+    Collection<XmlRpcApiScopeHelper>         xmlResources = new ArrayList<XmlRpcApiScopeHelper>();
     Collection<PathScopeHelper>              paths         = new ArrayList<PathScopeHelper>();
 
     public AddOnScopeApiPathBuilder withRestPaths(AddOnScopeBean.RestPathBean restPathBean, Collection<String> methods)
@@ -28,13 +33,28 @@ public class AddOnScopeApiPathBuilder
 
     public AddOnScopeApiPathBuilder withSoapRpcResources(AddOnScopeBean.SoapRpcPathBean soapRpcPathBean)
     {
-        soapResources.add(new RpcEncodedSoapApiScopeHelper("/rpc/soap" + prefixWithSlash(soapRpcPathBean.getPath()), "http://soap.rpc.jira.atlassian.com", soapRpcPathBean.getRpcMethods()));
+        for (String path : soapRpcPathBean.getPaths())
+        {
+            soapResources.add(new RpcEncodedSoapApiScopeHelper("/rpc/soap" + prefixWithSlash(path), "http://soap.rpc.jira.atlassian.com", soapRpcPathBean.getRpcMethods()));
+        }
         return this;
     }
 
     public AddOnScopeApiPathBuilder withJsonRpcResources(AddOnScopeBean.JsonRpcPathBean jsonRpcPathBean)
     {
-        jsonResources.add(new JsonRpcApiScopeHelper("/rpc/json-rpc" + prefixWithSlash(jsonRpcPathBean.getPath()), jsonRpcPathBean.getRpcMethods()));
+        for (String path : jsonRpcPathBean.getPaths())
+        {
+            jsonResources.add(new JsonRpcApiScopeHelper("/rpc/json-rpc" + prefixWithSlash(path), jsonRpcPathBean.getRpcMethods()));
+        }
+        return this;
+    }
+
+    public AddOnScopeApiPathBuilder withXmlRpcResources(AddOnScopeBean.XmlRpcBean xmlRpcBean)
+    {
+        for (String prefix : xmlRpcBean.getPrefixes())
+        {
+            xmlResources.add(new XmlRpcApiScopeHelper("/rpc/xmlrpc", prefixXmlRpcMethods(xmlRpcBean.getRpcMethods(), prefix)));
+        }
         return this;
     }
 
@@ -48,7 +68,7 @@ public class AddOnScopeApiPathBuilder
     {
         for (AddOnScopeApiPath path : paths)
         {
-            path.addTo(restResources, soapResources, jsonResources, this.paths);
+            path.addTo(restResources, soapResources, jsonResources, xmlResources, this.paths);
         }
 
         return this;
@@ -73,6 +93,11 @@ public class AddOnScopeApiPathBuilder
             paths.add(new AddOnScopeApiPath.JsonRpcApiPath(jsonResources));
         }
 
+        if (!xmlResources.isEmpty())
+        {
+            paths.add(new AddOnScopeApiPath.XmlRpcApiPath(xmlResources));
+        }
+
         if (!this.paths.isEmpty())
         {
             paths.add(new AddOnScopeApiPath.ApiPath(this.paths));
@@ -88,5 +113,17 @@ public class AddOnScopeApiPathBuilder
             : path.startsWith("/")
                 ? path
                 : "/" + path;
+    }
+
+    private static Collection<String> prefixXmlRpcMethods(Collection<String> rpcMethods, final String prefix)
+    {
+        return Collections2.transform(rpcMethods, new Function<String, String>()
+        {
+            @Override
+            public String apply(@Nullable String method)
+            {
+                return prefix + "." + method;
+            }
+        });
     }
 }

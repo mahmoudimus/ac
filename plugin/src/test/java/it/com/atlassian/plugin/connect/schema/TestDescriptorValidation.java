@@ -7,7 +7,7 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
