@@ -26,13 +26,19 @@ public class AddOnScopeApiPathBuilder
 
     public AddOnScopeApiPathBuilder withSoapRpcResources(AddOnScopeBean.SoapRpcPathBean soapRpcPathBean)
     {
-        soapResources.add(new RpcEncodedSoapApiScopeHelper("/rpc/soap" + prefixWithSlash(soapRpcPathBean.getPath()), "http://soap.rpc.jira.atlassian.com", soapRpcPathBean.getRpcMethods()));
+        for (String path : soapRpcPathBean.getPaths())
+        {
+            soapResources.add(new RpcEncodedSoapApiScopeHelper("/rpc/soap" + prefixWithSlash(path), "http://soap.rpc.jira.atlassian.com", soapRpcPathBean.getRpcMethods()));
+        }
         return this;
     }
 
     public AddOnScopeApiPathBuilder withJsonRpcResources(AddOnScopeBean.JsonRpcPathBean jsonRpcPathBean)
     {
-        jsonResources.add(new JsonRpcApiScopeHelper("/rpc/json-rpc" + prefixWithSlash(jsonRpcPathBean.getPath()), jsonRpcPathBean.getRpcMethods()));
+        for (String path : jsonRpcPathBean.getPaths())
+        {
+            jsonResources.add(new JsonRpcApiScopeHelper("/rpc/json-rpc" + prefixWithSlash(path), jsonRpcPathBean.getRpcMethods()));
+        }
         return this;
     }
 
