@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.scopes;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBeans;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.gson.GsonBuilder;

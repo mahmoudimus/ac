@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor.url;
 
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,11 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
-
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)

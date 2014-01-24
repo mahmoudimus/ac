@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities;
 
+import com.google.common.base.Strings;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.base.Strings;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

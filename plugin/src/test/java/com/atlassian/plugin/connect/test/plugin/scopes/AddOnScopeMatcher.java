@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPath;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
 import java.util.Collection;
-
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPath;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

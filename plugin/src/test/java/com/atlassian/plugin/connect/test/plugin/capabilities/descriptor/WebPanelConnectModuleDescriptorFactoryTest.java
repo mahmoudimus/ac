@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModu
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebPanelConnectModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebPanelConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
-import com.atlassian.plugin.connect.test.plugin.capabilities.util.TestContextBuilder;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.context.extractor.ProjectContextMapParameterExtractor;
@@ -17,6 +16,7 @@ import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.Projec
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.connect.test.plugin.capabilities.util.TestContextBuilder;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.web.Condition;

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.test.plugin.scopes.AbstractScopesTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -13,7 +14,7 @@ public class JiraDownloadScopesTest extends AbstractScopesTest
 {
     public JiraDownloadScopesTest(ScopeName scope, HttpMethod method, String path, boolean expectedOutcome)
     {
-        super(scope, method, path, expectedOutcome, "/jira", "JIRA");
+        super(scope, method, path, "", expectedOutcome, "/jira", "JIRA");
     }
 
     @Parameterized.Parameters(name = "Scope {0}: {1} {2} --> {3}")
