@@ -6,6 +6,8 @@ import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.XmlRpcApiScopeHelper;
 import com.atlassian.sal.api.user.UserKey;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -34,7 +36,8 @@ public interface AddOnScopeApiPath
         private final Collection<RestApiScopeHelper.RestScope> resources;
         private final RestApiScopeHelper restApiScopeHelper;
 
-        RestApiPath(Collection<RestApiScopeHelper.RestScope> resources)
+        @VisibleForTesting
+        public RestApiPath(Collection<RestApiScopeHelper.RestScope> resources)
         {
             this.resources = resources;
             this.restApiScopeHelper = new RestApiScopeHelper(Preconditions.checkNotNull(resources));

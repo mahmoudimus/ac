@@ -4,6 +4,13 @@ AP.define("dialog", ["_dollar", "_rpc"],
    * The Dialog module provides a mechanism for launching modal dialogs from within an add-on's iframe.
    * A modal dialog displays information without requiring the user to leave the current page.
    * The dialog is opened over the entire window, rather than within the iframe itself.
+   * ###Styling your dialog to look like a standard Atlassian dialog
+   * By default the dialog iframe is undecorated. It's up to the developer to style the dialog.
+   * <img src="../assets/images/connectdialogchromelessexample.jpeg" width="100%" />
+   *
+   * In order to maintain a consistent look and feel between the host application and the add-on,
+   * we encourage add-on developers to style their dialogs to match Atlassian's Design Guidelines for modal dialogs.
+   * To do that, you'll need to add the AUI styles to your dialog.
    *
    * For more information, read about the Atlassian User Interface [dialog component](https://docs.atlassian.com/aui/latest/docs/dialog.html).
    * @exports Dialog

@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.plugin.scopes;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBeans;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
@@ -58,7 +60,8 @@ public class StaticAddOnScopes
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
-    static Collection<AddOnScope> buildFor(String... products) throws IOException
+    @VisibleForTesting
+    public static Collection<AddOnScope> buildFor(String... products) throws IOException
     {
         Map<ScopeName, AddOnScope> keyToScope = new HashMap<ScopeName, AddOnScope>();
 
