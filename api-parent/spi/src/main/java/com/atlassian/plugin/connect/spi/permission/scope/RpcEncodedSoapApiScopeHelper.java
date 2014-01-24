@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.readDocument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Collections2.transform;
 
 /**
@@ -24,24 +25,33 @@ public final class RpcEncodedSoapApiScopeHelper
 {
     private final String path;
     private final Collection<SoapScope> soapActions;
+    private final String httpMethod;
     private transient final Iterable<ApiResourceInfo> apiResourceInfo;
 
-    public RpcEncodedSoapApiScopeHelper(final String path, Collection<SoapScope> soapActions)
+    public RpcEncodedSoapApiScopeHelper(final String path, Collection<SoapScope> soapActions, String httpMethod)
     {
         this.path = path;
         this.soapActions = soapActions;
+        this.httpMethod = checkNotNull(httpMethod).toUpperCase();
         this.apiResourceInfo = transform(soapActions, new Function<SoapScope, ApiResourceInfo>()
         {
             @Override
             public ApiResourceInfo apply(SoapScope from)
             {
-                return new ApiResourceInfo(path, "POST", from.name);
+                return new ApiResourceInfo(path, RpcEncodedSoapApiScopeHelper.this.httpMethod, from.name);
             }
         });
     }
 
     public RpcEncodedSoapApiScopeHelper(String path, final String namespace,
                                         Collection<String> methods)
+    {
+        this(path, namespace, methods, "POST");
+    }
+
+    public RpcEncodedSoapApiScopeHelper(String path, final String namespace,
+                                        Collection<String> methods,
+                                        String httpMethod)
     {
         // convert to ArrayList because the Collection subclass returned from Collections2.transform() has a broken equals()
         this(path, new ArrayList<SoapScope>(transform(methods, new Function<String, SoapScope>()
@@ -51,11 +61,16 @@ public final class RpcEncodedSoapApiScopeHelper
             {
                 return new SoapScope(namespace, from);
             }
-        })));
+        })), httpMethod);
     }
 
     public boolean allow(HttpServletRequest request, UserKey user)
     {
+        if (!httpMethod.equals(request.getMethod()))
+        {
+            return false;
+        }
+
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
         {

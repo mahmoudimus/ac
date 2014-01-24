@@ -189,12 +189,12 @@
   "jsonRpcPaths": [
     {
       "key": "jira-json-service-v2-read",
-      "paths": ["/jirasoapservice-v2($|/.*)"],
+      "paths": ["/jirasoapservice-v2"],
       "rpcMethods": ["getIssue", "getIssuesFromJqlSearch", "getVersions", "getIssuesFromTextSearchWithProject", "getSecurityLevels", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getAttachmentsFromIssue", "getGroup", "getProjectAvatar", "getFieldsForEdit", "getIssueById", "getUser", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getFieldsForCreate", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
     },
     {
       "key": "jira-json-service-v2-write",
-      "paths": ["/jirasoapservice-v2($|/.*)"],
+      "paths": ["/jirasoapservice-v2"],
       "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
     }
   ],

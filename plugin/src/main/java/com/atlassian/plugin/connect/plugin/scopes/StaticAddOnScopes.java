@@ -157,7 +157,7 @@ public class StaticAddOnScopes
                 if (jsonRpcPathBean.getKey().equals(jsonRpcPathKey))
                 {
                     found = true;
-                    pathsBuilder.withJsonRpcResources(jsonRpcPathBean);
+                    pathsBuilder.withJsonRpcResources(jsonRpcPathBean, scopeBean.getMethods());
                     break;
                 }
 
@@ -221,7 +221,7 @@ public class StaticAddOnScopes
                 if (soapRpcPathBean.getKey().equals(soapRpcPathKey))
                 {
                     found = true;
-                    pathsBuilder.withSoapRpcResources(soapRpcPathBean);
+                    pathsBuilder.withSoapRpcResources(soapRpcPathBean, scopeBean.getMethods());
                     break;
                 }
 
