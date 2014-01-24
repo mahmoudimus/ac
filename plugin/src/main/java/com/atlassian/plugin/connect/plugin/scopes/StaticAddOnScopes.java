@@ -157,7 +157,7 @@ public class StaticAddOnScopes
                 if (jsonRpcPathBean.getKey().equals(jsonRpcPathKey))
                 {
                     found = true;
-                    pathsBuilder.withJsonRpcResources(jsonRpcPathBean);
+                    pathsBuilder.withJsonRpcResources(jsonRpcPathBean, scopeBean.getMethods());
                     break;
                 }
 

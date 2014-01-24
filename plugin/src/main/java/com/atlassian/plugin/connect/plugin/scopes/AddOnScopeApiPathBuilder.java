@@ -36,11 +36,14 @@ public class AddOnScopeApiPathBuilder
         return this;
     }
 
-    public AddOnScopeApiPathBuilder withJsonRpcResources(AddOnScopeBean.JsonRpcPathBean jsonRpcPathBean)
+    public AddOnScopeApiPathBuilder withJsonRpcResources(AddOnScopeBean.JsonRpcPathBean jsonRpcPathBean, Collection<String> httpMethods)
     {
         for (String path : jsonRpcPathBean.getPaths())
         {
-            jsonResources.add(new JsonRpcApiScopeHelper("/rpc/json-rpc" + prefixWithSlash(path), jsonRpcPathBean.getRpcMethods()));
+            for (String httpMethod : httpMethods)
+            {
+                jsonResources.add(new JsonRpcApiScopeHelper("/rpc/json-rpc" + prefixWithSlash(path), jsonRpcPathBean.getRpcMethods(), httpMethod));
+            }
         }
         return this;
     }
