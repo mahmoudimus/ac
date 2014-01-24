@@ -30,7 +30,7 @@
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["workflowscheme"],
+      "restPathKeys": ["field", "workflowscheme"],
       "methods": ["GET", "POST", "PUT", "DELETE"]
     }
   ],
