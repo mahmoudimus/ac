@@ -10,10 +10,9 @@ import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.empty;
 import static com.google.common.collect.Lists.newArrayList;
 
-public abstract class BaseContentMacroModuleBean extends NameToKeyBean
+public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
 {
     /**
      * The link to the add-on resource that provides the content for the iFrame.

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.modules.beans.NameToKeyBean;
+import com.atlassian.plugin.connect.modules.beans.GeneratedKeyBean;
 import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
@@ -60,7 +60,7 @@ public class IFramePageServletDescriptorFactory
     /**
      * @return an iframe servlet module descriptor suitable for providing a JIRA Project admin tab.
      */
-    public ServletModuleDescriptor createIFrameProjectConfigTabServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
+    public ServletModuleDescriptor createIFrameProjectConfigTabServletDescriptor(final Plugin plugin, final GeneratedKeyBean bean,
                                                                                  final String localUrl, final String path,
                                                                                  final String decorator, final String templateSuffix,
                                                                                  final Condition condition,
@@ -86,7 +86,7 @@ public class IFramePageServletDescriptorFactory
                 servletBean.getiFrameParams());
     }
 
-    private ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
+    private ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final GeneratedKeyBean bean,
                                                                   final String localUrl, final String path,
                                                                   final String decorator, final String templateSuffix,
                                                                   final Condition condition,
@@ -101,7 +101,7 @@ public class IFramePageServletDescriptorFactory
                 new IFrameParamsImpl());
     }
 
-    private ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
+    private ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final GeneratedKeyBean bean,
                                                                   final String path,
                                                                   final PageInfo pageInfo,
                                                                   final ModuleFactoryType type,

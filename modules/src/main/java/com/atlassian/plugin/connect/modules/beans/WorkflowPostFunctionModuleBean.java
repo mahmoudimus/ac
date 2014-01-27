@@ -158,7 +158,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
  * @since 1.0
  */
 
-public class WorkflowPostFunctionModuleBean extends NameToKeyBean
+public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
 {
     /**
      * The description of the add-on's functionality that will show up in the *Manage add-ons* page.
