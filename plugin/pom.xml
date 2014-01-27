@@ -363,6 +363,10 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>atlassian-connect-modules</artifactId>
                         </testBundleExclude>
+                        <testBundleExclude>
+                            <groupId>com.google.code.gson</groupId>
+                            <artifactId>gson</artifactId>
+                        </testBundleExclude>
                     </testBundleExcludes>
                     <instructions>
                         <!-- <Import-Package>
@@ -567,7 +571,7 @@
                             </systemProperties>
                             <excludes>
                                 <exclude>it/jira/*.java</exclude>
-                                <exclude>it/*/jira/*.java</exclude>
+                                <exclude>it/**/jira/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -582,7 +586,7 @@
                             </systemProperties>
                             <excludes>
                                 <exclude>it/confluence/*.java</exclude>
-                                <exclude>it/*/confluence/*.java</exclude>
+                                <exclude>it/**/confluence/*.java</exclude>
                             </excludes>
                         </testGroup>
                     </testGroups>

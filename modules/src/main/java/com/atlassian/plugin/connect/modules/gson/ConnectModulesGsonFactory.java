@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.gson;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,11 +28,17 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapter(mapStringType, new IgnoredEmptyMapSerializer())
                 .registerTypeAdapter(String.class, new EmptyStringIgnoringTypeAdapter().nullSafe())
                 .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
+                .disableHtmlEscaping()
                 ;
     }
 
     public static Gson getGson()
     {
         return getGsonBuilder().create();
+    }
+    
+    public static String addonBeanToJson(ConnectAddonBean bean)
+    {
+        return getGson().toJson(bean);
     }
 }

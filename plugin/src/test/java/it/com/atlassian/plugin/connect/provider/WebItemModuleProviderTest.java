@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
@@ -20,9 +21,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import it.com.atlassian.plugin.connect.TestPluginInstaller;
+
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,13 +41,16 @@ public class WebItemModuleProviderTest
     public static final String OTHER_MODULE_NAME = "My Other Web Item";
     public static final String OTHER_MODULE_KEY = "my-other-web-item";
     public static final String CONTEXT_PATH = "http://ondemand.com/someProduct";
+    public static final String BASE_URL = "http://my.connect.addon.com";
 
     private final WebItemModuleProvider webItemModuleProvider;
+    private final TestPluginInstaller testPluginInstaller;
     private HttpServletRequest servletRequest;
 
-    public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider)
+    public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller)
     {
         this.webItemModuleProvider = webItemModuleProvider;
+        this.testPluginInstaller = testPluginInstaller;
     }
     
     @BeforeClass
@@ -74,7 +82,7 @@ public class WebItemModuleProviderTest
     }
 
     @Test
-    public void singleAbsoluteLinkWithAddOnContext() throws Exception
+    public void singleAbsoluteLinkWithPageContext() throws Exception
     {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
@@ -162,6 +170,47 @@ public class WebItemModuleProviderTest
     }
 
     @Test
+    public void singleAddonLink() throws Exception
+    {
+        WebItemModuleBean bean = newWebItemBean()
+                .withName(new I18nProperty(MODULE_NAME, ""))
+                .withKey(MODULE_KEY)
+                .withUrl("/my/addon")
+                .withLocation("atl.admin/menu")
+                .build();
+
+        ConnectAddonBean addon = newConnectAddonBean()
+                .withName(PLUGIN_NAME)
+                .withKey(PLUGIN_KEY)
+                .withBaseurl(BASE_URL)
+                .withModules("webItems",bean)
+                .build();
+
+        Plugin plugin = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+
+            assertEquals(1, descriptors.size());
+
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
+            descriptor.enabled();
+
+            assertTrue(descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+        }
+        finally
+        {
+            if(null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
+    }
+
+    @Test
     public void multipleWebItems() throws Exception
     {
         WebItemModuleBean bean = newWebItemBean()
@@ -178,18 +227,38 @@ public class WebItemModuleProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean, bean2));
-
-        assertEquals(2, descriptors.size());
-
-        WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
-        descriptor.enabled();
-
-        WebItemModuleDescriptor descriptor2 = (WebItemModuleDescriptor) descriptors.get(1);
-        descriptor2.enabled();
-
-        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
-        assertEquals(CONTEXT_PATH + "/plugins/servlet/ac/my-key/my/addon", descriptor2.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        ConnectAddonBean addon = newConnectAddonBean()
+                .withName(PLUGIN_NAME)
+                .withKey(PLUGIN_KEY)
+                .withBaseurl(BASE_URL)
+                .withModules("webItems",bean,bean2)
+                .build();
+        
+        Plugin plugin = null;
+        
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+            
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean, bean2));
+    
+            assertEquals(2, descriptors.size());
+    
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
+            descriptor.enabled();
+    
+            WebItemModuleDescriptor descriptor2 = (WebItemModuleDescriptor) descriptors.get(1);
+            descriptor2.enabled();
+    
+            assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+            assertTrue(descriptor2.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+        }
+        finally
+        {
+            if(null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
     }
 }
