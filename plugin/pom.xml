@@ -459,6 +459,10 @@
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
+                                <fastdev.mvn.command>${mvnCommand}</fastdev.mvn.command>
+                                <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                                <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
+                                <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -519,6 +523,10 @@
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
+                                <fastdev.mvn.command>${mvnCommand}</fastdev.mvn.command>
+                                <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                                <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
+                                <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -1006,5 +1014,6 @@
         <plugin.testrunner.version>1.1.3</plugin.testrunner.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
+        <mvnCommand>/usr/bin/mvn</mvnCommand>
     </properties>
 </project>

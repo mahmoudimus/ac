@@ -75,7 +75,8 @@ public class ConfluenceWebItemModuleProviderTest
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
         
         Principal principal = userManager.resolve("admin");
-        authenticationListener.authenticationSuccess(new Authenticator.Result.Success(principal),httpContext.getRequest(),httpContext.getResponse());
+        authenticationListener.authenticationSuccess(new Authenticator.Result.Success(principal), httpContext.getRequest(), httpContext.getResponse());
+
     }
 
     @Test
