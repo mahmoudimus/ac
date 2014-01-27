@@ -7,7 +7,7 @@ _AP.define("messages/main", ["_dollar"], function($) {
     }
 
     function getMessageBar(){
-        var msgBar = $('.' + MESSAGE_BAR_ID);
+        var msgBar = $('#' + MESSAGE_BAR_ID);
 
         if(msgBar.length < 1){
             msgBar = $('<div id="' + MESSAGE_BAR_ID + '" />').appendTo('body');
@@ -39,7 +39,7 @@ _AP.define("messages/main", ["_dollar"], function($) {
             $.extend(options, {title: title, body: body });
 
             if($.inArray(name, MESSAGE_TYPES) < 0){
-                throw "Invalid message type";
+                throw "Invalid message type. Must be: " + MESSAGE_TYPES.join(", ");
             }
             if(validateMessageId(options.id)){
                 AJS.messages[name](msgBar, options);
