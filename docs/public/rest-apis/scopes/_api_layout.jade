@@ -1,0 +1,42 @@
+mixin httpMethod
+    span.aui-lozenge.aui-lozenge-subtle
+        block
+
+mixin scope
+    span.aui-lozenge.aui-lozenge-default.aui-lozenge-complete
+        block
+
+mixin arrowRight
+    span.aui-icon.aui-icon-small.aui-iconfont-devtools-arrow-right.faded
+
+
+| Some doc here
+
+div.ac-properties
+    - each api in scope.apis
+        a(id = api.foo)
+        h3
+            code
+                = api.path
+        div.aui-group
+            div.aui-item.ac-property-key
+                h5 Versions
+            div.aui-item
+                - each version in api.versions
+                    span.aui-label
+                        != version
+        div.aui-group
+            div.aui-item.ac-property-key
+                h5 Scopes
+            div.aui-item
+                - each methods, scope in api.scopes
+                    p
+                    - each method in methods
+                        +httpMethod
+                            != method
+                        |&nbsp;
+                    +arrowRight
+                    |&nbsp;
+                    +scope
+                        !=scope
+

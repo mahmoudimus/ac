@@ -18,6 +18,9 @@ var srcFiles = ["public", "package.json"];
 
 var jiraSchemaPath = '../plugin/target/classes/schema/jira-schema.json';
 var confluenceSchemaPath = '../plugin/target/classes/schema/confluence-schema.json';
+var jiraScopesPath = '../plugin/target/classes/com/atlassian/connect/scopes.jira.json';
+var confluenceScopesPath = '../plugin/target/classes/com/atlassian/connect/scopes.confluence.json';
+var commonScopesPath = '../plugin/target/classes/com/atlassian/connect/scopes.common.json';
 
 program
   .option('-s, --serve', 'Serve and automatically watch for changes')
@@ -49,10 +52,10 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
                 if (property.items.anyOf) {
                     _.each(property.items.anyOf, function (child) {
                         if (child["$ref"] === "#") {
-                            // self reference 
+                            // self reference
                             property.arrayTypes.push({
-                                id: parent.id, 
-                                title: parent.name, 
+                                id: parent.id,
+                                title: parent.name,
                                 slug: parent.slug
                             });
                         } else {
@@ -73,7 +76,7 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
                     });
                 }
             }
-            
+
             property = _.pick(property, ["id", "type", "title", "slug", "description", "fieldDescription", "arrayType", "arrayTypes"]);
         } else if (property.type === "object" && property.id) {
             // if there's no id, it means that any object is allowed here
@@ -248,6 +251,36 @@ function findFragmentEntities(schemas) {
     return entitiesToModel(entities);
 }
 
+function convertRestScopesToViewModel(scopes) {
+    var apis = _.map(scopes.raw.restPaths, function(restPath) {
+      return _.map(restPath.basePaths, function(basePath) {
+        var path = "/rest/" + restPath.name + "/{version}" + basePath;
+        return {
+          path : path,
+          id : slugify(path),
+          versions : restPath.versions,
+          scopes : scopes.byKey[restPath.key]
+        }
+      });
+    });
+    return { apis : _.flatten(apis)};
+}
+
+function prepareScope(rawScopes)
+{
+    var scopes = {};
+    _.each(rawScopes.scopes, function(scope) {
+      _.each(scope.restPathKeys, function(restPathKey) {
+        scopes[restPathKey] = scopes[restPathKey] || {};
+        scopes[restPathKey][scope.key] = scope.methods;
+      });
+    });
+    return {
+        raw: rawScopes,
+        byKey : scopes
+    }
+}
+
 /**
  * Delete the build dir, regenerate the model from the schema and rebuild the documentation.
  */
@@ -269,6 +302,20 @@ function rebuildHarpSite() {
         fragment: findFragmentEntities(schemas)
     };
 
+    var scopes = {
+        jira: prepareScope(fs.readJsonSync(jiraScopesPath)),
+        confluence: prepareScope(fs.readJsonSync(confluenceScopesPath)),
+        common: prepareScope(fs.readJsonSync(commonScopesPath))
+    };
+
+    var scopesView = {
+        confluence: {
+            rest: convertRestScopesToViewModel(scopes.confluence)
+//            jsonrpc: convertJsonRpcScopesToViewModel(scopes.confluence),
+//            xmlrpc: convertXmlRpcScopesToViewModel(scopes.confluence)
+        }
+    };
+
     debug("\nEntities:\n", util.inspect(entities, {depth: 3}), "\n");
 
     copyToGenSrc(srcFiles);
@@ -287,7 +334,8 @@ function rebuildHarpSite() {
 
     harpGlobals.globals = _.extend({
         entityLinks: entityLinks,
-        entities: entities
+        entities: entities,
+        scopes: scopesView
     }, harpGlobals.globals);
 
     fs.outputFileSync(genSrcPrefix + '/harp.json', JSON.stringify(harpGlobals, null, 2));
