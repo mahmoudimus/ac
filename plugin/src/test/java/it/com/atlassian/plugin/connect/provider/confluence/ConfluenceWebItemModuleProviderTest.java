@@ -1,12 +1,10 @@
 package it.com.atlassian.plugin.connect.provider.confluence;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
@@ -14,7 +12,6 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
-import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -24,17 +21,12 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import com.atlassian.sal.api.auth.AuthenticationListener;
-
-
-import com.atlassian.sal.api.auth.Authenticator;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.web.context.HttpContext;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.TestPluginInstaller;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -58,18 +50,14 @@ public class ConfluenceWebItemModuleProviderTest
 
     private final WebItemModuleProvider webItemModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
-    private final AuthenticationListener authenticationListener;
-    private final UserManager userManager;
-    private final HttpContext httpContext;
     private HttpServletRequest servletRequest;
+    private final TestAuthenticator testAuthenticator;
 
-    public ConfluenceWebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, AuthenticationListener authenticationListener, UserManager userManager, HttpContext httpContext)
+    public ConfluenceWebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
         this.webItemModuleProvider = webItemModuleProvider;
         this.testPluginInstaller = testPluginInstaller;
-        this.authenticationListener = authenticationListener;
-        this.userManager = userManager;
-        this.httpContext = httpContext;
+        this.testAuthenticator = testAuthenticator;
     }
 
     @BeforeClass
@@ -78,8 +66,7 @@ public class ConfluenceWebItemModuleProviderTest
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
 
-        ConfluenceUser user= FindUserHelper.getUserByUsername("admin");
-        AuthenticatedUserThreadLocal.set(user);
+        testAuthenticator.authenticateUser("admin");
 
     }
 
@@ -99,7 +86,7 @@ public class ConfluenceWebItemModuleProviderTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
-                .withModules("webItems",bean)
+                .withModules("webItems", bean)
                 .build();
 
         Plugin plugin = null;
@@ -122,20 +109,20 @@ public class ConfluenceWebItemModuleProviderTest
 
             when(space.getId()).thenReturn(1234L);
             when(space.getKey()).thenReturn(SPACE_KEY);
-            
+
             when(wic.getSpace()).thenReturn(space);
             when(wic.getPage()).thenReturn(page);
 
-            context.put("webInterfaceContext",wic);
+            context.put("webInterfaceContext", wic);
 
             String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
 
-            assertTrue("wrong url prefix. expected: " + BASE_URL + "/my/addon but got: " + convertedUrl,convertedUrl.startsWith(BASE_URL + "/my/addon"));
+            assertTrue("wrong url prefix. expected: " + BASE_URL + "/my/addon but got: " + convertedUrl, convertedUrl.startsWith(BASE_URL + "/my/addon"));
             assertTrue("space key not found in: " + convertedUrl, convertedUrl.contains("mySpace=" + SPACE_KEY));
         }
         finally
         {
-            if(null != plugin)
+            if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
             }

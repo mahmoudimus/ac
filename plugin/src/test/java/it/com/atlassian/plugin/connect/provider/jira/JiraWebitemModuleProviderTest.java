@@ -23,6 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.TestPluginInstaller;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -48,12 +49,14 @@ public class JiraWebitemModuleProviderTest
     
     private final WebItemModuleProvider webItemModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
+    private final TestAuthenticator testAuthenticator;
     private HttpServletRequest servletRequest;
 
-    public JiraWebitemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller)
+    public JiraWebitemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
         this.webItemModuleProvider = webItemModuleProvider;
         this.testPluginInstaller = testPluginInstaller;
+        this.testAuthenticator = testAuthenticator;
     }
 
     @BeforeClass
@@ -61,6 +64,8 @@ public class JiraWebitemModuleProviderTest
     {
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
+        
+        testAuthenticator.authenticateUser("admin");
     }
 
     @Test
