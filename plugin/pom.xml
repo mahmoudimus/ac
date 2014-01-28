@@ -224,6 +224,7 @@
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
         </dependency>
+        
         <dependency>
             <groupId>com.atlassian.uri</groupId>
             <artifactId>atlassian-uri</artifactId>

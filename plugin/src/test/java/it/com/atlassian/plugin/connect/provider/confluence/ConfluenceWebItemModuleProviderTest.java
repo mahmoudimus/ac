@@ -6,10 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
+import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
+import com.atlassian.confluence.user.ConfluenceUser;
+import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -73,16 +77,16 @@ public class ConfluenceWebItemModuleProviderTest
     {
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
-        
-        Principal principal = userManager.resolve("admin");
-        authenticationListener.authenticationSuccess(new Authenticator.Result.Success(principal), httpContext.getRequest(), httpContext.getResponse());
+
+        ConfluenceUser user= FindUserHelper.getUserByUsername("admin");
+        AuthenticatedUserThreadLocal.set(user);
 
     }
 
     @Test
     public void singleAddonLinkWithReplacement() throws Exception
     {
-        System.out.println("session user: " + userManager.getRemoteUser().getUsername());
+        //System.out.println("session user: " + userManager.getRemoteUser().getUsername());
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -118,6 +122,9 @@ public class ConfluenceWebItemModuleProviderTest
 
             when(space.getId()).thenReturn(1234L);
             when(space.getKey()).thenReturn(SPACE_KEY);
+            
+            when(wic.getSpace()).thenReturn(space);
+            when(wic.getPage()).thenReturn(page);
 
             context.put("webInterfaceContext",wic);
 
