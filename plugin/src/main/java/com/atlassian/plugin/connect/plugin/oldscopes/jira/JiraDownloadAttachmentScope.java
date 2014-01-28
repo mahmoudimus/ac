@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.api.jira.JiraPermissions;
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
-import com.atlassian.plugin.connect.spi.permission.scope.DownloadScopeHelper;
+import com.atlassian.plugin.connect.spi.permission.scope.PathScopeHelper;
 import com.atlassian.sal.api.user.UserKey;
 
 import javax.annotation.Nullable;
@@ -15,12 +15,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class JiraDownloadAttachmentScope extends AbstractPermission implements ApiScope
 {
-    private final DownloadScopeHelper delegate;
+    private final PathScopeHelper delegate;
 
     public JiraDownloadAttachmentScope()
     {
         super(JiraPermissions.DOWNLOAD_ATTACHMENTS);
-        this.delegate = new DownloadScopeHelper("/secure/attachment");
+        this.delegate = new PathScopeHelper(false, "/secure/attachment");
     }
 
     @Override

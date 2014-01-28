@@ -1,5 +1,6 @@
 package com.atlassian.json.schema.doclet;
 
+import com.atlassian.json.schema.annotation.SchemaIgnore;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.doclet.model.SchemaClassDoc;
 import com.atlassian.json.schema.doclet.model.SchemaFieldDoc;
@@ -80,7 +81,7 @@ public class JsonSchemaDoclet
         
         for (FieldDoc fieldDoc : classDoc.fields())
         {
-            if (!fieldDoc.isTransient() && !fieldDoc.isStatic())
+            if (!fieldDoc.isTransient() && !fieldDoc.isStatic() && !hasAnnotation(fieldDoc, SchemaIgnore.class))
             {
                 SchemaFieldDoc schemaFieldDoc = new SchemaFieldDoc();
                 schemaFieldDoc.setFieldName(fieldDoc.name());
@@ -104,6 +105,22 @@ public class JsonSchemaDoclet
         }
         
         addFieldDocs(classDoc.superclass(),schemaFieldDocs);
+    }
+
+    private static boolean hasAnnotation(FieldDoc fieldDoc, Class<?> annoClass)
+    {
+        boolean foundAnnotation = false;
+        
+        for(AnnotationDesc annoDesc : fieldDoc.annotations())
+        {
+            if(annoDesc.toString().equals("@" + annoClass.getName()) || annoDesc.toString().equals("@" + annoClass.getSimpleName()))
+            {
+                foundAnnotation = true;
+                break;
+            }
+        }
+        
+        return foundAnnotation;
     }
 
     private static String getDocWithIncludes(Doc doc)

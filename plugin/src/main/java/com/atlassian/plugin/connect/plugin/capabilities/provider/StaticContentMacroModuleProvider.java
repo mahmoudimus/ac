@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.StaticContent
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.osgi.framework.BundleContext;
@@ -24,9 +25,11 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
                                             IFramePageServletDescriptorFactory servletDescriptorFactory,
                                             HostContainer hostContainer,
                                             AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
-                                            RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+                                            RelativeAddOnUrlConverter relativeAddOnUrlConverter,
+                                            I18nPropertiesPluginManager i18nPropertiesPluginManager)
     {
-        super(webItemModuleDescriptorFactory, servletDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, relativeAddOnUrlConverter);
+        super(webItemModuleDescriptorFactory, servletDescriptorFactory, hostContainer,
+                absoluteAddOnUrlConverter, relativeAddOnUrlConverter, i18nPropertiesPluginManager);
         this.macroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 

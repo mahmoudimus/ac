@@ -12,20 +12,14 @@ import com.atlassian.confluence.it.plugin.WebTestPluginHelper;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.it.rpc.StartOfTestLogger;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
-import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.util.concurrent.LazyReference;
-import com.atlassian.webdriver.pageobjects.WebDriverTester;
-import com.atlassian.webdriver.testing.rule.IgnoreBrowserRule;
-import com.atlassian.webdriver.testing.rule.TestBrowserRule;
 import it.ConnectWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
 
 /**
  * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest. It works with the AC test DB
@@ -48,16 +42,9 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
     }
 
     @Rule
-    public IgnoreBrowserRule ignoreRule = new IgnoreBrowserRule();
-    @Rule
-    public TestBrowserRule testBrowserRule = new TestBrowserRule();
-
-    @Rule
     public TestName name = new TestName();
 
     protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
-
-    private static final Dimension DEFAULT_SCREEN_SIZE = new Dimension(1024, 768);
 
     private static final LazyReference<UploadablePlugin> FUNCTEST_RPC_PLUGIN_HOLDER = new LazyReference<UploadablePlugin>()
     {
@@ -110,13 +97,6 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
     public void setupTest() throws Exception
     {
         StartOfTestLogger.instance().logTestStart(rpc, getClass(), name.getMethodName());
-
-        // set our window up to be the default screen size
-        WebDriver.Window window = product.getTester().getDriver().manage().window();
-        if (!DEFAULT_SCREEN_SIZE.equals(window.getSize()))
-        {
-            window.setSize(DEFAULT_SCREEN_SIZE);
-        }
     }
 
     private static void disableFeatureDiscovery()

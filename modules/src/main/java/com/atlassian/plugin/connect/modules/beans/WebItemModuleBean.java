@@ -215,6 +215,8 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
                       .add("tooltip", getTooltip())
                       .add("target", getTarget())
                       .add("icon", getIcon())
+                      .add("conditions", getConditions())
+                      .add("params", getParams())
                       .toString();
     }
 
@@ -249,6 +251,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     public int hashCode()
     {
         return new HashCodeBuilder(13, 61)
+                .appendSuper(super.hashCode())
                 .append(url)
                 .append(location)
                 .append(context)

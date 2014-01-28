@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.oldscopes.confluence;
 
 import com.atlassian.plugin.connect.api.confluence.ConfluencePermissions;
-import com.atlassian.plugin.connect.spi.permission.scope.DownloadScopeHelper;
+import com.atlassian.plugin.connect.spi.permission.scope.PathScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 
 import static java.util.Arrays.asList;
@@ -75,7 +75,7 @@ public final class ReadContentScope extends ConfluenceScope
                         new RestApiScopeHelper.RestScope("ui", asList("1", "1.0", "latest"), "/content", asList("get")),
                         new RestApiScopeHelper.RestScope("api", asList("1", "1.0", "latest"), "/content", asList("get"))
                 ),
-                new DownloadScopeHelper("/download/temp/")
+                new PathScopeHelper(false, "/download/temp/")
         );
     }
 }

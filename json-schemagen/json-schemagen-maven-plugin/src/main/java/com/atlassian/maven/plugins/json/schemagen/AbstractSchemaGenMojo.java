@@ -3,7 +3,9 @@ package com.atlassian.maven.plugins.json.schemagen;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -16,9 +18,12 @@ import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.*;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.graph.Dependency;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
+
+import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
 
 public abstract class AbstractSchemaGenMojo extends AbstractMojo
 {
@@ -40,6 +45,9 @@ public abstract class AbstractSchemaGenMojo extends AbstractMojo
     @Parameter(defaultValue = "${repositorySystemSession}")
     private RepositorySystemSession reposession;
 
+    @Parameter(defaultValue = "false")
+    protected Boolean debug = false;
+
     public MojoExecutor.ExecutionEnvironment executionEnvironment()
     {
         if (buildPluginManager != null)
@@ -52,6 +60,20 @@ public abstract class AbstractSchemaGenMojo extends AbstractMojo
             /* Maven 2 */
             return MojoExecutor.executionEnvironment(project, session, pluginManager);
         }
+    }
+
+    protected static Xpp3Dom configurationWithoutNullElements(MojoExecutor.Element... elements)
+    {
+        List<MojoExecutor.Element> nonNullElements = new ArrayList<MojoExecutor.Element>();
+        for (MojoExecutor.Element e : elements)
+        {
+            if (e != null)
+            {
+                nonNullElements.add(e);
+            }
+        }
+
+        return configuration(nonNullElements.toArray(new MojoExecutor.Element[nonNullElements.size()]));
     }
     
     protected String getDefaultDocsFile()

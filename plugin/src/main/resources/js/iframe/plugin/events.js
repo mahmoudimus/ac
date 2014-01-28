@@ -49,7 +49,8 @@ AP.define("events", ["_dollar", "_rpc"],
 
     return {
      /**
-     * Subscribes a callback to an event name.
+     * Adds a listener for all occurrences of an event of a particular name.
+     * Listener arguments include any arguments passed to `events.emit`, followed by an object describing the complete event information.
      * @name on
      * @method
      * @memberof module:Events#
@@ -58,7 +59,8 @@ AP.define("events", ["_dollar", "_rpc"],
      */
 
     /**
-     * Subscribes a callback to an event name, removing it once fired.
+     * Adds a listener for one occurrence of an event of a particular name.
+     * Listener arguments include any argument passed to `events.emit`, followed by an object describing the complete event information.
      * @name once
      * @method
      * @memberof module:Events#
@@ -67,7 +69,8 @@ AP.define("events", ["_dollar", "_rpc"],
      */
 
     /**
-     * Subscribes a callback to all events, regardless of name.
+     * Adds a listener for all occurrences of any event, regardless of name.
+     * Listener arguments begin with the event name, followed by any arguments passed to `events.emit`, followed by an object describing the complete event information.
      * @name onAny
      * @method
      * @memberof module:Events#
@@ -75,7 +78,7 @@ AP.define("events", ["_dollar", "_rpc"],
      */
 
     /**
-     * Unsubscribes a callback to an event name.
+     * Removes a particular listener for an event.
      * @name off
      * @method
      * @memberof module:Events#
@@ -84,7 +87,7 @@ AP.define("events", ["_dollar", "_rpc"],
      */
 
     /**
-     * Unsubscribes all callbacks from an event name, or unsubscribes all event-name-specific listeners
+     * Removes all listeners from an event name, or unsubscribes all event-name-specific listeners
      * if no name if given.
      * @name offAll
      * @method
@@ -93,7 +96,7 @@ AP.define("events", ["_dollar", "_rpc"],
      */
 
     /**
-     * Unsubscribes a callback from the set of 'any' event listeners.
+     * Removes an `any` event listener.
      * @name offAny
      * @method
      * @memberof module:Events#

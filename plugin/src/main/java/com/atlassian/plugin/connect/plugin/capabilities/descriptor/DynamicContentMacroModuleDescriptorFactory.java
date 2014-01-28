@@ -6,7 +6,6 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.DynamicContentMacro;
-import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
@@ -27,13 +26,12 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
     @Autowired
     public DynamicContentMacroModuleDescriptorFactory(
             AbsoluteAddOnUrlConverter urlConverter,
-            I18nPropertiesPluginManager i18nPropertiesPluginManager,
             IFrameRenderer iFrameRenderer,
             UserManager userManager,
             RemotablePluginAccessorFactory remotablePluginAccessorFactory,
             UrlVariableSubstitutor urlVariableSubstitutor)
     {
-        super(urlConverter, i18nPropertiesPluginManager);
+        super(urlConverter);
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.iFrameRenderer = iFrameRenderer;
         this.userManager = userManager;

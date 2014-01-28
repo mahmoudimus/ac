@@ -62,11 +62,17 @@ public class ConnectAppServlets
      * Verify from a WebDriver test using {@link RemoteWebPanel#getCustomMessage()}.
      *
      * @param message the message to display
+     * @param resize whether the iFrame content should automatically resize
      * @return a servlet that contains a custom message
      */
+    public static HttpServlet customMessageServlet(String message, Boolean resize)
+    {
+        return wrapContextAwareServlet(new CustomMessageServlet(message, resize));
+    }
+
     public static HttpServlet customMessageServlet(String message)
     {
-        return wrapContextAwareServlet(new CustomMessageServlet(message));
+        return wrapContextAwareServlet(new CustomMessageServlet(message, true));
     }
 
     /**

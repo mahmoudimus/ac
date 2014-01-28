@@ -65,7 +65,7 @@ public class ConnectPageOperations
         return findRemoteLinkedContent(webItemId, dropDownMenuId, "servlet-" + pageKey);
     }
 
-    private LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
+    public LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
     }
@@ -81,4 +81,8 @@ public class ConnectPageOperations
         return pageBinder.bind(RemotePluginDialog.class, dialogContent);
     }
 
+    public PageBinder getPageBinder()
+    {
+        return pageBinder;
+    }
 }

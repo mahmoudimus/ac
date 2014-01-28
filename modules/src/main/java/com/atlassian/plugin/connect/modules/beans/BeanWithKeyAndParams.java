@@ -64,7 +64,7 @@ public class BeanWithKeyAndParams extends NameToKeyBean
     public int hashCode()
     {
         return new HashCodeBuilder(41, 17)
-                .append(super.hashCode())
+                .appendSuper(super.hashCode())
                 .append(params)
                 .build();
     }

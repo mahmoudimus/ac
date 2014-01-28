@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.plugin.connect.modules.beans.builder.SpaceToolsTabModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
@@ -51,8 +52,10 @@ public class ConnectJsonExamples
     public static final String WEBITEM_EXAMPLE = createWebItemExample();
     public static final String WEBITEM_TARGET_EXAMPLE = createWebitemTargetExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
+    public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
     public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
     public static final String IMAGE_PLACEHOLDER_EXAMPLE = createImagePlaceholderExample();
+    public static final String SPACE_TOOLS_TAB_EXAMPLE = createSpaceToolsTabExample();
 
 
     private static String createAddonExample()
@@ -102,6 +105,7 @@ public class ConnectJsonExamples
                 .withModules("profilePages", ConnectPageModuleBean.newPageBean().withName(i18nProperty("Profile Page")).withUrl("my-confluence-profile-page").build())
                 .withModules("dynamicContentMacros", DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean().withName(i18nProperty("Dynamic Macro")).withUrl("/dynamic-macro").build())
                 .withModules("staticContentMacros", StaticContentMacroModuleBean.newStaticContentMacroModuleBean().withName(i18nProperty("Static Macro")).withUrl("/static-macro").build())
+                .withModules("spaceToolsTabs", SpaceToolsTabModuleBean.newSpaceToolsTabBean().withName(i18nProperty("Space Tools Tab")).withUrl("/space-tools").build())
                 .build();
 
         return gson.toJson(addonBean);
@@ -184,6 +188,17 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("webPanels", webPanelModuleBean));
+    }
+
+    private static String createWebSectionExample()
+    {
+        WebSectionModuleBean webSectionModuleBean = WebSectionModuleBean.newWebSectionBean()
+                .withName(new I18nProperty("My Web Section", ""))
+                .withLocation("com.atlassian.jira.plugin.headernav.left.context")
+                .withWeight(50)
+                .build();
+
+        return gson.toJson(createModuleArray("webSections", webSectionModuleBean));
     }
 
     public static String createComponentTabPanelExample()
@@ -284,6 +299,17 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("staticContentMacros", macroModuleBean));
+    }
+
+    private static String createSpaceToolsTabExample()
+    {
+        SpaceToolsTabModuleBean spaceToolsTabModuleBean = SpaceToolsTabModuleBean.newSpaceToolsTabBean()
+                .withName(new I18nProperty("Space Tools Tab", ""))
+                .withUrl("/space-tools-tab?space_key={space.key}")
+                .withLocation("contenttools")
+                .build();
+
+        return gson.toJson(createModuleArray("spaceToolsTabs", spaceToolsTabModuleBean));
     }
 
     private static String createI18nExample()

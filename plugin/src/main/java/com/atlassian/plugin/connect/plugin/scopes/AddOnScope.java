@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
@@ -8,6 +9,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
@@ -16,10 +19,10 @@ import java.util.Collections;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.*;
 
-public class AddOnScope extends AbstractPermission implements ApiScope
+public class AddOnScope extends AbstractPermission implements ApiScope, Comparable<AddOnScope>
 {
     private final Iterable<AddOnScopeApiPath> paths;
-    private final Iterable<ApiResourceInfo> apiResourceInfos;
+    private transient final Iterable<ApiResourceInfo> apiResourceInfos;
 
     public AddOnScope(String key, Iterable<AddOnScopeApiPath> paths)
     {
@@ -62,9 +65,50 @@ public class AddOnScope extends AbstractPermission implements ApiScope
     @Override
     public String toString()
     {
+        // don't consider apiResourceInfo because they are a static transform of paths
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("key", getKey())
                 .append("paths", paths)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
+
+        AddOnScope that = (AddOnScope) o;
+        // don't consider apiResourceInfo because they are a static transform of paths
+        return new EqualsBuilder()
+                .append(getKey(), that.getKey())
+                .append(paths, that.paths)
+                .build();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(29, 7)
+                // don't consider apiResourceInfo because they are a static transform of paths
+                .append(super.hashCode())
+                .append(paths)
+                .build();
+    }
+
+    @Override
+    public int compareTo(AddOnScope o)
+    {
+        return null == o ? 1 : ScopeName.valueOf(getKey()).compareTo(ScopeName.valueOf(o.getKey()));
     }
 }

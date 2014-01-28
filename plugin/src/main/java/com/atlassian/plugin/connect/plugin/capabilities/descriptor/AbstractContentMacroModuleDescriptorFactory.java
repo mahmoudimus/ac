@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceholderMacro;
-import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.MacroI18nBuilder;
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -28,14 +28,11 @@ import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLink
 public abstract class AbstractContentMacroModuleDescriptorFactory<B extends BaseContentMacroModuleBean> implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor>
 {
     private final AbsoluteAddOnUrlConverter urlConverter;
-    private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
 
     public AbstractContentMacroModuleDescriptorFactory(
-            AbsoluteAddOnUrlConverter urlConverter,
-            I18nPropertiesPluginManager i18nPropertiesPluginManager)
+            AbsoluteAddOnUrlConverter urlConverter)
     {
         this.urlConverter = urlConverter;
-        this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
     }
 
     protected abstract ModuleFactory createModuleFactory(Plugin plugin, DOMElement element, B bean);
@@ -49,8 +46,6 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
 
         FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
         descriptor.init(plugin, element);
-
-        registerI18nProperties(plugin, bean);
 
         return descriptor;
     }
@@ -81,21 +76,6 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         handleAliases(bean, element);
 
         return element;
-    }
-
-    protected void registerI18nProperties(Plugin plugin, B bean)
-    {
-        MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(plugin.getKey(), bean.getKey());
-
-        i18nBuilder.addName(bean.getName());
-        i18nBuilder.addDescription(bean.getDescription());
-
-        for (MacroParameterBean parameterBean : bean.getParameters())
-        {
-            i18nBuilder.addParameterLabel(parameterBean.getIdentifier(), parameterBean.getName());
-            i18nBuilder.addParameterDescription(parameterBean.getIdentifier(), parameterBean.getDescription());
-        }
-        i18nPropertiesPluginManager.add(plugin.getKey(), i18nBuilder.getI18nProperties());
     }
 
     private void handleAliases(B bean, DOMElement element)

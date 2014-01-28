@@ -36,62 +36,65 @@ import static com.google.common.collect.Lists.newArrayList;
  * Modules are UI extension points that add-ons can use to insert content into various areas of the host application's
  * interface. You implement a page module (along with others type of module you can use with Atlassian Connect, like
  * webhooks) by declaring it in the add-on descriptor and implementing the add-on code that composes it.
- * <p/>
+ *
  * Each application has module types that are specific for it, but there are some common types as well. For instance,
  * both JIRA and Confluence support the `generalPages` module, but only Confluence has `profilePage`.
- * <p/>
+ *
  * An add-on can implement as many modules as needed. For example, a typical add-on would likely provide modules for at
  * least one lifecycle element, a configuration page, and possibly multiple general pages.
- * <p/>
+ *
  * Here's an example of a module declaration:
- * <p/>
- * {
- * "name": "My Addon",
- * "modules": {
- * "webItems": [{
- * "conditions": [
- * {
- * "condition": "sub_tasks_enabled"
- * },
- * {
- * "condition": "is_issue_editable"
- * },
- * {
- * "condition": "is_issue_unresolved"
- * }
- * ],
- * "location": "operations-subtasks",
- * "url": "/dialog",
- * "name": {
- * "value": "Create Sub-Tasks"
- * }
- * }]
- * }
- * }
- * <p/>
- * In this case, we're declaring a `dialog-page` webItem. This declaration adds a dialog box to JIRA that users can open
- * by clicking a "Create Sub-Tasks" link on an issue.
- * <p/>
+ *
+ *    {
+ *        "name": "My Addon",
+ *        "modules": {
+ *            "webItems": [{
+ *                "conditions": [
+ *                    {
+ *                        "condition": "sub_tasks_enabled"
+ *                    },
+ *                    {
+ *                        "condition": "is_issue_editable"
+ *                    },
+ *                    {
+ *                        "condition": "is_issue_unresolved"
+ *                    }
+ *                ],
+ *                "location": "operations-subtasks",
+ *                "url": "/dialog",
+ *                "name": {
+ *                    "value": "Create Sub-Tasks"
+ *                },
+ *                "target": {
+ *                    "type": "dialog"
+ *                }
+ *            }]
+ *        }
+ *    }
+ *
+ * In this case, we're declaring a web item which opens as a dialog. This declaration adds a dialog box to JIRA that
+ * users can open by clicking a "Create Sub-Tasks" link on an issue.
+ *
  *### Conditions
- * <p/>
+ *
  * You can specify the conditions in which the link (and therefore access to this page) appears. The Atlassian application
  * ensures that the link only appears if it is appropriate for it to do so. In the example, the module should only appear
  * if subtasks are enabled and the issue is both editable and unresolved.. The condition elements state conditions that
  * must be true for the module to be in effect. Note, the condition only applies to the presence or absence of the link.
  * You should still permission the URL that the link references if appropriate.
- * <p/>
+ *
  *### URLs
- * <p/>
+ *
  * All module declarations must have a `url` attribute. The url attribute identifies the path on the add-on host to the
  * resource that implements the module. The URL value must be valid relative to the `baseUrl` value in the add-on descriptor.
- * <p/>
+ *
  * The url value in our example is `/dialog`. This must be a resource that is accessible on your server (relative to the
  * base URL of the add-on). It presents the content that appears in the iframe dialog; in other words, the HTML,
  * JavaScript, or other type of web content source that composes the iframe content.
- * <p/>
+ *
  * Note: for a webhook, the URL should be the address to which the Atlassian application posts notifications. For other
  * modules, such as `generalPages` or `webItems`, the URL identifies the web content to be used to compose the page.
- * <p/>
+ *
  * You can request certain pieces of contextual data, such as a project or space key, to be included in the URLs
  * requested from your add-on. See passing [Context Parameters](../../concepts/context-parameters.html).
  */
@@ -112,13 +115,21 @@ public class ModuleList extends BaseModuleBean
     private List<WebItemModuleBean> webItems;
 
     /**
-     * The Web Panel module allows you  to define panels, or sections, on an HTML page.
+     * The Web Panel module allows you to define panels, or sections, on an HTML page.
      * A panel is an iFrame that will be inserted into a page.
      *
      * @schemaTitle Web Panel
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider")
     private List<WebPanelModuleBean> webPanels;
+
+    /**
+     * The Web Section plugin module allows you to define new sections in application menus.
+     *
+     * @schemaTitle Web Section
+     */
+    @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebSectionModuleProvider")
+    private List<WebSectionModuleBean> webSections;
 
     /**
      * The Web Hook module allows you be notified of key events that occur in the host product
@@ -242,6 +253,13 @@ public class ModuleList extends BaseModuleBean
     private List<ConnectPageModuleBean> profilePages;
 
     /**
+     * The Space Tools Tab module allows you to add new tabs to the Space Tools area of Confluence.
+     * @schemaTitle Space Tools Tab
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider", products = {ProductFilter.CONFLUENCE})
+    private List<SpaceToolsTabModuleBean> spaceToolsTabs;
+
+    /**
      * Static content macros allow you to add a macro into a Confluence page which is stored with the Confluence page
      * itself. The add-on is responsible for generating the rendered XHTML in
      * [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
@@ -265,10 +283,12 @@ public class ModuleList extends BaseModuleBean
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.profilePages = newArrayList();
+        this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
+        this.webSections = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -307,6 +327,10 @@ public class ModuleList extends BaseModuleBean
         {
             this.webPanels = newArrayList();
         }
+        if (null == webSections)
+        {
+            this.webSections = newArrayList();
+        }
         if (null == generalPages)
         {
             this.generalPages = newArrayList();
@@ -334,6 +358,10 @@ public class ModuleList extends BaseModuleBean
         if (null == dynamicContentMacros)
         {
             this.dynamicContentMacros = newArrayList();
+        }
+        if (null == spaceToolsTabs)
+        {
+            this.spaceToolsTabs = newArrayList();
         }
         if (null == staticContentMacros)
         {
@@ -381,6 +409,11 @@ public class ModuleList extends BaseModuleBean
         return webPanels;
     }
 
+    public List<WebSectionModuleBean> getWebSections()
+    {
+        return webSections;
+    }
+
     public List<WorkflowPostFunctionModuleBean> getJiraWorkflowPostFunctions()
     {
         return jiraWorkflowPostFunctions;
@@ -421,6 +454,10 @@ public class ModuleList extends BaseModuleBean
         return dynamicContentMacros;
     }
 
+    public List<SpaceToolsTabModuleBean> getSpaceToolsTabs() {
+        return spaceToolsTabs;
+    }
+
     public List<StaticContentMacroModuleBean> getStaticContentMacros()
     {
         return staticContentMacros;
@@ -456,10 +493,12 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
                 .append(profilePages, other.profilePages)
+                .append(spaceToolsTabs, other.spaceToolsTabs)
                 .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
                 .append(webPanels, webPanels)
+                .append(webSections, webSections)
                 .build();
     }
 
@@ -481,10 +520,12 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
                 .append(profilePages)
+                .append(spaceToolsTabs)
                 .append(staticContentMacros)
                 .append(webhooks)
                 .append(webItems)
                 .append(webPanels)
+                .append(webSections)
                 .build();
     }
 }
