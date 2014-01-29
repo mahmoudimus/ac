@@ -280,25 +280,47 @@ function convertRestScopesToViewModel(scopes) {
     return { apis: _.flatten(apis)};
 }
 
-function convertJsonRpcScopesToViewModel(scopes) {
-    var apis = _.map(scopes.jsonRpcPaths, function(jsonRpcPath) {
-        var matchingScope = _.find(scopes.scopes, function(scope) {
-            return (scope.jsonRpcPathKeys && _.contains(scope.jsonRpcPathKeys, jsonRpcPath.key))
+function convertRpcScopesToViewModel(scopes, pathsProperty, keyProperty, converter) {
+    var apis = _.map(scopes[pathsProperty], function (rpcPath) {
+        var matchingScope = _.find(scopes.scopes, function (scope) {
+            return (scope[keyProperty] && _.contains(scope[keyProperty], rpcPath.key))
         });
-        return _.map(jsonRpcPath.paths, function(path) {
-            return _.map(jsonRpcPath.rpcMethods, function(rpcMethod) {
-                var methodPath = path + "/" + rpcMethod;
-                return {
-                    path: methodPath,
-                    id: slugify(path),
-                    scope: matchingScope.key
-                }
-            });
+        return _.map(rpcPath.rpcMethods, function (rpcMethod) {
+            if (converter) {
+                return converter(rpcPath, rpcMethod, matchingScope)
+            }
+            return {
+                method: rpcMethod,
+                paths: rpcPath.paths,
+                id: slugify(rpcMethod),
+                scope: matchingScope.key
+            }
         });
     });
     return { apis: _.flatten(apis)};
 }
 
+function convertJsonRpcScopesToViewModel(scopes) {
+    return convertRpcScopesToViewModel(scopes, "jsonRpcPaths", "jsonRpcPathKeys");
+}
+
+function convertSoapRpcScopesToViewModel(scopes) {
+    return convertRpcScopesToViewModel(scopes, "soapRpcPaths", "soapRpcPathKeys");
+}
+
+function convertXmlRpcScopesToViewModel(scopes) {
+    return convertRpcScopesToViewModel(scopes, "xmlRpcPaths", "xmlRpcPathKeys", function(rpcPath, rpcMethod, scope) {
+        return _.map(rpcPath.prefixes, function(prefix) {
+            var method = prefix + "." + rpcMethod;
+            return {
+                method: method,
+                paths: ["/xmlrpc"],
+                id: slugify(method),
+                scope: scope.key
+            }
+        });
+    })
+}
 
 /**
  * Delete the build dir, regenerate the model from the schema and rebuild the documentation.
@@ -330,13 +352,13 @@ function rebuildHarpSite() {
     var scopesView = {
         confluence: {
             rest: convertRestScopesToViewModel(scopes.confluence),
-            jsonrpc: convertJsonRpcScopesToViewModel(scopes.confluence)
-//            xmlrpc: convertXmlRpcScopesToViewModel(scopes.confluence)
+            jsonrpc: convertJsonRpcScopesToViewModel(scopes.confluence),
+            xmlrpc: convertXmlRpcScopesToViewModel(scopes.confluence)
         },
         jira: {
             rest: convertRestScopesToViewModel(scopes.jira),
-            jsonrpc: convertJsonRpcScopesToViewModel(scopes.jira)
-//            xmlrpc: convertXmlRpcScopesToViewModel(scopes.confluence)
+            jsonrpc: convertJsonRpcScopesToViewModel(scopes.jira),
+            soaprpc: convertSoapRpcScopesToViewModel(scopes.jira)
         }
     };
 

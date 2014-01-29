@@ -9,6 +9,7 @@ table.aui
     thead
         tr
             th Method
+            th Paths
             th Scope
     tbody
         - each api in scope.apis
@@ -16,6 +17,11 @@ table.aui
                 td
                     a(id = api.id)
                     code
-                        != api.path
+                        != api.method
+                td
+                    - each path in api.paths
+                        code
+                            != path
+                        br
                 td
                     +scope(api.scope)
