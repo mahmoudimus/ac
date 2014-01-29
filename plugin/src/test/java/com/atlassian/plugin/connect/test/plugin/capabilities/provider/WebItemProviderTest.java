@@ -64,7 +64,7 @@ public class WebItemProviderTest
                 new WebItemModuleDescriptorFactoryForTests(webInterfaceManager),
                 new IconModuleFragmentFactory(remotablePluginAccessorFactoryForTests),
                 new ConditionModuleFragmentFactory(mock(ProductAccessor.class), new ParamsModuleFragmentFactory()),
-                remotablePluginAccessorFactoryForTests);
+                remotablePluginAccessorFactoryForTests, new ParamsModuleFragmentFactory());
         servletRequest = mock(HttpServletRequest.class);
 
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
