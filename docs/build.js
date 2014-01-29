@@ -251,7 +251,16 @@ function findFragmentEntities(schemas) {
     return entitiesToModel(entities);
 }
 
-function transposeRestScopes(rawScopes) {
+/**
+ * Transform the restPaths entries from the raw scopes file into a lookup structure by path:
+ * {
+ *     "/project": {
+ *         "GET": "READ",
+ *         "POST": "WRITE"
+ *     }
+ * }
+ */
+function transformRestScopes(rawScopes) {
     var scopes = {};
     _.each(rawScopes.scopes, function (scope) {
         _.each(scope.restPathKeys, function (restPathKey) {
@@ -264,52 +273,91 @@ function transposeRestScopes(rawScopes) {
     return scopes;
 }
 
-function convertRestScopesToViewModel(scopes) {
-    var scopesByKey = transposeRestScopes(scopes);
-    var apis = _.map(scopes.restPaths, function (restPath) {
-        return _.map(restPath.basePaths, function (basePath) {
-            var path = "/" + restPath.name + "/{version}" + basePath;
-            return {
-                path: path,
-                id: slugify(path),
-                versions: restPath.versions,
-                scopes: scopesByKey[restPath.key]
-            }
+/**
+ * All the REST paths end in "($|/.*)", which is distracting
+ */
+function removeTrailingPattern(path) {
+    var patternPos = path.lastIndexOf('(');
+    return patternPos > -1 ? path.substring(0, patternPos) : path;
+}
+
+/**
+ * Transform the restPaths entries from the raw scopes files into
+ * a model that can be easily rendered.
+ *
+ * The result is a sorted array of entries like this:
+ * {
+ *     "path" : "/api/{version}/resource",
+ *     "id": "apiversionresource",
+ *     "versions": ["1.0", "2.0"],
+ *     "scopes": {
+ *         "GET": "READ",
+ *         "POST": "WRITE"
+ *     }
+ * }
+ */
+function convertRestScopesToViewModel(scopeDefinitions) {
+    var apis = _.map(scopeDefinitions, function(scopeDefinition) {
+        var scopesByKey = transformRestScopes(scopeDefinition);
+        return _.map(scopeDefinition.restPaths, function (restPath) {
+            return _.map(restPath.basePaths, function (basePath) {
+                var path = "/" + restPath.name + "/{version}" + removeTrailingPattern(basePath);
+                return {
+                    path: path,
+                    id: slugify(path),
+                    versions: restPath.versions.sort(),
+                    scopes: scopesByKey[restPath.key]
+                }
+            });
         });
     });
-    return { apis: _.flatten(apis)};
+    return { apis: _.sortBy(_.flatten(apis), "path")};
 }
 
-function convertRpcScopesToViewModel(scopes, pathsProperty, keyProperty, converter) {
-    var apis = _.map(scopes[pathsProperty], function (rpcPath) {
-        var matchingScope = _.find(scopes.scopes, function (scope) {
-            return (scope[keyProperty] && _.contains(scope[keyProperty], rpcPath.key))
-        });
-        return _.map(rpcPath.rpcMethods, function (rpcMethod) {
-            if (converter) {
-                return converter(rpcPath, rpcMethod, matchingScope)
-            }
-            return {
-                method: rpcMethod,
-                paths: rpcPath.paths,
-                id: slugify(rpcMethod),
-                scope: matchingScope.key
-            }
+/**
+ * Transform the *rpcPaths entries from the raw scopes files into
+ * a model that can be easily rendered.
+ *
+ * The result is a sorted array of entries like this:
+ * {
+ *     "method" : "getSomething",
+ *     "id": "getsomething",
+ *     "paths": ["/v1", "/v2"],
+ *     "scope": "READ"
+ * }
+ */
+function convertRpcScopesToViewModel(scopeDefinitions, pathsProperty, keyProperty, converter) {
+    var apis = _.map(scopeDefinitions, function(scopeDefinition) {
+        return _.map(scopeDefinition[pathsProperty], function (rpcPath) {
+            var matchingScope = _.find(scopeDefinition.scopes, function (scope) {
+                return (scope[keyProperty] && _.contains(scope[keyProperty], rpcPath.key))
+            });
+            return _.map(rpcPath.rpcMethods, function (rpcMethod) {
+                if (converter) {
+                    return converter(rpcPath, rpcMethod, matchingScope)
+                }
+                return {
+                    method: rpcMethod,
+                    paths: rpcPath.paths,
+                    id: slugify(rpcMethod),
+                    scope: matchingScope.key
+                }
+            });
         });
     });
-    return { apis: _.flatten(apis)};
+    return { apis: _.sortBy(_.flatten(apis), "method")};
 }
 
-function convertJsonRpcScopesToViewModel(scopes) {
-    return convertRpcScopesToViewModel(scopes, "jsonRpcPaths", "jsonRpcPathKeys");
+function convertJsonRpcScopesToViewModel(scopeDefinitions) {
+    return convertRpcScopesToViewModel(scopeDefinitions, "jsonRpcPaths", "jsonRpcPathKeys");
 }
 
-function convertSoapRpcScopesToViewModel(scopes) {
-    return convertRpcScopesToViewModel(scopes, "soapRpcPaths", "soapRpcPathKeys");
+function convertSoapRpcScopesToViewModel(scopeDefinitions) {
+    return convertRpcScopesToViewModel(scopeDefinitions, "soapRpcPaths", "soapRpcPathKeys");
 }
 
-function convertXmlRpcScopesToViewModel(scopes) {
-    return convertRpcScopesToViewModel(scopes, "xmlRpcPaths", "xmlRpcPathKeys", function(rpcPath, rpcMethod, scope) {
+function convertXmlRpcScopesToViewModel(scopeDefinitions) {
+    return convertRpcScopesToViewModel(scopeDefinitions, "xmlRpcPaths", "xmlRpcPathKeys", function(rpcPath, rpcMethod, scope) {
         return _.map(rpcPath.prefixes, function(prefix) {
             var method = prefix + "." + rpcMethod;
             return {
@@ -351,14 +399,14 @@ function rebuildHarpSite() {
 
     var scopesView = {
         confluence: {
-            rest: convertRestScopesToViewModel(scopes.confluence),
-            jsonrpc: convertJsonRpcScopesToViewModel(scopes.confluence),
-            xmlrpc: convertXmlRpcScopesToViewModel(scopes.confluence)
+            rest: convertRestScopesToViewModel([scopes.confluence, scopes.common]),
+            jsonrpc: convertJsonRpcScopesToViewModel([scopes.confluence, scopes.common]),
+            xmlrpc: convertXmlRpcScopesToViewModel([scopes.confluence, scopes.common])
         },
         jira: {
-            rest: convertRestScopesToViewModel(scopes.jira),
-            jsonrpc: convertJsonRpcScopesToViewModel(scopes.jira),
-            soaprpc: convertSoapRpcScopesToViewModel(scopes.jira)
+            rest: convertRestScopesToViewModel([scopes.jira, scopes.common]),
+            jsonrpc: convertJsonRpcScopesToViewModel([scopes.jira, scopes.common]),
+            soaprpc: convertSoapRpcScopesToViewModel([scopes.jira, scopes.common])
         }
     };
 

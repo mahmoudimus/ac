@@ -13,7 +13,6 @@ table.aui
     thead
         tr
             th Path
-            th Versions
             th GET
             th POST
             th PUT
@@ -25,10 +24,10 @@ table.aui
                     a(id = api.id)
                     code
                         != api.path
-                td
-                    - each version in api.versions
-                        span.aui-label
-                            != version
+                    p
+                        - each version in api.versions
+                            span.aui-label
+                                != version
                 - each method in ["GET", "POST", "PUT", "DELETE"]
                     td
                         - if (api.scopes[method])

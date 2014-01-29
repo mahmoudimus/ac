@@ -48,30 +48,31 @@
     "rest-apis": {
         "product-api-browser.html": {
             "title": "Product API Browser"
-        },
-
+        }
+    },
+    "scopes": {
         "jira-rest-scopes.html": {
-            "title": "JIRA REST Scopes",
+            "title": "JIRA REST",
             "new": true
         },
         "jira-jsonrpc-scopes.html": {
-            "title": "JIRA JSON-RPC Scopes",
+            "title": "JIRA JSON-RPC",
             "new": true
         },
         "jira-soap-scopes.html": {
-            "title": "JIRA SOAP Scopes",
+            "title": "JIRA SOAP",
             "new": true
         },
         "confluence-rest-scopes.html": {
-            "title": "Confluence REST Scopes",
+            "title": "Confluence REST",
             "new": true
         },
         "confluence-jsonrpc-scopes.html": {
-            "title": "Confluence JSON-RPC Scopes",
+            "title": "Confluence JSON-RPC",
             "new": true
         },
         "confluence-xmlrpc-scopes.html": {
-            "title": "Confluence XML-RPC Scopes",
+            "title": "Confluence XML-RPC",
             "new": true
         }
     },
