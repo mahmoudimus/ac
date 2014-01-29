@@ -1,8 +1,21 @@
 # Scopes
 
-Scopes have yet to be fully implemented. Please check back later.
+Scopes allow an add-on to request a particular level of access to an Atlassian product.
 
-* As of Connect version 1.0-m29 JIRA REST API endpoints are in the JSON descriptor scopes white-list.
-    * If your add-on uses these endpoints then you can now specify scopes in your descriptor and they will be respected in authorisation checks on requests to JIRA.
-    * E.g. add ```"scopes": ["READ", "WRITE"]``` to your JSON descriptor if your add-on performs read-only actions and mutating actions.
-    * Scopes white-list documentation coming soon so that you will be able to figure out which scope is required for each endpoint that you access.
+The following scopes are available for use by Atlassian Connect add-ons:
+
+#### JIRA
+
+* `READ` &ndash; can view, browse, read information from JIRA
+* `WRITE` &ndash; can create or edit content in JIRA, but not delete them
+* `DELETE` &ndash; can delete entities from JIRA
+* `PROJECT_ADMIN` &ndash; can administer a project in JIRA
+* `ADMIN` &ndash; can administer the entire JIRA instance
+
+#### Confluence
+
+* `READ` &ndash; can view, browse, read information from Confluence
+* `WRITE` &ndash; can create or edit content in Confluence, but not delete them
+* `DELETE` &ndash; can delete entities from Confluence
+* `SPACE_ADMIN` &ndash; can administer a space in Confluence
+* `ADMIN` &ndash; can administer the entire Confluence instance
