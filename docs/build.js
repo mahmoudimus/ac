@@ -260,10 +260,10 @@ function findFragmentEntities(schemas) {
  *     }
  * }
  */
-function transformRestScopes(rawScopes) {
+function transformRestScopes(rawScopes, pathKeysProperty) {
     var scopes = {};
     _.each(rawScopes.scopes, function (scope) {
-        _.each(scope.restPathKeys, function (restPathKey) {
+        _.each(scope[pathKeysProperty], function (restPathKey) {
             scopes[restPathKey] = scopes[restPathKey] || {};
             _.each(scope.methods, function (method) {
                 scopes[restPathKey][method] = scope.key;
@@ -282,8 +282,30 @@ function removeTrailingPattern(path) {
 }
 
 /**
+ * Generic transformer for RPC style APIs that iteratates over one or more scope files
+ * and invokes a callback for every entry in an array specified by 'keyProperty'. It looks
+ * up the matching scope first and passes that into the callback as well.
+ */
+function convertScopesToViewModel(scopeDefinitions, pathsProperty, keyProperty, methodsProperty, sortKey, converter) {
+    var apis = _.map(scopeDefinitions, function(scopeDefinition) {
+        return _.map(scopeDefinition[pathsProperty], function (path) {
+            var matchingScope = _.find(scopeDefinition.scopes, function (scope) {
+                return (scope[keyProperty] && _.contains(scope[keyProperty], path.key))
+            });
+            return _.map(path[methodsProperty], function (method) {
+                return converter(path, method, matchingScope)
+            });
+        });
+    });
+    return { apis: _.sortBy(_.flatten(apis), sortKey)};
+}
+
+/**
  * Transform the restPaths entries from the raw scopes files into
  * a model that can be easily rendered.
+ *
+ * It also includes the download scopes, as these are conceptually
+ * equivalent to the rest scopes.
  *
  * The result is a sorted array of entries like this:
  * {
@@ -297,11 +319,11 @@ function removeTrailingPattern(path) {
  * }
  */
 function convertRestScopesToViewModel(scopeDefinitions) {
-    var apis = _.map(scopeDefinitions, function(scopeDefinition) {
-        var scopesByKey = transformRestScopes(scopeDefinition);
+    var restApis = _.map(scopeDefinitions, function(scopeDefinition) {
+        var scopesByKey = transformRestScopes(scopeDefinition, "restPathKeys");
         return _.map(scopeDefinition.restPaths, function (restPath) {
             return _.map(restPath.basePaths, function (basePath) {
-                var path = "/" + restPath.name + "/{version}" + removeTrailingPattern(basePath);
+                var path = "/rest/" + restPath.name + "/{version}" + removeTrailingPattern(basePath);
                 return {
                     path: path,
                     id: slugify(path),
@@ -311,7 +333,23 @@ function convertRestScopesToViewModel(scopeDefinitions) {
             });
         });
     });
-    return { apis: _.sortBy(_.flatten(apis), "path")};
+    // The below code can be removed once download scopes and rest scopes
+    // share the same structure
+    var downloadApis = _.map(scopeDefinitions, function(scopeDefinition) {
+        var scopesByKey = transformRestScopes(scopeDefinition, "pathKeys");
+        return _.map(scopeDefinition.paths, function (downloadPath) {
+            return _.map(downloadPath.paths, function (basePath) {
+                var path = removeTrailingPattern(basePath);
+                return {
+                    path: path,
+                    id: slugify(path),
+                    versions: [],
+                    scopes: scopesByKey[downloadPath.key]
+                }
+            });
+        });
+    });
+    return { apis: _.sortBy(_.flatten([restApis, downloadApis]), "path")};
 }
 
 /**
@@ -326,26 +364,16 @@ function convertRestScopesToViewModel(scopeDefinitions) {
  *     "scope": "READ"
  * }
  */
-function convertRpcScopesToViewModel(scopeDefinitions, pathsProperty, keyProperty, converter) {
-    var apis = _.map(scopeDefinitions, function(scopeDefinition) {
-        return _.map(scopeDefinition[pathsProperty], function (rpcPath) {
-            var matchingScope = _.find(scopeDefinition.scopes, function (scope) {
-                return (scope[keyProperty] && _.contains(scope[keyProperty], rpcPath.key))
-            });
-            return _.map(rpcPath.rpcMethods, function (rpcMethod) {
-                if (converter) {
-                    return converter(rpcPath, rpcMethod, matchingScope)
-                }
-                return {
-                    method: rpcMethod,
-                    paths: rpcPath.paths,
-                    id: slugify(rpcMethod),
-                    scope: matchingScope.key
-                }
-            });
+function convertRpcScopesToViewModel(scopeDefinitions, pathsProperty, keyProperty) {
+    return convertScopesToViewModel(scopeDefinitions, pathsProperty, keyProperty, "rpcMethods", "method",
+        function (rpcPath, rpcMethod, scope) {
+            return {
+                method: rpcMethod,
+                paths: rpcPath.paths,
+                id: slugify(rpcMethod),
+                scope: scope.key
+            }
         });
-    });
-    return { apis: _.sortBy(_.flatten(apis), "method")};
 }
 
 function convertJsonRpcScopesToViewModel(scopeDefinitions) {
@@ -357,17 +385,18 @@ function convertSoapRpcScopesToViewModel(scopeDefinitions) {
 }
 
 function convertXmlRpcScopesToViewModel(scopeDefinitions) {
-    return convertRpcScopesToViewModel(scopeDefinitions, "xmlRpcPaths", "xmlRpcPathKeys", function(rpcPath, rpcMethod, scope) {
-        return _.map(rpcPath.prefixes, function(prefix) {
-            var method = prefix + "." + rpcMethod;
-            return {
-                method: method,
-                paths: ["/xmlrpc"],
-                id: slugify(method),
-                scope: scope.key
-            }
-        });
-    })
+    return convertScopesToViewModel(scopeDefinitions, "xmlRpcPaths", "xmlRpcPathKeys", "rpcMethods", "method",
+        function (rpcPath, rpcMethod, scope) {
+            return _.map(rpcPath.prefixes, function (prefix) {
+                var method = prefix + "." + rpcMethod;
+                return {
+                    method: method,
+                    paths: ["/rpc/xmlrpc"],
+                    id: slugify(method),
+                    scope: scope.key
+                }
+            });
+        })
 }
 
 /**
