@@ -49,12 +49,21 @@
         "product-api-browser.html": {
             "title": "Product API Browser"
         },
+        
+        "jira-rest-scopes.html": {
+            "title": "JIRA REST Scopes",
+            "new": true
+        },
+        "jira-jsonrpc-scopes.html": {
+            "title": "JIRA JSON-RPC Scopes",
+            "new": true
+        },
         "confluence-rest-scopes.html": {
             "title": "Confluence REST Scopes",
             "new": true
         },
-        "jira-rest-scopes.html": {
-            "title": "JIRA REST Scopes",
+        "confluence-jsonrpc-scopes.html": {
+            "title": "Confluence JSON-RPC Scopes",
             "new": true
         }
     },

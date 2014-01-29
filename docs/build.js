@@ -251,37 +251,54 @@ function findFragmentEntities(schemas) {
     return entitiesToModel(entities);
 }
 
-function convertRestScopesToViewModel(scopes) {
-    var apis = _.map(scopes.raw.restPaths, function(restPath) {
-      return _.map(restPath.basePaths, function(basePath) {
-        var path = "/" + restPath.name + "/{version}" + basePath;
-        return {
-          path : path,
-          id : slugify(path),
-          versions : restPath.versions,
-          scopes : scopes.byKey[restPath.key]
-        }
-      });
+function transposeRestScopes(rawScopes) {
+    var scopes = {};
+    _.each(rawScopes.scopes, function (scope) {
+        _.each(scope.restPathKeys, function (restPathKey) {
+            scopes[restPathKey] = scopes[restPathKey] || {};
+            _.each(scope.methods, function (method) {
+                scopes[restPathKey][method] = scope.key;
+            });
+        });
     });
-    return { apis : _.flatten(apis)};
+    return scopes;
 }
 
-function prepareScope(rawScopes)
-{
-    var scopes = {};
-    _.each(rawScopes.scopes, function(scope) {
-      _.each(scope.restPathKeys, function(restPathKey) {
-        scopes[restPathKey] = scopes[restPathKey] || {};
-        _.each(scope.methods, function(method) {
-          scopes[restPathKey][method] = scope.key;
+function convertRestScopesToViewModel(scopes) {
+    var scopesByKey = transposeRestScopes(scopes);
+    var apis = _.map(scopes.restPaths, function (restPath) {
+        return _.map(restPath.basePaths, function (basePath) {
+            var path = "/" + restPath.name + "/{version}" + basePath;
+            return {
+                path: path,
+                id: slugify(path),
+                versions: restPath.versions,
+                scopes: scopesByKey[restPath.key]
+            }
         });
-      });
     });
-    return {
-        raw: rawScopes,
-        byKey : scopes
-    }
+    return { apis: _.flatten(apis)};
 }
+
+function convertJsonRpcScopesToViewModel(scopes) {
+    var apis = _.map(scopes.jsonRpcPaths, function(jsonRpcPath) {
+        var matchingScope = _.find(scopes.scopes, function(scope) {
+            return (scope.jsonRpcPathKeys && _.contains(scope.jsonRpcPathKeys, jsonRpcPath.key))
+        });
+        return _.map(jsonRpcPath.paths, function(path) {
+            return _.map(jsonRpcPath.rpcMethods, function(rpcMethod) {
+                var methodPath = path + "/" + rpcMethod;
+                return {
+                    path: methodPath,
+                    id: slugify(path),
+                    scope: matchingScope.key
+                }
+            });
+        });
+    });
+    return { apis: _.flatten(apis)};
+}
+
 
 /**
  * Delete the build dir, regenerate the model from the schema and rebuild the documentation.
@@ -305,20 +322,20 @@ function rebuildHarpSite() {
     };
 
     var scopes = {
-        jira: prepareScope(fs.readJsonSync(jiraScopesPath)),
-        confluence: prepareScope(fs.readJsonSync(confluenceScopesPath)),
-        common: prepareScope(fs.readJsonSync(commonScopesPath))
+        jira: fs.readJsonSync(jiraScopesPath),
+        confluence: fs.readJsonSync(confluenceScopesPath),
+        common: fs.readJsonSync(commonScopesPath)
     };
 
     var scopesView = {
         confluence: {
-            rest: convertRestScopesToViewModel(scopes.confluence)
-//            jsonrpc: convertJsonRpcScopesToViewModel(scopes.confluence),
+            rest: convertRestScopesToViewModel(scopes.confluence),
+            jsonrpc: convertJsonRpcScopesToViewModel(scopes.confluence)
 //            xmlrpc: convertXmlRpcScopesToViewModel(scopes.confluence)
         },
         jira: {
-            rest: convertRestScopesToViewModel(scopes.jira)
-//            jsonrpc: convertJsonRpcScopesToViewModel(scopes.confluence),
+            rest: convertRestScopesToViewModel(scopes.jira),
+            jsonrpc: convertJsonRpcScopesToViewModel(scopes.jira)
 //            xmlrpc: convertXmlRpcScopesToViewModel(scopes.confluence)
         }
     };

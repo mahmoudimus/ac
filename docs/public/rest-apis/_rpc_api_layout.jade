@@ -1,0 +1,21 @@
+mixin scope(key)
+    span.aui-lozenge.aui-lozenge-default.aui-lozenge-complete #{key}
+        block
+
+h1
+    != title
+
+table.aui
+    thead
+        tr
+            th Method
+            th Scope
+    tbody
+        - each api in scope.apis
+            tr
+                td
+                    a(id = api.id)
+                    code
+                        != api.path
+                td
+                    +scope(api.scope)
