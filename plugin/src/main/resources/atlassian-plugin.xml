@@ -71,6 +71,8 @@
         <url-pattern>/ac/*</url-pattern>
     </servlet>
 
+    <web-panel key="connect-dialog-options" location="atl.header" class="com.atlassian.plugin.connect.plugin.dialog.DialogOptionsWebPanel"/>
+    
     <!-- docs are built and copied into target/classes/docs during the prepare-package phase -->
     <web-resource key="docs">
         <resource type="download" name="docs/" location="docs" />

@@ -10,6 +10,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.test.plugin.capabilities.ConnectAsserts;
@@ -25,6 +26,7 @@ import it.com.atlassian.plugin.connect.TestPluginInstaller;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -200,6 +202,56 @@ public class WebItemModuleProviderTest
             descriptor.enabled();
 
             assertTrue(descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+        }
+        finally
+        {
+            if(null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void dialogOptions() throws Exception
+    {
+        WebItemModuleBean bean = newWebItemBean()
+                .withName(new I18nProperty(MODULE_NAME, ""))
+                .withKey(MODULE_KEY)
+                .withUrl("/my/addon")
+                .withLocation("atl.admin/menu")
+                .withTarget(
+                        newWebItemTargetBean()
+                        .withType(WebItemTargetType.dialog)
+                        .withOption("width","100")
+                        .withOption("height","300")
+                        .build()
+                )
+                .build();
+
+        ConnectAddonBean addon = newConnectAddonBean()
+                .withName(PLUGIN_NAME)
+                .withKey(PLUGIN_KEY)
+                .withBaseurl(BASE_URL)
+                .withModules("webItems",bean)
+                .build();
+
+        Plugin plugin = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+
+            assertEquals(1, descriptors.size());
+
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
+            descriptor.enabled();
+
+            assertTrue(descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+            assertTrue("expected param [-acopt-width]",descriptor.getParams().containsKey("-acopt-width"));
+            assertTrue("expected param [-acopt-height]",descriptor.getParams().containsKey("-acopt-height"));
         }
         finally
         {

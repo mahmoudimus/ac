@@ -19,6 +19,8 @@ import com.atlassian.plugin.connect.plugin.installer.SharedSecretServiceImpl;
 import com.atlassian.plugin.connect.test.plugin.util.ConnectInstallationTestUtil;
 
 import com.google.common.collect.Sets;
+
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,6 +90,12 @@ public class DefaultConnectAddOnInstallerJwtTest
             public boolean matches(Object actual)
             {
                 return actual instanceof String && !PUBLIC_KEY.equals(actual) && UUID.fromString((String)actual) != null; // UUID.fromString() will object if the format is not UUID
+            }
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("expected valid uuid that is not the public key [" + PUBLIC_KEY + "]");
             }
         };
     }
