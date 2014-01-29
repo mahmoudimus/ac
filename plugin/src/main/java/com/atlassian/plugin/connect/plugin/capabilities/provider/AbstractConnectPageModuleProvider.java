@@ -72,7 +72,6 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .condition(getCondition())
-                    .additionalRenderContext(additionalRenderContext)
                     .build();
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
 

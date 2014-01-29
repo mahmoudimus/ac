@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameter
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.atlassian.plugin.connect.plugin.module.page.dialog.DialogPageModuleDescriptor.DIALOG_CLASSIFIER;
+import static com.atlassian.plugin.connect.plugin.module.page.dialog.DialogPageModuleDescriptor.SIMPLE_DIALOG_CLASSIFIER;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
@@ -28,11 +31,15 @@ public class ConnectIFrameServlet extends HttpServlet
 
     private final IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry;
     private final ModuleContextParser moduleContextParser;
+    private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
 
-    public ConnectIFrameServlet(IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry, ModuleContextParser moduleContextParser)
+    public ConnectIFrameServlet(IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry,
+            ModuleContextParser moduleContextParser,
+            LegacyAddOnIdentifierService legacyAddOnIdentifierService)
     {
         this.IFrameRenderStrategyRegistry = IFrameRenderStrategyRegistry;
         this.moduleContextParser = moduleContextParser;
+        this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;
     }
 
     @Override
@@ -46,13 +53,14 @@ public class ConnectIFrameServlet extends HttpServlet
             String moduleKey = matcher.group(2);
 
             IFrameRenderStrategy renderStrategy;
-            if (Boolean.valueOf(req.getParameter("raw")))
+            if (legacyAddOnIdentifierService.isConnectAddOn(addOnKey))
             {
-                renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, RAW_CLASSIFIER);
+                // TODO remove when we fuck off XML
+                renderStrategy = getiFrameRenderStrategyForXMLModule(req, addOnKey, moduleKey);
             }
             else
             {
-                renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey);
+                renderStrategy = getiFrameRenderStrategyForJsonModule(req, addOnKey, moduleKey);
             }
 
             if (renderStrategy != null)
@@ -66,6 +74,34 @@ public class ConnectIFrameServlet extends HttpServlet
         }
 
         resp.sendError(SC_NOT_FOUND);
+    }
+
+    private IFrameRenderStrategy getiFrameRenderStrategyForJsonModule(final HttpServletRequest req, final String addOnKey, final String moduleKey)
+    {
+        final IFrameRenderStrategy renderStrategy;
+        if (Boolean.valueOf(req.getParameter("raw")))
+        {
+            renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, RAW_CLASSIFIER);
+        }
+        else
+        {
+            renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey);
+        }
+        return renderStrategy;
+    }
+
+    private IFrameRenderStrategy getiFrameRenderStrategyForXMLModule(final HttpServletRequest req, final String addOnKey, final String moduleKey)
+    {
+        final IFrameRenderStrategy renderStrategy;
+        if (req.getParameter("simpleDialog") != null)
+        {
+            renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, SIMPLE_DIALOG_CLASSIFIER);
+        }
+        else
+        {
+            renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, DIALOG_CLASSIFIER);
+        }
+        return renderStrategy;
     }
 
     public static String iFrameServletPath(String addOnKey, String moduleKey)
