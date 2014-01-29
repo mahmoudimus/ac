@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
@@ -13,12 +10,15 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.web.Condition;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+import java.util.List;
+import java.util.Map;
+
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.RAW_CLASSIFIER;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -43,16 +43,17 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
     @Override
     public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName,
-                                                 List<ConnectPageModuleBean> beans)
+            List<ConnectPageModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
         for (ConnectPageModuleBean bean : beans)
         {
-            // register a render strategy for our iframe page
             Map<String, Object> additionalRenderContext = Maps.newHashMap();
             augmentRenderContext(additionalRenderContext);
-            IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+
+            // register a render strategy for our iframe page
+            IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(plugin.getKey())
                     .module(bean.getKey())
                     .pageTemplate()
@@ -62,8 +63,18 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .title(bean.getDisplayName())
                     .additionalRenderContext(additionalRenderContext)
                     .build();
+            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), pageRenderStrategy);
 
-            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
+            // and an additional strategy for raw content, in case the user wants to use it as a dialog target
+            IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                    .addOn(plugin.getKey())
+                    .module(bean.getKey())
+                    .genericBodyTemplate()
+                    .urlTemplate(bean.getUrl())
+                    .condition(getCondition())
+                    .additionalRenderContext(additionalRenderContext)
+                    .build();
+            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
 
             if (hasWebItem())
             {

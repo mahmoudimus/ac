@@ -22,6 +22,8 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  */
 public class ConnectIFrameServlet extends HttpServlet
 {
+    public static final String RAW_CLASSIFIER = "raw";
+
     private static final Pattern PATH_PATTERN = Pattern.compile("^/([^/]+)/([^/]+)");
 
     private final IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry;
@@ -42,7 +44,17 @@ public class ConnectIFrameServlet extends HttpServlet
         {
             String addOnKey = matcher.group(1);
             String moduleKey = matcher.group(2);
-            IFrameRenderStrategy renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey);
+
+            IFrameRenderStrategy renderStrategy;
+            if (Boolean.valueOf(req.getParameter("raw")))
+            {
+                renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, RAW_CLASSIFIER);
+            }
+            else
+            {
+                renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey);
+            }
+
             if (renderStrategy != null)
             {
                 renderStrategy.shouldShowOrThrow(Collections.<String, Object>emptyMap());

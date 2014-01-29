@@ -21,6 +21,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataB
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
@@ -81,6 +82,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final LicenseRetriever licenseRetriever;
     private final IsDevModeService isDevModeService;
+    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     @Inject
     public ConnectEventHandler(EventPublisher eventPublisher,
@@ -96,7 +98,8 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                                ConnectDescriptorRegistry descriptorRegistry,
                                BeanToModuleRegistrar beanToModuleRegistrar,
                                LicenseRetriever licenseRetriever,
-                               IsDevModeService devModeService)
+                               IsDevModeService devModeService,
+                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
@@ -112,6 +115,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         this.descriptorRegistry = descriptorRegistry;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
         this.isDevModeService = devModeService;
+        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
     public void pluginInstalled(ConnectAddonBean addon, String sharedSecret)
@@ -165,8 +169,11 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         if (connectIdentifier.isConnectAddOn(plugin))
         {
             beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
-
         }
+
+        // TODO remove this once we remove support for XML desciptors
+        // ACDEV-886 -- unregister for ALL addons, as some XML descriptors register strategies
+        iFrameRenderStrategyRegistry.unregisterAll(plugin.getKey());
     }
 
     @PluginEventListener

@@ -85,7 +85,7 @@ public abstract class RemoteWebItemModuleDescriptorTestBase
         IFramePageRenderer iFramePageRenderer = null;
         UrlVariableSubstitutor urlVariableSubstitutor = new UrlVariableSubstitutor();
         RemotePageDescriptorCreator remotePageDescriptorCreator = new RemotePageDescriptorCreator(bundleContext, userManager,
-                webItemCreator, iFramePageRenderer, productAccessor, urlValidator, urlVariableSubstitutor);
+                webItemCreator, iFramePageRenderer, productAccessor, urlVariableSubstitutor);
 
         RemotablePluginAccessor remotablePluginAccessor = mock(RemotablePluginAccessor.class);
 
