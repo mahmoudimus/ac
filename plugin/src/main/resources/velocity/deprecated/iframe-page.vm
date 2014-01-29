@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>$!title</title>
+  <!-- Confluence breadcrumbs, TODO: invent a better way of doing this -->
+  <content tag="breadcrumbs">
+    <ol id="breadcrumbs">
+      <li class="first" ><span><a href="$contextPath/dashboard.action">Dashboard</a></span></li>
+      <li><span>$!title</span></li>
+    </ol>
+  </content>
+  <meta name="tab" content="$!title"/>
+  <meta name="decorator" content="$decorator"/>
+</head>
+<body>
+  <div class="ap-servlet-placeholder">
+    $iframeHtml
+  </div>
+</body>
+</html>

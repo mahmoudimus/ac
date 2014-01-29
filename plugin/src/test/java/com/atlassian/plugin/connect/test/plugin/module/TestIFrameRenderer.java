@@ -68,7 +68,7 @@ public class TestIFrameRenderer
         iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), "jim", emptyContext());
 
         String path = getActualTemplateRendererPath();
-        assertEquals("velocity/iframe-body.vm", path);
+        assertEquals("velocity/deprecated/iframe-body.vm", path);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class TestIFrameRenderer
         iframeRenderer.renderInline(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), "jim", emptyContext());
 
         String path = getActualTemplateRendererPath();
-        assertEquals("velocity/iframe-body-inline.vm", path);
+        assertEquals("velocity/deprecated/iframe-body-inline.vm", path);
     }
 
     @Test

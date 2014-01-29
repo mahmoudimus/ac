@@ -63,12 +63,12 @@ public class IFramePageRenderer
                 ctx.put(metaTag.getKey(), metaTag.getValue());
             }
 
-            templateRenderer.render("velocity/iframe-page" + pageInfo.getTemplateSuffix() + ".vm", ctx, writer);
+            templateRenderer.render("velocity/deprecated/iframe-page" + pageInfo.getTemplateSuffix() + ".vm", ctx, writer);
         }
         catch (PermissionDeniedException ex)
         {
             templateRenderer.render(
-                    "velocity/iframe-page-accessdenied" + pageInfo.getTemplateSuffix() + ".vm",
+                    "velocity/deprecated/iframe-page-accessdenied" + pageInfo.getTemplateSuffix() + ".vm",
                     ImmutableMap.<String, Object>of(
                             "title", pageInfo.getTitle(),
                             "decorator", pageInfo.getDecorator()), writer);

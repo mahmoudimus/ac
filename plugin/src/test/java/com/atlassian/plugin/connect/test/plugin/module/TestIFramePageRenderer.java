@@ -52,7 +52,7 @@ public class TestIFramePageRenderer
         iframePageRenderer.renderPage(createContext("a.b", "my-path", "my-namespace"), pageInfo, "", emptyParams(), "jim", emptyContext(), writer);
 
         String renderedTemplate = getActualTemplateRendererPath();
-        assertEquals("velocity/iframe-page-accessdenied-my-suffix.vm", renderedTemplate);
+        assertEquals("velocity/deprecated/iframe-page-accessdenied-my-suffix.vm", renderedTemplate);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class TestIFramePageRenderer
         iframePageRenderer.renderPage(createContext("a.b", "my-path", "my-namespace"), pageInfo, "", emptyParams(), "jim", emptyContext(), writer);
 
         String renderedTemplate = getActualTemplateRendererPath();
-        assertEquals("velocity/iframe-page-my-suffix.vm", renderedTemplate);
+        assertEquals("velocity/deprecated/iframe-page-my-suffix.vm", renderedTemplate);
     }
 
     @Test
