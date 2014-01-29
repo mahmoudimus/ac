@@ -1,0 +1,37 @@
+mixin NA
+    span.aui-lozenge.aui-lozenge-very-subtle N/A
+        block
+
+mixin scope(key)
+    span.aui-lozenge.aui-lozenge-default.aui-lozenge-complete #{key}
+        block
+
+h1
+    != title
+
+table.aui
+    thead
+        tr
+            th Path
+            th Versions
+            th GET
+            th POST
+            th PUT
+            th DELETE
+    tbody
+        - each api in scope.apis
+            tr
+                td
+                    a(id = api.foo)
+                    code
+                        != api.path
+                td
+                    - each version in api.versions
+                        span.aui-label
+                            != version
+                - each method in ["GET", "POST", "PUT", "DELETE"]
+                    td
+                        - if (api.scopes[method])
+                            +scope(api.scopes[method])
+                        - else
+                            +NA

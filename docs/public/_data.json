@@ -48,6 +48,14 @@
     "rest-apis": {
         "product-api-browser.html": {
             "title": "Product API Browser"
+        },
+        "confluence-rest-scopes.html": {
+            "title": "Confluence REST Scopes",
+            "new": true
+        },
+        "jira-rest-scopes.html": {
+            "title": "JIRA REST Scopes",
+            "new": true
         }
     },
     "resources": {

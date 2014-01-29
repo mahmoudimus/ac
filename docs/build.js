@@ -254,7 +254,7 @@ function findFragmentEntities(schemas) {
 function convertRestScopesToViewModel(scopes) {
     var apis = _.map(scopes.raw.restPaths, function(restPath) {
       return _.map(restPath.basePaths, function(basePath) {
-        var path = "/rest/" + restPath.name + "/{version}" + basePath;
+        var path = "/" + restPath.name + "/{version}" + basePath;
         return {
           path : path,
           id : slugify(path),
@@ -272,7 +272,9 @@ function prepareScope(rawScopes)
     _.each(rawScopes.scopes, function(scope) {
       _.each(scope.restPathKeys, function(restPathKey) {
         scopes[restPathKey] = scopes[restPathKey] || {};
-        scopes[restPathKey][scope.key] = scope.methods;
+        _.each(scope.methods, function(method) {
+          scopes[restPathKey][method] = scope.key;
+        });
       });
     });
     return {
@@ -311,6 +313,11 @@ function rebuildHarpSite() {
     var scopesView = {
         confluence: {
             rest: convertRestScopesToViewModel(scopes.confluence)
+//            jsonrpc: convertJsonRpcScopesToViewModel(scopes.confluence),
+//            xmlrpc: convertXmlRpcScopesToViewModel(scopes.confluence)
+        },
+        jira: {
+            rest: convertRestScopesToViewModel(scopes.jira)
 //            jsonrpc: convertJsonRpcScopesToViewModel(scopes.confluence),
 //            xmlrpc: convertXmlRpcScopesToViewModel(scopes.confluence)
         }
