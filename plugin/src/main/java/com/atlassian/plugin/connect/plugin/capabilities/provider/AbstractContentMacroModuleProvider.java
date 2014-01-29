@@ -32,12 +32,14 @@ import static com.google.common.collect.Lists.newArrayList;
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
         implements ConnectModuleProvider<T>
 {
+    public static final String EDITOR_CLASSIFIER = "editor";
+
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
     private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
-    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
+    protected final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
     public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, I18nPropertiesPluginManager i18nPropertiesPluginManager)
@@ -165,7 +167,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .dimensions(editor.getWidth(), editor.getHeight())
                 .build();
 
-        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), renderStrategy);
+        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), EDITOR_CLASSIFIER, renderStrategy);
     }
 
     private ModuleDescriptor createEditorWebResource(Plugin plugin, T macroBean)
