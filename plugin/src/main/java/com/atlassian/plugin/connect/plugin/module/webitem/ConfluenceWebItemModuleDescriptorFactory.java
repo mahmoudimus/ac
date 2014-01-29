@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebPanelModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -24,14 +25,16 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final WebPanelModuleContextExtractor webPanelModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Autowired
     public ConfluenceWebItemModuleDescriptorFactory(
             WebFragmentHelper webFragmentHelper,
             IFrameUriBuilderFactory iFrameUriBuilderFactory,
             WebPanelModuleContextExtractor webPanelModuleContextExtractor,
-            ModuleContextFilter moduleContextFilter)
+            ModuleContextFilter moduleContextFilter, UrlVariableSubstitutor urlVariableSubstitutor)
     {
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
         this.webPanelModuleContextExtractor = checkNotNull(webPanelModuleContextExtractor);
         this.moduleContextFilter = checkNotNull(moduleContextFilter);
@@ -46,6 +49,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
                 , iFrameUriBuilderFactory
                 , webPanelModuleContextExtractor
                 , moduleContextFilter
+                , urlVariableSubstitutor
                 , url
                 , pluginKey
                 , moduleKey
@@ -62,6 +66,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         private final WebPanelModuleContextExtractor webPanelModuleContextExtractor;
         private final ModuleContextFilter moduleContextFilter;
         private final String url;
+        private final UrlVariableSubstitutor urlVariableSubstitutor;
         private final String pluginKey;
         private final String moduleKey;
         private final boolean absolute;
@@ -69,13 +74,15 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
 
         private RemoteConfluenceWebItemModuleDescriptor(
                 WebFragmentHelper webFragmentHelper,
-                IFrameUriBuilderFactory iFrameUriBuilderFactory, WebPanelModuleContextExtractor webPanelModuleContextExtractor, ModuleContextFilter moduleContextFilter, String url,
-                String pluginKey, String moduleKey, boolean absolute,
+                IFrameUriBuilderFactory iFrameUriBuilderFactory,
+                WebPanelModuleContextExtractor webPanelModuleContextExtractor, ModuleContextFilter moduleContextFilter,
+                UrlVariableSubstitutor urlVariableSubstitutor, String url, String pluginKey, String moduleKey, boolean absolute,
                 AddOnUrlContext addOnUrlContext)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.webPanelModuleContextExtractor = webPanelModuleContextExtractor;
             this.moduleContextFilter = moduleContextFilter;
+            this.urlVariableSubstitutor = urlVariableSubstitutor;
             this.pluginKey = pluginKey;
             this.moduleKey = moduleKey;
             this.webFragmentHelper = webFragmentHelper;
@@ -87,7 +94,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         @Override
         public ConfluenceWebLink getLink()
         {
-            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext));
+            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory, urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext));
         }
 
         @Override
