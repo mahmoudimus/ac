@@ -19,6 +19,7 @@
         "task",
         "user"
       ],
+      "pathKeys": ["download"],
       "methods": ["GET"]
     },
     {
@@ -543,6 +544,12 @@
         "setUserPreferenceString"
       ]
     }
+  ],
+  "paths": [
+      {
+        "key": "download",
+        "paths": ["/download/temp/.*"]
+      }
   ]
 }
 
