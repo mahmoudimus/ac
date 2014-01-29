@@ -13,7 +13,7 @@ If you have an existing Connect add-on using AC Play `0.6.x`, follow these steps
 ### Upgrade AC Play
 In your `project/Build.scala` file, change the AC Play dependency to
 ```
-"com.atlassian.connect" % "ac-play-java_2.10" % "0.7.0-BETA"
+"com.atlassian.connect" % "ac-play-java_2.10" % "0.7.0-BETA7"
 ```
 
 ### Play 2.2
