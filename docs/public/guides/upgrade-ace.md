@@ -6,9 +6,6 @@ If you are creating a new `atlassian-connect-express` (ACE) add-on, then all you
 <div class="aui-message info">
     <span class="aui-icon icon-info"></span>
     Upgrading to ACE 0.9.x will replace OAuth 1 with JWT.
-    <p></p>
-    These instructions do not include information for upgrading add-ons which are running in production systems.
-    Coming soon!
 </div>
 
 If you have an existing Connect add-on using ACE `0.8.x`, follow these steps to update.
