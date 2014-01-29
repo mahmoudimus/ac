@@ -68,7 +68,7 @@ public class TestIssueTabPanel extends TestBase
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-issue-tab-panel", issueKey, PLUGIN_KEY);
+                JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issueKey, PLUGIN_KEY);
         Assert.assertEquals("Success", page.getMessage());
     }
 }

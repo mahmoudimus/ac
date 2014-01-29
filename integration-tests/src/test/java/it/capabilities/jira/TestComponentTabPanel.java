@@ -71,7 +71,7 @@ public class TestComponentTabPanel extends TestBase
     public void testComponentTabPanel() throws Exception
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, "component-tab");
+        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, "component-tab-panel");
 
         componentTabPage.clickTab();
 
