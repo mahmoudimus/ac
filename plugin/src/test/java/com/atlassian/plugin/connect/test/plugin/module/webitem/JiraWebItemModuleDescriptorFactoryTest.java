@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
@@ -54,6 +55,9 @@ public class JiraWebItemModuleDescriptorFactoryTest
     private WebPanelModuleContextExtractor webPanelModuleContextExtractor;
 
     @Mock
+    private UrlVariableSubstitutor urlVariableSubstitutor;
+
+    @Mock
     private ModuleContextFilter moduleContextFilter;
 
     private WebItemModuleDescriptor descriptor;
@@ -63,7 +67,9 @@ public class JiraWebItemModuleDescriptorFactoryTest
     {
         Plugin plugin = new PluginForTests("my-key", "My Plugin");
 
-        JiraWebItemModuleDescriptorFactory webItemFactory = new JiraWebItemModuleDescriptorFactory(webFragmentHelper, webInterfaceManager, iFrameUriBuilderFactory, jiraAuthenticationContext, webPanelModuleContextExtractor, moduleContextFilter);
+        JiraWebItemModuleDescriptorFactory webItemFactory = new JiraWebItemModuleDescriptorFactory(
+                webFragmentHelper, webInterfaceManager, iFrameUriBuilderFactory, jiraAuthenticationContext,
+                webPanelModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
@@ -57,6 +58,9 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
     private WebPanelModuleContextExtractor webPanelModuleContextExtractor;
 
     @Mock
+    private UrlVariableSubstitutor urlVariableSubstitutor;
+
+    @Mock
     private ModuleContextFilter moduleContextFilter;
 
     private WebItemModuleDescriptor descriptor;
@@ -66,7 +70,9 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
     {
         Plugin plugin = new PluginForTests("my-key", "My Plugin");
 
-        ConfluenceWebItemModuleDescriptorFactory webItemFactory = new ConfluenceWebItemModuleDescriptorFactory(webFragmentHelper, iFrameUriBuilderFactory, webPanelModuleContextExtractor, moduleContextFilter);
+        ConfluenceWebItemModuleDescriptorFactory webItemFactory =
+                new ConfluenceWebItemModuleDescriptorFactory(webFragmentHelper, iFrameUriBuilderFactory,
+                        webPanelModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 

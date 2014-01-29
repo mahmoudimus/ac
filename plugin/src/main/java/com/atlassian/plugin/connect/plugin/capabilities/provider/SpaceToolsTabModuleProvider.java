@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.atlassian.plugin.ModuleDescriptor;
@@ -8,11 +7,12 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.XWorkActionDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsContextInterceptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsIFrameAction;
-import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
@@ -50,17 +50,20 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final XWorkActionDescriptorFactory xWorkActionDescriptorFactory;
     private final ProductAccessor productAccessor;
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
+    private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
+    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     @Autowired
     public SpaceToolsTabModuleProvider(final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             final XWorkActionDescriptorFactory xWorkActionDescriptorFactory, ProductAccessor productAccessor,
-            final UrlVariableSubstitutor urlVariableSubstitutor)
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.xWorkActionDescriptorFactory = xWorkActionDescriptorFactory;
         this.productAccessor = productAccessor;
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
+        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
     @Override
@@ -71,6 +74,15 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
         {
             XWorkActionModuleBean actionBean = createActionBean(plugin, bean);
             modules.add(xWorkActionDescriptorFactory.create(plugin, actionBean));
+
+            IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                    .addOn(plugin.getKey())
+                    .module(bean.getKey())
+                    .genericBodyTemplate()
+                    .urlTemplate(bean.getUrl())
+                    .build();
+
+            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
 
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
             for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
@@ -83,9 +95,9 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
 
     private XWorkActionModuleBean createActionBean(Plugin plugin, SpaceToolsTabModuleBean bean)
     {
-        PageInfo pageInfo = new PageInfo("", "", bean.getDisplayName(), null, Collections.<String, String>emptyMap());
         String spaceAdminLegacyKey = bean.getKey() + SPACE_ADMIN_KEY_SUFFIX;
-        SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(plugin, urlVariableSubstitutor, bean.getUrl(), bean.getKey(), spaceAdminLegacyKey, pageInfo);
+        SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(plugin.getKey(), bean.getKey(),
+                bean.getDisplayName(), spaceAdminLegacyKey);
 
         return newXWorkActionBean()
                 .withName(bean.getName())
@@ -123,6 +135,8 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
 
         WebItemModuleBean spaceToolsWebItemBean = newWebItemBean(baseWebItemBean)
                 .withKey(bean.getKey())
+                .withName(bean.getName())
+                .withContext(AddOnUrlContext.product)
                 .withLocation(SPACE_TOOLS_SECTION + "/" + location)
                 .withConditions(newSingleConditionBean()
                         .withCondition(ConfluenceConditions.SPACE_SIDEBAR)
@@ -131,6 +145,8 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
 
         WebItemModuleBean spaceAdminWebItemBean = newWebItemBean(baseWebItemBean)
                 .withKey(bean.getKey() + SPACE_ADMIN_KEY_SUFFIX)
+                .withName(bean.getName())
+                .withContext(AddOnUrlContext.product)
                 .withLocation(SPACE_ADMIN_SECTION + "/" + LEGACY_LOCATION)
                 .withConditions(newSingleConditionBean()
                         .withCondition(ConfluenceConditions.SPACE_SIDEBAR)
