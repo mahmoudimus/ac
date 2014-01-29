@@ -1,4 +1,4 @@
-_AP.define("dialog/simple", ["_dollar"], function($) {
+_AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function($, uri, statusHelper) {
 
   var enc = encodeURIComponent;
 
@@ -63,6 +63,26 @@ _AP.define("dialog/simple", ["_dollar"], function($) {
     var $dialog = $("#" + dialogId);
     $nexus = $dialog.find(".ap-servlet-placeholder");
 
+    function displayDialogContent(container, contentUrl){
+            container.empty();
+            options = mergedOptions;
+            options.w = options.w || options.width;
+            options.h = options.h || options.height;
+
+            if (!options.ns) {
+                options.ns = 'dialog-content';
+            }
+            options.container = options.ns;
+            options.src = options.url = options.url || contentUrl;
+
+            if(!container.find('iframe').length){
+                container.attr('id', 'ap-' + options.ns);
+                container.append('<div id="embedded-' + options.ns + '" />');
+                container.append(statusHelper.createStatusMessages());
+                _AP.create(options);
+            }
+    }
+
     return {
       id: dialogId,
       show: function() {
@@ -72,19 +92,6 @@ _AP.define("dialog/simple", ["_dollar"], function($) {
         contentUrl += (contentUrl.indexOf("?") > 0 ? "&" : "?") + "dialog=1&simpleDialog=1";
         contentUrl = setDimension(contentUrl, "width", $panelBody.width());
         contentUrl = setDimension(contentUrl, "height", $panelBody.height());
-
-        var timeout = setTimeout(function () {
-          $nexus
-            .append("<div class='ap-dialog-loading hidden'>&nbsp;</div>")
-            .find(".ap-dialog-loading").height($panelBody.height()).fadeIn();
-        }, 500);
-
-        function preventTimeout() {
-          if (timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-          }
-        }
 
         function enableButtons() {
           buttons.setEnabled(true);
@@ -124,6 +131,27 @@ _AP.define("dialog/simple", ["_dollar"], function($) {
         // @todo should we instead start with all but cancel set to hidden, showing when iframe is inited?
         buttons.setEnabled(false);
 
+        //check for json descriptor add-ons
+        var scheme = new uri.init(contentUrl).scheme();
+        if(scheme){
+          displayDialogContent($panelBody, contentUrl);
+          return;
+        }
+
+        var timeout = setTimeout(function () {
+          $nexus
+            .append("<div class='ap-dialog-loading hidden'>&nbsp;</div>")
+            .find(".ap-dialog-loading").height($panelBody.height()).fadeIn();
+        }, 500);
+
+        function preventTimeout() {
+          if (timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+          }
+        }
+
+        // support XML descriptors
         $.ajax(contentUrl, {
           dataType: "html",
           success: function(data) {
