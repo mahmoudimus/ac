@@ -14,7 +14,9 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static it.matcher.ValueMatchers.hasProperty;
 import static it.matcher.ValueMatchers.isArrayMatching;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 public class TestUpgrade extends AbstractBrowserlessTest
@@ -61,7 +63,7 @@ public class TestUpgrade extends AbstractBrowserlessTest
         plugin1.start();
 
         JSON pluginJson = JSON.parse(plugin1.getUpmPluginJson());
-        Matcher<Iterable<? extends Value>> valMatcher = containsInAnyOrder(
+        Matcher<Iterable<? super Value>> valMatcher = hasItem(
                 hasProperty("key", KEY_PAGE_TWO));
         
         assertThat(pluginJson.get("modules"), isArrayMatching(valMatcher));
