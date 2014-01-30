@@ -42,22 +42,4 @@ public enum ScopeName
     {
         return ordinal();
     }
-
-    /**
-     * Returns the name of an AUI icon associated with this scope.
-     */
-    public String getIconKey()
-    {
-        switch (this)
-        {
-            case READ:
-                return "view";
-            case WRITE:
-                return "edit";
-            case DELETE:
-                return "remove";
-            default:
-                return "user";
-        }
-    }
 }
