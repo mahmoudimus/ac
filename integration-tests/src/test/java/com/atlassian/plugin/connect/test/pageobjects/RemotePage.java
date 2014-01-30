@@ -100,7 +100,7 @@ public class RemotePage
 
     private WebElement iframe()
     {
-        driver.waitUntilElementIsLocated(By.cssSelector("#embedded-" + key + " iframe"));
+        driver.waitUntilElementIsLocated(By.cssSelector("#embedded-servlet" + key + " iframe"));
         return containerDiv.findElement(By.tagName("iframe"));
     }
 }
