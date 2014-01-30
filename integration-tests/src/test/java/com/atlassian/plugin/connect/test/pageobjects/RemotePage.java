@@ -28,8 +28,8 @@ public class RemotePage
     @WaitUntil
     public void waitForInit()
     {
-        driver.waitUntilElementIsLocated(By.id("embedded-" + key));
-        this.containerDiv = driver.findElement(By.id("embedded-" + key));
+        driver.waitUntilElementIsLocated(By.id("embedded-servlet-" + key));
+        this.containerDiv = driver.findElement(By.id("embedded-servlet-" + key));
         driver.waitUntil(new Function<WebDriver, Boolean>()
         {
             @Override
@@ -42,9 +42,9 @@ public class RemotePage
 
     public boolean isLoaded()
     {
-        return driver.elementExists(By.cssSelector("#ap-" + key + " .ap-loading.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-" + key + " .ap-load-timeout.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-" + key + " .ap-load-error.ap-status.hidden"));
+        return driver.elementExists(By.cssSelector("#ap-servlet-" + key + " .ap-loading.ap-status.hidden")) &&
+                driver.elementExists(By.cssSelector("#ap-servlet-" + key + " .ap-load-timeout.ap-status.hidden")) &&
+                driver.elementExists(By.cssSelector("#ap-servlet-" + key + " .ap-load-error.ap-status.hidden"));
     }
 
     public Map<String, String> getIframeQueryParams()

@@ -52,7 +52,7 @@ public class ConnectPageOperations
 
     public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)
     {
-        return findRemoteLinkedContent(mode, linkText, dropDownMenuId, "servlet-" + pageKey);
+        return findRemoteLinkedContent(mode, linkText, dropDownMenuId, pageKey);
     }
 
     public LinkedRemoteContent findTabPanel(String webItemId, Option<String> dropDownMenuId, String pageKey)
@@ -62,7 +62,7 @@ public class ConnectPageOperations
 
     public LinkedRemoteContent findConnectPage(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
-        return findRemoteLinkedContent(webItemId, dropDownMenuId, "servlet-" + pageKey);
+        return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
     }
 
     public LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)

@@ -55,7 +55,7 @@ public class TestDialogWithContext extends JiraWebDriverTestBase
         viewIssuePage.findWebPanel("my-issue-panel");
 
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "remote-web-panel", "my-issue-panel", remotePlugin.getPluginKey());
-        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey("servlet-my-dialog");
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey("my-dialog");
 
         assertEquals("test dialog close url", issue.getId(), closeDialogPage.getFromQueryString("my-issue-id"));
     }
