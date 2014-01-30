@@ -65,6 +65,12 @@ public class ConnectPageOperations
         return findRemoteLinkedContent(mode, linkText, dropDownMenuId, pageKey);
     }
 
+    @Deprecated
+    public LinkedRemoteContent findConnectPageFromXml(ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)
+    {
+        return findRemoteLinkedContent(mode, linkText, dropDownMenuId, pageKey);
+    }
+
     public LinkedRemoteContent findTabPanel(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
@@ -76,6 +82,12 @@ public class ConnectPageOperations
     }
 
     public LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
+    {
+        return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
+    }
+
+    @Deprecated
+    public LinkedRemoteContent findRemoteLinkedContentFromXml(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
     }
