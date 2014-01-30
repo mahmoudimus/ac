@@ -40,4 +40,36 @@ public class ServletUtilsTest
 
         assertThat(ServletUtils.extractPathInfo(request), is("/untrusted"));
     }
+
+    @Test
+    public void testNormalizedPathShouldBeIdenticalWithoutContext() throws Exception {
+        when(request.getContextPath()).thenReturn("/");
+        when(request.getRequestURI()).thenReturn("/my/url");
+
+        assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(true));
+    }
+
+    @Test
+    public void testNormalizedPathShouldBeIdenticalWithSimpleUrl() throws Exception {
+        when(request.getContextPath()).thenReturn("/jira");
+        when(request.getRequestURI()).thenReturn("/jira/my/url");
+
+        assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(true));
+    }
+
+    @Test
+    public void testNormalizedPathShouldBeDifferentWithRelativePaths() throws Exception {
+        when(request.getContextPath()).thenReturn("/jira");
+        when(request.getRequestURI()).thenReturn("/jira/../../rest/api/2/user");
+
+        assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(true));
+    }
+
+    @Test
+    public void testNormalizedPathShouldBeDifferentWithSemiColon() throws Exception {
+        when(request.getContextPath()).thenReturn("/jira");
+        when(request.getRequestURI()).thenReturn("/jira/foo;../../rest/api/2/user");
+
+        assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(true));
+    }
 }

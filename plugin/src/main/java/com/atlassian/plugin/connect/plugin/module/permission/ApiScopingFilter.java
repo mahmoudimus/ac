@@ -5,6 +5,7 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
+import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
@@ -69,6 +70,13 @@ public class ApiScopingFilter implements Filter
         String clientKey = extractClientKey(req);
         if (clientKey != null && !ourConsumerKey.equals(clientKey))
         {
+            // Don't accept requests when the normalised and the original request uris are not the same -- see ACDEV-656
+            if (ServletUtils.normalisedAndOriginalRequestUrisDiffer(req)) {
+                log.warn("Request URI '{}' was deemed as improperly formed as it did not normalise as expected",
+                                    new Object[]{req.getRequestURI()});
+                res.sendError(HttpServletResponse.SC_BAD_REQUEST, "The request URI is improperly formed");
+                return;
+            }
             handleScopedRequest(clientKey, req, res, chain);
             return;
         }
