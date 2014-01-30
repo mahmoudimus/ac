@@ -198,6 +198,11 @@
         </optional-permissions>
     </described-module-type>
 
+    <described-module-type key="connect-dependency-enforcer" name="Connect Dependency Enforcer"
+                           class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDependencyEnforcerModuleDescriptor">
+        <description>Just here to enforce connect addons to wait for connect to load first</description>
+    </described-module-type>
+
     <described-module-type key="general-page" class="com.atlassian.plugin.connect.plugin.module.page.GeneralPageModuleDescriptor">
         <description>
             A full-sized page that will be decorated as a general page, meaning it will receive the product header
