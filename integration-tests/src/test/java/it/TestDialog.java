@@ -78,7 +78,7 @@ public class TestDialog extends ConnectWebDriverTestBase
         page.clickRemotePluginLink();
 
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "servlet", "remotePluginGeneralOpenDialog", remotePlugin.getPluginKey());
-        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey("servlet-my-dialog");
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey("my-dialog");
 
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();
