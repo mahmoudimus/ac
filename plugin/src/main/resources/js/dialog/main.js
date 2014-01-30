@@ -79,7 +79,11 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
       // Clear the nexus handle to allow subsequent dialogs to open
       $nexus = null;
     }
-    _AP.AJS.dialog2($dialog).hide();
+    if($dialog){
+      _AP.AJS.dialog2($dialog).hide();
+    } else {
+        AJS.$('.aui-dialog .ap-servlet-placeholder').trigger('ra.dialog.close');
+    }
   }
 
   return {

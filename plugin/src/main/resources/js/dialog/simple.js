@@ -64,22 +64,22 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
     $nexus = $dialog.find(".ap-servlet-placeholder");
 
     function displayDialogContent(container, contentUrl){
-            container.empty();
-            options = mergedOptions;
-            options.w = options.w || options.width;
-            options.h = options.h || options.height;
+            dialogOptions = mergedOptions;
+            dialogOptions.w = dialogOptions.w || dialogOptions.width;
+            dialogOptions.h = dialogOptions.h || dialogOptions.height;
 
-            if (!options.ns) {
-                options.ns = 'dialog-content';
+            if (!dialogOptions.ns) {
+                dialogOptions.ns = dialogId;
             }
-            options.container = options.ns;
-            options.src = options.url = options.url || contentUrl;
-
+            dialogOptions.container = dialogOptions.ns;
+            dialogOptions.src = new uri.init(contentUrl).deleteQueryParam('xdm_c').deleteQueryParam('xdm_e').deleteQueryParam('xdm_p') + '';
+            dialogOptions.dlg = true;
             if(!container.find('iframe').length){
-                container.attr('id', 'ap-' + options.ns);
-                container.append('<div id="embedded-' + options.ns + '" />');
+                container.attr('id', 'ap-' + dialogOptions.ns);
+                container.append('<div id="embedded-' + dialogOptions.ns + '" />');
                 container.append(statusHelper.createStatusMessages());
-                _AP.create(options);
+                _AP.create(dialogOptions);
+
             }
     }
 
@@ -134,7 +134,8 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
         //check for json descriptor add-ons
         var scheme = new uri.init(contentUrl).scheme();
         if(scheme){
-          displayDialogContent($panelBody, contentUrl);
+          var cont = $('<div />').appendTo('.ap-servlet-placeholder');
+          displayDialogContent(cont, contentUrl);
           return;
         }
 
