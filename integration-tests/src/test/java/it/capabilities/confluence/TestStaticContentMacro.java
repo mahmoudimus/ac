@@ -27,8 +27,8 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     private static final String STORAGE_FORMAT_MACRO_NAME = "Storage Format Macro";
     private static final String STORAGE_FORMAT_MACRO_KEY = "storage-format-macro";
 
-    private static final String POST_MACRO_NAME = "Post Macro";
-    private static final String POST_MACRO_KEY = "post-macro";
+    private static final String GET_MACRO_NAME = "Get Macro";
+    private static final String GET_MACRO_KEY = "get-macro";
 
     private static final String POST_PARAM_MACRO_NAME = "Post Parameter Macro";
     private static final String POST_PARAM_MACRO_KEY = "post-parameter-macro";
@@ -55,10 +55,10 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                 .withName(new I18nProperty(STORAGE_FORMAT_MACRO_NAME, ""))
                 .build();
 
-        StaticContentMacroModuleBean postMacro = newStaticContentMacroModuleBean()
+        StaticContentMacroModuleBean getMacro = newStaticContentMacroModuleBean()
                 .withUrl("/render-context")
-                .withKey(POST_MACRO_KEY)
-                .withName(new I18nProperty(POST_MACRO_NAME, ""))
+                .withKey(GET_MACRO_KEY)
+                .withName(new I18nProperty(GET_MACRO_NAME, ""))
                 .build();
 
         StaticContentMacroModuleBean postParameterMacro = newStaticContentMacroModuleBean()
@@ -86,7 +86,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                         imagePlaceholderMacro,
                         parameterMacro,
                         storageFormatMacro,
-                        postMacro,
+                        getMacro,
                         postParameterMacro,
                         editorMacro
                 )
@@ -126,13 +126,13 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testMacroHttpMethod() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("HTTP POST Macro");
+        editorPage.setTitle("HTTP GET Macro");
 
-        selectMacro(editorPage, POST_MACRO_NAME);
+        selectMacro(editorPage, GET_MACRO_NAME);
 
         savedPage = editorPage.save();
 
-        assertThat(String.valueOf(contextServlet.waitForContext().get("req_method")), is("POST"));
+        assertThat(String.valueOf(contextServlet.waitForContext().get("req_method")), is("GET"));
     }
 
     @Test
