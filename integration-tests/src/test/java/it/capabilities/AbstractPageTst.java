@@ -41,7 +41,7 @@ public class AbstractPageTst extends ConnectWebDriverTestBase
                 .withWeight(1234);
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
-                .addModule(fieldName, pageBeanBuilder.build())
+                .addModule(fieldName, pageBeanBuilder.withKey(MY_AWESOME_PAGE_KEY).build())
                 .addRoute(URL, ConnectAppServlets.apRequestServlet())
                 .start();
     }

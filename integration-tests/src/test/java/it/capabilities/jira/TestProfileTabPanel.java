@@ -55,7 +55,7 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
         loginAsAdmin();
         product.visit(ViewProfilePage.class);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_profile-tab-profile-tab-panel_a",
-                Option.<String>none(), "profile-tab-profile-tab-panel");
+                Option.<String>none(), "profile-tab-panel");
         RemotePluginEmbeddedTestPage remotePage = tabPanel.click();
         assertThat(remotePage.isLoaded(), equalTo(true));
         assertThat(remotePage.getMessage(), equalTo("Success"));
