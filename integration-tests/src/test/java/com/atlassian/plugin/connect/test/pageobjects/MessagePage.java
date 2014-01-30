@@ -10,7 +10,7 @@ public class MessagePage extends RemotePluginEmbeddedTestPage implements Page
 
     public MessagePage(String appKey, String pageKey)
     {
-        super("servlet-" + pageKey);
+        super(pageKey);
         this.appKey = appKey;
         this.pageKey = pageKey;
     }

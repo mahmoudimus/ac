@@ -24,7 +24,6 @@ public class TestUpgrade extends AbstractBrowserlessTest
     private static final String PLUGIN_KEY = "my-upgraded-plugin";
     public static final String KEY_PAGE_ONE = "page-one";
     public static final String KEY_PAGE_TWO = "page-two";
-    public static final String KEY_SERVLET_PAGE_TWO = "servlet-page-two";
 
     private ConnectRunner plugin0;
     private ConnectRunner plugin1;

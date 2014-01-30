@@ -34,6 +34,16 @@ public class ConnectPageOperations
         return pageBinder.bind(RemoteWebPanel.class, id);
     }
 
+    /**
+     * For XML descriptor tests.
+     * TODO remove when we ditch support for XML descriptors.
+     */
+    @Deprecated
+    public RemoteWebPanel findWebPanelFromXMLAddOn(String id)
+    {
+        return pageBinder.bind(RemoteWebPanel.class, id, "remote-web-panel-");
+    }
+
     public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownLinkId)
     {
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownLinkId);
@@ -52,7 +62,7 @@ public class ConnectPageOperations
 
     public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)
     {
-        return findRemoteLinkedContent(mode, linkText, dropDownMenuId, "servlet-" + pageKey);
+        return findRemoteLinkedContent(mode, linkText, dropDownMenuId, pageKey);
     }
 
     public LinkedRemoteContent findTabPanel(String webItemId, Option<String> dropDownMenuId, String pageKey)
@@ -62,7 +72,7 @@ public class ConnectPageOperations
 
     public LinkedRemoteContent findConnectPage(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
-        return findRemoteLinkedContent(webItemId, dropDownMenuId, "servlet-" + pageKey);
+        return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
     }
 
     public LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)

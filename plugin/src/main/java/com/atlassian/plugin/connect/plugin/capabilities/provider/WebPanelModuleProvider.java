@@ -46,6 +46,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
                     .pageTemplate()
                     .urlTemplate(bean.getUrl())
                     .title(bean.getDisplayName())
+                    .dimensions(bean.getLayout().getWidth(), bean.getLayout().getHeight())
                     .build();
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
 
