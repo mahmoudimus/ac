@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
+import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
@@ -44,6 +45,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private Condition condition;
     private String width;
     private String height;
+    private boolean uniqueNamespace;
 
     public IFrameRenderStrategyBuilderImpl(
             final IFrameUriBuilderFactory iFrameUriBuilderFactory,
@@ -85,9 +87,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public TemplatedBuilder genericInlineTemplate()
+    public TemplatedBuilder genericBodyTemplate(boolean inline)
     {
-        template = TEMPLATE_GENERIC_INLINE;
+        template = inline ? TEMPLATE_GENERIC_INLINE : TEMPLATE_GENERIC_BODY;
         return this;
     }
 
@@ -166,11 +168,18 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
+    public InitializedBuilder ensureUniqueNamespace(boolean uniqueNamespace)
+    {
+        this.uniqueNamespace = uniqueNamespace;
+        return this;
+    }
+
+    @Override
     public IFrameRenderStrategy build()
     {
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, urlTemplate, title, decorator, condition,
-                additionalRenderContext, width, height);
+                additionalRenderContext, width, height, uniqueNamespace);
     }
 
     private static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
@@ -188,6 +197,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final String title;
         private final String width;
         private final String height;
+        private final boolean uniqueNamespace;
         private final String decorator;
         private final Condition condition;
 
@@ -196,7 +206,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                 final TemplateRenderer templateRenderer, final String addOnKey, final String moduleKey,
                 final String template, final String urlTemplate, final String title, final String decorator,
                 final Condition condition, final Map<String, Object> additionalRenderContext, String width,
-                String height)
+                String height, final boolean uniqueNamespace)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -211,22 +221,25 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.additionalRenderContext = additionalRenderContext;
             this.width = width;
             this.height = height;
+            this.uniqueNamespace = uniqueNamespace;
         }
 
         @Override
         public void render(final ModuleContextParameters moduleContextParameters, final Writer writer)
                 throws IOException
         {
+            String namespace = uniqueNamespace ? ModuleKeyGenerator.randomName(moduleKey) : moduleKey;
+
             String signedUri = iFrameUriBuilderFactory.builder()
                     .addOn(addOnKey)
-                    .module(moduleKey)
+                    .namespace(namespace)
                     .urlTemplate(urlTemplate)
                     .context(moduleContextParameters)
                     .signAndBuild();
 
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
                     .addOn(addOnKey)
-                    .module(moduleKey)
+                    .namespace(namespace)
                     .iframeUri(signedUri)
                     .decorator(decorator)
                     .title(title)

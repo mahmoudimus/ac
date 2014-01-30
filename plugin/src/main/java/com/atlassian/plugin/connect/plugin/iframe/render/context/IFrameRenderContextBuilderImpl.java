@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.context;
 
 import com.atlassian.html.encode.JavascriptEncoder;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -22,7 +21,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 /**
  *
  */
-public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilder, IFrameRenderContextBuilder.AddOnContextBuilder, IFrameRenderContextBuilder.ModuleContextBuilder
+public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilder, IFrameRenderContextBuilder.AddOnContextBuilder, IFrameRenderContextBuilder.NamespacedContextBuilder
 {
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
@@ -31,7 +30,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
     private final List<String> dialogScriptUrls;
 
     private String addonKey;
-    private String moduleKey;
+    private String namespace;
 
     public IFrameRenderContextBuilderImpl(final RemotablePluginAccessorFactory pluginAccessorFactory,
                                           final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
@@ -52,30 +51,29 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
     }
 
     @Override
-    public ModuleContextBuilder module(final String key)
+    public NamespacedContextBuilder namespace(final String namespace)
     {
-        moduleKey = key;
+        this.namespace = namespace;
         return this;
     }
 
     @Override
     public InitializedBuilder iframeUri(final String uri)
     {
-        return new InitializedBuilderImpl(addonKey, moduleKey, uri);
+        return new InitializedBuilderImpl(addonKey, namespace, uri);
     }
 
     private class InitializedBuilderImpl implements InitializedBuilder
     {
         private final String addonKey;
-        private final String moduleKey;
+        private final String namespace;
         private final String iframeUri;
-        private boolean uniqueNamespace;
 
         private final Map<String, Object> additionalContext = Maps.newHashMap();
 
-        private InitializedBuilderImpl(final String addonKey, final String moduleKey, final String iframeUri) {
+        private InitializedBuilderImpl(final String addonKey, final String namespace, final String iframeUri) {
             this.addonKey = addonKey;
-            this.moduleKey = moduleKey;
+            this.namespace = namespace;
             this.iframeUri = iframeUri;
         }
 
@@ -111,13 +109,6 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         public InitializedBuilder title(final String title)
         {
             putIfNotNull("title", title);
-            return this;
-        }
-
-        @Override
-        public InitializedBuilder ensureUniqueNamespace()
-        {
-            uniqueNamespace = true;
             return this;
         }
 
@@ -175,8 +166,6 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             String username = nullToEmpty(profile == null ? "" : profile.getUsername());
             String userKey = nullToEmpty(profile == null ? "" : profile.getUserKey().getStringValue());
             String timeZone = userPreferencesRetriever.getTimeZoneFor(username).getID();
-
-            String namespace = uniqueNamespace ? ModuleKeyGenerator.randomName(moduleKey) : moduleKey;
 
             defaultContext.put("iframeSrcHtml", escapeQuotes(iframeUri));
             defaultContext.put("plugin", pluginAccessorFactory.getOrThrow(addonKey));

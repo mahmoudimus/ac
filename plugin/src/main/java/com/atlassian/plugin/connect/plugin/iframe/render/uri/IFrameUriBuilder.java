@@ -11,10 +11,10 @@ public interface IFrameUriBuilder
 
     interface AddOnUriBuilder
     {
-        ModuleUriBuilder module(String key);
+        NamespacedUriBuilder namespace(String namespace);
     }
 
-    interface ModuleUriBuilder
+    interface NamespacedUriBuilder
     {
         TemplatedBuilder urlTemplate(String uri);
     }
@@ -28,7 +28,6 @@ public interface IFrameUriBuilder
     {
         InitializedBuilder param(String key, String value);
         String signAndBuild();
-
         String buildUnsigned();
     }
 }

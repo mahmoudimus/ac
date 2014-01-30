@@ -109,7 +109,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMacroIsRendered() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Simple Macro on Page");
+        editorPage.setTitle("Simple Macro on Page_" + System.currentTimeMillis());
 
         selectMacro(editorPage, SIMPLE_MACRO_NAME);
 
@@ -124,7 +124,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testBodyInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Short Body Macro");
+        editorPage.setTitle("Short Body Macro_" + System.currentTimeMillis());
 
         selectMacro(editorPage, SHORT_BODY_MACRO_NAME);
 
@@ -142,7 +142,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testBodyHashInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Long Body Macro");
+        editorPage.setTitle("Long Body Macro_" + System.currentTimeMillis());
 
         selectMacro(editorPage, LONG_BODY_MACRO_NAME);
 
@@ -162,7 +162,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testParameterInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Parameter Page");
+        editorPage.setTitle("Parameter Page_" + System.currentTimeMillis());
 
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);
@@ -183,7 +183,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMultipleMacrosOnPage() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Multiple Macros");
+        editorPage.setTitle("Multiple Macros_" + System.currentTimeMillis());
 
         selectMacro(editorPage, SIMPLE_MACRO_NAME);
         selectMacro(editorPage, SIMPLE_MACRO_NAME);
@@ -203,7 +203,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMacroDimensions() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Small Inline Macro");
+        editorPage.setTitle("Small Inline Macro_" + System.currentTimeMillis());
 
         selectMacro(editorPage, SMALL_INLINE_MACRO_NAME);
 

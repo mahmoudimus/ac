@@ -72,7 +72,7 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
                 dialogOptions.ns = dialogId;
             }
             dialogOptions.container = dialogOptions.ns;
-            dialogOptions.src = new uri.init(contentUrl).deleteQueryParam('xdm_c').deleteQueryParam('xdm_e').deleteQueryParam('xdm_p') + '';
+            dialogOptions.src = contentUrl;
             dialogOptions.dlg = true;
             if(!container.find('iframe').length){
                 container.attr('id', 'ap-' + dialogOptions.ns);
