@@ -71,7 +71,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(adminPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/pg"));
+        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/" + GENERATED_PAGE_KEY));
 
         RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
