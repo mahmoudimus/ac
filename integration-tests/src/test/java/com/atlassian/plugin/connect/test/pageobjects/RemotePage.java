@@ -18,18 +18,25 @@ public class RemotePage
     protected AtlassianWebDriver driver;
 
     protected final String key;
+    protected final String extraPrefix;
     protected WebElement containerDiv;
 
     public RemotePage(String contextKey)
     {
+        this(contextKey,"");
+    }
+
+    public RemotePage(String contextKey, String extraPrefix)
+    {
         this.key = contextKey;
+        this.extraPrefix = extraPrefix;
     }
 
     @WaitUntil
     public void waitForInit()
     {
-        driver.waitUntilElementIsLocated(By.id("embedded-servlet-" + key));
-        this.containerDiv = driver.findElement(By.id("embedded-servlet-" + key));
+        driver.waitUntilElementIsLocated(By.id("embedded-" + extraPrefix + key));
+        this.containerDiv = driver.findElement(By.id("embedded-" + extraPrefix + key));
         driver.waitUntil(new Function<WebDriver, Boolean>()
         {
             @Override
@@ -42,9 +49,9 @@ public class RemotePage
 
     public boolean isLoaded()
     {
-        return driver.elementExists(By.cssSelector("#ap-servlet-" + key + " .ap-loading.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-servlet-" + key + " .ap-load-timeout.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-servlet-" + key + " .ap-load-error.ap-status.hidden"));
+        return driver.elementExists(By.cssSelector("#ap-" + extraPrefix + key + " .ap-loading.ap-status.hidden")) &&
+                driver.elementExists(By.cssSelector("#ap-" + extraPrefix + key + " .ap-load-timeout.ap-status.hidden")) &&
+                driver.elementExists(By.cssSelector("#ap-" + extraPrefix+ key + " .ap-load-error.ap-status.hidden"));
     }
 
     public Map<String, String> getIframeQueryParams()
@@ -100,7 +107,7 @@ public class RemotePage
 
     private WebElement iframe()
     {
-        driver.waitUntilElementIsLocated(By.cssSelector("#embedded-servlet-" + key + " iframe"));
+        driver.waitUntilElementIsLocated(By.cssSelector("#embedded-" + extraPrefix + key + " iframe"));
         return containerDiv.findElement(By.tagName("iframe"));
     }
 }

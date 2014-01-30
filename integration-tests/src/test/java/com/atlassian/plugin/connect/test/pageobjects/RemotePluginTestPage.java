@@ -7,6 +7,11 @@ public class RemotePluginTestPage extends RemotePluginEmbeddedTestPage
         super(pageKey);
     }
 
+    public RemotePluginTestPage(String pageKey, String extraPrefix)
+    {
+        super(pageKey, extraPrefix);
+    }
+
     public String getTitle()
     {
         return driver.getTitle();
