@@ -2,14 +2,14 @@ mixin scope(key)
     span.aui-lozenge.aui-lozenge-default.aui-lozenge-complete #{key}
         block
 
-h1
-    != title
+p
+| The required scope for your add-on depends on the methods that your add-on invokes. The table below shows the
+| required scope for every RPC method call.
 
 table.aui
     thead
         tr
             th Method
-            th Paths
             th Scope
     tbody
         - each api in scope.apis
@@ -18,10 +18,5 @@ table.aui
                     a(id = api.id)
                     code
                         != api.method
-                td
-                    - each path in api.paths
-                        code
-                            != path
-                        br
                 td
                     +scope(api.scope)
