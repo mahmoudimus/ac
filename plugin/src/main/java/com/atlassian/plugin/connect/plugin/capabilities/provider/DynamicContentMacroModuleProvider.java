@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
@@ -41,9 +42,10 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(plugin.getKey())
                 .module(macroBean.getKey())
-                .pageTemplate()
+                .genericBodyTemplate(macroBean.getOutputType() == MacroOutputType.INLINE)
                 .urlTemplate(macroBean.getUrl())
                 .dimensions(macroBean.getWidth(), macroBean.getHeight())
+                .ensureUniqueNamespace(true)
                 .build();
 
         iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), CONTENT_CLASSIFIER, renderStrategy);

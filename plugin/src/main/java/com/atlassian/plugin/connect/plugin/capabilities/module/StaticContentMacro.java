@@ -55,7 +55,7 @@ public class StaticContentMacro extends AbstractMacro
 
         String uri = iFrameUriBuilderFactory.builder()
                 .addOn(addOnKey)
-                .module(moduleKey)
+                .namespace(moduleKey)
                 .urlTemplate(uriTemplate)
                 .context(moduleContext)
                 .buildUnsigned();

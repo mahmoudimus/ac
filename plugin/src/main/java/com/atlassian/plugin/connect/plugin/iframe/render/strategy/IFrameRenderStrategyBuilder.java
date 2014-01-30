@@ -20,7 +20,7 @@ public interface IFrameRenderStrategyBuilder
     {
         TemplatedBuilder pageTemplate();
         TemplatedBuilder genericBodyTemplate();
-        TemplatedBuilder genericInlineTemplate();
+        TemplatedBuilder genericBodyTemplate(boolean inline);
         TemplatedBuilder dialogTemplate();
         TemplatedBuilder projectAdminTabTemplate();
         TemplatedBuilder workflowPostFunctionTemplate();
@@ -39,6 +39,7 @@ public interface IFrameRenderStrategyBuilder
         InitializedBuilder decorator(String decorator);
         InitializedBuilder additionalRenderContext(String key, Object object);
         InitializedBuilder additionalRenderContext(Map<String, Object> additionalRenderContext);
+        InitializedBuilder ensureUniqueNamespace(boolean uniqueNamespace);
         IFrameRenderStrategy build();
     }
 }

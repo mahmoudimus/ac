@@ -22,7 +22,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  *
  */
 public class IFrameUriBuilderImpl
-        implements IFrameUriBuilder, IFrameUriBuilder.AddOnUriBuilder, IFrameUriBuilder.ModuleUriBuilder, IFrameUriBuilder.TemplatedBuilder
+        implements IFrameUriBuilder, IFrameUriBuilder.AddOnUriBuilder, IFrameUriBuilder.NamespacedUriBuilder, IFrameUriBuilder.TemplatedBuilder
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
@@ -33,7 +33,7 @@ public class IFrameUriBuilderImpl
     private final UserPreferencesRetriever userPreferencesRetriever;
 
     private String addonKey;
-    private String moduleKey;
+    private String namespace;
     private String templateUri;
 
     public IFrameUriBuilderImpl(final UrlVariableSubstitutor urlVariableSubstitutor,
@@ -59,9 +59,9 @@ public class IFrameUriBuilderImpl
     }
 
     @Override
-    public ModuleUriBuilder module(final String key)
+    public NamespacedUriBuilder namespace(final String namespace)
     {
-        moduleKey = Preconditions.checkNotNull(key);
+        this.namespace = Preconditions.checkNotNull(namespace);
         return this;
     }
 
@@ -77,19 +77,19 @@ public class IFrameUriBuilderImpl
     {
         String substitutedUrl = urlVariableSubstitutor.replace(templateUri, context);
         UriBuilder uriBuilder = new UriBuilder(Uri.parse(substitutedUrl));
-        return new InitializedBuilderImpl(addonKey, moduleKey, uriBuilder);
+        return new InitializedBuilderImpl(addonKey, namespace, uriBuilder);
     }
 
     private class InitializedBuilderImpl implements InitializedBuilder
     {
         private final String addonKey;
-        private final String moduleKey;
+        private final String namespace;
         private final UriBuilder uriBuilder;
 
-        private InitializedBuilderImpl(final String addonKey, final String moduleKey, final UriBuilder uriBuilder)
+        private InitializedBuilderImpl(final String addonKey, final String namespace, final UriBuilder uriBuilder)
         {
             this.addonKey = addonKey;
-            this.moduleKey = moduleKey;
+            this.namespace = namespace;
             this.uriBuilder = uriBuilder;
         }
 
@@ -136,7 +136,7 @@ public class IFrameUriBuilderImpl
 
             // XDM parameters
             uriBuilder.addQueryParameter("xdm_e", hostApplicationInfo.getUrl().toString());
-            uriBuilder.addQueryParameter("xdm_c", "channel-" + moduleKey);
+            uriBuilder.addQueryParameter("xdm_c", "channel-" + namespace);
             uriBuilder.addQueryParameter("xdm_p", "1");
             uriBuilder.addQueryParameter("cp", hostApplicationInfo.getContextPath());
 

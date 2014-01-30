@@ -57,7 +57,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
 
         return iFrameUriBuilderFactory.builder()
                                       .addOn(pluginKey)
-                                      .module(moduleKey)
+                                      .namespace(moduleKey)
                                       .urlTemplate(url)
                                       .context(moduleParams)
                                       .buildUnsigned();
@@ -79,7 +79,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             {
                 return iFrameUriBuilderFactory.builder()
                                               .addOn(pluginKey)
-                                              .module(moduleKey)
+                                              .namespace(moduleKey)
                                               .urlTemplate(url)
                                               .context(moduleContext)
                                               .signAndBuild();
