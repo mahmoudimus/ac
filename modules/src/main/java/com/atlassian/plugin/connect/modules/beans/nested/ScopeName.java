@@ -33,4 +33,31 @@ public enum ScopeName
             }
         }));
     }
+
+    /**
+     * Returns an integer indicating the canonical display order for scopes. This is
+     * currently the same value returned by <tt>ordinal()</tt>.
+     */
+    public int getSortOrder()
+    {
+        return ordinal();
+    }
+
+    /**
+     * Returns the name of an AUI icon associated with this scope.
+     */
+    public String getIconKey()
+    {
+        switch (this)
+        {
+            case READ:
+                return "view";
+            case WRITE:
+                return "edit";
+            case DELETE:
+                return "remove";
+            default:
+                return "user";
+        }
+    }
 }
