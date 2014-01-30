@@ -71,7 +71,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/pg"));
+        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/" + KEY_MY_AWESOME_PAGE));
 
         assertThat(URLEncodedUtils.parse(url, UTF_8.name()),
                 containsInAnyOrder(
