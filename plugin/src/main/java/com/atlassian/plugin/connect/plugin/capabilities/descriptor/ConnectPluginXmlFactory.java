@@ -19,10 +19,6 @@ import static com.atlassian.fugue.Option.option;
 @Component
 public class ConnectPluginXmlFactory
 {
-
-    public static final String CONNECT_DEPENDENCY_ENFORCER = "connect-dependency-enforcer";
-    public static final String I_NEED_CONNECT = "i-need-connect";
-
     public String createPluginXml(ConnectAddonBean bean)
     {
         Document doc = DocumentFactory.getInstance().createDocument();
@@ -56,7 +52,6 @@ public class ConnectPluginXmlFactory
         });
 
         root.add(info);
-        root.add(new DOMElement(CONNECT_DEPENDENCY_ENFORCER).addAttribute("key", I_NEED_CONNECT));
 
         return doc.asXML();
 
