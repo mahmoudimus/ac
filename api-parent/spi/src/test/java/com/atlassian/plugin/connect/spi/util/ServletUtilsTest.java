@@ -1,0 +1,43 @@
+package com.atlassian.plugin.connect.spi.util;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.when;
+
+@RunWith (MockitoJUnitRunner.class)
+public class ServletUtilsTest
+{
+    @Mock
+    private HttpServletRequest request;
+
+    @Test
+    public void testExtractPathInfoWithoutContext() throws Exception {
+        when(request.getContextPath()).thenReturn("");
+        when(request.getRequestURI()).thenReturn("/rest/api/2/user");
+
+        assertThat(ServletUtils.extractPathInfo(request), is("/rest/api/2/user"));
+    }
+
+    @Test
+    public void testExtractPathInfoWithContext() throws Exception {
+        when(request.getContextPath()).thenReturn("/jira");
+        when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user");
+
+        assertThat(ServletUtils.extractPathInfo(request), is("/rest/api/2/user"));
+    }
+
+    @Test
+    public void testExtractPathFromMaliciousUrl() throws Exception {
+        when(request.getContextPath()).thenReturn("/jira");
+        when(request.getRequestURI()).thenReturn("/jira/untrusted;../../rest/api/2/user");
+
+        assertThat(ServletUtils.extractPathInfo(request), is("/untrusted"));
+    }
+}

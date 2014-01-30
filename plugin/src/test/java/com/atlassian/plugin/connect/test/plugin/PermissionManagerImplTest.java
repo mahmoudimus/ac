@@ -165,6 +165,24 @@ public class PermissionManagerImplTest
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
+    @Test
+    public void checksThatSigningVulnerabilityTestIsNotFalsePositive()
+    {
+        when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa");
+        when(request.getMethod()).thenReturn("GET");
+        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+    }
+
+    @Test
+    public void signingNotVulnerableToNormalizedUris()
+    {
+        when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa;../../../rest/api/2/user");
+        when(request.getMethod()).thenReturn("GET");
+        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+    }
+
     private Setup setup()
     {
         return new Setup();

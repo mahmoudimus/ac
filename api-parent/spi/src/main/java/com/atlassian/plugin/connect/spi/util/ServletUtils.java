@@ -8,6 +8,10 @@ public final class ServletUtils
 {
     public static String extractPathInfo(HttpServletRequest request)
     {
-        return URI.create(request.getRequestURI().substring(request.getContextPath().length())).normalize().toString();
+        String requestURI = request.getRequestURI();
+        if (requestURI.contains(";")) {
+            requestURI = requestURI.substring(0, requestURI.indexOf(';'));
+        }
+        return URI.create(requestURI.substring(request.getContextPath().length())).normalize().toString();
     }
 }
