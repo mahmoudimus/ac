@@ -34,6 +34,16 @@ public class ConnectPageOperations
         return pageBinder.bind(RemoteWebPanel.class, id);
     }
 
+    /**
+     * For XML descriptor tests.
+     * TODO remove when we ditch support for XML descriptors.
+     */
+    @Deprecated
+    public RemoteWebPanel findWebPanelFromXMLAddOn(String id)
+    {
+        return pageBinder.bind(RemoteWebPanel.class, id, "remote-web-panel-");
+    }
+
     public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownLinkId)
     {
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownLinkId);
