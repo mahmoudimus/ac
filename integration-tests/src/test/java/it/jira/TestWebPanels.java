@@ -95,7 +95,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
 
-        RemoteWebPanel panel = viewIssuePage.findWebPanel(ISSUE_PANEL_ID).waitUntilContentLoaded();
+        RemoteWebPanel panel = viewIssuePage.findWebPanelFromXMLAddOn(ISSUE_PANEL_ID).waitUntilContentLoaded();
 
         assertEquals(issue.getId(), panel.getIssueId());
         assertEquals(issue.getKey(), panel.getFromQueryString("issue_key"));
@@ -112,7 +112,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
     {
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
-        RemoteWebPanel panel = viewIssuePage.findWebPanel(ISSUE_REMOTE_LEFT_WEB_PANEL_ID_2).waitUntilContentLoaded();
+        RemoteWebPanel panel = viewIssuePage.findWebPanelFromXMLAddOn(ISSUE_REMOTE_LEFT_WEB_PANEL_ID_2).waitUntilContentLoaded();
 
         assertEquals(issue.getId(), panel.getFromQueryString("my-issue-id"));
         assertEquals(project.getId(), panel.getFromQueryString("my-project-id"));
@@ -125,7 +125,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
     {
         loginAsAdmin();
         JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
-        RemoteWebPanel panel = projectAdministrationPage.findWebPanel(PROJECT_CONFIG_PANEL_ID).waitUntilContentLoaded();
+        RemoteWebPanel panel = projectAdministrationPage.findWebPanelFromXMLAddOn(PROJECT_CONFIG_PANEL_ID).waitUntilContentLoaded();
 
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(ADMIN_USERNAME, panel.getUserId());
@@ -141,7 +141,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         loginAsAdmin();
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for left remotable-web-panel panel");
         RemoteWebPanel panel = product.visit(JiraViewIssuePage.class, issue.getKey())
-                .findWebPanel(ISSUE_REMOTE_LEFT_WEB_PANEL_ID).waitUntilContentLoaded();
+                .findWebPanelFromXMLAddOn(ISSUE_REMOTE_LEFT_WEB_PANEL_ID).waitUntilContentLoaded();
 
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(issue.getId(), panel.getIssueId());
@@ -157,7 +157,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         loginAsAdmin();
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Another test issue for right remotable-web-panel panel");
         RemoteWebPanel panel = product.visit(JiraViewIssuePage.class, issue.getKey())
-                .findWebPanel(ISSUE_REMOTE_RIGHT_WEB_PANEL_ID).waitUntilContentLoaded();
+                .findWebPanelFromXMLAddOn(ISSUE_REMOTE_RIGHT_WEB_PANEL_ID).waitUntilContentLoaded();
 
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(issue.getId(), panel.getIssueId());
@@ -173,7 +173,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         loginAsAdmin();
         JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
         RemoteWebPanel panel = projectAdministrationPage
-                .findWebPanel(PROJECT_CONFIG_HEADER_WEB_PANEL).waitUntilContentLoaded();
+                .findWebPanelFromXMLAddOn(PROJECT_CONFIG_HEADER_WEB_PANEL).waitUntilContentLoaded();
 
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(ADMIN_USERNAME, panel.getUserId());
@@ -189,7 +189,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
 
         loginAsAdmin();
         JiraViewProfilePage jiraViewProfilePage = product.visit(JiraViewProfilePage.class, userProfileName);
-        RemoteWebPanel panel = jiraViewProfilePage.findWebPanel(USER_PROFILE_WEB_PANEL_ID);
+        RemoteWebPanel panel = jiraViewProfilePage.findWebPanelFromXMLAddOn(USER_PROFILE_WEB_PANEL_ID);
 
         assertEquals(userProfileName, panel.getFromQueryString("profile_user_key"));
         assertEquals(userProfileName, panel.getFromQueryString("profile_user_name"));

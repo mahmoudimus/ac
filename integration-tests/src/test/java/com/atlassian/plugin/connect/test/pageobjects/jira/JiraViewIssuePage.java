@@ -49,6 +49,11 @@ public class JiraViewIssuePage implements Page
         return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
 
+    public RemoteWebPanel findWebPanelFromXMLAddOn(String panelId)
+    {
+        return pageBinder.bind(RemoteWebPanel.class, panelId, "remote-web-panel-");
+    }
+
     public RemoteXdmEventPanel findXdmEventPanel(String panelId)
     {
         return pageBinder.bind(RemoteXdmEventPanel.class, panelId);
