@@ -52,28 +52,22 @@
     },
     "scopes": {
         "jira-rest-scopes.html": {
-            "title": "JIRA REST",
-            "new": true
+            "title": "JIRA REST"
         },
         "jira-jsonrpc-scopes.html": {
-            "title": "JIRA JSON-RPC",
-            "new": true
+            "title": "JIRA JSON-RPC"
         },
         "jira-soap-scopes.html": {
-            "title": "JIRA SOAP",
-            "new": true
+            "title": "JIRA SOAP"
         },
         "confluence-rest-scopes.html": {
-            "title": "Confluence REST",
-            "new": true
+            "title": "Confluence REST"
         },
         "confluence-jsonrpc-scopes.html": {
-            "title": "Confluence JSON-RPC",
-            "new": true
+            "title": "Confluence JSON-RPC"
         },
         "confluence-xmlrpc-scopes.html": {
-            "title": "Confluence XML-RPC",
-            "new": true
+            "title": "Confluence XML-RPC"
         }
     },
     "resources": {
