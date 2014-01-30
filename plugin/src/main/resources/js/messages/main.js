@@ -43,7 +43,8 @@ _AP.define("messages/main", ["_dollar"], function($) {
             }
             if(validateMessageId(options.id)){
                 AJS.messages[name](msgBar, options);
-                // center the message bar
+                // Calculate the left offset based on the content width.
+                // This ensures the message always stays in the centre of the window.
                 msgBar.css('margin-left', '-' + msgBar.innerWidth()/2 + 'px');
             }
         },
