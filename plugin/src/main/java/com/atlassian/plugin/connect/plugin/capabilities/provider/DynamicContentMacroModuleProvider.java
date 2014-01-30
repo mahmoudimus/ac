@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ConfluenceComponent
 public class DynamicContentMacroModuleProvider extends AbstractContentMacroModuleProvider<DynamicContentMacroModuleBean>
 {
+    public static final String CONTENT_CLASSIFIER = "content";
+
     private final DynamicContentMacroModuleDescriptorFactory dynamicContentMacroModuleDescriptorFactory;
 
     @Autowired
@@ -35,6 +38,16 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     @Override
     protected ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, DynamicContentMacroModuleBean macroBean)
     {
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                .addOn(plugin.getKey())
+                .module(macroBean.getKey())
+                .pageTemplate()
+                .urlTemplate(macroBean.getUrl())
+                .dimensions(macroBean.getWidth(), macroBean.getHeight())
+                .build();
+
+        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), CONTENT_CLASSIFIER, renderStrategy);
+
         return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(plugin, macroBean);
     }
 }

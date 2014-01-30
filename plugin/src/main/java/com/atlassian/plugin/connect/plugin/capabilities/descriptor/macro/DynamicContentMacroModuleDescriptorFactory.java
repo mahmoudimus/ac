@@ -16,6 +16,8 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.provider.DynamicContentMacroModuleProvider.CONTENT_CLASSIFIER;
+
 @ConfluenceComponent
 public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<DynamicContentMacroModuleBean>
 {
@@ -55,7 +57,8 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(plugin.getKey(), bean.getKey());
+                IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(plugin.getKey(),
+                        bean.getKey(), CONTENT_CLASSIFIER);
                 DynamicContentMacro macro = new DynamicContentMacro(MacroEnumMapper.map(bean.getBodyType()),
                         MacroEnumMapper.map(bean.getOutputType()), renderStrategy, macroModuleContextExtractor);
 

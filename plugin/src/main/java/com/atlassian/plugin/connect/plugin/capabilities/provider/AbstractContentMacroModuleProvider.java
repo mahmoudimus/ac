@@ -35,9 +35,9 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
     private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
-    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
+    protected final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
     public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, I18nPropertiesPluginManager i18nPropertiesPluginManager)
@@ -91,6 +91,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         if (macroBean.hasEditor())
         {
             createEditorIFrame(plugin, macroBean);
+            descriptors.add(createEditorWebResource(plugin, macroBean));
         }
 
         // TODO: Add Image Placeholder --> ACDEV-678
