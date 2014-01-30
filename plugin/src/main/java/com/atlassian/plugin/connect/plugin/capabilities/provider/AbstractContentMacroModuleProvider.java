@@ -32,8 +32,6 @@ import static com.google.common.collect.Lists.newArrayList;
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
         implements ConnectModuleProvider<T>
 {
-    public static final String EDITOR_CLASSIFIER = "editor";
-
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
     private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
@@ -93,6 +91,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         if (macroBean.hasEditor())
         {
             createEditorIFrame(plugin, macroBean);
+            descriptors.add(createEditorWebResource(plugin, macroBean));
         }
 
         // TODO: Add Image Placeholder --> ACDEV-678
@@ -167,7 +166,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .dimensions(editor.getWidth(), editor.getHeight())
                 .build();
 
-        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), EDITOR_CLASSIFIER, renderStrategy);
+        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), renderStrategy);
     }
 
     private ModuleDescriptor createEditorWebResource(Plugin plugin, T macroBean)
