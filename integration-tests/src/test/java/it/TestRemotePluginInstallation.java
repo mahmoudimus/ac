@@ -21,6 +21,8 @@ import static org.junit.Assert.*;
 
 public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
 {
+    public static final String EXTRA_PREFIX = "servlet-";
+    
     @Test
     public void testSchemaContainsCustomScope() throws IOException, DocumentException
     {
@@ -48,7 +50,7 @@ public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
                                       .resource(ConnectAppServlets.helloWorldServlet()))
                 .start();
         product.visit(HomePage.class);
-        assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
+        assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page",EXTRA_PREFIX)
                           .clickRemotePluginLink()
                           .isLoaded());
         pluginFirst.stopAndUninstall();

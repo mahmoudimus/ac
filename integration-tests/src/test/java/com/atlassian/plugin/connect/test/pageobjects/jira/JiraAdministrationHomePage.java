@@ -15,6 +15,13 @@ public class JiraAdministrationHomePage extends AbstractJiraPage
     private static final String REMOTE_PLUGIN_ADMIN_KEY_SERVLET = "remotePluginAdmin";
     private static final String REMOTE_PLUGIN_ADMIN_KEY_WEBITEM = "remotePluginAdmin";
 
+    private final String extraPrefix;
+
+    public JiraAdministrationHomePage(String extraPrefix)
+    {
+        this.extraPrefix = extraPrefix;
+    }
+
     @Override
     public String getUrl()
     {
@@ -55,7 +62,7 @@ public class JiraAdministrationHomePage extends AbstractJiraPage
     private RemotePluginEmbeddedTestPage bindAdminPage(final String adminPageWebItemKey, final String adminPageServletKey)
     {
         findAdminPageLink(adminPageWebItemKey).click();
-        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, adminPageServletKey);
+        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, adminPageServletKey, extraPrefix);
     }
 
     private PageElement findAdminPageLink(final String adminPageKey)

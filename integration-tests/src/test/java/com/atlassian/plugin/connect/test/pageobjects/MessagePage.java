@@ -7,12 +7,19 @@ public class MessagePage extends RemotePluginEmbeddedTestPage implements Page
 {
     private final String appKey;
     private final String pageKey;
+    private final String extraPrefix;
 
     public MessagePage(String appKey, String pageKey)
     {
-        super(pageKey);
+        this(appKey, pageKey, "");
+    }
+
+    public MessagePage(String appKey, String pageKey, String extraPrefix)
+    {
+        super(pageKey, extraPrefix);
         this.appKey = appKey;
         this.pageKey = pageKey;
+        this.extraPrefix = extraPrefix;
     }
 
     @Override
