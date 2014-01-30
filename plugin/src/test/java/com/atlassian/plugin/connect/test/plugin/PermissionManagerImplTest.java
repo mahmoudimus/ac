@@ -165,6 +165,9 @@ public class PermissionManagerImplTest
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
+    // This test exists to ensure that signingNotVulnerableToNormalizedUris is not returning a false
+    // positive test passed result. eg, if "/secure/Dashboard.jspa" suddenly becomes allowed then
+    // both tests should fail
     @Test
     public void checksThatSigningVulnerabilityTestIsNotFalsePositive()
     {
