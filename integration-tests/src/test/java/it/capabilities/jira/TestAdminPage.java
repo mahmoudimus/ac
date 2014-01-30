@@ -63,7 +63,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        loginAsAdmin();
+        loginAsAdmin();t
         product.visit(JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, GENERATED_PAGE_KEY, PAGE_NAME);
@@ -81,7 +81,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public void nonAdminCanNotSeePage()
     {
         loginAs(TestConstants.BARNEY_USERNAME, TestConstants.BARNEY_USERNAME);
-        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", "pg");
+        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", GENERATED_PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }

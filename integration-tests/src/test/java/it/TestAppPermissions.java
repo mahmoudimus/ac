@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 
 public class TestAppPermissions extends ConnectWebDriverTestBase
 {
-
+    public static final String EXTRA_PREFIX = "servlet-";
     private static final String LICENSE_RESPONSE_STATUS_CODE_ID = "licenseResponseStatusCode";
 
     @Test
@@ -53,7 +53,7 @@ public class TestAppPermissions extends ConnectWebDriverTestBase
                                     .resource(new CallServlet(product.getProductInstance().getBaseUrl(), runner.getSignedRequestHandler().get())))
               .start();
 
-        String status = product.visit(MessagePage.class, runner.getPluginKey(), "page").getMessage();
+        String status = product.visit(MessagePage.class, runner.getPluginKey(), "page", EXTRA_PREFIX).getMessage();
         assertEquals("403", status);
         runner.stopAndUninstall();
     }
@@ -82,7 +82,7 @@ public class TestAppPermissions extends ConnectWebDriverTestBase
     private RemotePluginTestPage visitLicenseResponsePage()
     {
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "pluginLicensePage", "Plugin License Page");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "pluginLicensePage", "Plugin License Page", EXTRA_PREFIX);
         return page.clickRemotePluginLink();
     }
 
