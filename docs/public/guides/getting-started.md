@@ -181,7 +181,7 @@ That's it! You can now see your Hello World greeting in the Atlassian applicatio
 2. look for the __Greeting__ entry in the application header (in JIRA) or the __Question Mark__
 menu (in Confluence).
 3. Click __Greeting__. Your __Hello World__ message appears on the page:
-<img src="../assets/images/helloworld-addoninapp.jpeg" width="100%" />
+<img src="../assets/images/helloworld-addoninapp.jpeg" width="100%" style="border:1px solid #999;margin-top:10px;" />
 
 ## 7. What just happened?
 
