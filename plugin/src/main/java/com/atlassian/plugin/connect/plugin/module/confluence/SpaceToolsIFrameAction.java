@@ -7,10 +7,13 @@ import com.atlassian.plugin.connect.plugin.iframe.context.confluence.ConfluenceM
 import com.atlassian.plugin.connect.plugin.iframe.context.confluence.ConfluenceModuleContextParametersImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil;
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
 
 import java.io.IOException;
+import java.util.Collections;
+
+import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderAccessDeniedToString;
+import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
 
 public class SpaceToolsIFrameAction extends SpaceAdminAction
 {
@@ -21,10 +24,18 @@ public class SpaceToolsIFrameAction extends SpaceAdminAction
     public String getIFrameHtml() throws IOException
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(context.getAddOnKey(), context.getModuleKey());
-        ConfluenceModuleContextParameters unfilteredContext = new ConfluenceModuleContextParametersImpl();
-        unfilteredContext.addSpace(this.space);
-        ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
-        return IFrameRenderStrategyUtil.renderToString(filteredContext, renderStrategy);
+
+        if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
+        {
+            ConfluenceModuleContextParameters unfilteredContext = new ConfluenceModuleContextParametersImpl();
+            unfilteredContext.addSpace(this.space);
+            ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
+            return renderToString(filteredContext, renderStrategy);
+        }
+        else
+        {
+            return renderAccessDeniedToString(renderStrategy);
+        }
     }
 
     public SpaceToolsTabContext getSpaceTabInfo()

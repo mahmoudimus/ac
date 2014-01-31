@@ -31,10 +31,16 @@ public class ConnectIFrameWebPanel implements WebPanel
     @Override
     public void writeHtml(final Writer writer, final Map<String, Object> context) throws IOException
     {
-        renderStrategy.shouldShowOrThrow(context);
-        ModuleContextParameters unfilteredContext = moduleContextExtractor.extractParameters(context);
-        ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
-        renderStrategy.render(filteredContext, writer);
+        if (renderStrategy.shouldShow(context))
+        {
+            ModuleContextParameters unfilteredContext = moduleContextExtractor.extractParameters(context);
+            ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
+            renderStrategy.render(filteredContext, writer);
+        }
+        else
+        {
+            renderStrategy.renderAccessDenied(writer);
+        }
     }
 
     @Override
