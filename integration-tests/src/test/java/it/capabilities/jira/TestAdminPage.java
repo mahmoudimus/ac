@@ -18,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static it.jira.TestJira.EXTRA_PREFIX;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -64,7 +65,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
-        product.visit(JiraAdministrationHomePage.class);
+        product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, GENERATED_PAGE_KEY, PAGE_NAME);
 
