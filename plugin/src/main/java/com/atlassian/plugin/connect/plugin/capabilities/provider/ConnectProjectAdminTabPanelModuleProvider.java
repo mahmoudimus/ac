@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -67,6 +68,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
                     .withName(bean.getName())
                     .withKey(bean.getKey())
                     .withUrl(webItemUri)
+                    .withContext(AddOnUrlContext.page)
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())
                     .build();
