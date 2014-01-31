@@ -72,7 +72,7 @@ public class RemotePage
 
     public String getValue(final String key)
     {
-        return RemotePageUtil.getValue(driver, containerDiv, key);
+        return RemotePageUtil.waitForValue(driver, containerDiv, key);
     }
 
     public <T> T runInFrame(Callable<T> callable)
