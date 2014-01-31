@@ -51,7 +51,11 @@ public class StaticContentMacro extends AbstractMacro
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
             throws MacroExecutionException
     {
-        ModuleContextParameters moduleContext = macroModuleContextExtractor.extractParameters(storageFormatBody, conversionContext);
+        ModuleContextParameters moduleContext = macroModuleContextExtractor.extractParameters(
+                storageFormatBody,
+                conversionContext,
+                parameters
+        );
 
         String uri = iFrameUriBuilderFactory.builder()
                 .addOn(addOnKey)

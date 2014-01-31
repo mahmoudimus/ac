@@ -18,7 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -29,9 +28,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
     private static final String GET_MACRO_NAME = "Get Macro";
     private static final String GET_MACRO_KEY = "get-macro";
-
-    private static final String POST_PARAM_MACRO_NAME = "Post Parameter Macro";
-    private static final String POST_PARAM_MACRO_KEY = "post-parameter-macro";
 
     private static ConnectRunner remotePlugin;
     private static EchoQueryParametersServlet parameterServlet;
@@ -61,18 +57,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                 .withName(new I18nProperty(GET_MACRO_NAME, ""))
                 .build();
 
-        StaticContentMacroModuleBean postParameterMacro = newStaticContentMacroModuleBean()
-                .withUrl(DEFAULT_MACRO_URL)
-                .withKey(POST_PARAM_MACRO_KEY)
-                .withName(new I18nProperty(POST_PARAM_MACRO_NAME, ""))
-                .withParameters(newMacroParameterBean()
-                        .withIdentifier("param1")
-                        .withName(new I18nProperty("Param 1", ""))
-                        .withType("string")
-                        .build()
-                )
-                .build();
-
         parameterServlet = new EchoQueryParametersServlet();
         contextServlet = new EchoContextServlet();
 
@@ -87,7 +71,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                         parameterMacro,
                         storageFormatMacro,
                         getMacro,
-                        postParameterMacro,
                         editorMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.wrapContextAwareServlet(parameterServlet))
@@ -111,7 +94,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testMacroIsRendered() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Simple Macro on Page");
+        editorPage.setTitle("Simple Macro on Page_" + System.currentTimeMillis());
 
         selectMacro(editorPage, STORAGE_FORMAT_MACRO_NAME);
 
@@ -126,7 +109,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testMacroHttpMethod() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("HTTP GET Macro");
+        editorPage.setTitle("HTTP GET Macro_" + System.currentTimeMillis());
 
         selectMacro(editorPage, GET_MACRO_NAME);
 
@@ -139,7 +122,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testBodyInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Short Body Macro");
+        editorPage.setTitle("Short Body Macro_" + System.currentTimeMillis());
 
         selectMacro(editorPage, SHORT_BODY_MACRO_NAME);
 
@@ -156,7 +139,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testBodyHashInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Long Body Macro");
+        editorPage.setTitle("Long Body Macro_" + System.currentTimeMillis());
 
         selectMacro(editorPage, LONG_BODY_MACRO_NAME);
 
@@ -174,29 +157,10 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testParameterInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Parameter Page");
+        editorPage.setTitle("Parameter Page_" + System.currentTimeMillis());
 
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);
-        MacroForm macroForm = macro.select();
-
-        macroForm.getAutocompleteField("param1").setValue("param value");
-        macroBrowser.clickSave();
-
-        savedPage = editorPage.save();
-
-        String value = parameterServlet.waitForQueryParameters().any("param1").getValue();
-        assertThat(value, is("param value"));
-    }
-
-    @Test
-    public void testPOSTParameterInclusion() throws Exception
-    {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("HTTP POST Parameter Page");
-
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(POST_PARAM_MACRO_NAME);
         MacroForm macroForm = macro.select();
 
         macroForm.getAutocompleteField("param1").setValue("param value");
