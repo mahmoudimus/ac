@@ -1,5 +1,12 @@
 package com.atlassian.plugin.connect.test.plugin;
 
+import com.atlassian.crowd.embedded.api.PasswordCredential;
+import com.atlassian.crowd.exception.*;
+import com.atlassian.crowd.manager.application.ApplicationManager;
+import com.atlassian.crowd.manager.application.ApplicationService;
+import com.atlassian.crowd.model.application.Application;
+import com.atlassian.crowd.model.user.User;
+import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginArtifact;
@@ -37,6 +44,7 @@ public class DefaultConnectAddOnInstallerOAuthTest
     private static final AuthenticationType AUTHENTICATION_TYPE = AuthenticationType.OAUTH;
     private static final String PUBLIC_KEY = "public key";
     private static final ConnectAddonBean ADD_ON_BEAN = ConnectInstallationTestUtil.createBean(AUTHENTICATION_TYPE, PUBLIC_KEY, BASE_URL);
+    private static final String ADD_ON_USER_KEY = "the_add_on_user_key";
 
     private @Mock RemotePluginArtifactFactory remotePluginArtifactFactory;
     private @Mock PluginController pluginController;
@@ -49,13 +57,17 @@ public class DefaultConnectAddOnInstallerOAuthTest
     private @Mock ConnectApplinkManager connectApplinkManager;
     private @Mock ConnectDescriptorRegistry connectDescriptorRegistry;
     private @Mock ConnectEventHandler connectEventHandler;
+    private @Mock ApplicationService applicationService;
+    private @Mock ApplicationManager applicationManager;
+    private @Mock Application application;
 
     private @Mock Plugin plugin;
+    private @Mock User addOnUser;
 
     @Test
     public void appLinkIsCreatedWithCorrectParameters()
     {
-        verify(connectApplinkManager).createAppLink(eq(plugin), eq(BASE_URL), eq(AUTHENTICATION_TYPE), eq(PUBLIC_KEY));
+        verify(connectApplinkManager).createAppLink(eq(plugin), eq(BASE_URL), eq(AUTHENTICATION_TYPE), eq(PUBLIC_KEY), eq(ADD_ON_USER_KEY));
     }
 
     @Test
@@ -65,14 +77,18 @@ public class DefaultConnectAddOnInstallerOAuthTest
     }
 
     @Before
-    public void beforeEachTest()
+    public void beforeEachTest() throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, ApplicationNotFoundException
     {
         when(pluginController.installPlugins(any(PluginArtifact.class))).thenReturn(Sets.newHashSet(ADD_ON_KEY));
         when(plugin.getKey()).thenReturn(ADD_ON_KEY);
         when(pluginAccessor.getPlugin(ADD_ON_KEY)).thenReturn(plugin);
         when(pluginAccessor.isPluginEnabled(ADD_ON_KEY)).thenReturn(true);
+        when(addOnUser.getName()).thenReturn(ADD_ON_USER_KEY);
+        when(applicationService.addUser(any(Application.class), any(UserTemplate.class), eq(PasswordCredential.NONE))).thenReturn(addOnUser);
+        when(applicationManager.findByName("crowd-embedded")).thenReturn(application);
         new DefaultConnectAddOnInstaller(remotePluginArtifactFactory, pluginController, pluginAccessor, oAuthLinkManager,
-                remoteEventsHandler, beanToModuleRegistrar, connectApplinkManager, connectDescriptorRegistry, connectEventHandler, new SharedSecretServiceImpl())
+                remoteEventsHandler, beanToModuleRegistrar, connectApplinkManager, connectDescriptorRegistry, connectEventHandler, new SharedSecretServiceImpl(),
+                applicationService, applicationManager)
             .install("username", ConnectModulesGsonFactory.getGson().toJson(ADD_ON_BEAN));
     }
 }

@@ -35,6 +35,8 @@ import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @ExportAsDevService
 @Named
 public class DefaultConnectApplinkManager implements ConnectApplinkManager
@@ -60,8 +62,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     }
 
     @Override
-    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String publicKey)
+    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String publicKey, final String userKey)
     {
+        checkNotNull(userKey);
         transactionTemplate.execute(new TransactionCallback<Void>()
         {
             @Override
@@ -89,8 +92,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                     link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
 
                     link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
-
-
+                    link.putProperty("user.key", userKey); // TODO ACDEV-937: reference a constant in atlassian-jwt instead of using a literal for the property name
                     link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
                     link.putProperty("system", Boolean.TRUE.toString());
 

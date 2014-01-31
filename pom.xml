@@ -520,6 +520,12 @@
                 <artifactId>atlassian-html-encoder</artifactId>
                 <version>${atlassian.html.encoder.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.atlassian.crowd</groupId>
+                <artifactId>embedded-crowd-api</artifactId>
+                <version>${atlassian.crowd.version}</version>
+                <scope>provided</scope>
+            </dependency>
 
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
@@ -640,6 +646,7 @@
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
         <atlassian.spring.scanner.version>1.0-m9</atlassian.spring.scanner.version>
+        <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
     </properties>
 
     <repositories>

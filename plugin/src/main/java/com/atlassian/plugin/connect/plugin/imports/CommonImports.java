@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.plugin.imports;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
+import com.atlassian.crowd.manager.application.ApplicationManager;
+import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
@@ -34,6 +33,9 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * This class does nothing but is here to centralize the cross-product component imports.
@@ -72,6 +74,8 @@ public class CommonImports
     private final ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry;
     private final RemotePluginLicenseService remotePluginLicenseService;
     private final JwtService jwtService;
+    private final ApplicationService applicationService;
+    private final ApplicationManager applicationManager;
 
 
     @Inject
@@ -105,7 +109,9 @@ public class CommonImports
             @ComponentImport HttpClient httpClient,
             @ComponentImport ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry,
             @ComponentImport RemotePluginLicenseService remotePluginLicenseService,
-            @ComponentImport JwtService jwtService)
+            @ComponentImport JwtService jwtService,
+            @ComponentImport ApplicationService applicationService,
+            @ComponentImport ApplicationManager applicationManager)
     {
         this.pluginController = pluginController;
         this.templateRenderer = templateRenderer;
@@ -137,5 +143,7 @@ public class CommonImports
         this.webHookListenerRegistry = webHookListenerRegistry;
         this.remotePluginLicenseService = remotePluginLicenseService;
         this.jwtService = jwtService;
+        this.applicationService = applicationService;
+        this.applicationManager = applicationManager;
     }
 }
