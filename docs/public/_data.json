@@ -50,6 +50,26 @@
             "title": "Product API Browser"
         }
     },
+    "scopes": {
+        "jira-rest-scopes.html": {
+            "title": "JIRA REST"
+        },
+        "jira-jsonrpc-scopes.html": {
+            "title": "JIRA JSON-RPC"
+        },
+        "jira-soap-scopes.html": {
+            "title": "JIRA SOAP"
+        },
+        "confluence-rest-scopes.html": {
+            "title": "Confluence REST"
+        },
+        "confluence-jsonrpc-scopes.html": {
+            "title": "Confluence JSON-RPC"
+        },
+        "confluence-xmlrpc-scopes.html": {
+            "title": "Confluence XML-RPC"
+        }
+    },
     "resources": {
         "release-notes.html": {
             "title": "Release Notes",
