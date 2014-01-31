@@ -40,12 +40,9 @@ public class IFrameProjectConfigTabServlet extends IFramePageServlet
     @VisibleForTesting
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
 	{
-//        final Project project = getProject(req);
-//        req.setAttribute("com.atlassian.jira.projectconfig.util.ServletRequestProjectConfigRequestCache:project", project);
-//
-//        // This is a workaround for JRA-26407.
-//        ((IsProjectAdminCondition)pageInfo.getCondition()).setProject(project);
-//
+        final Project project = getProject(req);
+        req.setAttribute("com.atlassian.jira.projectconfig.util.ServletRequestProjectConfigRequestCache:project", project);
+
         super.doGet(req, resp);
 	}
 

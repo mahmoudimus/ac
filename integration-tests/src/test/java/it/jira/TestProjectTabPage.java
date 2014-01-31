@@ -84,7 +84,7 @@ public class TestProjectTabPage extends JiraWebDriverTestBase
                 page.getTabs().gotoTab(
                         JiraProjectAdministrationTab.MODULE_KEY,
                         JiraProjectAdministrationTab.class,
-                        project.getKey());
+                        project.getKey(), "servlet-");
 
         // Test of workaround for JRA-26407.
         assertNotNull(remoteProjectAdministrationTab.getProjectHeader());
