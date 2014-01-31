@@ -56,7 +56,7 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
 
             var dialogOpts = {
                 header: macroData.params ? opts.editTitle : opts.insertTitle,
-                submitText: "Insert"
+                submitText: macroData.params ? "Save" : "Insert"
             };
 
             if (opts.width) {

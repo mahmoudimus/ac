@@ -17,7 +17,6 @@ import com.atlassian.plugin.connect.plugin.installer.DefaultConnectAddOnInstalle
 import com.atlassian.plugin.connect.plugin.installer.RemotePluginArtifactFactory;
 import com.atlassian.plugin.connect.plugin.installer.SharedSecretServiceImpl;
 import com.atlassian.plugin.connect.test.plugin.util.ConnectInstallationTestUtil;
-
 import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;

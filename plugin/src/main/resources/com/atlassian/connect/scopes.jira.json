@@ -3,6 +3,7 @@
     {
       "key": "READ",
       "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow"],
+      "pathKeys": ["download attachments"],
       "methods": ["GET"]
     },
     {
@@ -29,7 +30,7 @@
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["workflowscheme"],
+      "restPathKeys": ["field", "workflowscheme"],
       "methods": ["GET", "POST", "PUT", "DELETE"]
     }
   ],
@@ -176,25 +177,31 @@
   "soapRpcPaths": [
     {
       "key": "jirasoapservice-v2-read",
-      "path": "/jirasoapservice-v2",
+      "paths": ["/jirasoapservice-v2"],
       "rpcMethods": ["getIssuesFromJqlSearch", "getIssue", "getVersions", "getIssuesFromTextSearchWithProject", "getSecurityLevels", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getGroup", "getAttachmentsFromIssue", "getProjectAvatar", "getFieldsForEdit", "getUser", "getIssueById", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getFieldsForCreate", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
     },
     {
       "key": "jirasoapservice-v2-write",
-      "path": "/jirasoapservice-v2",
+      "paths": ["/jirasoapservice-v2"],
       "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
     }
   ],
   "jsonRpcPaths": [
     {
       "key": "jira-json-service-v2-read",
-      "path": "/jirasoapservice-v2($|/.*)",
+      "paths": ["/jirasoapservice-v2"],
       "rpcMethods": ["getIssue", "getIssuesFromJqlSearch", "getVersions", "getIssuesFromTextSearchWithProject", "getSecurityLevels", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getAttachmentsFromIssue", "getGroup", "getProjectAvatar", "getFieldsForEdit", "getIssueById", "getUser", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getFieldsForCreate", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
     },
     {
       "key": "jira-json-service-v2-write",
-      "path": "/jirasoapservice-v2($|/.*)",
+      "paths": ["/jirasoapservice-v2"],
       "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
     }
+  ],
+  "paths": [
+      {
+        "key": "download attachments",
+        "paths": ["/secure/attachment($|/.*)"]
+      }
   ]
 }

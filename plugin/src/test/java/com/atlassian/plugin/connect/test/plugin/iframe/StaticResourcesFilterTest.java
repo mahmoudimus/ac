@@ -1,26 +1,27 @@
 package com.atlassian.plugin.connect.test.plugin.iframe;
 
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.zip.GZIPOutputStream;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 public class StaticResourcesFilterTest

@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.scopes;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBeans;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.gson.GsonBuilder;
@@ -13,14 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.google.common.collect.Collections2.transform;
 
@@ -111,7 +103,41 @@ public class StaticAddOnScopes
         addRestPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
         addSoapRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
         addJsonRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
+        addXmlRpcPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
+        addPaths(scopesFileResourceName, scopeBeans, scopeBean, pathsBuilder);
         keyToScope.put(scopeName, new AddOnScope(scopeBean.getKey(), pathsBuilder.build()));
+    }
+
+    private static void addPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
+    {
+        for (String pathKey : scopeBean.getPathKeys())
+        {
+            boolean found = false;
+            int pathIndex = 0;
+
+            for (AddOnScopeBean.PathBean pathBean : scopeBeans.getPaths())
+            {
+                if (null == pathBean.getKey())
+                {
+                    throw new IllegalArgumentException(String.format("Path index %d in scopes file '%s' has a null or missing 'key': please add a key", pathIndex, scopesFileResourceName));
+                }
+
+                if (pathBean.getKey().equals(pathKey))
+                {
+                    found = true;
+                    pathsBuilder.withPaths(pathBean);
+                    break;
+                }
+
+                ++pathIndex;
+            }
+
+            if (!found)
+            {
+                throw new IllegalArgumentException(String.format("Path key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
+                        pathKey, scopeBean.getKey(), scopesFileResourceName));
+            }
+        }
     }
 
     private static void addJsonRpcPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
@@ -131,7 +157,7 @@ public class StaticAddOnScopes
                 if (jsonRpcPathBean.getKey().equals(jsonRpcPathKey))
                 {
                     found = true;
-                    pathsBuilder.withJsonRpcResources(jsonRpcPathBean);
+                    pathsBuilder.withJsonRpcResources(jsonRpcPathBean, scopeBean.getMethods());
                     break;
                 }
 
@@ -142,6 +168,38 @@ public class StaticAddOnScopes
             {
                 throw new IllegalArgumentException(String.format("JSON path key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
                         jsonRpcPathKey, scopeBean.getKey(), scopesFileResourceName));
+            }
+        }
+    }
+
+    private static void addXmlRpcPaths(String scopesFileResourceName, AddOnScopeBeans scopeBeans, AddOnScopeBean scopeBean, AddOnScopeApiPathBuilder pathsBuilder)
+    {
+        for (String xmlRpcPathKey : scopeBean.getXmlRpcPathKeys())
+        {
+            boolean found = false;
+            int xmlPathIndex = 0;
+
+            for (AddOnScopeBean.XmlRpcBean xmlRpcBean : scopeBeans.getXmlRpcPaths())
+            {
+                if (null == xmlRpcBean.getKey())
+                {
+                    throw new IllegalArgumentException(String.format("XML-RPC path index %d in scopes file '%s' has a null or missing 'key': please add a key", xmlPathIndex, scopesFileResourceName));
+                }
+
+                if (xmlRpcBean.getKey().equals(xmlRpcPathKey))
+                {
+                    found = true;
+                    pathsBuilder.withXmlRpcResources(xmlRpcBean);
+                    break;
+                }
+
+                ++xmlPathIndex;
+            }
+
+            if (!found)
+            {
+                throw new IllegalArgumentException(String.format("XML-RPC path key '%s' in scope '%s' is not the key of any restPath in the JSON scopes file '%s': please correct this typo",
+                        xmlRpcPathKey, scopeBean.getKey(), scopesFileResourceName));
             }
         }
     }
@@ -163,7 +221,7 @@ public class StaticAddOnScopes
                 if (soapRpcPathBean.getKey().equals(soapRpcPathKey))
                 {
                     found = true;
-                    pathsBuilder.withSoapRpcResources(soapRpcPathBean);
+                    pathsBuilder.withSoapRpcResources(soapRpcPathBean, scopeBean.getMethods());
                     break;
                 }
 

@@ -12,23 +12,23 @@ import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.emp
 /**
  * A Search Request View allows you to render a custom representation of a search result. Rendering a custom XML format
  * is a common example.
- * <p/>
+ *
  * After an add-on declaring a Search Request View module is installed, a new entry will show up in the
  * *Export* menu on the Issue Navigator page. Clicking the entry will redirect to the URL that is provided
  * by your add-on, passing in the issue keys, pagination information and the OAuth parameters that allow you
  * to verify the validity of the request.
- * <p/>
+ *
  * To declare a Search Request View, you must mainly provide the URL that will handle the HTTP GET request.
  * This URL is relative to the base url of the descriptor.
- * <p/>
+ *
  * Your service will be invoked with these parameters:
- * <p/>
+ *
  * * `issues`: A comma-separated list of issue keys
  * * `link`: A link back to the JIRA Issue Navigator where the action was invoked
  * * `startIssue`: The index of the first passed issue key in the list of all issues
  * * `endIssue`: The index of the last passed issue key in the list of all issues
  * * `totalIssues`: The number of issues in the entire search result
- * <p/>
+ *
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SEARCH_VIEW_EXAMPLE}
@@ -46,7 +46,7 @@ public class SearchRequestViewModuleBean extends BeanWithKeyAndParamsAndConditio
 
     /**
      * Determines the order in which the Search Request View entry appears in the *Export* menu.
-     * <p/>
+     *
      * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
      * while the "heaviest" weights sink to the bottom of the menu or list.
      */

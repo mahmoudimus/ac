@@ -5,20 +5,26 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.PermissionManagerImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeServiceImpl;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.collect.Sets;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -39,16 +45,18 @@ public abstract class AbstractScopesTest
     private final ScopeName scope;
     private final HttpMethod method;
     private final String path;
+    private final String requestBody;
     private final boolean expectedOutcome;
     private final String contextPath;
     private final String productName;
 
 
-    public AbstractScopesTest(ScopeName scope, HttpMethod method, String path, boolean expectedOutcome, String contextPath, String productName)
+    public AbstractScopesTest(ScopeName scope, HttpMethod method, String path, String requestBody, boolean expectedOutcome, String contextPath, String productName)
     {
         this.scope = scope;
         this.method = method;
         this.path = path;
+        this.requestBody = requestBody;
         this.expectedOutcome = expectedOutcome;
         this.contextPath = contextPath;
         this.productName = productName;
@@ -61,6 +69,14 @@ public abstract class AbstractScopesTest
         when(request.getContextPath()).thenReturn(contextPath);
         when(request.getRequestURI()).thenReturn(path);
         when(request.getMethod()).thenReturn(method.name());
+        when(request.getInputStream()).thenAnswer(new Answer<ServletInputStream>()
+        {
+            @Override
+            public ServletInputStream answer(InvocationOnMock invocationOnMock) throws Throwable
+            {
+                return new ServletStringInputStream(requestBody);
+            }
+        });
 
         permissionsReader = mock(PermissionsReader.class);
 
@@ -92,4 +108,19 @@ public abstract class AbstractScopesTest
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, USER_KEY), is(expectedOutcome));
     }
 
+    private static class ServletStringInputStream extends ServletInputStream
+    {
+        private final InputStream delegate;
+
+        public ServletStringInputStream(String content) throws IOException
+        {
+            this.delegate = IOUtils.toInputStream(content, "UTF-8");
+        }
+
+        @Override
+        public int read() throws IOException
+        {
+            return delegate.read();
+        }
+    }
 }

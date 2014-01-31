@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.google.common.collect.Lists;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -7,8 +8,6 @@ import org.hamcrest.Matcher;
 
 import java.util.Collection;
 import java.util.Iterator;
-
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

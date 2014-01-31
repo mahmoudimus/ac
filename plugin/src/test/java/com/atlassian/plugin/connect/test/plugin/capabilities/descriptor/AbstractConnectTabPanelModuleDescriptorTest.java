@@ -3,10 +3,9 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 import com.atlassian.jira.plugin.TabPanelModuleDescriptor;
 import com.atlassian.jira.plugin.browsepanel.TabPanel;
 import com.atlassian.jira.project.browse.BrowseContext;
-import com.atlassian.plugin.connect.test.plugin.capabilities.util.TestContextBuilder;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.IFrameContextMatchers;
-
+import com.atlassian.plugin.connect.test.plugin.capabilities.util.TestContextBuilder;
 import org.junit.Before;
 import org.junit.Test;
 

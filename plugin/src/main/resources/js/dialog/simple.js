@@ -62,6 +62,7 @@ _AP.define("dialog/simple", ["_dollar"], function($) {
     dialog.addPanel(null, placeholderContent, "ap-dialog-content");
     var $dialog = $("#" + dialogId);
     $nexus = $dialog.find(".ap-servlet-placeholder");
+    var submitButtonText = mergedOptions.submitText || "Submit";
 
     return {
       id: dialogId,
@@ -92,7 +93,7 @@ _AP.define("dialog/simple", ["_dollar"], function($) {
 
         var buttons = makeButtons(dialog, [{
           name: "submit",
-          displayName: "Submit",
+          displayName: submitButtonText,
           type: "Button",
           actions: {
             done: closeDialog

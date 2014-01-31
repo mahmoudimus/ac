@@ -11,11 +11,11 @@ import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WorkflowPostFunctionModuleDescriptorFactory;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.ConnectAutowireUtilForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.IFrameContextMatchers;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.ConnectAutowireUtilForTests;
 import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.webresource.UrlMode;
