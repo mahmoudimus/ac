@@ -114,16 +114,8 @@ public class PermissionManagerImplTest
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
-    // ACDEV-679
     @Test
-    public void invalidJsonDescriptorScopeIsInScopeInDevMode()
-    {
-        setup().withJson(true).withDevMode(true);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
-    }
-
-    @Test
-    public void invalidJsonDescriptorScopeIsOutOfScopeInProdMode()
+    public void invalidJsonDescriptorScopeIsOutOfScope()
     {
         setup().withJson(true).withDevMode(false);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
@@ -162,6 +154,27 @@ public class PermissionManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
         setup().withJson(true).withScope(ScopeName.WRITE).withDevMode(false);
+        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+    }
+
+    // This test exists to ensure that signingNotVulnerableToNormalizedUris is not returning a false
+    // positive test passed result. eg, if "/secure/Dashboard.jspa" suddenly becomes allowed then
+    // both tests should fail
+    @Test
+    public void checksThatSigningVulnerabilityTestIsNotFalsePositive()
+    {
+        when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa");
+        when(request.getMethod()).thenReturn("GET");
+        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+    }
+
+    @Test
+    public void signingNotVulnerableToNormalizedUris()
+    {
+        when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa;../../../rest/api/2/user");
+        when(request.getMethod()).thenReturn("GET");
+        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
