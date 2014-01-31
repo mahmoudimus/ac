@@ -46,6 +46,11 @@ public class ConfluenceGeneralPage implements GeneralPage
         this(pageKey,linkText,ignoreBrowseMenu,"");
     }
 
+    public ConfluenceGeneralPage(String pageKey, String linkText, String extraPrefix)
+    {
+        this(pageKey, linkText, false, extraPrefix);
+    }
+    
     public ConfluenceGeneralPage(String pageKey, String linkText, boolean ignoreBrowseMenu, String extraPrefix)
     {
         this.pageKey = pageKey;
