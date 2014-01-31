@@ -104,6 +104,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
         if (null == user)
         {
+            // Justin Koke says that NONE password prevents logging in
             user = applicationService.addUser(application, new UserTemplate(userKey), PasswordCredential.NONE);
         }
 
