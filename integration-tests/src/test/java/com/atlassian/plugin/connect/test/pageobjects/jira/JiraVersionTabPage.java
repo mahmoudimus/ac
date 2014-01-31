@@ -21,7 +21,7 @@ public class JiraVersionTabPage extends AbstractJiraPage
 
     protected PageElement tabField;
 
-    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-version-tab-";
+    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-";
     private static final String IFRAME_ID_SUFFIX = "-panel_provider";
     private PageElement iframe;
     private String iframeSrc;
@@ -38,7 +38,7 @@ public class JiraVersionTabPage extends AbstractJiraPage
     @Override
     public TimedCondition isAt()
     {
-        final String versionTabPanelId = VersionTabPageModuleDescriptor.VERSION_TAB_PAGE_MODULE_PREFIX + versionTabId + "-panel-panel";
+        final String versionTabPanelId = versionTabId + "-panel-panel";
         tabField = elementFinder.find(By.id(versionTabPanelId));
 
         return tabField.timed().isPresent();
