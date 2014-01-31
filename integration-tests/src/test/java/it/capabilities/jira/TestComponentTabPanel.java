@@ -22,7 +22,6 @@ public class TestComponentTabPanel extends TestBase
 {
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
     private static final String COMPONENT_NAME = "test-component";
-    private static final String JIRA_COMPONENT_TAB_PANEL = "jira-component-tab-panel";
     private static ConnectRunner remotePlugin;
 
     private String componentId;
@@ -71,7 +70,7 @@ public class TestComponentTabPanel extends TestBase
     public void testComponentTabPanel() throws Exception
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, "component-tab-panel");
+        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, "component-tab");
 
         componentTabPage.clickTab();
 
