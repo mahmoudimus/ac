@@ -5,10 +5,13 @@ import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.WebDriverElement;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.atlassian.webdriver.utils.by.ByJquery;
+
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.pagefactory.ByChained;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -24,6 +27,7 @@ public class RemotePage
 
     @Inject
     private PageElementFinder elementFinder;
+
 
     protected final String key;
     protected final String extraPrefix;
@@ -43,11 +47,22 @@ public class RemotePage
     @WaitUntil
     public void waitForInit()
     {
-        PageElement containerDivElement = elementFinder.find(By.cssSelector("#" + "embedded-" + extraPrefix + key + ".iframe-init"));
-
+        PageElement containerDivElement = elementFinder.find(ByJquery.$("#embedded-" + extraPrefix + key + ".iframe-init"));
         waitUntilTrue(containerDivElement.timed().isPresent());
         
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
+
+//        driver.waitUntilElementIsLocated(By.id("embedded-" + extraPrefix + key));
+//        this.containerDiv = driver.findElement(By.id("embedded-" + extraPrefix + key));
+//        
+//        driver.waitUntil(new Function<WebDriver, Boolean>()
+//        {
+//            @Override
+//            public Boolean apply(@Nullable WebDriver input)
+//            {
+//                return containerDiv.getAttribute("class").contains("iframe-init");
+//            }
+//        },20);
     }
 
     public boolean isLoaded()
