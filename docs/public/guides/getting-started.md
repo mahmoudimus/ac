@@ -178,7 +178,8 @@ used Hello World for your add-on name, __Hello World__ will appears in the list.
 That's it! You can now see your Hello World greeting in the Atlassian application.
 
 1. Reload the page.
-2. look for the __Greeting__ entry in the application header.
+2. look for the __Greeting__ entry in the application header (in JIRA) or the __Question Mark__
+menu (in Confluence).
 3. Click __Greeting__. Your __Hello World__ message appears on the page:
 <img src="../assets/images/helloworld-addoninapp.jpeg" width="100%" />
 
