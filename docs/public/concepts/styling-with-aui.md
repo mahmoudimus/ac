@@ -18,14 +18,14 @@ fixes, but using the most recent version of AUI ensures that your styles will mo
 
 #### CSS
 ```
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.2-m6/css/aui.css" media="all">
-<!--[if lt IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.2-m6/css/aui-ie.css" media="all"><![endif]-->
-<!--[if IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.2-m6/css/aui-ie9.css" media="all"><![endif]-->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.4.3/aui/css/aui-all.css" media="all">
+<!--[if lt IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.4.3/aui/css/aui-ie.css" media="all"><![endif]-->
+<!--[if IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.4.3/aui/css/aui-ie9.css" media="all"><![endif]-->
 ```
 
 #### Javascript
 ```
-<script src="//cdnjs.cloudflare.com/ajax/libs/aui/5.2-m6/js/aui-all.js" type="text/javascript"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/aui/5.4.3/aui/js/aui-all.js" type="text/javascript"></script>
 ```
 
 For more details on AUI, you should view the [AUI documentation](https://developer.atlassian.com/display/AUI/).
