@@ -120,9 +120,6 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
         // clear xdm params as they are added by easyxdm later
         signedUrl = new UriBuilder(Uri.parse(signedUrl))
-                .removeQueryParameter("xdm_e")
-                .removeQueryParameter("xdm_c")
-                .removeQueryParameter("xdm_p")
                 .toString();
 
         Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
