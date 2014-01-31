@@ -1,0 +1,80 @@
+mixin NA
+    span.aui-lozenge.lozenge-unavailable N/A
+        block
+
+mixin scope(key)
+    span.aui-lozenge.aui-lozenge-subtle.aui-lozenge-complete #{key}
+        block
+
+p
+| The required scope for your add-on depends on how you interact with the resources that are exposed by the REST API.
+| The table below shows the required scope for GET, POST, PUT and DELETE operations on a resource path. REST resources
+| are versioned by a path segment that varies with the version. The supported versions are listed below the path.
+
+h2 Example
+
+table.aui
+    thead
+        tr
+            th Path
+            th GET
+            th POST
+            th PUT
+            th DELETE
+    tbody
+        tr
+            td
+                code /rest/atlassian-connect/{version}/license
+                p
+                    span.aui-label 1
+                    span.aui-label latest
+            td
+                +scope("READ")
+            td
+                +NA
+            td
+                +NA
+            td
+                +NA
+
+p
+| The example above means that a <strong>GET</strong> operation on
+
+ul
+    li
+        code /rest/atlassian-connect/1/license
+    li
+        code /rest/atlassian-connect/latest/license
+
+p
+| will require your add-on to declare the <strong>READ</strong> scope.
+| The example also shows that this specific resource only supports <strong>GET</strong>, but no other HTTP verbs.
+
+
+h2 Resources and their Associated Scopes
+
+table.aui
+    thead
+        tr
+            th Path
+            th GET
+            th POST
+            th PUT
+            th DELETE
+    tbody
+        - each api in scope.apis
+            tr
+                td
+                    a(id = api.id)
+                    code
+                        != api.path
+                    p
+                        - each version in api.versions
+                            span.aui-label
+                                != version
+                - each method in ["GET", "POST", "PUT", "DELETE"]
+                    td
+                        - if (api.scopes[method])
+                            +scope(api.scopes[method])
+                        - else
+                            +NA

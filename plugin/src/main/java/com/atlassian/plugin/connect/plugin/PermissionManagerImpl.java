@@ -20,6 +20,7 @@ import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserKey;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -41,9 +42,7 @@ import java.util.Set;
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterables.*;
 import static java.lang.String.format;
 
 /**
@@ -79,7 +78,8 @@ public final class PermissionManagerImpl implements PermissionManager
                 scopeService);
     }
 
-    PermissionManagerImpl(
+    @VisibleForTesting
+    public PermissionManagerImpl(
             PluginAccessor pluginAccessor,
             PermissionsReader permissionsReader,
             IsDevModeService isDevModeService,
@@ -117,17 +117,7 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, UserKey user)
     {
-        boolean isInScopes = any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
-
-        // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
-        if (!isInScopes && isDevModeService.isDevMode() && jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey))
-        {
-            log.warn(String.format("Dev mode: allowing plugin '%s' to access '%s' for user '%s'",
-                    pluginKey, req.getRequestURI(), null == user ? "anonymous" : user.getStringValue()));
-            isInScopes = true;
-        }
-
-        return isInScopes;
+        return any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
     }
 
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String pluginKey)

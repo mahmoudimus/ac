@@ -22,25 +22,25 @@ abstract class ConfluenceScope extends AbstractPermission implements ApiScope
     private final RestApiScopeHelper restApiScopeHelper;
     private final Iterable<ApiResourceInfo> apiResourceInfo;
 
-    private final DownloadScopeHelper downloadScopeHelper;
+    private final PathScopeHelper downloadScopeHelper;
 
     protected ConfluenceScope(String key, Collection<String> methods)
     {
 
-        this(key, methods, Collections.<RestApiScopeHelper.RestScope>emptyList(), new DownloadScopeHelper());
+        this(key, methods, Collections.<RestApiScopeHelper.RestScope>emptyList(), new PathScopeHelper(false));
     }
 
     protected ConfluenceScope(String key, Collection<String> methods, Collection<RestApiScopeHelper.RestScope> resources)
     {
-        this(key, methods, resources, new DownloadScopeHelper());
+        this(key, methods, resources, new PathScopeHelper(false));
     }
 
-    protected ConfluenceScope(String key, Collection<String> methods, DownloadScopeHelper downloadScopeHelper)
+    protected ConfluenceScope(String key, Collection<String> methods, PathScopeHelper pathScopeHelper)
     {
-        this(key, methods, Collections.<RestApiScopeHelper.RestScope>emptyList(), downloadScopeHelper);
+        this(key, methods, Collections.<RestApiScopeHelper.RestScope>emptyList(), pathScopeHelper);
     }
 
-    protected ConfluenceScope(String key, Collection<String> methods, Collection<RestApiScopeHelper.RestScope> resources, DownloadScopeHelper downloadScopeHelper)
+    protected ConfluenceScope(String key, Collection<String> methods, Collection<RestApiScopeHelper.RestScope> resources, PathScopeHelper pathScopeHelper)
     {
         super(key);
 
@@ -49,12 +49,12 @@ abstract class ConfluenceScope extends AbstractPermission implements ApiScope
         this.v1XmlRpcApiScopeHelper = new XmlRpcApiScopeHelper("/rpc/xmlrpc", Collections2.transform(methods, xmlRpcTransform("confluence1")));
         this.v2XmlRpcApiScopeHelper = new XmlRpcApiScopeHelper("/rpc/xmlrpc", Collections2.transform(methods, xmlRpcTransform("confluence2")));
         this.restApiScopeHelper = new RestApiScopeHelper(checkNotNull(resources));
-        this.downloadScopeHelper = checkNotNull(downloadScopeHelper);
+        this.downloadScopeHelper = checkNotNull(pathScopeHelper);
         this.apiResourceInfo = concat(v1JsonRpcScopeHelper.getApiResourceInfos(),
                 v2JsonRpcScopeHelper.getApiResourceInfos(),
                 v1XmlRpcApiScopeHelper.getApiResourceInfos(),
                 v2XmlRpcApiScopeHelper.getApiResourceInfos(),
-                downloadScopeHelper.getApiResourceInfos());
+                pathScopeHelper.getApiResourceInfos());
     }
 
     @Override

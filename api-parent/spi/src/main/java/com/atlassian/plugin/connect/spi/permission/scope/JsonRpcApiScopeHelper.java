@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 
 /**
@@ -26,24 +27,36 @@ public final class JsonRpcApiScopeHelper
 {
     private final Collection<String> methods;
     private final String path;
+    private final String httpMethod;
     private transient final Iterable<ApiResourceInfo> apiResourceInfo;
 
     public JsonRpcApiScopeHelper(final String path, Collection<String> methods)
     {
+        this(path, methods, "POST");
+    }
+
+    public JsonRpcApiScopeHelper(final String path, Collection<String> methods, final String httpMethod)
+    {
         this.path = path;
         this.methods = methods;
+        this.httpMethod = checkNotNull(httpMethod).toUpperCase();
         this.apiResourceInfo = transform(methods, new Function<String, ApiResourceInfo>()
         {
             @Override
             public ApiResourceInfo apply(String from)
             {
-                return new ApiResourceInfo(path, "POST", from);
+                return new ApiResourceInfo(path, JsonRpcApiScopeHelper.this.httpMethod, from);
             }
         });
     }
 
     public boolean allow(HttpServletRequest request, UserKey user)
     {
+        if (!httpMethod.equals(request.getMethod()))
+        {
+            return false;
+        }
+
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
         {
@@ -61,7 +74,7 @@ public final class JsonRpcApiScopeHelper
         else
         {
             // methodName in path
-            String method = pathInfo.replaceAll(path.toString() + "/", "");
+            String method = pathInfo.replaceAll(path + "/", "");
             return methods.contains(method);
         }
         return false;

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-api-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m29-SNAPSHOT</version>
+        <version>1.0-m30-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -112,6 +112,13 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
 

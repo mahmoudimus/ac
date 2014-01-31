@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m29-SNAPSHOT</version>
+    <version>1.0-m30-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -624,6 +624,7 @@
         <webdriver.browser>chrome</webdriver.browser>
 
         <hamcrest.version>1.3</hamcrest.version>
+        <mockito.version>1.9.0</mockito.version>
         <jetty.version>8.1.7.v20120910</jetty.version>
         <json-simple.version>1.1.1</json-simple.version>
         <log4j.version>1.2.16</log4j.version>
