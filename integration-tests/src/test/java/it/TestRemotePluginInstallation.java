@@ -62,7 +62,7 @@ public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
                                       .resource(ConnectAppServlets.helloWorldServlet()))
                 .start();
         product.visit(HomePage.class);
-        assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
+        assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page", EXTRA_PREFIX)
                           .clickRemotePluginLink()
                           .isLoaded());
         pluginSecond.stopAndUninstall();
