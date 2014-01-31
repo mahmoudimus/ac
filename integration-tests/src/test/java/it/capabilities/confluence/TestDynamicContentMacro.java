@@ -114,7 +114,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         selectMacro(editorPage, SIMPLE_MACRO_NAME);
 
         savedPage = editorPage.save();
-        RenderedMacro renderedMacro = connectPageOperations.findMacro(SIMPLE_MACRO_KEY, 0);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
 
         assertThat(content, is("Hello world"));
@@ -132,7 +132,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         editorContent.setRichTextMacroBody("a short body");
 
         savedPage = editorPage.save();
-        RenderedMacro renderedMacro = connectPageOperations.findMacro(SHORT_BODY_MACRO_KEY, 0);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SHORT_BODY_MACRO_KEY, 0);
         String body = renderedMacro.getFromQueryString("body");
 
         assertThat(body, is("<p>a short body</p>"));
@@ -152,7 +152,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         savedPage = editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacro(LONG_BODY_MACRO_KEY, 0);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(LONG_BODY_MACRO_KEY, 0);
         String hash = renderedMacro.getFromQueryString("hash");
 
         assertThat(hash, is(DigestUtils.md5Hex(body)));
@@ -173,7 +173,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         savedPage = editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacro(PARAMETER_MACRO_KEY, 0);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(PARAMETER_MACRO_KEY);
         String value = renderedMacro.getFromQueryString("param1");
 
         assertThat(value, is("param value"));
@@ -190,10 +190,12 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         savedPage = editorPage.save();
 
-        RenderedMacro renderedMacro1 = connectPageOperations.findMacro(SIMPLE_MACRO_KEY, 0);
+        connectPageOperations.waitUntilNConnectIFramesPresent(2); // preempt flakiness
+
+        RenderedMacro renderedMacro1 = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         String content1 = renderedMacro1.getIFrameElementText("hello-world-message");
 
-        RenderedMacro renderedMacro2 = connectPageOperations.findMacro(SIMPLE_MACRO_KEY, 1);
+        RenderedMacro renderedMacro2 = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 1);
         String content2 = renderedMacro2.getIFrameElementText("hello-world-message");
 
         assertThat(content1, is(content2));
@@ -209,7 +211,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         savedPage = editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacro(SMALL_INLINE_MACRO_KEY, 0);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SMALL_INLINE_MACRO_KEY);
 
         assertThat(renderedMacro.getIFrameSize(), both(hasProperty("width", is(60))).and(hasProperty("height", is(30))));
     }

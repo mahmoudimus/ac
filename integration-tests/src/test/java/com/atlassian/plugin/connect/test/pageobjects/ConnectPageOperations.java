@@ -4,12 +4,19 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.atlassian.webdriver.utils.element.WebDriverPoller;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.ID;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.size;
 
 /**
  * The set of standard operations for testing connect addons. The intention is to have one place for all such ops
@@ -49,9 +56,33 @@ public class ConnectPageOperations
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownLinkId);
     }
 
-    public RenderedMacro findMacro(String macroKey, int count)
+    public RenderedMacro findMacroWithIdPrefix(String idPrefix)
     {
-        return pageBinder.bind(RenderedMacro.class, macroKey, count);
+        return pageBinder.bind(RenderedMacro.class, idPrefix);
+    }
+
+    public RenderedMacro findMacroWithIdPrefix(String idPrefix, int indexOnPage)
+    {
+        return pageBinder.bind(RenderedMacro.class, idPrefix, indexOnPage);
+    }
+
+    public void waitUntilNConnectIFramesPresent(final int n)
+    {
+        new WebDriverPoller(driver).waitUntil(new Function<WebDriver, Boolean>() {
+            @Override
+            public Boolean apply(final WebDriver input)
+            {
+                return n == size(filter(input.findElements(By.tagName("iframe")), new Predicate<WebElement>()
+                {
+                    @Override
+                    public boolean apply(final WebElement input)
+                    {
+                        String id = input.getAttribute("id");
+                        return id != null && id.startsWith("easyXDM_embedded-");
+                    }
+                }));
+            }
+        });
     }
 
     public Boolean webItemDoesNotExist(String webItemId)
