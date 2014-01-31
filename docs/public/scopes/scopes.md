@@ -24,4 +24,11 @@ The following scopes are available for use by Atlassian Connect add-ons:
 * `SPACE_ADMIN` &ndash; can administer a space in Confluence
 * `ADMIN` &ndash; can administer the entire Confluence instance
 
-You can see what APIs are contained in each scope in the [Product API Scopes](#product-api-scopes) section.
+You can see what API methods are available in each scope for each API below:
+
+* [JIRA REST APIs](./jira-rest-scopes.html)
+* [JIRA JSON-RPC APIs](./jira-jsonrpc-scopes.html)
+* [JIRA SOAP APIs](./jira-soap-scopes.html)
+* [Confluence REST APIs](./confluence-rest-scopes.html)
+* [Confluence JSON-RPC APIs](./confluence-jsonrpc-scopes.html)
+* [Confluence XML-RPC APIs](./confluence-xmlrpc-scopes.html)

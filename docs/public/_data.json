@@ -26,9 +26,6 @@
         "authentication.html": {
             "title": "Authentication"
         },
-        "scopes.html": {
-            "title": "Scopes"
-        },
         "conditions.html": {
             "title": "Conditions"
         },
