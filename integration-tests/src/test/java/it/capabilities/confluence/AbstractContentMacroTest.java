@@ -118,7 +118,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createParameterMacro(T builder)
     {
         return builder
-                .withUrl(DEFAULT_MACRO_URL)
+                .withUrl(DEFAULT_MACRO_URL + "?param1={param1}")
                 .withKey(PARAMETER_MACRO_KEY)
                 .withName(new I18nProperty(PARAMETER_MACRO_NAME, ""))
                 .withParameters(newMacroParameterBean()
