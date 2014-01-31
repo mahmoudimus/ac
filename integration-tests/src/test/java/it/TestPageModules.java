@@ -132,7 +132,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
 
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", EXTRA_PREFIX);
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
@@ -193,7 +193,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
-        final RemotePluginTestPage remotePluginTestPage = upm.configurePlugin("configurePage", EXTRA_PREFIX + "page", RemotePluginTestPage.class);
+        final RemotePluginTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", RemotePluginTestPage.class, EXTRA_PREFIX);
         assertTrue(remotePluginTestPage.isLoaded());
 
         runner.stopAndUninstall();

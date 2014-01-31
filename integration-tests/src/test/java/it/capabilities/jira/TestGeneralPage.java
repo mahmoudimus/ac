@@ -73,13 +73,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/" + KEY_MY_AWESOME_PAGE));
 
-        assertThat(URLEncodedUtils.parse(url, UTF_8.name()),
-                containsInAnyOrder(
-                        (NameValuePair) new BasicNameValuePair("project_key", project.getKey()),
-                        new BasicNameValuePair("project_id", project.getId())
-                )
-        );
-
         RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
         assertThat(addonContentsPage.isFullSize(), is(true));
     }

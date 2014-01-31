@@ -81,7 +81,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public void nonAdminCanNotSeePage()
     {
         loginAs(TestConstants.BARNEY_USERNAME, TestConstants.BARNEY_USERNAME);
-        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", "pg");
+        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", GENERATED_PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }
