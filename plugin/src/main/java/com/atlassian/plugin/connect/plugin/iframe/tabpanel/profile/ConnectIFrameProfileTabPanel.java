@@ -11,6 +11,9 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
+import java.util.Collections;
+
+import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderAccessDeniedToString;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
 
 /**
@@ -39,15 +42,22 @@ public class ConnectIFrameProfileTabPanel implements ViewProfilePanel
     @Override
     public String getHtml(final User profileUser)
     {
-        UserProfile userProfile = userManager.getUserProfile(profileUser.getName());
-        // parse and filter module context
-        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
-        unfilteredContext.addProfileUser(userProfile);
+        if (iFrameRenderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
+        {
+            UserProfile userProfile = userManager.getUserProfile(profileUser.getName());
+            // parse and filter module context
+            JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
+            unfilteredContext.addProfileUser(userProfile);
 
-        ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
+            ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
 
-        // render tab HTML
-        return renderToString(filteredContext, iFrameRenderStrategy);
+            // render tab HTML
+            return renderToString(filteredContext, iFrameRenderStrategy);
+        }
+        else
+        {
+            return renderAccessDeniedToString(iFrameRenderStrategy);
+        }
     }
 
 }
