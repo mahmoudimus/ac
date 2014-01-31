@@ -111,7 +111,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testMacroIsRendered() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Simple Macro on Page");
+        editorPage.setTitle("Simple Macro on Page_" + System.currentTimeMillis());
 
         selectMacro(editorPage, STORAGE_FORMAT_MACRO_NAME);
 
@@ -126,7 +126,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testMacroHttpMethod() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("HTTP GET Macro");
+        editorPage.setTitle("HTTP GET Macro_" + System.currentTimeMillis());
 
         selectMacro(editorPage, GET_MACRO_NAME);
 
@@ -139,7 +139,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testBodyInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Short Body Macro");
+        editorPage.setTitle("Short Body Macro_" + System.currentTimeMillis());
 
         selectMacro(editorPage, SHORT_BODY_MACRO_NAME);
 
@@ -156,7 +156,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testBodyHashInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Long Body Macro");
+        editorPage.setTitle("Long Body Macro_" + System.currentTimeMillis());
 
         selectMacro(editorPage, LONG_BODY_MACRO_NAME);
 
@@ -174,7 +174,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testParameterInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Parameter Page");
+        editorPage.setTitle("Parameter Page_" + System.currentTimeMillis());
 
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);
@@ -193,7 +193,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testPOSTParameterInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("HTTP POST Parameter Page");
+        editorPage.setTitle("HTTP POST Parameter Page_" + System.currentTimeMillis());
 
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(POST_PARAM_MACRO_NAME);
