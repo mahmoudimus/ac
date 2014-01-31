@@ -43,10 +43,10 @@ public class ServletUtilsTest
 
     @Test
     public void testNormalizedPathShouldBeIdenticalWithoutContext() throws Exception {
-        when(request.getContextPath()).thenReturn("/");
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/my/url");
 
-        assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(true));
+        assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(false));
     }
 
     @Test
@@ -54,13 +54,21 @@ public class ServletUtilsTest
         when(request.getContextPath()).thenReturn("/jira");
         when(request.getRequestURI()).thenReturn("/jira/my/url");
 
+        assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(false));
+    }
+
+    @Test
+    public void testNormalizedPathShouldBeSameWithRelativePathAtFront() throws Exception {
+        when(request.getContextPath()).thenReturn("/jira");
+        when(request.getRequestURI()).thenReturn("/jira/../../rest/api/2/user");
+
         assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(true));
     }
 
     @Test
     public void testNormalizedPathShouldBeDifferentWithRelativePaths() throws Exception {
         when(request.getContextPath()).thenReturn("/jira");
-        when(request.getRequestURI()).thenReturn("/jira/../../rest/api/2/user");
+        when(request.getRequestURI()).thenReturn("/jira/hello/world/../../rest/api/2/user");
 
         assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(true));
     }

@@ -18,8 +18,8 @@ public final class ServletUtils
 
     public static boolean normalisedAndOriginalRequestUrisDiffer(HttpServletRequest request)
     {
-        String requestURI = request.getRequestURI();
-        String normalizedURI = URI.create(requestURI.substring(request.getContextPath().length())).normalize().toString();
+        String requestURI = request.getRequestURI().substring(request.getContextPath().length());
+        String normalizedURI = URI.create(requestURI).normalize().toString();
 
         return !requestURI.equals(normalizedURI);
     }
