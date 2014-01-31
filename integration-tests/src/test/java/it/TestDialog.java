@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestDialog extends ConnectWebDriverTestBase
 {
+    public static final String EXTRA_PREFIX = "servlet-";
     private static AtlassianConnectAddOnRunner remotePlugin;
 
     @BeforeClass
@@ -56,7 +57,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     public void testOpenCloseDialogUrl()
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog", EXTRA_PREFIX);
 
         page.clickRemotePluginLink();
 
@@ -73,7 +74,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     public void testOpenCloseDialogKey()
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog",EXTRA_PREFIX);
 
         page.clickRemotePluginLink();
 

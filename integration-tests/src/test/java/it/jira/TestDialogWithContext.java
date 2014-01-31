@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestDialogWithContext extends JiraWebDriverTestBase
 {
+    public static final String EXTRA_PREFIX = "remote-web-panel-";
     private static AtlassianConnectAddOnRunner remotePlugin;
 
     @BeforeClass
@@ -50,7 +51,7 @@ public class TestDialogWithContext extends JiraWebDriverTestBase
     {
         loginAsAdmin();
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(), EXTRA_PREFIX);
 
         viewIssuePage.findWebPanel("my-issue-panel");
 
