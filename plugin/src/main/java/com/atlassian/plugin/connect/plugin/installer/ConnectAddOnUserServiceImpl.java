@@ -90,7 +90,14 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     {
         if (!applicationService.isUserDirectGroupMember(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY))
         {
-            applicationService.addUserToGroup(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+            try
+            {
+                applicationService.addUserToGroup(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+            }
+            catch (MembershipAlreadyExistsException e)
+            {
+                // ignore, because the membership that we're trying to create exists
+            }
         }
     }
 
