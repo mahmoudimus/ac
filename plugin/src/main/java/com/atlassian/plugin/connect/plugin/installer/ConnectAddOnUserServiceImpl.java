@@ -75,24 +75,89 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
     private User createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException
     {
-        Group group;
+        ensureGroupExists();
+        User user = ensureUserExists(userKey);
+        ensureUserIsInGroup(userKey);
 
+        // TODO ACDEV-933: enable user if disabled
+
+        // TODO ACDEV-936: disable password recovery on this user
+
+        return user;
+    }
+
+    private void ensureUserIsInGroup(String userKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException
+    {
+        if (!applicationService.isUserDirectGroupMember(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY))
+        {
+            applicationService.addUserToGroup(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+        }
+    }
+
+    private User ensureUserExists(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException
+    {
+        User user = findUserByKey(userKey);
+
+        if (null == user)
+        {
+            user = createUser(userKey);
+        }
+
+        return user;
+    }
+
+    private User createUser(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException
+    {
+        User user;
         try
         {
-            group = applicationService.findGroupByName(application, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+            // Justin Koke says that NONE password prevents logging in
+            user = applicationService.addUser(application, new UserTemplate(userKey), PasswordCredential.NONE);
         }
-        catch (GroupNotFoundException e)
+        catch (InvalidUserException iue)
         {
-            group = null;
+            // the javadoc says that addUser() throws an InvalidUserException if the user already exists
+            // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
+
+            user = findUserByKey(userKey);
+
+            if (null == user)
+            {
+                // the ApplicationService is messing us around by saying that the user exists and then that it does not
+                throw new RuntimeException(String.format("The %s %s said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
+                        ApplicationService.class.getSimpleName(), applicationService, User.class.getSimpleName(), userKey));
+            }
         }
 
-        if (null == group)
+        return user;
+    }
+
+    private void ensureGroupExists() throws OperationFailedException, ApplicationPermissionException
+    {
+        if (null == findGroupByKey())
         {
-            applicationService.addGroup(application, new GroupTemplate(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY));
+            try
+            {
+                applicationService.addGroup(application, new GroupTemplate(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY));
+            }
+            catch (InvalidGroupException ige)
+            {
+                // according to its javadoc addGroup() throws InvalidGroupException if the group already exists
+                // --> handle the race condition of something else creating this group at around the same time
+
+                if (null == findGroupByKey())
+                {
+                    // the ApplicationService is messing us around by saying that the group exists and then that it does not
+                    throw new RuntimeException(String.format("The %s %s said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
+                            ApplicationService.class.getSimpleName(), applicationService, Group.class.getSimpleName(), ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY));
+                }
+            }
         }
+    }
 
-        User user = null;
-
+    private User findUserByKey(String userKey)
+    {
+        User user;
         try
         {
             user = applicationService.findUserByName(application, userKey);
@@ -101,22 +166,20 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         {
             user = null;
         }
-
-        if (null == user)
-        {
-            // Justin Koke says that NONE password prevents logging in
-            user = applicationService.addUser(application, new UserTemplate(userKey), PasswordCredential.NONE);
-        }
-
-        if (!applicationService.isUserDirectGroupMember(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY))
-        {
-            applicationService.addUserToGroup(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
-        }
-
-        // TODO ACDEV-933: enable user if disabled
-
-        // TODO ACDEV-936: disable password recovery on this user
-
         return user;
+    }
+
+    private Group findGroupByKey()
+    {
+        Group group;
+        try
+        {
+            group = applicationService.findGroupByName(application, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+        }
+        catch (GroupNotFoundException gnf)
+        {
+            group = null;
+        }
+        return group;
     }
 }
