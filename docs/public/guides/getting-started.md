@@ -7,9 +7,113 @@ install it into a local-running copy of JIRA.
 The examples in this tutorial use Linux or OS X. If working on another operating system, use the
 command appropriate for your environment.
 
-## 1. Start the target Atlassian application with the Atlassian SDK
 
-The first step in development is to start a copy of your target Atlassian application, so that you
+## 1. Create the add-on descriptor (`atlassian-connect.json`)
+
+An add-on descriptor is an JSON file that describes the add-on to the Atlassian application. For
+example, it specifies the key and name of the add-on, lists the permissions it needs to operate, and
+the different integration modules that it provides.
+
+1. Create a project directory for your add-on source files.
+2. In your project directory, create a new file named `atlassian-connect.json`.
+3. Add the following text to the file:
+```
+    {
+        "name": "Hello World",
+        "description": "Atlassian Connect add-on",
+        "key": "com.example.myaddon_helloworld",
+        "baseUrl": "http://localhost:8000",
+        "vendor": {
+            "name": "Example, Inc.",
+            "url": "http://example.com"
+        },
+        "version": "1.0",
+        "modules": {
+            "generalPages": [
+                {
+                    "url": "/helloworld.html",
+                    "name": {
+                        "value": "Greeting"
+                    }
+                }
+            ]
+        }
+    }
+```
+4. Save and close the descriptor file.
+
+You're now ready to create the "web app", which in our case is just a simple, old-fashioned HTML
+page.
+
+## 2. Create the web page
+Now create the HTML page that serves as the add-on "web application." While a static HTML page does
+not represent what would be a typical add-on, it's not that far off either. Just a few components
+turn any web application into an Atlassian Connect add-on so this simple example will demonstrate
+the principles.
+
+In the same folder as the descriptor file, create a new file with a name that matches the
+generalPages url attribute you set in the add-on descriptor, such as `helloworld.html`. Add the
+following content:
+
+```
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="//HOSTNAME:PORT/CONTEXT/atlassian-connect/all.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+    </body>
+</html>
+```
+
+Replace these values with ones appropriate for your environment:
+
+ * `HOSTNAME`: The hostname for the Atlassian application.
+ * `PORT`: The port number on which the Atlassian application serves its web interface.
+ * `CONTEXT`: The application context for the application, such as `/jira` or `/confluence`.
+
+For this tutorial, these values will be either:
+
+<code data-lang="text">//localhost:2990/jira/</code>
+
+<code data-lang="text">//localhost:1990/confluence/</code>
+
+Nothing out of the ordinary here except for one thing: the script tag for `all.js`. This JavaScript
+file is a part of the Atlassian Connect library, and is available in any Atlassian application
+version that supports Atlassian Connect.
+
+The library supplies a number of functions you can use in your add-on, as described in the
+[Javascript API](../concepts/javascript-api.html). For our simple HTML file, this line is required
+because it enables the resizing of the iframe in which the page is to be embedded in the Atlassian
+application.
+
+<a name="start-addon-host" id="start-addon-host"></a>
+## 3. Start the add-on
+
+That's it as far as coding goes. The next step is to make the files you created available on a web
+server. The options for accomplishing this are many, but this example we'll serve the file locally,
+since our target application is operating locally as well.
+
+In our case, we'll use Python to serve the current directory containing your
+`atlassian-connect.json` and `helloworld.html` files. Navigate to that directory and run:
+
+````
+python -m SimpleHTTPServer 8000
+````
+
+After starting, the server should indicate it is serving HTTP at the current address and at the
+specified port, 8000.
+
+Confirm that you're serving the files the files we created in steps 1 and 2 by visiting:
+
+<code data-lang="text"><a href="http://localhost:8000/atlassian-connect.json">http://localhost:8000/atlassian-connect.json</a></code>
+
+<code data-lang="text"><a href="http://localhost:8000/helloworld.html">http://localhost:8000/helloworld.html</code>
+
+## 4. Start the target Atlassian application with the Atlassian SDK
+
+The next step in development is to start a copy of your target Atlassian application, so that you
 can install your add-on.
 
 The easiest way to get a local instance of the Atlassian application running is with the [Atlassian
@@ -47,126 +151,19 @@ After the startup process completes, you can confirm that you application is run
 
 
 
-
-## 2. Create the add-on descriptor (`atlassian-connect.json`)
-
-An add-on descriptor is an JSON  file that describes the add-on to the Atlassian application. For
-example, it specifies the key and name of the add-on, lists the permissions it needs to operate, and
-the different integration modules that it provides.
-
-1. Create a project directory for your add-on source files, or choose an existing directory
-location. In choosing a location, it's worth considering that you'll need to expose this directory
-by web server (or copy the files you create here to a location that is served by a web server).
-2. In your project directory, create a new file named `atlassian-connect.json`.
-3. Add the following text to the file:
-```
-    {
-        "name": "Hello World",
-        "description": "Atlassian Connect add-on",
-        "key": "com.example.myaddon_helloworld",
-        "baseUrl": "http://localhost:8000",
-        "vendor": {
-            "name": "Example, Inc.",
-            "url": "http://example.com"
-        },
-        "version": "1.0",
-        "modules": {
-            "generalPages": [
-                {
-                    "url": "/helloworld.html",
-                    "name": {
-                        "value": "Greeting"
-                    }
-                }
-            ]
-        }
-    }
-```
-4. Save and close the descriptor file.
-
-You're now ready to create the "web app", which in our case is just a simple, old-fashioned HTML
-page.
-
-## 3. Create the web page
-Now create the HTML page that serves as the web application that will be our add-on. While a static
-HTML page does not represent what would be a typical add-on, it's not that far off either. Just a
-few components turn a web application into an Atlassian Connect add-on, so whether the add-on is a
-simple HTML page or a complete, free-standing SaaS system, the idea is the same.
-
-In the same folder as the descriptor file, create a new file with a name that matches the
-generalPages url attribute you set in the add-on descriptor, such as `helloworld.html`. Add the
-following content:
-
-```
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <script src="//HOSTNAME:PORT/CONTEXT/atlassian-connect/all.js" type="text/javascript"></script>
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
-</html>
-```
-
-Replace these values with ones appropriate for your environment:
-
- * `HOSTNAME`: The hostname for the Atlassian application.
- * `PORT`: The port number on which the Atlassian application serves its web interface.
- * `CONTEXT`: The application context for the application, such as `/jira` or `/confluence`.
-
-If you followed step 1, then these values will be either:
-
-<code data-lang="text">//localhost:2990/jira/</code>
-
-<code data-lang="text">//localhost:1990/confluence/</code>
-
-Nothing out of the ordinary here except for one thing: the script tag for `all.js`. This JavaScript
-file is a part of the Atlassian Connect library, and is available in any Atlassian application
-version that supports Atlassian Connect.
-
-The library supplies a number of functions you can use in your add-on, as described in the
-[Javascript API](../concepts/javascript-api.html). For our simple HTML file, this line is required
-because it enables the resizing of the iframe in which the page is to be embedded in the Atlassian
-application.
-
-<a name="start-addon-host" id="start-addon-host"></a>
-## 4. Start the add-on
-
-That's it as far as coding goes. The next step is to make the files you created available on a web
-server. The options for accomplishing this are many, but this example we'll serve the file locally,
-since our target application is operating locally as well.
-
-In our case, we'll use Python to serve the current directory containing your
-`atlassian-connect.json` and `helloworld.html` files. Navigate to that directory and run:
-
-````
-python -m SimpleHTTPServer 8000
-````
-
-After starting, the server should indicate it is serving HTTP at the current address and at the
-specified port, 8000.
-
-Confirm that you're serving the files the files we created in steps 2 and 3 by visiting:
-
-<code data-lang="text"><a href="http://localhost:8000/atlassian-connect.json">http://localhost:8000/atlassian-connect.json</a></code>
-
-<code data-lang="text"><a href="http://localhost:8000/helloworld.html">http://localhost:8000/helloworld.html</code>
-
-
 ## 5. Register your add-on in the target application
 
 Now it's time to register your add-on with the target application.
 
-1. Visit the target application we started in step one, at either:
+1. Visit the target application we started in step 4, at either:
   * [http://localhost:2990/jira/]
   * [http://localhost:1990/confluence/]
 1. Log in as the system administrator. The default username/password combination is admin/admin.
 2. Choose __Cog Menu > Add-ons__ from the menu. The Administration page will display.
 3. Choose the __Manage add-ons__ option from the side menu.
 6. Click the __Upload Add-on__ link
-7. Enter the URL to the hosted location of your add-on descriptor that we created in the previous
-step. In this example, the URL is similar to the following:
+7. Enter the URL to the hosted location of your add-on descriptor that we created in step 3. In this
+example, the URL is similar to the following:
 `http://localhost:8000/atlassian-connect.json`.
 8. Press __Upload__. The application will display the __Installed and ready to go__ dialog when
 installation is complete.
