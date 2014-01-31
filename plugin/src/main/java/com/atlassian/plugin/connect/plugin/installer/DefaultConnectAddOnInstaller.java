@@ -1,14 +1,5 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import com.atlassian.crowd.embedded.api.PasswordCredential;
-import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.crowd.exception.*;
-import com.atlassian.crowd.manager.application.ApplicationManager;
-import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.crowd.model.application.Application;
-import com.atlassian.crowd.model.group.Group;
-import com.atlassian.crowd.model.group.GroupTemplate;
-import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -32,6 +23,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 {
@@ -45,12 +38,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final ConnectDescriptorRegistry connectDescriptorRegistry;
     private final ConnectEventHandler connectEventHandler;
     private final SharedSecretService sharedSecretService;
-    private final ApplicationService applicationService;
-    private final Application application;
+    private final ConnectAddOnUserService connectAddOnUserService;
 
-    private static final String ADD_ON_USER_KEY_PREFIX = "addon_";
-    private static final String ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY = "atlassian-addons"; // in order to not occupy a license this has to match constant in user-provisioning-plugin/src/main/java/com/atlassian/crowd/plugin/usermanagement/userprovisioning/Constants.java
-    private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
@@ -64,8 +53,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                                         ConnectDescriptorRegistry connectDescriptorRegistry,
                                         ConnectEventHandler connectEventHandler,
                                         SharedSecretService sharedSecretService,
-                                        ApplicationService applicationService,
-                                        ApplicationManager applicationManager) throws ApplicationNotFoundException
+                                        ConnectAddOnUserService connectAddOnUserService)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -77,8 +65,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectDescriptorRegistry = connectDescriptorRegistry;
         this.connectEventHandler = connectEventHandler;
         this.sharedSecretService = sharedSecretService;
-        this.applicationService = applicationService;
-        this.application = applicationManager.findByName(CROWD_APPLICATION_NAME);
+        this.connectAddOnUserService = checkNotNull(connectAddOnUserService);
     }
 
     @Override
@@ -128,7 +115,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
                 //applink MUST be created before any modules
-                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOn.getKey()).getName());
+                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, connectAddOnUserService.getOrCreateUserKey(addOn.getKey()));
 
                 //create the modules
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
@@ -171,52 +158,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             throw new InstallationFailedException(e.getCause() != null ? e.getCause() : e);
         }
 
-    }
-
-    private User createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException
-    {
-        Group group;
-
-        try
-        {
-            group = applicationService.findGroupByName(application, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
-        }
-        catch (GroupNotFoundException e)
-        {
-            group = null;
-        }
-
-        if (null == group)
-        {
-            applicationService.addGroup(application, new GroupTemplate(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY));
-        }
-
-        User user = null;
-
-        try
-        {
-            user = applicationService.findUserByName(application, userKey);
-        }
-        catch (UserNotFoundException e)
-        {
-            user = null;
-        }
-
-        if (null == user)
-        {
-            user = applicationService.addUser(application, new UserTemplate(userKey), PasswordCredential.NONE);
-        }
-
-        if (!applicationService.isUserDirectGroupMember(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY))
-        {
-            applicationService.addUserToGroup(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
-        }
-
-        // TODO ACDEV-933: enable user if disabled
-
-        // TODO ACDEV-936: disable password recovery on this user
-
-        return user;
     }
 
     private boolean addOnUsesSymmetricSharedSecret(AuthenticationType authType)
