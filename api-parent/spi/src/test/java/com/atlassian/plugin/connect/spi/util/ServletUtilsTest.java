@@ -62,7 +62,7 @@ public class ServletUtilsTest
         when(request.getContextPath()).thenReturn("/jira");
         when(request.getRequestURI()).thenReturn("/jira/../../rest/api/2/user");
 
-        assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(true));
+        assertThat(ServletUtils.normalisedAndOriginalRequestUrisDiffer(request), is(false));
     }
 
     @Test
