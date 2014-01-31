@@ -13,6 +13,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Map;
+
 /**
  *
  */
@@ -34,9 +36,11 @@ public class MacroModuleContextExtractorImpl implements MacroModuleContextExtrac
     }
 
     @Override
-    public ModuleContextParameters extractParameters(final String storageFormatBody, final ConversionContext conversionContext)
+    public ModuleContextParameters extractParameters(final String storageFormatBody, final ConversionContext conversionContext, final Map<String, String> parameters)
     {
         ModuleContextParameters moduleContext = new HashMapModuleContextParameters();
+
+        moduleContext.putAll(parameters);
 
         moduleContext.put("macro.body", StringUtils.left(storageFormatBody, MAX_BODY_LENGTH));
         moduleContext.put("macro.truncated", Boolean.toString(storageFormatBody.length() > MAX_BODY_LENGTH));
