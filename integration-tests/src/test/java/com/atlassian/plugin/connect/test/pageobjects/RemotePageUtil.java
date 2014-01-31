@@ -31,7 +31,7 @@ public class RemotePageUtil
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            throw new RuntimeException("Nested operation in iframe failed", e);
         }
         outIframe(driver);
         return result;

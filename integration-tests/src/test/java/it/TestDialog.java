@@ -71,10 +71,10 @@ public class TestDialog extends ConnectWebDriverTestBase
     }
 
     @Test
-    public void testOpenCloseDialogKey()
+    public void testOpenCloseDialogKey() throws Exception
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog",EXTRA_PREFIX);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog", EXTRA_PREFIX);
 
         page.clickRemotePluginLink();
 
