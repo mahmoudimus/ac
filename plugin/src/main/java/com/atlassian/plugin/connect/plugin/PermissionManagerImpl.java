@@ -117,17 +117,7 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, UserKey user)
     {
-        boolean isInScopes = any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
-
-        // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
-        if (!isInScopes && isDevModeService.isDevMode() && jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey))
-        {
-            log.warn(String.format("Dev mode: allowing plugin '%s' to access '%s' for user '%s'",
-                    pluginKey, req.getRequestURI(), null == user ? "anonymous" : user.getStringValue()));
-            isInScopes = true;
-        }
-
-        return isInScopes;
+        return any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
     }
 
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String pluginKey)
