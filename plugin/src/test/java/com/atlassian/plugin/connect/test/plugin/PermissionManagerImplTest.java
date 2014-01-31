@@ -114,16 +114,8 @@ public class PermissionManagerImplTest
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
-    // ACDEV-679
     @Test
-    public void invalidJsonDescriptorScopeIsInScopeInDevMode()
-    {
-        setup().withJson(true).withDevMode(true);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
-    }
-
-    @Test
-    public void invalidJsonDescriptorScopeIsOutOfScopeInProdMode()
+    public void invalidJsonDescriptorScopeIsOutOfScope()
     {
         setup().withJson(true).withDevMode(false);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
