@@ -51,18 +51,6 @@ public class RemotePage
         waitUntilTrue(containerDivElement.timed().isPresent());
         
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
-
-//        driver.waitUntilElementIsLocated(By.id("embedded-" + extraPrefix + key));
-//        this.containerDiv = driver.findElement(By.id("embedded-" + extraPrefix + key));
-//        
-//        driver.waitUntil(new Function<WebDriver, Boolean>()
-//        {
-//            @Override
-//            public Boolean apply(@Nullable WebDriver input)
-//            {
-//                return containerDiv.getAttribute("class").contains("iframe-init");
-//            }
-//        },20);
     }
 
     public boolean isLoaded()
