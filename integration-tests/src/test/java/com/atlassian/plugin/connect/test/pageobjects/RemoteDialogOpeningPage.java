@@ -75,7 +75,7 @@ public class RemoteDialogOpeningPage
             {
                 PageElement element = elementFinder.find(By.id(id));
                 waitUntilTrue(element.timed().isVisible());
-                element.javascript().mouse().click();
+                element.click();
                 return null;
             }
         });
