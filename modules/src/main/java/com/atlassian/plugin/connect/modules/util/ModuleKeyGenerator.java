@@ -26,7 +26,7 @@ public class ModuleKeyGenerator
 
     /**
      * Collapses CamelCase into dashes, replaces any special characters in a key with dashes and lowercases the entire
-     * key.x
+     * key.
      */
     public static String cleanKey(String originalKey)
     {
