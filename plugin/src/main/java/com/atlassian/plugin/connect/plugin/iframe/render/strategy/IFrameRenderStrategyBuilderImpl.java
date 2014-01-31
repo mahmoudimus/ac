@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFac
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
@@ -27,8 +28,10 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private static final String TEMPLATE_GENERIC_INLINE = TEMPLATE_PATH + "iframe-body-inline.vm";
     private static final String TEMPLATE_PAGE = TEMPLATE_PATH + "iframe-page.vm";
     private static final String TEMPLATE_PROJECT_ADMIN_TAB = TEMPLATE_PATH + "iframe-page-project-admin.vm";
-    private static final String TEMPLATE_DIALOG = TEMPLATE_PATH + "iframe-page-dialog.vm";
     private static final String TEMPLATE_WORKFLOW_POSTFUNCTION = TEMPLATE_PATH + "jira/workflow/iframe-post-function.vm";
+
+    private static final String TEMPLATE_ACCESS_DENIED_PAGE = TEMPLATE_PATH + "iframe-page-accessdenied.vm";
+    private static final String TEMPLATE_ACCESS_DENIED_GENERIC_BODY = TEMPLATE_PATH + "iframe-body-accessdenied.vm";
 
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
@@ -39,6 +42,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private String addOnKey;
     private String moduleKey;
     private String template;
+    private String accessDeniedTemplate;
     private String urlTemplate;
     private String title;
     private String decorator;
@@ -76,6 +80,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     public TemplatedBuilder pageTemplate()
     {
         template = TEMPLATE_PAGE;
+        accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_PAGE;
         return this;
     }
 
@@ -83,6 +88,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     public TemplatedBuilder genericBodyTemplate()
     {
         template = TEMPLATE_GENERIC_BODY;
+        accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_GENERIC_BODY;
         return this;
     }
 
@@ -90,13 +96,15 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     public TemplatedBuilder genericBodyTemplate(boolean inline)
     {
         template = inline ? TEMPLATE_GENERIC_INLINE : TEMPLATE_GENERIC_BODY;
+        accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_GENERIC_BODY;
         return this;
     }
 
     @Override
     public TemplatedBuilder dialogTemplate()
     {
-        template = TEMPLATE_DIALOG;
+        template = TEMPLATE_GENERIC_BODY;
+        accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_GENERIC_BODY;
         return this;
     }
 
@@ -104,6 +112,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     public TemplatedBuilder projectAdminTabTemplate()
     {
         template = TEMPLATE_PROJECT_ADMIN_TAB;
+        accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_PAGE;
         return this;
     }
 
@@ -111,6 +120,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     public TemplatedBuilder workflowPostFunctionTemplate()
     {
         template = TEMPLATE_WORKFLOW_POSTFUNCTION;
+        accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_GENERIC_BODY;
         return this;
     }
 
@@ -178,8 +188,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     public IFrameRenderStrategy build()
     {
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                templateRenderer, addOnKey, moduleKey, template, urlTemplate, title, decorator, condition,
-                additionalRenderContext, width, height, uniqueNamespace);
+                templateRenderer, addOnKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
+                decorator, condition, additionalRenderContext, width, height, uniqueNamespace);
     }
 
     private static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
@@ -193,6 +203,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final String addOnKey;
         private final String moduleKey;
         private final String template;
+        private final String accessDeniedTemplate;
         private final String urlTemplate;
         private final String title;
         private final String width;
@@ -204,9 +215,10 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private IFrameRenderStrategyImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
                 final TemplateRenderer templateRenderer, final String addOnKey, final String moduleKey,
-                final String template, final String urlTemplate, final String title, final String decorator,
-                final Condition condition, final Map<String, Object> additionalRenderContext, String width,
-                String height, final boolean uniqueNamespace)
+                final String template, final String accessDeniedTemplate, final String urlTemplate,
+                final String title, final String decorator, final Condition condition,
+                final Map<String, Object> additionalRenderContext, String width, String height,
+                final boolean uniqueNamespace)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -214,6 +226,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.addOnKey = addOnKey;
             this.moduleKey = moduleKey;
             this.template = template;
+            this.accessDeniedTemplate = accessDeniedTemplate;
             this.urlTemplate = urlTemplate;
             this.title = title;
             this.decorator = decorator;
@@ -250,6 +263,17 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .build();
 
             templateRenderer.render(template, renderContext, writer);
+        }
+
+        @Override
+        public void renderAccessDenied(final Writer writer) throws IOException
+        {
+            Map<String, Object> renderContext = ImmutableMap.<String, Object>builder()
+                    .put("title", title)
+                    .put("decorator", decorator)
+                    .build();
+
+            templateRenderer.render(accessDeniedTemplate, renderContext, writer);
         }
 
         @Override

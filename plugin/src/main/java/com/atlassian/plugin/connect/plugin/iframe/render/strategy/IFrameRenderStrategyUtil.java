@@ -27,5 +27,20 @@ public class IFrameRenderStrategyUtil
         return out.toString();
     }
 
+    public static String renderAccessDeniedToString(IFrameRenderStrategy iFrameRenderStrategy)
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try
+        {
+            iFrameRenderStrategy.renderAccessDenied(new OutputStreamWriter(out));
+        }
+        catch (IOException e)
+        {
+            // no I/O, so no IOException.. right?
+            throw new IllegalStateException(e);
+        }
+        return out.toString();
+    }
+
 
 }

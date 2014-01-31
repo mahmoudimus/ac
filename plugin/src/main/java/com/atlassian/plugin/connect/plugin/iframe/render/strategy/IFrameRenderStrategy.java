@@ -16,4 +16,6 @@ public interface IFrameRenderStrategy
     void shouldShowOrThrow(Map<String, Object> conditionContext);
 
     void render(ModuleContextParameters moduleContextParameters, Writer writer) throws IOException;
+
+    void renderAccessDenied(Writer writer) throws IOException;
 }

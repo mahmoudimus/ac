@@ -65,10 +65,17 @@ public class ConnectIFrameServlet extends HttpServlet
 
             if (renderStrategy != null)
             {
-                renderStrategy.shouldShowOrThrow(Collections.<String, Object>emptyMap());
-                ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
                 resp.setContentType("text/html");
-                renderStrategy.render(moduleContextParameters, resp.getWriter());
+                if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
+                {
+                    ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
+                    renderStrategy.render(moduleContextParameters, resp.getWriter());
+                }
+                else
+                {
+                    renderStrategy.renderAccessDenied(resp.getWriter());
+                }
+
                 return;
             }
         }

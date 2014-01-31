@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
+import java.util.Collections;
 import java.util.Map;
 
 import com.atlassian.event.api.EventPublisher;
@@ -115,19 +116,25 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     @Override
     public void writeHtml(String resourceName, Map<String, ?> startingParams, Writer writer) throws IOException
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.get(getPluginKey(), getKey(), resourceName);
-        ModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(getPluginKey(), getKey(), resourceName);
 
-        moduleContext.put(
-            JiraModuleContextFilter.POSTFUNCTION_ID,
-            (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_ID)
-        );
-        moduleContext.put(
-            JiraModuleContextFilter.POSTFUNCTION_CONFIG,
-            (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_CONFIG)
-        );
-
-        renderStrategy.render(moduleContext, writer);
+        if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
+        {
+            ModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
+            moduleContext.put(
+                    JiraModuleContextFilter.POSTFUNCTION_ID,
+                    (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_ID)
+            );
+            moduleContext.put(
+                    JiraModuleContextFilter.POSTFUNCTION_CONFIG,
+                    (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_CONFIG)
+            );
+            renderStrategy.render(moduleContext, writer);
+        }
+        else
+        {
+            renderStrategy.renderAccessDenied(writer);
+        }
     }
 
 }
