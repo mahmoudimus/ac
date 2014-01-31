@@ -599,6 +599,7 @@
         <amps.version>4.2.7</amps.version>
         <atlassian.applinks.version>4.0.2</atlassian.applinks.version>
         <atlassian.confluence.version>5.4-OD-4</atlassian.confluence.version>
+        <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.httpclient.version>0.17.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
@@ -625,7 +626,6 @@
         <atlassian.webresource.version>3.0.0-m24</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
-        <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <aui.version>5.2</aui.version>
         <webdriver.browser>chrome</webdriver.browser>
 
