@@ -203,18 +203,16 @@ Browser->User:Requested page\nrendered
 
 ## 4. What's next?
 
-While not particularly useful in itself, the Hello World add-on illustrates how to go about building
-your own add-on.
-
 For most Atlassian Connect add-ons, the next step for the developer would be to add code that relies
-on the Atlassian application REST APIs. This involves implementing the authentication mechanism used
-between Atlassian applications and Atlassian Connect add-ons, JWT.
+on the Atlassian application REST APIs. This requires implementing the
+[authentication](../concepts/authentication.html) used between Atlassian applications and Atlassian
+Connect add-ons.
 
-The implementation details for JWT vary considerably depending on the programming language and
-framework you are using to develop your add-on.
+You can do this using any language or framework that you wish, and many languages already provide
+libraries to help you with implement JWT authentication.
 
-This is where our framework helpers come in. They help you build some of the plumbing required
-between Atlassian Connect add-ons and OnDemand applications.
+We've written two example implementations, one in Java and one in Javascript. These tools can help
+by generating some of the plumbing required.
 
  * [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
  * [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express)
