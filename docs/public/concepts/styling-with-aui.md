@@ -1,20 +1,22 @@
 # Styling Add-ons with Atlassian UI
 
-The Atlassian User Interface Library (AUI) is the framework that Atlassian uses to build our products. AUI is a library
- of Javascript, CSS, templates and other resources you can include in your projects. Building a user interface with
- AUI automatically ensures your feature is ADG compliant in terms of look, feel and control behavior. Anything that
- you find in the Atlassian Design Guidelines (ADG) you can build with the AUI library.
+The Atlassian User Interface Library (AUI) is the framework that Atlassian uses to build our
+products. AUI is a library of Javascript, CSS, templates and other resources you can include
+in your projects. Building a user interface with AUI automatically ensures your add-on will
+match its target applications user interface.
 
-Because style properties from the parent don't cascade down to the page in the iframe, it's important to understand that
-you'll need to control your page's design to match the parent. Utilizing the AUI flat-pack is going to help you with
-this task.
+Because style properties from the parent page don't cascade down to your add-on's iframe,
+you'll need to control your page's design to match the parent. Using the AUI flat-pack
+will help you with this task.
 
 ## Using AUI styling in your pages
 
-The most convenient way of styling your pages to look like Atlassian products is to use the AUI CSS and Javascript. You can
-include these resources on any page that you serve. In most cases, you should use the most recent version of AUI that is
-available. It's your responsiblity to update as new versions become available. Not only will you get new features and bug
-fixes, but using the most recent version of AUI ensures that your styles will most closely match those of your host application.
+You can include the AUI resources on any page that you serve from your add-on. In most cases, you
+should use the most recent version of AUI that is available. It's your responsiblity to update as
+new versions become available. Not only will you get new features and bug fixes, but using the most
+recent version of AUI ensures that your styles will most closely match those of your host application.
+
+Use the HTML below to include the AUI resources on your page, directly from the CDN:
 
 #### CSS
 ```
@@ -28,17 +30,17 @@ fixes, but using the most recent version of AUI ensures that your styles will mo
 <script src="//cdnjs.cloudflare.com/ajax/libs/aui/5.4.3/aui/js/aui-all.js" type="text/javascript"></script>
 ```
 
-For more details on AUI, you should view the [AUI documentation](https://developer.atlassian.com/display/AUI/).
+For more details on AUI, read the [AUI documentation](https://developer.atlassian.com/display/AUI/).
 
 An easy way to get started with AUI is to experiment with the [sandbox](https://docs.atlassian.com/aui/latest/sandbox/).
 
 ## Minimal styling
 
-Atlassian Connect provides a small set of CSS styles for styling your pages, but this stylesheet is not the
-[Atlassian User Interface (AUI)](https://developer.atlassian.com/design/). To style your pages using AUI and the
-ADG, you should reference the AUI flat-pack into your add-on using the [CDN](http://cdnjs.com/libraries/aui/).
-But if you just need a minimal set of styles, you can add the following to your HTML:
+Even if you intend to provide your own styles, your add-on's pages still need minimal set of styles in
+order to behave proerply inside Atlassian Connect iframes. Add the following to your HTML to bring in
+the minimal, Connect-specific styles:
+
 ```
-<link rel="stylesheet" type="text/css" href="https://{OnDemand hostname}/{context}/atlassian-connect/all.css"/>
+<link rel="stylesheet" type="text/css" href="https://{HOSTNAME}:{PORT}/{CONTEXT}/atlassian-connect/all.css"/>
 ```
 
