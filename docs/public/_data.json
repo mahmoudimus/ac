@@ -32,19 +32,11 @@
         "context-parameters.html": {
             "title": "Context Parameters"
         },
-        "javascript-api.html": {
-            "title": "Javascript API"
-        },
         "styling-with-aui.html": {
             "title": "Styling Add-ons with AUI"
         },
         "licensing.html": {
             "title": "Licensing"
-        }
-    },
-    "rest-apis": {
-        "product-api-browser.html": {
-            "title": "Product API Browser"
         }
     },
     "scopes": {
