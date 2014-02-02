@@ -164,18 +164,10 @@ public final class PermissionManagerImpl implements PermissionManager
     private Set<String> getOldStylePermissionsForPlugin(String pluginKey)
     {
         Set<String> permissions = Sets.newHashSet();
-        if (jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey) && isDevModeService.isDevMode())
+        Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        if (plugin != null)
         {
-            // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
-            permissions.addAll(getPermissionKeys());
-        }
-        else
-        {
-            Plugin plugin = pluginAccessor.getPlugin(pluginKey);
-            if (plugin != null)
-            {
-                permissions.addAll(permissionsReader.getPermissionsForPlugin(plugin));
-            }
+            permissions.addAll(permissionsReader.getPermissionsForPlugin(plugin));
         }
         return permissions;
     }
