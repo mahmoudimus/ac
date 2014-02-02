@@ -11,6 +11,8 @@ import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPathBuilder;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
+import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionInfo;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
@@ -176,6 +178,27 @@ public class PermissionManagerImplTest
         when(request.getMethod()).thenReturn("GET");
         setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+    }
+
+    @Test
+    public void jsonAddonDoesNotRequirePermissionToCreateOAuthLink()
+    {
+        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        permissionManager.requirePermission(PLUGIN_KEY, Permissions.CREATE_OAUTH_LINK);
+    }
+
+    @Test
+    public void xmlAddonCanCreateOAuthLinkWithPermission()
+    {
+        setup().withJson(false).withPermission(Permissions.CREATE_OAUTH_LINK);
+        permissionManager.requirePermission(PLUGIN_KEY, Permissions.CREATE_OAUTH_LINK);
+    }
+
+    @Test(expected = PermissionDeniedException.class)
+    public void xmlAddonCantCreateOAuthLinkWithoutPermission()
+    {
+        setup().withJson(false);
+        permissionManager.requirePermission(PLUGIN_KEY, Permissions.CREATE_OAUTH_LINK);
     }
 
     private Setup setup()

@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
@@ -186,7 +187,10 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public void requirePermission(String pluginKey, String permissionKey) throws PermissionDeniedException
     {
-        if (!getOldStylePermissionsForPlugin(pluginKey).contains(permissionKey))
+        boolean isJsonAddon = jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey);
+        boolean skipCheck = isJsonAddon && Permissions.CREATE_OAUTH_LINK.equals(permissionKey);
+
+        if (!skipCheck && !getOldStylePermissionsForPlugin(pluginKey).contains(permissionKey))
         {
             throw new PermissionDeniedException(pluginKey,
                     format("Plugin '%s' requires a resource protected by '%s', but it did not request it.", pluginKey, permissionKey));
