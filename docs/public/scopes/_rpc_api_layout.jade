@@ -1,0 +1,22 @@
+mixin scope(key)
+    span.aui-lozenge.aui-lozenge-subtle.aui-lozenge-complete #{key}
+        block
+
+p
+| The required scope for your add-on depends on the methods that your add-on invokes. The table below shows the
+| required scope for every RPC method call.
+
+table.aui
+    thead
+        tr
+            th Method
+            th Scope
+    tbody
+        - each api in scope.apis
+            tr
+                td
+                    a(id = api.id)
+                    code
+                        != api.method
+                td
+                    +scope(api.scope)

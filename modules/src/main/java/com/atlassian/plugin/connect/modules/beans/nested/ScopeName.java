@@ -3,13 +3,15 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import com.google.common.base.Predicate;
 
 import javax.annotation.Nullable;
+
+import java.lang.Comparable;
 import java.util.HashSet;
 import java.util.Set;
 
 import static com.google.common.collect.Collections2.filter;
 import static java.util.Arrays.asList;
 
-public enum ScopeName
+public enum ScopeName implements Comparable<ScopeName>
 {
     /**
      * Note: PROJECT_ADMIN and SPACE_ADMIN are effectively synonyms that prevent

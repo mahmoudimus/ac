@@ -11,6 +11,8 @@ import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPathBuilder;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
+import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionInfo;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
@@ -114,16 +116,8 @@ public class PermissionManagerImplTest
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
-    // ACDEV-679
     @Test
-    public void invalidJsonDescriptorScopeIsInScopeInDevMode()
-    {
-        setup().withJson(true).withDevMode(true);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
-    }
-
-    @Test
-    public void invalidJsonDescriptorScopeIsOutOfScopeInProdMode()
+    public void invalidJsonDescriptorScopeIsOutOfScope()
     {
         setup().withJson(true).withDevMode(false);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
@@ -163,6 +157,48 @@ public class PermissionManagerImplTest
         when(request.getMethod()).thenReturn("DELETE");
         setup().withJson(true).withScope(ScopeName.WRITE).withDevMode(false);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+    }
+
+    // This test exists to ensure that signingNotVulnerableToNormalizedUris is not returning a false
+    // positive test passed result. eg, if "/secure/Dashboard.jspa" suddenly becomes allowed then
+    // both tests should fail
+    @Test
+    public void checksThatSigningVulnerabilityTestIsNotFalsePositive()
+    {
+        when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa");
+        when(request.getMethod()).thenReturn("GET");
+        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+    }
+
+    @Test
+    public void signingNotVulnerableToNormalizedUris()
+    {
+        when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa;../../../rest/api/2/user");
+        when(request.getMethod()).thenReturn("GET");
+        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+    }
+
+    @Test
+    public void jsonAddonDoesNotRequirePermissionToCreateOAuthLink()
+    {
+        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        permissionManager.requirePermission(PLUGIN_KEY, Permissions.CREATE_OAUTH_LINK);
+    }
+
+    @Test
+    public void xmlAddonCanCreateOAuthLinkWithPermission()
+    {
+        setup().withJson(false).withPermission(Permissions.CREATE_OAUTH_LINK);
+        permissionManager.requirePermission(PLUGIN_KEY, Permissions.CREATE_OAUTH_LINK);
+    }
+
+    @Test(expected = PermissionDeniedException.class)
+    public void xmlAddonCantCreateOAuthLinkWithoutPermission()
+    {
+        setup().withJson(false);
+        permissionManager.requirePermission(PLUGIN_KEY, Permissions.CREATE_OAUTH_LINK);
     }
 
     private Setup setup()
