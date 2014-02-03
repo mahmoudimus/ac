@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
@@ -117,17 +118,7 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, UserKey user)
     {
-        boolean isInScopes = any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
-
-        // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
-        if (!isInScopes && isDevModeService.isDevMode() && jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey))
-        {
-            log.warn(String.format("Dev mode: allowing plugin '%s' to access '%s' for user '%s'",
-                    pluginKey, req.getRequestURI(), null == user ? "anonymous" : user.getStringValue()));
-            isInScopes = true;
-        }
-
-        return isInScopes;
+        return any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
     }
 
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String pluginKey)
@@ -173,18 +164,10 @@ public final class PermissionManagerImpl implements PermissionManager
     private Set<String> getOldStylePermissionsForPlugin(String pluginKey)
     {
         Set<String> permissions = Sets.newHashSet();
-        if (jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey) && isDevModeService.isDevMode())
+        Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        if (plugin != null)
         {
-            // Connect Add-Ons provided by JSON descriptors are allowed all scopes (ACDEV-679)
-            permissions.addAll(getPermissionKeys());
-        }
-        else
-        {
-            Plugin plugin = pluginAccessor.getPlugin(pluginKey);
-            if (plugin != null)
-            {
-                permissions.addAll(permissionsReader.getPermissionsForPlugin(plugin));
-            }
+            permissions.addAll(permissionsReader.getPermissionsForPlugin(plugin));
         }
         return permissions;
     }
@@ -196,7 +179,10 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public void requirePermission(String pluginKey, String permissionKey) throws PermissionDeniedException
     {
-        if (!getOldStylePermissionsForPlugin(pluginKey).contains(permissionKey))
+        boolean isJsonAddon = jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey);
+        boolean skipCheck = isJsonAddon && Permissions.CREATE_OAUTH_LINK.equals(permissionKey);
+
+        if (!skipCheck && !getOldStylePermissionsForPlugin(pluginKey).contains(permissionKey))
         {
             throw new PermissionDeniedException(pluginKey,
                     format("Plugin '%s' requires a resource protected by '%s', but it did not request it.", pluginKey, permissionKey));

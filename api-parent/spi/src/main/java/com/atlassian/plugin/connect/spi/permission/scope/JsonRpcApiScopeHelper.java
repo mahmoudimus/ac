@@ -74,7 +74,7 @@ public final class JsonRpcApiScopeHelper
         else
         {
             // methodName in path
-            String method = pathInfo.replaceAll(path.toString() + "/", "");
+            String method = pathInfo.replaceAll(path + "/", "");
             return methods.contains(method);
         }
         return false;
