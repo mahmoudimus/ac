@@ -40,6 +40,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultConnectApplinkManagerTest
 {
+    private static final String USER_KEY = "some_user_key";
+
     @Mock private MutatingApplicationLinkService applicationLinkService;
     @Mock private TypeAccessor typeAccessor;
     @Mock private PluginSettingsFactory pluginSettingsFactory;
@@ -129,6 +131,13 @@ public class DefaultConnectApplinkManagerTest
         verify(appLink).putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, "signing key");
     }
 
+    @Test
+    public void userKeyIsSet()
+    {
+        MutableApplicationLink appLink = createAppLink();
+        verify(appLink).putProperty("user.key", USER_KEY);
+    }
+
     @Before
     public void setup()
     {
@@ -154,7 +163,7 @@ public class DefaultConnectApplinkManagerTest
         when(plugin.getKey()).thenReturn("my-connect-addon");
         when(applicationLinkService.addApplicationLink(any(ApplicationId.class), any(ApplicationType.class), any(ApplicationLinkDetails.class))).thenReturn(appLink);
         when(applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class)).thenReturn(Collections.<ApplicationLink>emptyList());
-        connectApplinkManager.createAppLink(plugin, "/baseUrl", AuthenticationType.JWT, "signing key");
+        connectApplinkManager.createAppLink(plugin, "/baseUrl", AuthenticationType.JWT, "signing key", USER_KEY);
         return appLink;
     }
 }

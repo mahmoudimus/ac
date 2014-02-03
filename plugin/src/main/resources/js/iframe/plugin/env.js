@@ -61,31 +61,6 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
         fireEvent: function (id, props) {
           console.log("AP.fireEvent deprecated; will be removed in future version");
         },
-
-        /**
-        * shows a message with body and title by id in the host application
-        *
-        * @param {String} id    the message id
-        * @param {String} title   the message title
-        * @param {string} body    the message body
-        * @example
-        * AP.showMessage('123', 'Hello world title', 'Hello world body');
-        */
-        showMessage: function (id, title, body) {
-          remote.showMessage(id, title, body);
-        },
-
-        /**
-        * clears a message by id in the host application
-        *
-        * @param {String} id    the message id
-        * @example
-        * AP.clearMessage('123');
-        */
-        clearMessage: function (id) {
-          remote.clearMessage(id);
-        },
-
         /**
         * resize this iframe
         * @method

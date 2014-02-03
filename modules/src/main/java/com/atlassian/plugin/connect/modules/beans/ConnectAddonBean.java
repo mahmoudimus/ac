@@ -140,7 +140,7 @@ public class ConnectAddonBean extends BaseModuleBean
     private AuthenticationBean authentication;
 
     /**
-     * Whether or not to enable licensing options in the UPM.Marketplace for this add on
+     * Whether or not to enable licensing options in the UPM/Marketplace for this add on
      */
     @CommonSchemaAttributes(defaultValue = "false")
     private Boolean enableLicensing;
@@ -150,6 +150,9 @@ public class ConnectAddonBean extends BaseModuleBean
      */
     private ModuleList modules;
 
+    /**
+     * Set of [scopes](../concepts/scopes.html) requested by this add on
+     */
     private Set<String> scopes;
     
     public ConnectAddonBean()

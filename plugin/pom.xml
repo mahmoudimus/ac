@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m29-SNAPSHOT</version>
+        <version>1.0-m31-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -149,6 +149,10 @@
             <groupId>com.atlassian.upm</groupId>
             <artifactId>licensing-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>embedded-crowd-api</artifactId>
         </dependency>
 
         <!-- the upm is here just for debugging -->
@@ -298,7 +302,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.9.0</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -335,6 +339,54 @@
                 <exclusion>
                     <groupId>org.hamcrest</groupId>
                     <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-tests</artifactId>
+            <version>${atlassian.jira.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-library</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.objenesis</groupId>
+                    <artifactId>objenesis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>mockobjects</groupId>
+                    <artifactId>mockobjects-jdk1.3-j2ee1.3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit-dep</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.easymock</groupId>
+                    <artifactId>easymock</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.easymock</groupId>
+                    <artifactId>easymockclassextension</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.powermock.api</groupId>
+                    <artifactId>powermock-api-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.powermock.api</groupId>
+                    <artifactId>powermock-api-easymock</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -444,6 +496,7 @@
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
+                        <!-- DO NOT put Atlassian-Plugin-Key here!! it will bypass all transforms and component-imports will break -->
                     </instructions>
                     <systemPropertyVariables>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
@@ -549,6 +602,11 @@
                                     <artifactId>json-schema-validator-atlassian-bundle</artifactId>
                                     <groupId>com.atlassian.bundles</groupId>
                                     <version>${atlassian.json.schema.validator.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.confluence.plugins</groupId>
+                                    <artifactId>confluence-scriptsfinished-plugin</artifactId>
+                                    <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 
@@ -674,12 +732,15 @@
                                         <include>js/iframe-min/plugin/_dollar-min.js</include>
                                         <include>js/iframe-min/_events-min.js</include>
                                         <include>js/iframe-min/_base64-min.js</include>
+                                        <include>js/iframe-min/_uri-min.js</include>
                                         <include>js/iframe-min/_xdm-min.js</include>
                                         <include>js/iframe-min/plugin/_rpc-min.js</include>
                                         <include>js/iframe-min/plugin/events-min.js</include>
                                         <include>js/iframe-min/plugin/env-min.js</include>
                                         <include>js/iframe-min/plugin/request-min.js</include>
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
+                                        <include>js/iframe-min/plugin/inline-dialog-min.js</include>
+                                        <include>js/iframe-min/plugin/messages-min.js</include>
                                         <include>js/iframe-min/plugin/_resize_listener-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>

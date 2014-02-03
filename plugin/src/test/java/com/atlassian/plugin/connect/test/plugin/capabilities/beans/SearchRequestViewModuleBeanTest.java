@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -41,7 +42,7 @@ public class SearchRequestViewModuleBeanTest
         ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
         ConnectAddonBean bean = createBean();
 
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(bean));
+        assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
     }
 
     @Test
@@ -52,7 +53,7 @@ public class SearchRequestViewModuleBeanTest
         String json = gson.toJson(originalBean, ConnectAddonBean.class);
         ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
 
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(originalBean));
+        assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }
 
     private static ConnectAddonBean createBean()

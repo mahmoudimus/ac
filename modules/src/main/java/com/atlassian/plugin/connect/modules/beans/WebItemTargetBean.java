@@ -108,6 +108,7 @@ public class WebItemTargetBean extends BeanWithParams
     public int hashCode()
     {
         return new HashCodeBuilder(19, 23)
+                .appendSuper(super.hashCode())
                 .append(type)
                 .append(options)
                 .build();

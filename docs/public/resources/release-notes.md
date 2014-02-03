@@ -1,8 +1,20 @@
 
 # Release Notes
 
+## [1.0-m30](../release-notes/1-0-m30.html)
+* Support for [JIRA issue properties](../modules/jira/entity-property.html)
+* Make [AP.messages](../javascript/module-messages.html) API stable
+* Whitelisted remote endpoints are [listed in the documentation](../concepts/scopes.html)
+* Fix bug with OAuth and JSON descriptor
+
+Read the [1.0-m30 release notes](../release-notes/1-0-m30.html).
+
 ## [1.0-m29](../release-notes/1-0-m29.html)
-* Tabs can now be added to Confluence Space Tools section. Check out [Space Tools Tab](modules/confluence/space-tools-tab.html) documentation for more information.
+* Tabs can now be added to Confluence Space Tools section. Check out [Space Tools Tab](../modules/confluence/space-tools-tab.html)
+documentation for more information
+* Support for [web sections](../modules/jira/web-section.html)
+* Support for full screen dialogs
+* AC Play support for JSON descriptor and JWT. Read the [upgrade guide](../guides/upgrade-play.html)
 
 Read the [1.0-m29 release notes](../release-notes/1-0-m29.html).
 

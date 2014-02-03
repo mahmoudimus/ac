@@ -27,9 +27,9 @@ public class AddOnScopeBuilderForTests
         ));
         Matcher<AddOnScope> readScope = new AddOnScopeMatcher(ScopeName.READ.name(), asList(readPaths));
         AddOnScopeApiPath writePaths = new AddOnScopeApiPath.RestApiPath(asList(
-                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/notification.*", asList("post", "put"), true),
-                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/task.*", asList("post", "put"), true),
-                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/action.*", asList("post", "put"), true),
+                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/notification.*", asList("post"), true),
+                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/task.*", asList("post"), true),
+                new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/action.*", asList("post"), true),
                 new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/content.*", asList("post", "put"), true),
                 new RestApiScopeHelper.RestScope("ui", asList("1", "1.0", "latest"), "/content.*", asList("post", "put"), true)
         ));

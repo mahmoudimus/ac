@@ -1,21 +1,25 @@
 package com.atlassian.json.schema.scanner;
 
+import com.atlassian.json.schema.scanner.model.InterfaceImplementors;
+import com.atlassian.json.schema.scanner.model.InterfaceList;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import com.atlassian.json.schema.scanner.model.InterfaceImplementors;
-import com.atlassian.json.schema.scanner.model.InterfaceList;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
 
 import static com.atlassian.json.schema.ClassloaderUtil.getClassloader;
 

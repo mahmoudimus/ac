@@ -1,18 +1,38 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.plugin.connect.modules.beans.builder.SpaceToolsTabModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.*;
+import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
+import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean.newImagePlaceholderBean;
@@ -52,10 +72,13 @@ public class ConnectJsonExamples
     public static final String WEBITEM_EXAMPLE = createWebItemExample();
     public static final String WEBITEM_TARGET_EXAMPLE = createWebitemTargetExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
+    public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
     public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
     public static final String IMAGE_PLACEHOLDER_EXAMPLE = createImagePlaceholderExample();
     public static final String SPACE_TOOLS_TAB_EXAMPLE = createSpaceToolsTabExample();
-
+    public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
+    public static final String ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
+    public static final String ENTITY_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createEntityPropertyIndexKeyConfigurationExample();
 
     private static String createAddonExample()
     {
@@ -69,6 +92,7 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
+                .withScopes(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE))
                 .withModules("webItems", WebItemModuleBean.newWebItemBean().withName(i18nProperty("Web Item")).withUrl("/my-web-item").withLocation("system.preset.filters").build())
                 .build();
 
@@ -87,6 +111,7 @@ public class ConnectJsonExamples
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
+                .withScopes(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE))
                 .withModules("webItems", WebItemModuleBean.newWebItemBean().withName(i18nProperty("Web Item")).withUrl("/my-web-item").withLocation("system.preset.filters").build())
                 .withModules("webPanels", WebPanelModuleBean.newWebPanelBean().withName(i18nProperty("Web Panel")).withLocation("com.atlassian.jira.plugin.headernav.left.context").withUrl("/my-web-panel").build())
                 .withModules("generalPages", ConnectPageModuleBean.newPageBean().withName(i18nProperty("General Page")).withUrl("my-general-page").build())
@@ -187,6 +212,17 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("webPanels", webPanelModuleBean));
+    }
+
+    private static String createWebSectionExample()
+    {
+        WebSectionModuleBean webSectionModuleBean = WebSectionModuleBean.newWebSectionBean()
+                .withName(new I18nProperty("My Web Section", ""))
+                .withLocation("com.atlassian.jira.plugin.headernav.left.context")
+                .withWeight(50)
+                .build();
+
+        return gson.toJson(createModuleArray("webSections", webSectionModuleBean));
     }
 
     public static String createComponentTabPanelExample()
@@ -338,15 +374,15 @@ public class ConnectJsonExamples
                 .withType(CompositeConditionType.AND)
                 .withConditions(
                         newCompositeConditionBean()
-                        .withType(CompositeConditionType.OR)
-                        .withConditions(
-                                newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_FILE_TO_ISSUE).build()
-                                ,newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_SCREENSHOT_TO_ISSUE).build()
-                        ).build()
-                        ,newSingleConditionBean().withCondition(JiraConditions.USER_IS_LOGGED_IN).build()
+                                .withType(CompositeConditionType.OR)
+                                .withConditions(
+                                        newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_FILE_TO_ISSUE).build(),
+                                        newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_SCREENSHOT_TO_ISSUE).build()
+                                ).build()
+                        , newSingleConditionBean().withCondition(JiraConditions.USER_IS_LOGGED_IN).build()
                 ).build();
 
-        return gson.toJson(createModuleObject("conditions",bean));
+        return gson.toJson(createModuleObject("conditions", bean));
     }
 
     private static String createUrlExample()
@@ -408,6 +444,7 @@ public class ConnectJsonExamples
 
         return gson.toJson(bean);
     }
+
     private static String createMacroEditorExample()
     {
         MacroEditorBean macroEditorBean = newMacroEditorBean()
@@ -431,6 +468,42 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleObject("imagePlaceholder", imagePlaceholderBean));
+    }
+
+    private static String createEntityPropertyExample()
+    {
+        List<EntityPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number),
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.text),
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.updated", EntityPropertyIndexType.date)
+        );
+        EntityPropertyIndexKeyConfigurationBean issueAttachmentIndexConfiguration =
+                new EntityPropertyIndexKeyConfigurationBean(extractionConfiguration, "attachment");
+
+        EntityPropertyModuleBean entityPropertyModuleBean = newEntityPropertyModuleBean()
+                .withName(new I18nProperty("Attachment Index Document", ""))
+                .withEntityType(EntityPropertyType.issue)
+                .withKeyConfiguration(issueAttachmentIndexConfiguration)
+                .build();
+
+        return gson.toJson(createModuleArray("jiraEntityProperties", entityPropertyModuleBean));
+    }
+
+    private static String createEntityPropertyIndexExtractionConfigurationExample()
+    {
+        EntityPropertyIndexExtractionConfigurationBean bean = new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number);
+
+        return gson.toJson(bean);
+    }
+
+    private static String createEntityPropertyIndexKeyConfigurationExample()
+    {
+        EntityPropertyIndexExtractionConfigurationBean extractionConfiguration =
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number);
+        EntityPropertyIndexKeyConfigurationBean issueAttachmentIndexConfiguration =
+                new EntityPropertyIndexKeyConfigurationBean(Lists.newArrayList(extractionConfiguration), "attachment");
+
+        return gson.toJson(issueAttachmentIndexConfiguration);
     }
 
     private static JsonObject createModuleArray(String name, ModuleBean bean)

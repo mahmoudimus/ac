@@ -51,7 +51,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapabilities("webItems",
+                .addModules("webItems",
                         newWebItemBean()
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                                 .withKey(ADDON_WEBITEM)

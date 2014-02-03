@@ -21,8 +21,6 @@ var xdmMockEnv;
         getLocation: sinon.spy(),
         getUser: sinon.spy(),
         getTimeZone: sinon.spy(),
-        showMessage: sinon.spy(),
-        clearMessage: sinon.spy(),
         resize: sinon.spy(),
         sizeToParent: sinon.spy()
     };
@@ -38,8 +36,6 @@ var xdmMockEnv;
                 xdmMockEnv.getLocation.reset();
                 xdmMockEnv.getUser.reset();
                 xdmMockEnv.getTimeZone.reset();
-                xdmMockEnv.showMessage.reset();
-                xdmMockEnv.clearMessage.reset();
                 xdmMockEnv.resize.reset();
                 xdmMockEnv.sizeToParent.reset();
             },
@@ -184,40 +180,6 @@ var xdmMockEnv;
             var spy = sinon.spy();
             env.getTimeZone(spy);
             equal(xdmMockEnv.getTimeZone.args[0][0], spy);
-        });
-
-        test("showMessage calls remote showMessage", function() {
-            env.showMessage();
-            ok(xdmMockEnv.showMessage.calledOnce);
-        });
-
-        test("showMessage passes id to remote method", function() {
-            var id = "foo";
-            env.showMessage(id);
-            equal(xdmMockEnv.showMessage.args[0][0], id);
-        });
-
-        test("showMessage passes title to remote method", function() {
-            var title = "foo title";
-            env.showMessage(null, title);
-            equal(xdmMockEnv.showMessage.args[0][1], title);
-        });
-
-        test("showMessage passes body to remote method", function() {
-            var body = "foo body";
-            env.showMessage(null, null, body);
-            equal(xdmMockEnv.showMessage.args[0][2], body);
-        });
-
-        test("clearMessage calls remote clearMessage", function() {
-            env.clearMessage();
-            ok(xdmMockEnv.clearMessage.calledOnce);
-        });
-
-        test("clearMessage passes id to remote method", function() {
-            var id = "bar";
-            env.clearMessage(id);
-            equal(xdmMockEnv.clearMessage.args[0][0], id);
         });
 
         test("resize calls remote resize", function() {

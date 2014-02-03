@@ -4,6 +4,13 @@ AP.define("dialog", ["_dollar", "_rpc"],
    * The Dialog module provides a mechanism for launching modal dialogs from within an add-on's iframe.
    * A modal dialog displays information without requiring the user to leave the current page.
    * The dialog is opened over the entire window, rather than within the iframe itself.
+   * ###Styling your dialog to look like a standard Atlassian dialog
+   * By default the dialog iframe is undecorated. It's up to the developer to style the dialog.
+   * <img src="../assets/images/connectdialogchromelessexample.jpeg" width="100%" />
+   *
+   * In order to maintain a consistent look and feel between the host application and the add-on,
+   * we encourage add-on developers to style their dialogs to match Atlassian's Design Guidelines for modal dialogs.
+   * To do that, you'll need to add the AUI styles to your dialog.
    *
    * For more information, read about the Atlassian User Interface [dialog component](https://docs.atlassian.com/aui/latest/docs/dialog.html).
    * @exports Dialog
@@ -24,12 +31,21 @@ AP.define("dialog", ["_dollar", "_rpc"],
     exports = {
       /**
       * Creates a dialog for a module key
+      * @param {DialogOptions} options configuration object of dialog options.
       * @example
       * AP.require('dialog', function(dialog){
       *   dialog.create('mydialog');
       * });
       */
       create: function(options) {
+        /**
+        * @name DialogOptions
+        * @class
+        * @property {String} key The module key of the page you want to open as a dialog
+        * @property {String} size Opens the dialog at a preset size: small, medium, large, x-large or maximum (full screen).
+        * @property {Number|String} width overrides size, define the width as a percentage (append a % to the number) or pixels.
+        * @property {Number|String} height overrides size, define the height as a percentage (append a % to the number) or pixels.
+        */
         remote.createDialog(options);
         return {
           on: function (event, callback) {

@@ -38,6 +38,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.IsEmptyMap.emptyMap;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.beans.PropertyUtil.NO_ARGUMENTS;
 import static org.hamcrest.beans.PropertyUtil.propertyDescriptorsFor;
@@ -170,7 +171,7 @@ public class SameDeepPropertyValuesAs<T> extends TypeSafeDiagnosingMatcher<T>
                 Map<Object, Object> map = (Map<Object, Object>) object;
                 if (map.isEmpty())
                 {
-                    return IsEmptyMap.emptyMap();
+                    return emptyMap();
                 }
                 List<Matcher> matchers = createMapMatchers(map);
                 return new AllOf(matchers);

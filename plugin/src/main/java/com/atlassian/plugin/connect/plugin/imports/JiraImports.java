@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.imports;
 
+import com.atlassian.crowd.manager.application.ApplicationManager;
+import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jira.bc.issue.attachment.AttachmentService;
 import com.atlassian.jira.bc.issue.worklog.WorklogService;
 import com.atlassian.jira.bc.project.ProjectService;
@@ -75,8 +77,9 @@ public class JiraImports
             @JiraImport VoteManager voteManager,
             @JiraImport WatcherManager watcherManager,
             @JiraImport WebFragmentHelper webFragmentHelper,
-            @JiraImport WorklogService worklogService
-    )
+            @JiraImport WorklogService worklogService,
+            @JiraImport ApplicationService applicationService,
+            @JiraImport ApplicationManager applicationManager)
     {
     }
 }

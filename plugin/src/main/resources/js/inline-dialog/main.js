@@ -17,6 +17,10 @@ _AP.define("inline-dialog", ["_dollar", "inline-dialog/simple"], function($, sim
         getInlineDialog($content).refresh();
     }
 
+    function hideInlineDialog($content){
+        getInlineDialog($content).hide();
+    }
+
     /**
     * init
     * sets up an inline dialog.
@@ -37,6 +41,7 @@ _AP.define("inline-dialog", ["_dollar", "inline-dialog/simple"], function($, sim
     return {
         showInlineDialog: showInlineDialog,
         resizeInlineDialog: resizeInlineDialog,
+        hideInlineDialog: hideInlineDialog,
         init: init
     };
 

@@ -22,7 +22,7 @@ public class StaticAddOnScopesTest
     @Test
     public void readsTestScopes() throws IOException
     {
-        assertThat(getTestScopes(), is(AddOnScopeBuilderForTests.buildScopes()));
+        MatcherAssert.assertThat(getTestScopes(), is(AddOnScopeBuilderForTests.buildScopes()));
     }
 
     @Test

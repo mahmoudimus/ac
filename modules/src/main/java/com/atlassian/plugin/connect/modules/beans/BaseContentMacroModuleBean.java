@@ -17,33 +17,33 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     /**
      * The link to the add-on resource that provides the content for the iFrame.
      * This URL has to be relative to the add-on base URL.
-     * <p/>
+     *
      * Additional context parameters can be passed as variables in the URL.
-     * <p/>
+     *
      * ```
      * "url": "/macro-renderer?body={macro.body}&space_id={space.id}&page_id={page.id}"
      * ```
-     * <p/>
-     * Since macro bodies can be of arbitrary size and may contain sensitive data, care must be taken
+     *
+     *Since macro bodies can be of arbitrary size and may contain sensitive data, care must be taken
      * as to how its passed to your connect addon.  You have three options to gain access to the body:
-     * <p/>
+     *
      * * If you can predict the size of your body and is consistently less than 128 characters, you
-     * can include it in the GET request using the {macro.body} parameter.
+     * can include it in the GET request using the `{macro.body}` parameter.
      * * If you know your macro contains a body that will often exceed the 128 character threshold
-     * (or is known to contain sensitive data), then you can include the {macro.hash} parameter and
+     * (or is known to contain sensitive data), then you can include the `{macro.hash}` parameter and
      * use the Confluence REST api to call back to collect the body.
-     * * If you want, you can include, {macro.body}, {macro.hash}, and {macro.truncated}.  This way
-     * your plugin can call back to confluence only if {macro.truncated} is 'true'.  This will allow
+     * * If you want, you can include, `{macro.body}`, `{macro.hash}`, and `{macro.truncated}`. This way
+     * your plugin can call back to confluence only if `{macro.truncated}` is '`true`'.  This will allow
      * you to skip the callback if it's not needed.  This would be useful for macros that don't
      * contain sensitive data of an unpredictable size.
-     * <p/>
-     * Note:  If you include the {macro.body} in your URL you are potentially leaking sensitive data
+     *
+     *Note: If you include the `{macro.body}` in your URL you are potentially leaking sensitive data
      * to any intermediate host on the internet.  This may result in the body being cached or indexed
      * by a third party.  If you are concerned about the security of your macro, you should always use
-     * the {macro.hash} and use the Confluence REST api to collect the body.
-     * <p/>
-     * Currently supported variables for macros are:
-     * <p/>
+     * the `{macro.hash}` and use the Confluence REST api to collect the body.
+     *
+     *Currently supported variables for macros are:
+     *
      * * `macro.hash`: The hash of the macro body
      * * `macro.body`: The macro body, truncated to 128 characters
      * * `macro.truncated`: True if the macro body was truncated, false of not
@@ -79,9 +79,9 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
 
     /**
      * The categories the macro should appear in. A macro with no category will show up in the default 'All' category.
-     * <p/>
+     *
      * Currently, the following categories are supported by Confluence:
-     * <p/>
+     *
      * * `admin`: Administration
      * * `communication`: Communication
      * * `confluence-content`: Confluence Content

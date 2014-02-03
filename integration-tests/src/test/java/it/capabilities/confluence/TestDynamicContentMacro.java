@@ -77,7 +77,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .build();
 
         remotePlugin = new ConnectRunner(baseUrl, "my-plugin")
-                .addCapabilities("dynamicContentMacros",
+                .addModules("dynamicContentMacros",
                         simpleMacro,
                         allParameterTypesMacro,
                         longBodyMacro,

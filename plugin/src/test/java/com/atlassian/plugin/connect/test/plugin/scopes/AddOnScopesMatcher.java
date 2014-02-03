@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
+import com.google.common.collect.Lists;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -38,17 +40,29 @@ public class AddOnScopesMatcher extends BaseMatcher<Collection<AddOnScope>>
         }
 
         Iterator<Matcher<AddOnScope>> scopeMatchersIter = scopeMatchers.iterator();
-        Iterator<Object> actualsIter = actuals.iterator();
+        Collection actualsToCheck = Lists.newArrayList(actuals);
 
-        while (scopeMatchersIter.hasNext() && actualsIter.hasNext())
+        while (scopeMatchersIter.hasNext())
         {
-            if (!scopeMatchersIter.next().matches(actualsIter.next()))
+            Matcher<AddOnScope> scopeMatcher = scopeMatchersIter.next();
+            boolean matched = false;
+
+            Iterator<Object> actualsIter = actualsToCheck.iterator();
+            while (actualsIter.hasNext() && !matched)
+            {
+                if (scopeMatcher.matches(actualsIter.next()))
+                {
+                    actualsIter.remove();
+                    matched = true;
+                }
+            }
+            if (!matched)
             {
                 return false;
             }
         }
 
-        return !scopeMatchersIter.hasNext() && !actualsIter.hasNext();
+        return actualsToCheck.isEmpty();
     }
 
     @Override
