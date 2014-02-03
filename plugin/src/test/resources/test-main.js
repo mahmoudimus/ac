@@ -24,6 +24,7 @@ requirejs.config({
     'inline-dialog/main': '../src/main/resources/js/inline-dialog/main',
     'inline-dialog/simple': '../src/main/resources/js/inline-dialog/simple',
     'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
+    'messages/main': '../src/main/resources/js/messages/main',
     // shared
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
     'iframe/_events': '../src/main/resources/js/iframe/_events',
@@ -81,6 +82,11 @@ requirejs.config({
       ]
     },
     'confluence/macro/editor': {
+        deps: [
+        'iframe/host/_dollar'
+        ]
+    },
+    'messages/main': {
         deps: [
         'iframe/host/_dollar'
         ]

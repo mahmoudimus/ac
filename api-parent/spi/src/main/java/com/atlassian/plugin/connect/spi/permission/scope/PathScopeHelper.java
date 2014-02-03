@@ -14,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 
 /**
@@ -24,19 +25,26 @@ public final class PathScopeHelper
     private final Iterable<ApiResourceInfo> apiResourceInfo;
     private final Iterable<String> paths;
     private final boolean isRegex;
+    private final String httpMethod;
 
     public PathScopeHelper(final boolean isRegex, final Collection<String> paths)
     {
-        this.paths = paths;
+        this(isRegex, paths, "GET");
+    }
+
+    public PathScopeHelper(final boolean isRegex, final Collection<String> paths, String httpMethod)
+    {
+        this.paths = checkNotNull(paths);
+        this.isRegex = isRegex;
+        this.httpMethod = checkNotNull(httpMethod);
         this.apiResourceInfo = transform(paths, new Function<String, ApiResourceInfo>()
         {
             @Override
             public ApiResourceInfo apply(String from)
             {
-                return new ApiResourceInfo(from, "GET");
+                return new ApiResourceInfo(from, PathScopeHelper.this.httpMethod);
             }
         });
-        this.isRegex = isRegex;
     }
 
     public PathScopeHelper(final boolean isRegex, final String... paths)
@@ -46,7 +54,7 @@ public final class PathScopeHelper
 
     public boolean allow(final HttpServletRequest request, UserKey user)
     {
-        if (!"GET".equalsIgnoreCase(request.getMethod()))
+        if (!this.httpMethod.equalsIgnoreCase(request.getMethod()))
         {
             return false;
         }
