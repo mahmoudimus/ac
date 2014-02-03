@@ -2,13 +2,11 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.websection.ProductSpecificWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;
 import com.google.common.base.Strings;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +20,18 @@ public class ConnectWebSectionModuleDescriptorFactory implements ConnectModuleDe
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectWebSectionModuleDescriptorFactory.class);
 
-    private final ConnectAutowireUtil connectAutowireUtil;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     private final ProductSpecificWebSectionModuleDescriptorFactory webSectionModuleDescriptorFactory;
 
     @Autowired
-    public ConnectWebSectionModuleDescriptorFactory(final ConnectAutowireUtil connectAutowireUtil, ConditionModuleFragmentFactory conditionModuleFragmentFactory, final ProductSpecificWebSectionModuleDescriptorFactory webSectionModuleDescriptorFactory)
+    public ConnectWebSectionModuleDescriptorFactory(ConditionModuleFragmentFactory conditionModuleFragmentFactory, final ProductSpecificWebSectionModuleDescriptorFactory webSectionModuleDescriptorFactory)
     {
-        this.connectAutowireUtil = connectAutowireUtil;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
         this.webSectionModuleDescriptorFactory = webSectionModuleDescriptorFactory;
     }
 
     @Override
-    public WebSectionModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebSectionModuleBean bean)
+    public WebSectionModuleDescriptor createModuleDescriptor(Plugin plugin, WebSectionModuleBean bean)
     {
         Element webSectionElement = new DOMElement("web-section");
 
@@ -73,9 +69,6 @@ public class ConnectWebSectionModuleDescriptorFactory implements ConnectModuleDe
 
     private WebSectionModuleDescriptor createWebSectionDescriptor(Plugin plugin, Element webSectionElement)
     {
-        // is this needed?
-        // webSectionElement.addAttribute("system", "true");
-
         final WebSectionModuleDescriptor descriptor = webSectionModuleDescriptorFactory.createWebSectionModuleDescriptor();
         descriptor.init(plugin, webSectionElement);
         return descriptor;

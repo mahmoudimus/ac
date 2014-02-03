@@ -19,7 +19,6 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URISyntaxException;
@@ -58,7 +57,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     }
 
     @Override
-    public SearchRequestViewModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, SearchRequestViewModuleBean bean)
+    public SearchRequestViewModuleDescriptor createModuleDescriptor(Plugin plugin, SearchRequestViewModuleBean bean)
     {
         SearchRequestViewModuleDescriptorImpl descriptor = new SearchRequestViewModuleDescriptorImpl(authenticationContext,
                 urlHandler, createModuleFactory(bean, plugin), conditionDescriptorFactory);

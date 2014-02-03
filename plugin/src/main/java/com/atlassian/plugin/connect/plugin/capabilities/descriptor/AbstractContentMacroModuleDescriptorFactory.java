@@ -38,7 +38,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     protected abstract ModuleFactory createModuleFactory(Plugin plugin, DOMElement element, B bean);
 
     @Override
-    public XhtmlMacroModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, B bean)
+    public XhtmlMacroModuleDescriptor createModuleDescriptor(Plugin plugin, B bean)
     {
         DOMElement element = createDOMElement(plugin, bean);
         ModuleFactory moduleFactory = createModuleFactory(plugin, element, bean);

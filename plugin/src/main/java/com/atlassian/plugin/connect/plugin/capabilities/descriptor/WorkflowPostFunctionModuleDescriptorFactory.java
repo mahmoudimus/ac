@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPo
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
@@ -31,7 +30,7 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
     }
 
     @Override
-    public WorkflowFunctionModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WorkflowPostFunctionModuleBean bean)
+    public WorkflowFunctionModuleDescriptor createModuleDescriptor(Plugin plugin, WorkflowPostFunctionModuleBean bean)
     {
         Element element = createDOMElement(bean);
         ConnectWorkflowFunctionModuleDescriptor moduleDescriptor = connectAutowireUtil.createBean(ConnectWorkflowFunctionModuleDescriptor.class);
