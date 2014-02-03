@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.imports;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
@@ -34,6 +31,9 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * This class does nothing but is here to centralize the cross-product component imports.

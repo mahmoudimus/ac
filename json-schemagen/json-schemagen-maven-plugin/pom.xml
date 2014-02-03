@@ -3,7 +3,7 @@
     <parent>
         <artifactId>json-schemagen</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m30-SNAPSHOT</version>
+        <version>1.0-m31-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,7 @@
     
     <dependencies>
         <dependency>
-            <groupId>${parent.groupId}</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>json-schemagen-scanner</artifactId>
             <version>${project.version}</version>
         </dependency>
