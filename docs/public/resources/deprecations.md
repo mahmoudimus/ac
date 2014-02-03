@@ -81,7 +81,7 @@ Atlassian Connect will no longer provide a REST endpoint allowing add-ons to sen
         <h5>OnDemand removal</h5>
     </div>
     <div class="aui-item">
-        __10th February, 2014__
+        __17th February, 2014__
     </div>
 </div>
 <div class="aui-group">
