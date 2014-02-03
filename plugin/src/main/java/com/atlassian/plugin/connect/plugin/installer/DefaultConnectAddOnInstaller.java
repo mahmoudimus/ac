@@ -23,6 +23,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 {
@@ -36,11 +38,22 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final ConnectDescriptorRegistry connectDescriptorRegistry;
     private final ConnectEventHandler connectEventHandler;
     private final SharedSecretService sharedSecretService;
+    private final ConnectAddOnUserService connectAddOnUserService;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
-    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, ConnectApplinkManager connectApplinkManager, ConnectDescriptorRegistry connectDescriptorRegistry, ConnectEventHandler connectEventHandler, SharedSecretService sharedSecretService)
+    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory,
+                                        PluginController pluginController,
+                                        PluginAccessor pluginAccessor,
+                                        OAuthLinkManager oAuthLinkManager,
+                                        RemoteEventsHandler remoteEventsHandler,
+                                        BeanToModuleRegistrar beanToModuleRegistrar,
+                                        ConnectApplinkManager connectApplinkManager,
+                                        ConnectDescriptorRegistry connectDescriptorRegistry,
+                                        ConnectEventHandler connectEventHandler,
+                                        SharedSecretService sharedSecretService,
+                                        ConnectAddOnUserService connectAddOnUserService)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -52,6 +65,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectDescriptorRegistry = connectDescriptorRegistry;
         this.connectEventHandler = connectEventHandler;
         this.sharedSecretService = sharedSecretService;
+        this.connectAddOnUserService = checkNotNull(connectAddOnUserService);
     }
 
     @Override
@@ -101,7 +115,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
                 //applink MUST be created before any modules
-                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey);
+                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, connectAddOnUserService.getOrCreateUserKey(addOn.getKey()));
 
                 //create the modules
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);

@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.imports;
 
+import com.atlassian.crowd.manager.application.ApplicationManager;
+import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jira.bc.issue.attachment.AttachmentService;
 import com.atlassian.jira.bc.issue.worklog.WorklogService;
 import com.atlassian.jira.bc.project.ProjectService;
@@ -70,10 +72,12 @@ public class JiraImports
     private final WatcherManager watcherManager;
     private final WebFragmentHelper webFragmentHelper;
     private final WorklogService worklogService;
+    private final ApplicationService applicationService;
+    private final ApplicationManager applicationManager;
 
     @Inject
     public JiraImports(
-            @JiraImport ("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
+            @JiraImport("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
             @JiraImport AttachmentService attachmentService,
             @JiraImport FieldManager fieldManager,
             @JiraImport FieldVisibilityManager fieldVisibilityManager,
@@ -94,14 +98,15 @@ public class JiraImports
             @JiraImport TimeZoneService timeZoneService,
             @JiraImport UserIssueHistoryManager userIssueHistoryManager,
             @JiraImport UserPreferencesManager userPreferencesManager,
-            @JiraImport ("jiraUserManager") UserManager userManager,
+            @JiraImport("jiraUserManager") UserManager userManager,
             @JiraImport UserUtil userUtil,
             @JiraImport VelocityRequestContextFactory velocityRequestContextFactory,
             @JiraImport VoteManager voteManager,
             @JiraImport WatcherManager watcherManager,
             @JiraImport WebFragmentHelper webFragmentHelper,
-            @JiraImport WorklogService worklogService
-    )
+            @JiraImport WorklogService worklogService,
+            @JiraImport ApplicationService applicationService,
+            @JiraImport ApplicationManager applicationManager)
     {
         this.attachmentService = attachmentService;
         this.fieldManager = fieldManager;
@@ -131,5 +136,7 @@ public class JiraImports
         this.watcherManager = watcherManager;
         this.webFragmentHelper = webFragmentHelper;
         this.worklogService = worklogService;
+        this.applicationService = applicationService;
+        this.applicationManager = applicationManager;
     }
 }
