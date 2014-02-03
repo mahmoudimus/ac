@@ -28,11 +28,11 @@ public class TestDialogWithContext extends JiraWebDriverTestBase
                 .add(RemoteWebPanelModule.key("my-issue-panel")
                         .name("Issue WebPanel")
                         .location("atl.jira.view.issue.left.context")
-                        .path("/ilwp")
+                        .path("/ilwp?issue.id=${issue.id}")
                         .resource(ConnectAppServlets.openDialogServlet()))
                 .add(DialogPageModule.key("my-dialog")
                         .name("Remote dialog")
-                        .path("/my-dialog?my-issue-id=${issue.id}")
+                        .path("/my-dialog?issue.id=${issue.id}")
                         .section("")
                         .resource(ConnectAppServlets.closeDialogServlet()))
                 .start();
@@ -47,7 +47,7 @@ public class TestDialogWithContext extends JiraWebDriverTestBase
         }
     }
 
-    @Ignore("Tim, we need to figure out why it can't find custom params in the url here")
+    @Ignore("Tim, we need to solve ACDEV-955 and put this back in")
     @Test
     public void testOpenCloseDialogUrl() throws Exception
     {
@@ -60,6 +60,6 @@ public class TestDialogWithContext extends JiraWebDriverTestBase
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "remote-web-panel", "my-issue-panel", remotePlugin.getPluginKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey("my-dialog");
 
-        assertEquals("test dialog close url", issue.getId(), closeDialogPage.getFromQueryString("my-issue-id"));
+        assertEquals("test dialog close url", issue.getId(), closeDialogPage.getFromQueryString("issue.id"));
     }
 }
