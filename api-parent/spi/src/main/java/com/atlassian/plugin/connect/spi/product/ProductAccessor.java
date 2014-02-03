@@ -26,9 +26,5 @@ public interface ProductAccessor extends HostProperties
 
     Map<String, String> getLinkContextParams();
 
-    void sendEmail(String user, Email email, String bodyAsHtml, String bodyAsText);
-
-    void flushEmail();
-
     Map<String, Class<? extends Condition>> getConditions();
 }

@@ -1,14 +1,9 @@
 package com.atlassian.plugin.connect.plugin.product.confluence;
 
 import com.atlassian.core.task.MultiQueueTaskManager;
-import com.atlassian.mail.Email;
-import com.atlassian.mail.MailException;
-import com.atlassian.mail.MailFactory;
-import com.atlassian.mail.server.SMTPMailServer;
 import com.atlassian.plugin.connect.modules.beans.ConfluenceConditions;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
@@ -84,51 +79,6 @@ public final class ConfluenceProductAccessor implements ProductAccessor
         return ImmutableMap.of(
                 "page_id", "$!page.id",
                 "page_type", "$!page.type");
-    }
-
-    @Override
-    public void sendEmail(String userName, final Email email, String bodyAsHtml, String bodyAsText)
-    {
-        // todo: support html emails for Confluence
-        email.setBody(bodyAsText);
-        try
-        {
-            ContextClassLoaderSwitchingUtil.runInContext(MailFactory.class.getClassLoader(), new Runnable()
-
-            {
-                @Override
-                public void run()
-                {
-                    SMTPMailServer defaultSMTPMailServer = MailFactory.getServerManager()
-                            .getDefaultSMTPMailServer();
-                    if (defaultSMTPMailServer != null)
-                    {
-                        try
-                        {
-                            defaultSMTPMailServer.send(email);
-                        }
-                        catch (MailException e)
-                        {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    else
-                    {
-                        log.warn("Can't send email - no mail server defined");
-                    }
-                }
-            });
-        }
-        catch (RuntimeException e)
-        {
-            log.warn("Unable to send email: " + email, e);
-        }
-    }
-
-    @Override
-    public void flushEmail()
-    {
-        taskManager.flush("mail");
     }
 
     @Override
