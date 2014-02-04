@@ -1,12 +1,5 @@
 package com.atlassian.plugin.connect.plugin.product.jira;
 
-import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.user.preferences.JiraUserPreferences;
-import com.atlassian.jira.user.preferences.PreferenceKeys;
-import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.mail.Email;
-import com.atlassian.mail.queue.MailQueue;
-import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -19,15 +12,11 @@ import java.util.Map;
 @JiraComponent
 public final class JiraProductAccessor implements ProductAccessor
 {
-    private final UserManager userManager;
-    private final MailQueue mailQueue;
     private final JiraConditions jiraConditions;
 
     @Autowired
-    public JiraProductAccessor(UserManager userManager, MailQueue mailQueue, JiraConditions jiraConditions)
+    public JiraProductAccessor(JiraConditions jiraConditions)
     {
-        this.userManager = userManager;
-        this.mailQueue = mailQueue;
         this.jiraConditions = jiraConditions;
     }
 
@@ -81,34 +70,6 @@ public final class JiraProductAccessor implements ProductAccessor
                 "project_key", "$!helper.project.key",
                 "issue_id", "$!issue.id",
                 "issue_key", "$!issue.key");
-    }
-
-    @Override
-    public void sendEmail(String userName, Email email, String bodyAsHtml, String bodyAsText)
-    {
-        User user = userManager.getUser(userName);
-
-        JiraUserPreferences userPrefs = new JiraUserPreferences(user);
-        String prefFormat = userPrefs.getString(PreferenceKeys.USER_NOTIFICATIONS_MIMETYPE);
-
-        // Default to text if the property is not configured.
-        if ("html".equalsIgnoreCase(prefFormat))
-        {
-            email.setMimeType("text/html");
-            email.setBody(bodyAsHtml);
-        }
-        else
-        {
-            email.setMimeType("text/plain");
-            email.setBody(bodyAsText);
-        }
-        mailQueue.addItem(new SingleMailQueueItem(email));
-    }
-
-    @Override
-    public void flushEmail()
-    {
-        mailQueue.sendBuffer();
     }
 
     @Override

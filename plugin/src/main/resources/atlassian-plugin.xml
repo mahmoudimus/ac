@@ -250,11 +250,6 @@
         </description>
     </described-module-type>
 
-    <plugin-permission key="send_email" name="Send Email"
-                       class="com.atlassian.plugin.connect.plugin.product.SendEmailScope">
-        <description>Ability to send an email from the Atlassian server</description>
-    </plugin-permission>
-
     <plugin-permission key="generate_any_html" name="Generate Any HTML">
             <description>Ability to generate any HTML without any sanitisation.</description>
     </plugin-permission>
