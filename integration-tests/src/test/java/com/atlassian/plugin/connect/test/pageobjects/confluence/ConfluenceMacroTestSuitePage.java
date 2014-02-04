@@ -10,6 +10,8 @@ import org.openqa.selenium.WebElement;
  */
 public class ConfluenceMacroTestSuitePage extends ConfluenceMacroPage
 {
+    private static final String EXTRA_PREFIX = "servlet-";
+
     public ConfluenceMacroTestSuitePage(String title)
     {
         super(title);
@@ -46,18 +48,9 @@ public class ConfluenceMacroTestSuitePage extends ConfluenceMacroPage
 
     public RemotePluginTestPage visitGeneralLink()
     {
-//        By browseLocator = By.id("browse-menu-link");
-        WebElement menuLink;
-//        if (driver.elementExists(browseLocator))
-//        {
-//            menuLink = driver.findElement(browseLocator);
-//        }
-//        else
-//        {
-        menuLink = driver.findElement(By.id("help-menu-link"));
-//        }
+        WebElement menuLink = driver.findElement(By.id("help-menu-link"));
         menuLink.click();
         driver.findElement(By.id("remotePluginGeneral")).click();
-        return pageBinder.bind(RemotePluginTestPage.class, "remotePluginGeneral");
+        return pageBinder.bind(RemotePluginTestPage.class, "remotePluginGeneral", EXTRA_PREFIX);
     }
 }

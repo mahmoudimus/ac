@@ -1,0 +1,16 @@
+<div class="remote-macro-errors">
+  #if ($errors.hasErrors())
+  <p>There were errors rendering macro:</p>
+  <ul class="global">
+    #foreach($err in $errors.messages)
+      <li>$err</li>
+    #end
+  </ul>
+
+  <ul class="fields">
+    #foreach($err in $errors.fieldErrors.entrySet())
+      <li><code>$err.key</code> - $err.value</li>
+    #end
+  </ul>
+  #end
+</div>

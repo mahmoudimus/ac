@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class EchoContextServlet extends ContextServlet
 {
@@ -29,8 +30,13 @@ public class EchoContextServlet extends ContextServlet
         doGet(req, resp, context);
     }
 
-    public Map<String, Object> waitForContext() throws InterruptedException
+    public Map<String, Object> waitForContext() throws InterruptedException, TimeoutException
     {
-        return contexts.poll(5, TimeUnit.SECONDS);
+        Map<String, Object> poll = contexts.poll(10, TimeUnit.SECONDS);
+        if (poll == null) {
+            throw new TimeoutException("Ran out of time waiting for a request context. Perhaps no request was made "
+                    + "to the Connect app?");
+        }
+        return poll;
     }
 }

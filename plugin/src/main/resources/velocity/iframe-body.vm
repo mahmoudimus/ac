@@ -1,5 +1,5 @@
 <div class="ap-container" id="ap-$namespace">
-  $!extraMarkupHtml
+
   <div class="ap-content" id="embedded-$namespace"></div>
   <div class="ap-stats hidden">
     <div class="ap-loading ap-status">
@@ -13,5 +13,7 @@
       <small>Add-on <a href="${plugin.baseUrl}" class="ap-doc-url" target="_blank">$plugin.name</a> failed to load.</small>
     </div>
   </div>
-   #parse("velocity/iframe-body-script.vm")
+
+  #parse("velocity/iframe-body-script.vm")
+
 </div>

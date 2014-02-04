@@ -48,7 +48,7 @@ public class UrlVariableSubstitutor
      * @param context context containing values to replace
      * @return source with variables replaced by values.
      */
-    public String replace(String source, Map<String, Object> context)
+    public String replace(String source, Map<String, ?> context)
     {
         Matcher m = PLACEHOLDER_PATTERN.matcher(source);
         StringBuffer sb = new StringBuffer();
@@ -92,7 +92,7 @@ public class UrlVariableSubstitutor
         }
     }
 
-    private String fromContext(String term, Map<String, Object> context)
+    private String fromContext(String term, Map<String, ?> context)
     {
         Iterable<String> terms = Arrays.asList(term.split("\\."));
         Object value = fromContext(terms, context);
@@ -119,7 +119,7 @@ public class UrlVariableSubstitutor
         return "";
     }
 
-    private Object fromContext(Iterable<String> terms, Map<String, Object> context)
+    private Object fromContext(Iterable<String> terms, Map<String, ?> context)
     {
         Object current = context;
         for (String key : terms)

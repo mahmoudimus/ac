@@ -33,18 +33,30 @@ public class ConfluenceGeneralPage implements GeneralPage
 
     private WebElement browseMenuLink;
     private PageElement linkElement;
+    private final String extraPrefix;
 
 
     public ConfluenceGeneralPage(String pageKey, String linkText)
     {
-        this(pageKey, linkText, false);
+        this(pageKey, linkText, false, "");
     }
 
     public ConfluenceGeneralPage(String pageKey, String linkText, boolean ignoreBrowseMenu)
     {
+        this(pageKey,linkText,ignoreBrowseMenu,"");
+    }
+
+    public ConfluenceGeneralPage(String pageKey, String linkText, String extraPrefix)
+    {
+        this(pageKey, linkText, false, extraPrefix);
+    }
+    
+    public ConfluenceGeneralPage(String pageKey, String linkText, boolean ignoreBrowseMenu, String extraPrefix)
+    {
         this.pageKey = pageKey;
         this.linkText = linkText;
         this.ignoreBrowseMenu = ignoreBrowseMenu;
+        this.extraPrefix = extraPrefix;
     }
 
     @Init
@@ -72,7 +84,7 @@ public class ConfluenceGeneralPage implements GeneralPage
     public RemotePluginTestPage clickRemotePluginLink()
     {
         findLinkElement().click();
-        return pageBinder.bind(RemotePluginTestPage.class, pageKey);
+        return pageBinder.bind(RemotePluginTestPage.class, pageKey, extraPrefix);
     }
 
     @Override

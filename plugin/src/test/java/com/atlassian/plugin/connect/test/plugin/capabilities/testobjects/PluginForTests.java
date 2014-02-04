@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.testobjects;
 
-import com.atlassian.plugin.impl.AbstractPlugin;
-
 import java.io.InputStream;
 import java.net.URL;
+
+import com.atlassian.plugin.impl.AbstractPlugin;
 
 /**
  * @since 1.0

@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
@@ -67,6 +68,7 @@ public class ConnectEventHandlerOAuthTest
     private @Mock ConnectDescriptorRegistry descriptorRegistry;
     private @Mock BeanToModuleRegistrar beanToModuleRegistrar;
     private @Mock LicenseRetriever licenseRetriever;
+    private @Mock IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     private @Mock Request.Builder requestBuilder;
     private @Mock Bundle bundle;
@@ -113,8 +115,10 @@ public class ConnectEventHandlerOAuthTest
         when(requestBuilder.execute(Request.Method.POST)).thenReturn(responsePromise);
         when(responsePromise.claim()).thenReturn(response);
         when(response.getStatusCode()).thenReturn(200);
-        ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
-                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE);
+        ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager,
+                userManager, httpClient, requestSigner, consumerService, applicationProperties, productAccessor,
+                bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever,
+                PROD_MODE, iFrameRenderStrategyRegistry);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.OAUTH, PUBLIC_KEY, "https://server:1234/baseUrl"), null);
     }
 

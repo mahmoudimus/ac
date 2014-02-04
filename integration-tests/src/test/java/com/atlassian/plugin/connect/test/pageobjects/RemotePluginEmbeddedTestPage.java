@@ -8,7 +8,12 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
 {
     public RemotePluginEmbeddedTestPage(String pageKey)
     {
-        super(pageKey);
+        this(pageKey, "");
+    }
+
+    public RemotePluginEmbeddedTestPage(String pageKey, String extraPrefix)
+    {
+        super(pageKey, extraPrefix);
     }
 
     public String getFullName()

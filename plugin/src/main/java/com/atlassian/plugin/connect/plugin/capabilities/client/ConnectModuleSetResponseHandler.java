@@ -1,13 +1,14 @@
 package com.atlassian.plugin.connect.plugin.capabilities.client;
 
+import java.io.IOException;
+import java.util.List;
+
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.impl.client.BasicResponseHandler;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @since 1.0

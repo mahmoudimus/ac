@@ -3,87 +3,121 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PageToWebItemAndServletConverter;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.connect.spi.module.IFrameParams;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
-import org.osgi.framework.BundleContext;
+import com.google.common.collect.Maps;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.RAW_CLASSIFIER;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
- * Base class for ConnectModuleProviders of Connect Pages.
- * Note that there is actually no P2 module descriptor. Instead it is modelled as a web-item plus a servlet
+ * Base class for ConnectModuleProviders of Connect Pages. Note that there is actually no P2 module descriptor. Instead
+ * it is modelled as a web-item plus a servlet
  */
 public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageModuleBean>
 {
-    private final IFrameParams iFrameParams;
-    private final String defaultSection;
-    private final int defaultWeight;
-
-    public static class ConnectPageIFrameParams extends IFrameParamsImpl
-    {
-        /**
-         * Used in UI to change sizing etc
-         */
-        public void setIsGeneralPage()
-        {
-            setParam("general", "1");
-        }
-
-        public static IFrameParams withGeneralPage()
-        {
-            ConnectPageIFrameParams params = new ConnectPageIFrameParams();
-            params.setIsGeneralPage();
-            return params;
-        }
-    }
-
+    private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
+    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
-    private final IFramePageServletDescriptorFactory servletDescriptorFactory;
-    private final String decorator;
-    private final String templateSuffix;
-    private final Map<String, String> metaTagContents;
-    private final Condition condition;
 
-    public AbstractConnectPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                             IFramePageServletDescriptorFactory servletDescriptorFactory,
-                                             String decorator, String defaultSection, int defaultWeight,
-                                             String templateSuffix, Map<String, String> metaTagContents,
-                                             Condition condition, @Nullable IFrameParams iFrameParams)
+    public AbstractConnectPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
     {
-        this.defaultSection = defaultSection;
-        this.defaultWeight = defaultWeight;
+        this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
+        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
-        this.servletDescriptorFactory = checkNotNull(servletDescriptorFactory);
-        this.decorator = decorator;
-        this.templateSuffix = templateSuffix;
-        this.metaTagContents = metaTagContents;
-        this.condition = condition;
-        this.iFrameParams = iFrameParams;
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName,
-                                                 List<ConnectPageModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName,
+            List<ConnectPageModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
         for (ConnectPageModuleBean bean : beans)
         {
-            PageToWebItemAndServletConverter converter = new PageToWebItemAndServletConverter(bean, plugin.getKey(),
-                    defaultWeight, defaultSection, decorator, templateSuffix, metaTagContents, condition, iFrameParams);
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, converter.getWebItemBean()));
-            builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, converter.getServletBean()));
+            Map<String, Object> additionalRenderContext = Maps.newHashMap();
+            augmentRenderContext(additionalRenderContext);
+
+            // register a render strategy for our iframe page
+            IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                    .addOn(plugin.getKey())
+                    .module(bean.getKey())
+                    .pageTemplate()
+                    .urlTemplate(bean.getUrl())
+                    .decorator(getDecorator())
+                    .condition(getCondition())
+                    .title(bean.getDisplayName())
+                    .additionalRenderContext(additionalRenderContext)
+                    .build();
+            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), pageRenderStrategy);
+
+            // and an additional strategy for raw content, in case the user wants to use it as a dialog target
+            IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                    .addOn(plugin.getKey())
+                    .module(bean.getKey())
+                    .genericBodyTemplate()
+                    .urlTemplate(bean.getUrl())
+                    .condition(getCondition())
+                    .build();
+            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
+
+            if (hasWebItem())
+            {
+                // create a web item targeting the iframe page
+                Integer weight = bean.getWeight() == null ? getDefaultWeight() : bean.getWeight();
+                String location = isNullOrEmpty(bean.getLocation()) ? getDefaultSection() : bean.getLocation();
+
+                WebItemModuleBean webItemBean = newWebItemBean()
+                        .withName(bean.getName())
+                        .withKey(bean.getKey())
+                        .withContext(product)
+                        .withUrl(ConnectIFrameServlet.iFrameServletPath(plugin.getKey(), bean.getKey()))
+                        .withLocation(location)
+                        .withWeight(weight)
+                        .withIcon(bean.getIcon())
+                        .withConditions(bean.getConditions())
+                        .build();
+
+                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemBean));
+            }
         }
 
         return builder.build();
     }
+
+    protected Condition getCondition()
+    {
+        return null;
+    }
+
+    protected boolean hasWebItem()
+    {
+        return true;
+    }
+
+    protected void augmentRenderContext(Map<String, Object> additionalRenderContext)
+    {
+        // no additional context by default
+    }
+
+    protected abstract String getDecorator();
+
+    protected abstract String getDefaultSection();
+
+    protected abstract int getDefaultWeight();
+
 }

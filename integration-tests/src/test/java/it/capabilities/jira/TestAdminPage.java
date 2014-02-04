@@ -18,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static it.jira.TestJira.EXTRA_PREFIX;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -64,14 +65,14 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
-        product.visit(JiraAdministrationHomePage.class);
+        product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, GENERATED_PAGE_KEY, PAGE_NAME);
 
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(adminPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/pg"));
+        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/" + GENERATED_PAGE_KEY));
 
         RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
@@ -81,7 +82,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public void nonAdminCanNotSeePage()
     {
         loginAs(TestConstants.BARNEY_USERNAME, TestConstants.BARNEY_USERNAME);
-        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", "pg");
+        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", GENERATED_PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }

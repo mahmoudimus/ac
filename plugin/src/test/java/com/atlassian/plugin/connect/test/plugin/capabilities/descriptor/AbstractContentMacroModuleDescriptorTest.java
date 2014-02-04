@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
+
 import org.junit.Before;
 import org.junit.Test;
 

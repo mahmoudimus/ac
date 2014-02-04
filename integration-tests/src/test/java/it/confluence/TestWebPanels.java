@@ -65,7 +65,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         final String pageId = pageData.getId();
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
-        RemoteWebPanel webPanel = editPage.findWebPanel("edit-screen-web-panel").waitUntilContentLoaded();
+        RemoteWebPanel webPanel = connectPageOperations.findWebPanelFromXMLAddOn("edit-screen-web-panel").waitUntilContentLoaded();
 
         assertEquals(pageId, webPanel.getPageId());
         // Confluence doesn't provide space id via the xml-rpc API, so we can't find the actual space id.
@@ -84,7 +84,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         final String pageId = pageData.getId();
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
-        RemoteWebPanel webPanel = editPage.findWebPanel("edit-screen-web-panel-2").waitUntilContentLoaded();
+        RemoteWebPanel webPanel = connectPageOperations.findWebPanelFromXMLAddOn("edit-screen-web-panel-2").waitUntilContentLoaded();
 
         assertEquals(pageId, webPanel.getFromQueryString("my-page-id"));
         // Confluence doesn't provide space id via the xml-rpc API, so we can't find the actual space id.

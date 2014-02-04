@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>$!title</title>
+  <meta name="tab" content="$!title"/>
+  <meta name="decorator" content="$decorator"/>
+</head>
+<body>
+  <div class="ap-servlet-placeholder">
+    $iframeHtml
+  </div>
+</body>
+</html>

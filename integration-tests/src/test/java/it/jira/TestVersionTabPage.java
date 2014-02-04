@@ -69,7 +69,7 @@ public class TestVersionTabPage extends TestBase
     public void testVersionTabPanel() throws RemoteException
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, "jira-version-tab");
+        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, "version-tab-jira-version-tab");
 
         versionTabPage.clickTab();
 

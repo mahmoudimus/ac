@@ -1,21 +1,23 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.spi.module.RemoteCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 import static com.google.common.collect.Maps.newHashMap;

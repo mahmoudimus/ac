@@ -75,13 +75,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/pg"));
-
-        assertThat(URLEncodedUtils.parse(url, UTF_8.name()),
-                containsInAnyOrder(
-                        (NameValuePair) new BasicNameValuePair("page_id", confluenceViewPage.getPageId())
-                )
-        );
+        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/my-awesome-page"));
 
         RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
 

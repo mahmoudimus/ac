@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.test.plugin.module.webfragment;
 
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class LegacyTestUrlVariableSubstitutor
 {
