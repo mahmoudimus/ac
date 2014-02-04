@@ -236,6 +236,8 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         counterMacroServlet.reset();
 
         ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), COUNTER_MACRO);
+        
+        //TODO: this is flaky, where sometimes the counter value in the page is inexplicably 0
         assertEquals(1, getCounter(page));
 
         // stays the same on a new visit

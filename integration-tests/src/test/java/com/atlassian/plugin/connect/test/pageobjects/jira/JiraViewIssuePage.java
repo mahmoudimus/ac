@@ -15,6 +15,7 @@ import org.openqa.selenium.By;
 public class JiraViewIssuePage implements Page
 {
     private String issueKey;
+    private String extraPrefix;
 
     @Inject
     private com.atlassian.webdriver.AtlassianWebDriver driver;
@@ -24,7 +25,13 @@ public class JiraViewIssuePage implements Page
 
     public JiraViewIssuePage(String issueKey)
     {
+        this(issueKey,"");
+    }
+
+    public JiraViewIssuePage(String issueKey, String extraPrefix)
+    {
         this.issueKey = issueKey;
+        this.extraPrefix = extraPrefix;
     }
 
     @Override
@@ -46,7 +53,7 @@ public class JiraViewIssuePage implements Page
 
     public RemoteWebPanel findWebPanel(String panelId)
     {
-        return pageBinder.bind(RemoteWebPanel.class, panelId);
+        return pageBinder.bind(RemoteWebPanel.class, panelId, extraPrefix);
     }
 
     public RemoteXdmEventPanel findXdmEventPanel(String panelId)

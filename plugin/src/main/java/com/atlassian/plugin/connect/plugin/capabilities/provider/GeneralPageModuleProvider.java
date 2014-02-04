@@ -1,27 +1,51 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
-import com.google.common.collect.ImmutableMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import static com.atlassian.plugin.connect.plugin.capabilities.provider.AbstractConnectPageModuleProvider.ConnectPageIFrameParams.withGeneralPage;
 
 @Component
 public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
 {
-    public static final String GENERAL_PAGE_DECORATOR = "atl.general";
+    private final ProductAccessor productAccessor;
 
     @Autowired
-    public GeneralPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                     IFramePageServletDescriptorFactory servletDescriptorFactory,
-                                     ProductAccessor productAccessor)
+    public GeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            ProductAccessor productAccessor)
     {
-        super(webItemModuleDescriptorFactory, servletDescriptorFactory, GENERAL_PAGE_DECORATOR,
-                productAccessor.getPreferredGeneralSectionKey(), productAccessor.getPreferredGeneralWeight(), "",
-                ImmutableMap.<String, String>of(), new AlwaysDisplayCondition(), withGeneralPage());
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
+        this.productAccessor = productAccessor;
+    }
+
+    @Override
+    protected int getDefaultWeight()
+    {
+        return productAccessor.getPreferredGeneralWeight();
+    }
+
+    @Override
+    protected String getDefaultSection()
+    {
+        return productAccessor.getPreferredGeneralSectionKey();
+    }
+
+    @Override
+    protected String getDecorator()
+    {
+        return "atl.general";
+    }
+
+    @Override
+    protected void augmentRenderContext(final Map<String, Object> additionalRenderContext)
+    {
+        additionalRenderContext.put("general", 1);
     }
 }

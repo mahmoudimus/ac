@@ -108,6 +108,7 @@ public class StaticResourcesFilter implements Filter
                 "plugin/request.js",
                 "plugin/dialog.js",
                 "plugin/inline-dialog.js",
+                "plugin/messages.js",
                 "plugin/_resize_listener.js",
                 "plugin/jira.js",
                 "plugin/confluence.js",

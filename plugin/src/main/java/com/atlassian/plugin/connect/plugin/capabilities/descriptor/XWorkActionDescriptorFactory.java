@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.plugin.module.XWorkPackageCreator;
 import com.atlassian.plugin.connect.plugin.module.confluence.XWorkActionDescriptor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

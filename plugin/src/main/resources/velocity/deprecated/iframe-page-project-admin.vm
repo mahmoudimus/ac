@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	$webResourceManager.requireResource("com.atlassian.jira.jira-project-config-plugin:project-config-global")
+	<title>$!title</title>
+	<meta name="tab" content="$!title"/>
+	<meta name="decorator" content="atl.admin"/>
+	<meta name="admin.active.section" content="atl.jira.proj.config"/>
+	<meta name="admin.active.tab" content="${adminActiveTab}"/>
+	<meta name="projectKey" content="$queryParams.projectKey.get(0)"/>
+</head>
+<body>
+<div class="ap-servlet-placeholder">
+	$iframeHtml
+</div>
+</body>
+</html>

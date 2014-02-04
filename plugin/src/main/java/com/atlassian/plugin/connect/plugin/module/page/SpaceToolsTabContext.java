@@ -1,56 +1,42 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-
 /**
  * Container for all information required by invocations of {@link com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsIFrameAction}.
  */
 public class SpaceToolsTabContext
 {
-    private final Plugin plugin;
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final String url;
-    private final String spaceToolsWebItemKey;
+    private final String addOnKey;
+    private final String moduleKey;
+    private final String displayName;
     private final String spaceAdminWebItemKey;
-    private final PageInfo pageInfo;
 
-    public SpaceToolsTabContext(Plugin plugin, final UrlVariableSubstitutor urlVariableSubstitutor, String url, String spaceToolsWebItemKey, String spaceAdminWebItemKey, PageInfo pageInfo)
+    public SpaceToolsTabContext(final String addOnKey, final String moduleKey, final String displayName,
+            final String spaceAdminWebItemKey)
     {
-        this.plugin = plugin;
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.url = url;
-        this.spaceToolsWebItemKey = spaceToolsWebItemKey;
+        this.addOnKey = addOnKey;
+        this.moduleKey = moduleKey;
+        this.displayName = displayName;
         this.spaceAdminWebItemKey = spaceAdminWebItemKey;
-        this.pageInfo = pageInfo;
     }
 
-    public String getSpaceToolsWebItemKey()
+    public String getAddOnKey()
     {
-        return spaceToolsWebItemKey;
+        return addOnKey;
     }
 
-    public String getSpaceAdminWebItemKey() {
+    public String getModuleKey()
+    {
+        return moduleKey;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
+    }
+
+    public String getSpaceAdminWebItemKey()
+    {
         return spaceAdminWebItemKey;
     }
 
-    public Plugin getPlugin()
-    {
-        return plugin;
-    }
-
-    public UrlVariableSubstitutor getUrlVariableSubstitutor()
-    {
-        return urlVariableSubstitutor;
-    }
-
-    public String getUrl()
-    {
-        return url;
-    }
-
-    public PageInfo getPageInfo()
-    {
-        return pageInfo;
-    }
 }

@@ -85,7 +85,7 @@ public abstract class RemoteWebItemModuleDescriptorTestBase
         IFramePageRenderer iFramePageRenderer = null;
         UrlVariableSubstitutor urlVariableSubstitutor = new UrlVariableSubstitutor();
         RemotePageDescriptorCreator remotePageDescriptorCreator = new RemotePageDescriptorCreator(bundleContext, userManager,
-                webItemCreator, iFramePageRenderer, productAccessor, urlValidator, urlVariableSubstitutor);
+                webItemCreator, iFramePageRenderer, productAccessor, urlVariableSubstitutor);
 
         RemotablePluginAccessor remotablePluginAccessor = mock(RemotablePluginAccessor.class);
 
@@ -145,8 +145,7 @@ public abstract class RemoteWebItemModuleDescriptorTestBase
         static String url = null;
 
         @Override
-        public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String moduleKey, boolean absolute,
-                                                                     AddOnUrlContext addOnUrlContext, RemotablePluginAccessor remotablePluginAccessor)
+        public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
         {
             if (null != MyWebItemModuleDescriptorFactory.url && !MyWebItemModuleDescriptorFactory.url.equals(url))
             {

@@ -6,6 +6,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader;
+import com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs;
+
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -13,13 +16,12 @@ import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean.newImagePlaceholderBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
-import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
-import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -45,7 +47,7 @@ public class DynamicContentMacroModuleBeanTest
         ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
         ConnectAddonBean bean = createBean();
 
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(bean));
+        assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
     }
 
     @Test
@@ -56,7 +58,7 @@ public class DynamicContentMacroModuleBeanTest
         String json = gson.toJson(originalBean, ConnectAddonBean.class);
         ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
 
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(originalBean));
+        assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }
 
     private static ConnectAddonBean createBean()
@@ -120,7 +122,7 @@ public class DynamicContentMacroModuleBeanTest
 
     private static String readTestFile() throws IOException
     {
-        return readAddonTestFile("dynamicContentMacroAddon.json");
+        return TestFileReader.readAddonTestFile("dynamicContentMacroAddon.json");
     }
 
 }

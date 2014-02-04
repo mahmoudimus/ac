@@ -111,7 +111,7 @@ public class ModuleList extends BaseModuleBean
      *
      * @schemaTitle Web Item
      */
-    @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider")
+    @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider")
     private List<WebItemModuleBean> webItems;
 
     /**
@@ -234,6 +234,13 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider", products = {ProductFilter.JIRA})
     private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
 
+    /**
+     * The Entity Property are add-on key/value stories in certain JIRA objects, such as issues and projects.
+     * @schemaTitle Entity Property
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.EntityPropertyModuleProvider", products = {ProductFilter.JIRA})
+    private List<EntityPropertyModuleBean> jiraEntityProperties;
+
     /////////////////////////////////////////////////////
     ///////    CONFLUENCE MODULES
     /////////////////////////////////////////////////////
@@ -282,6 +289,7 @@ public class ModuleList extends BaseModuleBean
         this.jiraSearchRequestViews = newArrayList();
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
+        this.jiraEntityProperties = newArrayList();
         this.profilePages = newArrayList();
         this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
@@ -318,6 +326,10 @@ public class ModuleList extends BaseModuleBean
         if (null == jiraProfileTabPanels)
         {
             this.jiraProfileTabPanels = newArrayList();
+        }
+        if (null == jiraEntityProperties)
+        {
+            this.jiraEntityProperties = newArrayList();
         }
         if (null == webItems)
         {
@@ -419,6 +431,11 @@ public class ModuleList extends BaseModuleBean
         return jiraWorkflowPostFunctions;
     }
 
+    public List<EntityPropertyModuleBean> getJiraEntityProperties()
+    {
+        return jiraEntityProperties;
+    }
+
     public List<ConnectPageModuleBean> getGeneralPages()
     {
         return generalPages;
@@ -492,6 +509,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraSearchRequestViews, other.jiraSearchRequestViews)
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
+                .append(jiraEntityProperties, other.jiraEntityProperties)
                 .append(profilePages, other.profilePages)
                 .append(spaceToolsTabs, other.spaceToolsTabs)
                 .append(staticContentMacros, other.staticContentMacros)
@@ -519,6 +537,7 @@ public class ModuleList extends BaseModuleBean
                 .append(jiraSearchRequestViews)
                 .append(jiraVersionTabPanels)
                 .append(jiraWorkflowPostFunctions)
+                .append(jiraEntityProperties)
                 .append(profilePages)
                 .append(spaceToolsTabs)
                 .append(staticContentMacros)

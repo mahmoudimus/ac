@@ -7,7 +7,7 @@
                 key: "bar-capability-key"
             },
             productContextJson = "",
-            contentPath = "/plugins/servlet/atlassian-connect/" + pluginKey + "/" + capability.key;
+            contentPath = "/plugins/servlet/ac/" + pluginKey + "/" + capability.key;
 
             module("Content Utilities", {
                 setup: function() {
@@ -28,7 +28,7 @@
             });
 
             test("getContentUrl returns the correct contentURL", function(){
-                var expectedBeginningUrl = new RegExp("https://www.example.com/plugins/servlet/atlassian-connect/foo-plugin-key/bar-capability-key"),
+                var expectedBeginningUrl = new RegExp("https://www.example.com/plugins/servlet/ac/foo-plugin-key/bar-capability-key"),
                 url = contentUtilities.getContentUrl(pluginKey, capability);
 
                 equal(0, url.search(expectedBeginningUrl));

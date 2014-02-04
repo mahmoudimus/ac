@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.util.Map;
+
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 public class ParamsModuleFragmentFactory

@@ -16,16 +16,16 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static it.TestConstants.BETTY_USERNAME;
 import static org.hamcrest.CoreMatchers.is;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 
 public class TestAppPermissions extends ConnectWebDriverTestBase
 {
-
+    public static final String EXTRA_PREFIX = "servlet-";
     private static final String LICENSE_RESPONSE_STATUS_CODE_ID = "licenseResponseStatusCode";
 
     @Test
@@ -53,7 +53,7 @@ public class TestAppPermissions extends ConnectWebDriverTestBase
                                     .resource(new CallServlet(product.getProductInstance().getBaseUrl(), runner.getSignedRequestHandler().get())))
               .start();
 
-        String status = product.visit(MessagePage.class, runner.getPluginKey(), "page").getMessage();
+        String status = product.visit(MessagePage.class, runner.getPluginKey(), "page", EXTRA_PREFIX).getMessage();
         assertEquals("403", status);
         runner.stopAndUninstall();
     }
@@ -82,7 +82,7 @@ public class TestAppPermissions extends ConnectWebDriverTestBase
     private RemotePluginTestPage visitLicenseResponsePage()
     {
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "pluginLicensePage", "Plugin License Page");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "pluginLicensePage", "Plugin License Page", EXTRA_PREFIX);
         return page.clickRemotePluginLink();
     }
 

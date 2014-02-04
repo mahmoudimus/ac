@@ -356,15 +356,9 @@
     function createIframe(config) {
       var iframe = document.createElement("iframe"),
         id = "easyXDM_" + config.container + "_provider";
-      var src = toUrl(config.remote, {
-        xdm_e: localOrigin,
-        // for signing compat until server is changed to omit it
-        xdm_c: config.channel,
-        xdm_p: 1
-      });
       $.extend(iframe, {id: id, name: id, frameBorder: "0"}, config.props);
       $("#" + config.container).append(iframe);
-      iframe.src = src;
+      iframe.src = config.remote;
       return iframe;
     }
 

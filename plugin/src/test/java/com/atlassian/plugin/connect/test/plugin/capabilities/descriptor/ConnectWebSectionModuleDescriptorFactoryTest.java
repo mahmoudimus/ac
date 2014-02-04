@@ -76,7 +76,7 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
                 .withConditions(new SingleConditionBeanBuilder().withCondition("unconditional").build())
                 .build();
 
-        descriptor = webSectionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        descriptor = webSectionFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
     }
 

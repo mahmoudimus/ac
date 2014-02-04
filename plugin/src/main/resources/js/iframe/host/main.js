@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper"], function ($, XdmRpc, addons, statusHelper) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main"], function ($, XdmRpc, addons, statusHelper, messages) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -139,27 +139,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         getTimeZone: function () {
           return options.data.timeZone;
         },
-        showMessage: function (id, title, body) {
-          // init message bar if necessary
-          if ($("#aui-message-bar").length === 0) {
-            // @todo adding #aui-message-bar only works for the view-issue page for now
-            $.html("div").attr("id", "aui-message-bar").prependTo("#details-module");
-          }
-          this.clearMessage(id);
-          AJS.messages.info({
-            title: title,
-            body: "<p>" + $("<div/>").text(body).html() + "<p>",
-            id: id,
-            closeable: false
-          });
+        showMessage: function (name, title, body, options) {
+          return messages.showMessage(name, title, body, options);
         },
         clearMessage: function (id) {
-          var selector = $(".aui-message#" + id).first();
-          if(selector.length === 1 && selector.hasClass("aui-message")){
-            selector.remove();
-          } else {
-            log("Unable to clear message");
-          }
+          return messages.clearMessage(id);
         },
         setDialogButtonEnabled: function (name, enabled) {
           var button = getDialogButton(name);
@@ -185,6 +169,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
                 inlineDialog.hideInlineDialog($content, $nexus);
             });
         },
+
         request: function (args, success, error) {
           // add the context path to the request url
           var url = options.cp + args.url;
@@ -226,10 +211,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             throw new Error("Invalid workflow ID");
           }
           var value,
-          selector = $("#remoteWorkflowPostFunctionConfiguration-"+uuid)[0];
+          selector = $("#postFunction\\.config-"+uuid)[0];
 
           // if the matching selector has an id that starts with the correct string
-          if(selector && selector.id.match(/remoteWorkflowPostFunctionConfiguration\-/).length === 1){
+          if(selector && selector.id.match(/postFunction\.config\-/).length === 1){
             value = $(selector).val();
           } else {
             throw ("Workflow configuration not found");
@@ -314,7 +299,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         e.preventDefault();
         rpc.setWorkflowConfigurationMessage(function (either) {
           if (either.valid) {
-            $("#remoteWorkflowPostFunctionConfiguration-" + either.uuid).val(either.value);
+            $("#postFunction\\.config-" + either.uuid).val(either.value);
             done = true;
             $(e.target).click();
           }

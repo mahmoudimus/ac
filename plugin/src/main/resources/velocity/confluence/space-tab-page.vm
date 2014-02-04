@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>$spaceTabInfo.pageInfo.title</title>
+    <title>$title</title>
     <meta name="decorator" content="main"/>
 </head>
     #applyDecorator("root")
@@ -13,9 +13,9 @@
     #applyDecorator ("root")
             #decoratorParam ("context" "spaceadminpanel")
             #decoratorParam ("selection" $spaceAdminWebItemKey)
-            #decoratorParam ("title" $spaceTabInfo.pageInfo.title)
+            #decoratorParam ("title" $title)
             #decoratorParam ("selectedTab" "admin")
-            #decoratorParam ("selectedSpaceToolsWebItem" $spaceToolsWebItemKey)
+            #decoratorParam ("selectedSpaceToolsWebItem" $moduleKey)
             #decoratorParam("helper" $action.helper)
 
             $iFrameHtml

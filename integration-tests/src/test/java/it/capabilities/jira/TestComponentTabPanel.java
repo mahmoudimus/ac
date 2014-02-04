@@ -22,7 +22,6 @@ public class TestComponentTabPanel extends TestBase
 {
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
     private static final String COMPONENT_NAME = "test-component";
-    private static final String JIRA_COMPONENT_TAB_PANEL = "jira-component-tab-panel";
     private static ConnectRunner remotePlugin;
 
     private String componentId;

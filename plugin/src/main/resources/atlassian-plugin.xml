@@ -56,6 +56,7 @@
         </description>
         <url-pattern>/redirect/permanent</url-pattern>
     </servlet>
+
     <servlet key="remotablePluginsIframe"
              name="Remotable Plugins Iframe Generator"
              class="com.atlassian.plugin.connect.plugin.module.page.ContextFreeIFramePageServlet">
@@ -65,6 +66,13 @@
         <url-pattern>/render-signed-iframe</url-pattern>
     </servlet>
 
+    <servlet key="addon-iframe-servlet"
+             class="com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet">
+        <url-pattern>/ac/*</url-pattern>
+    </servlet>
+
+    <web-panel key="connect-dialog-options" location="atl.header" class="com.atlassian.plugin.connect.plugin.dialog.DialogOptionsWebPanel"/>
+    
     <!-- docs are built and copied into target/classes/docs during the prepare-package phase -->
     <web-resource key="docs">
         <resource type="download" name="docs/" location="docs" />
@@ -127,6 +135,13 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
+    <web-resource key="messages">
+        <resource type="download" name="messages-main.css" location="css/messages/main.css" />
+        <resource type="download" name="messages-main.js" location="js/messages/main.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+    </web-resource>
+
     <web-resource key="iframe-host-css">
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
     </web-resource>
@@ -153,7 +168,7 @@
 
     <!-- big pipe stuff -->
     <web-resource key="big-pipe">
-        <resource type="download" name="bigpipe.js" location="js/bigpipe/bigpipe.js" />
+        <resource type="download" name="bigpipe.js" location="js/bigpipes/bigpipe.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
@@ -171,6 +186,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:inline-dialog</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:messages</dependency>
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
