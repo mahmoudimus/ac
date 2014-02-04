@@ -28,7 +28,6 @@ import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.velocity.VelocityRequestContextFactory;
 import com.atlassian.jira.web.FieldVisibilityManager;
 import com.atlassian.jira.web.session.SessionSearchObjectManagerFactory;
-import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -54,7 +53,6 @@ public class JiraImports
     private final IssueToSubTaskConversionService issueToSubTaskConversionService;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final JiraBaseUrls jiraBaseUrls;
-    private final MailQueue mailQueue;
     private final PermissionManager jiraPermissionManager;
     private final ProjectRoleManager projectRoleManager;
     private final ProjectService projectService;
@@ -87,7 +85,6 @@ public class JiraImports
             @JiraImport IssueToSubTaskConversionService issueToSubTaskConversionService,
             @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
             @JiraImport JiraBaseUrls jiraBaseUrls,
-            @JiraImport MailQueue mailQueue,
             @JiraImport PermissionManager jiraPermissionManager,
             @JiraImport ProjectRoleManager projectRoleManager,
             @JiraImport ProjectService projectService,
@@ -119,7 +116,6 @@ public class JiraImports
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.jiraBaseUrls = jiraBaseUrls;
         this.jiraPermissionManager = jiraPermissionManager;
-        this.mailQueue = mailQueue;
         this.projectRoleManager = projectRoleManager;
         this.projectService = projectService;
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
