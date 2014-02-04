@@ -2,12 +2,16 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function(
     return function (contentUrl, options) {
         var $inlineDialog;
 
-        // Find the web-item that was clicked.
-        var webItem = options.bindTo;
-        if (!webItem.hasClass("ap-inline-dialog")) {
-            webItem = webItem.closest(".ap-inline-dialog");
+        // Find the web-item that was clicked, we'll be needing its ID.
+        if (!options.bindTo || !options.bindTo.jquery) {
+            return;
         }
+
+        var webItem = options.bindTo.hasClass("ap-inline-dialog") ? options.bindTo : options.bindTo.closest(".ap-inline-dialog");
         var itemId = webItem.attr("id");
+        if (!itemId) {
+            return;
+        }
 
         var displayInlineDialog = function(content, trigger, showPopup) {
 
