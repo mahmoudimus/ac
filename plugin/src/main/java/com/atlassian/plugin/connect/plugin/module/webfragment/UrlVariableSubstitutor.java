@@ -50,6 +50,11 @@ public class UrlVariableSubstitutor
      */
     public String replace(String source, Map<String, ?> context)
     {
+        if (source.contains("${"))
+        {
+            log.warn("Addon uses legacy variable format '${ variableName }' in url {}", new Object[] {source} );
+        }
+
         Matcher m = PLACEHOLDER_PATTERN.matcher(source);
         StringBuffer sb = new StringBuffer();
         while (m.find())
