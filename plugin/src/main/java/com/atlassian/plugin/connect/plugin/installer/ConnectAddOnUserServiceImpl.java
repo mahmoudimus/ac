@@ -79,8 +79,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         User user = ensureUserExists(userKey);
         ensureUserIsInGroup(userKey);
 
-        // TODO ACDEV-933: enable user if disabled
-
         // TODO ACDEV-936: disable password recovery on this user
 
         return user;
