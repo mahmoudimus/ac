@@ -71,7 +71,8 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
                     .setText(bean.getTooltip().getValue());
         }
 
-        Element linkElement = webItemElement.addElement("link").addAttribute("linkId", webItemKey);
+        String linkId = plugin.getKey() + "-" + webItemKey;
+        Element linkElement = webItemElement.addElement("link").addAttribute("linkId", linkId);
         linkElement.setText(bean.getUrl());
 
         List<String> styles = newArrayList(bean.getStyleClasses());
