@@ -44,15 +44,21 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
         super.init(plugin, element);
         Element oauthElement = element.element("oauth");
         String displayUrl = getRequiredAttribute(element, "display-url");
-        String publicKey = getRequiredElementText(oauthElement, "public-key");
 
         if (null != element.getParent() && element.getParent().elements(element.getName()).size() > 1)
         {
             throw new PluginParseException("Can only have one remote-plugin-container module in a descriptor");
         }
-        
-        connectApplinkManager.createAppLink(plugin,displayUrl,AuthenticationType.OAUTH,publicKey,"");
+
         connectAddonRegistry.storeBaseUrl(plugin.getKey(), displayUrl);
+        
+        if(null != oauthElement)
+        {
+            String publicKey = getRequiredElementText(oauthElement, "public-key");
+            connectApplinkManager.createAppLink(plugin,displayUrl,AuthenticationType.OAUTH,publicKey,"");
+        }
+        
+        
     }
 
     @Override
