@@ -90,7 +90,7 @@
 
       if (n !== 0) {
         k = decodeURIComponent(p.substring(0, n));
-        v = decodeURIComponent(p.substring(n + 1));
+        v = decodeURIComponent(p.substring(n + 1).replace(/\+/g, " "));
         pairs.push(n === -1 ? [p, null] : [k, v]);
       }
 

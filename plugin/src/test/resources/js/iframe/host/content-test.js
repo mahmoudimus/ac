@@ -34,6 +34,17 @@
                 equal(0, url.search(expectedBeginningUrl));
             });
 
+            // ACDEV-590
+            test("getContentUrl returns encoded urls", function(){
+                var key = "../rest/activity-stream/1.0/i18n/key/<img%20src=x%20onerror=alert(0)>",
+                capability = {
+                    key: "../rest/activity-stream/1.0/i18n/key/<img%20src=x%20onerror=alert(0)>"
+                },
+                expectedUrl = 'https://www.example.com/plugins/servlet/ac/..%2Frest%2Factivity-stream%2F1.0%2Fi18n%2Fkey%2F%3Cimg%2520src%3Dx%2520onerror%3Dalert(0)%3E/..%2Frest%2Factivity-stream%2F1.0%2Fi18n%2Fkey%2F%3Cimg%2520src%3Dx%2520onerror%3Dalert(0)%3E'
+                url = contentUtilities.getContentUrl(key, capability);
+                equal(url, expectedUrl);
+            });
+
             test("getIframeHTMLForKey returns an ajax request", function(){
                 var ajaxRequest = contentUtilities.getIframeHtmlForKey(pluginKey, productContextJson, capability);
 
