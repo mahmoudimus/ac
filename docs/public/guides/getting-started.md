@@ -124,10 +124,10 @@ You can start JIRA or Confluence with Atlassian Connect as follows:
 
 
 #### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.2-OD-06-43 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m29,com.atlassian.jwt:jwt-plugin:1.0-m8,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.5,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.2-OD-08-034 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m30,com.atlassian.jwt:jwt-plugin:1.0-m8,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.4-OD-4 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m29,com.atlassian.jwt:jwt-plugin:1.0-m8,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.14.5,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.4-OD-5 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0-m30,com.atlassian.jwt:jwt-plugin:1.0-m8,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 
 ####Note:

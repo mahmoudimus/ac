@@ -1,3 +1,5 @@
+# Javascript API
+
 ## Sandboxing
 An iframe instance whose parent and child reside on different domains or hostnames constitutes a [sandboxed environment](http://en.wikipedia.org/wiki/Sandbox_%28computer_security%29). The contained page has no access to its parent. These restrictions are imposed by the browser's [same origin policy](http://en.wikipedia.org/wiki/Same_origin_policy).
 

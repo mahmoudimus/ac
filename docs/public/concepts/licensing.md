@@ -5,26 +5,26 @@ to be license-enabled. Add-ons work with the atlassian application to apply lice
 
 The Atlassian application does the following:
 
- * Stores licenses for the Atlassian instance, including local and remote plugin licenses.
- * Checks the license status for the an instance before servicing a request that involves a
+ * stores licenses for the Atlassian instance, including local and remote plugin licenses.
+ * checks the license status for the an instance before servicing a request that involves a
    license-enabled add-on
- * Reports the licensing status of the instance to the plugin in each request
+ * reports the licensing status of the instance to the plugin in each request
 
 The add-on should perform these functions: 
 
- * Check the license status in service requests it receives from the Atlassian application
- * Implement the logic appropriate for the given license status. For instance, for an expired
+ * check the license status in service requests it receives from the Atlassian application
+ * implement the logic appropriate for the given license status. For instance, for an expired
    license, the add-on may choose to disable its features, enter a read-only state, or function
-   in some other restricted manner that makes sense.
+   in some other restricted manner that makes sense
 
 ## Development Considerations
 
 In a nutshell, to implement licensing for Atlassian Connect, you need to:
 
- * Set the enableLicensing flag in the add-on descriptor for the add-on.
- * Write code to check the `lic` URL parameter for all incoming requests.
- * Use a REST resource at /license to get additional license information for each application.
- * Implement the logic appropriate for the add-on based on the license status.
+ * set the `enableLicensing` flag in the add-on descriptor for the add-on
+ * write code to check the `lic` URL parameter for all incoming requests
+ * use a REST resource at /license to get additional license information for each application
+ * implement the logic appropriate for the add-on based on the license status
 
 #### Note:
 The results of a license check by the Atlassian application is cached for 5 minutes.
@@ -62,9 +62,9 @@ http://....?lic=active
 Your add-on should check this value to determine the license status of the instance associated with
 the current request. The `lic` parameter may have one of three values:
 
- * `active` – the license is valid for this instance and add-on.
- * `expired` – a license is present, but it is expired.
- * `none` – no license is present.
+ * `active` – the license is valid for this instance and add-on
+ * `expired` – a license is present, but it is expired
+ * `none` – no license is present
 
 ## Accessing License Details
 
@@ -79,11 +79,11 @@ https://{HOSTNAME}:{PORT}/{CONTEXT}/rest/atlassian-connect/latest/license
 
 Among other information, the plugin can use the resource to discover:
 
- * whether the plugin license for an instance is valid.
- * the organisation name, SEN and contact email associated with the license.
- * the number of users allowed by the current license.
- * the expiration date of the license.
- * license type, such as `commercial` or `academic`.
+ * whether the plugin license for an instance is valid
+ * the organisation name, SEN and contact email associated with the license
+ * the number of users allowed by the current license
+ * the expiration date of the license
+ * license type, such as `commercial` or `academic`
 
 ## Testing license enforcement
 
