@@ -1,20 +1,20 @@
 _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function($, statusHelper) {
-
-    var idSeq = 0;
-    function nextId(){
-        return 'inline-dialog-content-' + idSeq;
-    }
-
     return function (contentUrl, options) {
         var $inlineDialog;
-        idSeq++;
+
+        // Find the web-item that was clicked.
+        var webItem = options.bindTo;
+        if (!webItem.hasClass("ap-inline-dialog")) {
+            webItem = webItem.closest(".ap-inline-dialog");
+        }
+        var itemId = webItem.attr("id");
 
         var displayInlineDialog = function(content, trigger, showPopup) {
 
             options.w = options.w || options.width;
             options.h = options.h || options.height;
             if (!options.ns) {
-                options.ns = nextId();
+                options.ns = itemId;
             }
             options.container = options.ns;
             options.src = options.url = options.url || contentUrl;
@@ -34,7 +34,7 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function(
         $inlineDialog = AJS.InlineDialog(
             options.bindTo,
             //assign unique id to inline Dialog
-            "ap-" + nextId(),
+            "ap-inline-dialog-content-" + itemId,
             displayInlineDialog,
             options
         );
