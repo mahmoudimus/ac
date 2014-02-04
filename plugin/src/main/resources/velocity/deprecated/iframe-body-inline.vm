@@ -1,0 +1,5 @@
+<span class="ap-container ap-inline" id="ap-$namespace">
+    $!extraMarkupHtml
+    <span class="ap-content ap-inline" id="embedded-$namespace"></span>
+    #parse("velocity/deprecated/iframe-body-script.vm")
+</span>

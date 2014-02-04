@@ -4,6 +4,7 @@ import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.plugin.descriptor.web.ConfluenceWebFragmentHelper;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.websudo.WebSudoManager;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.SpaceManager;
@@ -25,19 +26,6 @@ import javax.inject.Inject;
 @ConfluenceComponent
 public class ConfluenceImports
 {
-    private final ConfluenceWebFragmentHelper confluenceWebFragmentHelper;
-    private final BandanaManager bandanaManager;
-    private final I18NBeanFactory i18NBeanFactory;
-    private final MultiQueueTaskManager multiQueueTaskManager;
-    private final PageManager pageManager;
-    private final SettingsManager settingsManager;
-    private final SpaceManager spaceManager;
-    private final StorageFormatCleaner storageFormatCleaner;
-    private final SystemInformationService systemInformationService;
-    private final WebSudoManager webSudoManager;
-    private final UserAccessor userAccessor;
-    private final XhtmlContent xhtmlContent;
-    
     @Inject
     public ConfluenceImports(
             // this one's a component from an external jar, not an OSGi service
@@ -46,6 +34,7 @@ public class ConfluenceImports
             @ConfluenceImport I18NBeanFactory i18NBeanFactory,
             @ConfluenceImport MultiQueueTaskManager multiQueueTaskManager,
             @ConfluenceImport PageManager pageManager,
+            @ConfluenceImport ("confluencePermissionManager") PermissionManager permissionManager,
             @ConfluenceImport SettingsManager settingsManager,
             @ConfluenceImport SpaceManager spaceManager,
             @ConfluenceImport StorageFormatCleaner storageFormatCleaner,
@@ -55,17 +44,5 @@ public class ConfluenceImports
             @ConfluenceImport XhtmlContent xhtmlContent
     )
     {
-        this.confluenceWebFragmentHelper = confluenceWebFragmentHelper;
-        this.bandanaManager = bandanaManager;
-        this.i18NBeanFactory = i18NBeanFactory;
-        this.multiQueueTaskManager = multiQueueTaskManager;
-        this.pageManager = pageManager;
-        this.settingsManager = settingsManager;
-        this.spaceManager = spaceManager;
-        this.storageFormatCleaner = storageFormatCleaner;
-        this.systemInformationService = systemInformationService;
-        this.webSudoManager = webSudoManager;
-        this.userAccessor = userAccessor;
-        this.xhtmlContent = xhtmlContent;
     }
 }

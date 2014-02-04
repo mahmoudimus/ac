@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.scopes;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
+
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -28,7 +29,7 @@ public class StaticAddOnScopesTest
     public void referencedScopesAreFound() throws IOException
     {
         Collection<AddOnScope> scopes = StaticAddOnScopes.dereference(getTestScopes(), asList(ScopeName.READ, ScopeName.WRITE));
-        assertThat(scopes, Is.is(AddOnScopeBuilderForTests.buildScopes()));
+        MatcherAssert.assertThat(scopes, Is.is(AddOnScopeBuilderForTests.buildScopes()));
     }
 
     @Test(expected = IllegalArgumentException.class)

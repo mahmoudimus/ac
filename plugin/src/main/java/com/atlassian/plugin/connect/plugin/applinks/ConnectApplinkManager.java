@@ -15,9 +15,9 @@ public interface ConnectApplinkManager
      * @param baseUrl The baseurl of the connect addon
      * @param authType JWT or OAUTH
      * @param publicKey the publicKey used for asymmetric key encryption. Cannot be null if using OAUTH or JWT+RSA
-     * @param userKey the user-key of the add-on user; will be stored for later retrieval when we work out the {@link java.security.Principal} for incoming requests from this add-on
+     * @param addonUserKey the user-key of the add-on user; will be stored for later retrieval when we work out the {@link java.security.Principal} for incoming requests from this add-on
      */
-    void createAppLink(Plugin plugin, String baseUrl, AuthenticationType authType, String publicKey, String userKey);
+    void createAppLink(Plugin plugin, String baseUrl, AuthenticationType authType, String publicKey, String addonUserKey);
 
     /**
      * Deletes an {@link ApplicationLink} for an Atlassian Connect add-on.

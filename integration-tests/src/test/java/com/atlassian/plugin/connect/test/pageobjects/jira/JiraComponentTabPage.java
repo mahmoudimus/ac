@@ -4,7 +4,6 @@ import com.atlassian.jira.pageobjects.pages.AbstractJiraPage;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.query.TimedCondition;
-import com.atlassian.plugin.connect.plugin.module.jira.componenttab.ComponentTabPageModuleDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil;
 import org.openqa.selenium.By;
 
@@ -21,7 +20,7 @@ public class JiraComponentTabPage extends AbstractJiraPage
 
     protected PageElement tabField;
 
-    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-component-tab-";
+    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-";
     private static final String IFRAME_ID_SUFFIX = "-panel_provider";
     private PageElement iframe;
     private String iframeSrc;
@@ -40,7 +39,7 @@ public class JiraComponentTabPage extends AbstractJiraPage
     @Override
     public TimedCondition isAt()
     {
-        final String componentTabPanelId = ComponentTabPageModuleDescriptor.COMPONENT_TAB_PAGE_MODULE_PREFIX + componentTabId + "-panel-panel";
+        final String componentTabPanelId = componentTabId + "-panel-panel";
         tabField = elementFinder.find(By.id(componentTabPanelId));
 
         return tabField.timed().isPresent();

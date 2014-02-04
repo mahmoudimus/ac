@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 
 public class TestJira extends JiraWebDriverTestBase
 {
+    public static final String EXTRA_PREFIX = "servlet-";
     private static AtlassianConnectAddOnRunner remotePlugin;
 
     @BeforeClass
@@ -72,7 +73,7 @@ public class TestJira extends JiraWebDriverTestBase
                                            .navigateToAndBind(IssueDetailPage.class, issue.getKey())
                                            .details()
                                            .openFocusShifter()
-                                           .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
+                                           .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction",EXTRA_PREFIX);
 
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
 
@@ -124,7 +125,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testAdminPageInJiraSpecificLocation() throws Exception
     {
         loginAsAdmin();
-        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class);
+        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
         assertTrue(adminPage.hasJiraRemotableAdminPageLink());
         assertEquals(ADMIN_FULL_NAME, adminPage.clickJiraRemotableAdminPage().getFullName());
     }
@@ -133,7 +134,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testGeneralAdminPage() throws Exception
     {
         loginAsAdmin();
-        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class);
+        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
         assertTrue(adminPage.hasGeneralRemotableAdminPage());
         assertEquals(ADMIN_FULL_NAME, adminPage.clickGeneralRemotableAdminPage().getFullName());
     }

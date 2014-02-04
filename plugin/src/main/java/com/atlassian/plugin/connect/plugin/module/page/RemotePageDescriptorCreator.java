@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.WebItemContext;
 import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -50,7 +49,7 @@ public final class RemotePageDescriptorCreator
     public RemotePageDescriptorCreator(
             BundleContext bundleContext, UserManager userManager,
             WebItemCreator webItemCreator, IFramePageRenderer iFramePageRenderer,
-            ProductAccessor productAccessor, UrlValidator urlValidator,
+            ProductAccessor productAccessor,
             UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.bundleContext = bundleContext;

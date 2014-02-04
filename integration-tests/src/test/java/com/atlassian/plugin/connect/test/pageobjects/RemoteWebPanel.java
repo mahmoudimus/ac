@@ -11,18 +11,31 @@ import static it.TestConstants.IFRAME_ID_SUFFIX;
  */
 public class RemoteWebPanel extends AbstractConnectIFrameComponent<RemoteWebPanel>
 {
-    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-remote-web-panel-";
+    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-";
 
-    private String id;
+    private final String id;
+    /**
+     * For retrieving web panels registered by legacy descriptors.
+     * TODO remove when we drop support for XML descriptors.
+     */
+    @Deprecated
+    private final String extraPrefix;
+
+    @Deprecated
+    public RemoteWebPanel(final String id, String extraPrefix)
+    {
+        this.id = id;
+        this.extraPrefix = extraPrefix;
+    }
 
     public RemoteWebPanel(final String id)
     {
-        this.id = id;
+        this(id, "");
     }
 
     protected String getFrameId()
     {
-        return IFRAME_ID_PREFIX + id + IFRAME_ID_SUFFIX;
+        return IFRAME_ID_PREFIX + extraPrefix + id + IFRAME_ID_SUFFIX;
     }
 
     public String getUserId()

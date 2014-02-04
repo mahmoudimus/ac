@@ -27,8 +27,7 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
     }
 
     @Override
-    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext,
-            EntityPropertyModuleBean bean)
+    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(Plugin plugin, EntityPropertyModuleBean bean)
     {
         Element indexDocumentConfiguration = new DOMElement(DESCRIPTOR_NAME);
 

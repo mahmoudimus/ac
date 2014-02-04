@@ -69,7 +69,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(adminPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/pg"));
+        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/" + GENERATED_PAGE_KEY));
 
         // TODO Admin page web-item location has incorrect text ("OSGi")
 
@@ -81,7 +81,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     public void nonAdminCanNotSeePage()
     {
         loginAs(TestConstants.BARNEY_USERNAME, TestConstants.BARNEY_USERNAME);
-        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", "pg");
+        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", GENERATED_PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }

@@ -48,7 +48,6 @@
           "url": "images/placeholder.png",
           "width": 100
         },
-        "method": "post",
         "name": {
           "i18n": "some.macro.name",
           "value": "Some Macro"

@@ -1,12 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin;
 
-import com.atlassian.crowd.embedded.api.PasswordCredential;
-import com.atlassian.crowd.exception.*;
-import com.atlassian.crowd.manager.application.ApplicationManager;
-import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
-import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginArtifact;
@@ -19,10 +13,7 @@ import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
-import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
-import com.atlassian.plugin.connect.plugin.installer.DefaultConnectAddOnInstaller;
-import com.atlassian.plugin.connect.plugin.installer.RemotePluginArtifactFactory;
-import com.atlassian.plugin.connect.plugin.installer.SharedSecretServiceImpl;
+import com.atlassian.plugin.connect.plugin.installer.*;
 import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +33,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultConnectAddOnInstallerJwtTest
 {
-    private static final String ADD_ON_KEY = "add-on key";
     private static final String BASE_URL = "/baseUrl";
     private static final AuthenticationType AUTHENTICATION_TYPE = AuthenticationType.JWT;
     private static final String PUBLIC_KEY = "public key";
@@ -60,9 +50,7 @@ public class DefaultConnectAddOnInstallerJwtTest
     private @Mock ConnectApplinkManager connectApplinkManager;
     private @Mock ConnectDescriptorRegistry connectDescriptorRegistry;
     private @Mock ConnectEventHandler connectEventHandler;
-    private @Mock ApplicationService applicationService;
-    private @Mock ApplicationManager applicationManager;
-    private @Mock Application application;
+    private @Mock ConnectAddOnUserService connectAddOnUserService;
 
     private @Mock Plugin plugin;
     private @Mock User addOnUser;
@@ -79,19 +67,24 @@ public class DefaultConnectAddOnInstallerJwtTest
         verify(connectEventHandler).pluginInstalled(eq(ADD_ON_BEAN), argThat(isValidUUID()));
     }
 
-    @Before
-    public void beforeEachTest() throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, ApplicationNotFoundException
+    @Test
+    public void userCreationIsInvokedWithTheAddOnKey() throws ConnectAddOnUserInitException
     {
-        when(pluginController.installPlugins(any(PluginArtifact.class))).thenReturn(Sets.newHashSet(ADD_ON_KEY));
-        when(plugin.getKey()).thenReturn(ADD_ON_KEY);
-        when(pluginAccessor.getPlugin(ADD_ON_KEY)).thenReturn(plugin);
-        when(pluginAccessor.isPluginEnabled(ADD_ON_KEY)).thenReturn(true);
+        verify(connectAddOnUserService).getOrCreateUserKey(eq(ADD_ON_BEAN.getKey()));
+    }
+
+    @Before
+    public void beforeEachTest() throws ConnectAddOnUserInitException
+    {
+        when(pluginController.installPlugins(any(PluginArtifact.class))).thenReturn(Sets.newHashSet(ADD_ON_BEAN.getKey()));
+        when(plugin.getKey()).thenReturn(ADD_ON_BEAN.getKey());
+        when(pluginAccessor.getPlugin(ADD_ON_BEAN.getKey())).thenReturn(plugin);
+        when(pluginAccessor.isPluginEnabled(ADD_ON_BEAN.getKey())).thenReturn(true);
         when(addOnUser.getName()).thenReturn(ADD_ON_USER_KEY);
-        when(applicationService.addUser(any(Application.class), any(UserTemplate.class), eq(PasswordCredential.NONE))).thenReturn(addOnUser);
-        when(applicationManager.findByName("crowd-embedded")).thenReturn(application);
+        when(connectAddOnUserService.getOrCreateUserKey(ADD_ON_BEAN.getKey())).thenReturn(ADD_ON_USER_KEY);
         new DefaultConnectAddOnInstaller(remotePluginArtifactFactory, pluginController, pluginAccessor, oAuthLinkManager,
                 remoteEventsHandler, beanToModuleRegistrar, connectApplinkManager, connectDescriptorRegistry, connectEventHandler, new SharedSecretServiceImpl(),
-                applicationService, applicationManager)
+                connectAddOnUserService)
             .install("username", ConnectModulesGsonFactory.getGson().toJson(ADD_ON_BEAN));
     }
 

@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.net.URISyntaxException;
+
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
@@ -17,12 +19,10 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
+
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.net.URISyntaxException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -58,7 +58,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     }
 
     @Override
-    public SearchRequestViewModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, SearchRequestViewModuleBean bean)
+    public SearchRequestViewModuleDescriptor createModuleDescriptor(Plugin plugin, SearchRequestViewModuleBean bean)
     {
         SearchRequestViewModuleDescriptorImpl descriptor = new SearchRequestViewModuleDescriptorImpl(authenticationContext,
                 urlHandler, createModuleFactory(bean, plugin), conditionDescriptorFactory);

@@ -7,6 +7,9 @@ import org.openqa.selenium.By;
 
 import java.util.concurrent.Callable;
 
+import static com.atlassian.pageobjects.elements.query.Poller.by;
+import static org.hamcrest.Matchers.is;
+
 public class ConfluenceEditorContent extends EditorContent
 {
     public MacroList autoCompleteMacroList(final String text)
@@ -53,7 +56,7 @@ public class ConfluenceEditorContent extends EditorContent
             public Void call()
             {
                 PageElement macroBodyElement = page.find(By.className("wysiwyg-macro-body"));
-                Poller.waitUntilTrue(macroBodyElement.timed().isPresent());
+                Poller.waitUntil(macroBodyElement.timed().isPresent(), is(true), by(20000)); // this can be slow
                 return null;
             }
         });

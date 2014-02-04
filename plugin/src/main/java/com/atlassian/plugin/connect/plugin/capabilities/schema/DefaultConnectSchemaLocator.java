@@ -1,18 +1,19 @@
 package com.atlassian.plugin.connect.plugin.capabilities.schema;
 
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.util.ProductFilter;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-import com.atlassian.sal.api.ApplicationProperties;
-import org.apache.commons.io.IOUtils;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.util.ProductFilter;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.sal.api.ApplicationProperties;
+
+import org.apache.commons.io.IOUtils;
 
 @Named
 @ExportAsService

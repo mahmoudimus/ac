@@ -9,6 +9,8 @@ import org.hamcrest.Matcher;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AddOnScopesMatcher extends BaseMatcher<Collection<AddOnScope>>
