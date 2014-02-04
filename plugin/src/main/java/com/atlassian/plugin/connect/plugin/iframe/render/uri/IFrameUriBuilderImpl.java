@@ -13,6 +13,8 @@ import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
@@ -24,6 +26,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class IFrameUriBuilderImpl
         implements IFrameUriBuilder, IFrameUriBuilder.AddOnUriBuilder, IFrameUriBuilder.NamespacedUriBuilder, IFrameUriBuilder.TemplatedBuilder
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(IFrameUriBuilderImpl.class);
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
@@ -69,6 +72,10 @@ public class IFrameUriBuilderImpl
     public TemplatedBuilder urlTemplate(final String uri)
     {
         templateUri = Preconditions.checkNotNull(uri);
+        if (templateUri.contains("${"))
+        {
+            LOGGER.error("Addon {} uses legacy variable format '${ variableName }' in url {}", new Object[] { addonKey, templateUri });
+        }
         return this;
     }
 
