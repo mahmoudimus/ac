@@ -1,48 +1,18 @@
 package com.atlassian.plugin.connect.plugin.module.applinks;
 
-import com.atlassian.applinks.api.ApplicationId;
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.TypeNotInstalledException;
-import com.atlassian.applinks.spi.application.ApplicationIdUtil;
-import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
-import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
-import com.atlassian.applinks.spi.util.TypeAccessor;
-import com.atlassian.oauth.Consumer;
-import com.atlassian.oauth.ServiceProvider;
-import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.util.BundleUtil;
-import com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils;
-import com.atlassian.plugin.connect.spi.Permissions;
-import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.descriptors.CannotDisable;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.sal.api.pluginsettings.PluginSettings;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.atlassian.sal.api.transaction.TransactionCallback;
-import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.PublicKey;
-import java.util.List;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
 import static com.google.common.base.Preconditions.checkNotNull;
