@@ -42,13 +42,6 @@ valid. See the [licensing documentation](../concepts/licensing.html) for details
 For more about how administrators install and manage add-ons, see the
 [Universal Plugin Manager documentation](https://confluence.atlassian.com/display/UPM/About+the+Universal+Plugin+Manager).
 
-## Creating Marketing Assets for your add-on
-You can associate logos, screenshots and other marketing assets for your listing by referring to the
-assets bundle in the add-on descriptor.
-
-For an Atlassian Connect add-on compatible with OnDemand, we suggest calling out OnDemand
-compatibility in your banner image or screenshots.
-
 ## Making your listing public
 When you are ready to make your privately listed add-on public, initiate the process as follows:
 
@@ -60,7 +53,8 @@ listing which are not for a private listing, such as the pricing model and marke
 Marketing labels classify your add-on, and help customers find it on the Marketplace.
 5. When ready, click the **Submit for approval** button at the bottom of the form.
 
-This creates a JIRA issue that notifies the Marketplace team that your add-on is ready for review. The Atlassian
-Marketplace team checks your add-on and the listing itself against the requirements specified in the approval process.
-Note that the [approval process](https://developer.atlassian.com/display/MARKET/Add-on+approval+guidelines#Add-onapprovalguidelines-CriteriaforAtlassianConnectadd-ons) may take several days, and
-typically involves several rounds of feedback and updates to your listing.
+This creates a JIRA issue that notifies the Marketplace team that your add-on is ready for review.
+The Atlassian Marketplace team checks your add-on and the listing itself against the requirements
+specified in the approval process. Note that the
+[approval process](https://developer.atlassian.com/display/MARKET/Add-on+approval+guidelines#Add-onapprovalguidelines-CriteriaforAtlassianConnectadd-ons)
+may take several days, and typically involves several rounds of feedback and updates to your listing.
