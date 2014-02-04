@@ -40,17 +40,23 @@
 
             test("Inline dialog creates an inline dialog", function() {
                 var href ="someurl";
-                var options = {};
+                var options = {
+                    bindTo: $("<div id='acmodule-foo' class='ap-inline-dialog'></div>")
+                };
                 simpleInlineDialog(href, options);
                 ok(AJS.InlineDialog.calledOnce);
             });
 
             test("Inline dialog returns the inline dialog id", function() {
+                $("<div id='ac-module-awesome' class='ap-inline-dialog'></div>")
+
                 var href ="someurl";
-                var options = {};
+                var options = {
+                    bindTo: $("<div id='acmodule-foo' class='ap-inline-dialog'></div>")
+                };
 
                 var inlineDialog = simpleInlineDialog(href, options);
-                ok(inlineDialog.id.length > 1);
+                equal(inlineDialog.id, "ap-acmodule-foo");
             });
 
 
