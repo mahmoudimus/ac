@@ -7,28 +7,21 @@ import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
-import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.hostcontainer.HostContainer;
-import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
-import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -36,39 +29,37 @@ import java.util.List;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
 
-public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean> implements ConnectModuleProvider<T>
+public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
+        implements ConnectModuleProvider<T>
 {
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
-    private final IFramePageServletDescriptorFactory servletDescriptorFactory;
     private final HostContainer hostContainer;
     private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
-    private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
     private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
+    protected final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
     public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                              IFramePageServletDescriptorFactory servletDescriptorFactory,
-                                              HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
-                                              RelativeAddOnUrlConverter relativeAddOnUrlConverter,
-                                              I18nPropertiesPluginManager i18nPropertiesPluginManager)
+            HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, I18nPropertiesPluginManager i18nPropertiesPluginManager)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
-        this.servletDescriptorFactory = servletDescriptorFactory;
         this.hostContainer = hostContainer;
         this.absoluteAddOnUrlConverter = absoluteAddOnUrlConverter;
-        this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
+        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+        this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
     }
 
-    protected abstract ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, BundleContext bundleContext, T macroBean);
+    protected abstract ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, T macroBean);
 
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<T> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<T> beans)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
         MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(plugin.getKey());
 
         for (T bean : beans)
         {
-            moduleDescriptors.addAll(createModuleDescriptors(plugin, addonBundleContext, bean));
+            moduleDescriptors.addAll(createModuleDescriptors(plugin, bean));
             i18nBuilder.add(bean);
         }
 
@@ -77,18 +68,18 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         return moduleDescriptors;
     }
 
-    protected List<ModuleDescriptor> createModuleDescriptors(Plugin plugin, BundleContext bundleContext, T macroBean)
+    protected List<ModuleDescriptor> createModuleDescriptors(Plugin plugin, T macroBean)
     {
         List<ModuleDescriptor> descriptors = newArrayList();
 
         // The actual Macro module descriptor
-        descriptors.add(createMacroModuleDescriptor(plugin, bundleContext, macroBean));
+        descriptors.add(createMacroModuleDescriptor(plugin, macroBean));
 
         // Add a web item if the Macro is featured
         if (macroBean.isFeatured())
         {
             WebItemModuleBean featuredWebItem = createFeaturedWebItem(plugin, macroBean);
-            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, bundleContext, featuredWebItem));
+            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, featuredWebItem));
 
             // Add a featured icon web resource
             if (macroBean.hasIcon())
@@ -99,11 +90,11 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         if (macroBean.hasEditor())
         {
-            IFrameServletBean servletBean = createServletBean(plugin, macroBean);
-            ServletModuleDescriptor servletDescriptor = servletDescriptorFactory.createIFrameServletDescriptor(plugin, servletBean);
-            descriptors.add(servletDescriptor);
+            createEditorIFrame(plugin, macroBean);
             descriptors.add(createEditorWebResource(plugin, macroBean));
         }
+
+        // TODO: Add Image Placeholder --> ACDEV-678
 
         return ImmutableList.copyOf(descriptors);
     }
@@ -162,17 +153,20 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         return jsDescriptor;
     }
 
-    private IFrameServletBean createServletBean(Plugin plugin, T macroBean)
+    private void createEditorIFrame(Plugin plugin, T macroBean)
     {
         MacroEditorBean editor = macroBean.getEditor();
-        AddonUrlTemplatePair urlTemplatePair = new AddonUrlTemplatePair(editor.getUrl(), plugin.getKey());
-        PageInfo pageInfo = new PageInfo("", "-dialog", macroBean.getKey(), new AlwaysDisplayCondition(), ImmutableMap.<String, String>of());
 
-        IFrameParamsImpl iFrameParams = new IFrameParamsImpl();
-        iFrameParams.setParam("width", editor.getWidth());
-        iFrameParams.setParam("height", editor.getHeight());
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                .addOn(plugin.getKey())
+                .module(macroBean.getKey())
+                .dialogTemplate()
+                .urlTemplate(editor.getUrl())
+                .title(macroBean.getDisplayName())
+                .dimensions(editor.getWidth(), editor.getHeight())
+                .build();
 
-        return new IFrameServletBean(macroBean, urlTemplatePair, pageInfo, iFrameParams);
+        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), renderStrategy);
     }
 
     private ModuleDescriptor createEditorWebResource(Plugin plugin, T macroBean)
@@ -182,8 +176,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         String macroKey = macroBean.getKey();
         String editTitle = editor.hasEditTitle() ? editor.getEditTitle().getValue() : macroBean.getDisplayName();
         String insertTitle = editor.hasInsertTitle() ? editor.getInsertTitle().getValue() : macroBean.getDisplayName();
-
-        RelativeAddOnUrl relativeUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), editor.getUrl());
 
         Element webResource = new DOMElement("web-resource")
                 .addElement("web-resource")
@@ -211,7 +203,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                 .addAttribute("name", "URL")
-                .addAttribute("value", relativeUrl.getRelativeUri()).getParent()
+                .addAttribute("value", ConnectIFrameServlet.iFrameServletPath(plugin.getKey(), macroBean.getKey())).getParent()
                 .addElement("var")
                 .addAttribute("name", "WIDTH")
                 .addAttribute("value", editor.getWidth()).getParent()

@@ -62,7 +62,7 @@ public class RemoteCloseDialogPage
             {
                 PageElement element = elementFinder.find(By.id("dialog-close-button"));
                 waitUntilTrue(element.timed().isVisible());
-                element.click();
+                element.javascript().mouse().click();
                 return null;
             }
         });

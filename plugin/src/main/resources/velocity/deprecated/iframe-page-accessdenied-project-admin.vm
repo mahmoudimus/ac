@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="tab" content="$!title"/>
+	<title>$!title</title>
+	<meta name="decorator" content="$decorator"></meta>
+</head>
+<body>
+<div id="errorMessage">You do not have the correct permissions to view the page $!title.</div>
+</body>
+</html>

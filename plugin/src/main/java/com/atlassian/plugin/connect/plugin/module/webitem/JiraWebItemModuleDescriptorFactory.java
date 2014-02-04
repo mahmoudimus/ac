@@ -4,14 +4,16 @@ import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescri
 import com.atlassian.jira.plugin.webfragment.model.JiraWebLink;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebPanelModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebLink;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -24,42 +26,53 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
 {
     private final WebFragmentHelper webFragmentHelper;
     private final WebInterfaceManager webInterfaceManager;
+    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final ContextMapURLSerializer contextMapURLSerializer;
     private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+    private final ModuleContextFilter moduleContextFilter;
 
     @Autowired
     public JiraWebItemModuleDescriptorFactory(
             WebFragmentHelper webFragmentHelper,
             WebInterfaceManager webInterfaceManager,
-            UrlVariableSubstitutor urlVariableSubstitutor,
-            ContextMapURLSerializer contextMapURLSerializer,
-            JiraAuthenticationContext jiraAuthenticationContext)
+            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            JiraAuthenticationContext jiraAuthenticationContext,
+            WebPanelModuleContextExtractor webPanelModuleContextExtractor,
+            ModuleContextFilter moduleContextFilter,
+            UrlVariableSubstitutor urlVariableSubstitutor)
     {
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.webPanelModuleContextExtractor = checkNotNull(webPanelModuleContextExtractor);
+        this.moduleContextFilter = checkNotNull(moduleContextFilter);
         this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
-        this.contextMapURLSerializer = checkNotNull(contextMapURLSerializer);
+        this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
         this.webInterfaceManager = checkNotNull(webInterfaceManager);
         this.webFragmentHelper = checkNotNull(webFragmentHelper);
-        this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute,
-                                                                 AddOnUrlContext addOnUrlContext,
-                                                                 RemotablePluginAccessor remotablePluginAccessor)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(
+            String url
+            , String pluginKey
+            , String moduleKey
+            , boolean absolute
+            , AddOnUrlContext addOnUrlContext)
     {
         return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
-                urlVariableSubstitutor, contextMapURLSerializer, remotablePluginAccessor, url, linkId, absolute, addOnUrlContext);
+                iFrameUriBuilderFactory, urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext);
     }
 
     private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor
     {
         private final WebFragmentHelper webFragmentHelper;
+        private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
         private final UrlVariableSubstitutor urlVariableSubstitutor;
-        private final ContextMapURLSerializer contextMapURLSerializer;
+        private final WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+        private final ModuleContextFilter moduleContextFilter;
         private final String url;
-        private final String linkId;
-        private final RemotablePluginAccessor remotablePluginAccessor;
+        private final String pluginKey;
+        private final String moduleKey;
         private boolean absolute;
         private final AddOnUrlContext addOnUrlContext;
 
@@ -67,20 +80,24 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
                 JiraAuthenticationContext jiraAuthenticationContext,
                 WebInterfaceManager webInterfaceManager,
                 WebFragmentHelper webFragmentHelper,
+                IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 UrlVariableSubstitutor urlVariableSubstitutor,
-                ContextMapURLSerializer contextMapURLSerializer,
-                RemotablePluginAccessor remotablePluginAccessor,
+                WebPanelModuleContextExtractor webPanelModuleContextExtractor,
+                ModuleContextFilter moduleContextFilter,
                 String url,
-                String linkId,
+                String pluginKey,
+                String moduleKey,
                 boolean absolute, AddOnUrlContext addOnUrlContext)
         {
             super(jiraAuthenticationContext, webInterfaceManager);
             this.webFragmentHelper = webFragmentHelper;
+            this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.urlVariableSubstitutor = urlVariableSubstitutor;
-            this.contextMapURLSerializer = contextMapURLSerializer;
-            this.remotablePluginAccessor = remotablePluginAccessor;
+            this.webPanelModuleContextExtractor = webPanelModuleContextExtractor;
+            this.moduleContextFilter = moduleContextFilter;
             this.url = url;
-            this.linkId = linkId;
+            this.pluginKey = pluginKey;
+            this.moduleKey = moduleKey;
             this.absolute = absolute;
             this.addOnUrlContext = addOnUrlContext;
         }
@@ -88,8 +105,9 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         @Override
         public WebLink getLink()
         {
-            return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer,
-                    remotablePluginAccessor, url, linkId, absolute, addOnUrlContext), authenticationContext);
+            return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory,
+                    urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey,
+                    moduleKey, absolute, addOnUrlContext), authenticationContext);
         }
 
         @Override

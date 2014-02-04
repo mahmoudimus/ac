@@ -68,7 +68,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
         when(autowireUtil.createBean(eq(EntityPropertyIndexDocumentModuleDescriptorImpl.class)))
                 .thenReturn(new EntityPropertyIndexDocumentModuleDescriptorImpl(authContext, moduleFactory));
         EntityPropertyModuleBean bean = createBean();
-        this.moduleDescriptor = factory.createModuleDescriptor(plugin, bundleContext, bean);
+        this.moduleDescriptor = factory.createModuleDescriptor(plugin, bean);
     }
 
     @Test

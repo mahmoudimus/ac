@@ -8,11 +8,11 @@
 	<meta name="decorator" content="atl.admin"/>
 	<meta name="admin.active.section" content="atl.jira.proj.config"/>
 	<meta name="admin.active.tab" content="${adminActiveTab}"/>
-	<meta name="projectKey" content="$queryParams.projectKey.get(0)"/>
+	<meta name="projectKey" content="$contextParams.get('project.key')"/>
 </head>
 <body>
 <div class="ap-servlet-placeholder">
-	$iframeHtml
+    #parse("velocity/iframe-body.vm")
 </div>
 </body>
 </html>

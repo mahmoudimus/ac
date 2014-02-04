@@ -51,8 +51,8 @@ public class IFramePageServlet extends HttpServlet
         this.contextParamNameToSymbolicName = checkNotNull(contextParamNameToSymbolicName);
     }
 
-    @VisibleForTesting
     @Override
+    @VisibleForTesting
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
             IOException
     {

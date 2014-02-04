@@ -1,20 +1,22 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
-import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ProfilePageModuleProvider;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
+@Ignore("Replace with wired tests")
 public class ProfilePageModuleProviderTest extends AbstractPageModuleProviderTest<ProfilePageModuleProvider>
 {
     @Override
     protected ProfilePageModuleProvider createPageModuleProvider()
     {
-        return new ProfilePageModuleProvider(webItemModuleDescriptorFactory, servletDescriptorFactory, productAccessor);
+        return new ProfilePageModuleProvider(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
+                webItemModuleDescriptorFactory, productAccessor);
     }
 
     @Test
@@ -27,11 +29,5 @@ public class ProfilePageModuleProviderTest extends AbstractPageModuleProviderTes
     public void fetchesDefaultWeightFromProductAccessorWhenNotSpecified()
     {
         verify(productAccessor).getPreferredProfileWeight();
-    }
-
-    @Test
-    public void callsServletDescriptorFactory()
-    {
-        verify(servletDescriptorFactory()).createIFrameServletDescriptor(eq(plugin), any(IFrameServletBean.class));
     }
 }

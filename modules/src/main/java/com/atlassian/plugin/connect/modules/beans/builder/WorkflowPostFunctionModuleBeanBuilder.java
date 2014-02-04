@@ -5,9 +5,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 
 
-public class WorkflowPostFunctionModuleBeanBuilder extends NameToKeyBeanBuilder<WorkflowPostFunctionModuleBeanBuilder, WorkflowPostFunctionModuleBean>
+public class WorkflowPostFunctionModuleBeanBuilder extends RequiredKeyBeanBuilder<WorkflowPostFunctionModuleBeanBuilder, WorkflowPostFunctionModuleBean>
 {
-
     private I18nProperty description;
     private UrlBean view;
     private UrlBean edit;

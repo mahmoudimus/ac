@@ -36,7 +36,7 @@ public class StaticContentMacroUrlTemplateTest extends AbstractContentMacroUrlTe
 
     protected StaticContentMacro createMacro(StaticContentMacroModuleBean bean)
     {
-        return new StaticContentMacro("my-plugin", bean, userManager, macroContentManager, remotablePluginAccessorFactory, urlVariableSubstitutor);
+        return mock(StaticContentMacro.class); // TODO
     }
 
     protected void verifyRendererInvokedWithQueryParameter(String name, String value) throws Exception

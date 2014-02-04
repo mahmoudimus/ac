@@ -9,11 +9,11 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModu
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IconModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.descriptor.WebItemModuleDescriptorFactoryForTests;
+import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
+import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
@@ -26,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.osgi.framework.BundleContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -70,7 +69,7 @@ public class WebItemModuleDescriptorFactoryTest
         RemotablePluginAccessorFactoryForTests pluginAccessorFactory = new RemotablePluginAccessorFactoryForTests();
         pluginAccessorFactory.withBaseUrl(ADDON_BASE_URL);
         webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager),
-                new IconModuleFragmentFactory(pluginAccessorFactory), conditionModuleFragmentFactory, pluginAccessorFactory);
+                new IconModuleFragmentFactory(pluginAccessorFactory), conditionModuleFragmentFactory, pluginAccessorFactory, new ParamsModuleFragmentFactory());
 
         when(servletRequest.getContextPath()).thenReturn("http://ondemand.com/jira");
 
@@ -95,7 +94,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void completeKeyIsCorrect()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getCompleteKey(), is("my-key:my-web-item"));
@@ -105,7 +104,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void sectionIsCorrect()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getSection(), is("atl.admin/menu"));
@@ -115,7 +114,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void urlPrefixIsCorrect()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), new HashMap<String, Object>()), startsWith("http://www.google.com"));
@@ -142,7 +141,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void weightIsCorrect()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getWeight(), is(123));
@@ -160,7 +159,7 @@ public class WebItemModuleDescriptorFactoryTest
                                 .build()
                 )
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         WebIcon icon = descriptor.getIcon();
@@ -174,7 +173,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void styleClassIsEmptyWhenNotDefined()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         assertEquals("", descriptor.getStyleClass());
@@ -186,7 +185,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withStyleClasses("batman", "robin", "mr-freeze")
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getStyleClass(), allOf(containsString("batman"), containsString("robin"), containsString("mr-freeze")));
@@ -198,7 +197,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         assertEquals("", descriptor.getStyleClass());
@@ -210,7 +209,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         assertEquals("ap-dialog", descriptor.getStyleClass());
@@ -222,7 +221,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         assertEquals("ap-inline-dialog", descriptor.getStyleClass());
@@ -235,7 +234,7 @@ public class WebItemModuleDescriptorFactoryTest
                 .withStyleClasses("batman", "robin")
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getStyleClass(), allOf(containsString("batman"), containsString("robin"), containsString("ap-inline-dialog")));

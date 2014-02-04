@@ -16,7 +16,7 @@ public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage i
 {
     // TODO this PageObject should not be tied to a particular key
     public static final String MODULE_KEY = "my-connect-project-config";
-    public static final String TAB_ID = "servlet-my-connect-project-config";
+    public static final String TAB_ID = "my-connect-project-config";
 
     @Inject
     private PageBinder pageBinder;
@@ -29,13 +29,17 @@ public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage i
 
     public JiraProjectAdministrationTab()
     {
-        super(TAB_ID);
-        projectKey = null;
+        this(null);
     }
 
     public JiraProjectAdministrationTab(final String projectKey)
     {
-        super(TAB_ID);
+        this(projectKey, "");
+    }
+
+    public JiraProjectAdministrationTab(final String projectKey, final String extraPrefix)
+    {
+        super(TAB_ID, extraPrefix);
         this.projectKey = projectKey;
     }
 

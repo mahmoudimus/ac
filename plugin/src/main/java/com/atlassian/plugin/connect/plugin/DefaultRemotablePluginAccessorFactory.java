@@ -185,6 +185,17 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         return accessor;
     }
 
+    @Override
+    public RemotablePluginAccessor getOrThrow(final String pluginKey)
+    {
+        RemotablePluginAccessor remotablePluginAccessor = get(pluginKey);
+        if (remotablePluginAccessor == null)
+        {
+            throw new IllegalStateException("No " + RemotablePluginAccessor.class + " available for " + pluginKey);
+        }
+        return remotablePluginAccessor;
+    }
+
     private Supplier<URI> getDisplayUrl(final String pluginKey)
     {
         final ApplicationLink link = connectApplinkManager.getAppLink(pluginKey);

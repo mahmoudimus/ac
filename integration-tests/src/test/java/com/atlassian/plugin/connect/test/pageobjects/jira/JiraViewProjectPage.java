@@ -4,7 +4,6 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
-import com.atlassian.webdriver.utils.element.ElementNotLocated;
 
 import com.google.common.base.Optional;
 import org.openqa.selenium.By;
@@ -38,6 +37,11 @@ public class JiraViewProjectPage implements Page
     public RemoteWebPanel findWebPanel(String panelId)
     {
         return pageBinder.bind(RemoteWebPanel.class, panelId);
+    }
+
+    public RemoteWebPanel findWebPanelFromXMLAddOn(String panelId)
+    {
+        return pageBinder.bind(RemoteWebPanel.class, panelId, "remote-web-panel-");
     }
 
     public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownMenuId)

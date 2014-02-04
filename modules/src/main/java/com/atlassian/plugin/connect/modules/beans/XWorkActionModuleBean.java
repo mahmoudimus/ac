@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * Note that this bean is not publicly exposed, and thus does not contain user-facing javadocs.
  */
-public class XWorkActionModuleBean extends NameToKeyBean
+public class XWorkActionModuleBean extends GeneratedKeyBean
 {
     private String namespace;
     private Class<?> clazz;

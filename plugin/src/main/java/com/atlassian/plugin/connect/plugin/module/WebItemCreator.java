@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.plugin.module;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -9,16 +13,13 @@ import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
+
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
@@ -58,7 +59,7 @@ public final class WebItemCreator
     {
         private Class<? extends Condition> condition = AlwaysDisplayCondition.class;
         private String additionalStyleClass = "";
-        private Map<String,String> contextParams;
+        private Map<String, String> contextParams;
         private int preferredWeight;
         private String preferredSectionKey;
         private boolean absolute;
@@ -67,7 +68,7 @@ public final class WebItemCreator
         {
             this.contextParams = new HashMap<String, String>();
         }
-        
+
         public WebItemModuleDescriptor build(Plugin plugin, String key, String webItemUrl, Element configurationElement)
         {
             notNull(condition);
@@ -98,14 +99,14 @@ public final class WebItemCreator
                 {
                     UriBuilder uriBuilder = new UriBuilder(Uri.parse("/plugins/servlet" + webItemUrl));
                     String width = getOptionalAttribute(configurationElement, "width", null);
-                    if (width != null) uriBuilder.addQueryParameter("width", width);
+                    if (width != null) { uriBuilder.addQueryParameter("width", width); }
                     String height = getOptionalAttribute(configurationElement, "height", null);
-                    if (height != null) uriBuilder.addQueryParameter("height", height);
+                    if (height != null) { uriBuilder.addQueryParameter("height", height); }
 
                     url = uriBuilder.toString();
                     String sep = url.indexOf("?") > 0 ? "&" : "?";
 
-                    for (Map.Entry<String,String> entry : contextParams.entrySet())
+                    for (Map.Entry<String, String> entry : contextParams.entrySet())
                     {
                         url += sep + entry.getKey() + "=" + entry.getValue();
                         sep = "&";
@@ -121,7 +122,7 @@ public final class WebItemCreator
             }
             convertIcon(plugin, configurationElement, config);
             config.addElement("condition")
-                    .addAttribute("class", DynamicMarkerCondition.class.getName());
+                  .addAttribute("class", DynamicMarkerCondition.class.getName());
             if (condition != null)
             {
                 config.addElement("condition").addAttribute("class", condition.getName());
@@ -155,8 +156,14 @@ public final class WebItemCreator
         private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element config, String linkId, String url)
         {
             config.addAttribute("system", "true");
-            final WebItemModuleDescriptor descriptor = webItemModuleDescriptorFactory.createWebItemModuleDescriptor(url, linkId,
-                    absolute, product, remotablePluginAccessorFactory.get(plugin.getKey()));
+
+            final WebItemModuleDescriptor descriptor = webItemModuleDescriptorFactory.createWebItemModuleDescriptor(
+                    url
+                    , plugin.getKey()
+                    , linkId
+                    , absolute
+                    , product
+            );
             descriptor.init(plugin, config);
             return descriptor;
         }
@@ -168,11 +175,11 @@ public final class WebItemCreator
             {
                 // todo: would be nice to detect the size or at least allow it to be configured
                 target.addElement("icon")
-                        .addAttribute("width", "16")
-                        .addAttribute("height", "16")
-                        .addElement("link")
-                        .addText(getPermanentRedirectUrl(
-                                plugin.getKey(), iconUri));
+                      .addAttribute("width", "16")
+                      .addAttribute("height", "16")
+                      .addElement("link")
+                      .addText(getPermanentRedirectUrl(
+                              plugin.getKey(), iconUri));
             }
         }
 

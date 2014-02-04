@@ -211,10 +211,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             throw new Error("Invalid workflow ID");
           }
           var value,
-          selector = $("#remoteWorkflowPostFunctionConfiguration-"+uuid)[0];
+          selector = $("#postFunction\\.config-"+uuid)[0];
 
           // if the matching selector has an id that starts with the correct string
-          if(selector && selector.id.match(/remoteWorkflowPostFunctionConfiguration\-/).length === 1){
+          if(selector && selector.id.match(/postFunction\.config\-/).length === 1){
             value = $(selector).val();
           } else {
             throw ("Workflow configuration not found");
@@ -299,7 +299,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         e.preventDefault();
         rpc.setWorkflowConfigurationMessage(function (either) {
           if (either.valid) {
-            $("#remoteWorkflowPostFunctionConfiguration-" + either.uuid).val(either.value);
+            $("#postFunction\\.config-" + either.uuid).val(either.value);
             done = true;
             $(e.target).click();
           }
