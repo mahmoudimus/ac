@@ -34,13 +34,4 @@ For more details on AUI, read the [AUI documentation](https://developer.atlassia
 
 An easy way to get started with AUI is to experiment with the [sandbox](https://docs.atlassian.com/aui/latest/sandbox/).
 
-## Minimal styling
-
-Even if you intend to provide your own styles, your add-on's pages still need minimal set of styles in
-order to behave properly inside Atlassian Connect iframes. Add the following to your HTML to bring in
-the minimal, Connect-specific styles:
-
-```
-<link rel="stylesheet" type="text/css" href="https://{HOSTNAME}:{PORT}/{CONTEXT}/atlassian-connect/all.css"/>
-```
 
