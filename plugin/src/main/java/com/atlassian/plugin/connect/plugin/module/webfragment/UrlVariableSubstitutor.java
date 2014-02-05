@@ -5,6 +5,7 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -45,6 +46,7 @@ public class UrlVariableSubstitutor
     private static final Pattern VARIABLE_EQUALS_PLACEHOLDER_PATTERN = Pattern.compile("([^}&?]+)=(" + PLACEHOLDER_PATTERN_STRING + ")");
     private final IsDevModeService devModeService;
 
+    @Autowired
     public UrlVariableSubstitutor(IsDevModeService devModeService)
     {
         this.devModeService = checkNotNull(devModeService);
