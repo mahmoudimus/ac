@@ -22,7 +22,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         contentId = $content.attr("id"),
         channelId = "channel-" + ns,
         initWidth = options.w || "100%",
-        initHeight = options.h || "0",
+        initHeight = options.h || "100%",
         start = new Date().getTime(),
         isDialog = !!options.dlg,
         isInlineDialog = ($content.closest('.aui-inline-dialog').length > 0),

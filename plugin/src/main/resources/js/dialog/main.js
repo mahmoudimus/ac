@@ -57,8 +57,8 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
   function createDialogElement(id, titleId, size) {
     // TODO: copied from AUI dialog2 soy. Should make it use that when it's in products.
     var $el = AJS.$("<section></section>")
-      .addClass("ap-aui-layer").addClass("ap-aui-layer-hidden").addClass("ap-aui-layer-modal")
-      .addClass("ap-aui-dialog2").addClass("ap-aui-dialog2-" + (size || "medium"))
+      .addClass("aui-layer aui-layer-hidden aui-layer-modal")
+      .addClass("aui-dialog2 aui-dialog2-" + (size || "medium"))
       .attr("role", "dialog")
       .attr("data-aui-blanketed", "true")
       .attr("data-aui-focus-selector", ".aui-dialog2-content :input:visible:enabled");
@@ -80,6 +80,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
       $nexus = null;
     }
     if($dialog){
+      $dialog.data('aui-remove-on-hide', true);
       AJS.dialog2($dialog).hide();
     } else {
         AJS.$('.aui-dialog .ap-servlet-placeholder').trigger('ra.dialog.close');
