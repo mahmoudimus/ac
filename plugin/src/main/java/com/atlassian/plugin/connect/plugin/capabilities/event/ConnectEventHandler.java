@@ -22,7 +22,7 @@ import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
@@ -78,7 +78,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final ProductAccessor productAccessor;
     private final BundleContext bundleContext;
     private final JsonConnectAddOnIdentifierService connectIdentifier;
-    private final ConnectDescriptorRegistry descriptorRegistry;
+    private final ConnectAddonRegistry descriptorRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final LicenseRetriever licenseRetriever;
     private final IsDevModeService isDevModeService;
@@ -95,7 +95,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                                ProductAccessor productAccessor,
                                BundleContext bundleContext,
                                JsonConnectAddOnIdentifierService connectIdentifier,
-                               ConnectDescriptorRegistry descriptorRegistry,
+                               ConnectAddonRegistry descriptorRegistry,
                                BeanToModuleRegistrar beanToModuleRegistrar,
                                LicenseRetriever licenseRetriever,
                                IsDevModeService devModeService,
@@ -204,9 +204,9 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             {
                 log.warn("Tried to publish plugin uninstalled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...");
             }
-
-            descriptorRegistry.removeDescriptor(pluginKey);
         }
+
+        descriptorRegistry.removeAll(pluginKey);
     }
 
     /**
