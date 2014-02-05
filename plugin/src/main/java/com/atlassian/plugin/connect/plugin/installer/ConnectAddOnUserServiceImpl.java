@@ -37,7 +37,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         // Oh how I long for Java 7's conciser catch semantics.
         try
         {
-            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey).getName();
+            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey);
         }
         catch (InvalidCredentialException e)
         {
@@ -73,8 +73,10 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         }
     }
 
-    private User createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException
+    private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException
     {
+        return userKey;
+        /*
         ensureGroupExists();
         User user = ensureUserExists(userKey);
         ensureUserIsInGroup(userKey);
@@ -84,6 +86,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         // TODO ACDEV-936: disable password recovery on this user
 
         return user;
+        */
     }
 
     private void ensureUserIsInGroup(String userKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException
