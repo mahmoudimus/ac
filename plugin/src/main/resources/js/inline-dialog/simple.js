@@ -20,6 +20,9 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function(
             if (!options.ns) {
                 options.ns = itemId;
             }
+            if (!options.cp) {
+                options.cp = AJS.Meta.get("context-path");
+            }
             options.container = options.ns;
             options.src = options.url = options.url || contentUrl;
             content.data('inlineDialog', $inlineDialog);
