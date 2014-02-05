@@ -111,7 +111,7 @@ public class ModuleList extends BaseModuleBean
      *
      * @schemaTitle Web Item
      */
-    @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider")
+    @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider")
     private List<WebItemModuleBean> webItems;
 
     /**

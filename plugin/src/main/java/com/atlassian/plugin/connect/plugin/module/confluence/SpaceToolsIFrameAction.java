@@ -1,60 +1,71 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
-import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.context.confluence.ConfluenceModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.context.confluence.ConfluenceModuleContextParametersImpl;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.plugin.connect.spi.module.IFrameParams;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.google.common.collect.ImmutableMap;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.Collections;
 
-import static com.google.common.collect.Maps.newHashMap;
+import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderAccessDeniedToString;
+import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
 
 public class SpaceToolsIFrameAction extends SpaceAdminAction
 {
-    private IFrameRenderer iFrameRenderer;
-
+    private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private ModuleContextFilter moduleContextFilter;
     private SpaceToolsTabContext context;
 
     public String getIFrameHtml() throws IOException
     {
-        Map<String, Object> urlContext = buildUrlContext();
-        String iframePath = context.getUrlVariableSubstitutor().replace(context.getUrl(), urlContext);
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(context.getAddOnKey(), context.getModuleKey());
 
-        IFrameParams iFrameParams = new IFrameParamsImpl();
-        IFrameContext iFrameContext = new IFrameContextImpl(context.getPlugin().getKey(), iframePath, context.getSpaceToolsWebItemKey(), iFrameParams);
-        return iFrameRenderer.render(iFrameContext, this.getAuthenticatedUser().getName());
-    }
-
-    private Map<String, Object> buildUrlContext()
-    {
-        return ImmutableMap.<String, Object>of(
-                "space", ImmutableMap.of("key", this.space.getKey(), "id", this.space.getId())
-        );
+        if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
+        {
+            ConfluenceModuleContextParameters unfilteredContext = new ConfluenceModuleContextParametersImpl();
+            unfilteredContext.addSpace(this.space);
+            ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
+            return renderToString(filteredContext, renderStrategy);
+        }
+        else
+        {
+            return renderAccessDeniedToString(renderStrategy);
+        }
     }
 
     public SpaceToolsTabContext getSpaceTabInfo()
     {
-        return this.context;
+        return context;
     }
 
     public String getSpaceAdminWebItemKey()
     {
-        return this.context.getSpaceAdminWebItemKey();
+        return context.getSpaceAdminWebItemKey();
     }
 
     public String getSpaceToolsWebItemKey()
     {
-        return this.context.getSpaceToolsWebItemKey();
+        return context.getModuleKey();
     }
 
-    public void setiFrameRenderer(IFrameRenderer iFrameRenderer)
+    public String getTitle()
     {
-        this.iFrameRenderer = iFrameRenderer;
+        return context.getDisplayName();
+    }
+
+    public void setiFrameRenderStrategyRegistry(final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+    {
+        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+    }
+
+    public void setModuleContextFilter(final ModuleContextFilter moduleContextFilter)
+    {
+        this.moduleContextFilter = moduleContextFilter;
     }
 
     public void provideContext(SpaceToolsTabContext context)

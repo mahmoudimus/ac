@@ -47,7 +47,7 @@ public class PluginManagerPage implements Page
         }
     }
 
-    public <P extends Object> P configurePlugin(String pluginKeyAndName, String pageKey, Class<P> nextPage)
+    public <P extends Object> P configurePlugin(String pluginKeyAndName, String pageKey, Class<P> nextPage, String extraPrefix)
     {
         for (WebElement element : driver.findElements(By.className("upm-plugin-name")))
         {
@@ -61,10 +61,15 @@ public class PluginManagerPage implements Page
                         pluginKeyAndName + "/" + pageKey))
                 {
                     configureLink.click();
-                    return pageBinder.bind(nextPage, pageKey);
+                    return pageBinder.bind(nextPage, pageKey, extraPrefix);
                 }
             }
         }
         throw new IllegalStateException("Didn't find plugin");
+    }
+    
+    public <P extends Object> P configurePlugin(String pluginKeyAndName, String pageKey, Class<P> nextPage)
+    {
+        return configurePlugin(pluginKeyAndName,pageKey,nextPage,"");
     }
 }

@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.*;
 import it.servlet.ConnectAppServlets;
+import org.junit.After;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
@@ -27,11 +28,22 @@ import static org.junit.Assert.*;
 
 public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
 {
-    
+    private AtlassianConnectAddOnRunner remotePlugin;
+
+    @After
+    public void cleanup() throws Exception
+    {
+        if (remotePlugin != null)
+        {
+            remotePlugin.stopAndUninstall();
+            remotePlugin = null;
+        }
+    }
+
     @Test
     public void testContextParam() throws Exception
     {
-        AtlassianConnectAddOnRunner remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
                 .addPermission("read_content")
                 .addPermission("read_users_and_groups")
@@ -69,8 +81,6 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), params.get("page_id"));
         assertEquals(BETTY_USERNAME, params.get("user_id"));
         assertTrue(params.containsKey("user_key"));
-
-        remotePlugin.stopAndUninstall();
     }
 
     @Test
@@ -82,7 +92,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                         "</div>");
 
         MyParamsMacroServlet macroServlet = new MyParamsMacroServlet();
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "header")
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "header")
                 .add(RemoteMacroModule.key("header")
                                       .path("/header")
                                       .contextParameters(
@@ -96,7 +106,6 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
         assertFalse(macroServlet.getQueryParams().containsKey("user_id"));
         assertEquals(BETTY_USERNAME, macroServlet.getHeaderParams().get("user_id"));
         assertFalse(macroServlet.getHeaderParams().containsKey("page_id"));
-        runner.stopAndUninstall();
     }
 
     public static class MyParamsMacroServlet extends HttpServlet

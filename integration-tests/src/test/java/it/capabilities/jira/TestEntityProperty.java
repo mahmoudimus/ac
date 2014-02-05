@@ -127,7 +127,7 @@ public class TestEntityProperty
 
         // Check it is possible to search for the issues by the indexed property
         SearchResult byAttachmentSizeSearchResult =
-                searchClient.getSearch(new SearchRequest().jql("issue.property[attachment].\"size\" > 5"));
+                searchClient.getSearch(new SearchRequest().jql("issue.property[attachment].size > 5"));
         assertHasIssues(byAttachmentSizeSearchResult, Lists.newArrayList(issue.key));
     }
 

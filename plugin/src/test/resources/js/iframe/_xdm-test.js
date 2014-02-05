@@ -17,7 +17,7 @@
                     var f = fixture || 'xdm-emit.html';
                     return new XdmRpc($, {
                         remoteKey: 'myremotekey',
-                        remote: this.getBaseUrl() + '/base/src/test/resources/fixtures/' + f + '?oauth_consumer_key=jira:12345',
+                        remote: this.getBaseUrl() + '/base/src/test/resources/fixtures/' + f + '?oauth_consumer_key=jira:12345&xdm_e=' + encodeURIComponent(this.getBaseUrl()) + '&xdm_c=testchannel&xdm_p=1',
                         container: 'qunit-container',
                         channel: 'testchannel',
                         props: {}

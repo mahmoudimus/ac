@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
 import com.atlassian.jira.component.ComponentAccessor;
+
 import org.springframework.stereotype.Component;
 
 @Component

@@ -6,9 +6,9 @@ package com.atlassian.plugin.connect.modules.beans;
 public enum AddOnUrlContext
 {
     /**
-     * A relative URL whose end target is the addon but initially targets the host so the iFrame can be decorated.
+     * A context that uses the url as the module key to point to an existing page
      */
-    decorated,
+    page,
 
     /**
      * A URL that is relative to the addon host.

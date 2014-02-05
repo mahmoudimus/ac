@@ -3,15 +3,15 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.StaticContentMacroModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.StaticContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import org.osgi.framework.BundleContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
@@ -22,20 +22,19 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
     @Autowired
     public StaticContentMacroModuleProvider(StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory,
                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                            IFramePageServletDescriptorFactory servletDescriptorFactory,
                                             HostContainer hostContainer,
                                             AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
-                                            RelativeAddOnUrlConverter relativeAddOnUrlConverter,
+                                            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                             I18nPropertiesPluginManager i18nPropertiesPluginManager)
     {
-        super(webItemModuleDescriptorFactory, servletDescriptorFactory, hostContainer,
-                absoluteAddOnUrlConverter, relativeAddOnUrlConverter, i18nPropertiesPluginManager);
+        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, i18nPropertiesPluginManager);
         this.macroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 
     @Override
-    protected ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, BundleContext bundleContext, StaticContentMacroModuleBean macroBean)
+    protected ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, StaticContentMacroModuleBean macroBean)
     {
-        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, bundleContext, macroBean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, macroBean);
     }
 }

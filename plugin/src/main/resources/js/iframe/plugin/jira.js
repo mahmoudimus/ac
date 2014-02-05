@@ -7,7 +7,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     * @memberOf WorkflowConfiguration
     */
     function getUuid() {
-        return decodeURI(RegExp('remoteWorkflowPostFunctionUUID=([0-9a-z\-]+)').exec(document.location)[1]);
+        return decodeURI(RegExp('postFunction\\.id=([0-9a-z\\-]+)').exec(document.location)[1]);
     }
 
     var workflowListener,

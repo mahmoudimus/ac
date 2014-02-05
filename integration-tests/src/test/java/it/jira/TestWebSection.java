@@ -95,7 +95,7 @@ public class TestWebSection extends JiraWebDriverTestBase
         PageElement item = dropdown.getItem(By.id(CONTENT_WEB_ITEM_ID));
 
         assertNotNull("Web item within web section should be found", item);
-        assertTrue("Web item url within web section should be correct", item.getAttribute("href").endsWith(CONTENT_WEB_ITEM_URL));
+        assertTrue("Web item url within web section should be correct", item.getAttribute("href").contains(CONTENT_WEB_ITEM_URL));
         assertEquals("Web item text within web section should be correct", CONTENT_WEB_ITEM_NAME, item.getText());
     }
 

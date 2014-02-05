@@ -28,6 +28,12 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
     }
 
     @Override
+    public RemotablePluginAccessor getOrThrow(final String pluginKey)
+    {
+        return get(pluginKey); // it's never null
+    }
+
+    @Override
     public RemotablePluginAccessor get(final String pluginKey)
     {
         return new RemotablePluginAccessor() {

@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.module;
 
-import com.atlassian.plugin.connect.plugin.module.IFrameHost;
+import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
@@ -21,7 +21,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.test.plugin.module.TestIFrameRenderer.*;
+import static com.atlassian.plugin.connect.test.plugin.module.TestIFrameRenderer.createContext;
+import static com.atlassian.plugin.connect.test.plugin.module.TestIFrameRenderer.emptyContext;
+import static com.atlassian.plugin.connect.test.plugin.module.TestIFrameRenderer.emptyParams;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -31,7 +33,7 @@ public class TestIFramePageRenderer
 {
     @Mock private TemplateRenderer templateRenderer;
     @Mock private IFrameRenderer iframeRenderer;
-    @Mock private IFrameHost iframeHost;
+    @Mock private HostApplicationInfo hostApplicationInfo;
 
     private IFramePageRenderer iframePageRenderer;
 
@@ -39,7 +41,7 @@ public class TestIFramePageRenderer
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        this.iframePageRenderer = new IFramePageRenderer(templateRenderer, iframeRenderer, iframeHost);
+        this.iframePageRenderer = new IFramePageRenderer(templateRenderer, iframeRenderer, hostApplicationInfo);
     }
 
     @Test
@@ -50,7 +52,7 @@ public class TestIFramePageRenderer
         iframePageRenderer.renderPage(createContext("a.b", "my-path", "my-namespace"), pageInfo, "", emptyParams(), "jim", emptyContext(), writer);
 
         String renderedTemplate = getActualTemplateRendererPath();
-        assertEquals("velocity/iframe-page-accessdenied-my-suffix.vm", renderedTemplate);
+        assertEquals("velocity/deprecated/iframe-page-accessdenied-my-suffix.vm", renderedTemplate);
     }
 
     @Test
@@ -61,7 +63,7 @@ public class TestIFramePageRenderer
         iframePageRenderer.renderPage(createContext("a.b", "my-path", "my-namespace"), pageInfo, "", emptyParams(), "jim", emptyContext(), writer);
 
         String renderedTemplate = getActualTemplateRendererPath();
-        assertEquals("velocity/iframe-page-my-suffix.vm", renderedTemplate);
+        assertEquals("velocity/deprecated/iframe-page-my-suffix.vm", renderedTemplate);
     }
 
     @Test

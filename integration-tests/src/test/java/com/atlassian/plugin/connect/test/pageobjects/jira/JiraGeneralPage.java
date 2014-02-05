@@ -31,6 +31,7 @@ public final class JiraGeneralPage implements GeneralPage
     private PageBinder pageBinder;
     private final String pageKey;
     private final String linkText;
+    private final String extraPrefix;
 
     private final Supplier<Option<WebElement>> link = new Supplier<Option<WebElement>>()
     {
@@ -46,8 +47,14 @@ public final class JiraGeneralPage implements GeneralPage
 
     public JiraGeneralPage(String pageKey, String linkText)
     {
+        this(pageKey, linkText, "");
+    }
+
+    public JiraGeneralPage(String pageKey, String linkText, String extraPrefix)
+    {
         this.pageKey = pageKey;
         this.linkText = linkText;
+        this.extraPrefix = extraPrefix;
     }
 
     @Override
@@ -75,7 +82,7 @@ public final class JiraGeneralPage implements GeneralPage
                     {
                         l.click();
                         logger.debug("Link '{}' was found and clicked.", l);
-                        return pageBinder.bind(RemotePluginTestPage.class, pageKey);
+                        return pageBinder.bind(RemotePluginTestPage.class, pageKey, extraPrefix);
                     }
                 }
         );

@@ -21,16 +21,23 @@ public class LinkedRemoteContent
     private final ItemMatchingMode mode;
     private final String matchValue;
     private final Option<String> dropDownLinkId;
+    private final String extraPrefix;
 
     @Inject
     private PageBinder pageBinder;
 
     public LinkedRemoteContent(ItemMatchingMode mode, String id, Option<String> dropDownLinkId, String pageKey)
     {
+        this(mode,id,dropDownLinkId,pageKey,"");
+    }
+
+    public LinkedRemoteContent(ItemMatchingMode mode, String id, Option<String> dropDownLinkId, String pageKey,String extraPrefix)
+    {
         this.mode = mode;
         this.matchValue = id;
         this.dropDownLinkId = dropDownLinkId;
         this.pageKey = pageKey;
+        this.extraPrefix = extraPrefix;
     }
 
     public LinkedRemoteContent(String matchValue, Option<String> dropDownLinkId, String pageKey)
@@ -53,6 +60,6 @@ public class LinkedRemoteContent
     {
         webItem.click();
 
-        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, pageKey);
+        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, pageKey, extraPrefix);
     }
 }
