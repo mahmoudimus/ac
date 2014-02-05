@@ -56,8 +56,7 @@ http://....?lic=active
 ```
 
 Your add-on should check this value to determine the license status of the instance associated with
-the current request. Note, you will need to declare `READ` [scope](../scopes/scopes.html) in order
-to use this resource. The `lic` parameter may have one of three values:
+the current request. The `lic` parameter may have one of three values:
 
  * `active` – the license is valid for this instance and add-on
  * `expired` – a license is present, but it is expired
@@ -66,7 +65,8 @@ to use this resource. The `lic` parameter may have one of three values:
 ## Accessing License Details
 
 In addition to the `lic` parameter, an add-on can use a REST API resource to get an instance's
-license for this plugin.
+license for this plugin. Note, you will need to declare `READ` [scope](../scopes/scopes.html) in
+order to use this resource.
 
 The license resource is exposed as a REST resource at this URL:
 
