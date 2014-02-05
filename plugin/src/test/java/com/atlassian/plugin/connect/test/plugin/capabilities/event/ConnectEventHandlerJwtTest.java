@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -78,7 +78,8 @@ public class ConnectEventHandlerJwtTest
     private @Mock ProductAccessor productAccessor;
     private @Mock BundleContext bundleContext;
     private @Mock JsonConnectAddOnIdentifierService connectIdentifier;
-    private @Mock ConnectDescriptorRegistry descriptorRegistry;
+    private @Mock
+    ConnectAddonRegistry descriptorRegistry;
     private @Mock BeanToModuleRegistrar beanToModuleRegistrar;
     private @Mock LicenseRetriever licenseRetriever;
     private @Mock IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
