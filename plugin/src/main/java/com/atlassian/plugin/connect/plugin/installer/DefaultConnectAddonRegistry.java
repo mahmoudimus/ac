@@ -27,101 +27,101 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void removeAll(String pluginKey)
     {
-        settings().remove(descriptorKey(pluginKey));
-        settings().remove(baseUrlKey(pluginKey));
-        settings().remove(secretKey(pluginKey));
+        settings().remove(key(CONNECT_DESCRIPTOR_PREFIX, pluginKey));
+        settings().remove(key(CONNECT_BASEURL_PREFIX, pluginKey));
+        settings().remove(key(CONNECT_SECRET_PREFIX, pluginKey));
     }
     
     @Override
     public void storeDescriptor(String pluginKey, String json)
     {
-        settings().put(descriptorKey(pluginKey), json);
+        settings().put(key(CONNECT_DESCRIPTOR_PREFIX, pluginKey), json);
     }
 
     @Override
     public void removeDescriptor(String pluginKey)
     {
-        settings().remove(descriptorKey(pluginKey));
+        settings().remove(key(CONNECT_DESCRIPTOR_PREFIX, pluginKey));
     }
 
     @Override
     public String getDescriptor(String pluginKey)
     {
-        return Strings.nullToEmpty((String) settings().get(descriptorKey(pluginKey)));
+        return get(key(CONNECT_DESCRIPTOR_PREFIX, pluginKey));
     }
 
     @Override
     public boolean hasDescriptor(String pluginKey)
     {
-        return !Strings.isNullOrEmpty(getDescriptor(pluginKey));
+        return has(getDescriptor(pluginKey));
     }
 
     @Override
     public void storeBaseUrl(String pluginKey, String url)
     {
-        settings().put(baseUrlKey(pluginKey), url);
+        settings().put(key(CONNECT_BASEURL_PREFIX, pluginKey), url);
     }
 
     @Override
     public void removeBaseUrl(String pluginKey)
     {
-        settings().remove(baseUrlKey(pluginKey));
+        settings().remove(key(CONNECT_BASEURL_PREFIX, pluginKey));
     }
 
     @Override
     public String getBaseUrl(String pluginKey)
     {
-        return Strings.nullToEmpty((String) settings().get(baseUrlKey(pluginKey)));
+        return get(key(CONNECT_BASEURL_PREFIX, pluginKey));
     }
 
     @Override
     public boolean hasBaseUrl(String pluginKey)
     {
-        return !Strings.isNullOrEmpty(getBaseUrl(pluginKey));
+        return has(getBaseUrl(pluginKey));
     }
 
     @Override
     public void storeSecret(String pluginKey, String secret)
     {
-        settings().put(secretKey(pluginKey), secret);
+        settings().put(key(CONNECT_SECRET_PREFIX, pluginKey), secret);
     }
 
     @Override
     public void removeSecret(String pluginKey)
     {
-        settings().remove(secretKey(pluginKey));
+        settings().remove(key(CONNECT_SECRET_PREFIX, pluginKey));
     }
 
     @Override
     public String getSecret(String pluginKey)
     {
-        return Strings.nullToEmpty((String) settings().get(secretKey(pluginKey)));
+        return get(key(CONNECT_SECRET_PREFIX, pluginKey));
     }
 
     @Override
     public boolean hasSecret(String pluginKey)
     {
-        return !Strings.isNullOrEmpty(getSecret(pluginKey));
+        return has(getSecret(pluginKey));
     }
 
+    private boolean has(String value)
+    {
+        return !Strings.isNullOrEmpty(value);
+    }
+    
+    private String get(String key)
+    {
+        return Strings.nullToEmpty((String) settings().get(key));
+    }
+    
     private PluginSettings settings()
     {
         return pluginSettingsFactory.createGlobalSettings();
     }
 
-    private static String descriptorKey(String key)
+    private static String key(String prefix, String key)
     {
-        return CONNECT_DESCRIPTOR_PREFIX + key;
-    }
-
-    private static String baseUrlKey(String key)
-    {
-        return CONNECT_BASEURL_PREFIX + key;
-    }
-
-    private static String secretKey(String key)
-    {
-        return CONNECT_SECRET_PREFIX + key;
+        return prefix + key;
     }
 
 }
