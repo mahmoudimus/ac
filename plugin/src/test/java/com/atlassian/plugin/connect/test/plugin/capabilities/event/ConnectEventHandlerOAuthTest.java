@@ -6,6 +6,7 @@ import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
+import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -13,7 +14,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -49,6 +50,14 @@ import static org.mockito.Mockito.*;
 @RunWith (MockitoJUnitRunner.class)
 public class ConnectEventHandlerOAuthTest
 {
+    private static final IsDevModeService DEV_MODE = new IsDevModeService()
+    {
+        @Override
+        public boolean isDevMode()
+        {
+            return true;
+        }
+    };
     private static final IsDevModeService PROD_MODE = new IsDevModeService()
     {
         @Override
@@ -68,10 +77,12 @@ public class ConnectEventHandlerOAuthTest
     private @Mock ProductAccessor productAccessor;
     private @Mock BundleContext bundleContext;
     private @Mock JsonConnectAddOnIdentifierService connectIdentifier;
-    private @Mock ConnectDescriptorRegistry descriptorRegistry;
+    private @Mock
+    ConnectAddonRegistry descriptorRegistry;
     private @Mock BeanToModuleRegistrar beanToModuleRegistrar;
     private @Mock LicenseRetriever licenseRetriever;
     private @Mock IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private @Mock JwtApplinkFinder jwtApplinkFinder;
 
     private @Mock Request.Builder requestBuilder;
     private @Mock Bundle bundle;
@@ -119,10 +130,9 @@ public class ConnectEventHandlerOAuthTest
         when(requestBuilder.execute(Request.Method.POST)).thenReturn(responsePromise);
         when(responsePromise.claim()).thenReturn(response);
         when(response.getStatusCode()).thenReturn(200);
-        ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager,
-                userManager, httpClient, consumerService, applicationProperties, productAccessor,
-                bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever,
-                PROD_MODE, iFrameRenderStrategyRegistry, remotablePluginAccessorFactory);
+        ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, consumerService,
+                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, DEV_MODE,
+                iFrameRenderStrategyRegistry, remotablePluginAccessorFactory,jwtApplinkFinder);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.OAUTH, PUBLIC_KEY, "https://server:1234/baseUrl"), null);
     }
 

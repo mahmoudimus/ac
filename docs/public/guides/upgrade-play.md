@@ -41,7 +41,7 @@ jsonNode.getFieldNames() -> jsonNode.fieldNames()
 1. Rename `atlassian-plugin.xml` to `atlassian-connect.json` per our [migration guide](./migrating-from-xml-to-json-descriptor.html)
 
     a. make sure you remove any `&amp;` characters from the url as it is required in xml but breaks in json
-    b. Permissions need to be migrated to [scopes](../concepts/scopes.html)
+    b. Permissions need to be migrated to [scopes](../scopes/scopes.html)
     c. You _must_ have the lifecycle `installed` event registered to `/installed`
 
 2. Update your `Application` class to invoke the `ACController`'s json descriptor method. The end result should look something like:

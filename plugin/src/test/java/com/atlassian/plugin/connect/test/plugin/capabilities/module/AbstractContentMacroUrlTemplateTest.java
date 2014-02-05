@@ -4,10 +4,11 @@ import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.module.AbstractMacro;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.service.IsDevModeServiceImpl;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.ContentEntityForTests;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -63,7 +64,7 @@ public abstract class AbstractContentMacroUrlTemplateTest<B extends BaseContentM
     protected ConversionContext conversionContext;
 
     protected RemotablePluginAccessorFactory remotablePluginAccessorFactory = new RemotablePluginAccessorFactoryForTests();
-    protected UrlVariableSubstitutor urlVariableSubstitutor = new UrlVariableSubstitutor();
+    protected UrlVariableSubstitutor urlVariableSubstitutor = new UrlVariableSubstitutor(new IsDevModeServiceImpl());
 
     private final String variable;
     private final String expectedValue;

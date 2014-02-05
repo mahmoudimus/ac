@@ -25,29 +25,22 @@ information on the Marketplace.
 The OnDemand try and buy flow for Atlassian Connect add-ons is similar to that of traditional
 downloadable add-ons, but with a few differences. These include:
 
-- Installation of a Connect add-on in OnDemand really means that the plugin descriptor is installed
-in the OnDemand instance.
-- ONDemand customers can subscribe to your Connect add-on. After a 30-day trial period, the customer
+- OnDemand customers can subscribe to your Connect add-on. After a 30-day trial period, the customer
 will begin paying the subscription fee that you set.
 - Atlassian Connect add-on trials automatically roll into a subscription, and then roll from one
-month into another.
-- If the administrator cancels a trial or unsubscribes from the add-on, the add-on may remain in the
-UI until the add-on descriptor is uninstalled. In OnDemand, this removes removes any elements of the
-add-on from the application's UI.
+month into another unless cancelled.
+- If the administrator cancels a trial or unsubscribes from the add-on, the add-on may remain
+installed in the application until the add-on descriptor is removed. Be sure to check the license
+attribute on all incoming requests from the Atlassian application.
 
-You should keep in mind that installation and licensing are separate functions for Atlassian Connect add-ons. Thus,
-an add-on with an expired license can retain a presence in the UI and retain data generated while active. Every
-request made to your add-on includes the license status for that particular instance. It is up to you to take
-appropriate action for a request where the license state is not valid.
+Keep in mind that installation and licensing are separate functions for Atlassian Connect add-ons.
+Thus, an add-on with an expired license can retain a presence in the UI and retain data generated
+while active. Every request made to your add-on includes the license status for that particular
+instance. It is up to you to take appropriate action for a request where the license state is not
+valid. See the [licensing documentation](../concepts/licensing.html) for details.
 
-For more about how administrators install and manage add-ons, see the [Universal Plugin Manager documentation](https://confluence.atlassian.com/display/UPM/About+the+Universal+Plugin+Manager).
-
-## Creating Marketing Assets for your add-on
-You can associate logos, screenshots and other marketing assets for your listing by referring to the
-assets bundle in the add-on descriptor.
-
-For an Atlassian Connect add-on compatible with OnDemand, we suggest calling out OnDemand
-compatibility in your banner image or screenshots.
+For more about how administrators install and manage add-ons, see the
+[Universal Plugin Manager documentation](https://confluence.atlassian.com/display/UPM/About+the+Universal+Plugin+Manager).
 
 ## Making your listing public
 When you are ready to make your privately listed add-on public, initiate the process as follows:
@@ -60,7 +53,8 @@ listing which are not for a private listing, such as the pricing model and marke
 Marketing labels classify your add-on, and help customers find it on the Marketplace.
 5. When ready, click the **Submit for approval** button at the bottom of the form.
 
-This creates a JIRA issue that notifies the Marketplace team that your add-on is ready for review. The Atlassian
-Marketplace team checks your add-on and the listing itself against the requirements specified in the approval process.
-Note that the [approval process](https://developer.atlassian.com/display/MARKET/Add-on+approval+guidelines#Add-onapprovalguidelines-CriteriaforAtlassianConnectadd-ons) may take several days, and
-typically involves several rounds of feedback and updates to your listing.
+This creates a JIRA issue that notifies the Marketplace team that your add-on is ready for review.
+The Atlassian Marketplace team checks your add-on and the listing itself against the requirements
+specified in the approval process. Note that the
+[approval process](https://developer.atlassian.com/display/MARKET/Add-on+approval+guidelines#Add-onapprovalguidelines-CriteriaforAtlassianConnectadd-ons)
+may take several days, and typically involves several rounds of feedback and updates to your listing.

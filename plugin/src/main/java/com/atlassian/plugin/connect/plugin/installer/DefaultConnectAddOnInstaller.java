@@ -15,6 +15,7 @@ import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.upm.spi.PluginInstallException;
+import com.google.common.base.Strings;
 import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final RemoteEventsHandler remoteEventsHandler;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final ConnectApplinkManager connectApplinkManager;
-    private final ConnectDescriptorRegistry connectDescriptorRegistry;
+    private final ConnectAddonRegistry connectAddonRegistry;
     private final ConnectEventHandler connectEventHandler;
     private final SharedSecretService sharedSecretService;
     private final ConnectAddOnUserService connectAddOnUserService;
@@ -50,7 +51,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                                         RemoteEventsHandler remoteEventsHandler,
                                         BeanToModuleRegistrar beanToModuleRegistrar,
                                         ConnectApplinkManager connectApplinkManager,
-                                        ConnectDescriptorRegistry connectDescriptorRegistry,
+                                        ConnectAddonRegistry connectAddonRegistry,
                                         ConnectEventHandler connectEventHandler,
                                         SharedSecretService sharedSecretService,
                                         ConnectAddOnUserService connectAddOnUserService)
@@ -62,7 +63,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.remoteEventsHandler = remoteEventsHandler;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
         this.connectApplinkManager = connectApplinkManager;
-        this.connectDescriptorRegistry = connectDescriptorRegistry;
+        this.connectAddonRegistry = connectAddonRegistry;
         this.connectEventHandler = connectEventHandler;
         this.sharedSecretService = sharedSecretService;
         this.connectAddOnUserService = checkNotNull(connectAddOnUserService);
@@ -114,14 +115,20 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
-                //applink MUST be created before any modules
+                //applink, baseurl and secret MUST be created before any modules
                 connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, connectAddOnUserService.getOrCreateUserKey(addOn.getKey()));
-
+                connectAddonRegistry.storeBaseUrl(pluginKey, addOn.getBaseUrl());
+                
+                if(!Strings.isNullOrEmpty(sharedSecret))
+                {
+                    connectAddonRegistry.storeSecret(pluginKey, sharedSecret);
+                }
+                
                 //create the modules
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
 
                 //save the descriptor so we can use it again if we ever need to re-enable the addon
-                connectDescriptorRegistry.storeDescriptor(pluginKey, jsonDescriptor);
+                connectAddonRegistry.storeDescriptor(pluginKey, jsonDescriptor);
 
                 //make the sync callback if needed
                 connectEventHandler.pluginInstalled(addOn, sharedSecret);

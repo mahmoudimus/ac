@@ -1,7 +1,7 @@
 (function(){
     define(['inline-dialog/simple'], function() {
 
-        _AP.require(["inline-dialog/simple"], function(simpleInlineDialog) {
+        _AP.require(["inline-dialog/simple", "_dollar"], function(simpleInlineDialog, $) {
 
             var INLINE_DIALOG_SELECTOR = '.aui-inline-dialog';
 
@@ -39,21 +39,45 @@
 
 
             test("Inline dialog creates an inline dialog", function() {
-                var href ="someurl";
-                var options = {};
+                var href = "someurl";
+                var options = {
+                    bindTo: $("<div id='acmodule-foo' class='ap-inline-dialog'></div>")
+                };
                 simpleInlineDialog(href, options);
                 ok(AJS.InlineDialog.calledOnce);
             });
 
             test("Inline dialog returns the inline dialog id", function() {
-                var href ="someurl";
-                var options = {};
+                $("<div id='ac-module-awesome' class='ap-inline-dialog'></div>")
+
+                var href = "someurl";
+                var options = {
+                    bindTo: $("<div id='acmodule-foo' class='ap-inline-dialog'></div>")
+                };
 
                 var inlineDialog = simpleInlineDialog(href, options);
-                ok(inlineDialog.id.length > 1);
+                equal(inlineDialog.id, "ap-acmodule-foo");
             });
 
+            test("Inline dialog bails if no element to bind to", function() {
+                var options = {
+                };
+                ok(!simpleInlineDialog("someurl", options));
+            });
 
+            test("Inline dialog bails if bind target is not a jQuery object", function() {
+                var options = {
+                    bindTo: $("<div id='acmodule-foo' class='ap-inline-dialog'></div>")[0]
+                };
+                ok(!simpleInlineDialog("someurl", options));
+            });
+
+            test("Inline dialog bails if web-item ID is not found", function() {
+                var options = {
+                    bindTo: $("<div class='ap-inline-dialog'></div>")
+                };
+                ok(!simpleInlineDialog("someurl", options));
+            });
         });
     });
 })();
