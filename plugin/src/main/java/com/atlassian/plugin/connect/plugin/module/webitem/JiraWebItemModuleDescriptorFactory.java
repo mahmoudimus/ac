@@ -13,7 +13,6 @@ import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebLink;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkNotNull;

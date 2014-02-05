@@ -9,11 +9,11 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModu
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IconModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
+import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.descriptor.WebItemModuleDescriptorFactoryForTests;
-import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
