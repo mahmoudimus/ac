@@ -21,7 +21,7 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function(
                 options.ns = itemId;
             }
             if (!options.cp) {
-                options.cp = AJS.Meta.get("context-path");
+                options.cp = AJS.contextPath();
             }
             options.container = options.ns;
             options.src = options.url = options.url || contentUrl;
