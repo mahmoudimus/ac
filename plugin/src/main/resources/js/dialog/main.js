@@ -41,7 +41,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
 
     $dialog = createDialogElement(options.id, options.titleId, options.size).appendTo(AJS.$("body"));
     if (options.width || options.height) {
-      _AP.AJS.layer($dialog).changeSize(options.width, options.height);
+      AJS.layer($dialog).changeSize(options.width, options.height);
     }
 
     var dialog = AJS.dialog2($dialog);

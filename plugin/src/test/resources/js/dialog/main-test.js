@@ -15,10 +15,10 @@ define(['dialog/main'], function() {
         this.layerSpy = {
           changeSize: sinon.spy()
         };
-        _AP.AJS = {
-          dialog2: sinon.stub().returns(this.dialogSpy),
-          layer: sinon.stub().returns(this.layerSpy)
-        };
+
+        AJS.dialog2 = sinon.stub().returns(this.dialogSpy);
+        AJS.layer = sinon.stub().returns(this.layerSpy);
+
         this.server = sinon.fakeServer.create();
       },
       teardown: function() {
