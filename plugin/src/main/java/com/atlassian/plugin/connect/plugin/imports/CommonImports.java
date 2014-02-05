@@ -6,6 +6,7 @@ import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
+import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
@@ -72,6 +73,7 @@ public class CommonImports
     private final ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry;
     private final RemotePluginLicenseService remotePluginLicenseService;
     private final JwtService jwtService;
+    private final JwtApplinkFinder jwtApplinkFinder;
 
 
     @Inject
@@ -105,7 +107,8 @@ public class CommonImports
             @ComponentImport HttpClient httpClient,
             @ComponentImport ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry,
             @ComponentImport RemotePluginLicenseService remotePluginLicenseService,
-            @ComponentImport JwtService jwtService)
+            @ComponentImport JwtService jwtService,
+            @ComponentImport JwtApplinkFinder jwtApplinkFinder)
     {
         this.pluginController = pluginController;
         this.templateRenderer = templateRenderer;
@@ -137,5 +140,6 @@ public class CommonImports
         this.webHookListenerRegistry = webHookListenerRegistry;
         this.remotePluginLicenseService = remotePluginLicenseService;
         this.jwtService = jwtService;
+        this.jwtApplinkFinder = jwtApplinkFinder;
     }
 }

@@ -1,13 +1,16 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.event;
 
+import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
+import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
@@ -18,6 +21,7 @@ import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventManager;
+import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserKey;
@@ -67,6 +71,7 @@ public class ConnectEventHandlerJwtTest
     private static final String PRODUCT_URL = "https://test.atlassian.com/confluence";
     private static final String UNSECURED_BASE_URL = "http://server:1234/baseUrl";
     private static final String SECURED_BASE_URL = "https://server:1234/baseUrl";
+    private static final String PLUGIN_KEY = "my-plugin-key";
 
     private @Mock EventPublisher eventPublisher;
     private @Mock PluginEventManager pluginEventManager;
@@ -83,6 +88,9 @@ public class ConnectEventHandlerJwtTest
     private @Mock BeanToModuleRegistrar beanToModuleRegistrar;
     private @Mock LicenseRetriever licenseRetriever;
     private @Mock IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private @Mock JwtApplinkFinder jwtApplinkFinder;
+    private @Mock ApplicationLink applicationLink;
+    private @Mock Plugin plugin;
 
     private @Mock Request.Builder requestBuilder;
     private @Mock Bundle bundle;
@@ -123,7 +131,7 @@ public class ConnectEventHandlerJwtTest
         // make a call over http (note the lack of "s") and it shall be rejected
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
                 applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE,
-                iFrameRenderStrategyRegistry);
+                iFrameRenderStrategyRegistry, jwtApplinkFinder);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, UNSECURED_BASE_URL), SHARED_SECRET);
     }
 
@@ -134,8 +142,18 @@ public class ConnectEventHandlerJwtTest
         // make a call over http (note the lack of "s") and it shall be allowed in dev mode
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
                 applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, DEV_MODE,
-                iFrameRenderStrategyRegistry);
+                iFrameRenderStrategyRegistry, jwtApplinkFinder);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, UNSECURED_BASE_URL), SHARED_SECRET); // no exception
+    }
+
+    @Test
+    public void uninstallEventDisablesAddOnUser()
+    {
+        ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
+                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, DEV_MODE,
+                iFrameRenderStrategyRegistry, jwtApplinkFinder);
+        connectEventHandler.pluginUninstalled(new PluginUninstalledEvent(plugin));
+        verify(applicationLink).removeProperty("user.key");
     }
 
     private static ArgumentMatcher<String> hasValidSharedSecret()
@@ -165,9 +183,11 @@ public class ConnectEventHandlerJwtTest
         when(responsePromise.claim()).thenReturn(response);
         when(response.getStatusCode()).thenReturn(200);
         when(applicationProperties.getBaseUrl(UrlMode.CANONICAL)).thenReturn(PRODUCT_URL);
+        when(jwtApplinkFinder.find(PLUGIN_KEY)).thenReturn(applicationLink);
+        when(plugin.getKey()).thenReturn(PLUGIN_KEY);
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
                 applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE,
-                iFrameRenderStrategyRegistry);
+                iFrameRenderStrategyRegistry, jwtApplinkFinder);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, SECURED_BASE_URL), SHARED_SECRET);
     }
 }
