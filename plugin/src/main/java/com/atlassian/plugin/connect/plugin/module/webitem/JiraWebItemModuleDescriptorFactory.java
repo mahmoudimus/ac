@@ -52,12 +52,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(
-            String url
-            , String pluginKey
-            , String moduleKey
-            , boolean absolute
-            , AddOnUrlContext addOnUrlContext)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
     {
         return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
                 iFrameUriBuilderFactory, urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext);

@@ -101,6 +101,16 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
+    public void linkIdIsCorrect()
+    {
+        WebItemModuleBean bean = createWebItemBeanBuilder().build();
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
+        descriptor.enabled();
+
+        assertThat(descriptor.getLink().getId(), is("my-key-my-web-item"));
+    }
+
+    @Test
     public void sectionIsCorrect()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
