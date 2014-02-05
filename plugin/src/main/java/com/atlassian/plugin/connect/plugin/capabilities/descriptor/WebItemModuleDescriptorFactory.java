@@ -1,23 +1,21 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
-
 import com.google.common.base.Joiner;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;
@@ -71,7 +69,8 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
                     .setText(bean.getTooltip().getValue());
         }
 
-        Element linkElement = webItemElement.addElement("link").addAttribute("linkId", webItemKey);
+        String linkId = plugin.getKey() + "-" + webItemKey;
+        Element linkElement = webItemElement.addElement("link").addAttribute("linkId", linkId);
         linkElement.setText(bean.getUrl());
 
         List<String> styles = newArrayList(bean.getStyleClasses());

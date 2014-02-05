@@ -6,6 +6,7 @@ import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
+import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -70,6 +71,7 @@ public class ConnectEventHandlerOAuthTest
     private @Mock BeanToModuleRegistrar beanToModuleRegistrar;
     private @Mock LicenseRetriever licenseRetriever;
     private @Mock IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private @Mock JwtApplinkFinder jwtApplinkFinder;
 
     private @Mock Request.Builder requestBuilder;
     private @Mock Bundle bundle;
@@ -119,7 +121,7 @@ public class ConnectEventHandlerOAuthTest
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager,
                 userManager, httpClient, requestSigner, consumerService, applicationProperties, productAccessor,
                 bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever,
-                PROD_MODE, iFrameRenderStrategyRegistry);
+                PROD_MODE, iFrameRenderStrategyRegistry, jwtApplinkFinder);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.OAUTH, PUBLIC_KEY, "https://server:1234/baseUrl"), null);
     }
 
