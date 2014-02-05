@@ -80,7 +80,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
       $nexus = null;
     }
     if($dialog){
-      _AP.AJS.dialog2($dialog).hide();
+      AJS.dialog2($dialog).hide();
     } else {
         AJS.$('.aui-dialog .ap-servlet-placeholder').trigger('ra.dialog.close');
     }
