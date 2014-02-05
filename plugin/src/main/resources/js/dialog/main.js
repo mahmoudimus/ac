@@ -59,6 +59,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
     var $el = AJS.$("<section></section>")
       .addClass("aui-layer aui-layer-hidden aui-layer-modal")
       .addClass("aui-dialog2 aui-dialog2-" + (size || "medium"))
+      .addClass("ap-aui-dialog2 ap-aui-dialog2-" + (size || "medium"))
       .attr("role", "dialog")
       .attr("data-aui-blanketed", "true")
       .attr("data-aui-focus-selector", ".aui-dialog2-content :input:visible:enabled");
