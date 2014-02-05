@@ -44,7 +44,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
       _AP.AJS.layer($dialog).changeSize(options.width, options.height);
     }
 
-    var dialog = _AP.AJS.dialog2($dialog);
+    var dialog = AJS.dialog2($dialog);
     $nexus = $("<div class='ap-servlet-placeholder ap-dialog-container'></div>").appendTo($dialog);
     dialog.on("hide", function() {
       // We always show the dialog when it's created, so we need to remove() when it's hidden
