@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.base.Strings;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Named
 @ExportAsDevService

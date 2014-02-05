@@ -15,6 +15,7 @@ import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.upm.spi.PluginInstallException;
+import com.google.common.base.Strings;
 import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
-
-import com.google.common.base.Strings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

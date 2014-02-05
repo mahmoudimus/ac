@@ -14,8 +14,8 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredElementText;
 
 /**
  * Dynamically creates an application link for a plugin host

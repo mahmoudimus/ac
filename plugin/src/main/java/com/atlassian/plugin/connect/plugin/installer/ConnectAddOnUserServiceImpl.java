@@ -24,6 +24,14 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     private static final String ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY = "atlassian-addons"; // in order to not occupy a license this has to match constant in user-provisioning-plugin/src/main/java/com/atlassian/crowd/plugin/usermanagement/userprovisioning/Constants.java
     private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
+    // Use a "no reply" email address for add-on users so that
+    //   * reset password attempts are not received by anyone, and
+    //   * there are no error messages in logs about failing to email.
+    // Note that an admin can still change the email address but that non-admins can't simply click a "I lost my password" link and take control of the account.
+    // We also rely on the user-provisioning-plugin to count add-on users as consuming licenses if an admin does take control of an account and use it to log in.
+    // The rationale is that either they can't log in as these users, in which case they consume no licenses, or logging in is possible and such users do consume licenses.
+    private static final String NO_REPLY_EMAIL_ADDRESS = "noreply@mailer.atlassian.com";
+
     @Autowired
     public ConnectAddOnUserServiceImpl(ApplicationService applicationService, ApplicationManager applicationManager) throws ApplicationNotFoundException
     {
@@ -77,9 +85,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     {
         ensureGroupExists();
         User user = ensureUserExists(userKey);
-        ensureUserIsInGroup(userKey);
-
-        // TODO ACDEV-936: disable password recovery on this user
+        ensureUserIsInGroup(user.getName());
 
         return user.getName();
     }
@@ -99,13 +105,24 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         }
     }
 
-    private User ensureUserExists(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException
+    private User ensureUserExists(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException
     {
         User user = findUserByKey(userKey);
 
         if (null == user)
         {
             user = createUser(userKey);
+        }
+        else
+        {
+            // just in case an admin changes the email address
+            // (we don't rely on this to prevent an admin taking control of the account, but it would make it more difficult)
+            if (!NO_REPLY_EMAIL_ADDRESS.equals(user.getEmailAddress()))
+            {
+                UserTemplate userTemplate = new UserTemplate(user);
+                userTemplate.setEmailAddress(NO_REPLY_EMAIL_ADDRESS);
+                applicationService.updateUser(application, userTemplate);
+            }
         }
 
         return user;
@@ -117,7 +134,9 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         try
         {
             // Justin Koke says that NONE password prevents logging in
-            user = applicationService.addUser(application, new UserTemplate(userKey), PasswordCredential.NONE);
+            UserTemplate userTemplate = new UserTemplate(userKey);
+            userTemplate.setEmailAddress(NO_REPLY_EMAIL_ADDRESS); // so that "reset password" emails go nowhere
+            user = applicationService.addUser(application, userTemplate, PasswordCredential.NONE);
         }
         catch (InvalidUserException iue)
         {

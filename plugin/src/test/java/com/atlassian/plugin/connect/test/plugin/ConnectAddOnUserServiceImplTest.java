@@ -10,9 +10,11 @@ import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserServiceImpl;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -26,6 +28,7 @@ import static org.mockito.Mockito.*;
 public class ConnectAddOnUserServiceImplTest
 {
     private static final String GROUP_KEY = "atlassian-addons";
+    private static final String ADD_ON_EMAIL_ADDRESS = "noreply@mailer.atlassian.com";
     private ConnectAddOnUserService connectAddOnUserService;
 
     private @Mock ApplicationService applicationService;
@@ -78,6 +81,40 @@ public class ConnectAddOnUserServiceImplTest
         when(applicationService.isUserDirectGroupMember(eq(application), eq(USER_KEY), eq(GROUP_KEY))).thenReturn(true);
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
         verify(applicationService, never()).addUserToGroup(eq(application), eq(USER_KEY), eq(GROUP_KEY));
+    }
+
+    @Test
+    public void userIsCreatedWithCorrectEmailAddress() throws ConnectAddOnUserInitException, InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException
+    {
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
+    }
+
+    @Test
+    public void userEmailIsCorrectedIfFoundChanged() throws ConnectAddOnUserInitException, UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException
+    {
+        theUserExists();
+        when(user.getEmailAddress()).thenReturn("wrong");
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        verify(applicationService).updateUser(eq(application), argThat(hasExpectedEmailAddress()));
+    }
+
+    private ArgumentMatcher<UserTemplate> hasExpectedEmailAddress()
+    {
+        return new ArgumentMatcher<UserTemplate>()
+        {
+            @Override
+            public boolean matches(Object argument)
+            {
+                return argument instanceof UserTemplate && ADD_ON_EMAIL_ADDRESS.equals(((UserTemplate) argument).getEmailAddress());
+            }
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText(UserTemplate.class.getSimpleName() + " with the email address").appendValue(ADD_ON_EMAIL_ADDRESS);
+            }
+        };
     }
 
     private void theUserExists() throws UserNotFoundException, InvalidUserException, OperationFailedException, InvalidCredentialException, ApplicationPermissionException
