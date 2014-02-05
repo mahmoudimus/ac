@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserInitExcepti
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserServiceImpl;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -43,7 +42,6 @@ public class ConnectAddOnUserServiceImplTest
         assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY), is(USER_KEY));
     }
 
-    @Ignore
     @Test
     public void findsUserByKey() throws ConnectAddOnUserInitException, UserNotFoundException
     {
@@ -58,7 +56,6 @@ public class ConnectAddOnUserServiceImplTest
         assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY), is(USER_KEY));
     }
 
-    @Ignore
     @Test
     public void userIsAddedToGroupWhenItCreatesTheUser() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
     {
@@ -66,7 +63,6 @@ public class ConnectAddOnUserServiceImplTest
         verify(applicationService).addUserToGroup(eq(application), eq(USER_KEY), eq(GROUP_KEY));
     }
 
-    @Ignore
     @Test
     public void userIsAddedToGroupWhenTheUserAlreadyExistsButIsNotAMember() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException, InvalidCredentialException, InvalidUserException
     {

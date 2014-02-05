@@ -75,8 +75,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
     private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException
     {
-        return userKey;
-        /*
         ensureGroupExists();
         User user = ensureUserExists(userKey);
         ensureUserIsInGroup(userKey);
@@ -85,8 +83,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
         // TODO ACDEV-936: disable password recovery on this user
 
-        return user;
-        */
+        return user.getName();
     }
 
     private void ensureUserIsInGroup(String userKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException
