@@ -1,6 +1,9 @@
 
 # Release Notes
 
+## [1.0-m31](../release-notes/1-0-m31.html)
+* Support for Inline Dialogs
+
 ## [1.0-m30](../release-notes/1-0-m30.html)
 * Removal of email sending resource
 * Support for [JIRA issue properties](../modules/jira/entity-property.html)
