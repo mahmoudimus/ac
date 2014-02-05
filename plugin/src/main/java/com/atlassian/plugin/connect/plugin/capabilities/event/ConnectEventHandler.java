@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,8 +27,10 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
@@ -41,7 +45,6 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
-import com.atlassian.webhooks.spi.plugin.RequestSigner;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -53,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -72,7 +76,6 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final PluginEventManager pluginEventManager;
     private final UserManager userManager;
     private final HttpClient httpClient;
-    private final RequestSigner requestSigner;
     private final ConsumerService consumerService;
     private final ApplicationProperties applicationProperties;
     private final ProductAccessor productAccessor;
@@ -83,13 +86,13 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final LicenseRetriever licenseRetriever;
     private final IsDevModeService isDevModeService;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
     @Inject
     public ConnectEventHandler(EventPublisher eventPublisher,
                                PluginEventManager pluginEventManager,
                                UserManager userManager,
                                HttpClient httpClient,
-                               RequestSigner requestSigner,
                                ConsumerService consumerService,
                                ApplicationProperties applicationProperties,
                                ProductAccessor productAccessor,
@@ -99,14 +102,14 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                                BeanToModuleRegistrar beanToModuleRegistrar,
                                LicenseRetriever licenseRetriever,
                                IsDevModeService devModeService,
-                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, RemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
         this.licenseRetriever = licenseRetriever;
         this.userManager = userManager;
         this.httpClient = httpClient;
-        this.requestSigner = requestSigner;
+        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.consumerService = consumerService;
         this.applicationProperties = applicationProperties;
         this.productAccessor = productAccessor;
@@ -127,7 +130,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     @PluginEventListener
-    @SuppressWarnings ("unused")
+    @SuppressWarnings("unused")
     public void pluginEnabled(PluginEnabledEvent pluginEnabledEvent)
     {
         final Plugin plugin = pluginEnabledEvent.getPlugin();
@@ -151,7 +154,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     @PluginEventListener
-    @SuppressWarnings ("unused")
+    @SuppressWarnings("unused")
     public void pluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
     {
         final Plugin plugin = pluginDisabledEvent.getPlugin();
@@ -162,7 +165,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     @PluginEventListener
-    @SuppressWarnings ("unused")
+    @SuppressWarnings("unused")
     public void pluginDisabled(PluginDisabledEvent pluginDisabledEvent)
     {
         final Plugin plugin = pluginDisabledEvent.getPlugin();
@@ -177,7 +180,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     @PluginEventListener
-    @SuppressWarnings ("unused")
+    @SuppressWarnings("unused")
     public void pluginUninstalled(PluginUninstalledEvent pluginUninstalledEvent)
     {
         final Plugin plugin = pluginUninstalledEvent.getPlugin();
@@ -259,8 +262,11 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             request.setContentType(MediaType.APPLICATION_JSON);
             request.setEntity(jsonEventData);
 
-            //TODO: is there a better way to sign this?
-            requestSigner.sign(installHandler, pluginKey, request);
+            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(pluginKey).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, List<String>>emptyMap());
+            if (authHeader.isDefined())
+            {
+                request.setHeader(AUTHORIZATION_HEADER, authHeader.get());
+            }
 
             Response response = request.execute(Request.Method.POST).claim();
             int statusCode = response.getStatusCode();
@@ -299,16 +305,16 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
 
         dataBuilder.withBaseUrl(nullToEmpty(baseUrl))
-                .withPluginKey(pluginKey)
-                .withClientKey(nullToEmpty(consumer.getKey()))
-                .withPublicKey(nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
-                .withSharedSecret(nullToEmpty(sharedSecret))
-                .withPluginsVersion(nullToEmpty(getConnectPluginVersion()))
-                .withServerVersion(nullToEmpty(applicationProperties.getBuildNumber()))
-                .withServiceEntitlementNumber(nullToEmpty(licenseRetriever.getServiceEntitlementNumber(pluginKey)))
-                .withProductType(nullToEmpty(productAccessor.getKey()))
-                .withDescription(nullToEmpty(consumer.getDescription()))
-                .withEventType(eventType);
+                   .withPluginKey(pluginKey)
+                   .withClientKey(nullToEmpty(consumer.getKey()))
+                   .withPublicKey(nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
+                   .withSharedSecret(nullToEmpty(sharedSecret))
+                   .withPluginsVersion(nullToEmpty(getConnectPluginVersion()))
+                   .withServerVersion(nullToEmpty(applicationProperties.getBuildNumber()))
+                   .withServiceEntitlementNumber(nullToEmpty(licenseRetriever.getServiceEntitlementNumber(pluginKey)))
+                   .withProductType(nullToEmpty(productAccessor.getKey()))
+                   .withDescription(nullToEmpty(consumer.getDescription()))
+                   .withEventType(eventType);
 
         if (null != addon && null != addon.getAuthentication() && AuthenticationType.OAUTH.equals(addon.getAuthentication().getType()))
         {

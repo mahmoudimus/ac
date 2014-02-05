@@ -8,6 +8,8 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallHandler;
 import com.atlassian.upm.spi.PluginInstallResult;
@@ -20,11 +22,13 @@ public class TestPluginInstaller
     public static final String DESCRIPTOR_PREFIX = "connect-descriptor-";
     private final PluginInstallHandler installHandler;
     private final PluginController pluginController;
+    private final ApplicationProperties applicationProperties;
 
-    public TestPluginInstaller(PluginInstallHandler installHandler, PluginController pluginController)
+    public TestPluginInstaller(PluginInstallHandler installHandler, PluginController pluginController, ApplicationProperties applicationProperties)
     {
         this.installHandler = installHandler;
         this.pluginController = pluginController;
+        this.applicationProperties = applicationProperties;
     }
 
     public Plugin installPlugin(ConnectAddonBean bean) throws IOException
@@ -39,6 +43,11 @@ public class TestPluginInstaller
     public void uninstallPlugin(Plugin plugin) throws IOException
     {
         pluginController.uninstall(plugin);
+    }
+    
+    public String getInternalAddonBaseUrl(String pluginKey)
+    {
+        return applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/" + AddonTestFilter.FILTER_MAPPING + "/" + pluginKey;
     }
 
     private File createTempDescriptor(String json) throws IOException
