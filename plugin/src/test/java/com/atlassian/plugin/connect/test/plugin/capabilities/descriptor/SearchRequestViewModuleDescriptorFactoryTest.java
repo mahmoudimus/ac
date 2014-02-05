@@ -7,8 +7,6 @@ import com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition;
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactory;
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
@@ -54,10 +52,6 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     @Mock
     private DelegatingComponentAccessor componentAccessor;
     @Mock
-    private UserManager userManager;
-    @Mock
-    private MailQueue mailQueue;
-    @Mock
     private HostContainer hostContainer;
 
     private SearchRequestViewModuleDescriptorImpl descriptor;
@@ -73,7 +67,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
 
         ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(hostContainer);
         ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(
-                new JiraProductAccessor(userManager, mailQueue, new JiraConditions()), new ParamsModuleFragmentFactory());
+                new JiraProductAccessor(new JiraConditions()), new ParamsModuleFragmentFactory());
         when(hostContainer.create(UserLoggedInCondition.class)).thenReturn(new UserLoggedInCondition());
 
         when(componentAccessor.getComponent(SearchRequestURLHandler.class)).thenReturn(urlHandler);

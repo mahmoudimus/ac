@@ -5,7 +5,7 @@ _AP.define("host/content", ["_dollar"], function ($) {
     "use strict";
 
     function getContentUrl(pluginKey, capability){
-        return AJS.contextPath() + "/plugins/servlet/ac/" + pluginKey + "/" + capability.key;
+        return AJS.contextPath() + "/plugins/servlet/ac/" + encodeURIComponent(pluginKey) + "/" + encodeURIComponent(capability.key);
     }
 
     function getIframeHtmlForKey(pluginKey, productContextJson, capability) {

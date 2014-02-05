@@ -48,7 +48,8 @@ public class DefaultConnectAddOnInstallerJwtTest
     private @Mock BeanToModuleRegistrar beanToModuleRegistrar;
     private @Mock BundleContext bundleContext;
     private @Mock ConnectApplinkManager connectApplinkManager;
-    private @Mock ConnectDescriptorRegistry connectDescriptorRegistry;
+    private @Mock
+    ConnectAddonRegistry connectAddonRegistry;
     private @Mock ConnectEventHandler connectEventHandler;
     private @Mock ConnectAddOnUserService connectAddOnUserService;
 
@@ -83,7 +84,7 @@ public class DefaultConnectAddOnInstallerJwtTest
         when(addOnUser.getName()).thenReturn(ADD_ON_USER_KEY);
         when(connectAddOnUserService.getOrCreateUserKey(ADD_ON_BEAN.getKey())).thenReturn(ADD_ON_USER_KEY);
         new DefaultConnectAddOnInstaller(remotePluginArtifactFactory, pluginController, pluginAccessor, oAuthLinkManager,
-                remoteEventsHandler, beanToModuleRegistrar, connectApplinkManager, connectDescriptorRegistry, connectEventHandler, new SharedSecretServiceImpl(),
+                remoteEventsHandler, beanToModuleRegistrar, connectApplinkManager, connectAddonRegistry, connectEventHandler, new SharedSecretServiceImpl(),
                 connectAddOnUserService)
             .install("username", ConnectModulesGsonFactory.getGson().toJson(ADD_ON_BEAN));
     }

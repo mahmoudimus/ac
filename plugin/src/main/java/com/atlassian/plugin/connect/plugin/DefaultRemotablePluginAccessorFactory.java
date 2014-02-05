@@ -13,7 +13,7 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
-import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -29,6 +29,7 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class DefaultRemotablePluginAccessorFactory implements RemotablePluginAccessorFactory, DisposableBean
 {
     private final ConnectApplinkManager connectApplinkManager;
-    private final ConnectDescriptorRegistry connectDescriptorRegistry;
+    private final ConnectAddonRegistry connectAddonRegistry;
     private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
     private final PluginAccessor pluginAccessor;
@@ -62,7 +63,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     @Autowired
     public DefaultRemotablePluginAccessorFactory(ConnectApplinkManager connectApplinkManager,
-            ConnectDescriptorRegistry connectDescriptorRegistry,
+            ConnectAddonRegistry connectAddonRegistry,
             OAuthLinkManager oAuthLinkManager,
             CachingHttpContentRetriever httpContentRetriever,
             PluginAccessor pluginAccessor,
@@ -73,7 +74,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
             UserManager userManager)
     {
         this.connectApplinkManager = connectApplinkManager;
-        this.connectDescriptorRegistry = connectDescriptorRegistry;
+        this.connectAddonRegistry = connectAddonRegistry;
         this.oAuthLinkManager = oAuthLinkManager;
         this.httpContentRetriever = httpContentRetriever;
         this.pluginAccessor = pluginAccessor;
@@ -198,10 +199,20 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     private Supplier<URI> getDisplayUrl(final String pluginKey)
     {
-        final ApplicationLink link = connectApplinkManager.getAppLink(pluginKey);
-        if (link != null)
+        final String storedBaseUrl = connectAddonRegistry.getBaseUrl(pluginKey);
+
+        if (!Strings.isNullOrEmpty(storedBaseUrl))
         {
-            return Suppliers.ofInstance(link.getDisplayUrl());
+            return Suppliers.compose(ToUriFunction.INSTANCE,
+                    new Supplier<String>()
+                    {
+                        @Override
+                        public String get()
+                        {
+                            return storedBaseUrl;
+                        }
+                    }
+            );
         }
         else
         {
