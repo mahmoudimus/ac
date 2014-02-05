@@ -3,7 +3,7 @@
 The Atlassian User Interface Library (AUI) is the framework that Atlassian uses to build our
 products. AUI is a library of Javascript, CSS, templates and other resources you can include
 in your projects. Building a user interface with AUI automatically ensures your add-on will
-match its target applications user interface.
+match its target application's user interface.
 
 Because style properties from the parent page don't cascade down to your add-on's iframe,
 you'll need to control your page's design to match the parent. Using the AUI flat-pack
@@ -37,7 +37,7 @@ An easy way to get started with AUI is to experiment with the [sandbox](https://
 ## Minimal styling
 
 Even if you intend to provide your own styles, your add-on's pages still need minimal set of styles in
-order to behave proerply inside Atlassian Connect iframes. Add the following to your HTML to bring in
+order to behave properly inside Atlassian Connect iframes. Add the following to your HTML to bring in
 the minimal, Connect-specific styles:
 
 ```

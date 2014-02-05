@@ -3,14 +3,9 @@
 Any add-on intended for sale on the [Atlassian Marketplace](https://marketplace.atlassian.com) needs
 to be license-enabled. Add-ons work with the atlassian application to apply licensing requirements.
 
-The Atlassian application does the following:
+The Atlassian application reports the licensing status of the instance to the plugin in each request.
 
- * stores licenses for the Atlassian instance, including local and remote plugin licenses.
- * checks the license status for the an instance before servicing a request that involves a
-   license-enabled add-on
- * reports the licensing status of the instance to the plugin in each request
-
-The add-on should perform these functions: 
+The add-on should:
 
  * check the license status in service requests it receives from the Atlassian application
  * implement the logic appropriate for the given license status. For instance, for an expired
@@ -23,11 +18,12 @@ In a nutshell, to implement licensing for Atlassian Connect, you need to:
 
  * set the `enableLicensing` flag in the add-on descriptor for the add-on
  * write code to check the `lic` URL parameter for all incoming requests
- * use a REST resource at /license to get additional license information for each application
+ * use a REST resource at `/rest/atlassian-connect/1/license` to get additional license information
+   for each application
  * implement the logic appropriate for the add-on based on the license status
 
 #### Note:
-The results of a license check by the Atlassian application is cached for 5 minutes.
+The result of a license check by the Atlassian application is cached for 5 minutes.
 
 ## Setting the License-Enabled Flag
 
@@ -60,7 +56,8 @@ http://....?lic=active
 ```
 
 Your add-on should check this value to determine the license status of the instance associated with
-the current request. The `lic` parameter may have one of three values:
+the current request. Note, you will need to declare `READ` [scope](../scopes/scopes.html) in order
+to use this resource. The `lic` parameter may have one of three values:
 
  * `active` – the license is valid for this instance and add-on
  * `expired` – a license is present, but it is expired
@@ -90,5 +87,5 @@ Among other information, the plugin can use the resource to discover:
 You can test licensing-related behavior of your add-on in a local, development environment to an
 extent. But there's no way to replicate the interaction with the UPM and Atlassian Marketplace in a
 local environment alone. In the production environment, the Atlassian Marketplace serves licenses
-for new subscribers, and application interacts with the Marketplace to get the license state.
+for new subscribers, and the application interacts with the Marketplace to get the license state.
 

@@ -4,9 +4,6 @@
 In this Hello World tutorial, we'll turn a simple HTML page into an Atlassian Connect add-on and
 install it into a local-running copy of JIRA.
 
-The examples in this tutorial use Linux or OS X. If working on another operating system, use the
-command appropriate for your environment.
-
 
 ## 1. Create the add-on descriptor (`atlassian-connect.json`)
 
@@ -95,8 +92,9 @@ That's it as far as coding goes. The next step is to make the files you created 
 server. The options for accomplishing this are many, but this example we'll serve the file locally,
 since our target application is operating locally as well.
 
-In our case, we'll use Python to serve the current directory containing your
-`atlassian-connect.json` and `helloworld.html` files. Navigate to that directory and run:
+In our case, we'll use a simple web server that ships with [Python](http://python.org) to serve the
+current directory containing your `atlassian-connect.json` and `helloworld.html` files. Navigate to
+that directory and run:
 
 ````
 python -m SimpleHTTPServer 8000
@@ -105,7 +103,7 @@ python -m SimpleHTTPServer 8000
 After starting, the server should indicate it is serving HTTP at the current address and at the
 specified port, 8000.
 
-Confirm that you're serving the files the files we created in steps 1 and 2 by visiting:
+Confirm that you're serving the files we created in steps 1 and 2 by visiting:
 
 <code data-lang="text"><a href="http://localhost:8000/atlassian-connect.json">http://localhost:8000/atlassian-connect.json</a></code>
 
@@ -156,8 +154,8 @@ After the startup process completes, you can confirm that you application is run
 Now it's time to register your add-on with the target application.
 
 1. Visit the target application we started in step 4, at either:
-  * [http://localhost:2990/jira/]
-  * [http://localhost:1990/confluence/]
+  * http://localhost:2990/jira/
+  * http://localhost:1990/confluence/
 1. Log in as the system administrator. The default username/password combination is admin/admin.
 2. Choose __Cog Menu > Add-ons__ from the menu. The Administration page will display.
 3. Choose the __Manage add-ons__ option from the side menu.
@@ -175,7 +173,7 @@ used Hello World for your add-on name, __Hello World__ will appears in the list.
 That's it! You can now see your Hello World greeting in the Atlassian application.
 
 1. Reload the page.
-2. look for the __Greeting__ entry in the application header (in JIRA) or the __Question Mark__
+2. Look for the __Greeting__ entry in the application header (in JIRA) or the __Question Mark__
 menu (in Confluence).
 3. Click __Greeting__. Your __Hello World__ message appears on the page:
 <img src="../assets/images/helloworld-addoninapp.jpeg" width="100%" style="border:1px solid #999;margin-top:10px;" />
@@ -201,7 +199,7 @@ Add_on_server->Browser:Responds with contents of\n helloworld.html page
 Browser->User:Requested page\nrendered
 </div>
 
-## 4. What's next?
+## 8. What's next?
 
 For most Atlassian Connect add-ons, the next step for the developer would be to add code that relies
 on the Atlassian application REST APIs. This requires implementing the
