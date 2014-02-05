@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import com.atlassian.plugin.connect.modules.beans.NameToKeyBean;
+import com.atlassian.plugin.connect.modules.beans.GeneratedKeyBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
@@ -12,12 +12,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class IFrameServletBean
 {
-    private final NameToKeyBean linkBean;
+    private final GeneratedKeyBean linkBean;
     private final AddonUrlTemplatePair urlTemplatePair;
     private final PageInfo pageInfo;
     private final IFrameParams iFrameParams;
 
-    public IFrameServletBean(final NameToKeyBean bean,
+    public IFrameServletBean(final GeneratedKeyBean bean,
                              final AddonUrlTemplatePair urlTemplatePair,
                              final PageInfo pageInfo, IFrameParams iFrameParams)
     {
@@ -30,7 +30,7 @@ public class IFrameServletBean
     /**
      * The bean that holds the link which targets the servlet
      */
-    public NameToKeyBean getLinkBean()
+    public GeneratedKeyBean getLinkBean()
     {
         return linkBean;
     }

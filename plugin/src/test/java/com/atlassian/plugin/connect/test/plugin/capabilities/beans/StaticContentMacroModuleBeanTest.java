@@ -11,13 +11,13 @@ import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
+import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean.newImagePlaceholderBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
-import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -57,16 +57,6 @@ public class StaticContentMacroModuleBeanTest
         assertThat(deserializedBean, sameDeepPropertyValuesAs(originalBean));
     }
 
-    @Test
-    public void verifyDefaultMethod()
-    {
-        Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = "{}";
-        StaticContentMacroModuleBean deserializedBean = gson.fromJson(json, StaticContentMacroModuleBean.class);
-
-        assertThat(deserializedBean.getMethod(), is(MacroHttpMethod.GET));
-    }
-
     private static ConnectAddonBean createBean()
     {
         return newConnectAddonBean()
@@ -80,7 +70,6 @@ public class StaticContentMacroModuleBeanTest
                         .withKey("static-content-macro")
                         .withUrl("/my-macro")
                         .withAliases("some-alias")
-                        .withMethod(MacroHttpMethod.POST)
                         .withBodyType(MacroBodyType.PLAIN_TEXT)
                         .withOutputType(MacroOutputType.BLOCK)
                         .withCategories("hidden-macros")

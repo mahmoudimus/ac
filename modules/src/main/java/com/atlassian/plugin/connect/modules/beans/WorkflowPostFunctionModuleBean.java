@@ -159,7 +159,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @schemaTitle Workflow Post Function
  * @since 1.0
  */
-public class WorkflowPostFunctionModuleBean extends NameToKeyBean
+
+public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
 {
     /**
      * The description of the add-on's functionality that will show up in the *Manage add-ons* page.

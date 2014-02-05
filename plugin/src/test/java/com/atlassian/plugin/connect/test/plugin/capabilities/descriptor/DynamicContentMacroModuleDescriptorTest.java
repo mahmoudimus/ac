@@ -3,29 +3,22 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DynamicContentMacroModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
-import com.atlassian.sal.api.user.UserManager;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
-import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacroModuleDescriptorTest<DynamicContentMacroModuleBean, DynamicContentMacroModuleBeanBuilder>
 {
-    @Mock
-    private IFrameRenderer iFrameRenderer;
-    @Mock
-    private UserManager userManager;
-    @Mock
-    private UrlVariableSubstitutor urlVariableSubstitutor;
+    @Mock private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    @Mock private MacroModuleContextExtractor macroModuleContextExtractor;
 
     @Override
     protected XhtmlMacroModuleDescriptor createModuleDescriptorForTest()
@@ -33,15 +26,11 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
 
         DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new DynamicContentMacroModuleDescriptorFactory(
-                new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
-                iFrameRenderer,
-                userManager,
-                remotablePluginAccessorFactoryForTests,
-                urlVariableSubstitutor);
+                iFrameRenderStrategyRegistry, new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
+                macroModuleContextExtractor);
 
         DynamicContentMacroModuleBean bean = createBeanBuilder().build();
-
-        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, bean);
     }
 
     @Override

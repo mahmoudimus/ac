@@ -23,6 +23,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+import com.google.common.base.Strings;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 {
@@ -33,14 +37,25 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final RemoteEventsHandler remoteEventsHandler;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final ConnectApplinkManager connectApplinkManager;
-    private final ConnectDescriptorRegistry connectDescriptorRegistry;
+    private final ConnectAddonRegistry connectAddonRegistry;
     private final ConnectEventHandler connectEventHandler;
     private final SharedSecretService sharedSecretService;
+    private final ConnectAddOnUserService connectAddOnUserService;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
-    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, ConnectApplinkManager connectApplinkManager, ConnectDescriptorRegistry connectDescriptorRegistry, ConnectEventHandler connectEventHandler, SharedSecretService sharedSecretService)
+    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory,
+                                        PluginController pluginController,
+                                        PluginAccessor pluginAccessor,
+                                        OAuthLinkManager oAuthLinkManager,
+                                        RemoteEventsHandler remoteEventsHandler,
+                                        BeanToModuleRegistrar beanToModuleRegistrar,
+                                        ConnectApplinkManager connectApplinkManager,
+                                        ConnectAddonRegistry connectAddonRegistry,
+                                        ConnectEventHandler connectEventHandler,
+                                        SharedSecretService sharedSecretService,
+                                        ConnectAddOnUserService connectAddOnUserService)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -49,9 +64,10 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.remoteEventsHandler = remoteEventsHandler;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
         this.connectApplinkManager = connectApplinkManager;
-        this.connectDescriptorRegistry = connectDescriptorRegistry;
+        this.connectAddonRegistry = connectAddonRegistry;
         this.connectEventHandler = connectEventHandler;
         this.sharedSecretService = sharedSecretService;
+        this.connectAddOnUserService = checkNotNull(connectAddOnUserService);
     }
 
     @Override
@@ -100,14 +116,20 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
-                //applink MUST be created before any modules
-                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey);
-
+                //applink, baseurl and secret MUST be created before any modules
+                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, connectAddOnUserService.getOrCreateUserKey(addOn.getKey()));
+                connectAddonRegistry.storeBaseUrl(pluginKey, addOn.getBaseUrl());
+                
+                if(!Strings.isNullOrEmpty(sharedSecret))
+                {
+                    connectAddonRegistry.storeSecret(pluginKey, sharedSecret);
+                }
+                
                 //create the modules
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
 
                 //save the descriptor so we can use it again if we ever need to re-enable the addon
-                connectDescriptorRegistry.storeDescriptor(pluginKey, jsonDescriptor);
+                connectAddonRegistry.storeDescriptor(pluginKey, jsonDescriptor);
 
                 //make the sync callback if needed
                 connectEventHandler.pluginInstalled(addOn, sharedSecret);

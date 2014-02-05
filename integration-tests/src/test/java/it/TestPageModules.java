@@ -33,6 +33,7 @@ import static org.junit.Assert.*;
 
 public class TestPageModules extends ConnectWebDriverTestBase
 {
+    public static final String EXTRA_PREFIX = "servlet-";
     private static AtlassianConnectAddOnRunner remotePlugin;
 
     @BeforeClass
@@ -90,7 +91,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testMyGeneralLoaded()
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral", "Remotable Plugin app1 General Link");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral", "Remotable Plugin app1 General Link", EXTRA_PREFIX);
 
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
@@ -131,7 +132,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
 
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", EXTRA_PREFIX);
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
@@ -160,7 +161,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testRemoteConditionFails()
     {
         product.visit(LoginPage.class).login("barney", "barney", HomePage.class);
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty");
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", EXTRA_PREFIX);
         assertFalse(page.isRemotePluginLinkPresent());
     }
 
@@ -169,7 +170,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
 
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty");
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", EXTRA_PREFIX);
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
         assertTrue(remotePluginTest.getTitle().contains("Only Betty"));
@@ -192,7 +193,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
-        final RemotePluginTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", RemotePluginTestPage.class);
+        final RemotePluginTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", RemotePluginTestPage.class, EXTRA_PREFIX);
         assertTrue(remotePluginTestPage.isLoaded());
 
         runner.stopAndUninstall();
@@ -203,7 +204,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     {
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", "Encoded Spaces");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", "Encoded Spaces", EXTRA_PREFIX);
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
@@ -214,7 +215,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testAmd()
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", "AMD Test app1 General");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", "AMD Test app1 General", EXTRA_PREFIX);
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
@@ -227,7 +228,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testSizeToParent()
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", "Size to parent general page");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", "Size to parent general page", EXTRA_PREFIX);
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
@@ -238,7 +239,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testSizeToParentDoesNotWorkInDialog()
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", EXTRA_PREFIX);
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 

@@ -13,7 +13,7 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.*;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
@@ -48,7 +48,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     public static final String BASE_URL = "http://server:1234/contextPath";
 
     @Mock private ConnectApplinkManager connectApplinkManager;
-    @Mock private ConnectDescriptorRegistry descriptorRegistry;
+    @Mock private ConnectAddonRegistry descriptorRegistry;
     @Mock private PluginAccessor pluginAccessor;
     @Mock private ApplicationProperties applicationProperties;
     @Mock private EventPublisher eventPublisher;

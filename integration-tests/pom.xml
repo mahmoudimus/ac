@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m30</version>
+        <version>1.0-m30.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -240,7 +240,7 @@
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>ka-func-test-framework</artifactId>
-            <version>${jira.func.test.version}</version>
+            <version>${atlassian.jira.testkit.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.atlassian.browsers</groupId>
@@ -456,6 +456,5 @@
         <jetty.version>8.1.7.v20120910</jetty.version>
         <functest.version>0.7.1</functest.version>
         <functestbasics.version>1.9.7</functestbasics.version>
-        <jira.func.test.version>${atlassian.jira.modules.version}</jira.func.test.version>
     </properties>
 </project>

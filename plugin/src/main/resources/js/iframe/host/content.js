@@ -5,7 +5,7 @@ _AP.define("host/content", ["_dollar"], function ($) {
     "use strict";
 
     function getContentUrl(pluginKey, capability){
-        return AJS.contextPath() + "/plugins/servlet/atlassian-connect/" + pluginKey + "/" + capability.key;
+        return AJS.contextPath() + "/plugins/servlet/ac/" + encodeURIComponent(pluginKey) + "/" + encodeURIComponent(capability.key);
     }
 
     function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
@@ -18,7 +18,8 @@ _AP.define("host/content", ["_dollar"], function ($) {
                 "product-context": productContextJson,
                 "key": capability.key,
                 "width": "100%",
-                "height": "100%"
+                "height": "100%",
+                "raw": "true"
             }
         });
     }

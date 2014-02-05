@@ -35,7 +35,7 @@ public class ConnectWebSectionModuleDescriptorFactory implements ConnectModuleDe
     }
 
     @Override
-    public WebSectionModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebSectionModuleBean bean)
+    public WebSectionModuleDescriptor createModuleDescriptor(Plugin plugin, WebSectionModuleBean bean)
     {
         Element webSectionElement = new DOMElement("web-section");
 

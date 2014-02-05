@@ -1,5 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
+import java.net.URI;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
+
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
@@ -15,7 +21,8 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataB
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
@@ -35,19 +42,16 @@ import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-import java.net.URI;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -74,10 +78,11 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final ProductAccessor productAccessor;
     private final BundleContext bundleContext;
     private final JsonConnectAddOnIdentifierService connectIdentifier;
-    private final ConnectDescriptorRegistry descriptorRegistry;
+    private final ConnectAddonRegistry descriptorRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final LicenseRetriever licenseRetriever;
     private final IsDevModeService isDevModeService;
+    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     @Inject
     public ConnectEventHandler(EventPublisher eventPublisher,
@@ -90,10 +95,11 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                                ProductAccessor productAccessor,
                                BundleContext bundleContext,
                                JsonConnectAddOnIdentifierService connectIdentifier,
-                               ConnectDescriptorRegistry descriptorRegistry,
+                               ConnectAddonRegistry descriptorRegistry,
                                BeanToModuleRegistrar beanToModuleRegistrar,
                                LicenseRetriever licenseRetriever,
-                               IsDevModeService devModeService)
+                               IsDevModeService devModeService,
+                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
@@ -109,6 +115,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         this.descriptorRegistry = descriptorRegistry;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
         this.isDevModeService = devModeService;
+        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
     public void pluginInstalled(ConnectAddonBean addon, String sharedSecret)
@@ -129,7 +136,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         //if a descriptor is not stored, it means this event was fired during install before modules were created and we need to ignore
         if (connectIdentifier.isConnectAddOn(plugin) && descriptorRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
+            ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
 
             if (null != addon)
             {
@@ -163,6 +170,10 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         {
             beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
         }
+
+        // TODO remove this once we remove support for XML desciptors
+        // ACDEV-886 -- unregister for ALL addons, as some XML descriptors register strategies
+        iFrameRenderStrategyRegistry.unregisterAll(plugin.getKey());
     }
 
     @PluginEventListener
@@ -173,7 +184,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         String pluginKey = plugin.getKey();
         if (descriptorRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
+            ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
 
             if (null != addon)
             {
@@ -193,9 +204,18 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             {
                 log.warn("Tried to publish plugin uninstalled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...");
             }
-
-            descriptorRegistry.removeDescriptor(pluginKey);
         }
+
+        descriptorRegistry.removeAll(pluginKey);
+    }
+
+    /**
+     * @param pluginKey the key of a Connect addon
+     * @return a {@link ConnectAddonBean} if there is a corresponding descriptor stored in the registry, otherwise null
+     */
+    private ConnectAddonBean unmarshallDescriptor(final String pluginKey)
+    {
+        return ConnectModulesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
     }
 
     public void publishEnabledEvent(String pluginKey)

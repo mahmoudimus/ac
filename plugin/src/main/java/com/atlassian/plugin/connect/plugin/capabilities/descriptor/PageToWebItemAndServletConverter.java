@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.util.Map;
+
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
@@ -10,8 +12,6 @@ import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
-
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;

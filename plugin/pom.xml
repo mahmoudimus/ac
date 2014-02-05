@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m30</version>
+        <version>1.0-m30.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -150,6 +150,10 @@
             <artifactId>licensing-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>embedded-crowd-api</artifactId>
+        </dependency>
 
         <!-- the upm is here just for debugging -->
         <dependency>
@@ -224,6 +228,7 @@
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
         </dependency>
+        
         <dependency>
             <groupId>com.atlassian.uri</groupId>
             <artifactId>atlassian-uri</artifactId>
@@ -411,6 +416,10 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>atlassian-connect-modules</artifactId>
                         </testBundleExclude>
+                        <testBundleExclude>
+                            <groupId>com.google.code.gson</groupId>
+                            <artifactId>gson</artifactId>
+                        </testBundleExclude>
                     </testBundleExcludes>
                     <instructions>
                         <!-- <Import-Package>
@@ -481,10 +490,12 @@
                             com.atlassian.plugin.connect.plugin.product*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin.product.*;version="${project.version}",
                             com.atlassian.plugin.connect.modules*,
-                            com.atlassian.plugin.connect.modules*
+                            com.atlassian.plugin.connect.modules.*,
+                            com.atlassian.plugin.connect.modules.beans*,
+                            com.atlassian.plugin.connect.modules.beans.*
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
-                        <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>
+                        <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
                         <!-- DO NOT put Atlassian-Plugin-Key here!! it will bypass all transforms and component-imports will break -->
                     </instructions>
                     <systemPropertyVariables>
@@ -502,6 +513,10 @@
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
+                                <fastdev.mvn.command>${mvnCommand}</fastdev.mvn.command>
+                                <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                                <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
+                                <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -542,6 +557,16 @@
                             </pluginArtifacts>
 
                             <bundledArtifacts>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.devrel</groupId>
+                                    <artifactId>developer-toolbox-plugin</artifactId>
+                                    <version>${toolbox.version}</version>
+                                </bundledArtifact>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.labs</groupId>
+                                    <artifactId>fastdev-plugin</artifactId>
+                                    <version>${fastdev.version}</version>
+                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                         <product>
@@ -552,6 +577,10 @@
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
+                                <fastdev.mvn.command>${mvnCommand}</fastdev.mvn.command>
+                                <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                                <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
+                                <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -580,10 +609,54 @@
                                     <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
+
                             <bundledArtifacts>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.devrel</groupId>
+                                    <artifactId>developer-toolbox-plugin</artifactId>
+                                    <version>${toolbox.version}</version>
+                                </bundledArtifact>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.labs</groupId>
+                                    <artifactId>fastdev-plugin</artifactId>
+                                    <version>${fastdev.version}</version>
+                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                     </products>
+
+                    <testGroups>
+                        <testGroup>
+                            <id>confluence</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <excludes>
+                                <exclude>it/jira/*.java</exclude>
+                                <exclude>it/**/jira/*.java</exclude>
+                            </excludes>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <excludes>
+                                <exclude>it/confluence/*.java</exclude>
+                                <exclude>it/**/confluence/*.java</exclude>
+                            </excludes>
+                        </testGroup>
+                    </testGroups>
                 </configuration>
             </plugin>
 
@@ -1000,8 +1073,9 @@
         <devmode>true</devmode>
         <fastdev.version>2.2</fastdev.version>
         <toolbox.version>2.0.6</toolbox.version>
-        <plugin.testrunner.version>1.1.2</plugin.testrunner.version>
+        <plugin.testrunner.version>1.1.3</plugin.testrunner.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
+        <mvnCommand>/usr/bin/mvn</mvnCommand>
     </properties>
 </project>

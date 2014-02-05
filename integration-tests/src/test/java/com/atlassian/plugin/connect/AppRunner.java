@@ -1,6 +1,10 @@
 package com.atlassian.plugin.connect;
 
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.server.module.Condition;
 import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
@@ -13,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.test.server.ConnectRunner.newMustacheServlet;
 
 /**
@@ -27,39 +33,41 @@ public class AppRunner
     {
         try
         {
-            AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(JIRA,"xml-condition-plugin")
-                    .addOAuth()
-                    .addPermission("resttest")
-                    .add(GeneralPageModule.key("remotePluginGeneral")
-                                          .name("Remotable Plugin app1 General")
-                                          .path("/rpg")
-                                          .linkName("Remotable Plugin app1 General Link")
-                                          .iconUrl("/public/sandcastles.jpg")
-                                          .height("600")
-                                          .width("700")
-                                          .resource(ConnectAppServlets.apRequestServlet()))
-                    .add(GeneralPageModule.key("amdTest")
-                                          .name("AMD Test app1 General")
-                                          .path("/amdTest")
-                                          .resource(ConnectAppServlets.apRequestServlet()))
-                    .add(GeneralPageModule.key("onlyBetty")
-                                          .name("Only Betty")
-                                          .path("/ob")
-                                          .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new TestPageModules.OnlyBettyConditionServlet()))
-                                          .resource(ConnectAppServlets.apRequestServlet()))
-                    .add(DialogPageModule.key("remotePluginDialog")
-                                         .name("Remotable Plugin app1 Dialog")
-                                         .path("/rpd")
-                                         .resource(newMustacheServlet("dialog.mu")))
-                    .add(GeneralPageModule.key("sizeToParent")
-                                          .name("Size to parent general page")
-                                          .path("/fsg")
-                                          .resource(newMustacheServlet("iframe-size-to-parent.mu")))
-                    .add(DialogPageModule.key("sizeToParentDialog")
-                                         .name("Size to parent dialog page")
-                                         .path("/fsg")
-                                         .resource(newMustacheServlet("iframe-size-to-parent.mu")))
-                    .start();
+            ConnectRunner runner = new ConnectRunner(JIRA,"dialog-option-plugin")
+                    .addModules("webItems",
+                            newWebItemBean()
+                                    .withContext(AddOnUrlContext.addon)
+                                    .withName(new I18nProperty("AC General Web Item", "ac.gen"))
+                                    .withKey("ac-general-web-item")
+                                    .withLocation("system.top.navigation.bar")
+                                    .withWeight(1)
+                                    .withTarget(
+                                            newWebItemTargetBean()
+                                            .withType(WebItemTargetType.dialog)
+                                            .withOption("width","100")
+                                            .withOption("height","600")
+                                            .build()
+                                    )
+                                    .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
+                                    .build()
+                            
+                            ,newWebItemBean()
+                            .withContext(AddOnUrlContext.addon)
+                            .withName(new I18nProperty("AC General Web Item 2", "ac.gen2"))
+                            .withKey("ac-general-web-item2")
+                            .withLocation("system.top.navigation.bar")
+                            .withWeight(1)
+                            .withTarget(
+                                    newWebItemTargetBean()
+                                            .withType(WebItemTargetType.inlineDialog)
+                                            .withOption("width","42")
+                                            .withOption("height","42")
+                                            .build()
+                            )
+                            .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
+                            .build()
+                    )
+                                    .start();
 
 
 //            ConnectRunner remotePlugin = new ConnectRunner(JIRA,"my-plugin")

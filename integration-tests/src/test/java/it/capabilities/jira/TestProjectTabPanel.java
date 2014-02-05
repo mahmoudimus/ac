@@ -70,7 +70,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     {
         public AppProjectTabPage(final String projectKey)
         {
-            super(projectKey, "project-tab-ac-play-project-tab");
+            super(projectKey, "ac-play-project-tab");
         }
     }
 }

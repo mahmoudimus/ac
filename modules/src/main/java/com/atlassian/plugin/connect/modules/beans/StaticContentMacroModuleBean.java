@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroHttpMethod;
 
 /**
  * A Confluence macro that returns XHTML in the Confluence storage format. The add-on will only be called on creation of
@@ -21,35 +19,13 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroHttpMethod;
  */
 public class StaticContentMacroModuleBean extends BaseContentMacroModuleBean
 {
-
-    /**
-     * The HTTP method to use when calling the macro. The default value is GET.
-     */
-    @CommonSchemaAttributes(defaultValue = "get")
-    private MacroHttpMethod method;
-
     public StaticContentMacroModuleBean()
     {
-        init();
     }
 
     public StaticContentMacroModuleBean(StaticContentMacroModuleBeanBuilder builder)
     {
         super(builder);
-        init();
-    }
-
-    private void init()
-    {
-        if (null == method)
-        {
-            method = MacroHttpMethod.GET;
-        }
-    }
-
-    public MacroHttpMethod getMethod()
-    {
-        return method;
     }
 
     public static StaticContentMacroModuleBeanBuilder newStaticContentMacroModuleBean()

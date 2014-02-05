@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.webitem.RemoteWebItemModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.service.IsDevModeServiceImpl;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -83,9 +84,9 @@ public abstract class RemoteWebItemModuleDescriptorTestBase
         MyWebItemModuleDescriptorFactory webItemModuleDescriptorFactory = new MyWebItemModuleDescriptorFactory();
         WebItemCreator webItemCreator = new WebItemCreator(conditionProcessor, webItemModuleDescriptorFactory, pluginAccessorFactory);
         IFramePageRenderer iFramePageRenderer = null;
-        UrlVariableSubstitutor urlVariableSubstitutor = new UrlVariableSubstitutor();
+        UrlVariableSubstitutor urlVariableSubstitutor = new UrlVariableSubstitutor(new IsDevModeServiceImpl());
         RemotePageDescriptorCreator remotePageDescriptorCreator = new RemotePageDescriptorCreator(bundleContext, userManager,
-                webItemCreator, iFramePageRenderer, productAccessor, urlValidator, urlVariableSubstitutor);
+                webItemCreator, iFramePageRenderer, productAccessor, urlVariableSubstitutor);
 
         RemotablePluginAccessor remotablePluginAccessor = mock(RemotablePluginAccessor.class);
 
@@ -145,8 +146,7 @@ public abstract class RemoteWebItemModuleDescriptorTestBase
         static String url = null;
 
         @Override
-        public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String moduleKey, boolean absolute,
-                                                                     AddOnUrlContext addOnUrlContext, RemotablePluginAccessor remotablePluginAccessor)
+        public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
         {
             if (null != MyWebItemModuleDescriptorFactory.url && !MyWebItemModuleDescriptorFactory.url.equals(url))
             {

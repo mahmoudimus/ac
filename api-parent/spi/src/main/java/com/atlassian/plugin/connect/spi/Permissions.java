@@ -2,9 +2,6 @@ package com.atlassian.plugin.connect.spi;
 
 public final class Permissions
 {
-    // services
-    public static final String SEND_EMAIL = "send_email";
-
     // sandbox escaping
     public static final String GENERATE_ANY_HTML = "generate_any_html";
     public static final String CREATE_OAUTH_LINK = "create_oauth_link";

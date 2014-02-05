@@ -12,7 +12,8 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
-import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -77,9 +78,11 @@ public class ConnectEventHandlerJwtTest
     private @Mock ProductAccessor productAccessor;
     private @Mock BundleContext bundleContext;
     private @Mock JsonConnectAddOnIdentifierService connectIdentifier;
-    private @Mock ConnectDescriptorRegistry descriptorRegistry;
+    private @Mock
+    ConnectAddonRegistry descriptorRegistry;
     private @Mock BeanToModuleRegistrar beanToModuleRegistrar;
     private @Mock LicenseRetriever licenseRetriever;
+    private @Mock IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     private @Mock Request.Builder requestBuilder;
     private @Mock Bundle bundle;
@@ -119,7 +122,8 @@ public class ConnectEventHandlerJwtTest
     {
         // make a call over http (note the lack of "s") and it shall be rejected
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
-                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE);
+                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE,
+                iFrameRenderStrategyRegistry);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, UNSECURED_BASE_URL), SHARED_SECRET);
     }
 
@@ -129,7 +133,8 @@ public class ConnectEventHandlerJwtTest
     {
         // make a call over http (note the lack of "s") and it shall be allowed in dev mode
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
-                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, DEV_MODE);
+                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, DEV_MODE,
+                iFrameRenderStrategyRegistry);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, UNSECURED_BASE_URL), SHARED_SECRET); // no exception
     }
 
@@ -161,7 +166,8 @@ public class ConnectEventHandlerJwtTest
         when(response.getStatusCode()).thenReturn(200);
         when(applicationProperties.getBaseUrl(UrlMode.CANONICAL)).thenReturn(PRODUCT_URL);
         ConnectEventHandler connectEventHandler = new ConnectEventHandler(eventPublisher, pluginEventManager, userManager, httpClient, requestSigner, consumerService,
-                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE);
+                applicationProperties, productAccessor, bundleContext, connectIdentifier, descriptorRegistry, beanToModuleRegistrar, licenseRetriever, PROD_MODE,
+                iFrameRenderStrategyRegistry);
         connectEventHandler.pluginInstalled(createBean(AuthenticationType.JWT, PUBLIC_KEY, SECURED_BASE_URL), SHARED_SECRET);
     }
 }

@@ -7,8 +7,6 @@ import com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition;
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactory;
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
@@ -16,9 +14,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -27,7 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static org.hamcrest.CoreMatchers.*;
@@ -55,10 +52,6 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     @Mock
     private DelegatingComponentAccessor componentAccessor;
     @Mock
-    private UserManager userManager;
-    @Mock
-    private MailQueue mailQueue;
-    @Mock
     private HostContainer hostContainer;
 
     private SearchRequestViewModuleDescriptorImpl descriptor;
@@ -74,7 +67,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
 
         ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(hostContainer);
         ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(
-                new JiraProductAccessor(userManager, mailQueue, new JiraConditions()), new ParamsModuleFragmentFactory());
+                new JiraProductAccessor(new JiraConditions()), new ParamsModuleFragmentFactory());
         when(hostContainer.create(UserLoggedInCondition.class)).thenReturn(new UserLoggedInCondition());
 
         when(componentAccessor.getComponent(SearchRequestURLHandler.class)).thenReturn(urlHandler);
@@ -94,7 +87,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                         newSingleConditionBean().withCondition("user_is_logged_in").build())
                 .build();
 
-        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(plugin, bean);
         this.descriptor.enabled();
     }
 

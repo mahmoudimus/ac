@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
+import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -41,6 +44,13 @@ public class UrlVariableSubstitutor
 
     // in "http://server/path?name={var}&something" match "name={var}" with groups = "name", "{var}" and "var"
     private static final Pattern VARIABLE_EQUALS_PLACEHOLDER_PATTERN = Pattern.compile("([^}&?]+)=(" + PLACEHOLDER_PATTERN_STRING + ")");
+    private final IsDevModeService devModeService;
+
+    @Autowired
+    public UrlVariableSubstitutor(IsDevModeService devModeService)
+    {
+        this.devModeService = checkNotNull(devModeService);
+    }
 
     /**
      * Replaces all variables in the given source with values from the given context.
@@ -48,8 +58,13 @@ public class UrlVariableSubstitutor
      * @param context context containing values to replace
      * @return source with variables replaced by values.
      */
-    public String replace(String source, Map<String, Object> context)
+    public String replace(String source, Map<String, ?> context)
     {
+        if (devModeService.isDevMode() && source.contains("${"))
+        {
+            log.warn("Addon uses legacy variable format '${ variableName }' in url {}", new Object[] {source} );
+        }
+
         Matcher m = PLACEHOLDER_PATTERN.matcher(source);
         StringBuffer sb = new StringBuffer();
         while (m.find())
@@ -92,7 +107,7 @@ public class UrlVariableSubstitutor
         }
     }
 
-    private String fromContext(String term, Map<String, Object> context)
+    private String fromContext(String term, Map<String, ?> context)
     {
         Iterable<String> terms = Arrays.asList(term.split("\\."));
         Object value = fromContext(terms, context);
@@ -119,7 +134,7 @@ public class UrlVariableSubstitutor
         return "";
     }
 
-    private Object fromContext(Iterable<String> terms, Map<String, Object> context)
+    private Object fromContext(Iterable<String> terms, Map<String, ?> context)
     {
         Object current = context;
         for (String key : terms)
