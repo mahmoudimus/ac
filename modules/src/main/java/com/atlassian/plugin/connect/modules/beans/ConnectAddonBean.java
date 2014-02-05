@@ -151,7 +151,7 @@ public class ConnectAddonBean extends BaseModuleBean
     private ModuleList modules;
 
     /**
-     * Set of [scopes](../concepts/scopes.html) requested by this add on
+     * Set of [scopes](../scopes/scopes.html) requested by this add on
      */
     private Set<String> scopes;
     

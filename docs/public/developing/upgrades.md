@@ -41,7 +41,7 @@ approval, which usually takes 3-5 business days.
 but in addition any existing clients will have to approve the change to start paying for your add-on. They must choose
 either to approve or to uninstall the add-on.
 
-3. You change your add-on to require additional [scopes](./scopes.html) (a "scope" is a group of permissions). In this
+3. You change your add-on to require additional [scopes](../scopes/scopes.html) (a "scope" is a group of permissions). In this
 case, the marketplace update will happen automatically, but your clients must be given the opportunity to approve the
 new scopes. They must choose either to approve or to uninstall the add-on. 
 
