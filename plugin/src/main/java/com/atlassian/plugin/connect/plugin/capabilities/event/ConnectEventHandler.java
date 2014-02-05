@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
+import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
+import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
@@ -36,8 +38,10 @@ import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
@@ -80,6 +84,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final LicenseRetriever licenseRetriever;
     private final IsDevModeService isDevModeService;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private final JwtApplinkFinder jwtApplinkFinder;
 
     @Inject
     public ConnectEventHandler(EventPublisher eventPublisher,
@@ -96,7 +101,8 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                                BeanToModuleRegistrar beanToModuleRegistrar,
                                LicenseRetriever licenseRetriever,
                                IsDevModeService devModeService,
-                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                               JwtApplinkFinder jwtApplinkFinder)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
@@ -113,6 +119,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         this.beanToModuleRegistrar = beanToModuleRegistrar;
         this.isDevModeService = devModeService;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+        this.jwtApplinkFinder = jwtApplinkFinder;
     }
 
     public void pluginInstalled(ConnectAddonBean addon, String sharedSecret)
@@ -179,6 +186,8 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     {
         final Plugin plugin = pluginUninstalledEvent.getPlugin();
         String pluginKey = plugin.getKey();
+        disableAddOnUser(pluginKey); // disable this user even if something has gone wrong with the descriptor registry (be fail-safe)
+
         if (descriptorRegistry.hasDescriptor(pluginKey))
         {
             ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
@@ -204,6 +213,23 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         }
 
         descriptorRegistry.removeAll(pluginKey);
+    }
+
+    // removing the property from the app link removes the Authenticator's ability to assign a user to incoming requests
+    // and as these users cannot log in anyway this reduces their possible actions to zero
+    // (but don't remove the user as we need to preserve the history of their actions (e.g. audit trail, issue edited by <user>)
+    private void disableAddOnUser(String addOnKey)
+    {
+        ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
+
+        if (null != applicationLink)
+        {
+            applicationLink.removeProperty("user.key"); // TODO ACDEV-937: reference JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME in atlassian-jwt instead of using a literal for the property name
+        }
+        else
+        {
+            log.error("Unable to disable the user for add-on '{}' because the add-on has no ApplicationLink!", addOnKey);
+        }
     }
 
     /**

@@ -92,7 +92,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                     link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
 
                     link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
-                    link.putProperty("user.key", addonUserKey); // TODO ACDEV-937: reference a constant in atlassian-jwt instead of using a literal for the property name
+                    link.putProperty("user.key", addonUserKey); // TODO ACDEV-937: reference JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME in atlassian-jwt instead of using a literal for the property name
                     link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
                     link.putProperty("system", Boolean.TRUE.toString());
 
