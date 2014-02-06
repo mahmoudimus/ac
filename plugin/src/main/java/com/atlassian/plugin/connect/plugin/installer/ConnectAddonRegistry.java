@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+
 /**
  * The ConnectAddonRegistry is used to store information about connect addons so they can be retrieved at runtime without having to inspect the plugin jar or constantly marshall the json descriptor
  * This is simply a place to centralize access to common bits of info used in various components. Things like the json descriptor, baseurl, etc should be stored here.
@@ -34,4 +36,20 @@ public interface ConnectAddonRegistry
     String getSecret(String pluginKey);
 
     boolean hasSecret(String pluginKey);
+
+    void storeUserKey(String pluginKey, String userKey);
+
+    void removeUserKey(String pluginKey);
+
+    String getUserKey(String pluginKey);
+
+    boolean hasUserKey(String pluginKey);
+
+    void storeAuthType(String pluginKey, AuthenticationType type);
+
+    void removeAuthType(String pluginKey);
+
+    AuthenticationType getAuthType(String pluginKey);
+
+    boolean hasAuthType(String pluginKey);
 }
