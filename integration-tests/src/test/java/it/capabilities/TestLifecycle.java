@@ -1,6 +1,6 @@
 package it.capabilities;
 
-import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
+import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectPluginEventHandler;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
@@ -24,7 +24,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             public void test(WebHookWaiter waiter) throws Exception
             {
                 final WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body, ConnectEventHandler.SyncHandler.INSTALLED.name().toLowerCase());
+                assertWebHookDidFire(body, ConnectPluginEventHandler.SyncHandler.INSTALLED.name().toLowerCase());
             }
         });
     }
@@ -38,7 +38,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             public void test(WebHookWaiter waiter) throws Exception
             {
                 final WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body,ConnectEventHandler.SyncHandler.ENABLED.name().toLowerCase());
+                assertWebHookDidFire(body, ConnectPluginEventHandler.SyncHandler.ENABLED.name().toLowerCase());
             }
         });
     }
@@ -56,7 +56,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             plugin1.uninstall();
 
             WebHookBody body = servlet.waitForHook();
-            assertWebHookDidFire(body,ConnectEventHandler.SyncHandler.DISABLED.name().toLowerCase());
+            assertWebHookDidFire(body, ConnectPluginEventHandler.SyncHandler.DISABLED.name().toLowerCase());
         }
         finally
         {
@@ -79,7 +79,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             plugin1.uninstall();
 
             WebHookBody body = servlet.waitForHook();
-            assertWebHookDidFire(body, ConnectEventHandler.SyncHandler.UNINSTALLED.name().toLowerCase());
+            assertWebHookDidFire(body, ConnectPluginEventHandler.SyncHandler.UNINSTALLED.name().toLowerCase());
         }
         finally
         {

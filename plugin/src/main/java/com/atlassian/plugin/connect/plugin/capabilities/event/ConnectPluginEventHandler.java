@@ -47,7 +47,6 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
-import com.atlassian.webhooks.spi.plugin.RequestSigner;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -64,9 +63,9 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 
 @Named
-public class ConnectEventHandler implements InitializingBean, DisposableBean
+public class ConnectPluginEventHandler implements InitializingBean, DisposableBean
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectEventHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ConnectPluginEventHandler.class);
     public static final String USER_KEY = "user_key";
 
     private final EventPublisher eventPublisher;
@@ -90,21 +89,21 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     public enum SyncHandler { INSTALLED, UNINSTALLED, ENABLED, DISABLED };
 
     @Inject
-    public ConnectEventHandler(EventPublisher eventPublisher,
-                               PluginEventManager pluginEventManager,
-                               UserManager userManager,
-                               HttpClient httpClient,
-                               ConsumerService consumerService,
-                               ApplicationProperties applicationProperties,
-                               ProductAccessor productAccessor,
-                               BundleContext bundleContext,
-                               JsonConnectAddOnIdentifierService connectIdentifier,
-                               ConnectAddonRegistry descriptorRegistry,
-                               BeanToModuleRegistrar beanToModuleRegistrar,
-                               LicenseRetriever licenseRetriever,
-                               IsDevModeService devModeService,
-                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                               JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager)
+    public ConnectPluginEventHandler(EventPublisher eventPublisher,
+                                     PluginEventManager pluginEventManager,
+                                     UserManager userManager,
+                                     HttpClient httpClient,
+                                     ConsumerService consumerService,
+                                     ApplicationProperties applicationProperties,
+                                     ProductAccessor productAccessor,
+                                     BundleContext bundleContext,
+                                     JsonConnectAddOnIdentifierService connectIdentifier,
+                                     ConnectAddonRegistry descriptorRegistry,
+                                     BeanToModuleRegistrar beanToModuleRegistrar,
+                                     LicenseRetriever licenseRetriever,
+                                     IsDevModeService devModeService,
+                                     IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                                     JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
