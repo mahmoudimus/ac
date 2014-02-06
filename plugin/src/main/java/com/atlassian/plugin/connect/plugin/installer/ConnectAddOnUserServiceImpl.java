@@ -115,11 +115,12 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         }
         else
         {
-            // just in case an admin changes the email address
+            // just in case an admin changes the email address, makes the user active and resets the password, thereby hijacking the account for a free license
             // (we don't rely on this to prevent an admin taking control of the account, but it would make it more difficult)
-            if (!NO_REPLY_EMAIL_ADDRESS.equals(user.getEmailAddress()))
+            if (user.isActive() || !NO_REPLY_EMAIL_ADDRESS.equals(user.getEmailAddress()))
             {
                 UserTemplate userTemplate = new UserTemplate(user);
+                userTemplate.setActive(false);
                 userTemplate.setEmailAddress(NO_REPLY_EMAIL_ADDRESS);
                 applicationService.updateUser(application, userTemplate);
             }
