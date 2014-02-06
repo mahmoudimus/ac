@@ -42,9 +42,9 @@ public class MacroParameterBean extends BaseModuleBean
 
     /**
      * The type of parameter.
-     * <p/>
+     *
      * Currently the following parameter types are supported in the macro browser's UI:
-     * <p/>
+     *
      * * `attachment`: displays an autocomplete field for search on attachment filenames.
      * * `boolean`: displays a check box.
      * * `confluence-content`: displays an autocomplete field for search on page and blog titles.
