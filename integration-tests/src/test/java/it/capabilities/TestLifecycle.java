@@ -24,7 +24,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             public void test(WebHookWaiter waiter) throws Exception
             {
                 final WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body, ConnectEventHandler.INSTALLED);
+                assertWebHookDidFire(body, ConnectEventHandler.SyncHandler.INSTALLED.name().toLowerCase());
             }
         });
     }
@@ -38,7 +38,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             public void test(WebHookWaiter waiter) throws Exception
             {
                 final WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body,ConnectEventHandler.ENABLED);
+                assertWebHookDidFire(body,ConnectEventHandler.SyncHandler.ENABLED.name().toLowerCase());
             }
         });
     }
@@ -56,7 +56,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             plugin1.uninstall();
 
             WebHookBody body = servlet.waitForHook();
-            assertWebHookDidFire(body,ConnectEventHandler.DISABLED);
+            assertWebHookDidFire(body,ConnectEventHandler.SyncHandler.DISABLED.name().toLowerCase());
         }
         finally
         {
@@ -79,7 +79,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             plugin1.uninstall();
 
             WebHookBody body = servlet.waitForHook();
-            assertWebHookDidFire(body, ConnectEventHandler.UNINSTALLED);
+            assertWebHookDidFire(body, ConnectEventHandler.SyncHandler.UNINSTALLED.name().toLowerCase());
         }
         finally
         {

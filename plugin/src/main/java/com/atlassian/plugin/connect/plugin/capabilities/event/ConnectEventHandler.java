@@ -87,7 +87,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final JwtApplinkFinder jwtApplinkFinder;
     private final ConnectApplinkManager connectApplinkManager;
     
-    private enum SyncHandler { INSTALLED, UNINSTALLED, ENABLED, DISABLED };
+    public enum SyncHandler { INSTALLED, UNINSTALLED, ENABLED, DISABLED };
 
     @Inject
     public ConnectEventHandler(EventPublisher eventPublisher,
