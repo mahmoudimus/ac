@@ -1,8 +1,6 @@
-package it.com.atlassian.plugin.connect;
+package it.com.atlassian.plugin.connect.filter;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,13 +39,14 @@ public class AddonTestFilter implements Filter
     {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
-        Matcher matcher = PATH_PATTERN.matcher(req.getPathInfo());
+        String pathInfo = req.getServletPath();
+        Matcher matcher = PATH_PATTERN.matcher(pathInfo);
         if (matcher.find())
         {
             String addOnKey = matcher.group(2);
             String addonResource = matcher.group(3);
 
-            testFilterResults.put(addOnKey + "/" + addonResource, req);
+            testFilterResults.put(addOnKey + "/" + addonResource, new ServletRequestSnaphot(req));
 
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentLength(2);

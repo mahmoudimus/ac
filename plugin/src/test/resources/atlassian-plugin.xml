@@ -33,10 +33,10 @@
                interface="it.com.atlassian.plugin.connect.TestAuthenticator"
                application="confluence" />
 
-    <servlet-filter key="connect-test-addon" class="it.com.atlassian.plugin.connect.AddonTestFilter"
-                    location="after-encoding">
+    <servlet-filter key="connect-test-addon" class="it.com.atlassian.plugin.connect.filter.AddonTestFilter"
+                    location="after-encoding" weight="1">
         <url-pattern>/ac-test-addon/*</url-pattern>
     </servlet-filter>
 
-    <component key="testFilterResults" class="it.com.atlassian.plugin.connect.AddonTestFilterResults" />
+    <component key="testFilterResults" class="it.com.atlassian.plugin.connect.filter.AddonTestFilterResults" />
 </atlassian-plugin>

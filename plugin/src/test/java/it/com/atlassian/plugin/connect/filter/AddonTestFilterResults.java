@@ -1,25 +1,23 @@
-package it.com.atlassian.plugin.connect;
+package it.com.atlassian.plugin.connect.filter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class AddonTestFilterResults
 {
-    private Map<String, HttpServletRequest> requestMap;
+    private Map<String, ServletRequestSnaphot> requestMap;
 
     public AddonTestFilterResults()
     {
-        this.requestMap = new HashMap<String, HttpServletRequest>();
-    }
-    
-    public void put(String key, HttpServletRequest req)
-    {
-        requestMap.put(key,req);
+        this.requestMap = new HashMap<String, ServletRequestSnaphot>();
     }
 
-    public HttpServletRequest getRequest(String addonKey, String resource)
+    public void put(String key, ServletRequestSnaphot req)
+    {
+        requestMap.put(key, req);
+    }
+
+    public ServletRequestSnaphot getRequest(String addonKey, String resource)
     {
         String res = (resource.startsWith("/")) ? resource : "/" + resource;
         return requestMap.get(addonKey + res);

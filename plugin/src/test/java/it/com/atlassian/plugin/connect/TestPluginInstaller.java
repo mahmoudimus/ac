@@ -17,6 +17,10 @@ import com.atlassian.upm.spi.PluginInstallResult;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
+import org.apache.commons.lang.StringUtils;
+
+import it.com.atlassian.plugin.connect.filter.AddonTestFilter;
+
 public class TestPluginInstaller
 {
     public static final String DESCRIPTOR_PREFIX = "connect-descriptor-";
@@ -47,7 +51,14 @@ public class TestPluginInstaller
     
     public String getInternalAddonBaseUrl(String pluginKey)
     {
-        return applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/" + AddonTestFilter.FILTER_MAPPING + "/" + pluginKey;
+        String productBase = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
+        
+        if(productBase.endsWith("/"))
+        {
+            productBase = StringUtils.chop(productBase);
+        }
+        
+        return productBase + AddonTestFilter.FILTER_MAPPING + "/" + pluginKey;
     }
 
     private File createTempDescriptor(String json) throws IOException

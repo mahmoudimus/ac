@@ -131,7 +131,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 connectAddonRegistry.storeDescriptor(pluginKey, jsonDescriptor);
 
                 //make the sync callback if needed
-                connectEventHandler.pluginInstalled(addOn, sharedSecret);
+                connectEventHandler.pluginInstalled(installedPlugin, addOn, sharedSecret);
                 
                 /*
                 We need to manually fire the enabled event because the actual plugin enabled already fired and we ignored it.

@@ -18,11 +18,14 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -36,10 +39,7 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
-import com.atlassian.plugin.event.events.PluginDisabledEvent;
-import com.atlassian.plugin.event.events.PluginEnabledEvent;
-import com.atlassian.plugin.event.events.PluginUninstalledEvent;
+import com.atlassian.plugin.event.events.*;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
@@ -66,11 +66,6 @@ import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 @Named
 public class ConnectEventHandler implements InitializingBean, DisposableBean
 {
-    public static final String INSTALLED = "installed";
-    public static final String ENABLED = "enabled";
-    public static final String DISABLED = "disabled";
-    public static final String UNINSTALLED = "uninstalled";
-
     private static final Logger log = LoggerFactory.getLogger(ConnectEventHandler.class);
     public static final String USER_KEY = "user_key";
 
@@ -90,6 +85,9 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final JwtApplinkFinder jwtApplinkFinder;
+    private final ConnectApplinkManager connectApplinkManager;
+    
+    private enum SyncHandler { INSTALLED, UNINSTALLED, ENABLED, DISABLED };
 
     @Inject
     public ConnectEventHandler(EventPublisher eventPublisher,
@@ -106,7 +104,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                                LicenseRetriever licenseRetriever,
                                IsDevModeService devModeService,
                                IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                               JwtApplinkFinder jwtApplinkFinder)
+                               JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
@@ -124,13 +122,14 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         this.isDevModeService = devModeService;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.jwtApplinkFinder = jwtApplinkFinder;
+        this.connectApplinkManager = connectApplinkManager;
     }
 
-    public void pluginInstalled(ConnectAddonBean addon, String sharedSecret)
+    public void pluginInstalled(Plugin plugin, ConnectAddonBean addon, String sharedSecret)
     {
         if (!Strings.isNullOrEmpty(addon.getLifecycle().getInstalled()))
         {
-            callSyncHandler(addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), sharedSecret, addon));
+            callSyncHandler(plugin, addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), sharedSecret, addon), SyncHandler.INSTALLED);
         }
     }
 
@@ -140,6 +139,8 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     {
         final Plugin plugin = pluginEnabledEvent.getPlugin();
         String pluginKey = plugin.getKey();
+
+        remotablePluginAccessorFactory.remove(pluginKey);
 
         //if a descriptor is not stored, it means this event was fired during install before modules were created and we need to ignore
         if (connectIdentifier.isConnectAddOn(plugin) && descriptorRegistry.hasDescriptor(pluginKey))
@@ -159,13 +160,19 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     @PluginEventListener
+    public void onPluginModuleEnabled(PluginModuleEnabledEvent event)
+    {
+        remotablePluginAccessorFactory.remove(event.getModule().getPluginKey());
+    }
+
+    @PluginEventListener
     @SuppressWarnings("unused")
     public void pluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
     {
         final Plugin plugin = pluginDisabledEvent.getPlugin();
         if (connectIdentifier.isConnectAddOn(plugin))
         {
-            eventPublisher.publish(new ConnectAddonDisabledEvent(plugin.getKey(), createEventData(plugin.getKey(), DISABLED)));
+            eventPublisher.publish(new ConnectAddonDisabledEvent(plugin.getKey(), createEventData(plugin.getKey(), SyncHandler.DISABLED.name().toLowerCase())));
         }
     }
 
@@ -174,6 +181,9 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     public void pluginDisabled(PluginDisabledEvent pluginDisabledEvent)
     {
         final Plugin plugin = pluginDisabledEvent.getPlugin();
+
+        remotablePluginAccessorFactory.remove(plugin.getKey());
+        
         if (connectIdentifier.isConnectAddOn(plugin))
         {
             beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
@@ -202,7 +212,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                 {
                     try
                     {
-                        callSyncHandler(addon, addon.getLifecycle().getUninstalled(), createEventData(pluginKey, UNINSTALLED));
+                        callSyncHandler(plugin, addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey,addon), SyncHandler.UNINSTALLED);
                     }
                     catch (PluginInstallException e)
                     {
@@ -214,6 +224,16 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             {
                 log.warn("Tried to publish plugin uninstalled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...");
             }
+        }
+
+        try
+        {
+            connectApplinkManager.deleteAppLink(plugin);
+            remotablePluginAccessorFactory.remove(pluginKey);
+        }
+        catch (NotConnectAddonException e)
+        {
+            // swallow error, we don't want to do anything for plugins that are not connect add-ons.
         }
 
         descriptorRegistry.removeAll(pluginKey);
@@ -247,7 +267,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
 
     public void publishEnabledEvent(String pluginKey)
     {
-        eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, ENABLED)));
+        eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase())));
     }
 
     @Override
@@ -263,7 +283,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation
-    private void callSyncHandler(ConnectAddonBean addon, String path, String jsonEventData) throws PluginInstallException
+    private void callSyncHandler(Plugin plugin, ConnectAddonBean addon, String path, String jsonEventData, SyncHandler handler)
     {
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
@@ -271,7 +291,13 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         // try distributing prod shared secrets over http (note the lack of "s") and it shall be rejected
         if (!isDevModeService.isDevMode() && null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
         {
-            throw new PluginInstallException(String.format("Cannot issue install callback except via HTTPS. Current base URL = '%s'", addon.getBaseUrl()));
+            switch(handler)
+            {
+                case INSTALLED :
+                    throw new PluginInstallException(String.format("Cannot issue install callback except via HTTPS. Current base URL = '%s'", addon.getBaseUrl()));
+                case UNINSTALLED :
+                    throw new PluginException(String.format("Cannot issue uninstall callback except via HTTPS. Current base URL = '%s'", addon.getBaseUrl()));
+            }
         }
 
         try
@@ -286,7 +312,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             request.setContentType(MediaType.APPLICATION_JSON);
             request.setEntity(jsonEventData);
 
-            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(pluginKey).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, List<String>>emptyMap());
+            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(plugin).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, List<String>>emptyMap());
             if (authHeader.isDefined())
             {
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());
@@ -298,14 +324,27 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             {
                 String statusText = response.getStatusText();
                 log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]");
-                throw new PluginInstallException("Error contacting remote application " + statusCode + ":[" + statusText + "]", errorI18nKey);
+
+                switch(handler)
+                {
+                    case INSTALLED :
+                        throw new PluginInstallException("Error contacting remote application " + statusCode + ":[" + statusText + "]", errorI18nKey);
+                    case UNINSTALLED :
+                        throw new PluginException("Error contacting remote application " + statusCode + ":[" + statusText + "]");
+                }
             }
 
         }
         catch (Exception e)
         {
             log.error("Error contacting remote application at " + callbackUrl + "  [" + e.getMessage() + "]", e);
-            throw new PluginInstallException("Error contacting remote application [" + e.getMessage() + "]", errorI18nKey);
+            switch(handler)
+            {
+                case INSTALLED :
+                    throw new PluginInstallException("Error contacting remote application [" + e.getMessage() + "]", errorI18nKey);
+                case UNINSTALLED :
+                    throw new PluginException("Error contacting remote application [" + e.getMessage() + "]");
+            }
         }
     }
 
@@ -317,7 +356,12 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
 
     String createEventDataForInstallation(String pluginKey, String sharedSecret, ConnectAddonBean addon)
     {
-        return createEventDataInternal(pluginKey, INSTALLED, sharedSecret, addon);
+        return createEventDataInternal(pluginKey, SyncHandler.INSTALLED.name().toLowerCase(), sharedSecret, addon);
+    }
+
+    String createEventDataForUninstallation(String pluginKey, ConnectAddonBean addon)
+    {
+        return createEventDataInternal(pluginKey, SyncHandler.UNINSTALLED.name().toLowerCase(), null, addon);
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation

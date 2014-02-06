@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.testobjects;
 
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
@@ -31,6 +32,12 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
     public RemotablePluginAccessor getOrThrow(final String pluginKey)
     {
         return get(pluginKey); // it's never null
+    }
+
+    @Override
+    public void remove(String pluginKey)
+    {
+        //do nothing
     }
 
     @Override
@@ -79,5 +86,11 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
                 return null;
             }
         };
+    }
+
+    @Override
+    public RemotablePluginAccessor get(Plugin plugin)
+    {
+        return get(plugin.getKey());
     }
 }
