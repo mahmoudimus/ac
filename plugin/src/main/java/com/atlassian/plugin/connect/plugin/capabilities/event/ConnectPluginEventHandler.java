@@ -13,6 +13,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
@@ -274,7 +275,7 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
 
         if (null != applicationLink)
         {
-            applicationLink.removeProperty("user.key"); // TODO ACDEV-937: reference JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME in atlassian-jwt instead of using a literal for the property name
+            applicationLink.removeProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
         }
         else
         {
