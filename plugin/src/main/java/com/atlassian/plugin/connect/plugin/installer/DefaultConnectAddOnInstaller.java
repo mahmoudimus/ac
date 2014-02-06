@@ -116,8 +116,11 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
                 //applink, baseurl and secret MUST be created before any modules
-                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, connectAddOnUserService.getOrCreateUserKey(addOn.getKey()));
+                String userKey = connectAddOnUserService.getOrCreateUserKey(addOn.getKey());
+                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, userKey);
                 connectAddonRegistry.storeBaseUrl(pluginKey, addOn.getBaseUrl());
+                connectAddonRegistry.storeUserKey(pluginKey, userKey);
+                connectAddonRegistry.storeAuthType(pluginKey,authType);
                 
                 if(!Strings.isNullOrEmpty(sharedSecret))
                 {

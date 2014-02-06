@@ -48,6 +48,16 @@ public class TestPluginInstaller
     {
         pluginController.uninstall(plugin);
     }
+
+    public void disablePlugin(String pluginKey) throws IOException
+    {
+        pluginController.disablePlugin(pluginKey);
+    }
+
+    public void enablePlugin(String pluginKey) throws IOException
+    {
+        pluginController.enablePlugins(pluginKey);
+    }
     
     public String getInternalAddonBaseUrl(String pluginKey)
     {

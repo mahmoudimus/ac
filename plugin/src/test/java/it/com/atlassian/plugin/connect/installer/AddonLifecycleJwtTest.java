@@ -7,9 +7,11 @@ import java.security.KeyPairGenerator;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -33,117 +35,20 @@ import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecy
 import static org.junit.Assert.*;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class AddonLifecycleJwtTest
+public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 {
-    public static final String PLUGIN_KEY = "my-jwt-plugin";
-    public static final String PLUGIN_NAME = "My Plugin";
-    public static final String INSTALLED = "/installed";
-    public static final String ENABLED = "/enabled";
-    public static final String UNINSTALLED = "/uninstalled";
-    public static final String SHARED_SECRET_FIELD_NAME = "sharedSecret";
-    public static final String CLIENT_KEY_FIELD_NAME = "clientKey";
-    public static final String USER_KEY_FIELD_NAME = "userKey";
 
-    private final TestPluginInstaller testPluginInstaller;
-    private final TestAuthenticator testAuthenticator;
-    private final AddonTestFilterResults testFilterResults;
-    private final ConnectApplinkManager connectApplinkManager;
-
-    private ConnectAddonBean baseBean;
-    private ConnectAddonBean installOnlyBean;
-    private ConnectAddonBean uninstallOnlyBean;
-    private ConnectAddonBean installAndEnabledBean;
-    private ConnectAddonBean installAndUninstallBean;
-
-    public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager)
+    public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService)
     {
-        this.testPluginInstaller = testPluginInstaller;
-        this.testAuthenticator = testAuthenticator;
-        this.testFilterResults = testFilterResults;
-        this.connectApplinkManager = connectApplinkManager;
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService);
     }
 
     @BeforeClass
     public void setup() throws Exception
     {
         testAuthenticator.authenticateUser("admin");
-
-        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        KeyPair oauthKeyPair = gen.generateKeyPair();
-        StringWriter publicKeyWriter = new StringWriter();
-        PEMWriter pubWriter = new PEMWriter(publicKeyWriter);
-        pubWriter.writeObject(oauthKeyPair.getPublic());
-        pubWriter.close();
-
-        this.baseBean = newConnectAddonBean()
-                .withName(PLUGIN_NAME)
-                .withKey(PLUGIN_KEY)
-                .withAuthentication(
-                        newAuthenticationBean()
-                                .withType(AuthenticationType.JWT)
-                                .build()
-                )
-                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(PLUGIN_KEY))
-                .build();
-
-        this.installOnlyBean = newConnectAddonBean(baseBean)
-                .withLifecycle(
-                        newLifecycleBean()
-                                .withInstalled(INSTALLED)
-                                .build()
-                )
-                .build();
-
-        this.installAndEnabledBean = newConnectAddonBean(baseBean)
-                .withLifecycle(
-                        newLifecycleBean()
-                                .withInstalled(INSTALLED)
-                                .withEnabled(ENABLED)
-                                .build()
-                )
-                .build();
-
-        this.uninstallOnlyBean = newConnectAddonBean(baseBean)
-                .withLifecycle(
-                        newLifecycleBean()
-                                .withUninstalled(UNINSTALLED)
-                                .build()
-                )
-                .build();
-
-        this.installAndUninstallBean = newConnectAddonBean(baseBean)
-                .withLifecycle(
-                        newLifecycleBean()
-                                .withInstalled(INSTALLED)
-                                .withUninstalled(UNINSTALLED)
-                                .build()
-                )
-                .build();
-    }
-
-    @Test
-    public void installUrlIsPosted() throws Exception
-    {
-        ConnectAddonBean addon = installOnlyBean;
-
-        Plugin plugin = null;
-
-        try
-        {
-            plugin = testPluginInstaller.installPlugin(addon);
-
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
-            assertEquals(HttpMethod.POST, request.getMethod());
-
-        }
-        finally
-        {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
-            if (null != plugin)
-            {
-                testPluginInstaller.uninstallPlugin(plugin);
-            }
-        }
+        
+        initBeans(newAuthenticationBean().withType(AuthenticationType.JWT).build());
     }
 
     @Test
@@ -152,12 +57,14 @@ public class AddonLifecycleJwtTest
         ConnectAddonBean addon = installOnlyBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
+            addonKey = plugin.getKey();
+            
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
 
             boolean hasSharedSecret = new JsonParser().parse(payload).getAsJsonObject().has(SHARED_SECRET_FIELD_NAME);
@@ -166,7 +73,7 @@ public class AddonLifecycleJwtTest
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -180,12 +87,15 @@ public class AddonLifecycleJwtTest
         ConnectAddonBean addon = installAndEnabledBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            ServletRequestSnaphot installRequest = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
+            addonKey = plugin.getKey();
+            final String finalKey = addonKey;
+            
+            ServletRequestSnaphot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
             String installPayload = installRequest.getEntity();
 
             String sharedSecret = new JsonParser().parse(installPayload).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString();
@@ -196,7 +106,7 @@ public class AddonLifecycleJwtTest
                 @Override
                 public boolean isFinished()
                 {
-                    return null != testFilterResults.getRequest(PLUGIN_KEY, ENABLED);
+                    return null != testFilterResults.getRequest(finalKey, ENABLED);
                 }
 
                 @Override
@@ -206,7 +116,7 @@ public class AddonLifecycleJwtTest
                 }
             });
 
-            ServletRequestSnaphot enableRequest = testFilterResults.getRequest(PLUGIN_KEY, ENABLED);
+            ServletRequestSnaphot enableRequest = testFilterResults.getRequest(addonKey, ENABLED);
 
             String jwtToken = enableRequest.getHeaders().get(JwtConstants.HttpRequests.AUTHORIZATION_HEADER.toLowerCase());
 
@@ -217,8 +127,8 @@ public class AddonLifecycleJwtTest
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
-            testFilterResults.clearRequest(PLUGIN_KEY, ENABLED);
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, ENABLED);
             if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -232,12 +142,14 @@ public class AddonLifecycleJwtTest
         ConnectAddonBean addon = installOnlyBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
+            addonKey = plugin.getKey();
+
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
             boolean hasUserKey = new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME);
 
@@ -246,35 +158,7 @@ public class AddonLifecycleJwtTest
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
-            if (null != plugin)
-            {
-                testPluginInstaller.uninstallPlugin(plugin);
-            }
-        }
-    }
-
-    @Test
-    public void uninstallUrlIsPosted() throws Exception
-    {
-        ConnectAddonBean addon = uninstallOnlyBean;
-
-        Plugin plugin = null;
-
-        try
-        {
-            plugin = testPluginInstaller.installPlugin(addon);
-
-            testPluginInstaller.uninstallPlugin(plugin);
-            plugin = null;
-
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, UNINSTALLED);
-            assertEquals(HttpMethod.POST, request.getMethod());
-
-        }
-        finally
-        {
-            testFilterResults.clearRequest(PLUGIN_KEY, UNINSTALLED);
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -288,12 +172,14 @@ public class AddonLifecycleJwtTest
         ConnectAddonBean addon = installAndUninstallBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            ServletRequestSnaphot installRequest = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
+            addonKey = plugin.getKey();
+
+            ServletRequestSnaphot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
             String installPayload = installRequest.getEntity();
 
             String sharedSecret = new JsonParser().parse(installPayload).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString();
@@ -302,7 +188,7 @@ public class AddonLifecycleJwtTest
             testPluginInstaller.uninstallPlugin(plugin);
             plugin = null;
 
-            ServletRequestSnaphot uninstallRequest = testFilterResults.getRequest(PLUGIN_KEY, UNINSTALLED);
+            ServletRequestSnaphot uninstallRequest = testFilterResults.getRequest(addonKey, UNINSTALLED);
 
             String jwtToken = uninstallRequest.getHeaders().get(JwtConstants.HttpRequests.AUTHORIZATION_HEADER.toLowerCase());
 
@@ -313,8 +199,8 @@ public class AddonLifecycleJwtTest
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
-            testFilterResults.clearRequest(PLUGIN_KEY, UNINSTALLED);
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -328,15 +214,17 @@ public class AddonLifecycleJwtTest
         ConnectAddonBean addon = uninstallOnlyBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
+            addonKey = plugin.getKey();
+
             testPluginInstaller.uninstallPlugin(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, UNINSTALLED);
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             String payload = request.getEntity();
             boolean hasUserKey = new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME);
 
@@ -345,7 +233,7 @@ public class AddonLifecycleJwtTest
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, UNINSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -359,12 +247,14 @@ public class AddonLifecycleJwtTest
         ConnectAddonBean addon = installOnlyBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
+            addonKey = plugin.getKey();
+
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
 
             ApplicationLink appLink = connectApplinkManager.getAppLink(addon.getKey());
 
@@ -375,7 +265,7 @@ public class AddonLifecycleJwtTest
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);

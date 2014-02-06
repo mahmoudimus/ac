@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
@@ -44,31 +45,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class AddonLifecycleOAuthTest
+public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 {
-    public static final String PLUGIN_KEY = "my-oauth-plugin";
-    public static final String PLUGIN_NAME = "My Plugin";
-    public static final String INSTALLED = "/installed";
-    public static final String UNINSTALLED = "/uninstalled";
-    public static final String SHARED_SECRET_FIELD_NAME = "sharedSecret";
-    public static final String USER_KEY_FIELD_NAME = "userKey";
-    
-    private final TestPluginInstaller testPluginInstaller;
-    private final TestAuthenticator testAuthenticator;
-    private final AddonTestFilterResults testFilterResults;
-    private final ConnectApplinkManager connectApplinkManager;
-    
-    private ConnectAddonBean baseBean;
-    private ConnectAddonBean installOnlyBean;
-    private ConnectAddonBean uninstallOnlyBean;
-    
-
-    public AddonLifecycleOAuthTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults addonTestFilterResults, ConnectApplinkManager connectApplinkManager)
+    protected AddonLifecycleOAuthTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService)
     {
-        this.testPluginInstaller = testPluginInstaller;
-        this.testAuthenticator = testAuthenticator;
-        this.testFilterResults = addonTestFilterResults;
-        this.connectApplinkManager = connectApplinkManager;
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService);
     }
 
     @BeforeClass
@@ -83,72 +64,26 @@ public class AddonLifecycleOAuthTest
         pubWriter.writeObject(oauthKeyPair.getPublic());
         pubWriter.close();
         
-        this.baseBean = newConnectAddonBean()
-            .withName(PLUGIN_NAME)
-            .withKey(PLUGIN_KEY)
-            .withAuthentication(
-                    newAuthenticationBean()
-                    .withType(AuthenticationType.OAUTH)
-                    .withPublicKey(publicKeyWriter.toString())
-                    .build()
-            )
-            .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(PLUGIN_KEY))
-            .build();
-        
-        this.installOnlyBean = newConnectAddonBean(baseBean)
-            .withLifecycle(
-                    newLifecycleBean()
-                            .withInstalled(INSTALLED)
-                            .build()
-            )
-            .build();
-
-        this.uninstallOnlyBean = newConnectAddonBean(baseBean)
-                .withLifecycle(
-                        newLifecycleBean()
-                                .withUninstalled(UNINSTALLED)
-                                .build()
-                )
-                .build();
+        initBeans(newAuthenticationBean()
+                .withType(AuthenticationType.OAUTH)
+                .withPublicKey(publicKeyWriter.toString())
+                .build());
     }
 
-    @Test
-    public void installUrlIsPosted() throws Exception
-    {
-        ConnectAddonBean addon = installOnlyBean;
-
-        Plugin plugin = null;
-
-        try
-        {
-            plugin = testPluginInstaller.installPlugin(addon);
-
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
-            assertEquals(HttpMethod.POST, request.getMethod());
-
-        }
-        finally
-        {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
-            if(null != plugin)
-            {
-                testPluginInstaller.uninstallPlugin(plugin);
-            }
-        }
-    }
-    
     @Test
     public void installPostContainsNoSharedSecret() throws Exception
     {
         ConnectAddonBean addon = installOnlyBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
+            addonKey = plugin.getKey();
+            
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
             
             boolean hasSharedSecret = new JsonParser().parse(payload).getAsJsonObject().has(SHARED_SECRET_FIELD_NAME);
@@ -157,7 +92,7 @@ public class AddonLifecycleOAuthTest
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             if(null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -171,19 +106,21 @@ public class AddonLifecycleOAuthTest
         ConnectAddonBean addon = installOnlyBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
+            addonKey = plugin.getKey();
+
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
             assertTrue("field " + USER_KEY_FIELD_NAME + " not found in request payload: " + payload,new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME));
 
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             if(null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -197,12 +134,14 @@ public class AddonLifecycleOAuthTest
         ConnectAddonBean addon = installOnlyBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
+            addonKey = plugin.getKey();
+
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
 
             boolean hasOauthLink = new JsonParser().parse(payload).getAsJsonObject()
@@ -214,7 +153,7 @@ public class AddonLifecycleOAuthTest
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             if(null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -222,34 +161,6 @@ public class AddonLifecycleOAuthTest
         }
         
         
-    }
-
-    @Test
-    public void uninstallUrlIsPosted() throws Exception
-    {
-        ConnectAddonBean addon = uninstallOnlyBean;
-
-        Plugin plugin = null;
-
-        try
-        {
-            plugin = testPluginInstaller.installPlugin(addon);
-
-            testPluginInstaller.uninstallPlugin(plugin);
-            plugin = null;
-            
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, UNINSTALLED);
-            assertEquals(HttpMethod.POST, request.getMethod());
-
-        }
-        finally
-        {
-            testFilterResults.clearRequest(PLUGIN_KEY, UNINSTALLED);
-            if(null != plugin)
-            {
-                testPluginInstaller.uninstallPlugin(plugin);
-            }
-        }
     }
 
     @Test
@@ -258,15 +169,17 @@ public class AddonLifecycleOAuthTest
         ConnectAddonBean addon = uninstallOnlyBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
+            addonKey = plugin.getKey();
+
             testPluginInstaller.uninstallPlugin(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, UNINSTALLED);
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             String payload = request.getEntity();
 
             boolean hasSharedSecret = new JsonParser().parse(payload).getAsJsonObject().has(SHARED_SECRET_FIELD_NAME);
@@ -275,7 +188,7 @@ public class AddonLifecycleOAuthTest
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, UNINSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if(null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -289,22 +202,24 @@ public class AddonLifecycleOAuthTest
         ConnectAddonBean addon = uninstallOnlyBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
+            addonKey = plugin.getKey();
+
             testPluginInstaller.uninstallPlugin(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, UNINSTALLED);
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             String payload = request.getEntity();
             assertTrue("field " + USER_KEY_FIELD_NAME + " not found in request payload: " + payload,new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME));
 
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, UNINSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if(null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -318,15 +233,17 @@ public class AddonLifecycleOAuthTest
         ConnectAddonBean addon = uninstallOnlyBean;
 
         Plugin plugin = null;
-
+        String addonKey = null;
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
+            addonKey = plugin.getKey();
+
             testPluginInstaller.uninstallPlugin(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, UNINSTALLED);
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             String payload = request.getEntity();
 
             boolean hasOauthLink = new JsonParser().parse(payload).getAsJsonObject()
@@ -338,7 +255,7 @@ public class AddonLifecycleOAuthTest
         }
         finally
         {
-            testFilterResults.clearRequest(PLUGIN_KEY, UNINSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if(null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
@@ -346,36 +263,6 @@ public class AddonLifecycleOAuthTest
         }
 
 
-    }
-
-    @Test
-    public void appLinkIsCreatedWithCorrectParameters() throws Exception
-    {
-        ConnectAddonBean addon = installOnlyBean;
-
-        Plugin plugin = null;
-
-        try
-        {
-            plugin = testPluginInstaller.installPlugin(addon);
-
-            ServletRequestSnaphot request = testFilterResults.getRequest(PLUGIN_KEY, INSTALLED);
-
-            ApplicationLink appLink = connectApplinkManager.getAppLink(addon.getKey());
-
-            assertNotNull((appLink));
-            assertEquals(addon.getBaseUrl(),appLink.getDisplayUrl().toString());
-            assertEquals("addon_" + addon.getKey(),appLink.getProperty("user.key"));
-
-        }
-        finally
-        {
-            testFilterResults.clearRequest(PLUGIN_KEY, INSTALLED);
-            if (null != plugin)
-            {
-                testPluginInstaller.uninstallPlugin(plugin);
-            }
-        }
     }
 
 }
