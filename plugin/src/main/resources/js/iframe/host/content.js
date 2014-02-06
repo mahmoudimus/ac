@@ -1,7 +1,7 @@
 /**
  * Utility methods for rendering connect addons in AUI components
  */
-_AP.define("host/content", ["_dollar"], function ($) {
+_AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
     "use strict";
 
     function getContentUrl(pluginKey, capability){
@@ -29,17 +29,16 @@ _AP.define("host/content", ["_dollar"], function ($) {
 
         function domEventHandler(event) {
             event.preventDefault();
-            var $el = $(event.target);
-            var href = $el.closest("a").attr("href");
-            var options = {
+            var $el = $(event.target),
+            href = $el.closest("a").attr("href"),
+            url = new uri.init(href),
+            options = {
                 bindTo: $el,
-                header: $el.text()
+                header: $el.text(),
+                width:  url.getQueryParamValue('width'),
+                height: url.getQueryParamValue('height'),
+                cp:     url.getQueryParamValue('cp')
             };
-            var re = /[?&](width|height)=([^&]+)/g, match;
-            while (match = re.exec(href)) {
-                options[match[1]] = decodeURIComponent(match[2]);
-            }
-
             callback(href, options);
         }
 
