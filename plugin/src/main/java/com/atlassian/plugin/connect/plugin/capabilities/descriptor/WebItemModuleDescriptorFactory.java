@@ -110,7 +110,10 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
 
         if (bean.getTarget().isDialogTarget() && bean.getContext() == addon)
         {
-            url += "&dialog=1&simpleDialog=1"; // TODO: use url builder
+            // can't use UriBuilder as a Uri template is not a valid Uri. May be able to use a library that provides
+            // and impl of a UriTemplate and allows extra params to be appended
+            final String start = url.contains("?") ? "&" : "?";
+            url += start + "dialog=1&simpleDialog=1";
         }
 
         paramsModuleFragmentFactory.addParamsToElement(webItemElement,bean.getParams());
