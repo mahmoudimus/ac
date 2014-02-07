@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -91,5 +92,22 @@ public class ApiScopingFilterTest
 
         apiScopingFilter.doFilter(request, response, chain);
         verify(permissionManager, never()).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
+    }
+
+    @Test
+    public void testScopeIsNotCheckedForNonAddOnRequests() throws Exception
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(THIS_ADD_ON_KEY);
+
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(permissionManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
+    }
+
+
+    @Test
+    public void testScopeIsNotCheckedForMissingAddOnKey() throws Exception
+    {
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(permissionManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
     }
 }

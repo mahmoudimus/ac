@@ -106,7 +106,8 @@ public class ApiScopingFilter implements Filter
     private String getAddOnKeyForScopeCheck(HttpServletRequest req)
     {
         String addOnKey = extractClientKey(req);
-        if (addOnKey != null && !ourConsumerKey.equals(addOnKey)) {
+        if (addOnKey != null)
+        {
             return addOnKey;
         }
         addOnKey = extractXdmRequestKey(req);
@@ -119,7 +120,8 @@ public class ApiScopingFilter implements Filter
 
     private boolean isAddOnRequest(HttpServletRequest request)
     {
-        return extractClientKey(request) != null || extractXdmRequestKey(request) != null;
+        String addOnKey = extractClientKey(request);
+        return (addOnKey != null && !ourConsumerKey.equals(addOnKey)) || (extractXdmRequestKey(request) != null);
     }
 
     private void handleScopedRequest(String clientKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
