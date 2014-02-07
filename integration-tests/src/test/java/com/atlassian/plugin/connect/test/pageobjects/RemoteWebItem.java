@@ -126,4 +126,9 @@ public class RemoteWebItem
         }
         return webItem.hasClass(INLINE_DIALOG_ACTIVE_CLASS) || webItem.find(By.className(INLINE_DIALOG_ACTIVE_CLASS)).isPresent();
     }
+
+    public boolean isDialog()
+    {
+        return null != webItem && webItem.hasClass("ap-dialog");
+    }
 }
