@@ -13,39 +13,18 @@ import java.util.List;
 /**
  * Describes a parameter input field for a macro.
  *
- * In order to receive the value of the parameter, it must be defined in the macro URL template. For example:
+ * Any declared parameters must also be included in the URL value of the macro in order to serialise this value. For
+ * example, for a macro with a parameter `view` it should be added to the macro url as follows:
  *
- * Let's take this example of a dynamic macro, which specifies a parameter "city".
- *
- * ```
- * "dynamicContentMacros": [{
- *     "name": { ... },
- *     "url": "/render-map?pageTitle={page.title}",
- *     "categories": [ ... ],
- *     "parameters": [{
- *         "identifier": "city",
- *         "name": {
- *             "value": "Name a city"
- *         },
- *         "type": "string"
+ *     "dynamicContentMacros": [{
+ *         ...
+ *         "url": "/render-map?pageTitle={page.title}&viewChoice={view}",
+ *         ...
  *     }]
- * }]
- * ```
- *
- * Any declared parameters must now also be included in the URL value of the macro in order to serialise this value. For
- * example, your descriptor should add `cityName={city}`:
- *
- * ```
- * "dynamicContentMacros": [{
- *     ...
- *     "url": "/render-map?pageTitle={page.title}&cityName={city}",
- *     ...
- * }]
- * ```
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_PARAMS_EXAMPLE}
  * @schemaTitle Macro Input Parameter
  * @since 1.0
  */
