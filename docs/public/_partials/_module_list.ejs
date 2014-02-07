@@ -1,10 +1,8 @@
-<div class="aui-nav-heading">
-    <% if (modules.index) { %>
+<% if (modules.index) { %>
+    <div class="aui-nav-heading">
         <a href="<%= relDocRoot %><%= modules.index.selfLink %>.html"><%= modules.index.name %></a>
-    <% } else { %>
-        <strong><%= title %></strong>
-    <% } %>
-</div>
+    </div>
+<% } %>
 <ul class="aui-nav">
     <% for (var key in modules) { %>
         <% if (key === "index") continue; %>

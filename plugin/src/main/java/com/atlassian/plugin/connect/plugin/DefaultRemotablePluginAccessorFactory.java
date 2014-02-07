@@ -13,7 +13,7 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
-import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -29,6 +29,7 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class DefaultRemotablePluginAccessorFactory implements RemotablePluginAccessorFactory, DisposableBean
 {
     private final ConnectApplinkManager connectApplinkManager;
-    private final ConnectDescriptorRegistry connectDescriptorRegistry;
+    private final ConnectAddonRegistry connectAddonRegistry;
     private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
     private final PluginAccessor pluginAccessor;
@@ -62,7 +63,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     @Autowired
     public DefaultRemotablePluginAccessorFactory(ConnectApplinkManager connectApplinkManager,
-            ConnectDescriptorRegistry connectDescriptorRegistry,
+            ConnectAddonRegistry connectAddonRegistry,
             OAuthLinkManager oAuthLinkManager,
             CachingHttpContentRetriever httpContentRetriever,
             PluginAccessor pluginAccessor,
@@ -73,7 +74,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
             UserManager userManager)
     {
         this.connectApplinkManager = connectApplinkManager;
-        this.connectDescriptorRegistry = connectDescriptorRegistry;
+        this.connectAddonRegistry = connectAddonRegistry;
         this.oAuthLinkManager = oAuthLinkManager;
         this.httpContentRetriever = httpContentRetriever;
         this.pluginAccessor = pluginAccessor;
@@ -113,49 +114,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         }
     }
 
-    /**
-     * Clear accessor if a plugin is enabled
-     */
-    @EventListener
-    public void onPluginEnabled(PluginEnabledEvent event)
-    {
-        accessors.remove(event.getPlugin().getKey());
-    }
-
-    /**
-     * Clear accessor if a plugin is disabled
-     */
-    @EventListener
-    public void onPluginDisabled(PluginDisabledEvent event)
-    {
-        accessors.remove(event.getPlugin().getKey());
-    }
-
-    @EventListener
-    public void onPluginUninstalled(PluginUninstalledEvent event)
-    {
-        // this method is invoked for every plugin uninstall. The ConnectApplinkManager ensures we only remove applinks
-        // for connect add-ons
-        Plugin plugin = event.getPlugin();
-        String key = plugin.getKey();
-
-        try
-        {
-            connectApplinkManager.deleteAppLink(plugin);
-            accessors.remove(key);
-        }
-        catch (NotConnectAddonException e)
-        {
-            // swallow error, we don't want to do anything for plugins that are not connect add-ons.
-        }
-    }
-
-    @PluginEventListener
-    public void onPluginModuleEnabled(PluginModuleEnabledEvent event)
-    {
-        accessors.remove(event.getModule().getPluginKey());
-    }
-
     private String getPluginKey(ApplicationLink link)
     {
         return String.valueOf(link.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY));
@@ -170,6 +128,18 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
      */
     public RemotablePluginAccessor get(String pluginKey)
     {
+        final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        return get(plugin, pluginKey);
+    }
+
+    @Override
+    public RemotablePluginAccessor get(Plugin plugin)
+    {
+        return get(plugin,plugin.getKey());
+    }
+
+    private RemotablePluginAccessor get(final Plugin plugin, final String pluginKey)
+    {
         // this will potentially create multiple instances if called quickly, but we don't really
         // care as they shouldn't be cached
         final RemotablePluginAccessor accessor;
@@ -179,7 +149,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         }
         else
         {
-            accessor = create(pluginKey, getDisplayUrl(pluginKey));
+            accessor = create(plugin, pluginKey, getDisplayUrl(pluginKey));
             accessors.put(pluginKey, accessor);
         }
         return accessor;
@@ -196,12 +166,28 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         return remotablePluginAccessor;
     }
 
+    @Override
+    public void remove(String pluginKey)
+    {
+        accessors.remove(pluginKey);
+    }
+
     private Supplier<URI> getDisplayUrl(final String pluginKey)
     {
-        final ApplicationLink link = connectApplinkManager.getAppLink(pluginKey);
-        if (link != null)
+        final String storedBaseUrl = connectAddonRegistry.getBaseUrl(pluginKey);
+
+        if (!Strings.isNullOrEmpty(storedBaseUrl))
         {
-            return Suppliers.ofInstance(link.getDisplayUrl());
+            return Suppliers.compose(ToUriFunction.INSTANCE,
+                    new Supplier<String>()
+                    {
+                        @Override
+                        public String get()
+                        {
+                            return storedBaseUrl;
+                        }
+                    }
+            );
         }
         else
         {
@@ -228,9 +214,9 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
      * @param displayUrl The display url
      * @return An accessor for a remote plugin
      */
-    public RemotablePluginAccessor create(String pluginKey, Supplier<URI> displayUrl)
+    public RemotablePluginAccessor create(Plugin plugin, String pluginKey, Supplier<URI> displayUrl)
     {
-        final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        
         checkNotNull(plugin, "Plugin not found: '%s'", pluginKey);
 
         ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);

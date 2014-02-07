@@ -17,7 +17,7 @@
                     this.server.respondWith("GET", new RegExp(".*" + contentPath + ".*"),
                         [200, { "Content-Type": "text/html" }, 'This is the <span id="my-span">content</span>']);
 
-                    $('<a id="qunit-fixture" href="http://foo.com/?width=101&height=200" />').appendTo('body');
+                    $('<a id="qunit-fixture" href="http://foo.com/?width=101&height=200&cp=%2Fconfluence" />').appendTo('body');
                 },
                 teardown: function() {
                     this.container.remove();
@@ -76,6 +76,16 @@
                 $('#qunit-fixture').trigger('click');
 
                 equal(spy.firstCall.args[1]['height'], '200');
+            });
+
+            test("eventHandler callback includes the context path", function(){
+                var spy = sinon.spy();
+
+                contentUtilities.eventHandler("click", '#qunit-fixture', spy);
+                $('#qunit-fixture').trigger('click');
+
+                equal(spy.firstCall.args[1]['cp'], '/confluence');
+
             });
 
         });

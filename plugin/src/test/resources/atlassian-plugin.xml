@@ -20,6 +20,10 @@
     <component-import key="connectSchemaLocator" interface="com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator" />
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
     <component-import key="connectUpmInstallHandler" interface="com.atlassian.upm.spi.PluginInstallHandler"/>
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+    <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry"/>
+    <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService"/>
+    <component-import key="salUserManager" interface="com.atlassian.sal.api.user.UserManager" />
 
     <component key="testPluginInstaller" class="it.com.atlassian.plugin.connect.TestPluginInstaller" />
     <component key="jiraTestAuthenticator" 
@@ -30,4 +34,11 @@
                class="it.com.atlassian.plugin.connect.ConfluenceTestAuthenticator"
                interface="it.com.atlassian.plugin.connect.TestAuthenticator"
                application="confluence" />
+
+    <servlet-filter key="connect-test-addon" class="it.com.atlassian.plugin.connect.filter.AddonTestFilter"
+                    location="after-encoding" weight="1">
+        <url-pattern>/ac-test-addon/*</url-pattern>
+    </servlet-filter>
+
+    <component key="testFilterResults" class="it.com.atlassian.plugin.connect.filter.AddonTestFilterResults" />
 </atlassian-plugin>

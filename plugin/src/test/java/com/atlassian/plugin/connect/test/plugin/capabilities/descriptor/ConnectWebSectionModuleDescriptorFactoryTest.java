@@ -43,7 +43,6 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     private WebSectionModuleDescriptor descriptor;
 
     @Mock private PluginForTests plugin;
-    @Mock private ConnectAutowireUtil connectAutowireUtil;
     @Mock private HostContainer hostContainer;
     @Mock private WebInterfaceManager webInterfaceManager;
     @Mock private UserManager userManager;
@@ -56,11 +55,10 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     @Before
     public void beforeEachTest() throws Exception
     {
-        ConnectWebSectionModuleDescriptorFactory webSectionFactory = new ConnectWebSectionModuleDescriptorFactory(connectAutowireUtil, conditionModuleFragmentFactory, new WebSectionModuleDescriptorFactoryForTests(webInterfaceManager));
+        ConnectWebSectionModuleDescriptorFactory webSectionFactory = new ConnectWebSectionModuleDescriptorFactory(conditionModuleFragmentFactory, new WebSectionModuleDescriptorFactoryForTests(webInterfaceManager));
         when(plugin.getKey()).thenReturn("my-awesome-plugin");
         when(plugin.getName()).thenReturn("My Plugin™");
         ConnectWebSectionModuleDescriptor aDescriptor = new ConnectWebSectionModuleDescriptor(webInterfaceManager);
-        when(connectAutowireUtil.createBean(ConnectWebSectionModuleDescriptor.class)).thenReturn(aDescriptor);
 
         when(conditionModuleFragmentFactory.createFragment(eq("my-awesome-plugin"), anyList(), anyString()))
                 .thenReturn(conditionElement());
