@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 
 import java.util.Set;
 
+@SuppressWarnings("unused")
 @ConfluenceComponent
 public class ConfluenceConnectAddOnUserGroupsService implements ConnectAddOnUserGroupsService
 {

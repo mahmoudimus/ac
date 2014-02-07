@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 
 import java.util.Set;
 
+@SuppressWarnings("unused")
 @JiraComponent
 public class JiraConnectAddOnUserGroupsService implements ConnectAddOnUserGroupsService
 {
