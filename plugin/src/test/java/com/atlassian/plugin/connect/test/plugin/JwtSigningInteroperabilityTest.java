@@ -35,8 +35,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class JwtSigningInteroperabilityTest
 {
+    public static final String SHARED_SECRET = "s0m3-sh@r3d-s3cr37";
+
     private static class TestJwtService implements JwtService
     {
         private final String sharedSecret;
@@ -80,17 +84,23 @@ public class JwtSigningInteroperabilityTest
     private static class SigningTests
     {
         private final List<Map<String, String>> tests = Lists.newArrayList();
+        private final String sharedSecret;
 
-
-        public void add(String description, String signature)
+        public SigningTests(String sharedSecret)
         {
-            tests.add(ImmutableMap.of(description, signature));
+            this.sharedSecret = sharedSecret;
+        }
+
+
+        public void add(String description, String signedUrl)
+        {
+            tests.add(ImmutableMap.of("name", description, "url", signedUrl));
         }
 
         public Appendable toJSON(Appendable out)
         {
             Gson gson = new GsonBuilder().create();
-            gson.toJson(ImmutableMap.of("tests", tests), out);
+            gson.toJson(ImmutableMap.of("secret", sharedSecret, "tests", tests), out);
             return out;
         }
     }
@@ -121,7 +131,7 @@ public class JwtSigningInteroperabilityTest
 
         signer = new JwtSigningRemotablePluginAccessor(plugin,
                 baseUrlSupplier,
-                new TestJwtService("s0m3-sh@r3d-s3cr37"),
+                new TestJwtService(SHARED_SECRET),
                 consumerService,
                 connectApplinkManager,
                 httpContentRetriever,
@@ -131,7 +141,7 @@ public class JwtSigningInteroperabilityTest
     @Test
     public void generateTests() throws Exception
     {
-        SigningTests tests = new SigningTests();
+        SigningTests tests = new SigningTests(SHARED_SECRET);
 
         tests.add("Spaces", createAndSign("param", "some spaces in this parameter"));
         tests.add("Asterisk", createAndSign("query", "connect*"));
@@ -148,16 +158,33 @@ public class JwtSigningInteroperabilityTest
         tests.add("RFC-1738 Special", createAndSign("rfc", "$-_.+!*'(),"));
         tests.add("Empty", createAndSign("notmuch", ""));
         tests.add("Encoded", createAndSign("referrer", "http://from.net/p?x=A+%2B+B&y=%24-_.%2B%21*%27%28%29%2C"));
-        tests.add("Multiple", createAndSign("ids", "1","10", "-1","20", "2"));
-        tests.add("Multiple II", createAndSign("ids", ".1",":1",":2", ".2"));
-        tests.add("Multiple Unicode", createAndSign("chars", "宮","崎","駿"));
-        tests.add("Multiple Empty", createAndSign("c", ""," ","+", "%20"));
+        tests.add("Multiple", createAndSign("ids", "1", "10", "-1", "20", "2"));
+        tests.add("Multiple II", createAndSign("ids", ".1", ":1", ":2", ".2"));
+        tests.add("Multiple Unicode", createAndSign("chars", "宮", "崎", "駿"));
+        tests.add("Multiple Empty", createAndSign("c", "", " ", "+", "%20"));
         tests.add("Key RFC-1738 Unsafe", createAndSign("#1", "value"));
         tests.add("Key RFC-1738 Reserved", createAndSign(":1", "value"));
         tests.add("Key RFC-1738 Special", createAndSign("$1", "value"));
 
-        System.out.println(tests.toJSON(new StringBuilder()).toString());
+        write(tests);
+    }
 
+    private void write(SigningTests tests) throws IOException
+    {
+        System.out.println(tests.toJSON(new StringBuilder()));
+        String filePath = System.getProperty("jwtinteroptest.file");
+        if (null != filePath)
+        {
+            OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8");
+            try
+            {
+                tests.toJSON(fileWriter);
+            }
+            finally
+            {
+                fileWriter.close();
+            }
+        }
     }
 
     private String createAndSign(String key, String... values)
