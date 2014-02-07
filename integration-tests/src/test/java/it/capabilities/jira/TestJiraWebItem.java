@@ -231,7 +231,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertTrue("web item should be a dialog", webItem.isDialog());
         webItem.click();
 
-        RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class).waitUntilContentLoaded();
+        RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class).waitUntilContentElementNotEmpty("client-http-status");
         assertEquals("Success", dialogPage.getApRequestMessage());
         assertEquals("200", dialogPage.getApRequestStatusCode());
 
