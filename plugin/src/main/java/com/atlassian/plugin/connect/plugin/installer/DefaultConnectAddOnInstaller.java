@@ -70,7 +70,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     }
 
     @Override
-    public Plugin install(final String username, final Document document)
+    public Plugin install(final String username, final Document document) throws PluginInstallException
     {
         String pluginKey = getPluginKey(document);
         removeOldPlugin(pluginKey);
@@ -94,7 +94,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     }
 
     @Override
-    public Plugin install(String username, String jsonDescriptor)
+    public Plugin install(String username, String jsonDescriptor) throws PluginInstallException
     {
         String pluginKey;
         try
@@ -141,11 +141,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 This is so we can register webhooks during the module registration phase and they will get fired with this enabled event.
                  */
                 connectEventHandler.publishEnabledEvent(pluginKey);
-
-            }
-            catch (IllegalStateException e)
-            {
-                uninstallWithException(installedPlugin, e);
             }
             catch (Exception e)
             {

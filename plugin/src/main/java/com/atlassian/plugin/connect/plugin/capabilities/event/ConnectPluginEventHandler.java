@@ -35,7 +35,6 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserInitExcepti
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
@@ -88,13 +87,12 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
     private final ConnectAddonRegistry descriptorRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final LicenseRetriever licenseRetriever;
-    private final IsDevModeService isDevModeService;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final JwtApplinkFinder jwtApplinkFinder;
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddOnUserService connectAddOnUserService;
-    
+
     public enum SyncHandler { INSTALLED, UNINSTALLED, ENABLED, DISABLED };
 
     @Inject
@@ -110,7 +108,6 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
                                      ConnectAddonRegistry descriptorRegistry,
                                      BeanToModuleRegistrar beanToModuleRegistrar,
                                      LicenseRetriever licenseRetriever,
-                                     IsDevModeService devModeService,
                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, RemotablePluginAccessorFactory remotablePluginAccessorFactory,
                                      JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService)
     {
@@ -127,7 +124,6 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
         this.connectIdentifier = connectIdentifier;
         this.descriptorRegistry = descriptorRegistry;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
-        this.isDevModeService = devModeService;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.jwtApplinkFinder = jwtApplinkFinder;
         this.connectApplinkManager = connectApplinkManager;
@@ -314,21 +310,7 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
     // NB: the sharedSecret should be distributed synchronously and only on installation
     private void callSyncHandler(Plugin plugin, ConnectAddonBean addon, String path, String jsonEventData, SyncHandler handler)
     {
-        Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
-
-        // try distributing prod shared secrets over http (note the lack of "s") and it shall be rejected
-        if (!isDevModeService.isDevMode() && null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
-        {
-            String message = String.format("Cannot issue callback except via HTTPS. Current base URL = '%s'", addon.getBaseUrl());
-            switch(handler)
-            {
-                case INSTALLED :
-                    throw new PluginInstallException(handler.name() + ": " + message, errorI18nKey);
-                case UNINSTALLED :
-                    throw new PluginException(handler.name() + ": " + message);
-            }
-        }
 
         try
         {
@@ -360,13 +342,18 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
                 switch(handler)
                 {
                     case INSTALLED :
-                        throw new PluginInstallException(handler.name() + ": " + message, errorI18nKey);
+                        throw new PluginInstallException(handler.name() + ": " + message,
+                                Option.some("connect.install.error.remote.host.bad.response"));
                     case UNINSTALLED :
                         throw new PluginException(handler.name() + ": " + message);
                 }
             }
 
         }
+        // Catching Exception here makes me very sad, but there doesn't seem to be a contract for what RuntimeExceptions
+        // are thrown by atlassian http-client. The type passed to the ResponseTransformation.Builder.fail() function is
+        // a Throwable, so no help there. The upshot is we can't determine whether this exception was thrown because the
+        // request to the remote host failed, or because there's a bug in our code. We'll assume the former for now..
         catch (Exception e)
         {
             log.error("Error contacting remote application at " + callbackUrl + "  [" + e.getMessage() + "]", e);
@@ -375,7 +362,8 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
             switch(handler)
             {
                 case INSTALLED :
-                    throw new PluginInstallException(handler.name() + ": " + message, errorI18nKey);
+                    throw new PluginInstallException(handler.name() + ": " + message,
+                            Option.some("connect.install.error.remote.installation.error"));
                 case UNINSTALLED :
                     throw new PluginException(handler.name() + ": " + message);
             }
