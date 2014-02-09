@@ -49,9 +49,9 @@
           document.getElementById("client-http-response-text").innerHTML = xhr.responseText;
         }
 
-        AP.request("/rest/api/2/user/?username=betty&rnd=" + Math.random(), {
+        AP.request("/rest/remoteplugintest/1/user?rnd=" + Math.random(), {
           headers: {
-            "Accept": "application/json"
+            "Accept": "text/plain"
           },
           success: function (data, statusText, xhr) {
             document.getElementById("client-http-data").innerHTML = data;
