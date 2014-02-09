@@ -91,10 +91,14 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
 
         var $panelBody = $dialog.find(".ap-dialog-content");
         contentUrlObj = new uri.init(contentUrl)
-        .replaceQueryParam("dialog", "1")
-        .replaceQueryParam("simpleDialog", "1")
         .replaceQueryParam("width", $panelBody.width())
         .replaceQueryParam("height", $panelBody.height());
+
+        if(!contentUrlObj.getQueryParamValue("dialog") || !contentUrlObj.getQueryParamValue("simpleDialog")){
+          contentUrlObj
+            .addQueryParam("dialog", "1")
+            .addQueryParam("simpleDialog", "1");
+        }
 
         function enableButtons() {
           buttons.setEnabled(true);
