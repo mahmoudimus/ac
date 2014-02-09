@@ -159,10 +159,12 @@ public class JwtSigningInteroperabilityTest
     {
         SigningTests tests = new SigningTests(SHARED_SECRET);
 
+        tests.add("Simple", createAndSign("param", "value"));
         tests.add("Spaces", createAndSign("param", "some spaces in this parameter"));
         tests.add("Asterisk", createAndSign("query", "connect*"));
         tests.add("Unicode", createAndSign("director", "宮崎 駿"));
         tests.add("Comma-delimited", createAndSign("ids", "10,2,20,1"));
+        tests.add("Multi-value Comma-delimited", createAndSign("tuples", "1,2,3", "6,5,4", "7,9,8"));
         tests.add("Plus", createAndSign("title", "1 + 1 equals 3"));
         tests.add("JSON Object", createAndSign("json", "{\"key\":\"value\"}"));
         tests.add("JSON Array", createAndSign("json", "[\"val1\",\"val2\"]"));
@@ -174,13 +176,26 @@ public class JwtSigningInteroperabilityTest
         tests.add("RFC-1738 Special", createAndSign("rfc", "$-_.+!*'(),"));
         tests.add("Empty", createAndSign("notmuch", ""));
         tests.add("Encoded", createAndSign("referrer", "http://from.net/p?x=A+%2B+B&y=%24-_.%2B%21*%27%28%29%2C"));
-        tests.add("Multiple", createAndSign("ids", "1", "10", "-1", "20", "2"));
-        tests.add("Multiple II", createAndSign("ids", ".1", ":1", ":2", ".2"));
-        tests.add("Multiple Unicode", createAndSign("chars", "宮", "崎", "駿"));
-        tests.add("Multiple Empty", createAndSign("c", "", " ", "+", "%20"));
+        tests.add("Multi-value", createAndSign("ids", "1", "10", "-1", "20", "2"));
+        tests.add("Multi-value II", createAndSign("ids", ".1", ":1", ":2", ".2"));
+        tests.add("Multi-value Unicode", createAndSign("chars", "宮", "崎", "駿"));
+        tests.add("Multi-value Empty", createAndSign("c", "", " ", "+", "%20"));
         tests.add("Key RFC-1738 Unsafe", createAndSign("#1", "value"));
         tests.add("Key RFC-1738 Reserved", createAndSign(":1", "value"));
         tests.add("Key RFC-1738 Special", createAndSign("$1", "value"));
+        tests.add("Multiple Parameters Simple", createAndSign(ImmutableMap.of("a", new String[] {"x"},
+                "b", new String[]{"y"})));
+        tests.add("Multiple Multi-value Parameters", createAndSign(ImmutableMap.of("a", new String[] {"x10", "x1"},
+                "b", new String[]{"y1", "y10"})));
+        tests.add("Multiple Parameters Spaces", createAndSign(ImmutableMap.of("a", new String[] {"one string", "another one"},
+                "b", new String[]{"more here", "and yet more"})));
+        tests.add("Multiple Parameters Comma-delimited", createAndSign(ImmutableMap.of("a", new String[] {"1,2,3", "4,5,6"},
+                "b", new String[]{"a,b,c", "d,e,f"})));
+        tests.add("Parameter Order", createAndSign(ImmutableMap.of("a10", new String[] {"1"},
+                "a1", new String[]{"2"},
+                "b1", new String[]{"3"},
+                "b10", new String[]{"4"}
+        )));
 
         write(tests);
     }
@@ -206,5 +221,10 @@ public class JwtSigningInteroperabilityTest
     private String createAndSign(String key, String... values)
     {
         return signer.signGetUrl(basePath, ImmutableMap.of(key, values));
+    }
+
+    private String createAndSign(Map<String, String[]> params)
+    {
+        return signer.signGetUrl(basePath, params);
     }
 }
