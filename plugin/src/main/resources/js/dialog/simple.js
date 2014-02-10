@@ -89,7 +89,7 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
       show: function() {
         dialog.show();
 
-        var $panelBody = $dialog.find(".ap-dialog-content");
+        var $panelBody = $dialog.find(".ap-dialog-content"),
         contentUrlObj = new uri.init(contentUrl)
         .replaceQueryParam("width", $panelBody.width())
         .replaceQueryParam("height", $panelBody.height());
@@ -139,10 +139,10 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
         buttons.setEnabled(false);
 
         //check for json descriptor add-ons
-        var scheme = new uri.init(contentUrl).scheme();
+        var scheme =contentUrlObj.scheme();
         if(scheme){
           var cont = $('<div />').appendTo('.ap-servlet-placeholder');
-          displayDialogContent(cont, contentUrl);
+          displayDialogContent(cont, contentUrlObj.toString());
           return;
         }
 
@@ -160,7 +160,7 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
         }
 
         // support XML descriptors
-        $.ajax(contentUrl, {
+        $.ajax(contentUrlObj.toString(), {
           dataType: "html",
           success: function(data) {
             preventTimeout();
