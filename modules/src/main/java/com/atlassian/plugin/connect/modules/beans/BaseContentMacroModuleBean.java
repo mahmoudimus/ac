@@ -56,6 +56,9 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * * `user.id`: The user ID, e.g. 'admin'
      * * `user.key`: The user key, e.g. 'ff80808143087d180143087d3a910004'
      * * `output.type`: The output type, e.g. 'display'
+     *
+     *Context parameters for macros are also required in the URL. Please see the
+     * [Macro Input Parameter](../fragment/macro-input-parameter.html) documentation for details.
      */
     @Required
     @StringSchemaAttributes(format = "uri-template")
