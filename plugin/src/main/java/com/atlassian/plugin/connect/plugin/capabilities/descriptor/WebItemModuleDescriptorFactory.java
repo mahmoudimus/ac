@@ -108,13 +108,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
             }
         }
 
-        if (bean.getTarget().isDialogTarget() && bean.getContext() == addon)
-        {
-            // can't use UriBuilder as a Uri template is not a valid Uri. May be able to use a library that provides
-            // and impl of a UriTemplate and allows extra params to be appended
-            final String start = url.contains("?") ? "&" : "?";
-            url += start + "dialog=1&simpleDialog=1";
-        }
+        final boolean isDialog = bean.getTarget().isDialogTarget() && bean.getContext() == addon;
 
         paramsModuleFragmentFactory.addParamsToElement(webItemElement,bean.getParams());
 
@@ -128,11 +122,11 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
             log.debug("Created web item: " + printNode(webItemElement));
         }
 
-        return createWebItemDescriptor(plugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext());
+        return createWebItemDescriptor(plugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog);
     }
 
     private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String moduleKey, String url,
-                                                            boolean absolute, AddOnUrlContext urlContext)
+                                                            boolean absolute, AddOnUrlContext urlContext, boolean isDialog)
     {
         webItemElement.addAttribute("system", "true");
 
@@ -141,8 +135,8 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
                 ,plugin.getKey()
                 ,moduleKey
                 ,absolute
-                ,urlContext
-        );
+                ,urlContext,
+                false);
 
         descriptor.init(plugin, webItemElement);
 
