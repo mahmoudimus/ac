@@ -11,11 +11,16 @@ import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+
+import com.google.common.annotations.VisibleForTesting;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@ExportAsDevService
 @Component
 public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 {
@@ -90,6 +95,54 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         }
     }
 
+    @Override
+    public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException
+    {
+        String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;
+        User user = findUserByKey(userKey);
+
+        if (null != user)
+        {
+            UserTemplate userTemplate = new UserTemplate(user);
+            userTemplate.setActive(false);
+            try
+            {
+                applicationService.updateUser(application, userTemplate);
+            }
+            catch (InvalidUserException e)
+            {
+                throw new ConnectAddOnUserDisableException(e);
+            }
+            catch (OperationFailedException e)
+            {
+                throw new ConnectAddOnUserDisableException(e);
+            }
+            catch (ApplicationPermissionException e)
+            {
+                throw new ConnectAddOnUserDisableException(e);
+            }
+            catch (UserNotFoundException e)
+            {
+                throw new ConnectAddOnUserDisableException(e);
+            }
+        }
+    }
+
+    @VisibleForTesting
+    @Override
+    public boolean isAddOnUserActive(String addOnKey)
+    {
+        String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;
+        User user = findUserByKey(userKey);
+
+        if (null == user)
+        {
+            return false;
+        }
+        
+        return user.isActive();
+    }
+
     private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException
     {
         ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
@@ -140,10 +193,11 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         {
             // just in case an admin changes the email address
             // (we don't rely on this to prevent an admin taking control of the account, but it would make it more difficult)
-            if (!NO_REPLY_EMAIL_ADDRESS.equals(user.getEmailAddress()))
+            if (!NO_REPLY_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive())
             {
                 UserTemplate userTemplate = new UserTemplate(user);
                 userTemplate.setEmailAddress(NO_REPLY_EMAIL_ADDRESS);
+                userTemplate.setActive(true);
                 applicationService.updateUser(application, userTemplate);
             }
         }
@@ -159,6 +213,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             // Justin Koke says that NONE password prevents logging in
             UserTemplate userTemplate = new UserTemplate(userKey);
             userTemplate.setEmailAddress(NO_REPLY_EMAIL_ADDRESS); // so that "reset password" emails go nowhere
+            userTemplate.setActive(true); //if you don't set this, it defaults to inactive!!!
             user = applicationService.addUser(application, userTemplate, PasswordCredential.NONE);
         }
         catch (InvalidUserException iue)

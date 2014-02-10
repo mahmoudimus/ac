@@ -114,49 +114,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         }
     }
 
-    /**
-     * Clear accessor if a plugin is enabled
-     */
-    @EventListener
-    public void onPluginEnabled(PluginEnabledEvent event)
-    {
-        accessors.remove(event.getPlugin().getKey());
-    }
-
-    /**
-     * Clear accessor if a plugin is disabled
-     */
-    @EventListener
-    public void onPluginDisabled(PluginDisabledEvent event)
-    {
-        accessors.remove(event.getPlugin().getKey());
-    }
-
-    @EventListener
-    public void onPluginUninstalled(PluginUninstalledEvent event)
-    {
-        // this method is invoked for every plugin uninstall. The ConnectApplinkManager ensures we only remove applinks
-        // for connect add-ons
-        Plugin plugin = event.getPlugin();
-        String key = plugin.getKey();
-
-        try
-        {
-            connectApplinkManager.deleteAppLink(plugin);
-            accessors.remove(key);
-        }
-        catch (NotConnectAddonException e)
-        {
-            // swallow error, we don't want to do anything for plugins that are not connect add-ons.
-        }
-    }
-
-    @PluginEventListener
-    public void onPluginModuleEnabled(PluginModuleEnabledEvent event)
-    {
-        accessors.remove(event.getModule().getPluginKey());
-    }
-
     private String getPluginKey(ApplicationLink link)
     {
         return String.valueOf(link.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY));
@@ -171,6 +128,18 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
      */
     public RemotablePluginAccessor get(String pluginKey)
     {
+        final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        return get(plugin, pluginKey);
+    }
+
+    @Override
+    public RemotablePluginAccessor get(Plugin plugin)
+    {
+        return get(plugin,plugin.getKey());
+    }
+
+    private RemotablePluginAccessor get(final Plugin plugin, final String pluginKey)
+    {
         // this will potentially create multiple instances if called quickly, but we don't really
         // care as they shouldn't be cached
         final RemotablePluginAccessor accessor;
@@ -180,7 +149,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         }
         else
         {
-            accessor = create(pluginKey, getDisplayUrl(pluginKey));
+            accessor = create(plugin, pluginKey, getDisplayUrl(pluginKey));
             accessors.put(pluginKey, accessor);
         }
         return accessor;
@@ -195,6 +164,12 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
             throw new IllegalStateException("No " + RemotablePluginAccessor.class + " available for " + pluginKey);
         }
         return remotablePluginAccessor;
+    }
+
+    @Override
+    public void remove(String pluginKey)
+    {
+        accessors.remove(pluginKey);
     }
 
     private Supplier<URI> getDisplayUrl(final String pluginKey)
@@ -239,9 +214,9 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
      * @param displayUrl The display url
      * @return An accessor for a remote plugin
      */
-    public RemotablePluginAccessor create(String pluginKey, Supplier<URI> displayUrl)
+    public RemotablePluginAccessor create(Plugin plugin, String pluginKey, Supplier<URI> displayUrl)
     {
-        final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        
         checkNotNull(plugin, "Plugin not found: '%s'", pluginKey);
 
         ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);

@@ -18,6 +18,7 @@ import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.plugin.connect.plugin.util.OAuthHelper;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -193,7 +194,8 @@ public class OAuthLinkManager
         }
     }
 
-    private OAuthMessage sign(ServiceProvider serviceProvider,
+    @VisibleForTesting
+    public OAuthMessage sign(ServiceProvider serviceProvider,
                               HttpMethod method,
                               URI url,
                               Map<String, List<String>> originalParams
@@ -201,6 +203,8 @@ public class OAuthLinkManager
     {
         notNull(serviceProvider);
         notNull(url);
+        checkNormalized(url);
+
         Map<String, List<String>> params = newHashMap(originalParams);
         Consumer self = consumerService.getConsumer();
         params.put(OAuth.OAUTH_CONSUMER_KEY, singletonList(self.getKey()));
@@ -211,6 +215,14 @@ public class OAuthLinkManager
         Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method.name()), url, convertParameters(params));
         final Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
         return OAuthHelper.asOAuthMessage(signedRequest);
+    }
+
+    private static void checkNormalized(URI url)
+    {
+        if (!url.normalize().getPath().equals(url.getPath()))
+        {
+            throw new IllegalArgumentException("Refusing to sign non-normalized URL: " + url.toString());
+        }
     }
 
     private void dumpParamsToSign(Map<String, List<String>> params)

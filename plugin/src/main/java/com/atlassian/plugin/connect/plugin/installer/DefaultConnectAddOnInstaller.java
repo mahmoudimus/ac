@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
+import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectPluginEventHandler;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
@@ -37,7 +37,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddonRegistry connectAddonRegistry;
-    private final ConnectEventHandler connectEventHandler;
+    private final ConnectPluginEventHandler connectEventHandler;
     private final SharedSecretService sharedSecretService;
     private final ConnectAddOnUserService connectAddOnUserService;
 
@@ -52,7 +52,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                                         BeanToModuleRegistrar beanToModuleRegistrar,
                                         ConnectApplinkManager connectApplinkManager,
                                         ConnectAddonRegistry connectAddonRegistry,
-                                        ConnectEventHandler connectEventHandler,
+                                        ConnectPluginEventHandler connectEventHandler,
                                         SharedSecretService sharedSecretService,
                                         ConnectAddOnUserService connectAddOnUserService)
     {
@@ -116,8 +116,11 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
                 //applink, baseurl and secret MUST be created before any modules
-                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, connectAddOnUserService.getOrCreateUserKey(addOn.getKey()));
+                String userKey = connectAddOnUserService.getOrCreateUserKey(addOn.getKey());
+                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, userKey);
                 connectAddonRegistry.storeBaseUrl(pluginKey, addOn.getBaseUrl());
+                connectAddonRegistry.storeUserKey(pluginKey, userKey);
+                connectAddonRegistry.storeAuthType(pluginKey,authType);
                 
                 if(!Strings.isNullOrEmpty(sharedSecret))
                 {
@@ -131,7 +134,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 connectAddonRegistry.storeDescriptor(pluginKey, jsonDescriptor);
 
                 //make the sync callback if needed
-                connectEventHandler.pluginInstalled(addOn, sharedSecret);
+                connectEventHandler.pluginInstalled(installedPlugin, addOn, sharedSecret);
                 
                 /*
                 We need to manually fire the enabled event because the actual plugin enabled already fired and we ignored it.
