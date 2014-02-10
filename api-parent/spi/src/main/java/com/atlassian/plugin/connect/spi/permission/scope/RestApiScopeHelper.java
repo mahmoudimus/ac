@@ -133,21 +133,18 @@ public final class RestApiScopeHelper
         public Iterable<ApiResourceInfo> getApiResourceInfo()
         {
             List<ApiResourceInfo> infos = newArrayList();
-            StringBuilder sb = new StringBuilder("/rest/").append(name);
 
             for (String method : methods)
             {
                 if (versions.isEmpty())
                 {
-                    sb.append(basePath);
-                    infos.add(new ApiResourceInfo(sb.toString(), method.toUpperCase(Locale.US)));
+                    infos.add(new ApiResourceInfo("/rest/" + name + basePath, method.toUpperCase(Locale.US)));
                 }
                 else
                 {
                     for (String version : versions)
                     {
-                        sb.append("/").append(version).append(basePath);
-                        infos.add(new ApiResourceInfo(sb.toString(), method.toUpperCase(Locale.US)));
+                        infos.add(new ApiResourceInfo("/rest/" + name + "/" + version + basePath, method.toUpperCase(Locale.US)));
                     }
                 }
             }
