@@ -8,6 +8,12 @@ import static org.junit.Assert.assertTrue;
 public class RestApiScopeHelperTest
 {
     @Test
+    public void nullIsNotVersionString() throws Exception
+    {
+        assertFalse(RestApiScopeHelper.isVersionString(null));
+    }
+
+    @Test
     public void emptyIsNotVersionString() throws Exception
     {
         assertFalse(RestApiScopeHelper.isVersionString(""));
