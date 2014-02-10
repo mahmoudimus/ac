@@ -8,6 +8,11 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         return AJS.contextPath() + "/plugins/servlet/ac/" + encodeURIComponent(pluginKey) + "/" + encodeURIComponent(capability.key);
     }
 
+    //type = inlienDialog | dialog
+    function getOptionsForWebItem(type, pluginKey, moduleKey){
+        return window._A[type + 'Options'][pluginKey + ':' + moduleKey];
+    }
+
     function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
         var contentUrl = this.getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
@@ -49,7 +54,8 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
     return {
         getContentUrl: getContentUrl,
         getIframeHtmlForKey: getIframeHtmlForKey,
-        eventHandler: eventHandler
+        eventHandler: eventHandler,
+        getOptionsForWebItem: getOptionsForWebItem
     };
 
 
