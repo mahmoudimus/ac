@@ -108,7 +108,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
             }
         }
 
-        final boolean isDialog = bean.getTarget().isDialogTarget() && bean.getContext() == addon;
+        final boolean isDialog = bean.getTarget().isDialogTarget();
 
         paramsModuleFragmentFactory.addParamsToElement(webItemElement,bean.getParams());
 
@@ -136,7 +136,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
                 ,moduleKey
                 ,absolute
                 ,urlContext,
-                false);
+                isDialog);
 
         descriptor.init(plugin, webItemElement);
 
