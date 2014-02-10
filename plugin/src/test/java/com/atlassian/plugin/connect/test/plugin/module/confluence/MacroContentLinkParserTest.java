@@ -26,8 +26,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class MacroContentLinkParserTest
 {
-    private static final ImmutableMap<String, String> EMPTY = ImmutableMap.of();
-    private static final ImmutableMap<String, String[]> EMPTY_REQUEST_PARAMS = ImmutableMap.<String, String[]>of();
+    private static final ImmutableMap<String, String[]> EMPTY = ImmutableMap.of();
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private SettingsManager confluenceSettingsManager;
@@ -54,7 +53,7 @@ public class MacroContentLinkParserTest
     @Before
     public void initParser() throws URISyntaxException
     {
-        macroContentLinkParser = new MacroContentLinkParser(confluenceSettingsManager);
+        macroContentLinkParser = new MacroContentLinkParser();
         when(remotablePluginAccessor.getBaseUrl()).thenReturn(new URI("http://Macintosh.local:3000"));
         when(confluenceSettingsManager.getGlobalSettings().getBaseUrl()).thenReturn("http://blah.confluence.atlassian.com:1990");
         when(remotablePluginAccessor.getKey()).thenReturn("mykey");
@@ -70,23 +69,23 @@ public class MacroContentLinkParserTest
     public void callsUrlSignerWithCorrectUrl() throws URISyntaxException
     {
         parseMacroAndSignUrl(MACRO_BODY_WITH_SIGN_URL, EMPTY);
-        verify(remotablePluginAccessor).signGetUrl(new URI("/viewSport/10?foo=bar"), EMPTY_REQUEST_PARAMS);
+        verify(remotablePluginAccessor).signGetUrl(new URI("/viewSport/10?foo=bar"), EMPTY);
     }
 
     @Test
     public void callsUrlSignerWithEmptyParams() throws URISyntaxException
     {
         // TODO: I think this is correct cause the macro params are added as query params
-        parseMacroAndSignUrl(MACRO_BODY_WITH_SIGN_URL, ImmutableMap.of("key1", "value1"));
-        verify(remotablePluginAccessor).signGetUrl(any(URI.class), eq(EMPTY_REQUEST_PARAMS));
+        parseMacroAndSignUrl(MACRO_BODY_WITH_SIGN_URL, ImmutableMap.of("key1", new String[]{"value1"}));
+        verify(remotablePluginAccessor).signGetUrl(any(URI.class), eq(EMPTY));
     }
 
     @Test
     public void appendsMacroParametersAsQueryParams() throws URISyntaxException
     {
         parseMacroAndSignUrl("<a href='sign://Macintosh.local:3000/viewSport/10?foo=bar'>Edit Sport</a>",
-                ImmutableMap.of("key1", "value1", "key2", "value2"));
-        verify(remotablePluginAccessor).signGetUrl(new URI("/viewSport/10?foo=bar&key1=value1&key2=value2"), EMPTY_REQUEST_PARAMS);
+                ImmutableMap.of("key1", new String[]{"value1"}, "key2", new String[]{"value2"}));
+        verify(remotablePluginAccessor).signGetUrl(new URI("/viewSport/10?foo=bar&key1=value1&key2=value2"), EMPTY);
     }
 
     @Test
@@ -134,7 +133,7 @@ public class MacroContentLinkParserTest
         assertThat(macroContentLinkParser.parse(remotablePluginAccessor, null, EMPTY), is((String) null));
     }
 
-    private String parseMacroAndSignUrl(String macroBody, Map<String, String> macroParams)
+    private String parseMacroAndSignUrl(String macroBody, Map<String, String[]> macroParams)
     {
         when(remotablePluginAccessor.signGetUrl(any(URI.class), any(Map.class))).thenReturn(SIGNED_URL);
         return macroContentLinkParser.parse(remotablePluginAccessor, macroBody, macroParams);

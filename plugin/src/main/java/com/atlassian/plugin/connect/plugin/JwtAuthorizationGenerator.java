@@ -11,9 +11,8 @@ import com.atlassian.jwt.httpclient.CanonicalRequestUtil;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
+import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
@@ -26,19 +25,22 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
-  * Set the system property {@link JwtAuthorizationGenerator#JWT_EXPIRY_SECONDS_PROPERTY} with an integer value to control the size of the expiry window
-  * (default is {@link JwtAuthorizationGenerator#JWT_EXPIRY_WINDOW_SECONDS_DEFAULT}).
+ * Set the system property {@link JwtAuthorizationGenerator#JWT_EXPIRY_SECONDS_PROPERTY} with an integer value to control the size of the expiry window
+ * (default is {@link JwtAuthorizationGenerator#JWT_EXPIRY_WINDOW_SECONDS_DEFAULT}).
  */
-public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
+public class JwtAuthorizationGenerator implements AuthorizationGenerator
 {
-    private static final char[] QUERY_DELIMITERS = new char[] { '&' };
+    private static final char[] QUERY_DELIMITERS = new char[]{'&'};
 
     private static final String JWT_EXPIRY_SECONDS_PROPERTY = "com.atlassian.connect.jwt.expiry_seconds";
     /**
@@ -61,19 +63,10 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
     }
 
     @Override
-    public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, List<String>> parameters)
+    public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters)
     {
         checkArgument(null != parameters, "Parameters Map argument cannot be null");
-
-        Map<String, String[]> paramsAsArrays = Maps.transformValues(parameters, new Function<List<String>, String[]>()
-        {
-            @Override
-            public String[] apply(List<String> input)
-            {
-                return checkNotNull(input).toArray(new String[input.size()]);
-            }
-        });
-        return Option.some(JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, paramsAsArrays, null, consumerService.getConsumer().getKey(), jwtService, applicationLink));
+        return Option.some(JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, parameters, null, consumerService.getConsumer().getKey(), jwtService, applicationLink));
     }
 
     static String encodeJwt(HttpMethod httpMethod, URI targetPath, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, ApplicationLink appLink)

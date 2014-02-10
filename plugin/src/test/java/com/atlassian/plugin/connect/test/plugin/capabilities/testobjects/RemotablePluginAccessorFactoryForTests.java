@@ -43,7 +43,8 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
     @Override
     public RemotablePluginAccessor get(final String pluginKey)
     {
-        return new RemotablePluginAccessor() {
+        return new RemotablePluginAccessor()
+        {
             @Override
             public String getKey()
             {
@@ -69,7 +70,7 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
             }
 
             @Override
-            public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String> params, Map<String, String> headers)
+            public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers)
             {
                 return null;
             }

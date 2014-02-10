@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
@@ -43,7 +35,11 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.event.events.*;
+import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
+import com.atlassian.plugin.event.events.PluginDisabledEvent;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
+import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
@@ -51,7 +47,6 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import org.osgi.framework.BundleContext;
@@ -61,10 +56,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
+import java.net.URI;
+import java.util.Collections;
+
+import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
-import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 
 /**
  * This is the central place to handle PluginEvents broadcasted from plug-core as they relate to connect addons.
@@ -94,8 +95,13 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
     private final JwtApplinkFinder jwtApplinkFinder;
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddOnUserService connectAddOnUserService;
-    
-    public enum SyncHandler { INSTALLED, UNINSTALLED, ENABLED, DISABLED };
+
+    public enum SyncHandler
+    {
+        INSTALLED, UNINSTALLED, ENABLED, DISABLED
+    }
+
+    ;
 
     @Inject
     public ConnectPluginEventHandler(EventPublisher eventPublisher,
@@ -137,8 +143,9 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
     /**
      * Called directly from the {@link com.atlassian.plugin.connect.plugin.installer.ConnectUPMInstallHandler} when a plugin is installed.
      * This needs to be called manually instead of listening for a PluginInstalledEvent as we do special handling
-     * @param plugin The plugin that was installed
-     * @param addon The addon bean we're installing
+     *
+     * @param plugin       The plugin that was installed
+     * @param addon        The addon bean we're installing
      * @param sharedSecret The addon's shared secret if it is JWT
      */
     public void pluginInstalled(Plugin plugin, ConnectAddonBean addon, String sharedSecret)
@@ -152,6 +159,7 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
     /**
      * This is called by the plugin system during installs and enables.
      * We may need to ignore this until connect specific stuff is setup.
+     *
      * @param pluginEnabledEvent
      * @throws ConnectAddOnUserInitException
      */
@@ -209,7 +217,7 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
 
         //Instances of remotablePluginAccessor are only meant to be used for the current operation and should not be cached across operations.
         remotablePluginAccessorFactory.remove(plugin.getKey());
-        
+
         if (connectIdentifier.isConnectAddOn(plugin))
         {
             beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
@@ -238,7 +246,7 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
                 {
                     try
                     {
-                        callSyncHandler(plugin, addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey,addon), SyncHandler.UNINSTALLED);
+                        callSyncHandler(plugin, addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey, addon), SyncHandler.UNINSTALLED);
                     }
                     catch (PluginInstallException e)
                     {
@@ -321,11 +329,11 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
         if (!isDevModeService.isDevMode() && null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
         {
             String message = String.format("Cannot issue callback except via HTTPS. Current base URL = '%s'", addon.getBaseUrl());
-            switch(handler)
+            switch (handler)
             {
-                case INSTALLED :
+                case INSTALLED:
                     throw new PluginInstallException(handler.name() + ": " + message, errorI18nKey);
-                case UNINSTALLED :
+                case UNINSTALLED:
                     throw new PluginException(handler.name() + ": " + message);
             }
         }
@@ -343,7 +351,7 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
             request.setEntity(jsonEventData);
 
             // It's important to use the plugin in the call to remotablePluginAccessorFactory.get(plugin) as we might be calling this due to an uninstall event
-            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(plugin).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, List<String>>emptyMap());
+            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(plugin).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap());
             if (authHeader.isDefined())
             {
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());
@@ -357,11 +365,11 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
                 log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]");
 
                 String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]";
-                switch(handler)
+                switch (handler)
                 {
-                    case INSTALLED :
+                    case INSTALLED:
                         throw new PluginInstallException(handler.name() + ": " + message, errorI18nKey);
-                    case UNINSTALLED :
+                    case UNINSTALLED:
                         throw new PluginException(handler.name() + ": " + message);
                 }
             }
@@ -370,13 +378,13 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
         catch (Exception e)
         {
             log.error("Error contacting remote application at " + callbackUrl + "  [" + e.getMessage() + "]", e);
-            
+
             String message = "Error contacting remote application [" + e.getMessage() + "]";
-            switch(handler)
+            switch (handler)
             {
-                case INSTALLED :
+                case INSTALLED:
                     throw new PluginInstallException(handler.name() + ": " + message, errorI18nKey);
-                case UNINSTALLED :
+                case UNINSTALLED:
                     throw new PluginException(handler.name() + ": " + message);
             }
         }
@@ -407,16 +415,16 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
         String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
 
         dataBuilder.withBaseUrl(nullToEmpty(baseUrl))
-                   .withPluginKey(pluginKey)
-                   .withClientKey(nullToEmpty(consumer.getKey()))
-                   .withPublicKey(nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
-                   .withSharedSecret(nullToEmpty(sharedSecret))
-                   .withPluginsVersion(nullToEmpty(getConnectPluginVersion()))
-                   .withServerVersion(nullToEmpty(applicationProperties.getBuildNumber()))
-                   .withServiceEntitlementNumber(nullToEmpty(licenseRetriever.getServiceEntitlementNumber(pluginKey)))
-                   .withProductType(nullToEmpty(productAccessor.getKey()))
-                   .withDescription(nullToEmpty(consumer.getDescription()))
-                   .withEventType(eventType);
+                .withPluginKey(pluginKey)
+                .withClientKey(nullToEmpty(consumer.getKey()))
+                .withPublicKey(nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
+                .withSharedSecret(nullToEmpty(sharedSecret))
+                .withPluginsVersion(nullToEmpty(getConnectPluginVersion()))
+                .withServerVersion(nullToEmpty(applicationProperties.getBuildNumber()))
+                .withServiceEntitlementNumber(nullToEmpty(licenseRetriever.getServiceEntitlementNumber(pluginKey)))
+                .withProductType(nullToEmpty(productAccessor.getKey()))
+                .withDescription(nullToEmpty(consumer.getDescription()))
+                .withEventType(eventType);
 
         if (null != addon && null != addon.getAuthentication() && AuthenticationType.OAUTH.equals(addon.getAuthentication().getType()))
         {

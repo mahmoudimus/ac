@@ -7,12 +7,14 @@ import com.atlassian.jwt.SigningAlgorithm;
 import com.atlassian.jwt.applinks.ApplinkJwt;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.applinks.exception.NotAJwtPeerException;
+import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
 import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
 import com.atlassian.jwt.exception.JwtParseException;
 import com.atlassian.jwt.exception.JwtSigningException;
 import com.atlassian.jwt.exception.JwtUnknownIssuerException;
 import com.atlassian.jwt.exception.JwtVerificationException;
+import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.reader.JwtClaimVerifier;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.oauth.Consumer;
@@ -39,6 +41,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
@@ -92,9 +95,38 @@ public class JwtSigningInteroperabilityTest
         }
     }
 
+    private static class SignedUrlTest
+    {
+        private final String name;
+        private final String canonicalUrl;
+        private final String signedUrl;
+
+        private SignedUrlTest(String name, String canonicalUrl, String signedUrl)
+        {
+            this.name = name;
+            this.canonicalUrl = canonicalUrl;
+            this.signedUrl = signedUrl;
+        }
+
+        private String getName()
+        {
+            return name;
+        }
+
+        private String getCanonicalUrl()
+        {
+            return canonicalUrl;
+        }
+
+        private String getSignedUrl()
+        {
+            return signedUrl;
+        }
+    }
+
     private static class SigningTests
     {
-        private final List<Map<String, String>> tests = Lists.newArrayList();
+        private final List<SignedUrlTest> tests = Lists.newArrayList();
         private final String sharedSecret;
 
         public SigningTests(String sharedSecret)
@@ -102,10 +134,9 @@ public class JwtSigningInteroperabilityTest
             this.sharedSecret = sharedSecret;
         }
 
-
-        public void add(String description, String signedUrl)
+        public void add(SignedUrlTest signedUrlTest)
         {
-            tests.add(ImmutableMap.of("name", description, "url", signedUrl));
+            tests.add(signedUrlTest);
         }
 
         public Appendable toJSON(Appendable out)
@@ -159,43 +190,43 @@ public class JwtSigningInteroperabilityTest
     {
         SigningTests tests = new SigningTests(SHARED_SECRET);
 
-        tests.add("Simple", createAndSign("param", "value"));
-        tests.add("Spaces", createAndSign("param", "some spaces in this parameter"));
-        tests.add("Asterisk", createAndSign("query", "connect*"));
-        tests.add("Unicode", createAndSign("director", "宮崎 駿"));
-        tests.add("Comma-delimited", createAndSign("ids", "10,2,20,1"));
-        tests.add("Multi-value Comma-delimited", createAndSign("tuples", "1,2,3", "6,5,4", "7,9,8"));
-        tests.add("Plus", createAndSign("title", "1 + 1 equals 3"));
-        tests.add("JSON Object", createAndSign("json", "{\"key\":\"value\"}"));
-        tests.add("JSON Array", createAndSign("json", "[\"val1\",\"val2\"]"));
-        tests.add("Single Quotes", createAndSign("quote", "'quoted'"));
-        tests.add("Brackets", createAndSign("param", "()"));
-        tests.add("Tilde", createAndSign("eta", "in ~3 days"));
-        tests.add("RFC-1738 Unsafe", createAndSign("rfc", " <>\"#%{}|\\^~[]`"));
-        tests.add("RFC-1738 Reserved", createAndSign("rfc", ";/?:@=&"));
-        tests.add("RFC-1738 Special", createAndSign("rfc", "$-_.+!*'(),"));
-        tests.add("Empty", createAndSign("notmuch", ""));
-        tests.add("Encoded", createAndSign("referrer", "http://from.net/p?x=A+%2B+B&y=%24-_.%2B%21*%27%28%29%2C"));
-        tests.add("Multi-value", createAndSign("ids", "1", "10", "-1", "20", "2"));
-        tests.add("Multi-value II", createAndSign("ids", ".1", ":1", ":2", ".2"));
-        tests.add("Multi-value Unicode", createAndSign("chars", "宮", "崎", "駿"));
-        tests.add("Multi-value Empty", createAndSign("c", "", " ", "+", "%20"));
-        tests.add("Key RFC-1738 Unsafe", createAndSign("#1", "value"));
-        tests.add("Key RFC-1738 Reserved", createAndSign(":1", "value"));
-        tests.add("Key RFC-1738 Special", createAndSign("$1", "value"));
-        tests.add("Multiple Parameters Simple", createAndSign(ImmutableMap.of("a", new String[]{"x"},
+        tests.add(createAndSign("Simple", "param", "value"));
+        tests.add(createAndSign("Spaces", "param", "some spaces in this parameter"));
+        tests.add(createAndSign("Asterisk", "query", "connect*"));
+        tests.add(createAndSign("Unicode", "director", "宮崎 駿"));
+        tests.add(createAndSign("Comma-delimited", "ids", "10,2,20,1"));
+        tests.add(createAndSign("Multi-value Comma-delimited", "tuples", "1,2,3", "6,5,4", "7,9,8"));
+        tests.add(createAndSign("Plus", "title", "1 + 1 equals 3"));
+        tests.add(createAndSign("JSON Object", "json", "{\"key\":\"value\"}"));
+        tests.add(createAndSign("JSON Array", "json", "[\"val1\",\"val2\"]"));
+        tests.add(createAndSign("Single Quotes", "quote", "'quoted'"));
+        tests.add(createAndSign("Brackets", "param", "()"));
+        tests.add(createAndSign("Tilde", "eta", "in ~3 days"));
+        tests.add(createAndSign("RFC-1738 Unsafe", "rfc", " <>\"#%{}|\\^~[]`"));
+        tests.add(createAndSign("RFC-1738 Reserved", "rfc", ";/?:@=&"));
+        tests.add(createAndSign("RFC-1738 Special", "rfc", "$-_.+!*'(),"));
+        tests.add(createAndSign("Empty", "notmuch", ""));
+        tests.add(createAndSign("Encoded", "referrer", "http://from.net/p?x=A+%2B+B&y=%24-_.%2B%21*%27%28%29%2C"));
+        tests.add(createAndSign("Multi-value", "ids", "1", "10", "-1", "20", "2"));
+        tests.add(createAndSign("Multi-value II", "ids", ".1", ":1", ":2", ".2"));
+        tests.add(createAndSign("Multi-value Unicode", "chars", "宮", "崎", "駿"));
+        tests.add(createAndSign("Multi-value Empty", "c", "", " ", "+", "%20"));
+        tests.add(createAndSign("Key RFC-1738 Unsafe", "#1", "value"));
+        tests.add(createAndSign("Key RFC-1738 Reserved", ":1", "value"));
+        tests.add(createAndSign("Key RFC-1738 Special", "$1", "value"));
+        tests.add(createAndSign("Multiple Parameters Simple", ImmutableMap.of("a", new String[]{"x"},
                 "b", new String[]{"y"})));
-        tests.add("Multiple Multi-value Parameters", createAndSign(ImmutableMap.of("a", new String[]{"x10", "x1"},
+        tests.add(createAndSign("Multiple Multi-value Parameters", ImmutableMap.of("a", new String[]{"x10", "x1"},
                 "b", new String[]{"y1", "y10"})));
-        tests.add("Multiple Parameters Spaces", createAndSign(ImmutableMap.of("a", new String[]{"one string", "another one"},
+        tests.add(createAndSign("Multiple Parameters Spaces", ImmutableMap.of("a", new String[]{"one string", "another one"},
                 "b", new String[]{"more here", "and yet more"})));
-        tests.add("Multiple Parameters Comma-delimited", createAndSign(ImmutableMap.of("a", new String[]{"1,2,3", "4,5,6"},
+        tests.add(createAndSign("Multiple Parameters Comma-delimited", ImmutableMap.of("a", new String[]{"1,2,3", "4,5,6"},
                 "b", new String[]{"a,b,c", "d,e,f"})));
-        tests.add("Parameter Order", createAndSign(ImmutableMap.of("a10", new String[]{"1"},
+        tests.add(createAndSign("Parameter Order", ImmutableMap.of("a10", new String[]{"1"},
                 "a1", new String[]{"2"},
                 "b1", new String[]{"3"},
                 "b10", new String[]{"4"})));
-        tests.add("Upper- and Lower-case Parameters", createAndSign(ImmutableMap.of("A", new String[]{"A"},
+        tests.add(createAndSign("Upper- and Lower-case Parameters", ImmutableMap.of("A", new String[]{"A"},
                 "a", new String[]{"a"},
                 "b", new String[]{"b"},
                 "B", new String[]{"B"})));
@@ -221,13 +252,15 @@ public class JwtSigningInteroperabilityTest
         }
     }
 
-    private String createAndSign(String key, String... values)
+    private SignedUrlTest createAndSign(String name, String key, String... values) throws UnsupportedEncodingException
     {
-        return signer.signGetUrl(basePath, ImmutableMap.of(key, values));
+        return createAndSign(name, ImmutableMap.of(key, values));
     }
 
-    private String createAndSign(Map<String, String[]> params)
+    private SignedUrlTest createAndSign(String name, Map<String, String[]> params) throws UnsupportedEncodingException
     {
-        return signer.signGetUrl(basePath, params);
+        String canonicalUrl = HttpRequestCanonicalizer.canonicalize(new CanonicalHttpUriRequest("GET", basePath.getPath(), "", params));
+        String signedUrl = signer.signGetUrl(basePath, params);
+        return new SignedUrlTest(name, canonicalUrl, signedUrl);
     }
 }

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.util.MapFunctions;
+import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -9,7 +9,6 @@ import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Maps;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.util.ParameterParser;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Maps.transformValues;
 
 public abstract class DefaultRemotablePluginAccessorBase implements RemotablePluginAccessor
 {
@@ -45,19 +43,21 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     @Override
     public String createGetUrl(URI targetPath, Map<String, String[]> params)
     {
-        return new UriBuilder(Uri.fromJavaUri(getTargetUrl(targetPath))).addQueryParameters(transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING)).toString();
+        UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(getTargetUrl(targetPath)));
+        UriBuilderUtils.addQueryParameters(uriBuilder, params);
+        return uriBuilder.toString();
     }
 
     @Override
     public Promise<String> executeAsync(HttpMethod method,
                                         URI targetPath,
-                                        Map<String, String> params,
+                                        Map<String, String[]> params,
                                         Map<String, String> headers)
     {
         return httpContentRetriever.async(getAuthorizationGenerator(),
                 method,
                 getTargetUrl(targetPath),
-                Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING),
+                params,
                 headers,
                 getKey());
     }

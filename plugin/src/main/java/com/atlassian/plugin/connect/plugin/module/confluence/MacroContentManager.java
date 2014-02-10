@@ -9,6 +9,7 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilder;
+import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
@@ -83,7 +84,7 @@ public class MacroContentManager implements DisposableBean
         final UserProfile author = userManager.getRemoteUser();
         final String username = author == null ? "" : author.getUsername();
         final String userKey = author == null ? "" : author.getUserKey().getStringValue();
-        final Map<String, String> urlParameters = macroInstance.getUrlParameters(username, userKey);
+        final Map<String, String[]> urlParameters = UriBuilderUtils.toMultiValue(macroInstance.getUrlParameters(username, userKey));
 
         Map<String, String> headers = macroInstance.getHeaders(username, userKey);
 
@@ -91,7 +92,7 @@ public class MacroContentManager implements DisposableBean
                 macroInstance.conversionContext, macroInstance.getRemotablePluginAccessor());
     }
 
-    public String getStaticContent(HttpMethod method, URI path, Map<String, String> urlParameters,
+    public String getStaticContent(HttpMethod method, URI path, Map<String, String[]> urlParameters,
                                    final ConversionContext conversionContext,
                                    final RemotablePluginAccessor accessor)
     {
@@ -104,9 +105,9 @@ public class MacroContentManager implements DisposableBean
      per cache key as it may be possible for concurrent requests to both prompt a macro content
      retrieval.
     */
-    private String getStaticContent(HttpMethod method, URI path, Map<String, String> urlParameters,
-                                   Map<String, String> headers, final ConversionContext conversionContext,
-                                   final RemotablePluginAccessor accessor)
+    private String getStaticContent(HttpMethod method, URI path, Map<String, String[]> urlParameters,
+                                    Map<String, String> headers, final ConversionContext conversionContext,
+                                    final RemotablePluginAccessor accessor)
     {
         Promise<String> promise = accessor.executeAsync(method, path, urlParameters, headers);
 
