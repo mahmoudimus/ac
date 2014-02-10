@@ -40,6 +40,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+                .setAuthenticationToNone()
                 .addModule(
                         "adminPages",
                         newPageBean()

@@ -45,6 +45,7 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+                .setAuthenticationToNone()
                 .addModule(
                         "webItems",
                         newWebItemBean()

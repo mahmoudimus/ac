@@ -61,6 +61,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         contextServlet = new EchoContextServlet();
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+                .setAuthenticationToNone()
                 .addModules("staticContentMacros",
                         simpleMacro,
                         allParameterTypesMacro,

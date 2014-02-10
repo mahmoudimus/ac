@@ -26,6 +26,7 @@ public class TestWebPanel extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
+                .setAuthenticationToNone()
                 .addModule("webPanels", newWebPanelBean()
                         .withName(new I18nProperty("HipChat Discussions", "hipchat.discussions"))
                         .withKey("hip-chat-discussions")

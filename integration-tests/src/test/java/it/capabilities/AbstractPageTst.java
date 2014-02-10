@@ -42,6 +42,7 @@ public class AbstractPageTst extends ConnectWebDriverTestBase
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .addModule(fieldName, pageBeanBuilder.build())
+                .setAuthenticationToNone()
                 .addRoute(URL, ConnectAppServlets.apRequestServlet())
                 .start();
     }
