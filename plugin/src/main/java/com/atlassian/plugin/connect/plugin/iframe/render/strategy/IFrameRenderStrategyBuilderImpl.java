@@ -1,12 +1,17 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
+import javax.annotation.Nullable;
+
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleViewParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -238,7 +243,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @Override
-        public void render(final ModuleContextParameters moduleContextParameters, final Writer writer)
+        public void render(final ModuleContextParameters moduleContextParameters, final Writer writer, Option<ModuleViewParameters> moduleViewParameterOverrides)
                 throws IOException
         {
             String namespace = uniqueNamespace ? ModuleKeyGenerator.randomName(moduleKey) : moduleKey;
@@ -250,6 +255,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .context(moduleContextParameters)
                     .signAndBuild();
 
+            ModuleViewParameters moduleViewParameters = getModuleViewParameters(moduleViewParameterOverrides);
+
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
                     .addOn(addOnKey)
                     .namespace(namespace)
@@ -258,12 +265,38 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .title(title)
                     .context(additionalRenderContext)
                     .context("contextParams", moduleContextParameters)
-                    .context("width", width)
-                    .context("height", height)
+                    .context("width", moduleViewParameters.getWidth())
+                    .context("height", moduleViewParameters.getHeight())
                     .build();
 
             templateRenderer.render(template, renderContext, writer);
         }
+
+        private ModuleViewParameters getModuleViewParameters(Option<ModuleViewParameters> moduleViewParameterOverrides)
+        {
+            // use override values if provided, falling back to defaults in module
+
+            final String w = moduleViewParameterOverrides.flatMap(new Function<ModuleViewParameters, Option<String>>()
+            {
+                @Override
+                public Option<String> apply(@Nullable ModuleViewParameters input)
+                {
+                    return Option.option(input.getWidth());
+                }
+            }).getOrElse(width);
+
+            final String h = moduleViewParameterOverrides.flatMap(new Function<ModuleViewParameters, Option<String>>()
+            {
+                @Override
+                public Option<String> apply(@Nullable ModuleViewParameters input)
+                {
+                    return Option.option(input.getHeight());
+                }
+            }).getOrElse(height);
+
+            return new ModuleViewParameters(w, h);
+        }
+
 
         @Override
         public void renderAccessDenied(final Writer writer) throws IOException
