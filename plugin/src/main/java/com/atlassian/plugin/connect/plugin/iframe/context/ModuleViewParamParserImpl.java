@@ -24,6 +24,10 @@ public class ModuleViewParamParserImpl implements ModuleViewParamParser
     private String getParam(Map<String, String[]> parameterMap, String key)
     {
         String[] values = parameterMap.get(key);
+        if (values == null)
+        {
+            return null;
+        }
         if (values.length > 1) {
             log.warn("Multiple parameters with the same name are not supported, only the first will be used. "
                     + "(key was " + key + ")");
