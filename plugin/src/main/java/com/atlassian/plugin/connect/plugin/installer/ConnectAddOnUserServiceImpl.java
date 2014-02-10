@@ -10,7 +10,6 @@ import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -199,6 +198,9 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 userTemplate.setActive(true);
                 applicationService.updateUser(application, userTemplate);
             }
+
+            // Justin Koke says that NONE password prevents logging in
+            applicationService.updateUserCredential(application, user.getName(), PasswordCredential.NONE);
         }
 
         return user;
