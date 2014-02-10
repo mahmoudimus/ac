@@ -3,6 +3,7 @@
 
 ## [1.0-m31](../release-notes/1-0-m31.html)
 * Support for Inline Dialogs
+* The [`authentication`](../modules/authentication.html) module is now required
 
 ## [1.0-m30](../release-notes/1-0-m30.html)
 * Removal of email sending resource

@@ -137,6 +137,7 @@ public class ConnectAddonBean extends BaseModuleBean
     /**
      * Defines the authentication type to use when signing requests between the host application and the connect add on.
      */
+    @Required
     private AuthenticationBean authentication;
 
     /**
