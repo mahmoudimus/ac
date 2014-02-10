@@ -74,9 +74,9 @@ public class RestApiScopeHelperTest
     }
 
     @Test
-    public void doubleHyphenatedSuffixIsVersionString() throws Exception
+    public void singleDigitDoubleHyphenatedSuffixIsVersionString() throws Exception
     {
-        assertTrue(RestApiScopeHelper.isVersionString("2.0-m1-SNAPSHOT"));
+        assertTrue(RestApiScopeHelper.isVersionString("2-m1-SNAPSHOT"));
     }
 
     @Test
