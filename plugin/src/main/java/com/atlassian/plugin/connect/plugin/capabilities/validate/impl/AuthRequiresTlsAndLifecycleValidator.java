@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
 
+import static com.atlassian.plugin.connect.modules.beans.AuthenticationType.JWT;
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
  * If the add-on requests authentication, this validator checks that: <ol> <li>the add-on has registered an installed
  * callback</li> <li>the base url starts with https:// (unless running in dev mode)</li> </ol>
@@ -29,7 +32,7 @@ public class AuthRequiresTlsAndLifecycleValidator implements AddOnBeanValidator
     @Override
     public void validate(final Plugin plugin, final ConnectAddonBean addon) throws InvalidDescriptorException
     {
-        if (addon.getAuthentication() != null && addon.getAuthentication().getType() != null)
+        if (addon.getAuthentication() != null && addon.getAuthentication().getType() == JWT)
         {
             if (!isDevModeService.isDevMode() && !addon.getBaseUrl().toLowerCase().startsWith("https:"))
             {
@@ -38,13 +41,12 @@ public class AuthRequiresTlsAndLifecycleValidator implements AddOnBeanValidator
                 throw new InvalidDescriptorException(message, "connect.install.error.auth.with.no.tls");
             }
 
-//            TODO re-enable this if we default authentication to NONE instead of JWT
-//            if (addon.getLifecycle() == null || isNullOrEmpty(addon.getLifecycle().getInstalled()))
-//            {
-//                throw new InvalidDescriptorException("The add-on (" + plugin.getKey() + ") requested authentication "
-//                        + "but did not specify an installed lifecycle callback in its descriptor.",
-//                        "connect.install.error.auth.with.no.installed.callback");
-//            }
+            if (addon.getLifecycle() == null || isNullOrEmpty(addon.getLifecycle().getInstalled()))
+            {
+                throw new InvalidDescriptorException("The add-on (" + plugin.getKey() + ") requested authentication "
+                        + "but did not specify an installed lifecycle callback in its descriptor.",
+                        "connect.install.error.auth.with.no.installed.callback");
+            }
         }
     }
 }
