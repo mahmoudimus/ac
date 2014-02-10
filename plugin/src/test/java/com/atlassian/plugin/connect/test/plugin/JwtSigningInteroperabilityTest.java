@@ -205,6 +205,9 @@ public class JwtSigningInteroperabilityTest
         tests.add(createAndSign("RFC-1738 Unsafe", "rfc", " <>\"#%{}|\\^~[]`"));
         tests.add(createAndSign("RFC-1738 Reserved", "rfc", ";/?:@=&"));
         tests.add(createAndSign("RFC-1738 Special", "rfc", "$-_.+!*'(),"));
+        tests.add(createAndSign("RFC-3986 Unreserved", "rfc", "-._~"));
+        tests.add(createAndSign("RFC-3986 gen-delims", "rfc", ":/?#[]@"));
+        tests.add(createAndSign("RFC-3986 sub-delims", "rfc", "!$&'()*+,;="));
         tests.add(createAndSign("Empty", "notmuch", ""));
         tests.add(createAndSign("Encoded", "referrer", "http://from.net/p?x=A+%2B+B&y=%24-_.%2B%21*%27%28%29%2C"));
         tests.add(createAndSign("Multi-value", "ids", "1", "10", "-1", "20", "2"));
