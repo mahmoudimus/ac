@@ -24,7 +24,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
@@ -138,6 +137,14 @@ public class ConnectAddOnUserServiceImplTest
         when(applicationService.isUserDirectGroupMember(eq(application), eq(USER_KEY), eq("product group"))).thenReturn(true);
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
         verify(applicationService, never()).addUserToGroup(eq(application), eq(USER_KEY), eq("product group"));
+    }
+
+    @Test
+    public void passwordIsResetIfTheUserExists() throws ConnectAddOnUserInitException, UserNotFoundException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, InvalidUserException
+    {
+        theUserExists();
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        verify(applicationService).updateUserCredential(eq(application), eq(USER_KEY), eq(PasswordCredential.NONE));
     }
 
     private ArgumentMatcher<UserTemplate> hasExpectedEmailAddress()
