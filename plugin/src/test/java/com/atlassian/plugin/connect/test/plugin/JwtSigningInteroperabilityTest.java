@@ -50,10 +50,10 @@ import static org.mockito.Mockito.when;
 /**
  * This class doesn't test anything on its own. It generates a list of signed URLs as a JSON file that can be used as
  * test input in another framework like ACE (--> /test/jwt_signed_url_interoperability_test.js).
- *
+ * <p/>
  * To generate the signed URLs directly into ACE, follow these steps:
  * 1/ Set a JVM property -Djwtinteroptest.file={path to ACE}/test/resources/jwt-signed-urls.json, e.g.:
- *    -Djwtinteroptest.file=~/dev/atlassian-connect-express/test/resources/jwt-signed-urls.json
+ * -Djwtinteroptest.file=~/dev/atlassian-connect-express/test/resources/jwt-signed-urls.json
  * 2/ Run this test
  * 3/ Run 'mocha test' in ACE
  */
@@ -183,19 +183,22 @@ public class JwtSigningInteroperabilityTest
         tests.add("Key RFC-1738 Unsafe", createAndSign("#1", "value"));
         tests.add("Key RFC-1738 Reserved", createAndSign(":1", "value"));
         tests.add("Key RFC-1738 Special", createAndSign("$1", "value"));
-        tests.add("Multiple Parameters Simple", createAndSign(ImmutableMap.of("a", new String[] {"x"},
+        tests.add("Multiple Parameters Simple", createAndSign(ImmutableMap.of("a", new String[]{"x"},
                 "b", new String[]{"y"})));
-        tests.add("Multiple Multi-value Parameters", createAndSign(ImmutableMap.of("a", new String[] {"x10", "x1"},
+        tests.add("Multiple Multi-value Parameters", createAndSign(ImmutableMap.of("a", new String[]{"x10", "x1"},
                 "b", new String[]{"y1", "y10"})));
-        tests.add("Multiple Parameters Spaces", createAndSign(ImmutableMap.of("a", new String[] {"one string", "another one"},
+        tests.add("Multiple Parameters Spaces", createAndSign(ImmutableMap.of("a", new String[]{"one string", "another one"},
                 "b", new String[]{"more here", "and yet more"})));
-        tests.add("Multiple Parameters Comma-delimited", createAndSign(ImmutableMap.of("a", new String[] {"1,2,3", "4,5,6"},
+        tests.add("Multiple Parameters Comma-delimited", createAndSign(ImmutableMap.of("a", new String[]{"1,2,3", "4,5,6"},
                 "b", new String[]{"a,b,c", "d,e,f"})));
-        tests.add("Parameter Order", createAndSign(ImmutableMap.of("a10", new String[] {"1"},
+        tests.add("Parameter Order", createAndSign(ImmutableMap.of("a10", new String[]{"1"},
                 "a1", new String[]{"2"},
                 "b1", new String[]{"3"},
-                "b10", new String[]{"4"}
-        )));
+                "b10", new String[]{"4"})));
+        tests.add("Upper- and Lower-case Parameters", createAndSign(ImmutableMap.of("A", new String[]{"A"},
+                "a", new String[]{"a"},
+                "b", new String[]{"b"},
+                "B", new String[]{"B"})));
 
         write(tests);
     }
