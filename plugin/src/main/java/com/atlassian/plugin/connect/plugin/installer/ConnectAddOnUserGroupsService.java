@@ -3,7 +3,8 @@ package com.atlassian.plugin.connect.plugin.installer;
 import java.util.Set;
 
 /**
- * Implementations specific to each product manage user group membership.
+ * Manage user group membership for Connect add-ons.
+ * Product-specific implementations are expected.
  */
 public interface ConnectAddOnUserGroupsService
 {

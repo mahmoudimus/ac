@@ -9,11 +9,13 @@ import java.util.Set;
 @ConfluenceComponent
 public class ConfluenceConnectAddOnUserGroupsService implements ConnectAddOnUserGroupsService
 {
+    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("confluence-users");
+
     @Override
     public Set<String> getDefaultProductGroups()
     {
         // As reported by Sam Day, without the "confluence-users" group the add-on user can't
         // even get the page summary of a page that is open to anonymous access.
-        return ImmutableSet.of("confluence-users");
+        return GROUPS;
     }
 }
