@@ -12,7 +12,8 @@ import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 
 import com.google.common.annotations.VisibleForTesting;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 {
     private final ApplicationService applicationService;
     private final Application application;
+    private final ConnectAddOnUserGroupsService connectAddOnUserGroupsService;
 
     private static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     private static final String ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY = "atlassian-addons"; // in order to not occupy a license this has to match constant in user-provisioning-plugin/src/main/java/com/atlassian/crowd/plugin/usermanagement/userprovisioning/Constants.java
@@ -37,11 +39,17 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     // The rationale is that either they can't log in as these users, in which case they consume no licenses, or logging in is possible and such users do consume licenses.
     private static final String NO_REPLY_EMAIL_ADDRESS = "noreply@mailer.atlassian.com";
 
+    private static final Logger log = LoggerFactory.getLogger(ConnectAddOnUserServiceImpl.class);
+
     @Autowired
-    public ConnectAddOnUserServiceImpl(ApplicationService applicationService, ApplicationManager applicationManager) throws ApplicationNotFoundException
+    public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
+                                       ApplicationManager applicationManager,
+                                       ConnectAddOnUserGroupsService connectAddOnUserGroupsService)
+            throws ApplicationNotFoundException
     {
         this.applicationService = checkNotNull(applicationService);
         this.application = checkNotNull(applicationManager.findByName(CROWD_APPLICATION_NAME));
+        this.connectAddOnUserGroupsService = checkNotNull(connectAddOnUserGroupsService);
     }
 
     @Override
@@ -136,20 +144,34 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
     private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException
     {
-        ensureGroupExists();
+        ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
         User user = ensureUserExists(userKey);
-        ensureUserIsInGroup(user.getName());
+        ensureUserIsInGroup(user.getName(), ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+
+        for (String group : connectAddOnUserGroupsService.getDefaultProductGroups())
+        {
+            try
+            {
+                ensureUserIsInGroup(user.getName(), group);
+            }
+            catch (GroupNotFoundException e)
+            {
+                // carry on if the group does not exist so that an admin deleting a group will not kill all add-on installations
+                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist!", userKey, group), e);
+                // TODO ACDEV-938: propagate this error
+            }
+        }
 
         return user.getName();
     }
 
-    private void ensureUserIsInGroup(String userKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException
+    private void ensureUserIsInGroup(String userKey, String groupKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException
     {
-        if (!applicationService.isUserDirectGroupMember(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY))
+        if (!applicationService.isUserDirectGroupMember(application, userKey, groupKey))
         {
             try
             {
-                applicationService.addUserToGroup(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+                applicationService.addUserToGroup(application, userKey, groupKey);
             }
             catch (MembershipAlreadyExistsException e)
             {
@@ -211,24 +233,24 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private void ensureGroupExists() throws OperationFailedException, ApplicationPermissionException
+    private void ensureGroupExists(String groupKey) throws OperationFailedException, ApplicationPermissionException
     {
-        if (null == findGroupByKey())
+        if (null == findGroupByKey(groupKey))
         {
             try
             {
-                applicationService.addGroup(application, new GroupTemplate(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY));
+                applicationService.addGroup(application, new GroupTemplate(groupKey));
             }
             catch (InvalidGroupException ige)
             {
                 // according to its javadoc addGroup() throws InvalidGroupException if the group already exists
                 // --> handle the race condition of something else creating this group at around the same time
 
-                if (null == findGroupByKey())
+                if (null == findGroupByKey(groupKey))
                 {
                     // the ApplicationService is messing us around by saying that the group exists and then that it does not
                     throw new RuntimeException(String.format("The %s %s said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
-                            ApplicationService.class.getSimpleName(), applicationService, Group.class.getSimpleName(), ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY));
+                            ApplicationService.class.getSimpleName(), applicationService, Group.class.getSimpleName(), groupKey));
                 }
             }
         }
@@ -248,12 +270,12 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private Group findGroupByKey()
+    private Group findGroupByKey(String groupKey)
     {
         Group group;
         try
         {
-            group = applicationService.findGroupByName(application, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+            group = applicationService.findGroupByName(application, groupKey);
         }
         catch (GroupNotFoundException gnf)
         {

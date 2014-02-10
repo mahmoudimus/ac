@@ -7,18 +7,26 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.model.user.UserTemplate;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserGroupsService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserServiceImpl;
+import com.google.common.collect.ImmutableSet;
 import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
+
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -35,6 +43,10 @@ public class ConnectAddOnUserServiceImplTest
     private @Mock ApplicationManager applicationManager;
     private @Mock Application application;
     private @Mock User user;
+    private @Mock ConnectAddOnUserGroupsService connectAddOnUserGroupsService;
+
+    @Captor
+    private ArgumentCaptor<String> captor;
 
     private static final String ADD_ON_KEY = "my-cool-thingamajig";
     private static final String USER_KEY = "addon_my-cool-thingamajig";
@@ -99,6 +111,35 @@ public class ConnectAddOnUserServiceImplTest
         verify(applicationService).updateUser(eq(application), argThat(hasExpectedEmailAddress()));
     }
 
+    @Test
+    public void userIsCreatedWithDefaultProductGroups() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
+    {
+        when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
+        assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
+    }
+
+    @Test
+    public void userIsAddedToDefaultProductGroupsIfItExistedAndWasNotAMember() throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, ConnectAddOnUserInitException, GroupNotFoundException, MembershipAlreadyExistsException
+    {
+        theUserExists();
+        when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
+        assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
+    }
+
+    @Test
+    public void userIsNotAddedToDefaultProductGroupsIfItWasAlreadyAMember() throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, ConnectAddOnUserInitException, GroupNotFoundException, MembershipAlreadyExistsException
+    {
+        theUserExists();
+        when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
+        when(applicationService.isUserDirectGroupMember(eq(application), eq(USER_KEY), eq("product group"))).thenReturn(true);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        verify(applicationService, never()).addUserToGroup(eq(application), eq(USER_KEY), eq("product group"));
+    }
+
     private ArgumentMatcher<UserTemplate> hasExpectedEmailAddress()
     {
         return new ArgumentMatcher<UserTemplate>()
@@ -129,6 +170,7 @@ public class ConnectAddOnUserServiceImplTest
         when(applicationManager.findByName("crowd-embedded")).thenReturn(application);
         when(applicationService.addUser(eq(application), eq(new UserTemplate(USER_KEY)), eq(PasswordCredential.NONE))).thenReturn(user);
         when(user.getName()).thenReturn(USER_KEY);
-        connectAddOnUserService = new ConnectAddOnUserServiceImpl(applicationService, applicationManager);
+        when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
+        connectAddOnUserService = new ConnectAddOnUserServiceImpl(applicationService, applicationManager, connectAddOnUserGroupsService);
     }
 }
