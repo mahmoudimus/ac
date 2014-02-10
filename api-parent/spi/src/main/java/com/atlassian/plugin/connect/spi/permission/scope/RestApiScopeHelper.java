@@ -13,7 +13,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
