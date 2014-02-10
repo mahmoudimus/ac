@@ -26,7 +26,7 @@
     <div class="aui-item">
         <div class="index-box">
             [<img src="./assets/images/CharlieGears.png" width="100">](./guides/selling-on-marketplace.html)
-            [<h2>Share it with the world</h2>](./guides/selling-on-marketplace.html)
+            [<h2>Share it with the world</h2>](./developing/selling-on-marketplace.html)
             <p>Share your add-on with millions of developers on the Atlassian Marketplace.</p>
         </div>
     </div>
