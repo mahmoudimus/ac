@@ -202,7 +202,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     @Test
     public void uninstallPostContainsNoUserKey() throws Exception
     {
-        ConnectAddonBean addon = uninstallOnlyBean;
+        ConnectAddonBean addon = installAndUninstallBean;
 
         Plugin plugin = null;
         String addonKey = null;
@@ -224,6 +224,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
         }
         finally
         {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
@@ -244,8 +245,6 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installPlugin(addon);
 
             addonKey = plugin.getKey();
-
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
 
             ApplicationLink appLink = connectApplinkManager.getAppLink(addon.getKey());
 
