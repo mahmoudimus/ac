@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.permission;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
+import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
@@ -44,14 +45,17 @@ public class ApiScopingFilter implements Filter
     private final PermissionManager permissionManager;
     private final UserManager userManager;
     private final WebSudoService webSudoService;
+    private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final String ourConsumerKey;
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
-                            ConsumerService consumerService, WebSudoService webSudoService)
+                            ConsumerService consumerService, WebSudoService webSudoService,
+                            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
         this.webSudoService = webSudoService;
+        this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
         this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
 
@@ -66,31 +70,58 @@ public class ApiScopingFilter implements Filter
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        // apply scopes if this is an authenticated request from a Connect app
-        String clientKey = extractClientKey(req);
-        if (clientKey != null && !ourConsumerKey.equals(clientKey))
+        if (isAddOnRequest(req))
         {
             // Don't accept requests when the normalised and the original request uris are not the same -- see ACDEV-656
-            if (ServletUtils.normalisedAndOriginalRequestUrisDiffer(req)) {
+            if (ServletUtils.normalisedAndOriginalRequestUrisDiffer(req))
+            {
                 log.warn("Request URI '{}' was deemed as improperly formed as it did not normalise as expected",
-                                    new Object[]{req.getRequestURI()});
+                        new Object[]{req.getRequestURI()});
                 res.sendError(HttpServletResponse.SC_BAD_REQUEST, "The request URI is improperly formed");
                 return;
             }
-            handleScopedRequest(clientKey, req, res, chain);
-            return;
-        }
 
-        // apply XDM restrictions if this is an XHR from a Connect app made via the XDM bridge
-        // see AP.request() in the host AP js for more details.
-        clientKey = extractXdmRequestKey(req);
-        if (clientKey != null)
-        {
-            handleXdmRequest(clientKey, req, res, chain);
-            return;
-        }
+            // apply scopes if this is an authenticated request from
+            // a/ A server-to-server call using JWT or OAuth
+            // b/ A XDM bridge call from an add-on that declared scopes (== JSON descriptor)
+            String addOnKey = getAddOnKeyForScopeCheck(req);
+            if (addOnKey != null)
+            {
+                handleScopedRequest(addOnKey, req, res, chain);
+                return;
+            }
 
+            // apply XDM restrictions if this is an XHR from a XML-descriptor based Connect app made via the XDM bridge
+            // see AP.request() in the host AP js for more details.
+            addOnKey = extractXdmRequestKey(req);
+            if (addOnKey != null)
+            {
+                handleXdmRequest(addOnKey, req, res, chain);
+                return;
+            }
+        }
         chain.doFilter(request, response);
+    }
+
+    private String getAddOnKeyForScopeCheck(HttpServletRequest req)
+    {
+        String addOnKey = extractClientKey(req);
+        if (addOnKey != null)
+        {
+            return addOnKey;
+        }
+        addOnKey = extractXdmRequestKey(req);
+        if (addOnKey != null && jsonConnectAddOnIdentifierService.isConnectAddOn(addOnKey))
+        {
+            return addOnKey;
+        }
+        return null;
+    }
+
+    private boolean isAddOnRequest(HttpServletRequest request)
+    {
+        String addOnKey = extractClientKey(request);
+        return (addOnKey != null && !ourConsumerKey.equals(addOnKey)) || (extractXdmRequestKey(request) != null);
     }
 
     private void handleScopedRequest(String clientKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
@@ -177,6 +208,7 @@ public class ApiScopingFilter implements Filter
 
     /**
      * Set the id of a Connect add-on in the request attributes.
+     *
      * @param req the context {@link HttpServletRequest}
      * @return the unique add-on id, synonymous with OAuth client key and JWT issuer, or {@code null} if 2LO authentication failed or was not
      *         attempted
