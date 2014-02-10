@@ -25,7 +25,7 @@ function ($, rpc) {
             hide: function () {
                 remote.hideInlineDialog();
             }
-        }
+        };
         return {
             stubs: ['hideInlineDialog']
         }

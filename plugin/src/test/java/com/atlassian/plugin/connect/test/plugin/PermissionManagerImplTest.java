@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.plugin.PermissionManagerImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPathBuilder;
-import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.Permissions;
@@ -51,7 +50,6 @@ public class PermissionManagerImplTest
 
     @Mock private PluginAccessor pluginAccessor;
     @Mock private PermissionsReader permissionsReader;
-    @Mock private IsDevModeService isDevModeService;
     @Mock private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     @Mock private PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker;
     @Mock private ScopeService scopeService;
@@ -71,55 +69,34 @@ public class PermissionManagerImplTest
         Permission permission = createPermission();
         when(pluginModuleTracker.getModules()).thenReturn(asList(permission));
         when(scopeService.build()).thenReturn(buildTestScopes());
-        permissionManager = new PermissionManagerImpl(pluginAccessor, permissionsReader, isDevModeService, jsonConnectAddOnIdentifierService, pluginModuleTracker, scopeService);
-    }
-
-    @Test
-    public void validXmlDescriptorPermissionIsInScopeInDevMode()
-    {
-        setup().withJson(false).withPermission(PERMISSION_KEY).withDevMode(true);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
+        permissionManager = new PermissionManagerImpl(pluginAccessor, permissionsReader, jsonConnectAddOnIdentifierService, pluginModuleTracker, scopeService);
     }
 
     @Test
     public void validXmlDescriptorPermissionIsInScopeInProdMode()
     {
-        setup().withJson(false).withPermission(PERMISSION_KEY).withDevMode(false);
+        setup().withJson(false).withPermission(PERMISSION_KEY);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
-    }
-
-    @Test
-    public void invalidXmlDescriptorPermissionIsOutOfScopeInDevMode()
-    {
-        setup().withJson(false).withPermission("wrong").withDevMode(true);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
     @Test
     public void invalidXmlDescriptorPermissionIsOutOfScopeInProdMode()
     {
-        setup().withJson(false).withPermission("wrong").withDevMode(false);
+        setup().withJson(false).withPermission("wrong");
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
-    }
-
-    @Test
-    public void validJsonDescriptorPermissionIsInScopeInDevMode()
-    {
-        setup().withJson(true).withScope(ScopeName.READ).withDevMode(true);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
     @Test
     public void validJsonDescriptorScopeIsInScopeInProdMode()
     {
-        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        setup().withJson(true).withScope(ScopeName.READ);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
     @Test
     public void invalidJsonDescriptorScopeIsOutOfScope()
     {
-        setup().withJson(true).withDevMode(false);
+        setup().withJson(true);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -128,7 +105,7 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
-        setup().withJson(true).withScope(ScopeName.WRITE).withDevMode(false);
+        setup().withJson(true).withScope(ScopeName.WRITE);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
@@ -137,7 +114,7 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
-        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        setup().withJson(true).withScope(ScopeName.READ);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -146,7 +123,7 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
-        setup().withJson(true).withScope(ScopeName.DELETE).withDevMode(false);
+        setup().withJson(true).withScope(ScopeName.DELETE);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
@@ -155,7 +132,7 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
-        setup().withJson(true).withScope(ScopeName.WRITE).withDevMode(false);
+        setup().withJson(true).withScope(ScopeName.WRITE);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -167,7 +144,7 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa");
         when(request.getMethod()).thenReturn("GET");
-        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        setup().withJson(true).withScope(ScopeName.READ);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -176,14 +153,14 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa;../../../rest/api/2/user");
         when(request.getMethod()).thenReturn("GET");
-        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        setup().withJson(true).withScope(ScopeName.READ);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
     @Test
     public void jsonAddonDoesNotRequirePermissionToCreateOAuthLink()
     {
-        setup().withJson(true).withScope(ScopeName.READ).withDevMode(false);
+        setup().withJson(true).withScope(ScopeName.READ);
         permissionManager.requirePermission(PLUGIN_KEY, Permissions.CREATE_OAUTH_LINK);
     }
 
@@ -208,12 +185,6 @@ public class PermissionManagerImplTest
 
     private class Setup
     {
-        Setup withDevMode(boolean isDevMode)
-        {
-            when(isDevModeService.isDevMode()).thenReturn(isDevMode);
-            return this;
-        }
-
         Setup withJson(boolean isJson)
         {
             when(jsonConnectAddOnIdentifierService.isConnectAddOn(PLUGIN_KEY)).thenReturn(isJson);

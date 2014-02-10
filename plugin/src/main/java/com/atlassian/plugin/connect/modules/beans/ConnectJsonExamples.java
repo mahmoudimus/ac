@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
@@ -57,6 +58,7 @@ public class ConnectJsonExamples
     public static final String LINK_EXAMPLE = createLinkExample();
     public static final String LINKS_EXAMPLE = createLinksExample();
     public static final String MACRO_EDITOR_EXAMPLE = createMacroEditorExample();
+    public static final String MACRO_PARAMS_EXAMPLE = createMacroParamsExample();
     public static final String PAGE_EXAMPLE = createPageExample();
     public static final String PANEL_LAYOUT_EXAMPLE = createPanelLayoutExample();
     public static final String PARAMS_EXAMPLE = createParamsExample();
@@ -323,6 +325,22 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("staticContentMacros", macroModuleBean));
+    }
+
+    private static String createMacroParamsExample()
+    {
+        MacroParameterBean macroParameterBean = newMacroParameterBean()
+                .withIdentifier("view")
+                .withName(new I18nProperty("Map View", ""))
+                .withDescription(new I18nProperty("Allows switching between view types", ""))
+                .withType("enum")
+                .withDefaultValue("Map")
+                .withMultiple(false)
+                .withRequired(true)
+                .withValues("Map", "Satellite")
+                .build();
+
+        return gson.toJson(createModuleArray("parameters", macroParameterBean));
     }
 
     private static String createSpaceToolsTabExample()
