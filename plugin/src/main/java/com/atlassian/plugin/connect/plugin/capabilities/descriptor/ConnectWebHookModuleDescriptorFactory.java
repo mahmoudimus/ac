@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;

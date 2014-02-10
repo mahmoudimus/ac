@@ -47,23 +47,26 @@ public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifier
     @Override
     public boolean isConnectAddOn(final Plugin plugin)
     {
-        try
+        if (null != plugin)
         {
-            InputStream resourceAsStream = plugin.getResourceAsStream("/META-INF/MANIFEST.MF");
+            try
+            {
+                InputStream resourceAsStream = plugin.getResourceAsStream("/META-INF/MANIFEST.MF");
 
-            if (null != resourceAsStream)
-            {
-                Manifest mf = new Manifest(resourceAsStream);
-                return mf.getMainAttributes().containsKey(new Attributes.Name(CONNECT_ADDON_HEADER));
+                if (null != resourceAsStream)
+                {
+                    Manifest mf = new Manifest(resourceAsStream);
+                    return mf.getMainAttributes().containsKey(new Attributes.Name(CONNECT_ADDON_HEADER));
+                }
+                else
+                {
+                    log.debug("Plugin '{}' has no MANIFEST.MF file. Defaulting to isConnectAddon=false.", plugin.getKey());
+                }
             }
-            else
+            catch (Exception e)
             {
-                log.debug("Plugin '{}' has no MANIFEST.MF file. Defaulting to isConnectAddon=false.", plugin.getKey());
+                log.debug("Exception reading from MANIFEST.MF for plugin '{}'. Defaulting to isConnectAddon=false.", plugin.getKey(), e);
             }
-        }
-        catch (Exception e)
-        {
-            log.debug("Exception reading from MANIFEST.MF for plugin '{}'. Defaulting to isConnectAddon=false.", plugin.getKey(), e);
         }
 
         return false;

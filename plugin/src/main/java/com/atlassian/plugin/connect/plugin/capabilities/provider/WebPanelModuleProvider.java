@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
@@ -11,9 +7,12 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebP
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Component
 public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelModuleBean>
@@ -43,7 +42,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(plugin.getKey())
                     .module(bean.getKey())
-                    .pageTemplate()
+                    .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .title(bean.getDisplayName())
                     .dimensions(bean.getLayout().getWidth(), bean.getLayout().getHeight())
