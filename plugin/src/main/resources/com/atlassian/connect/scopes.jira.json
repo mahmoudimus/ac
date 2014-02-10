@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow", "myself"],
       "pathKeys": ["download attachments"],
       "methods": ["GET"]
     },
@@ -171,6 +171,12 @@
       "key": "workflowscheme",
       "name": "api",
       "basePaths": ["/workflowscheme($|/.*)"],
+      "versions": ["2", "latest"]
+    },
+    {
+      "key": "myself",
+      "name": "api",
+      "basePaths": ["/myself"],
       "versions": ["2", "latest"]
     }
   ],
