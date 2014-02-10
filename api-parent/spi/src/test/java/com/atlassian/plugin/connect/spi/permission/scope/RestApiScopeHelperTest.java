@@ -48,4 +48,46 @@ public class RestApiScopeHelperTest
     {
         assertTrue(RestApiScopeHelper.isVersionString("1.0"));
     }
+
+    @Test
+    public void singleDigitAlphaSuffixIsVersionString() throws Exception
+    {
+        assertTrue(RestApiScopeHelper.isVersionString("2.beta3"));
+    }
+
+    @Test
+    public void doubleDigitAlphaSuffixIsVersionString() throws Exception
+    {
+        assertTrue(RestApiScopeHelper.isVersionString("2.0.alpha1"));
+    }
+
+    @Test
+    public void singleDigitHyphenatedSuffixIsVersionString() throws Exception
+    {
+        assertTrue(RestApiScopeHelper.isVersionString("2-m1"));
+    }
+
+    @Test
+    public void doubleDigitHyphenatedSuffixIsVersionString() throws Exception
+    {
+        assertTrue(RestApiScopeHelper.isVersionString("2.0-m1"));
+    }
+
+    @Test
+    public void doubleHyphenatedSuffixIsVersionString() throws Exception
+    {
+        assertTrue(RestApiScopeHelper.isVersionString("2.0-m1-SNAPSHOT"));
+    }
+
+    @Test
+    public void doubleDigitDoubleHyphenatedSuffixIsVersionString() throws Exception
+    {
+        assertTrue(RestApiScopeHelper.isVersionString("2.0-m1-SNAPSHOT"));
+    }
+
+    @Test
+    public void tripleDigitDoubleHyphenatedSuffixIsVersionString() throws Exception
+    {
+        assertTrue(RestApiScopeHelper.isVersionString("2.1.0-m1-SNAPSHOT"));
+    }
 }

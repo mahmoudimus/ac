@@ -80,7 +80,7 @@ public final class RestApiScopeHelper
     @VisibleForTesting
     public static boolean isVersionString(String version)
     {
-        return !StringUtils.isBlank(version) && ("latest".equalsIgnoreCase(version) || version.matches("\\d+(\\.\\d+)?"));
+        return !StringUtils.isBlank(version) && ("latest".equalsIgnoreCase(version) || version.matches("\\d+([\\.-]\\w+)*"));
     }
 
     public Iterable<ApiResourceInfo> getApiResourceInfos()
