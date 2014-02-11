@@ -43,19 +43,17 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     private final ConnectAddonManager connectAddonManager;
     private final ConnectPluginDependentHelper dependentHelper;
     private final JsonConnectAddOnIdentifierService connectIdentifier;
-    private final PluginEventLogger pluginEventLogger;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final PluginEventManager pluginEventManager;
     private final ConnectAddonRegistry descriptorRegistry;
 
     @Inject
-    public ConnectMirrorPluginEventHandler(ConnectAddonManager connectAddonManager, ConnectPluginDependentHelper dependentHelper, JsonConnectAddOnIdentifierService connectIdentifier, PluginEventLogger pluginEventLogger, RemotablePluginAccessorFactory remotablePluginAccessorFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, PluginEventManager pluginEventManager, ConnectAddonRegistry descriptorRegistry)
+    public ConnectMirrorPluginEventHandler(ConnectAddonManager connectAddonManager, ConnectPluginDependentHelper dependentHelper, JsonConnectAddOnIdentifierService connectIdentifier, RemotablePluginAccessorFactory remotablePluginAccessorFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, PluginEventManager pluginEventManager, ConnectAddonRegistry descriptorRegistry)
     {
         this.connectAddonManager = connectAddonManager;
         this.dependentHelper = dependentHelper;
         this.connectIdentifier = connectIdentifier;
-        this.pluginEventLogger = pluginEventLogger;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.pluginEventManager = pluginEventManager;
@@ -113,11 +111,6 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
             return;
         }
 
-        if (connectIdentifier.isConnectAddOn(plugin))
-        {
-            pluginEventLogger.log(pluginEnabledEvent.getPlugin(), "PluginEnabledEvent");
-        }
-
         connectAddonManager.enableConnectAddon(plugin);
     }
 
@@ -130,10 +123,6 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
             return;
         }
 
-        if (connectIdentifier.isConnectAddOn(event.getModule().getPlugin()))
-        {
-            pluginEventLogger.log(event.getModule(), "PluginModuleEnabledEvent");
-        }
         //Instances of remotablePluginAccessor are only meant to be used for the current operation and should not be cached across operations.
         remotablePluginAccessorFactory.remove(event.getModule().getPluginKey());
     }
@@ -143,13 +132,13 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     public void beforePluginDisabled(BeforePluginDisabledEvent beforePluginDisabledEvent)
     {
         final Plugin plugin = beforePluginDisabledEvent.getPlugin();
-        
+
         if (isTheConnectPlugin(plugin))
         {
             this.connectPluginFullyEnabled = false;
         }
-        
-        if(connectIdentifier.isConnectAddOn(plugin))
+
+        if (connectIdentifier.isConnectAddOn(plugin))
         {
             //we need to publish the disabled event to the remote addon BEFORE we actually do the enable
             // so that the webhook modules that actually make the call are still available
@@ -165,8 +154,6 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
 
         if (connectIdentifier.isConnectAddOn(plugin))
         {
-            pluginEventLogger.log(pluginDisabledEvent.getPlugin(), "PluginDisabledEvent");
-
             connectAddonManager.disableConnectAddon(plugin);
         }
 
@@ -180,12 +167,6 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     public void pluginUninstalled(PluginUninstalledEvent pluginUninstalledEvent) throws ConnectAddOnUserDisableException, IOException
     {
         final Plugin plugin = pluginUninstalledEvent.getPlugin();
-
-        //we need to use the descriptor registry since we can't read from the jar any longer
-        if (descriptorRegistry.hasDescriptor(plugin.getKey()))
-        {
-            pluginEventLogger.log(plugin, "PluginUninstalledEvent");
-        }
 
         connectAddonManager.uninstallConnectAddon(plugin);
     }

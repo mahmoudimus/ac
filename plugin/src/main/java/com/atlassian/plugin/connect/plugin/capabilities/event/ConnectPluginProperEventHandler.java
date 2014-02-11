@@ -25,16 +25,14 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectPluginProperEventHandler.class);
     private final PluginEventManager pluginEventManager;
-    private final PluginEventLogger pluginEventLogger;
     private final ConnectPluginDependentHelper dependentHelper;
     private final EventPublisher eventPublisher;
     private final ConnectMirrorPluginEventHandler mirrorPluginEventHandler;
 
     @Inject
-    public ConnectPluginProperEventHandler(PluginEventManager pluginEventManager, PluginEventLogger pluginEventLogger, ConnectPluginDependentHelper dependentHelper, EventPublisher eventPublisher, ConnectMirrorPluginEventHandler mirrorPluginEventHandler)
+    public ConnectPluginProperEventHandler(PluginEventManager pluginEventManager, ConnectPluginDependentHelper dependentHelper, EventPublisher eventPublisher, ConnectMirrorPluginEventHandler mirrorPluginEventHandler)
     {
         this.pluginEventManager = pluginEventManager;
-        this.pluginEventLogger = pluginEventLogger;
         this.dependentHelper = dependentHelper;
         this.eventPublisher = eventPublisher;
         this.mirrorPluginEventHandler = mirrorPluginEventHandler;
@@ -46,8 +44,6 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
     {
         if (isTheConnectPlugin(pluginEnabledEvent.getPlugin()))
         {
-            pluginEventLogger.log(pluginEnabledEvent.getPlugin(), "PluginEnabledEvent");
-
             //PLUGDEV-38 - we need to force the mirror handler to know we're enabled!!!
             mirrorPluginEventHandler.pluginEnabled(pluginEnabledEvent);
 
@@ -61,8 +57,6 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
     {
         if (isTheConnectPlugin(beforePluginDisabledEvent.getPlugin()))
         {
-            pluginEventLogger.log(beforePluginDisabledEvent.getPlugin(), "BeforePluginDisabledEvent");
-
             dependentHelper.isDisabledPersistent(beforePluginDisabledEvent.getPlugin());
 
             //PLUGDEV-38 - we need to force the mirror handler to know we're disabling!!!
