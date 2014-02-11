@@ -18,7 +18,7 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
     function getOptionsForWebItem(target){
         var pluginKey = getWebItemPluginKey(target),
             moduleKey = getWebItemModuleKey(target),
-            type = (target.hasClass('ap-inline-dialog') ? 'inlineDialog' : 'dialog';
+            type = target.hasClass('ap-inline-dialog') ? 'inlineDialog' : 'dialog';
 
         return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
     }
