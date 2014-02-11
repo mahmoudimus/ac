@@ -179,6 +179,7 @@ public class ConnectJsonExamples
         WebItemModuleBean webItemModuleBean = WebItemModuleBean.newWebItemBean()
                 .withName(new I18nProperty("My Web Item", ""))
                 .withUrl("/my-web-item")
+                .withKey("web-item-example")
                 .withLocation("system.preset.filters")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(16).withWidth(16).build())
                 .withStyleClasses("webitem", "system-present-webitem")
@@ -193,6 +194,7 @@ public class ConnectJsonExamples
     {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withName(new I18nProperty("My Function", "my.function.name"))
+                .withKey("workflow-example")
                 .withDescription(new I18nProperty("My Description", "my.function.desc"))
                 .withTriggered(new UrlBean("/triggered"))
                 .withCreate(new UrlBean("/create"))
@@ -253,6 +255,7 @@ public class ConnectJsonExamples
     {
         DynamicContentMacroModuleBean macroModuleBean = DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
                 .withName(new I18nProperty("Maps", ""))
+                .withKey("dynamic-macro-example")
                 .withUrl("/render-map?pageTitle={page.title}")
                 .withAliases("map")
                 .withBodyType(MacroBodyType.NONE)
@@ -293,6 +296,7 @@ public class ConnectJsonExamples
     {
         StaticContentMacroModuleBean macroModuleBean = StaticContentMacroModuleBean.newStaticContentMacroModuleBean()
                 .withName(new I18nProperty("Maps", ""))
+                .withKey("static-macro-example")
                 .withUrl("/render-map?pageTitle={page.title}")
                 .withAliases("map")
                 .withBodyType(MacroBodyType.NONE)
@@ -369,7 +373,11 @@ public class ConnectJsonExamples
     private static String createWebitemTargetExample()
     {
         WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
-                .withType(WebItemTargetType.page).build();
+                .withType(WebItemTargetType.inlineDialog)
+                .withOption("offsetX", "30px")
+                .withOption("offsetY", "20px")
+                .withOption("onHover", true)
+                .build();
 
         return gson.toJson(createModuleObject("target", bean));
     }

@@ -8,10 +8,10 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
-public class WebItemTargetBeanBuilder extends BeanWithParamsBuilder<WebItemTargetBeanBuilder, WebItemTargetBean>
+public class WebItemTargetBeanBuilder extends BaseModuleBeanBuilder<WebItemTargetBeanBuilder, WebItemTargetBean>
 {
     private WebItemTargetType type;
-    private Map<String, String> options;
+    private Map<String, Object> options;
 
     public WebItemTargetBeanBuilder()
     {
@@ -31,15 +31,15 @@ public class WebItemTargetBeanBuilder extends BeanWithParamsBuilder<WebItemTarge
         return this;
     }
 
-    public WebItemTargetBeanBuilder withOption(String name, String value)
+    public WebItemTargetBeanBuilder withOption(String name, Object value)
     {
         checkNotNull(options);
-        
-        options.put(name,value);
+
+        options.put(name, value);
         return this;
     }
 
-    public WebItemTargetBeanBuilder withOption(Map<String,String> newOptions)
+    public WebItemTargetBeanBuilder withOption(Map<String, Object> newOptions)
     {
         checkNotNull(options);
 
