@@ -1,12 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
-import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 @Component
 public class IconModuleFragmentFactory implements ConnectModuleFragmentFactory<IconBean>
@@ -22,14 +23,13 @@ public class IconModuleFragmentFactory implements ConnectModuleFragmentFactory<I
     @Override
     public DOMElement createFragment(String pluginKey, IconBean bean)
     {
-        String addonBaseUrl = pluginAccessorFactory.get(pluginKey).getBaseUrl().toString();
-        String url = new PathBuilder(addonBaseUrl).withPathFragment(bean.getUrl()).build();
+        URI url = pluginAccessorFactory.get(pluginKey).getTargetUrl(URI.create(bean.getUrl()));
 
         DOMElement element = new DOMElement("icon");
         element.addAttribute("width", Integer.toString(bean.getWidth()))
               .addAttribute("height", Integer.toString(bean.getHeight()))
               .addElement("link")
-              .addText(url);
+              .addText(url.toString());
 
         return element;
     }

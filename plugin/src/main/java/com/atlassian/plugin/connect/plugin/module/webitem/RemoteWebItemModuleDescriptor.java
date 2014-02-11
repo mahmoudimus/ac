@@ -9,12 +9,13 @@ import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
 import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
+
+import java.net.URI;
 
 import static com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator.createLocalUrl;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
@@ -100,15 +101,14 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
 
     private void createIcon(final Element descriptor)
     {
-        String pluginBaseUrl = pluginAccessorFactory.get(plugin.getKey()).getBaseUrl().toString();
         Element iconElement = descriptor.element("icon");
         if (iconElement != null)
         {
             Element iconLinkElement = iconElement.element("link");
             if (iconLinkElement != null)
             {
-                String iconPath = iconLinkElement.getText();
-                iconLinkElement.setText(new PathBuilder(pluginBaseUrl).withPathFragment(iconPath).build());
+                URI iconPath = URI.create(iconLinkElement.getText());
+                iconLinkElement.setText(pluginAccessorFactory.get(plugin.getKey()).getTargetUrl(iconPath).toString());
             }
             else
             {

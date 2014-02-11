@@ -124,8 +124,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
 
                             String json = new JSONObject(data).toString(2);
 
-                            String url = new PathBuilder(addonAccessor.getBaseUrl().toString()).withPathFragment(path).build();
-                            URI installHandler = getURI(url);
+                            URI installHandler = addonAccessor.getTargetUrl(getURI(path));
 
                             Request.Builder request = httpClient.newRequest(installHandler);
                             request.setAttribute("purpose", "web-hook-notification");

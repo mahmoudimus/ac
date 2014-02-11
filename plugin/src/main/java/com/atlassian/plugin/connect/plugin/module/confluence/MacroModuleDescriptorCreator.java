@@ -370,9 +370,8 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("value", macroKey).getParent()
                     .addElement("var")
                     .addAttribute("name", "ICON_URL")
-                    .addAttribute("value", new PathBuilder(remotablePluginAccessor.getBaseUrl().toString())
-                            .withPathFragment(iconUrl.toString())
-                            .build()).getParent();
+                    .addAttribute("value", remotablePluginAccessor.getTargetUrl(iconUrl).toString())
+                    .getParent();
 
             ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
             jsDescriptor.init(plugin, webResource);

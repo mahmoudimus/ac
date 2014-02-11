@@ -37,8 +37,13 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
 
     protected DefaultRemotablePluginAccessorBase(Plugin plugin, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
     {
-        this.pluginKey = plugin.getKey();
-        this.pluginName = plugin.getName();
+        this(plugin.getKey(), plugin.getName(), baseUrlSupplier, httpContentRetriever);
+    }
+
+    protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
+    {
+        this.pluginKey = pluginKey;
+        this.pluginName = pluginName;
         this.baseUrlSupplier = baseUrlSupplier;
         this.httpContentRetriever = httpContentRetriever;
     }
@@ -81,7 +86,7 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
         return baseUrlSupplier.get();
     }
 
-    protected URI getTargetUrl(URI targetPath)
+    public URI getTargetUrl(URI targetPath)
     {
         if (targetPath.isAbsolute())
         {
