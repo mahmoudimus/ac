@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
 import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -107,7 +108,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
             if (iconLinkElement != null)
             {
                 String iconPath = iconLinkElement.getText();
-                iconLinkElement.setText(pluginBaseUrl + iconPath);
+                iconLinkElement.setText(new PathBuilder().withBaseUrl(pluginBaseUrl).withPathFragment(iconPath).build());
             }
             else
             {

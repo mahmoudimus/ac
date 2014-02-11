@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.util.MapFunctions;
+import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -87,14 +88,12 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
             throw new IllegalArgumentException("Target url was absolute (" + targetPath.toString() + "). Expected relative path to base URL of add-on (" + getBaseUrl().toString() + ").");
         }
 
-        String path = targetPath.getRawPath();
-        if (!StringUtils.startsWith(path, "/"))
-        {
-            path = "/" + path;
-        }
-
         UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(getBaseUrl()));
-        uriBuilder.setPath(uriBuilder.getPath() + path);
+        String path = new PathBuilder()
+                .withPathFragment(uriBuilder.getPath())
+                .withPathFragment(targetPath.getRawPath())
+                .build();
+        uriBuilder.setPath(path);
         uriBuilder.setQuery(targetPath.getRawQuery());
 
         return uriBuilder.toUri().toJavaUri();

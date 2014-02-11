@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
+import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 
 import org.dom4j.dom.DOMElement;
@@ -22,13 +23,14 @@ public class IconModuleFragmentFactory implements ConnectModuleFragmentFactory<I
     public DOMElement createFragment(String pluginKey, IconBean bean)
     {
         String addonBaseUrl = pluginAccessorFactory.get(pluginKey).getBaseUrl().toString();
+        String url = new PathBuilder().withBaseUrl(addonBaseUrl).withPathFragment(bean.getUrl()).build();
 
         DOMElement element = new DOMElement("icon");
         element.addAttribute("width", Integer.toString(bean.getWidth()))
               .addAttribute("height", Integer.toString(bean.getHeight()))
               .addElement("link")
-              .addText(addonBaseUrl + bean.getUrl());
-        
+              .addText(url);
+
         return element;
     }
 }

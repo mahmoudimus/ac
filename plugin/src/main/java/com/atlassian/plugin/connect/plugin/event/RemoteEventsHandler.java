@@ -10,6 +10,7 @@ import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
@@ -123,8 +124,8 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
 
                             String json = new JSONObject(data).toString(2);
 
-
-                            URI installHandler = getURI(addonAccessor.getBaseUrl().toString() + path);
+                            String url = new PathBuilder().withBaseUrl(addonAccessor.getBaseUrl().toString()).withPathFragment(path).build();
+                            URI installHandler = getURI(url);
 
                             Request.Builder request = httpClient.newRequest(installHandler);
                             request.setAttribute("purpose", "web-hook-notification");
