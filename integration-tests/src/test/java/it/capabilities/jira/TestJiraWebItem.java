@@ -13,6 +13,7 @@ import com.google.common.base.Optional;
 import it.capabilities.CheckUsernameConditionServlet;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,6 +29,8 @@ import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.assertURIEquals;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
@@ -229,6 +232,17 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_DIALOG, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be a dialog", webItem.isDialog());
+
+        // make sure the dialog=1 flag is included and not appended after the jwt.
+        // note: if we really want to prove that we've correctly handled the adding of the dialog flag we really need to calculate the canonical url
+        URL url = new URL(webItem.getPath());
+        String query = url.getQuery();
+        int dialogIndex = query.indexOf("dialog=1");
+        int jwtIndex = query.indexOf("jwt=");
+        assertThat(dialogIndex, is(greaterThanOrEqualTo(0)));
+        assertThat(jwtIndex, is(greaterThanOrEqualTo(0)));
+        assertThat(jwtIndex, is(greaterThan(dialogIndex))); // must be before the jwt
+
         webItem.click();
         assertTrue("web item dialog should be open", webItem.isActiveDialog());
     }
