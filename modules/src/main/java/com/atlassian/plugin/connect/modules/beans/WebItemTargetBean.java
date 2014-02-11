@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.BeanWithParamsBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemTargetBeanBuilder;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;

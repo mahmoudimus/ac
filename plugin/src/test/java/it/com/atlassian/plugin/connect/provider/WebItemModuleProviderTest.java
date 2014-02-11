@@ -185,10 +185,7 @@ public class WebItemModuleProviderTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
-<<<<<<< HEAD
                 .withAuthentication(AuthenticationBean.none())
-=======
->>>>>>> develop
                 .withModules("webItems", bean)
                 .build();
 
@@ -289,12 +286,8 @@ public class WebItemModuleProviderTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
-<<<<<<< HEAD
                 .withAuthentication(AuthenticationBean.none())
-                .withModules("webItems",bean,bean2)
-=======
                 .withModules("webItems", bean, bean2)
->>>>>>> develop
                 .build();
 
         Plugin plugin = null;
