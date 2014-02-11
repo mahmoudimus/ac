@@ -222,7 +222,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
-        assertEquals("ap-dialog", descriptor.getStyleClass());
+        assertEquals("ap-dialog ap-plugin-key-" + plugin.getKey() + "ap-module-key-" + descriptor.getKey(), descriptor.getStyleClass());
     }
 
     @Test
@@ -234,7 +234,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
-        assertEquals("ap-inline-dialog", descriptor.getStyleClass());
+        assertEquals("ap-inline-dialog ap-plugin-key-" + plugin.getKey() + "ap-module-key-" + descriptor.getKey(), descriptor.getStyleClass());
     }
 
     @Test
@@ -247,7 +247,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
-        assertThat(descriptor.getStyleClass(), allOf(containsString("batman"), containsString("robin"), containsString("ap-inline-dialog")));
+        assertThat(descriptor.getStyleClass(), allOf(containsString("batman"), containsString("robin"), containsString("ap-inline-dialog"), containsString("ap-plugin-key-" + plugin.getKey()), containsString("ap-module-key-" + descriptor.getKey())));
     }
 
     private WebItemModuleBeanBuilder createWebItemBeanBuilder()
