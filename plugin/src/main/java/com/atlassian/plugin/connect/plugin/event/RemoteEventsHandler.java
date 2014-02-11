@@ -124,7 +124,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
 
                             String json = new JSONObject(data).toString(2);
 
-                            String url = new PathBuilder().withBaseUrl(addonAccessor.getBaseUrl().toString()).withPathFragment(path).build();
+                            String url = new PathBuilder(addonAccessor.getBaseUrl().toString()).withPathFragment(path).build();
                             URI installHandler = getURI(url);
 
                             Request.Builder request = httpClient.newRequest(installHandler);

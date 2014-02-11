@@ -87,10 +87,88 @@ public class PathBuilderTest
 
 
     @Test
-    public void testFullUrl()
+    public void testBaseUrl1()
     {
-        String path = new PathBuilder().withBaseUrl("http://example.com/").withPathFragment("/other/").build();
+        String path = new PathBuilder("http://example.com/").withPathFragment("/other/").build();
         assertThat(path, is("http://example.com/other/"));
+    }
+
+    @Test
+    public void testBaseUrl2()
+    {
+        String path = new PathBuilder("http://example.com").withPathFragment("/other/").build();
+        assertThat(path, is("http://example.com/other/"));
+    }
+
+    @Test
+    public void testBaseUrl3()
+    {
+        String path = new PathBuilder("http://example.com/").withPathFragment("other/").build();
+        assertThat(path, is("http://example.com/other/"));
+    }
+
+    @Test
+    public void testBaseUrl4()
+    {
+        String path = new PathBuilder("http://example.com").withPathFragment("other/").build();
+        assertThat(path, is("http://example.com/other/"));
+    }
+
+    @Test
+    public void testEmptyPathSegment()
+    {
+        String path = new PathBuilder("http://example.com").withPathFragment("").build();
+        assertThat(path, is("http://example.com/"));
+    }
+
+    @Test
+    public void testEmptyPathSegment2()
+    {
+        String path = new PathBuilder("http://example.com/").withPathFragment("").build();
+        assertThat(path, is("http://example.com//"));
+    }
+
+    @Test
+    public void testEmptyPathSegment3()
+    {
+        String path = new PathBuilder("http://example.com/").withPathFragment("").withPathFragment("").build();
+        assertThat(path, is("http://example.com///"));
+    }
+
+    @Test
+    public void testSeparator()
+    {
+        String path = new PathBuilder("http://example.com").withPathFragment("/").withPathFragment("/").build();
+        assertThat(path, is("http://example.com//"));
+    }
+
+    @Test
+    public void testNullSegment()
+    {
+        String path = new PathBuilder("http://example.com").withPathFragment(null).withPathFragment(null).build();
+        assertThat(path, is("http://example.com"));
+    }
+
+    @Test
+    public void testMultiple()
+    {
+        String path = new PathBuilder("http://example.com")
+                .withPathFragment("zero")
+                .withPathFragment("one/")
+                .withPathFragment("/two/")
+                .withPathFragment("/three").build();
+        assertThat(path, is("http://example.com/zero/one/two/three"));
+    }
+
+    @Test
+    public void testNoEncodingIsDone()
+    {
+        String path = new PathBuilder("http://example.com")
+                .withPathFragment(" <>\"#%{}|\\^~[]`")
+                .withPathFragment(";/?:@=&/")
+                .withPathFragment("/宮崎 駿/")
+                .withPathFragment("/$-_.+!*'(),").build();
+        assertThat(path, is("http://example.com/ <>\"#%{}|\\^~[]`/;/?:@=&/宮崎 駿/$-_.+!*'(),"));
     }
 
 }

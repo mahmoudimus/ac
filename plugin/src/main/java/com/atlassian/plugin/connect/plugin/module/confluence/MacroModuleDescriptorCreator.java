@@ -370,8 +370,7 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("value", macroKey).getParent()
                     .addElement("var")
                     .addAttribute("name", "ICON_URL")
-                    .addAttribute("value", new PathBuilder()
-                            .withBaseUrl(remotablePluginAccessor.getBaseUrl().toString())
+                    .addAttribute("value", new PathBuilder(remotablePluginAccessor.getBaseUrl().toString())
                             .withPathFragment(iconUrl.toString())
                             .build()).getParent();
 

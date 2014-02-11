@@ -23,7 +23,7 @@ public class IconModuleFragmentFactory implements ConnectModuleFragmentFactory<I
     public DOMElement createFragment(String pluginKey, IconBean bean)
     {
         String addonBaseUrl = pluginAccessorFactory.get(pluginKey).getBaseUrl().toString();
-        String url = new PathBuilder().withBaseUrl(addonBaseUrl).withPathFragment(bean.getUrl()).build();
+        String url = new PathBuilder(addonBaseUrl).withPathFragment(bean.getUrl()).build();
 
         DOMElement element = new DOMElement("icon");
         element.addAttribute("width", Integer.toString(bean.getWidth()))

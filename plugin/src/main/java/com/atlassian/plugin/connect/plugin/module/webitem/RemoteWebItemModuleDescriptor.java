@@ -108,7 +108,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
             if (iconLinkElement != null)
             {
                 String iconPath = iconLinkElement.getText();
-                iconLinkElement.setText(new PathBuilder().withBaseUrl(pluginBaseUrl).withPathFragment(iconPath).build());
+                iconLinkElement.setText(new PathBuilder(pluginBaseUrl).withPathFragment(iconPath).build());
             }
             else
             {
