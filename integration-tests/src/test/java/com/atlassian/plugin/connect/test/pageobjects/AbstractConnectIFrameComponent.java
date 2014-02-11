@@ -6,6 +6,7 @@ import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import org.openqa.selenium.By;
@@ -56,6 +57,24 @@ public abstract class AbstractConnectIFrameComponent<C>
                     public Boolean apply(WebDriver iframe)
                     {
                         return !iframe.findElements(By.tagName("script")).isEmpty();
+                    }
+                });
+            }
+        }));
+        return (C) this;
+    }
+
+    public C waitUntilContentElementNotEmpty(final String elementId)
+    {
+        this.waitUntilContentLoaded();
+        // wait until the remote panel has loaded
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return withinIFrame(new Function<WebDriver, Boolean>() {
+                    @Override
+                    public Boolean apply(WebDriver iframe) {
+                        return iframe.findElements(ByJquery.$("#" + elementId + ":empty")).isEmpty();
                     }
                 });
             }

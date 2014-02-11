@@ -15,9 +15,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Describes a <dialog-page> Remote Module - must be bound after the dialog has been opened.
  */
-public class RemoteDialog
+public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
 {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-";
 
     @Inject
     protected AtlassianWebDriver driver;
@@ -30,6 +31,11 @@ public class RemoteDialog
 
     @FindBy(className = "ap-dialog-cancel")
     protected WebElement cancelButton;
+
+    protected String getFrameId()
+    {
+        return elementFinder.find(By.cssSelector(".ap-dialog-content iframe")).getAttribute("id");
+    }
 
     /**
      * Hits the "Submit" button on the dialog. Returns true if the dialog was dismissed. Returns false if the dialog is still
@@ -62,4 +68,5 @@ public class RemoteDialog
     {
         cancelButton.click();
     }
+
 }

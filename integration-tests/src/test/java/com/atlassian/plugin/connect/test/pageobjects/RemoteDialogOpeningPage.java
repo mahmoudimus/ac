@@ -51,7 +51,7 @@ public class RemoteDialogOpeningPage
     @Init
     public void init()
     {
-        this.containerDiv = driver.findElement(By.id("embedded-" + type + "-" + key));
+        this.containerDiv = driver.findElement(By.id("embedded-" + ( (type == null) ? "" : (type + "-") ) + key));
     }
 
     public RemoteCloseDialogPage openUrl()

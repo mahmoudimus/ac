@@ -14,3 +14,9 @@
 .ap-dialog-container .ap-content {
     height: 100%;
 }
+
+/* add new aui dialog size of maximum */
+.ap-aui-dialog2-maximum.ap-aui-dialog2.ap-aui-layer {
+    top: 0;
+    height: 100%;
+}
