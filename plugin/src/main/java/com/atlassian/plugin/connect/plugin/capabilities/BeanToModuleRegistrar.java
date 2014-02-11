@@ -15,7 +15,6 @@ import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
@@ -55,25 +54,21 @@ public class BeanToModuleRegistrar
     private final ProductAccessor productAccessor;
     private final ContainerManagedPlugin theConnectPlugin;
     private final ApplicationProperties applicationProperties;
-    private final AddOnBeanValidatorService addOnBeanValidatorService;
 
     @Autowired
     public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration,
             PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor,
-            ApplicationProperties applicationProperties, AddOnBeanValidatorService addOnBeanValidatorService)
+            ApplicationProperties applicationProperties)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.productAccessor = productAccessor;
         this.applicationProperties = applicationProperties;
-        this.addOnBeanValidatorService = addOnBeanValidatorService;
         this.theConnectPlugin = (ContainerManagedPlugin) pluginRetrievalService.getPlugin();
         this.registrations = new ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration>();
     }
 
     public void registerDescriptorsForBeans(Plugin plugin, ConnectAddonBean addon) throws InvalidDescriptorException
     {
-        addOnBeanValidatorService.validate(plugin, addon);
-
         BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
         AutowireWithConnectPluginDecorator connectAutowiringPlugin = new AutowireWithConnectPluginDecorator((AutowireCapablePlugin) theConnectPlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();

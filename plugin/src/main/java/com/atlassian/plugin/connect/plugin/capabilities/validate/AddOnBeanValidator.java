@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.validate;
 
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 
@@ -11,5 +10,5 @@ import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException
  */
 public interface AddOnBeanValidator
 {
-    void validate(Plugin plugin, ConnectAddonBean addonBean) throws InvalidDescriptorException;
+    void validate(ConnectAddonBean addonBean) throws InvalidDescriptorException;
 }

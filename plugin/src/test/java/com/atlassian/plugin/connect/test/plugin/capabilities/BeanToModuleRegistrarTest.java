@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.WebHookModuleBeanBuild
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.WebHookScopeService;
-import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.AutowireWithConnectPluginDecorator;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -39,7 +38,6 @@ public class BeanToModuleRegistrarTest
     @Mock private ProductAccessor productAccessor;
     @Mock private ApplicationProperties applicationProperties;
     @Mock private WebHookScopeService webHookScopeService;
-    @Mock private AddOnBeanValidatorService addOnBeanValidatorService;
 
     @Mock private ConnectAddonBean connectAddonBean;
     @Mock private LifecycleBean lifecycleBean;
@@ -64,7 +62,7 @@ public class BeanToModuleRegistrarTest
         when(connectAddonBean.getModules()).thenReturn(moduleList);
         when(moduleList.getWebhooks()).thenReturn(Collections.<WebHookModuleBean>emptyList());
         beanToModuleRegistrar = new BeanToModuleRegistrar(dynamicDescriptorRegistration, pluginRetrievalService,
-                productAccessor, applicationProperties, addOnBeanValidatorService);
+                productAccessor, applicationProperties);
     }
 
     @Test

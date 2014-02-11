@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.validate;
 
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
@@ -22,11 +21,11 @@ public class DelegatingAddOnBeanValidatorService implements AddOnBeanValidatorSe
     }
 
     @Override
-    public void validate(final Plugin plugin, final ConnectAddonBean addOnBean) throws InvalidDescriptorException
+    public void validate(final ConnectAddonBean addOnBean) throws InvalidDescriptorException
     {
         for (AddOnBeanValidator validator : connectContainerUtil.getBeansOfType(AddOnBeanValidator.class))
         {
-            validator.validate(plugin, addOnBean);
+            validator.validate(addOnBean);
         }
     }
 }

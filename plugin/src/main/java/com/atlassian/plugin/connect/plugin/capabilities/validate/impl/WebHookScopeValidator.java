@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.validate.impl;
 
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -31,7 +30,7 @@ public class WebHookScopeValidator implements AddOnBeanValidator
     }
 
     @Override
-    public void validate(final Plugin plugin, final ConnectAddonBean addon) throws InvalidDescriptorException
+    public void validate(final ConnectAddonBean addon) throws InvalidDescriptorException
     {
         for (WebHookModuleBean webHookModuleBean : addon.getModules().getWebhooks())
         {
@@ -40,7 +39,7 @@ public class WebHookScopeValidator implements AddOnBeanValidator
             if (!Iterables.any(addon.getScopes(), new ImpliedScopePredicate(requiredScope)))
             {
                 String exceptionMessage = String.format("Add-on '%s' requests web hook '%s' but not the '%s' scope "
-                        + "required to receive it. Please request this scope in your descriptor.", plugin.getKey(),
+                        + "required to receive it. Please request this scope in your descriptor.", addon.getKey(),
                         webHookModuleBean.getEvent(), requiredScope);
                 throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.missing.scope." + requiredScope.name());
             }
