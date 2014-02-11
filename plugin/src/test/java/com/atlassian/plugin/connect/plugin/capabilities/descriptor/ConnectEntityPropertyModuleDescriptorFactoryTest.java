@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyC
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.Matchers;
@@ -51,7 +51,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     @Rule
     public RuleChain mocksInContainer = MockitoMocksInContainer.forTest(this);
 
-    @Mock private ConnectAutowireUtil autowireUtil;
+    @Mock private ConnectContainerUtil autowireUtil;
     @Mock private Plugin plugin;
     @Mock private BundleContext bundleContext;
     @Mock private JiraAuthenticationContext authContext;

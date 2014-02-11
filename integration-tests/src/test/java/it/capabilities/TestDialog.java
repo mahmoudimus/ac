@@ -1,7 +1,6 @@
 package it.capabilities;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
@@ -35,6 +34,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+                .setAuthenticationToNone()
                 .addModules("generalPages",
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))

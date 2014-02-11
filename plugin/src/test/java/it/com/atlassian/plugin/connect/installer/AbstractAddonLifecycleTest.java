@@ -2,7 +2,6 @@ package it.com.atlassian.plugin.connect.installer;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -17,7 +16,6 @@ import it.com.atlassian.plugin.connect.TestPluginInstaller;
 import it.com.atlassian.plugin.connect.filter.AddonTestFilterResults;
 import it.com.atlassian.plugin.connect.filter.ServletRequestSnaphot;
 
-import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static org.junit.Assert.assertEquals;
@@ -44,7 +42,7 @@ public abstract class AbstractAddonLifecycleTest
 
     protected ConnectAddonBean baseBean;
     protected ConnectAddonBean installOnlyBean;
-    protected ConnectAddonBean uninstallOnlyBean;
+    protected ConnectAddonBean uninstallOnlyBean; // not valid for JWT tests - JWT requires an installed callback
     protected ConnectAddonBean installAndEnabledBean;
     protected ConnectAddonBean installAndDisabledBean;
     protected ConnectAddonBean installAndUninstallBean;
@@ -62,7 +60,7 @@ public abstract class AbstractAddonLifecycleTest
     protected void initBeans(AuthenticationBean authBean)
     {
         String pluginKeyPrefix = PLUGIN_KEY + "-" + authBean.getType().name().toLowerCase();
-        String addonKey = "";
+        String addonKey;
         
         this.baseBean = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
@@ -172,7 +170,7 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void uninstallUrlIsPosted() throws Exception
     {
-        ConnectAddonBean addon = uninstallOnlyBean;
+        ConnectAddonBean addon = installAndUninstallBean;
 
         Plugin plugin = null;
         String addonKey = null;
@@ -192,6 +190,7 @@ public abstract class AbstractAddonLifecycleTest
         }
         finally
         {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
@@ -230,7 +229,7 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void uninstallAddonUserIsDisabled() throws Exception
     {
-        ConnectAddonBean addon = uninstallOnlyBean;
+        ConnectAddonBean addon = installAndUninstallBean;
 
         Plugin plugin = null;
         String addonKey = null;
@@ -248,6 +247,7 @@ public abstract class AbstractAddonLifecycleTest
         }
         finally
         {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
