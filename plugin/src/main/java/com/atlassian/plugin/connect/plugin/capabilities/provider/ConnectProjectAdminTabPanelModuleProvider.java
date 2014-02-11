@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -39,14 +39,14 @@ public class ConnectProjectAdminTabPanelModuleProvider
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private final ConnectAutowireUtil connectAutowireUtil;
+    private final ConnectContainerUtil connectContainerUtil;
 
     @Autowired
     public ConnectProjectAdminTabPanelModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, ConnectAutowireUtil connectAutowireUtil)
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, ConnectContainerUtil connectContainerUtil)
     {
-        this.connectAutowireUtil = connectAutowireUtil;
+        this.connectContainerUtil = connectContainerUtil;
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
@@ -82,7 +82,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
                     .projectAdminTabTemplate()
                     .urlTemplate(bean.getUrl())
                     .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey())
-                    .condition(connectAutowireUtil.createBean(IsProjectAdminCondition.class))
+                    .condition(connectContainerUtil.createBean(IsProjectAdminCondition.class))
                     .title(bean.getDisplayName())
                     .build();
 

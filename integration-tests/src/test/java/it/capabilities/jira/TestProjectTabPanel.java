@@ -28,6 +28,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+                .setAuthenticationToNone()
                 .addModule(ConnectTabPanelModuleProvider.PROJECT_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("AC Play Project Tab", null))
                         .withKey("ac-play-project-tab")

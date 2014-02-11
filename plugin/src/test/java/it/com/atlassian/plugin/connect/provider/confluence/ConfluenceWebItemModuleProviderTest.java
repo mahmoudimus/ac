@@ -9,12 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
-import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
-import com.atlassian.confluence.user.ConfluenceUser;
-import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -86,6 +84,7 @@ public class ConfluenceWebItemModuleProviderTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
+                .withAuthentication(AuthenticationBean.none())
                 .withModules("webItems", bean)
                 .build();
 

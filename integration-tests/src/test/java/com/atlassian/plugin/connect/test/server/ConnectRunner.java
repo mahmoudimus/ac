@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.server;
 
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
@@ -168,6 +169,12 @@ public class ConnectRunner
     public ConnectRunner enableLicensing()
     {
         addonBuilder.withLicensing(true);
+        return this;
+    }
+
+    public ConnectRunner setAuthenticationToNone()
+    {
+        addonBuilder.withAuthentication(AuthenticationBean.none());
         return this;
     }
     

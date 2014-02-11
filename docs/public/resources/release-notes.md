@@ -4,6 +4,9 @@
 ## [1.0-m31](../release-notes/1-0-m31.html)
 * Support for Inline Dialogs
 * The [`authentication`](../modules/authentication.html) module is now required
+* Add-ons that request JWT authentication will now fail to install if they do not specify an ``"installed"``
+[lifecycle callback](../modules/lifecycle.html). To opt out of JWT authentication, you may specify an authentication
+type of ``"none"``.
 
 ## [1.0-m30](../release-notes/1-0-m30.html)
 * Removal of email sending resource

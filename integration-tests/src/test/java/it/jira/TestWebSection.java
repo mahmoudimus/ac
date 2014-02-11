@@ -45,31 +45,32 @@ public class TestWebSection extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
-                        .addModules(
-                                "webItems",
-                                newWebItemBean()
-                                        .withName(new I18nProperty(HEADER_WEB_ITEM_NAME, null))
-                                        .withKey(HEADER_WEB_ITEM_ID)
-                                        .withUrl(HEADER_WEB_ITEM_URL)
-                                        .withLocation(JIRA_HEADER_LOCATION)
-                                        .build(),
-                                newWebItemBean()
-                                        .withName(new I18nProperty(CONTENT_WEB_ITEM_NAME, null))
-                                        .withKey(CONTENT_WEB_ITEM_ID)
-                                        .withUrl(CONTENT_WEB_ITEM_URL)
-                                        .withLocation(DROPDOWN_LOCATION)
-                                        .build()
-                                )
-                        .addModule(
-                                "webSections",
-                                newWebSectionBean()
-                                    .withName(new I18nProperty(WEB_SECTION_NAME, null))
-                                    .withLocation(HEADER_WEB_ITEM_ID)
-                                    .withKey(WEB_SECTION_ID)
-                                    .build()
+                .setAuthenticationToNone()
+                .addModules(
+                        "webItems",
+                        newWebItemBean()
+                                .withName(new I18nProperty(HEADER_WEB_ITEM_NAME, null))
+                                .withKey(HEADER_WEB_ITEM_ID)
+                                .withUrl(HEADER_WEB_ITEM_URL)
+                                .withLocation(JIRA_HEADER_LOCATION)
+                                .build(),
+                        newWebItemBean()
+                                .withName(new I18nProperty(CONTENT_WEB_ITEM_NAME, null))
+                                .withKey(CONTENT_WEB_ITEM_ID)
+                                .withUrl(CONTENT_WEB_ITEM_URL)
+                                .withLocation(DROPDOWN_LOCATION)
+                                .build()
                         )
-                        .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
-                        .start();
+                .addModule(
+                        "webSections",
+                        newWebSectionBean()
+                            .withName(new I18nProperty(WEB_SECTION_NAME, null))
+                            .withLocation(HEADER_WEB_ITEM_ID)
+                            .withKey(WEB_SECTION_ID)
+                            .build()
+                )
+                .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
+                .start();
     }
 
     @AfterClass

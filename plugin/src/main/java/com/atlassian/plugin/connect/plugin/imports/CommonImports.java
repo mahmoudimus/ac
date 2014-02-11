@@ -40,42 +40,10 @@ import javax.inject.Named;
  * This class does nothing but is here to centralize the cross-product component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
+@SuppressWarnings ("ALL")
 @Named
 public class CommonImports
 {
-    private final PluginController pluginController;
-    private final TemplateRenderer templateRenderer;
-    private final ServletModuleManager servletModuleManager;
-    private final WebInterfaceManager webInterfaceManager;
-    private final PluginRetrievalService pluginRetrievalService;
-    private final ConsumerService consumerService;
-    private final RequestFactory requestFactory;
-    private final ApplicationProperties applicationProperties;
-    private final ServiceProviderConsumerStore serviceProviderConsumerStore;
-    private final MutatingApplicationLinkService applicationLinkService;
-    private final AuthenticationConfigurationManager authenticationConfigurationManager;
-    private final UserManager userManager;
-    private final AuthenticationListener authenticationListener;
-    private final AuthenticationController authenticationController;
-    private final TransactionTemplate transactionTemplate;
-    private final PluginEventManager pluginEventManager;
-    private final PluginAccessor pluginAccessor;
-    private final WebResourceManager webResourceManager;
-    private final EventPublisher eventPublisher;
-    private final I18nResolver i18nResolver;
-    private final LocaleResolver localeResolver;
-    private final PluginSettingsFactory pluginSettingsFactory;
-    private final TypeAccessor typeAccessor;
-    private final WebResourceUrlProvider webResourceUrlProvider;
-    private final ModuleFactory moduleFactory;
-    private final HttpClientFactory httpClientFactory;
-    private final HttpClient httpClient;
-    private final ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry;
-    private final RemotePluginLicenseService remotePluginLicenseService;
-    private final JwtService jwtService;
-    private final JwtApplinkFinder jwtApplinkFinder;
-
-
     @Inject
     public CommonImports(
             @ComponentImport PluginController pluginController,
@@ -110,36 +78,5 @@ public class CommonImports
             @ComponentImport JwtService jwtService,
             @ComponentImport JwtApplinkFinder jwtApplinkFinder)
     {
-        this.pluginController = pluginController;
-        this.templateRenderer = templateRenderer;
-        this.servletModuleManager = servletModuleManager;
-        this.webInterfaceManager = webInterfaceManager;
-        this.pluginRetrievalService = pluginRetrievalService;
-        this.consumerService = consumerService;
-        this.requestFactory = requestFactory;
-        this.applicationProperties = applicationProperties;
-        this.serviceProviderConsumerStore = serviceProviderConsumerStore;
-        this.applicationLinkService = applicationLinkService;
-        this.authenticationConfigurationManager = authenticationConfigurationManager;
-        this.userManager = userManager;
-        this.authenticationListener = authenticationListener;
-        this.authenticationController = authenticationController;
-        this.transactionTemplate = transactionTemplate;
-        this.pluginEventManager = pluginEventManager;
-        this.pluginAccessor = pluginAccessor;
-        this.webResourceManager = webResourceManager;
-        this.eventPublisher = eventPublisher;
-        this.i18nResolver = i18nResolver;
-        this.localeResolver = localeResolver;
-        this.pluginSettingsFactory = pluginSettingsFactory;
-        this.typeAccessor = typeAccessor;
-        this.webResourceUrlProvider = webResourceUrlProvider;
-        this.moduleFactory = moduleFactory;
-        this.httpClientFactory = httpClientFactory;
-        this.httpClient = httpClient;
-        this.webHookListenerRegistry = webHookListenerRegistry;
-        this.remotePluginLicenseService = remotePluginLicenseService;
-        this.jwtService = jwtService;
-        this.jwtApplinkFinder = jwtApplinkFinder;
     }
 }
