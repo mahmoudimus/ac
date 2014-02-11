@@ -8,16 +8,13 @@ import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.collect.Sets;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.TestPluginInstaller;
 import it.com.atlassian.plugin.connect.rule.DisableDevMode;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,13 +40,15 @@ public class AddonValidationTest
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
+    private final ApplicationProperties applicationProperties;
 
     private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
 
-    public AddonValidationTest(TestPluginInstaller testPluginInstaller, final TestAuthenticator testAuthenticator)
+    public AddonValidationTest(TestPluginInstaller testPluginInstaller, final TestAuthenticator testAuthenticator, ApplicationProperties applicationProperties)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
+        this.applicationProperties = applicationProperties;
     }
 
     @BeforeClass
@@ -116,7 +115,7 @@ public class AddonValidationTest
     @Test
     public void testJwtAuthenticationWithNoInstalledCallback() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.JWT).build();
+        ConnectAddonBean bean = testBeanBuilderWithJwt().build();
 
         installExpectingUpmErrorCode(bean, "connect.install.error.auth.with.no.installed.callback");
     }
@@ -132,14 +131,14 @@ public class AddonValidationTest
     @Test
     public void testNoAuthenticationWithNoInstalledCallback() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE).build();
+        ConnectAddonBean bean = testBeanBuilderWithNoAuth().build();
         install(bean);
     }
 
     @Test
     public void testJwtAuthenticationWithNoTls() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.JWT)
+        ConnectAddonBean bean = testBeanBuilderWithJwt()
                 .withBaseurl("http://example.com/no-tls")
                 .build();
 
@@ -149,7 +148,7 @@ public class AddonValidationTest
     @Test
     public void testNoAuthenticationWithNoTls() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE)
+        ConnectAddonBean bean = testBeanBuilderWithNoAuth()
                 .withBaseurl("http://example.com/no-tls")
                 .build();
 
@@ -227,4 +226,54 @@ public class AddonValidationTest
         install(bean);
     }
 
+    @Test
+    public void testJwtAuthenticationWithSchemelessBaseUrl() throws Exception
+    {
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("example.com").build(), "connect.install.error.auth.with.no.tls");
+    }
+
+    @Test
+    public void testOAuthAuthenticationWithSchemelessBaseUrl() throws Exception
+    {
+        installExpectingUpmErrorCode(testBeanBuilderWithAuth(AuthenticationType.OAUTH).withBaseurl("example.com").build(), "connect.install.error.base_url.no_scheme");
+    }
+
+    @Test
+    public void testNoneAuthenticationWithSchemelessBaseUrl() throws Exception
+    {
+        installExpectingUpmErrorCode(testBeanBuilderWithNoAuth().withBaseurl("example.com").build(), "connect.install.error.base_url.no_scheme");
+    }
+
+    @Test
+    public void testJwtAuthenticationWithMissingBaseUrl() throws Exception
+    {
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl(null).build(), schemaValidationErrorCode());
+    }
+
+    @Test
+    public void testJwtAuthenticationWithEmptyStringBaseUrl() throws Exception
+    {
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("").build(), schemaValidationErrorCode());
+    }
+
+    @Test
+    public void testJwtAuthenticationWithNonUriBaseUrl() throws Exception
+    {
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("this is not a URI").build(), schemaValidationErrorCode());
+    }
+
+    private static ConnectAddonBeanBuilder testBeanBuilderWithNoAuth()
+    {
+        return testBeanBuilderWithAuth(AuthenticationType.NONE);
+    }
+
+    private static ConnectAddonBeanBuilder testBeanBuilderWithJwt()
+    {
+        return testBeanBuilderWithAuth(AuthenticationType.JWT);
+    }
+
+    private String schemaValidationErrorCode()
+    {
+        return "connect.install.error.remote.descriptor.validation." + applicationProperties.getDisplayName().toLowerCase();
+    }
 }
