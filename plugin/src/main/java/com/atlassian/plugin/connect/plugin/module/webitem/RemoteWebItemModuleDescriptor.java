@@ -149,7 +149,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
     private boolean isAbsolute()
     {
         boolean absolute = Boolean.parseBoolean(getOptionalAttribute(link, "absolute", "false"));
-        return absolute || url.startsWith("http") || url.startsWith("https");
+        return absolute || url.startsWith("http");
     }
 
 }

@@ -2,6 +2,7 @@ package it.com.atlassian.plugin.connect.installer;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -21,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(AtlassianPluginsTestRunner.class)
+@RunWith (AtlassianPluginsTestRunner.class)
 public class ConnectAddonRegistryTest
 {
     public static final String CONTEXT_PATH = "http://ondemand.com/someProduct";
@@ -30,11 +31,11 @@ public class ConnectAddonRegistryTest
     public static final String MODULE_NAME = "My Web Item";
     public static final String MODULE_KEY = "my-web-item";
     public static final String BASE_URL = "http://my.connect.addon.com";
-    
+
     private final ConnectAddonRegistry connectAddonRegistry;
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
-    
+
     private HttpServletRequest servletRequest;
 
     public ConnectAddonRegistryTest(ConnectAddonRegistry connectAddonRegistry, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
@@ -68,7 +69,8 @@ public class ConnectAddonRegistryTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
-                .withModules("webItems",bean)
+                .withAuthentication(AuthenticationBean.none())
+                .withModules("webItems", bean)
                 .build();
 
         Plugin plugin = null;
@@ -77,11 +79,11 @@ public class ConnectAddonRegistryTest
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            assertEquals(BASE_URL,connectAddonRegistry.getBaseUrl(plugin.getKey()));
+            assertEquals(BASE_URL, connectAddonRegistry.getBaseUrl(plugin.getKey()));
         }
         finally
         {
-            if(null != plugin)
+            if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
             }
@@ -103,7 +105,8 @@ public class ConnectAddonRegistryTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
-                .withModules("webItems",bean)
+                .withAuthentication(AuthenticationBean.none())
+                .withModules("webItems", bean)
                 .build();
 
         Plugin plugin = null;
@@ -113,18 +116,18 @@ public class ConnectAddonRegistryTest
             plugin = testPluginInstaller.installPlugin(addon);
 
             String pluginKey = plugin.getKey();
-            
-            assertEquals(BASE_URL,connectAddonRegistry.getBaseUrl(pluginKey));
-            
+
+            assertEquals(BASE_URL, connectAddonRegistry.getBaseUrl(pluginKey));
+
             testPluginInstaller.uninstallPlugin(plugin);
             plugin = null;
-            
-            assertEquals("",connectAddonRegistry.getBaseUrl(pluginKey));
-            
+
+            assertEquals("", connectAddonRegistry.getBaseUrl(pluginKey));
+
         }
         finally
         {
-            if(null != plugin)
+            if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
             }

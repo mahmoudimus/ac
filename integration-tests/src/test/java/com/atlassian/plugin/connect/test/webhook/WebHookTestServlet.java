@@ -99,6 +99,7 @@ public final class WebHookTestServlet extends HttpServlet
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
+                .setAuthenticationToNone()
                 .addEnableLifecycle()
                 .addRoute(ConnectRunner.ENABLED_PATH, servlet)
                 .start();
@@ -160,6 +161,7 @@ public final class WebHookTestServlet extends HttpServlet
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, webHookId)
+                .setAuthenticationToNone()
                 .addModule("webhooks", WebHookModuleBean.newWebHookBean().withEvent(eventId).withUrl(path).build())
                 .addRoute(path, servlet)
                 .addScope(ScopeName.READ) // for receiving web hooks

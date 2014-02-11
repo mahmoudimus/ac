@@ -4,7 +4,7 @@ import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -23,19 +23,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @JiraComponent
 public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WorkflowPostFunctionModuleBean, WorkflowFunctionModuleDescriptor>
 {
-    private final ConnectAutowireUtil connectAutowireUtil;
+    private final ConnectContainerUtil connectContainerUtil;
 
     @Autowired
-    public WorkflowPostFunctionModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
+    public WorkflowPostFunctionModuleDescriptorFactory(ConnectContainerUtil connectContainerUtil)
     {
-        this.connectAutowireUtil = checkNotNull(connectAutowireUtil);
+        this.connectContainerUtil = checkNotNull(connectContainerUtil);
     }
 
     @Override
     public WorkflowFunctionModuleDescriptor createModuleDescriptor(Plugin plugin, WorkflowPostFunctionModuleBean bean)
     {
         Element element = createDOMElement(bean);
-        ConnectWorkflowFunctionModuleDescriptor moduleDescriptor = connectAutowireUtil.createBean(ConnectWorkflowFunctionModuleDescriptor.class);
+        ConnectWorkflowFunctionModuleDescriptor moduleDescriptor = connectContainerUtil.createBean(ConnectWorkflowFunctionModuleDescriptor.class);
         moduleDescriptor.init(plugin, element);
         return moduleDescriptor;
     }

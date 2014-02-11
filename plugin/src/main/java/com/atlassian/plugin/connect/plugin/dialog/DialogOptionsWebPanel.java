@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.dialog;
 
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebPanel;
 import com.atlassian.plugin.web.model.WebPanel;
@@ -19,7 +20,6 @@ public class DialogOptionsWebPanel extends AbstractWebPanel implements WebPanel
 {
     private static final Logger log = LoggerFactory.getLogger(DialogOptionsWebPanel.class);
 
-    public static final String DIALOG_OPTION_PREFIX = "-acopt-";
     private static final String OPTION_TEMPLATE = "/velocity/dialog-options.vm";
     private final PluginAccessor pluginAccessor;
     private final TemplateRenderer templateRenderer;
@@ -72,7 +72,7 @@ public class DialogOptionsWebPanel extends AbstractWebPanel implements WebPanel
     {
         for (Map.Entry<String, String> param : descriptor.getParams().entrySet())
         {
-            if (param.getKey().startsWith(DIALOG_OPTION_PREFIX))
+            if (param.getKey().startsWith(WebItemModuleDescriptorFactory.DIALOG_OPTION_PREFIX))
             {
                 addOption(keyedOptions, descriptor.getCompleteKey(), param.getKey(), param.getValue());
             }
@@ -86,6 +86,6 @@ public class DialogOptionsWebPanel extends AbstractWebPanel implements WebPanel
             keyedOptions.put(moduleKey, new HashMap<String, String>());
         }
 
-        keyedOptions.get(moduleKey).put(StringUtils.substringAfter(key, DIALOG_OPTION_PREFIX), value);
+        keyedOptions.get(moduleKey).put(StringUtils.substringAfter(key, WebItemModuleDescriptorFactory.DIALOG_OPTION_PREFIX), value);
     }
 }

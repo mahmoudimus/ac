@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.spi.permission.scope;
 
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import org.apache.commons.lang.StringUtils;
@@ -55,8 +56,11 @@ public final class RestApiScopeHelper
         {
             String name = elements[1];
             String version = elements[2].toLowerCase(Locale.US);
+            if (!isVersionString(version)) {
+                version = null;
+            }
             String method = request.getMethod().toLowerCase(Locale.US);
-            String path = StringUtils.join(Arrays.copyOfRange(elements, 3, elements.length), "/");
+            String path = StringUtils.join(Arrays.copyOfRange(elements, version == null ? 2 : 3, elements.length), "/");
             if (!path.startsWith("/"))
             {
                 path = "/" + path;
@@ -71,6 +75,12 @@ public final class RestApiScopeHelper
             }
         }
         return false;
+    }
+
+    @VisibleForTesting
+    public static boolean isVersionString(String version)
+    {
+        return !StringUtils.isBlank(version) && ("latest".equalsIgnoreCase(version) || version.matches("\\d+([\\.-]\\w+)*"));
     }
 
     public Iterable<ApiResourceInfo> getApiResourceInfos()
@@ -107,8 +117,14 @@ public final class RestApiScopeHelper
 
         public boolean match(String name, String version, String path, String method)
         {
+            boolean versionMatch = false;
+
+            if ((this.versions.isEmpty() && version == null) || this.versions.contains(version)) {
+                versionMatch = true;
+            }
+
             return this.name.equalsIgnoreCase(name) &&
-                    this.versions.contains(version) &&
+                    versionMatch &&
                     (pathIsRegex ? path.matches(basePath) : path.startsWith(basePath)) &&
                     this.methods.contains(method);
         }
@@ -116,15 +132,19 @@ public final class RestApiScopeHelper
         public Iterable<ApiResourceInfo> getApiResourceInfo()
         {
             List<ApiResourceInfo> infos = newArrayList();
-            for (String version : versions)
+
+            for (String method : methods)
             {
-                for (String method : methods)
+                if (versions.isEmpty())
                 {
-                    StringBuilder sb = new StringBuilder("/rest/")
-                            .append(name).append("/")
-                            .append(version)
-                            .append(basePath);
-                    infos.add(new ApiResourceInfo(sb.toString(), method.toUpperCase(Locale.US)));
+                    infos.add(new ApiResourceInfo("/rest/" + name + basePath, method.toUpperCase(Locale.US)));
+                }
+                else
+                {
+                    for (String version : versions)
+                    {
+                        infos.add(new ApiResourceInfo("/rest/" + name + "/" + version + basePath, method.toUpperCase(Locale.US)));
+                    }
                 }
             }
             return infos;
