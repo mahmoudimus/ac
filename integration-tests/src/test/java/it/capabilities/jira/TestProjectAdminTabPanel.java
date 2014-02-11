@@ -33,6 +33,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+                .setAuthenticationToNone()
                 .addModule(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
                         .withName(new I18nProperty(REMOTE_PROJECT_CONFIG_TAB_NAME, null))
                         .withKey(REMOTE_PROJECT_CONFIG_TAB_KEY)

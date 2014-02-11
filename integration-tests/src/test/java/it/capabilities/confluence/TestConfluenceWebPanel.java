@@ -81,6 +81,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .build();
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "cwp-plugin")
+                .setAuthenticationToNone()
                 .addModule(WEB_PANELS, editorWebPanel)
                 .addModule(WEB_PANELS, viewWebPanel)
                 .addModule(WEB_PANELS, profileWebPanel)

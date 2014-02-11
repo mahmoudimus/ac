@@ -24,6 +24,9 @@ the different integration modules that it provides.
             "name": "Example, Inc.",
             "url": "http://example.com"
         },
+        "authentication": {
+            "type": "none"
+        },
         "version": "1.0",
         "modules": {
             "generalPages": [

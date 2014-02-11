@@ -32,6 +32,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
+                .setAuthenticationToNone()
                 .addModules("webItems", newWebItemBean()
                         .withName(new I18nProperty("Only Betty", ONLY_BETTY_WEBITEM))
                         .withKey("only-betty")

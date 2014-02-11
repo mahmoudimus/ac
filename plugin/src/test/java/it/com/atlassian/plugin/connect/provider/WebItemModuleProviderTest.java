@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
-import com.atlassian.plugin.connect.test.plugin.capabilities.ConnectAsserts;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -185,6 +185,7 @@ public class WebItemModuleProviderTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
+                .withAuthentication(AuthenticationBean.none())
                 .withModules("webItems", bean)
                 .build();
 
@@ -233,6 +234,7 @@ public class WebItemModuleProviderTest
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
+                .withAuthentication(AuthenticationBean.none())
                 .withBaseurl(BASE_URL)
                 .withModules("webItems", bean)
                 .build();
@@ -284,6 +286,7 @@ public class WebItemModuleProviderTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
+                .withAuthentication(AuthenticationBean.none())
                 .withModules("webItems", bean, bean2)
                 .build();
 
