@@ -124,8 +124,11 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * For example, the "system.admin/globalsettings" location is in the administrative
      * menu link on the left side of the Administration Console.
      *
-     * For more locations, visit the <a href="https://developer.atlassian.com/display/JIRADEV/Web+Fragments">JIRA</a> or <a href="https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules">Confluence</a> list of locations.
-     */
+     * Product location documentation:
+     * 
+     * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
+     * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
+     */ 
     public String getLocation()
     {
         return location;

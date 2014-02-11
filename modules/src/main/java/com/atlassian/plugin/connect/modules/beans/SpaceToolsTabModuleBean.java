@@ -12,8 +12,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Space Tools Tab modules enable add-ons to insert tabs into Confluence Space Tools area. These can be automatically
  * resized to the width and height of your add-on's content. The location attribute defines which section the tab will
  * appear.
- * 
- * For more locations, visit the <a href="https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules">Confluence</a> list of locations.
+ *
+ * Product Location Documentation 
+ *
+ * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
+ * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
  *
  * Spaces page with the Documentation Theme do not support the Space Tools area, and instead display the
  * legacy Space Admin area. This module will insert a tab in a pre-defined location in Space Admin.
