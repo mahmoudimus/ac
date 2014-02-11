@@ -97,7 +97,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withUrl("http://www.wikipedia.org")
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
-                                                .withParam("onHover", "true")
+                                                .withOption("onHover", "true")
                                                 .build()
                                 )
                                 .build(),

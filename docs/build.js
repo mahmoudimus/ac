@@ -323,7 +323,8 @@ function convertRestScopesToViewModel(scopeDefinitions) {
         var scopesByKey = transformRestScopes(scopeDefinition, "restPathKeys");
         return _.map(scopeDefinition.restPaths, function (restPath) {
             return _.map(restPath.basePaths, function (basePath) {
-                var path = "/rest/" + restPath.name + "/{version}" + removeTrailingPattern(basePath);
+                var version = (restPath.versions.length > 0) ? "/{version}" : "";
+                var path = "/rest/" + restPath.name + version + removeTrailingPattern(basePath);
                 return {
                     path: path,
                     id: slugify(path),

@@ -20,14 +20,15 @@ public class ConfluenceRestScopesTest extends AbstractScopesTest
     {
         return Arrays.asList(new Object[][]
         {
-                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/1.0/content/12345", true},
-                {null, HttpMethod.GET, "/confluence/rest/api/1.0/content/12345", false},
-                {ScopeName.READ, HttpMethod.POST, "/confluence/rest/api/1.0/content/12345", false},
-                {ScopeName.READ, HttpMethod.PUT, "/confluence/rest/api/1.0/content/12345", false},
-                {ScopeName.READ, HttpMethod.DELETE, "/confluence/rest/api/1.0/content/12345", false},
-                {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/api/1.0/content/12345", true},
-                {ScopeName.WRITE, HttpMethod.PUT, "/confluence/rest/api/1.0/content/12345", true},
-                {ScopeName.DELETE, HttpMethod.DELETE, "/confluence/rest/api/1.0/content/12345", true},
+                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/content/12345", true},
+                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/content/2031617/history/8/macro/7c8fd5b99609c2d1864391f15993e07a", true},
+                {null, HttpMethod.GET, "/confluence/rest/api/content/12345", false},
+                {ScopeName.READ, HttpMethod.POST, "/confluence/rest/api/content/12345", false},
+                {ScopeName.READ, HttpMethod.PUT, "/confluence/rest/api/content/12345", false},
+                {ScopeName.READ, HttpMethod.DELETE, "/confluence/rest/api/content/12345", false},
+                {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/api/content/12345", true},
+                {ScopeName.WRITE, HttpMethod.PUT, "/confluence/rest/api/content/12345", true},
+                {ScopeName.DELETE, HttpMethod.DELETE, "/confluence/rest/api/content/12345", true},
 
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/applinks/2.0/applicationlink/uuid", false},
                 {ScopeName.ADMIN, HttpMethod.GET, "/confluence/rest/applinks/2.0/applicationlink/uuid", true},
@@ -54,9 +55,9 @@ public class ConfluenceRestScopesTest extends AbstractScopesTest
                 {null, HttpMethod.GET, "/confluence/rest/searchv3/1.0/search", false},
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/searchv3/1.0/search", true},
 
-                {ScopeName.READ, HttpMethod.POST, "/confluence/rest/api/1/contentbody/convert/", true},
+                {ScopeName.READ, HttpMethod.POST, "/confluence/rest/api/contentbody/convert/", true},
 
-                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/1/space/test/content", true},
+                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/space/test/content", true},
 
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/prototype/1/label/44/watches", true},
                 {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/prototype/1/label/44/watches", true},

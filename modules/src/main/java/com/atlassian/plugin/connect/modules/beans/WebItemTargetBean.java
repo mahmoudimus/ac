@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import java.util.Map;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
+import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.BeanWithParamsBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemTargetBeanBuilder;
 
@@ -12,17 +14,23 @@ import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Defines the way a web item link is opened in the browser, such as in a modal or inline dialog.
- * <p/>
- * #### Example
+ *
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_EXAMPLE}
  * @schemaTitle Web Item Target
  * @since 1.0
  */
-public class WebItemTargetBean extends BeanWithParams
+public class WebItemTargetBean extends BaseModuleBean
 {
+    /**
+     * Defines how the web-item content should be loaded by the page. By default, the web-item is loaded in the same
+     * page. The target can be set to open the web-item url as a modal dialog or an inline dialog.
+     */
+    @CommonSchemaAttributes (defaultValue = "page")
     private WebItemTargetType type;
-    private Map<String, String> options;
+
+    private Map<String, Object> options;
 
     public WebItemTargetBean()
     {
@@ -30,7 +38,7 @@ public class WebItemTargetBean extends BeanWithParams
         this.options = newHashMap();
     }
 
-    public WebItemTargetBean(final BeanWithParamsBuilder builder)
+    public WebItemTargetBean(final BaseModuleBeanBuilder builder)
     {
         super(builder);
         if (null == type)
@@ -63,7 +71,7 @@ public class WebItemTargetBean extends BeanWithParams
         return type;
     }
 
-    public Map<String, String> getOptions()
+    public Map<String, Object> getOptions()
     {
         if (null == options)
         {
