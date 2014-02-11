@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(AtlassianPluginsTestRunner.class)
+@RunWith (AtlassianPluginsTestRunner.class)
 public class WebItemModuleProviderTest
 {
     public static final String PLUGIN_KEY = "my-plugin";
@@ -54,7 +54,7 @@ public class WebItemModuleProviderTest
         this.webItemModuleProvider = webItemModuleProvider;
         this.testPluginInstaller = testPluginInstaller;
     }
-    
+
     @BeforeClass
     public void setup()
     {
@@ -185,7 +185,7 @@ public class WebItemModuleProviderTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
-                .withModules("webItems",bean)
+                .withModules("webItems", bean)
                 .build();
 
         Plugin plugin = null;
@@ -205,7 +205,7 @@ public class WebItemModuleProviderTest
         }
         finally
         {
-            if(null != plugin)
+            if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
             }
@@ -222,10 +222,11 @@ public class WebItemModuleProviderTest
                 .withLocation("atl.admin/menu")
                 .withTarget(
                         newWebItemTargetBean()
-                        .withType(WebItemTargetType.dialog)
-                        .withOption("width","100")
-                        .withOption("height","300")
-                        .build()
+                                .withType(WebItemTargetType.dialog)
+                                .withOption("width", "100")
+                                .withOption("height", "300px")
+                                .withOption("onHover", true)
+                                .build()
                 )
                 .build();
 
@@ -233,7 +234,7 @@ public class WebItemModuleProviderTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
-                .withModules("webItems",bean)
+                .withModules("webItems", bean)
                 .build();
 
         Plugin plugin = null;
@@ -250,12 +251,12 @@ public class WebItemModuleProviderTest
             descriptor.enabled();
 
             assertTrue(descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
-            assertTrue("expected param [-acopt-width]",descriptor.getParams().containsKey("-acopt-width"));
-            assertTrue("expected param [-acopt-height]",descriptor.getParams().containsKey("-acopt-height"));
+            assertTrue("expected param [-acopt-width]", descriptor.getParams().containsKey("-acopt-width"));
+            assertTrue("expected param [-acopt-height]", descriptor.getParams().containsKey("-acopt-height"));
         }
         finally
         {
-            if(null != plugin)
+            if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
             }
@@ -283,31 +284,31 @@ public class WebItemModuleProviderTest
                 .withName(PLUGIN_NAME)
                 .withKey(PLUGIN_KEY)
                 .withBaseurl(BASE_URL)
-                .withModules("webItems",bean,bean2)
+                .withModules("webItems", bean, bean2)
                 .build();
-        
+
         Plugin plugin = null;
-        
+
         try
         {
             plugin = testPluginInstaller.installPlugin(addon);
-            
+
             List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean, bean2));
-    
+
             assertEquals(2, descriptors.size());
-    
+
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
             descriptor.enabled();
-    
+
             WebItemModuleDescriptor descriptor2 = (WebItemModuleDescriptor) descriptors.get(1);
             descriptor2.enabled();
-    
+
             assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
             assertTrue(descriptor2.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
         }
         finally
         {
-            if(null != plugin)
+            if (null != plugin)
             {
                 testPluginInstaller.uninstallPlugin(plugin);
             }

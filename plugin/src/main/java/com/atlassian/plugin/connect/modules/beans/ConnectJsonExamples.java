@@ -369,7 +369,11 @@ public class ConnectJsonExamples
     private static String createWebitemTargetExample()
     {
         WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
-                .withType(WebItemTargetType.page).build();
+                .withType(WebItemTargetType.inlineDialog)
+                .withOption("offsetX", "30px")
+                .withOption("offsetY", "20px")
+                .withOption("onHover", true)
+                .build();
 
         return gson.toJson(createModuleObject("target", bean));
     }
