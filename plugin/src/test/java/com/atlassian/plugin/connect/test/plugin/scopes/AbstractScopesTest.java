@@ -5,7 +5,6 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.PermissionManagerImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeServiceImpl;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -86,9 +85,6 @@ public abstract class AbstractScopesTest
         PluginAccessor pluginAccessor = mock(PluginAccessor.class);
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
-        IsDevModeService isDevModeService = mock(IsDevModeService.class);
-        when(isDevModeService.isDevMode()).thenReturn(false);
-
         JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService = mock(JsonConnectAddOnIdentifierService.class);
         when(jsonConnectAddOnIdentifierService.isConnectAddOn(PLUGIN_KEY)).thenReturn(true);
 
@@ -99,7 +95,7 @@ public abstract class AbstractScopesTest
         ScopeService scopeService = new ScopeServiceImpl(applicationProperties);
 
         permissionManager = new PermissionManagerImpl(pluginAccessor, pluginEventManager,
-                permissionsReader, isDevModeService, jsonConnectAddOnIdentifierService, scopeService);
+                permissionsReader, jsonConnectAddOnIdentifierService, scopeService);
     }
 
     @Test
