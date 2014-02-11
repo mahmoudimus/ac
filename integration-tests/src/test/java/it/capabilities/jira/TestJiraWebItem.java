@@ -51,7 +51,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addScope(ScopeName.READ)
                 .addInstallLifecycle()
-                .addRoute(ConnectRunner.INSTALLED_PATH, )
+                .addRoute(ConnectRunner.INSTALLED_PATH, ConnectAppServlets.helloWorldServlet())
                 .addModules("webItems",
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.page)
@@ -113,7 +113,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                                 .build()
                                 )
                                 .build()
-
                 )
                 .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(BARNEY_USERNAME))
                 .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(BETTY_USERNAME))
