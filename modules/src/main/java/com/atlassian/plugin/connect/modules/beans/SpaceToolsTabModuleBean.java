@@ -13,13 +13,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * resized to the width and height of your add-on's content. The location attribute defines which section the tab will
  * appear.
  *
- * Product Location Documentation 
- *
- * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
- * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
- *
  * Spaces page with the Documentation Theme do not support the Space Tools area, and instead display the
- * legacy Space Admin area. This module will insert a tab in a pre-defined location in Space Admin.
+ * legacy Space Admin area. This module will insert a tab in a pre-defined location in Space Admin (look below for a 
+ * complete list of existing locations).
  *
  *#### Example
  *
