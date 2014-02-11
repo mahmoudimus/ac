@@ -8,8 +8,18 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         return AJS.contextPath() + "/plugins/servlet/ac/" + encodeURIComponent(pluginKey) + "/" + encodeURIComponent(capability.key);
     }
 
-    //type = inlineDialog | dialog
-    function getOptionsForWebItem(type, pluginKey, moduleKey){
+    function getWebItemPluginKey(target){
+        return target.attr('class').match(/ap-plugin-key-[^\s]*/)[0];
+    }
+    function getWebItemModuleKey(target){
+        return target.attr('class').match(/ap-module-key-[^\s]*/)[0];
+    }
+
+    function getOptionsForWebItem(target){
+        var pluginKey = getWebItemPluginKey(target),
+            moduleKey = getWebItemModuleKey(target),
+            type = (target.hasClass('ap-inline-dialog') ? 'inlineDialog' : 'dialog';
+
         return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
     }
 
@@ -55,7 +65,8 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         getContentUrl: getContentUrl,
         getIframeHtmlForKey: getIframeHtmlForKey,
         eventHandler: eventHandler,
-        getOptionsForWebItem: getOptionsForWebItem
+        getOptionsForWebItem: getOptionsForWebItem,
+
     };
 
 

@@ -3,11 +3,7 @@ var inlineDialogTrigger = '.ap-inline-dialog';
     AJS.toInit(function ($) {
         var action = "click mouseover mouseout",
             callback = function(href, options, eventType){
-                var webItemOptions = hostContentUtilities.getOptionsForWebItem(
-                    "inlineDialog",
-                    options.bindTo.attr('class').match(/ap-plugin-key-[^\s]*/)[0], //broken until ACDEV-996 is fixed
-                    options.bindTo.attr('id'));
-
+                var webItemOptions = hostContentUtilities.getOptionsForWebItem(options.bindTo);
                 $.extend(options, webItemOptions);
                 if(options.onHover !== "true" && eventType !== 'click'){
                     return;
