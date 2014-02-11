@@ -7,6 +7,9 @@
         "name": "Atlassian",
         "url": "http://www.atlassian.com"
     },
+    "authentication": {
+        "type": "none"
+    },
     "links": {
         "self": "http://www.example.com/capabilities",
         "homepage": "http://www.example.com"

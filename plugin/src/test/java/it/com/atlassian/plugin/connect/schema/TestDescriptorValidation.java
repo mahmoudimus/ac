@@ -26,8 +26,8 @@ public class TestDescriptorValidation
     @Test
     public void testGoodConfluenceDescriptor() throws Exception
     {
-        String json = readAddonTestFile("validConfluenceDescriptor.json");
-        DescriptorValidationResult result = validator.validate(json,schemaLocator.getSchemaForCurrentProduct());
+        String json = readAddonTestFile("validGenericDescriptor.json");
+        DescriptorValidationResult result = validator.validate(json, schemaLocator.getSchemaForCurrentProduct());
 
         assertTrue(result.isSuccess());
     }
@@ -35,8 +35,8 @@ public class TestDescriptorValidation
     @Test
     public void testBadConfluenceDescriptor() throws Exception
     {
-        String json = readAddonTestFile("invalidConfluenceDescriptor.json");
-        DescriptorValidationResult result = validator.validate(json,schemaLocator.getSchemaForCurrentProduct());
+        String json = readAddonTestFile("invalidGenericDescriptor.json");
+        DescriptorValidationResult result = validator.validate(json, schemaLocator.getSchemaForCurrentProduct());
 
         assertFalse(result.isSuccess());
     }
