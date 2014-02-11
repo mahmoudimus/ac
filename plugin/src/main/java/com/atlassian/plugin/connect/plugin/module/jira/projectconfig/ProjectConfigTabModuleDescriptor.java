@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.jira.projectconfig;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.*;
@@ -62,7 +62,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
             UserManager userManager,
             WebItemCreator webItemCreator,
             UrlVariableSubstitutor urlVariableSubstitutor,
-            ConnectAutowireUtil connectAutowireUtil)
+            ConnectContainerUtil connectContainerUtil)
     {
         super(moduleFactory);
         this.urlVariableSubstitutor = urlVariableSubstitutor;
@@ -71,7 +71,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
         this.iFramePageRenderer = checkNotNull(iFramePageRenderer);
         this.userManager = checkNotNull(userManager);
         this.webItemCreatorBuilder = checkNotNull(webItemCreator).newBuilder();
-        this.condition = connectAutowireUtil.createBean(IsProjectAdminCondition.class);
+        this.condition = connectContainerUtil.createBean(IsProjectAdminCondition.class);
 
         this.projectConfigTabPageBuilder = new ProjectConfigTabPageBuilder();
     }

@@ -50,6 +50,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner plugin1 = new ConnectRunner(baseUrl, "lifecycle-plugin")
                 .addDisableLifecycle()
+                .setAuthenticationToNone()
                 .addRoute(ConnectRunner.DISABLED_PATH, servlet);
         try
         {

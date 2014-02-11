@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.test.plugin.util.matchers.dom4j.Dom4JElementMatchers;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 
@@ -50,7 +50,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     private ModuleDescriptor connectTabPanelModuleDescriptor;
 
     @Mock
-    private ConnectAutowireUtil connectAutowireUtil;
+    private ConnectContainerUtil connectContainerUtil;
 
     protected AbstractConnectTabPanelModuleDescriptorFactoryTest(TabPanelDescriptorHints descriptorHints)
     {
@@ -63,7 +63,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
         when(plugin.getKey()).thenReturn(ADDON_KEY);
         when(plugin.getName()).thenReturn(ADDON_NAME);
 
-        when(connectAutowireUtil.createBean(any(Class.class))).thenAnswer(new Answer<Object>()
+        when(connectContainerUtil.createBean(any(Class.class))).thenAnswer(new Answer<Object>()
         {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable
@@ -72,13 +72,13 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
             }
         });
 
-        tabPanelModuleDescriptorFactory = createDescriptorFactory(connectAutowireUtil);
+        tabPanelModuleDescriptorFactory = createDescriptorFactory(connectContainerUtil);
         createModuleDescriptor();
     }
 
-    protected ConnectTabPanelModuleDescriptorFactory createDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
+    protected ConnectTabPanelModuleDescriptorFactory createDescriptorFactory(ConnectContainerUtil connectContainerUtil)
     {
-        return new ConnectTabPanelModuleDescriptorFactory(mock(ConditionModuleFragmentFactory.class), connectAutowireUtil);
+        return new ConnectTabPanelModuleDescriptorFactory(mock(ConditionModuleFragmentFactory.class), connectContainerUtil);
     }
 
     protected ConnectTabPanelModuleBean createModuleBean(String name, String i18NameKey, String key, String url, int weight)
