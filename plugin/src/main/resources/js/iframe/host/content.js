@@ -8,9 +8,9 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         return AJS.contextPath() + "/plugins/servlet/ac/" + encodeURIComponent(pluginKey) + "/" + encodeURIComponent(capability.key);
     }
 
-    //type = inlienDialog | dialog
+    //type = inlineDialog | dialog
     function getOptionsForWebItem(type, pluginKey, moduleKey){
-        return window._A[type + 'Options'][pluginKey + ':' + moduleKey];
+        return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
     }
 
     function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
@@ -44,10 +44,10 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
                 height: url.getQueryParamValue('height'),
                 cp:     url.getQueryParamValue('cp')
             };
-            callback(href, options);
+            callback(href, options, event.type);
         }
 
-        $(window.document).on("click", selector, domEventHandler);
+        $(window.document).on(action, selector, domEventHandler);
 
     }
 
