@@ -14,8 +14,6 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static it.matcher.ValueMatchers.hasProperty;
 import static it.matcher.ValueMatchers.isArrayMatching;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -36,6 +34,7 @@ public class TestUpgrade extends AbstractBrowserlessTest
     {
         // install then uninstall a plugin
         plugin0 = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+                .setAuthenticationToNone()
                 .addModule(
                         "generalPages",
                         newPageBean()
@@ -50,6 +49,7 @@ public class TestUpgrade extends AbstractBrowserlessTest
 
         // install another plugin with the same key, but different modules
         plugin1 = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+                .setAuthenticationToNone()
                 .addModule(
                         "generalPages",
                         newPageBean()

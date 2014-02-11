@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.testobjects;
 
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -11,12 +13,16 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static org.mockito.Mockito.mock;
 
-public class ConnectAutowireUtilForTests implements ConnectAutowireUtil
+public class ConnectContainerUtilForTests implements ConnectContainerUtil
 {
     private final Map<Class<?>, Object> predefinedMocks = newHashMap();
 
-    public ConnectAutowireUtilForTests defineMock(Class<?> clazz, Object instance)
+    public ConnectContainerUtilForTests defineMock(Class<?> clazz, Object instance)
     {
+        if (!clazz.isAssignableFrom(instance.getClass()))
+        {
+            throw new IllegalArgumentException(instance + " must implement " + clazz.getSimpleName());
+        }
         predefinedMocks.put(clazz, instance);
         return this;
     }
@@ -48,5 +54,22 @@ public class ConnectAutowireUtilForTests implements ConnectAutowireUtil
         {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public <T> Iterable<T> getBeansOfType(final Class<T> clazz)
+    {
+        @SuppressWarnings ("unchecked")
+        Iterable<T> beansOfType = (Iterable<T>) Maps.filterKeys(predefinedMocks, new Predicate<Class<?>>()
+        {
+            @Override
+            public boolean apply(final Class<?> input)
+            {
+                return input.getClass().equals(clazz);
+            }
+        }
+        ).values();
+
+        return beansOfType;
     }
 }

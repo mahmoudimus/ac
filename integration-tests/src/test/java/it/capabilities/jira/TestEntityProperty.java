@@ -58,6 +58,7 @@ public class TestEntityProperty
                 new EntityPropertyIndexKeyConfigurationBean(extractions, ATTACHMENT_PROPERTY_KEY);
 
         remotePlugin = new ConnectRunner(localEnvironmentData.getBaseUrl().toString(), PLUGIN_KEY)
+                .setAuthenticationToNone()
                 .addModule(
                         "jiraEntityProperties",
                         newEntityPropertyModuleBean()

@@ -67,6 +67,11 @@ public class AuthenticationBean extends BaseModuleBean
         return new AuthenticationBeanBuilder(defaultBean);
     }
 
+    public static AuthenticationBean none()
+    {
+        return newAuthenticationBean().withType(AuthenticationType.NONE).build();
+    }
+
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)

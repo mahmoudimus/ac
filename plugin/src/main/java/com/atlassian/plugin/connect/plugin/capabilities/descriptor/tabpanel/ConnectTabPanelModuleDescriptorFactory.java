@@ -5,7 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +26,13 @@ public class ConnectTabPanelModuleDescriptorFactory
     private static final String CLASS = "class";
 
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
-    private final ConnectAutowireUtil connectAutowireUtil;
+    private final ConnectContainerUtil connectContainerUtil;
 
     @Autowired
-    public ConnectTabPanelModuleDescriptorFactory(ConditionModuleFragmentFactory conditionModuleFragmentFactory, ConnectAutowireUtil connectAutowireUtil)
+    public ConnectTabPanelModuleDescriptorFactory(ConditionModuleFragmentFactory conditionModuleFragmentFactory, ConnectContainerUtil connectContainerUtil)
     {
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
-        this.connectAutowireUtil = connectAutowireUtil;
+        this.connectContainerUtil = connectContainerUtil;
     }
 
     public ModuleDescriptor createModuleDescriptor(Plugin plugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
@@ -60,7 +60,7 @@ public class ConnectTabPanelModuleDescriptorFactory
             element.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + bean.getKey()));
         }
 
-        ModuleDescriptor descriptor = connectAutowireUtil.createBean(hints.getDescriptorClass());
+        ModuleDescriptor descriptor = connectContainerUtil.createBean(hints.getDescriptorClass());
         descriptor.init(plugin, element);
         
         return descriptor;

@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DefaultConnectAutowireUtil implements ConnectAutowireUtil
+public class DefaultConnectContainerUtil implements ConnectContainerUtil
 {
     private final ContainerManagedPlugin theConnectPlugin;
 
     @Autowired
-    public DefaultConnectAutowireUtil(PluginRetrievalService pluginRetrievalService)
+    public DefaultConnectContainerUtil(PluginRetrievalService pluginRetrievalService)
     {
         this.theConnectPlugin = (ContainerManagedPlugin)pluginRetrievalService.getPlugin();
     }
@@ -21,5 +21,11 @@ public class DefaultConnectAutowireUtil implements ConnectAutowireUtil
     public <T> T createBean(Class<T> clazz)
     {
         return theConnectPlugin.getContainerAccessor().createBean(clazz);
+    }
+
+    @Override
+    public <T> Iterable<T> getBeansOfType(final Class<T> clazz)
+    {
+        return theConnectPlugin.getContainerAccessor().getBeansOfType(clazz);
     }
 }
