@@ -2,73 +2,29 @@ package com.atlassian.plugin.connect.plugin.capabilities.event;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
 
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.event.api.EventPublisher;
-import com.atlassian.httpclient.api.HttpClient;
-import com.atlassian.httpclient.api.Request;
-import com.atlassian.httpclient.api.Response;
-import com.atlassian.jwt.JwtConstants;
-import com.atlassian.jwt.applinks.JwtApplinkFinder;
-import com.atlassian.oauth.Consumer;
-import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginController;
-import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.PluginState;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
-import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
-import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
-import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.installer.*;
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.*;
 import com.atlassian.plugin.impl.AbstractPlugin;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
-import com.atlassian.upm.api.util.Option;
-import com.atlassian.upm.spi.PluginInstallException;
-import com.atlassian.uri.UriBuilder;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-
-import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.nullToEmpty;
 
 /**
  * This is the central place to handle PluginEvents broadcasted from plug-core as they relate to connect addons.
@@ -78,12 +34,12 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class ConnectMirrorPluginEventHandler implements InitializingBean, DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectMirrorPluginEventHandler.class);
-    
+
     /*
     This is a workaround for PLUGDEV-38. e.g. we must make sure the connect plugin is enabled before we do anything with dependent plugins/addons
      */
     private boolean connectPluginFullyEnabled;
-    
+
     private final ConnectAddonManager connectAddonManager;
     private final ConnectPluginDependentHelper dependentHelper;
     private final JsonConnectAddOnIdentifierService connectIdentifier;
@@ -91,9 +47,10 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final PluginEventManager pluginEventManager;
+    private final ConnectAddonRegistry descriptorRegistry;
 
     @Inject
-    public ConnectMirrorPluginEventHandler(ConnectAddonManager connectAddonManager, ConnectPluginDependentHelper dependentHelper, JsonConnectAddOnIdentifierService connectIdentifier, PluginEventLogger pluginEventLogger, RemotablePluginAccessorFactory remotablePluginAccessorFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, PluginEventManager pluginEventManager)
+    public ConnectMirrorPluginEventHandler(ConnectAddonManager connectAddonManager, ConnectPluginDependentHelper dependentHelper, JsonConnectAddOnIdentifierService connectIdentifier, PluginEventLogger pluginEventLogger, RemotablePluginAccessorFactory remotablePluginAccessorFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, PluginEventManager pluginEventManager, ConnectAddonRegistry descriptorRegistry)
     {
         this.connectAddonManager = connectAddonManager;
         this.dependentHelper = dependentHelper;
@@ -102,6 +59,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.pluginEventManager = pluginEventManager;
+        this.descriptorRegistry = descriptorRegistry;
     }
 
     /**
@@ -116,7 +74,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     {
         if (!Strings.isNullOrEmpty(addon.getLifecycle().getInstalled()))
         {
-            connectAddonManager.publishInstalledEvent(plugin,addon,sharedSecret);
+            connectAddonManager.publishInstalledEvent(plugin, addon, sharedSecret);
         }
     }
 
@@ -136,7 +94,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
         if (isTheConnectPlugin(plugin))
         {
             this.connectPluginFullyEnabled = true;
-            
+
             return;
         }
 
@@ -149,8 +107,8 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
             setPluginState(plugin, PluginState.DISABLED);
             return;
         }
-        
-        if(!connectPluginFullyEnabled)
+
+        if (!connectPluginFullyEnabled)
         {
             return;
         }
@@ -184,12 +142,21 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     @SuppressWarnings("unused")
     public void beforePluginDisabled(BeforePluginDisabledEvent beforePluginDisabledEvent)
     {
-        if (isTheConnectPlugin(beforePluginDisabledEvent.getPlugin()))
+        final Plugin plugin = beforePluginDisabledEvent.getPlugin();
+        
+        if (isTheConnectPlugin(plugin))
         {
             this.connectPluginFullyEnabled = false;
         }
+        
+        if(connectIdentifier.isConnectAddOn(plugin))
+        {
+            //we need to publish the disabled event to the remote addon BEFORE we actually do the enable
+            // so that the webhook modules that actually make the call are still available
+            connectAddonManager.publishDisabledEvent(plugin.getKey());
+        }
     }
-    
+
     @PluginEventListener
     @SuppressWarnings("unused")
     public void pluginDisabled(PluginDisabledEvent pluginDisabledEvent) throws ConnectAddOnUserDisableException, IOException
@@ -199,7 +166,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
         if (connectIdentifier.isConnectAddOn(plugin))
         {
             pluginEventLogger.log(pluginDisabledEvent.getPlugin(), "PluginDisabledEvent");
-            
+
             connectAddonManager.disableConnectAddon(plugin);
         }
 
@@ -214,11 +181,12 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     {
         final Plugin plugin = pluginUninstalledEvent.getPlugin();
 
-        if (connectIdentifier.isConnectAddOn(plugin))
+        //we need to use the descriptor registry since we can't read from the jar any longer
+        if (descriptorRegistry.hasDescriptor(plugin.getKey()))
         {
             pluginEventLogger.log(plugin, "PluginUninstalledEvent");
         }
-        
+
         connectAddonManager.uninstallConnectAddon(plugin);
     }
 
@@ -236,7 +204,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
             log.error("Unable to reflectively set pluginState to " + state.name() + " for plugin '" + plugin.getKey(), e);
         }
     }
-    
+
     @Override
     public void afterPropertiesSet() throws Exception
     {
@@ -256,6 +224,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
 
     /**
      * Just here to delegate so others that get us injected don't have to also get the connectAddonManager injected just for this call
+     *
      * @param pluginKey
      */
     public void publishEnabledEvent(String pluginKey)

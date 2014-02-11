@@ -61,7 +61,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  * The ConnectAddonManager handles all the stuff that needs to happen when an addon is enabled/disabled.
  * This class does not make any assumptions about the actual state of the addon's mirror plugin and so it's
  * important to only make calls to this when the mirror plugin is in an acceptable state.
- * 
+ *
  * @see com.atlassian.plugin.connect.plugin.capabilities.event.ConnectMirrorPluginEventHandler for the actual
  * hooks into the plugin lifecycle
  */
@@ -71,7 +71,7 @@ public class ConnectAddonManager
     private static final Logger log = LoggerFactory.getLogger(ConnectAddonManager.class);
 
     public static final String USER_KEY = "user_key";
-    
+
     public enum SyncHandler
     {
         INSTALLED, UNINSTALLED, ENABLED, DISABLED
@@ -93,7 +93,7 @@ public class ConnectAddonManager
     private final BundleContext bundleContext;
     private final JwtApplinkFinder jwtApplinkFinder;
     private final ConnectApplinkManager connectApplinkManager;
-    
+
     @Inject
     public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager, RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient, JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry, BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService, EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties, LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext, JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager)
     {
@@ -131,8 +131,8 @@ public class ConnectAddonManager
                 beanToModuleRegistrar.registerDescriptorsForBeans(plugin, addon);
                 connectAddOnUserService.getOrCreateUserKey(pluginKey);
                 publishEnabledEvent(pluginKey);
-                
-                if(log.isDebugEnabled())
+
+                if (log.isDebugEnabled())
                 {
                     log.debug("Enabled connect addon '" + pluginKey + "'");
                 }
@@ -141,21 +141,20 @@ public class ConnectAddonManager
             {
                 log.warn("Tried to publish plugin enabled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...");
             }
-        }    
+        }
     }
 
     public void disableConnectAddon(Plugin plugin) throws ConnectAddOnUserDisableException
     {
         String pluginKey = plugin.getKey();
         remotablePluginAccessorFactory.remove(pluginKey);
-        
+
         if (connectIdentifier.isConnectAddOn(plugin))
         {
-            beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
             disableAddOnUser(pluginKey);
-            publishDisabledEvent(pluginKey);
+            beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
 
-            if(log.isDebugEnabled())
+            if (log.isDebugEnabled())
             {
                 log.debug("Disabled connect addon '" + pluginKey + "'");
             }
@@ -165,7 +164,7 @@ public class ConnectAddonManager
     public void uninstallConnectAddon(Plugin plugin) throws ConnectAddOnUserDisableException
     {
         String pluginKey = plugin.getKey();
-        
+
         if (descriptorRegistry.hasDescriptor(pluginKey))
         {
             ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
@@ -203,7 +202,7 @@ public class ConnectAddonManager
         descriptorRegistry.removeAll(pluginKey);
         disableAddOnUser(pluginKey);
 
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
         {
             log.debug("Uninstalled connect addon '" + pluginKey + "'");
         }
@@ -213,7 +212,7 @@ public class ConnectAddonManager
     {
         callSyncHandler(plugin, addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), sharedSecret, addon), ConnectAddonManager.SyncHandler.INSTALLED);
     }
-    
+
     public void publishEnabledEvent(String pluginKey)
     {
         eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase())));
@@ -242,7 +241,7 @@ public class ConnectAddonManager
 
         connectAddOnUserService.disableAddonUser(addOnKey);
     }
-    
+
     // NB: the sharedSecret should be distributed synchronously and only on installation
     private void callSyncHandler(Plugin plugin, ConnectAddonBean addon, String path, String jsonEventData, SyncHandler handler)
     {
