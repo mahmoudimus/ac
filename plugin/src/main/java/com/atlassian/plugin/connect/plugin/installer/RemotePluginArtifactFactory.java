@@ -55,6 +55,7 @@ public class RemotePluginArtifactFactory
             public void build(ZipBuilder builder) throws IOException
             {
                 builder.addFile(Filenames.ATLASSIAN_PLUGIN_XML, document);
+                //builder.addFile(Filenames.ADDON_IMPORTS_XML,theConnectPlugin.getResourceAsStream(Filenames.ADDON_IMPORTS_RESOURCE));
             }
         }));
     }
@@ -80,6 +81,7 @@ public class RemotePluginArtifactFactory
         //create the plugin.xml
         builder.addResource(Filenames.ATLASSIAN_PLUGIN_XML, pluginXmlFactory.createPluginXml(addOn));
         builder.addResource(Filenames.ATLASSIAN_ADD_ON_JSON, ConnectModulesGsonFactory.getGson().toJson(addOn));
+        //builder.addResource(Filenames.ADDON_IMPORTS_XML, theConnectPlugin.getResourceAsStream(Filenames.ADDON_IMPORTS_RESOURCE));
 
         return new JarPluginArtifact(builder.build(addOn.getKey().replaceAll(CLEAN_FILENAME_PATTERN, "-").toLowerCase()));
     }

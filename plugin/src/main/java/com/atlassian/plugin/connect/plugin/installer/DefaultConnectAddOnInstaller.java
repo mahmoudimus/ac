@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectPluginEventHandler;
+import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectMirrorPluginEventHandler;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
@@ -37,7 +37,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddonRegistry connectAddonRegistry;
-    private final ConnectPluginEventHandler connectEventHandler;
+    private final ConnectMirrorPluginEventHandler connectEventHandler;
     private final SharedSecretService sharedSecretService;
     private final ConnectAddOnUserService connectAddOnUserService;
 
@@ -52,7 +52,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                                         BeanToModuleRegistrar beanToModuleRegistrar,
                                         ConnectApplinkManager connectApplinkManager,
                                         ConnectAddonRegistry connectAddonRegistry,
-                                        ConnectPluginEventHandler connectEventHandler,
+                                        ConnectMirrorPluginEventHandler connectEventHandler,
                                         SharedSecretService sharedSecretService,
                                         ConnectAddOnUserService connectAddOnUserService)
     {
