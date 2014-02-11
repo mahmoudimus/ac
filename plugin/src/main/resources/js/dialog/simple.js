@@ -65,12 +65,13 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
     var submitButtonText = mergedOptions.submitText || "Submit";
 
     function displayDialogContent(container, contentUrl){
+            var contentUrlObj = new uri.init(contentUrl);
             dialogOptions = mergedOptions;
             dialogOptions.w = dialogOptions.w || dialogOptions.width;
             dialogOptions.h = dialogOptions.h || dialogOptions.height;
 
             if (!dialogOptions.ns) {
-                dialogOptions.ns = dialogId;
+                dialogOptions.ns = contentUrlObj.getQueryParamValue('xdm_c').replace('channel-', '');
             }
             dialogOptions.container = dialogOptions.ns;
             dialogOptions.src = contentUrl;

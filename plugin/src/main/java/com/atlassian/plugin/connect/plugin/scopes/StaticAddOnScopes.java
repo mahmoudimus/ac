@@ -46,7 +46,7 @@ public class StaticAddOnScopes
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
-     * @param product product name in lower case e.g. "confluence" or "jira"
+     * @param products list of product names in lower case e.g. "confluence" or "jira"
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
