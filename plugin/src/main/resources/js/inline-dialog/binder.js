@@ -5,7 +5,7 @@ var inlineDialogTrigger = '.ap-inline-dialog';
             callback = function(href, options, eventType){
                 var webItemOptions = hostContentUtilities.getOptionsForWebItem(
                     "inlineDialog",
-                    options.addonKey, //broken until ACDEV-996 is fixed
+                    options.bindTo.attr('class').match(/ap-plugin-key-[^\s]*/)[0], //broken until ACDEV-996 is fixed
                     options.bindTo.attr('id'));
 
                 $.extend(options, webItemOptions);
