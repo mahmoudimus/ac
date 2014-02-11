@@ -30,6 +30,8 @@ public class WebSectionModuleBean extends BeanWithKeyAndParamsAndConditions
      * The location in the application interface where the web section should appear. For the Atlassian application
      * interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or
      * navigation list in the UI.
+     * </p/>
+     * For more locations, visit the <a href="https://developer.atlassian.com/display/JIRADEV/Web+Fragments">JIRA</a> or <a href="https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules">Confluence</a> list of locations.
      */
     @Required
     private String location;

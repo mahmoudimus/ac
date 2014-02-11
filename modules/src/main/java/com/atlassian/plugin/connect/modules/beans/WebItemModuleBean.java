@@ -52,6 +52,8 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * Places in the Atlassian UI are identified by what are known as "well-known locations".
      * For example, the `system.admin/globalsettings` location is in the administrative
      * menu on the left side of the Administration Console.
+     * <p/> 
+     * For more locations, visit the <a href="https://developer.atlassian.com/display/JIRADEV/Web+Fragments">JIRA</a> or <a href="https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules">Confluence</a> list of locations.
      */
     @Required
     private String location;
