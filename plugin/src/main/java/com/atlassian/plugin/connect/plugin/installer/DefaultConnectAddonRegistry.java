@@ -1,27 +1,19 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.io.Files;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.velocity.util.StringUtils;
 
 @Named
 @ExportAsDevService
@@ -54,7 +46,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         settings().remove(key(CONNECT_USER_PREFIX, pluginKey));
         settings().remove(key(CONNECT_AUTH_PREFIX, pluginKey));
     }
-    
+
     @Override
     public void storeDescriptor(String pluginKey, String json)
     {
@@ -191,12 +183,12 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     public List<String> getPluginsToEnable()
     {
         List<String> pluginsToEnable = (List<String>) settings().get(CONNECT_PLUGINSTOENABLE_KEY);
-        
-        if(null == pluginsToEnable)
+
+        if (null == pluginsToEnable)
         {
             pluginsToEnable = Collections.emptyList();
         }
-        
+
         return pluginsToEnable;
     }
 
@@ -204,8 +196,8 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     public boolean hasPluginsToEnable()
     {
         List<String> value = getPluginsToEnable();
-        boolean hasPlugins= (null != value && !value.isEmpty());
-        
+        boolean hasPlugins = (null != value && !value.isEmpty());
+
         return hasPlugins;
     }
 
@@ -213,12 +205,12 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     {
         return !Strings.isNullOrEmpty(value);
     }
-    
+
     private String get(String key)
     {
         return Strings.nullToEmpty((String) settings().get(key));
     }
-    
+
     private PluginSettings settings()
     {
         return pluginSettingsFactory.createGlobalSettings();
@@ -227,35 +219,6 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private static String key(String prefix, String key)
     {
         return prefix + key;
-    }
-
-    private void ensureFile() throws IOException
-    {
-        if(null == pluginsToEnableFile)
-        {
-            this.pluginsToEnableFile = createFile();
-            Files.touch(pluginsToEnableFile);
-        }
-        else if(!pluginsToEnableFile.exists())
-        {
-            Files.touch(pluginsToEnableFile);
-        }
-    }
-
-    private void ensureNewFile() throws IOException
-    {
-        if(null != pluginsToEnableFile && pluginsToEnableFile.exists())
-        {
-            removePluginsToEnable();
-        }
-        
-        ensureFile();
-    }
-
-    private File createFile()
-    {
-        File tmpDir = new File(System.getProperty("java.io.tmpdir"));
-        return new File(tmpDir,"connect-pluginsToEnable");
     }
 
 }
