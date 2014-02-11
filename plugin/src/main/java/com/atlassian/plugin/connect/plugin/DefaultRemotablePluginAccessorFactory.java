@@ -119,13 +119,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         return String.valueOf(link.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY));
     }
 
-    /**
-     * Supplies an accessor for remote plugin operations. Instances are only meant to be used for the current operation
-     * and should not be cached across operations.
-     *
-     * @param pluginKey The plugin key
-     * @return An accessor for either local or remote plugin operations
-     */
     public RemotablePluginAccessor get(String pluginKey)
     {
         final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
