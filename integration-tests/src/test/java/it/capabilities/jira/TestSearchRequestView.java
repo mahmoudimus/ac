@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMen
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.utils.NameValuePairs;
-import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -16,7 +15,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static com.atlassian.plugin.connect.test.server.ConnectRunner.INSTALLED_PATH;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,6 +36,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addInstallLifecycle()
+                .addRoute(ConnectRunner.INSTALLED_PATH, ConnectAppServlets.helloWorldServlet())
                 .addModule("jiraSearchRequestViews", SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
                         .withWeight(100)
                         .withUrl(SERVLET_URL)
@@ -47,7 +46,6 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
                                 newSingleConditionBean().withCondition("user_is_logged_in").build())
                         .build())
                 .addRoute(SERVLET_URL, ConnectAppServlets.wrapContextAwareServlet(searchRequestViewServlet))
-                .addRoute(INSTALLED_PATH, new WebHookTestServlet())
                 .start();
     }
 
