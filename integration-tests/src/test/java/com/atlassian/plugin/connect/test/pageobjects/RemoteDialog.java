@@ -69,23 +69,4 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
         cancelButton.click();
     }
 
-    public String getCustomMessage()
-    {
-        return getIFrameElementText("custom-message");
-    }
-
-    public String getApRequestMessage()
-    {
-        return getIFrameElementText("message");
-    }
-
-    public String getApRequestStatusCode()
-    {
-        return getIFrameElementText("client-http-status");
-    }
-
-    public String getApRequestUnauthorizedStatusCode()
-    {
-        return getIFrameElementText("client-http-unauthorized-code");
-    }
 }

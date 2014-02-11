@@ -230,10 +230,19 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be a dialog", webItem.isDialog());
         webItem.click();
+        assertTrue("web item dialog should be open", webItem.isActiveDialog());
+    }
+    @Test
+    public void testAbsoluteWebItemDialogXdm() throws Exception
+    {
+        loginAsAdmin();
 
+        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_DIALOG, Optional.<String>absent());
+        webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class).waitUntilContentElementNotEmpty("client-http-status");
-        assertEquals("Success", dialogPage.getApRequestMessage());
-        assertEquals("200", dialogPage.getApRequestStatusCode());
+        assertEquals("Success", dialogPage.getIFrameElementText("message"));
+        assertEquals("200", dialogPage.getIFrameElementText("client-http-status"));
 
     }
 
