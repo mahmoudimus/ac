@@ -15,16 +15,16 @@ define(['dialog/main'], function() {
         this.layerSpy = {
           changeSize: sinon.spy()
         };
-        _AP.AJS = {
-          dialog2: sinon.stub().returns(this.dialogSpy),
-          layer: sinon.stub().returns(this.layerSpy)
-        };
+
+        AJS.dialog2 = sinon.stub().returns(this.dialogSpy);
+        AJS.layer = sinon.stub().returns(this.layerSpy);
+
         this.server = sinon.fakeServer.create();
       },
       teardown: function() {
         this.server.restore();
         // remove any dialog elements
-        $(".ap-aui-dialog2").remove();
+        $(".aui-dialog2").remove();
         dialog.close();
         // clean up mock
         _AP.AJS = null;
@@ -59,7 +59,7 @@ define(['dialog/main'], function() {
         key: "blah",
         size: "xlarge"
       });
-      ok($("#my-dialog").is(".ap-aui-dialog2-xlarge"), "Size argument was passed to dialog");
+      ok($("#my-dialog").is(".aui-dialog2-xlarge"), "Size argument was passed to dialog");
     });
 
     test("Dialog create takes a titleId argument", function() {
