@@ -20,6 +20,7 @@ public class RemoteWebItem
 
     private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-servlet-";
     private static final String INLINE_DIALOG_ACTIVE_CLASS = "active";
+    private static final String DIALOG_ACTIVE_CLASS = "active";
 
     @Inject
     private PageElementFinder elementFinder;
@@ -126,4 +127,16 @@ public class RemoteWebItem
         }
         return webItem.hasClass(INLINE_DIALOG_ACTIVE_CLASS) || webItem.find(By.className(INLINE_DIALOG_ACTIVE_CLASS)).isPresent();
     }
+
+    public boolean isDialog()
+    {
+        return null != webItem && webItem.hasClass("ap-dialog");
+    }
+
+    public boolean isActiveDialog()
+    {
+        PageElement dialog = elementFinder.find(By.className("aui-popup"));
+        return (dialog.isPresent() && dialog.isVisible());
+    }
+
 }
