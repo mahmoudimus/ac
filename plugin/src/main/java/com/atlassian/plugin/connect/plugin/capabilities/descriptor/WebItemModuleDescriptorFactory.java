@@ -93,7 +93,10 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
         {
             styles.add("ap-inline-dialog");
         }
-        
+
+        styles.add("ap-plugin-key-" + plugin.getKey());
+        styles.add("ap-module-key-" + webItemKey);
+
         Map<String,String> dialogOptions = bean.getTarget().getOptions();
         Map<String,String> beanParams = bean.getParams();
         
