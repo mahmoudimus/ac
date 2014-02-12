@@ -28,6 +28,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.assertURIEquals;
+import static it.capabilities.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.*;
@@ -137,6 +138,8 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
         // web-item url mode is relative to the addon by default
         assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
+
+        verifyStandardAddOnRelativeQueryParameters(webItem, "/confluence");
     }
 
     @Test
@@ -150,6 +153,8 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
         assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
         assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
+
+        verifyStandardAddOnRelativeQueryParameters(webItem, "/confluence");
     }
 
     @Test
