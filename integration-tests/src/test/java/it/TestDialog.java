@@ -99,8 +99,8 @@ public class TestDialog extends ConnectWebDriverTestBase
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "servlet", "remotePluginGeneralOpenDialog", remotePlugin.getPluginKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey("my-dialog");
 
-        assertNotEquals("test dialog width is not 0", closeDialogPage.getWidth(), "0");
-        assertNotEquals("test dialog height is not 0", closeDialogPage.getHeight(), "0");
+        assertNotEquals("test dialog width is not 0", closeDialogPage.getIFrameSize().getWidth(), "0");
+        assertNotEquals("test dialog height is not 0", closeDialogPage.getIFrameSize().getHeight(), "0");
     }
 
 
@@ -115,8 +115,8 @@ public class TestDialog extends ConnectWebDriverTestBase
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "servlet", "remotePluginGeneralOpenDialog", remotePlugin.getPluginKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openUrl();
 
-        assertNotEquals("test dialog width is not 0", closeDialogPage.getWidth(), "0");
-        assertNotEquals("test dialog height is not 0", closeDialogPage.getHeight(), "0");
+        assertNotEquals("test dialog width is not 0", closeDialogPage.getIFrameSize().getWidth(), "0");
+        assertNotEquals("test dialog height is not 0", closeDialogPage.getIFrameSize().getHeight(), "0");
     }
 
 }

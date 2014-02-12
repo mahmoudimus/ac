@@ -233,6 +233,22 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         webItem.click();
         assertTrue("web item dialog should be open", webItem.isActiveDialog());
     }
+
+    @Test
+    public void testAbsoluteWebItemDialogDimensions() throws Exception
+    {
+        loginAsAdmin();
+
+        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_DIALOG, Optional.<String>absent());
+        webItem.click();
+        RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
+        assertNotEquals("webitem dialog has a height that is not 0", dialogPage.getIFrameSize().getHeight(), 0);
+        assertNotEquals("webitem dialog has a width that is not 0", dialogPage.getIFrameSize().getWidth(), 0);
+
+    }
+
+
     @Test
     public void testAbsoluteWebItemDialogXdm() throws Exception
     {
