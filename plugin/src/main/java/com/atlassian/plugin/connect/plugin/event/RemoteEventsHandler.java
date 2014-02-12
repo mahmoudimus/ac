@@ -183,7 +183,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
     }
 
 //    @PluginEventListener
-//    public void pluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
+//    public void beforePluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
 //    {
 //        final Plugin plugin = pluginDisabledEvent.getPlugin();
 //        if (connectIdentifier.isConnectAddOn(plugin))
