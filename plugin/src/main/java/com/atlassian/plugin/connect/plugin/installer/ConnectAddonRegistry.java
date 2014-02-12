@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import java.util.List;
+
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 
 /**
@@ -52,4 +54,12 @@ public interface ConnectAddonRegistry
     AuthenticationType getAuthType(String pluginKey);
 
     boolean hasAuthType(String pluginKey);
+
+    void storePluginsToEnable(List<String> pluginKeys);
+
+    void removePluginsToEnable();
+
+    List<String> getPluginsToEnable();
+
+    boolean hasPluginsToEnable();
 }

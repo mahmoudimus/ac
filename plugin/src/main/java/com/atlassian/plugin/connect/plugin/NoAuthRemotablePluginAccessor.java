@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.base.Supplier;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 public class NoAuthRemotablePluginAccessor extends DefaultRemotablePluginAccessorBase
@@ -27,10 +26,10 @@ public class NoAuthRemotablePluginAccessor extends DefaultRemotablePluginAccesso
     @Override
     public AuthorizationGenerator getAuthorizationGenerator()
     {
-        return new DefaultAuthorizationGeneratorBase()
+        return new AuthorizationGenerator()
         {
             @Override
-            public Option<String> generate(final HttpMethod method, final URI url, final Map<String, List<String>> parameters)
+            public Option<String> generate(final HttpMethod method, final URI url, final Map<String, String[]> parameters)
             {
                 return Option.none(String.class);
             }

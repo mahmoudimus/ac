@@ -15,8 +15,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModu
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
+import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -52,14 +52,14 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     private DelegatingComponentAccessor componentAccessor;
     @Mock
     private HostContainer hostContainer;
+    @Mock
+    private IFrameUriBuilderFactory iFrameUriBuilderFactory;
 
     private SearchRequestViewModuleDescriptorImpl descriptor;
 
     @Before
     public void beforeEachTest() throws Exception
     {
-        RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
-
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.<UserLoggedInCondition>loadClass(eq("com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"), any(Class.class)))
                 .thenReturn(UserLoggedInCondition.class);
@@ -73,8 +73,13 @@ public class SearchRequestViewModuleDescriptorFactoryTest
         when(componentAccessor.getComponent(ConditionDescriptorFactory.class)).thenReturn(conditionDescriptorFactory);
 
         SearchRequestViewModuleDescriptorFactory factory = new SearchRequestViewModuleDescriptorFactory(
-                authenticationContext, conditionModuleFragmentFactory, applicationProperties,
-                searchRequestViewBodyWriterUtil, templateRenderer, remotablePluginAccessorFactoryForTests, componentAccessor);
+                authenticationContext,
+                conditionModuleFragmentFactory,
+                applicationProperties,
+                searchRequestViewBodyWriterUtil,
+                templateRenderer,
+                iFrameUriBuilderFactory,
+                componentAccessor);
 
         SearchRequestViewModuleBean bean = SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
                 .withWeight(55)

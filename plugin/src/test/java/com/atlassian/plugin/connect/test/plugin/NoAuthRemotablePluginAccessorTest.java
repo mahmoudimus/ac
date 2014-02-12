@@ -5,26 +5,26 @@ import com.atlassian.plugin.connect.plugin.NoAuthRemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-@RunWith (MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class NoAuthRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
 {
     private static final URI PATH_URI = URI.create("/path");
-    private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[] { "param value" });
+    private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
 
     @Test
     public void createdRemotePluginAccessorHasCorrectPluginKey() throws ExecutionException, InterruptedException
@@ -62,8 +62,7 @@ public class NoAuthRemotablePluginAccessorTest extends BaseSigningRemotablePlugi
     @Test
     public void testGetAuthorizationGenerator() throws Exception
     {
-        List<String> paramVals = Lists.newArrayList("param value");
-        Map<String, List<String>> params = Collections.singletonMap("param", paramVals);
+        Map<String, String[]> params = Collections.singletonMap("param", new String[]{"param value"});
         Option<String> auth = createRemotePluginAccessor().getAuthorizationGenerator().generate(HttpMethod.POST, PATH_URI, params);
         assertThat(auth, is(Option.none(String.class)));
     }

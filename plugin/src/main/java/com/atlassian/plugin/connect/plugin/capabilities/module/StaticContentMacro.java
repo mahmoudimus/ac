@@ -32,9 +32,9 @@ public class StaticContentMacro extends AbstractMacro
     private final String uriTemplate;
 
     public StaticContentMacro(String addOnKey, String moduleKey, String uriTemplate, BodyType bodyType,
-            OutputType outputType, IFrameUriBuilderFactory iFrameUriBuilderFactory,
-            MacroModuleContextExtractor macroModuleContextExtractor, MacroContentManager macroContentManager,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory)
+                              OutputType outputType, IFrameUriBuilderFactory iFrameUriBuilderFactory,
+                              MacroModuleContextExtractor macroModuleContextExtractor, MacroContentManager macroContentManager,
+                              RemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         super(bodyType, outputType);
         this.addOnKey = addOnKey;
@@ -47,7 +47,7 @@ public class StaticContentMacro extends AbstractMacro
     }
 
     @Override
-    @RequiresFormat (Format.Storage)
+    @RequiresFormat(Format.Storage)
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
             throws MacroExecutionException
     {
@@ -67,7 +67,7 @@ public class StaticContentMacro extends AbstractMacro
         try
         {
             return macroContentManager.getStaticContent(HttpMethod.GET, URI.create(uri),
-                    Collections.<String, String>emptyMap(), conversionContext,
+                    Collections.<String, String[]>emptyMap(), conversionContext,
                     remotablePluginAccessorFactory.getOrThrow(addOnKey));
         }
         catch (Exception e)

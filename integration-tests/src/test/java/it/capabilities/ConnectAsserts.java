@@ -4,9 +4,14 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.google.common.base.Strings;
 
+import static it.matcher.MatchesPattern.matchesPattern;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class ConnectAsserts
@@ -54,4 +59,16 @@ public class ConnectAsserts
         }
         return map;
     }
+
+    public static void verifyStandardAddOnRelativeQueryParameters(final RemoteWebItem webItem, String context)
+    {
+        //example tz:  America/Los_Angeles
+        //example loc: en-GB
+        assertThat(webItem.getFromQueryString("tz"), matchesPattern("[A-Za-z0-9_\\-]+/[A-Za-z0-9_\\-]+"));
+        assertThat(webItem.getFromQueryString("loc"), matchesPattern("[A-Za-z0-9]{2,}-[A-Za-z0-9]{2,}"));
+        assertThat(webItem.getFromQueryString("cp"), is(equalTo(context)));
+        assertThat(webItem.getFromQueryString("lic"), is(equalTo("none")));
+    }
+
+
 }

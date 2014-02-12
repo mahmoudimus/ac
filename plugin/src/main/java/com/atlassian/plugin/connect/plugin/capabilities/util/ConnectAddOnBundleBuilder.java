@@ -17,6 +17,8 @@ import org.osgi.framework.Constants;
 import aQute.lib.osgi.Builder;
 import aQute.lib.osgi.Jar;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * @since 1.0
  */
@@ -25,7 +27,7 @@ public class ConnectAddOnBundleBuilder
     public static final String CONNECT_FILE_SUFFIX = "_-atlassian-connect-_";
     private static final DateFormat BUILD_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     private static final String ATLASSIAN_BUILD_DATE = "Atlassian-Build-Date";
-    private static final String ATLASSIAN_CONNECT_SPI_PACKAGE = "com.atlassian.plugin.connect.spi";
+    private static final String ATLASSIAN_CONNECT_PACKAGE = "com.atlassian.plugin.connect.plugin";
     
     private final Map<String, byte[]> jarContents;
     private Map<String, String> manifestMap;
@@ -51,6 +53,28 @@ public class ConnectAddOnBundleBuilder
     public ConnectAddOnBundleBuilder addResource(String path, String contents)
     {
         jarContents.put(path, contents.getBytes());
+        return this;
+    }
+
+    /**
+     * Adds a resource in the jar from an InputStream
+     *
+     * @param path     The path for the jar entry
+     * @param contents The contents of the file to create
+     * @return
+     */
+    public ConnectAddOnBundleBuilder addResource(String path, InputStream contents) throws IOException
+    {
+        checkNotNull(contents);
+        try
+        {
+            jarContents.put(path, IOUtils.toByteArray(contents));
+        }
+        finally
+        {
+            IOUtils.closeQuietly(contents);
+        }
+        
         return this;
     }
 
@@ -134,7 +158,7 @@ public class ConnectAddOnBundleBuilder
             mergedManifest.getMainAttributes().putValue(Constants.BUNDLE_CLASSPATH, ".");
         }
 
-        mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ATLASSIAN_CONNECT_SPI_PACKAGE);
+        mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ATLASSIAN_CONNECT_PACKAGE);
 
         
         File newJar = createExtractableTempFile(fileNamePrefix,".jar");
