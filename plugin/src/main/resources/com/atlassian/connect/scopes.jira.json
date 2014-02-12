@@ -14,7 +14,7 @@
     },
     {
       "key": "WRITE",
-      "restPathKeys": ["issue", "attachment", "version", "component", "search", "priority", "comment", "worklog", "customFieldOption", "issueLinkType"],
+      "restPathKeys": ["issue", "attachment", "version", "component", "search", "priority", "comment", "worklog", "customFieldOption"],
       "methods": ["POST", "PUT"]
     },
     {
@@ -25,13 +25,18 @@
     },
     {
       "key": "DELETE",
-      "restPathKeys": ["component", "priority", "issue", "attachment", "comment", "worklog", "customFieldOption", "version", "issueLinkType"],
+      "restPathKeys": ["component", "priority", "issue", "attachment", "comment", "worklog", "customFieldOption", "version"],
       "methods": ["DELETE"]
     },
     {
       "key": "ADMIN",
       "restPathKeys": ["field", "workflowscheme"],
       "methods": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "key": "ADMIN",
+      "restPathKeys": ["issueLinkType"],
+      "methods": ["POST", "PUT", "DELETE"]
     }
   ],
   "restPaths": [

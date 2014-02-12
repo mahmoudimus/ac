@@ -54,23 +54,23 @@ public class JiraRestScopesTest extends AbstractScopesTest
                         {ScopeName.DELETE, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", true},
                         {ScopeName.ADMIN, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", true},
 
-                        // issueLinkType creations and edits require WRITE or above
+                        // issueLinkType creations and edits require ADMIN
                         {null, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", false},
                         {ScopeName.READ, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", false},
-                        {ScopeName.WRITE, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", true},
-                        {ScopeName.DELETE, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", true},
+                        {ScopeName.WRITE, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", false},
+                        {ScopeName.DELETE, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", false},
                         {ScopeName.ADMIN, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", true},
                         {null, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", false},
                         {ScopeName.READ, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", false},
-                        {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", true},
-                        {ScopeName.DELETE, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", true},
+                        {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", false},
+                        {ScopeName.DELETE, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", false},
                         {ScopeName.ADMIN, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", true},
 
-                        // issueLinkType deletes require DELETE or above
+                        // issueLinkType deletes require ADMIN
                         {null, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
                         {ScopeName.READ, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
                         {ScopeName.WRITE, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
-                        {ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", true},
+                        {ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
                         {ScopeName.ADMIN, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", true},
                 }));
 
