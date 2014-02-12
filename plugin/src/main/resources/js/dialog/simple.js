@@ -93,6 +93,11 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
         var $panelBody = $dialog.find(".ap-dialog-content"),
         contentUrlObj = new uri.init(contentUrl);
 
+        // for legacy xml descriptors we add the dialog flags when we send to the host for signing
+        if(!contentUrlObj.scheme()){
+            contentUrlObj.replaceQueryParam("dialog", "1").replaceQueryParam("simpleDialog", "1");
+        }
+
         if(!contentUrlObj.getQueryParamValue("dialog") || !contentUrlObj.getQueryParamValue("simpleDialog")){
           throw "Missing dialog or simpleDialog url parameters";
         }
