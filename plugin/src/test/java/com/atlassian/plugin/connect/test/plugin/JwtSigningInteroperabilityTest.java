@@ -239,10 +239,24 @@ public class JwtSigningInteroperabilityTest
                 "a", new String[]{"a"},
                 "b", new String[]{"b"},
                 "B", new String[]{"B"})));
-        tests.add(createAndSign("Search Request View", ImmutableMap.of(
-                "link", new String[]{"http://ion:2990/jira/secure/IssueNavigator.jspa?reset=true"},
-                "jqlQuery", new String[]{"project+%3D+TEST"},
-                "issues", new String[]{"issues=TEST-2,TEST-1"})));
+        tests.add(createAndSign("Search Request View", URI.create("/search-view"), new ImmutableMap.Builder<String, String[]>()
+                .put("link", new String[]{"http://ion:2990/jira/secure/IssueNavigator.jspa?reset=true"})
+                .put("jqlQuery", new String[]{"project+%3D+TEST"})
+                .put("startIssue", new String[]{"0"})
+                .put("totalIssues", new String[]{"2"})
+                .put("endIssue", new String[]{"2"})
+                .put("issues", new String[]{"issues=TEST-2,TEST-1"})
+                .put("tz", new String[]{"Australia/Sydney"})
+                .put("loc", new String[]{"en-US"})
+                .put("user_id", new String[]{"admin"})
+                .put("user_key", new String[]{"admin"})
+                .put("xdm_e", new String[]{"http://ion.local:2990"})
+                .put("xdm_c", new String[]{"channel-acmodule-1564427223927602208"})
+                .put("xdm_p", new String[]{"1"})
+                .put("cp", new String[]{"jira"})
+                .put("lic", new String[]{"none"})
+                .build()
+        ));
         tests.add(createAndSign("BasePath only", ImmutableMap.<String,String[]>of()));
         tests.add(createAndSign("BasePath with Delimiter", URI.create("/endsWithDelimiter/"), ImmutableMap.of("a", new String[]{"b"})));
         tests.add(createAndSign("BasePath with Delimiter Only", URI.create("/endsWithDelimiter/"), ImmutableMap.<String,String[]>of()));
