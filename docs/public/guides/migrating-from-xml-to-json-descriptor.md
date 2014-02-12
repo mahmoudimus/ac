@@ -142,7 +142,8 @@ for a full list of all supported modules.
 
 ### Dialog Page
 
-* The `dialog-page` module has been removed. A replacement is coming in the near future.
+* The `dialog-page` module has been removed. It is replaced by the [`webItem`](../modules/jira/web-item.html) module with
+the [`target`](../modules/fragment/web-item-target.html) attribute set to `dialog`
 
 ### Confluence Macros
 
