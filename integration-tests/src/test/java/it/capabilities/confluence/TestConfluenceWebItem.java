@@ -27,8 +27,9 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
-import static it.capabilities.ConnectAsserts.assertURIEquals;
 import static it.capabilities.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
+import static it.matcher.IsInteger.isInteger;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.*;
@@ -82,7 +83,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withKey(ABSOLUTE_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withUrl("http://www.google.com")
+                                .withUrl("http://www.google.com?myPageId={page.id}&mySpaceKey={space.key}")
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build(),
                                         newSingleConditionBean().withCondition("/onlyBettyCondition").build()
@@ -123,7 +124,9 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         assertTrue("Web item link should be absolute", webItem.isPointingToACInternalUrl());
-        assertURIEquals("http://www.google.com", webItem.getPath());
+        assertThat(webItem.getPath(), startsWith("http://www.google.com/?"));
+        assertThat(webItem.getFromQueryString("myPageId"), isInteger());
+        assertThat(webItem.getFromQueryString("mySpaceKey"), equalTo("ds"));
     }
 
     @Test

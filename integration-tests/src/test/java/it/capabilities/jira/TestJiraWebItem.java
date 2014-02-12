@@ -13,7 +13,6 @@ import com.google.common.base.Optional;
 import it.capabilities.CheckUsernameConditionServlet;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,8 +25,8 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
-import static it.capabilities.ConnectAsserts.assertURIEquals;
 import static it.capabilities.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.greaterThan;
@@ -86,7 +85,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withKey(ABSOLUTE_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
-                                .withUrl("http://www.google.com")
+                                .withUrl("http://www.google.com?myProjectKey={project.key}")
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build()
                                         , newSingleConditionBean().withCondition("/onlyBettyCondition").build()
@@ -144,7 +143,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         assertTrue("Web item link should be absolute", webItem.isPointingToACInternalUrl());
-        assertURIEquals("http://www.google.com", webItem.getPath());
+        assertThat(webItem.getPath(), startsWith("http://www.google.com/?"));
+        assertThat(webItem.getFromQueryString("myProjectKey"), equalTo(project.getKey()));
     }
     
     @Test
