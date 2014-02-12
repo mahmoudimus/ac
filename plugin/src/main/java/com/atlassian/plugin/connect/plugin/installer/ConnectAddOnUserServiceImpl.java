@@ -10,9 +10,9 @@ import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import com.google.common.annotations.VisibleForTesting;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 {
     private final ApplicationService applicationService;
-    private final Application application;
+    private final ApplicationManager applicationManager;
+    private final ConnectAddOnUserGroupsService connectAddOnUserGroupsService;
 
     private static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     private static final String ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY = "atlassian-addons"; // in order to not occupy a license this has to match constant in user-provisioning-plugin/src/main/java/com/atlassian/crowd/plugin/usermanagement/userprovisioning/Constants.java
@@ -37,11 +38,16 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     // The rationale is that either they can't log in as these users, in which case they consume no licenses, or logging in is possible and such users do consume licenses.
     private static final String NO_REPLY_EMAIL_ADDRESS = "noreply@mailer.atlassian.com";
 
+    private static final Logger log = LoggerFactory.getLogger(ConnectAddOnUserServiceImpl.class);
+
     @Autowired
-    public ConnectAddOnUserServiceImpl(ApplicationService applicationService, ApplicationManager applicationManager) throws ApplicationNotFoundException
+    public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
+                                       ApplicationManager applicationManager,
+                                       ConnectAddOnUserGroupsService connectAddOnUserGroupsService)
     {
         this.applicationService = checkNotNull(applicationService);
-        this.application = checkNotNull(applicationManager.findByName(CROWD_APPLICATION_NAME));
+        this.applicationManager= checkNotNull(applicationManager);
+        this.connectAddOnUserGroupsService = checkNotNull(connectAddOnUserGroupsService);
     }
 
     @Override
@@ -84,38 +90,50 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         {
             throw new ConnectAddOnUserInitException(e);
         }
+        catch (ApplicationNotFoundException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
     }
 
     @Override
     public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException
     {
         String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;
-        User user = findUserByKey(userKey);
 
-        if (null != user)
+        try
         {
-            UserTemplate userTemplate = new UserTemplate(user);
-            userTemplate.setActive(false);
-            try
+            User user = findUserByKey(userKey);
+
+            if (null != user)
             {
-                applicationService.updateUser(application, userTemplate);
+                UserTemplate userTemplate = new UserTemplate(user);
+                userTemplate.setActive(false);
+                try
+                {
+                    applicationService.updateUser(getApplication(), userTemplate);
+                }
+                catch (InvalidUserException e)
+                {
+                    throw new ConnectAddOnUserDisableException(e);
+                }
+                catch (OperationFailedException e)
+                {
+                    throw new ConnectAddOnUserDisableException(e);
+                }
+                catch (ApplicationPermissionException e)
+                {
+                    throw new ConnectAddOnUserDisableException(e);
+                }
+                catch (UserNotFoundException e)
+                {
+                    throw new ConnectAddOnUserDisableException(e);
+                }
             }
-            catch (InvalidUserException e)
-            {
-                throw new ConnectAddOnUserDisableException(e);
-            }
-            catch (OperationFailedException e)
-            {
-                throw new ConnectAddOnUserDisableException(e);
-            }
-            catch (ApplicationPermissionException e)
-            {
-                throw new ConnectAddOnUserDisableException(e);
-            }
-            catch (UserNotFoundException e)
-            {
-                throw new ConnectAddOnUserDisableException(e);
-            }
+        }
+        catch (ApplicationNotFoundException e)
+        {
+            throw new ConnectAddOnUserDisableException(e);
         }
     }
 
@@ -124,32 +142,50 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     public boolean isAddOnUserActive(String addOnKey)
     {
         String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;
-        User user = findUserByKey(userKey);
+        User user = null;
 
-        if (null == user)
+        try
         {
-            return false;
+            user = findUserByKey(userKey);
         }
-        
-        return user.isActive();
+        catch (ApplicationNotFoundException e)
+        {
+            throw new IllegalStateException(e);
+        }
+
+        return null != user && user.isActive();
     }
 
-    private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException
+    private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException
     {
-        ensureGroupExists();
+        ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
         User user = ensureUserExists(userKey);
-        ensureUserIsInGroup(user.getName());
+        ensureUserIsInGroup(user.getName(), ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+
+        for (String group : connectAddOnUserGroupsService.getDefaultProductGroups())
+        {
+            try
+            {
+                ensureUserIsInGroup(user.getName(), group);
+            }
+            catch (GroupNotFoundException e)
+            {
+                // carry on if the group does not exist so that an admin deleting a group will not kill all add-on installations
+                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist!", userKey, group), e);
+                // TODO ACDEV-938: propagate this error
+            }
+        }
 
         return user.getName();
     }
 
-    private void ensureUserIsInGroup(String userKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException
+    private void ensureUserIsInGroup(String userKey, String groupKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException, ApplicationNotFoundException
     {
-        if (!applicationService.isUserDirectGroupMember(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY))
+        if (!applicationService.isUserDirectGroupMember(getApplication(), userKey, groupKey))
         {
             try
             {
-                applicationService.addUserToGroup(application, userKey, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+                applicationService.addUserToGroup(getApplication(), userKey, groupKey);
             }
             catch (MembershipAlreadyExistsException e)
             {
@@ -158,7 +194,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         }
     }
 
-    private User ensureUserExists(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException
+    private User ensureUserExists(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException
     {
         User user = findUserByKey(userKey);
 
@@ -175,14 +211,17 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 UserTemplate userTemplate = new UserTemplate(user);
                 userTemplate.setEmailAddress(NO_REPLY_EMAIL_ADDRESS);
                 userTemplate.setActive(true);
-                applicationService.updateUser(application, userTemplate);
+                applicationService.updateUser(getApplication(), userTemplate);
             }
+
+            // Justin Koke says that NONE password prevents logging in
+            applicationService.updateUserCredential(getApplication(), user.getName(), PasswordCredential.NONE);
         }
 
         return user;
     }
 
-    private User createUser(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException
+    private User createUser(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException
     {
         User user;
         try
@@ -191,7 +230,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             UserTemplate userTemplate = new UserTemplate(userKey);
             userTemplate.setEmailAddress(NO_REPLY_EMAIL_ADDRESS); // so that "reset password" emails go nowhere
             userTemplate.setActive(true); //if you don't set this, it defaults to inactive!!!
-            user = applicationService.addUser(application, userTemplate, PasswordCredential.NONE);
+            user = applicationService.addUser(getApplication(), userTemplate, PasswordCredential.NONE);
         }
         catch (InvalidUserException iue)
         {
@@ -211,35 +250,35 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private void ensureGroupExists() throws OperationFailedException, ApplicationPermissionException
+    private void ensureGroupExists(String groupKey) throws OperationFailedException, ApplicationPermissionException, ApplicationNotFoundException
     {
-        if (null == findGroupByKey())
+        if (null == findGroupByKey(groupKey))
         {
             try
             {
-                applicationService.addGroup(application, new GroupTemplate(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY));
+                applicationService.addGroup(getApplication(), new GroupTemplate(groupKey));
             }
             catch (InvalidGroupException ige)
             {
                 // according to its javadoc addGroup() throws InvalidGroupException if the group already exists
                 // --> handle the race condition of something else creating this group at around the same time
 
-                if (null == findGroupByKey())
+                if (null == findGroupByKey(groupKey))
                 {
                     // the ApplicationService is messing us around by saying that the group exists and then that it does not
                     throw new RuntimeException(String.format("The %s %s said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
-                            ApplicationService.class.getSimpleName(), applicationService, Group.class.getSimpleName(), ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY));
+                            ApplicationService.class.getSimpleName(), applicationService, Group.class.getSimpleName(), groupKey));
                 }
             }
         }
     }
 
-    private User findUserByKey(String userKey)
+    private User findUserByKey(String userKey) throws ApplicationNotFoundException
     {
         User user;
         try
         {
-            user = applicationService.findUserByName(application, userKey);
+            user = applicationService.findUserByName(getApplication(), userKey);
         }
         catch (UserNotFoundException e)
         {
@@ -248,17 +287,24 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private Group findGroupByKey()
+    private Group findGroupByKey(String groupKey) throws ApplicationNotFoundException
     {
         Group group;
         try
         {
-            group = applicationService.findGroupByName(application, ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+            group = applicationService.findGroupByName(getApplication(), groupKey);
         }
         catch (GroupNotFoundException gnf)
         {
             group = null;
         }
         return group;
+    }
+
+    // Richard Atkins says that the Application is immutable and therefore the instance replaced every time changes occur,
+    // and that therefore we should never cache it
+    private Application getApplication() throws ApplicationNotFoundException
+    {
+        return applicationManager.findByName(CROWD_APPLICATION_NAME);
     }
 }

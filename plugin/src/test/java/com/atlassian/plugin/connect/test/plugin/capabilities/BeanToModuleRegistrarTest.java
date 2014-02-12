@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.WebHookModuleBeanBuild
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.WebHookScopeService;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.AutowireWithConnectPluginDecorator;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -62,7 +61,8 @@ public class BeanToModuleRegistrarTest
         when(webHookScopeService.getRequiredScope(EVENT_IN_SCOPES)).thenReturn(ScopeName.ADMIN);
         when(connectAddonBean.getModules()).thenReturn(moduleList);
         when(moduleList.getWebhooks()).thenReturn(Collections.<WebHookModuleBean>emptyList());
-        beanToModuleRegistrar = new BeanToModuleRegistrar(dynamicDescriptorRegistration, pluginRetrievalService, productAccessor, applicationProperties, webHookScopeService);
+        beanToModuleRegistrar = new BeanToModuleRegistrar(dynamicDescriptorRegistration, pluginRetrievalService,
+                productAccessor, applicationProperties);
     }
 
     @Test
@@ -81,12 +81,4 @@ public class BeanToModuleRegistrarTest
         beanToModuleRegistrar.registerDescriptorsForBeans(plugin, connectAddonBean);
     }
 
-    @Test(expected = InvalidDescriptorException.class)
-    public void cannotRegisterAddOnWithWebHooksOutsideOfScopes()
-    {
-        WebHookModuleBean webHookModuleBean = new WebHookModuleBeanBuilder().withEvent(EVENT_IN_SCOPES).build();
-        when(moduleList.getWebhooks()).thenReturn(Arrays.asList(webHookModuleBean));
-        when(connectAddonBean.getScopes()).thenReturn(new HashSet<ScopeName>(Arrays.asList(ScopeName.READ)));
-        beanToModuleRegistrar.registerDescriptorsForBeans(plugin, connectAddonBean);
-    }
 }

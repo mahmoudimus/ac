@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow.WorkflowPostFunctionModuleDescriptorFactory;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.ConnectAutowireUtilForTests;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.ConnectContainerUtilForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class WorkflowPostFunctionModuleDescriptorFactoryTest
 {
-    private ConnectAutowireUtilForTests connectAutowireUtil;
+    private ConnectContainerUtilForTests connectAutowireUtil;
     private WorkflowPostFunctionModuleDescriptorFactory wfPostFunctionFactory;
 
     @Mock
@@ -75,7 +75,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
         when(plugin.getName()).thenReturn("My Plugin");
         when(plugin.getKey()).thenReturn("my-key");
 
-        connectAutowireUtil = new ConnectAutowireUtilForTests()
+        connectAutowireUtil = new ConnectContainerUtilForTests()
                 .defineMock(DelegatingComponentAccessor.class, componentAccessor)
                 .defineMock(PluginRetrievalService.class, pluginRetrievalService)
                 .defineMock(WebResourceUrlProvider.class, webResourceUrlProvider)

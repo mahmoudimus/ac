@@ -6,11 +6,10 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
@@ -18,10 +17,10 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
 {
     public static final String DESCRIPTOR_NAME = "index-document-configuration";
 
-    private final ConnectAutowireUtil autowireUtil;
+    private final ConnectContainerUtil autowireUtil;
 
     @Autowired
-    public ConnectEntityPropertyModuleDescriptorFactory(ConnectAutowireUtil autowireUtil)
+    public ConnectEntityPropertyModuleDescriptorFactory(ConnectContainerUtil autowireUtil)
     {
         this.autowireUtil = autowireUtil;
     }
