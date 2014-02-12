@@ -42,7 +42,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
     {
         return new RemoteConfluenceWebItemModuleDescriptor(
                 webFragmentHelper
@@ -55,6 +55,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
                 , moduleKey
                 , absolute
                 , addOnUrlContext
+                , isDialog
         );
     }
 
@@ -71,13 +72,14 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         private final String moduleKey;
         private final boolean absolute;
         private final AddOnUrlContext addOnUrlContext;
+        private final boolean isDialog;
 
         private RemoteConfluenceWebItemModuleDescriptor(
                 WebFragmentHelper webFragmentHelper,
                 IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 WebPanelModuleContextExtractor webPanelModuleContextExtractor, ModuleContextFilter moduleContextFilter,
                 UrlVariableSubstitutor urlVariableSubstitutor, String url, String pluginKey, String moduleKey, boolean absolute,
-                AddOnUrlContext addOnUrlContext)
+                AddOnUrlContext addOnUrlContext, boolean isDialog)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.webPanelModuleContextExtractor = webPanelModuleContextExtractor;
@@ -89,12 +91,13 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
             this.url = url;
             this.absolute = absolute;
             this.addOnUrlContext = addOnUrlContext;
+            this.isDialog = isDialog;
         }
 
         @Override
         public ConfluenceWebLink getLink()
         {
-            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory, urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext));
+            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory, urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog));
         }
 
         @Override

@@ -164,6 +164,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .urlTemplate(editor.getUrl())
                 .title(macroBean.getDisplayName())
                 .dimensions(editor.getWidth(), editor.getHeight())
+                .dialog(true)
                 .build();
 
         iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), renderStrategy);

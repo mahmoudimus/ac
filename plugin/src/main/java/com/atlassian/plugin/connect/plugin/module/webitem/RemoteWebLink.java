@@ -31,11 +31,12 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     private final String moduleKey;
     private final boolean absolute;
     private final AddOnUrlContext addOnUrlContext;
+    private final boolean isDialog;
 
     public RemoteWebLink(WebFragmentModuleDescriptor webFragmentModuleDescriptor, WebFragmentHelper webFragmentHelper,
-            IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
-            WebPanelModuleContextExtractor webPanelModuleContextExtractor, ModuleContextFilter moduleContextFilter,
-            String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
+                         IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
+                         WebPanelModuleContextExtractor webPanelModuleContextExtractor, ModuleContextFilter moduleContextFilter,
+                         String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
@@ -47,6 +48,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         this.moduleKey = moduleKey;
         this.absolute = absolute;
         this.addOnUrlContext = addOnUrlContext;
+        this.isDialog = isDialog;
     }
 
     @Override
@@ -82,6 +84,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
                                               .namespace(moduleKey)
                                               .urlTemplate(url)
                                               .context(moduleContext)
+                                              .dialog(isDialog)
                                               .signAndBuild();
             }
             else

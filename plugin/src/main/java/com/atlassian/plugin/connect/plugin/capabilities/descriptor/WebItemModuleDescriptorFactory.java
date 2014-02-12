@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -72,7 +73,8 @@ public class WebItemModuleDescriptorFactory
 
         String linkId = plugin.getKey() + "-" + webItemKey;
         Element linkElement = webItemElement.addElement("link").addAttribute("linkId", linkId);
-        linkElement.setText(bean.getUrl());
+        String url = bean.getUrl();
+        linkElement.setText(url);
 
         List<String> styles = newArrayList(bean.getStyleClasses());
 
@@ -113,7 +115,9 @@ public class WebItemModuleDescriptorFactory
             }
         }
 
-        paramsModuleFragmentFactory.addParamsToElement(webItemElement, bean.getParams());
+        final boolean isDialog = bean.getTarget().isDialogTarget();
+
+        paramsModuleFragmentFactory.addParamsToElement(webItemElement,bean.getParams());
 
         if (!styles.isEmpty())
         {
@@ -125,11 +129,11 @@ public class WebItemModuleDescriptorFactory
             log.debug("Created web item: " + printNode(webItemElement));
         }
 
-        return createWebItemDescriptor(plugin, webItemElement, webItemKey, bean.getUrl(), bean.isAbsolute(), bean.getContext());
+        return createWebItemDescriptor(plugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog);
     }
 
     private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String moduleKey, String url,
-            boolean absolute, AddOnUrlContext urlContext)
+                                                            boolean absolute, AddOnUrlContext urlContext, boolean isDialog)
     {
         webItemElement.addAttribute("system", "true");
 
@@ -139,7 +143,7 @@ public class WebItemModuleDescriptorFactory
                 , moduleKey
                 , absolute
                 , urlContext
-        );
+                , isDialog);
 
         descriptor.init(plugin, webItemElement);
 

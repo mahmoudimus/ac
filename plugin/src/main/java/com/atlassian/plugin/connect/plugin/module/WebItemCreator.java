@@ -162,8 +162,8 @@ public final class WebItemCreator
                     , plugin.getKey()
                     , linkId
                     , absolute
-                    , product
-            );
+                    , product,
+                    false);
             descriptor.init(plugin, config);
             return descriptor;
         }
