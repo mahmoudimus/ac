@@ -110,6 +110,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withUrl("/my-webitem-dialog")
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.dialog)
+                                                .withOption("width", "300px")
+                                                .withOption("height", "200px")
                                                 .build()
                                 )
                                 .build()
@@ -219,7 +221,21 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
         webItem.click();
         assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
-       }
+    }
+
+    @Test
+    public void testAbsoluteWebItemInlineDialogTargetOptions() throws Exception
+    {
+        loginAsAdmin();
+
+        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM_INLINE_DIALOG, Optional.<String>absent());
+        assertNotNull("Web item should be found", webItem);
+        assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
+        webItem.hover();
+        assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
+
+    }
 
     @Test
     public void testAbsoluteWebItemDialog() throws Exception
@@ -233,6 +249,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         webItem.click();
         assertTrue("web item dialog should be open", webItem.isActiveDialog());
     }
+
     @Test
     public void testAbsoluteWebItemDialogXdm() throws Exception
     {
@@ -244,6 +261,21 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class).waitUntilContentElementNotEmpty("client-http-status");
         assertEquals("Success", dialogPage.getIFrameElementText("message"));
         assertEquals("200", dialogPage.getIFrameElementText("client-http-status"));
+
+    }
+
+    @Test
+    public void testAbsoluteWebItemDialogTargetOptions() throws Exception
+    {
+        loginAsAdmin();
+
+        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_DIALOG, Optional.<String>absent());
+        webItem.click();
+        RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
+
+        assertEquals(dialogPage.getIFrameSize().getHeight(), "200");
+        assertEquals(dialogPage.getIFrameSize().getWidth(), "300");
 
     }
 

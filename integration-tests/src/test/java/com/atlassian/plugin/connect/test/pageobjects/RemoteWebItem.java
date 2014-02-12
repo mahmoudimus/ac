@@ -94,6 +94,15 @@ public class RemoteWebItem
         webItem.click();
     }
 
+    public void hover()
+    {
+        if (dropDownLinkId.isPresent())
+        {
+            elementFinder.find(By.id(dropDownLinkId.get())).click();
+        }
+        webItem.javascript().mouse().mouseover();
+    }
+
     public boolean isVisible()
     {
         if(null == webItem)
