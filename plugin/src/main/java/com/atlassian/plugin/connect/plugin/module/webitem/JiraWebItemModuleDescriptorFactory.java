@@ -51,10 +51,10 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
     {
         return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
-                iFrameUriBuilderFactory, urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext);
+                iFrameUriBuilderFactory, urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog);
     }
 
     private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor
@@ -69,6 +69,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         private final String moduleKey;
         private boolean absolute;
         private final AddOnUrlContext addOnUrlContext;
+        private final boolean isDialog;
 
         public RemoteJiraWebItemModuleDescriptor(
                 JiraAuthenticationContext jiraAuthenticationContext,
@@ -81,7 +82,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
                 String url,
                 String pluginKey,
                 String moduleKey,
-                boolean absolute, AddOnUrlContext addOnUrlContext)
+                boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
         {
             super(jiraAuthenticationContext, webInterfaceManager);
             this.webFragmentHelper = webFragmentHelper;
@@ -94,6 +95,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
             this.moduleKey = moduleKey;
             this.absolute = absolute;
             this.addOnUrlContext = addOnUrlContext;
+            this.isDialog = isDialog;
         }
 
         @Override
@@ -101,7 +103,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         {
             return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory,
                     urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey,
-                    moduleKey, absolute, addOnUrlContext), authenticationContext);
+                    moduleKey, absolute, addOnUrlContext, isDialog), authenticationContext);
         }
 
         @Override

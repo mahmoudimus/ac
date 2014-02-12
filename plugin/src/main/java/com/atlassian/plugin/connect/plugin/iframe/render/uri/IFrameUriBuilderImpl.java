@@ -101,6 +101,17 @@ public class IFrameUriBuilderImpl
         }
 
         @Override
+        public InitializedBuilder dialog(boolean isDialog)
+        {
+            if (isDialog)
+            {
+                uriBuilder.addQueryParameter("dialog", "1");
+                uriBuilder.addQueryParameter("simpleDialog", "1"); // TODO(chrisw): Do we still need this on the client?
+            }
+            return this;
+        }
+
+        @Override
         public String signAndBuild()
         {
             addDefaultIFrameUrlParameters();
