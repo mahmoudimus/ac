@@ -1,24 +1,17 @@
 package it.com.atlassian.plugin.connect.installer;
 
-import java.io.StringWriter;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
 import com.google.gson.JsonParser;
 
-import org.bouncycastle.openssl.PEMWriter;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,8 +23,6 @@ import it.com.atlassian.plugin.connect.filter.JwtTestVerifier;
 import it.com.atlassian.plugin.connect.filter.ServletRequestSnaphot;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static org.junit.Assert.*;
 
 @RunWith(AtlassianPluginsTestRunner.class)
@@ -211,7 +202,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     @Test
     public void uninstallPostContainsNoUserKey() throws Exception
     {
-        ConnectAddonBean addon = uninstallOnlyBean;
+        ConnectAddonBean addon = installAndUninstallBean;
 
         Plugin plugin = null;
         String addonKey = null;
@@ -233,6 +224,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
         }
         finally
         {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
@@ -253,8 +245,6 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installPlugin(addon);
 
             addonKey = plugin.getKey();
-
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
 
             ApplicationLink appLink = connectApplinkManager.getAppLink(addon.getKey());
 

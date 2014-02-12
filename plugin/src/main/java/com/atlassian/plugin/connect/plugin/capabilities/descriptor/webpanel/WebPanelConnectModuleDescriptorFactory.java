@@ -4,7 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 
@@ -19,13 +19,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean,WebPanelModuleDescriptor>
 {
-    private final ConnectAutowireUtil connectAutowireUtil;
+    private final ConnectContainerUtil connectContainerUtil;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
 
     @Autowired
-    public WebPanelConnectModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
+    public WebPanelConnectModuleDescriptorFactory(ConnectContainerUtil connectContainerUtil, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
-        this.connectAutowireUtil = connectAutowireUtil;
+        this.connectContainerUtil = connectContainerUtil;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
     }
 
@@ -33,7 +33,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     public WebPanelModuleDescriptor createModuleDescriptor(Plugin plugin, WebPanelModuleBean bean)
     {
         Element domElement = createDomElement(bean, bean.getKey(), plugin);
-        final WebPanelModuleDescriptor descriptor = connectAutowireUtil.createBean(WebPanelConnectModuleDescriptor.class);
+        final WebPanelModuleDescriptor descriptor = connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class);
         descriptor.init(plugin, domElement);
         return descriptor;
     }
