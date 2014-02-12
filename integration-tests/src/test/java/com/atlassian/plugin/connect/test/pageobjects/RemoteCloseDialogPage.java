@@ -78,4 +78,15 @@ public class RemoteCloseDialogPage
     {
         return RemotePageUtil.findInContext(iframe.getAttribute("src"), key);
     }
+
+    public String getHeight()
+    {
+        return iframe.getAttribute("height");
+    }
+
+    public String getWidth()
+    {
+        return iframe.getAttribute("width");
+    }
+
 }
