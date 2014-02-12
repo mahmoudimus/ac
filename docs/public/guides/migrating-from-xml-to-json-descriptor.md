@@ -143,12 +143,12 @@ for a full list of all supported modules.
 ### Dialog Page
 
 * The `dialog-page` module has been removed. It is replaced by the [`webItem`](../modules/jira/web-item.html) module with
-the [`target`](../modules/fragment/web-item-target.html) attribute set to `dialog`
+the [`target`](../modules/fragment/web-item-target.html) attribute set to `dialog`.
 
 ### Confluence Macros
 
-* The `<remote-macro>` XML element is replaced by the [`staticContentMacros`](../modules/confluence/static-content-macro.html) module
-* The `<macro-page>` XML element is replaced by the [`dynamicContentMacros`](../modules/confluence/dynamic-content-macro.html) module
+* The `<remote-macro>` XML element is replaced by the [`staticContentMacros`](../modules/confluence/static-content-macro.html) module.
+* The `<macro-page>` XML element is replaced by the [`dynamicContentMacros`](../modules/confluence/dynamic-content-macro.html) module.
 * The `<context-parameters>` XML element no longer exists. You can now use [variable substitution](../concepts/context-parameters.html) to include macro parameters in the URL.
 
 ### Project Config Tabs and Panels
