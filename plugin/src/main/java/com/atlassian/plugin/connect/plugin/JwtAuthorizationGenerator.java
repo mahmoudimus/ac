@@ -3,16 +3,17 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Option;
 import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.TimeUtil;
 import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
 import com.atlassian.jwt.core.writer.JwtClaimsBuilder;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
-import com.atlassian.jwt.httpclient.CanonicalRequestUtil;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
@@ -95,7 +96,7 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
             }
 
             CanonicalHttpUriRequest request = new CanonicalHttpUriRequest(httpMethod.toString(), targetPath.getPath(), "", completeParams);
-            log.debug("Canonical request is: " + CanonicalRequestUtil.toVerboseString(request));
+            log.debug("Canonical request is: " + HttpRequestCanonicalizer.canonicalize(request));
 
             JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, request);
         }
@@ -111,9 +112,11 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
         return jwtService.issueJwt(jsonBuilder.build(), appLink);
     }
 
-    private static Map<String, String[]> constructParameterMap(URI uri) throws UnsupportedEncodingException
+    @VisibleForTesting
+    public static Map<String, String[]> constructParameterMap(URI uri) throws UnsupportedEncodingException
     {
-        final String query = uri.getQuery();
+        // Do not use uri.getQuery() here, as getQuery() already decodes, and we decode again below
+        final String query = uri.getRawQuery();
         if (query == null)
         {
             return Collections.emptyMap();

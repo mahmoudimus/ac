@@ -59,7 +59,6 @@ import org.springframework.beans.factory.InitializingBean;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;

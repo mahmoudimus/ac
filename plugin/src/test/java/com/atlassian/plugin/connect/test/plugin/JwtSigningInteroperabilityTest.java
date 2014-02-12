@@ -1,37 +1,28 @@
 package com.atlassian.plugin.connect.test.plugin;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.TypeNotInstalledException;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
-import com.atlassian.jwt.SigningAlgorithm;
-import com.atlassian.jwt.applinks.ApplinkJwt;
-import com.atlassian.jwt.applinks.JwtService;
-import com.atlassian.jwt.applinks.exception.NotAJwtPeerException;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
-import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
-import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
-import com.atlassian.jwt.exception.JwtParseException;
-import com.atlassian.jwt.exception.JwtSigningException;
-import com.atlassian.jwt.exception.JwtUnknownIssuerException;
-import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
-import com.atlassian.jwt.reader.JwtClaimVerifier;
-import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.JwtAuthorizationGenerator;
 import com.atlassian.plugin.connect.plugin.JwtSigningRemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +34,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,36 +57,6 @@ import static org.mockito.Mockito.when;
 public class JwtSigningInteroperabilityTest
 {
     public static final String SHARED_SECRET = "s0m3-sh@r3d-s3cr37";
-
-    private static class TestJwtService implements JwtService
-    {
-        private final String sharedSecret;
-        private JwtWriterFactory jwtWriterFactory;
-
-        private TestJwtService(String sharedSecret)
-        {
-            this.sharedSecret = sharedSecret;
-            this.jwtWriterFactory = new NimbusJwtWriterFactory();
-        }
-
-        @Override
-        public boolean isJwtPeer(ApplicationLink applicationLink)
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public ApplinkJwt verifyJwt(String jwt, Map<String, ? extends JwtClaimVerifier> claimVerifiers) throws NotAJwtPeerException, JwtParseException, JwtVerificationException, TypeNotInstalledException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String issueJwt(String jsonPayload, ApplicationLink applicationLink) throws NotAJwtPeerException, JwtSigningException
-        {
-            return jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, sharedSecret).jsonToJwt(jsonPayload);
-        }
-    }
 
     private static class SignedUrlTest
     {
@@ -134,9 +97,9 @@ public class JwtSigningInteroperabilityTest
             this.sharedSecret = sharedSecret;
         }
 
-        public void add(SignedUrlTest signedUrlTest)
+        public void add(List<SignedUrlTest> signedUrlTest)
         {
-            tests.add(signedUrlTest);
+            tests.addAll(signedUrlTest);
         }
 
         public Appendable toJSON(Appendable out)
@@ -240,8 +203,7 @@ public class JwtSigningInteroperabilityTest
                 "b", new String[]{"b"},
                 "B", new String[]{"B"})));
         tests.add(createAndSign("Search Request View", URI.create("/search-view"), new ImmutableMap.Builder<String, String[]>()
-                .put("link", new String[]{"http://ion:2990/jira/secure/IssueNavigator.jspa?reset=true"})
-                .put("jqlQuery", new String[]{"project+%3D+TEST"})
+                .put("link", new String[]{"http://ion:2990/jira/secure/IssueNavigator.jspa?reset=true&jqlQuery=issuetype+%3D+Bug"})
                 .put("startIssue", new String[]{"0"})
                 .put("totalIssues", new String[]{"2"})
                 .put("endIssue", new String[]{"2"})
@@ -283,21 +245,45 @@ public class JwtSigningInteroperabilityTest
         }
     }
 
-    private SignedUrlTest createAndSign(String name, String key, String... values) throws UnsupportedEncodingException
+    private List<SignedUrlTest> createAndSign(String name, String key, String... values) throws UnsupportedEncodingException
     {
         return createAndSign(name, ImmutableMap.of(key, values));
     }
 
-    private SignedUrlTest createAndSign(String name, Map<String, String[]> params) throws UnsupportedEncodingException
+    private List<SignedUrlTest> createAndSign(String name, Map<String, String[]> params) throws UnsupportedEncodingException
     {
         return createAndSign(name, basePath, params);
     }
 
-    private SignedUrlTest createAndSign(String name, URI basePath, Map<String, String[]> params) throws UnsupportedEncodingException
+    private List<SignedUrlTest> createAndSign(String name, URI basePath, Map<String, String[]> params) throws UnsupportedEncodingException
     {
-        String canonicalUrl = HttpRequestCanonicalizer.canonicalize(new CanonicalHttpUriRequest("GET", basePath.getPath(), "", params));
+        ArrayList<SignedUrlTest> tests = Lists.newArrayList();
+        tests.add(createAndSignTest(name, basePath, params));
+        tests.add(createAndSignTest(name + " (uri)", createURI(basePath, params), ImmutableMap.<String,String[]>of()));
+        return tests;
+    }
+
+    private SignedUrlTest createAndSignTest(String name, URI basePath, Map<String, String[]> params) throws UnsupportedEncodingException
+    {
+        HashMap<String, String[]> completeParams = new HashMap<String, String[]>(params);
+        if (!StringUtils.isBlank(basePath.getQuery()))
+        {
+            completeParams.putAll(JwtAuthorizationGenerator.constructParameterMap(basePath));
+        }
+        String canonicalUrl = HttpRequestCanonicalizer.canonicalize(new CanonicalHttpUriRequest("GET", basePath.getPath(), "", completeParams));
         String signedUrl = signer.signGetUrl(basePath, params);
         return new SignedUrlTest(name, canonicalUrl, signedUrl);
     }
 
+    private URI createURI(URI basePath, Map<String, String[]> params)
+    {
+        UriBuilder uriBuilder = new UriBuilder()
+                .setScheme(basePath.getScheme())
+                .setAuthority(basePath.getAuthority())
+                .setPath(basePath.getPath());
+
+        UriBuilderUtils.addQueryParameters(uriBuilder, params);
+
+        return uriBuilder.toUri().toJavaUri();
+    }
 }

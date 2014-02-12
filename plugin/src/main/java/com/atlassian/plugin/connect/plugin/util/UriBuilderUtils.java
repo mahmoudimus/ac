@@ -15,9 +15,17 @@ public class UriBuilderUtils
     {
         for (Map.Entry<String, String[]> entry : parameters.entrySet())
         {
-            for (String value : entry.getValue())
+            String[] values = entry.getValue();
+            if (null == values || values.length == 0)
             {
-                uriBuilder.addQueryParameter(entry.getKey(), value);
+                uriBuilder.addQueryParameter(entry.getKey(), "");
+            }
+            else
+            {
+                for (String value : values)
+                {
+                    uriBuilder.addQueryParameter(entry.getKey(), value);
+                }
             }
         }
     }
