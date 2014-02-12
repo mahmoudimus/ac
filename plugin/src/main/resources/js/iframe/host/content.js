@@ -44,8 +44,8 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
 
         function domEventHandler(event) {
             event.preventDefault();
-            var $el = $(event.target),
-            href = $el.closest("a").attr("href"),
+            var $el = $(event.target).closest(selector),
+            href = $el.attr("href"),
             url = new uri.init(href),
             options = {
                 bindTo: $el,
