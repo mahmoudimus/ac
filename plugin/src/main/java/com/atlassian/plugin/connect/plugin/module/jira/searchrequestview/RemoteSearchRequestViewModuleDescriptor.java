@@ -11,9 +11,9 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
+import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -38,7 +38,7 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
     private final TemplateRenderer templateRenderer;
     private final ConditionDescriptorFactory conditionDescriptorFactory;
     private final JiraAuthenticationContext authenticationContext;
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final SearchRequestURLHandler urlHandler;
     private Element descriptor;
     private URI url;
@@ -51,13 +51,13 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
             ApplicationProperties applicationProperties,
             SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
             TemplateRenderer templateRenderer,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            IFrameUriBuilderFactory iFrameUriBuilderFactory,
             DelegatingComponentAccessor componentAccessor)
     {
         super(moduleFactory);
         this.authenticationContext = authenticationContext;
         this.urlHandler = checkNotNull(componentAccessor.getComponent(SearchRequestURLHandler.class));
-        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
+        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.applicationProperties = checkNotNull(applicationProperties);
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
@@ -108,7 +108,7 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
 
     private SearchRequestViewModuleDescriptor createDescriptor(Element element)
     {
-        final String title = getName();
+        final String displayName = getName();
         try
         {
             element.addAttribute("system", "true");
@@ -116,14 +116,17 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
             {
                 @Override
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
-                    PluginParseException
+                        PluginParseException
                 {
-                    return (T) new RemoteSearchRequestView(applicationProperties,
-                        searchRequestViewBodyWriterUtil,
-                        templateRenderer,
-                        url,
-                        title,
-                        remotablePluginAccessorFactory.get(getPluginKey()));
+                    return (T) new RemoteSearchRequestView(
+                            applicationProperties,
+                            searchRequestViewBodyWriterUtil,
+                            templateRenderer,
+                            iFrameUriBuilderFactory,
+                            getPluginKey(),
+                            getKey(),
+                            url,
+                            displayName);
                 }
             };
 

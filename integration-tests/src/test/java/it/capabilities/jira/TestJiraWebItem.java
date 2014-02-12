@@ -27,6 +27,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.assertURIEquals;
+import static it.capabilities.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.greaterThan;
@@ -59,7 +60,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.page)
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
-                                .withKey("ac-general-web-item")
+                                .withKey(ADDON_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
                                 .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
@@ -67,7 +68,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.addon)
                                 .withName(new I18nProperty("AC Direct To Addon Web Item", "ac.dir"))
-                                .withKey("ac-direct-to-addon-web-item")
+                                .withKey(ADDON_DIRECT_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
                                 .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
@@ -75,14 +76,14 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
                                 .withName(new I18nProperty("Quick project link", "ac.qp"))
-                                .withKey("quick-project-link")
+                                .withKey(PRODUCT_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
                                 .withUrl("/browse/ACDEV-1234?project_key={project.key}")
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("google link", "ac.gl"))
-                                .withKey("google-link")
+                                .withKey(ABSOLUTE_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
                                 .withUrl("http://www.google.com")
@@ -93,7 +94,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("wikipedia link", "ac.ild"))
-                                .withKey("wikipedia-link")
+                                .withKey(ABSOLUTE_WEBITEM_INLINE_DIALOG)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
                                 .withContext(AddOnUrlContext.addon)
@@ -147,7 +148,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
     
     @Test
-    public void testRelativeWebItem()
+    public void testRelativePageWebItem()
     {
         loginAsAdmin();
 
@@ -172,6 +173,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
         assertEquals(project.getId(), webItem.getFromQueryString("pid"));
         assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
+
+        verifyStandardAddOnRelativeQueryParameters(webItem, "/jira");
     }
 
     @Test
@@ -246,6 +249,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
         webItem.click();
         assertTrue("web item dialog should be open", webItem.isActiveDialog());
+
+        verifyStandardAddOnRelativeQueryParameters(webItem, "/jira");
     }
     @Test
     public void testAbsoluteWebItemDialogXdm() throws Exception
