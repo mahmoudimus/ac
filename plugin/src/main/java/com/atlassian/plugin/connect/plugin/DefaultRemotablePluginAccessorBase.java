@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
+import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -34,8 +35,13 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
 
     protected DefaultRemotablePluginAccessorBase(Plugin plugin, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
     {
-        this.pluginKey = plugin.getKey();
-        this.pluginName = plugin.getName();
+        this(plugin.getKey(), plugin.getName(), baseUrlSupplier, httpContentRetriever);
+    }
+
+    protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
+    {
+        this.pluginKey = pluginKey;
+        this.pluginName = pluginName;
         this.baseUrlSupplier = baseUrlSupplier;
         this.httpContentRetriever = httpContentRetriever;
     }
@@ -80,21 +86,19 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
         return baseUrlSupplier.get();
     }
 
-    protected URI getTargetUrl(URI targetPath)
+    public URI getTargetUrl(URI targetPath)
     {
         if (targetPath.isAbsolute())
         {
             throw new IllegalArgumentException("Target url was absolute (" + targetPath.toString() + "). Expected relative path to base URL of add-on (" + getBaseUrl().toString() + ").");
         }
 
-        String path = targetPath.getRawPath();
-        if (!StringUtils.startsWith(path, "/"))
-        {
-            path = "/" + path;
-        }
-
         UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(getBaseUrl()));
-        uriBuilder.setPath(uriBuilder.getPath() + path);
+        String path = new PathBuilder()
+                .withPathFragment(uriBuilder.getPath())
+                .withPathFragment(targetPath.getRawPath())
+                .build();
+        uriBuilder.setPath(path);
         uriBuilder.setQuery(targetPath.getRawQuery());
 
         return uriBuilder.toUri().toJavaUri();

@@ -204,6 +204,20 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
         verify(jwtService).issueJwt(argThat(hasExactlyTheseClaims("iss", "sub", "iat", "exp", JwtConstants.Claims.QUERY_HASH)), any(ApplicationLink.class));
     }
 
+    @Test
+    public void slashesAreNormalizedOnConcatenation() throws Exception
+    {
+        RemotablePluginAccessor accessor = createRemotePluginAccessor("https://example.com/addon/");
+        assertThat(accessor.createGetUrl(URI.create("/handler"), Collections.<String,String[]>emptyMap()), is("https://example.com/addon/handler"));
+    }
+
+    @Test
+    public void trailingSlashesAreLeftIntact() throws Exception
+    {
+        RemotablePluginAccessor accessor = createRemotePluginAccessor("https://example.com/addon");
+        assertThat(accessor.createGetUrl(URI.create("/handler/"), Collections.<String,String[]>emptyMap()), is("https://example.com/addon/handler/"));
+    }
+
     @Override
     protected Map<String, String> getPostSigningHeaders(Map<String, String> preSigningHeaders)
     {
@@ -401,6 +415,11 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
 
     private RemotablePluginAccessor createRemotePluginAccessor()
     {
+        return createRemotePluginAccessor(BASE_URL);
+    }
+
+    private RemotablePluginAccessor createRemotePluginAccessor(final String baseUrl)
+    {
         when(jwtService.issueJwt(any(String.class), eq(applicationLink))).thenReturn(MOCK_JWT);
         ConnectApplinkManager connectApplinkManager = mock(DefaultConnectApplinkManager.class);
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(applicationLink);
@@ -409,7 +428,7 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
             @Override
             public URI get()
             {
-                return URI.create(BASE_URL);
+                return URI.create(baseUrl);
             }
         };
 

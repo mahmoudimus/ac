@@ -96,14 +96,33 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
         assertThat(createRemotePluginAccessor().getAuthorizationGenerator(), is(not(nullValue())));
     }
 
+    @Test
+    public void slashesAreNormalizedOnConcatenation() throws Exception
+    {
+        RemotablePluginAccessor accessor = createRemotePluginAccessor("https://example.com/addon/");
+        assertThat(accessor.createGetUrl(URI.create("/handler"), Collections.<String,String[]>emptyMap()), is("https://example.com/addon/handler"));
+    }
+
+    @Test
+    public void trailingSlashesAreLeftIntact() throws Exception
+    {
+        RemotablePluginAccessor accessor = createRemotePluginAccessor("https://example.com/addon");
+        assertThat(accessor.createGetUrl(URI.create("/handler/"), Collections.<String,String[]>emptyMap()), is("https://example.com/addon/handler/"));
+    }
+
     private RemotablePluginAccessor createRemotePluginAccessor() throws ExecutionException, InterruptedException
+    {
+        return createRemotePluginAccessor(BASE_URL);
+    }
+
+    private RemotablePluginAccessor createRemotePluginAccessor(final String baseUrl) throws ExecutionException, InterruptedException
     {
         Supplier<URI> baseUrlSupplier = new Supplier<URI>()
         {
             @Override
             public URI get()
             {
-                return URI.create(BASE_URL);
+                return URI.create(baseUrl);
             }
         };
         OAuthLinkManager oAuthLinkManager = new MockOAuthLinkManager(mock(ServiceProviderConsumerStore.class), mock(AuthenticationConfigurationManager.class), mock(ConsumerService.class, RETURNS_DEEP_STUBS));

@@ -21,6 +21,8 @@ public interface RemotablePluginAccessor
      */
     URI getBaseUrl();
 
+    URI getTargetUrl(URI targetPath);
+
     String signGetUrl(URI targetPath, Map<String, String[]> params);
 
     String createGetUrl(URI targetPath, Map<String, String[]> params);

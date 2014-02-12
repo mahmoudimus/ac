@@ -30,7 +30,7 @@ public final class RemotablePluginsPluginUriResolver implements PluginUriResolve
     {
         if (!path.isAbsolute())
         {
-            return Optional.of(new UriBuilder(Uri.parse(remotablePluginAccessorFactory.get(pluginKey).getBaseUrl() + path.toString())).toUri().toJavaUri());
+            return Optional.of(remotablePluginAccessorFactory.get(pluginKey).getTargetUrl(path));
         }
         return Optional.absent();
     }
