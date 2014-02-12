@@ -145,7 +145,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
     
     @Test
-    public void testRelativeWebItem()
+    public void testRelativePageWebItem()
     {
         loginAsAdmin();
 
@@ -156,8 +156,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
         assertEquals(project.getId(), webItem.getFromQueryString("pid"));
         assertThat(webItem.getPath(), startsWith(product.getProductInstance().getBaseUrl()));
-
-        verifyStandardAddOnRelativeQueryParameters(webItem, "/jira");
     }
 
     @Test
