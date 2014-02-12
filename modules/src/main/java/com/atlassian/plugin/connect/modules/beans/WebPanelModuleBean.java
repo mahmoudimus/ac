@@ -20,7 +20,12 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
      * Location in the application interface for this panel.
-     */
+     * <p/>
+     * Product location documentation:
+     * 
+     * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
+     * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
+     */ 
     private String location;
     /**
      * The width and height of the web panel on the page.
