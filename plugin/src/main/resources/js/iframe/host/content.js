@@ -9,18 +9,19 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
     }
 
     function getWebItemPluginKey(target){
-        return target.attr('class').match(/ap-plugin-key-([^\s]*)/)[1];
+        var m = target.attr('class').match(/ap-plugin-key-([^\s]*)/);
+        return $.isArray(m) ? m[1] : false;
     }
     function getWebItemModuleKey(target){
-        return target.attr('class').match(/ap-module-key-([^\s]*)/)[1];
+        var m = target.attr('class').match(/ap-module-key-([^\s]*)/);
+        return $.isArray(m) ? m[1] : false;
     }
 
     function getOptionsForWebItem(target){
         var pluginKey = getWebItemPluginKey(target),
             moduleKey = getWebItemModuleKey(target),
             type = target.hasClass('ap-inline-dialog') ? 'inlineDialog' : 'dialog';
-
-        return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
+            return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
     }
 
     function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
