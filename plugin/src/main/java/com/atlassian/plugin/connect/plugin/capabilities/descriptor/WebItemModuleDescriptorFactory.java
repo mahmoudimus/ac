@@ -95,6 +95,12 @@ public class WebItemModuleDescriptorFactory
             styles.add("ap-inline-dialog");
         }
 
+        if (!bean.getTarget().isPageTarget())
+        {
+            styles.add("ap-plugin-key-" + plugin.getKey());
+            styles.add("ap-module-key-" + webItemKey);
+        }
+
         Map<String, Object> dialogOptions = bean.getTarget().getOptions();
         Map<String, String> beanParams = bean.getParams();
 
