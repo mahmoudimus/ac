@@ -1,28 +1,31 @@
-package it.com.atlassian.plugin.connect.filter;
+package com.atlassian.plugin.connect.test.filter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddonTestFilterResults
+public class DefaultAddonTestFilterResults implements AddonTestFilterResults
 {
     private Map<String, ServletRequestSnaphot> requestMap;
 
-    public AddonTestFilterResults()
+    public DefaultAddonTestFilterResults()
     {
         this.requestMap = new HashMap<String, ServletRequestSnaphot>();
     }
 
+    @Override
     public void put(String key, ServletRequestSnaphot req)
     {
         requestMap.put(key, req);
     }
 
+    @Override
     public ServletRequestSnaphot getRequest(String addonKey, String resource)
     {
         String res = (resource.startsWith("/")) ? resource : "/" + resource;
         return requestMap.get(addonKey + res);
     }
 
+    @Override
     public void clearRequest(String addonKey, String resource)
     {
         String res = (resource.startsWith("/")) ? resource : "/" + resource;

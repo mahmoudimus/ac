@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.atlassian.plugin.connect.test.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
@@ -23,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.TestPluginInstaller;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;

@@ -27,6 +27,7 @@
         <module>json-schemagen</module>
         <module>api-parent</module>
         <module>modules</module>
+        <module>test-support-plugin</module>
         <module>plugin</module>
     </modules>
 
@@ -34,7 +35,6 @@
         <profile>
             <id>it</id>
             <modules>
-                <module>rest-test-plugin</module>
                 <module>integration-tests</module>
             </modules>
         </profile>

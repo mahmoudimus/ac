@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.filter;
+package com.atlassian.plugin.connect.test.filter;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -7,8 +7,6 @@ import java.util.regex.Pattern;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
  * A ServletFilter that can act as a remote addon inside of a wired test.
@@ -58,7 +56,7 @@ public class AddonTestFilter implements Filter
             return;
         }
 
-        res.sendError(SC_NOT_FOUND);
+        res.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Override

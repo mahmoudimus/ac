@@ -6,15 +6,14 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.test.TestPluginInstaller;
+import com.atlassian.plugin.connect.test.filter.AddonTestFilterResults;
+import com.atlassian.plugin.connect.test.filter.ServletRequestSnaphot;
 import com.atlassian.plugin.util.WaitUntil;
 
 import org.junit.Test;
 
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.TestPluginInstaller;
-import it.com.atlassian.plugin.connect.filter.AddonTestFilterResults;
-import it.com.atlassian.plugin.connect.filter.ServletRequestSnaphot;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
@@ -33,6 +32,7 @@ public abstract class AbstractAddonLifecycleTest
     public static final String SHARED_SECRET_FIELD_NAME = "sharedSecret";
     public static final String CLIENT_KEY_FIELD_NAME = "clientKey";
     public static final String USER_KEY_FIELD_NAME = "userKey";
+    public static final String POST = "POST";
 
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
@@ -154,7 +154,7 @@ public abstract class AbstractAddonLifecycleTest
             addonKey = plugin.getKey();
             
             ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
-            assertEquals(HttpMethod.POST, request.getMethod());
+            assertEquals(POST, request.getMethod());
 
         }
         finally
@@ -185,7 +185,7 @@ public abstract class AbstractAddonLifecycleTest
             plugin = null;
 
             ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
-            assertEquals(HttpMethod.POST, request.getMethod());
+            assertEquals(POST, request.getMethod());
 
         }
         finally

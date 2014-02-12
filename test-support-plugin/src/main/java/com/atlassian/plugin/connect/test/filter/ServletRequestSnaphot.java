@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.filter;
+package com.atlassian.plugin.connect.test.filter;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
 
 import org.apache.commons.io.IOUtils;
 
@@ -108,9 +106,9 @@ public class ServletRequestSnaphot
         return parameters;
     }
 
-    public HttpMethod getMethod()
+    public String getMethod()
     {
-        return HttpMethod.valueOf(method.toUpperCase());
+        return method.toUpperCase();
     }
 
     public String getServerName()

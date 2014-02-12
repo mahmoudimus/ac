@@ -1,0 +1,44 @@
+<atlassian-plugin key="com.atlassian.plugin.connect.test" name="${project.name} - Test" plugins-version="2">
+    <plugin-info>
+        <version>${project.version}</version>
+        <bundle-instructions>
+            <Import-Package>
+                com.atlassian.plugin.connect.modules*;resolution:=optional,
+                com.atlassian.plugin.connect.modules.*;resolution:=optional,
+                com.atlassian.plugin.connect.modules.beans*;resolution:=optional,
+                com.atlassian.plugin.connect.modules.beans.*;resolution:=optional,
+                com.atlassian.upm.api*,
+                com.atlassian.upm.spi*,
+                *;resolution:=optional
+            </Import-Package>
+            <Export-Package>
+                com.atlassian.plugin.connect.test*,
+                com.atlassian.plugin.connect.test.filter*
+            </Export-Package>
+        </bundle-instructions>
+    </plugin-info>
+
+    <rest key="rest" path="/remoteplugintest" version="1">
+        <package>com.atlassian.plugin.connect.test.rest</package>
+    </rest>
+
+    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+
+    <component key="testPluginInstaller" 
+               class="com.atlassian.plugin.connect.test.DefaultTestPluginInstaller" 
+               interface="com.atlassian.plugin.connect.test.TestPluginInstaller"
+               public="true"
+            />
+
+    <component key="testFilterResults" 
+               class="com.atlassian.plugin.connect.test.filter.DefaultAddonTestFilterResults"
+               interface="com.atlassian.plugin.connect.test.filter.AddonTestFilterResults"
+               public="true"
+            />
+    
+    <servlet-filter key="connect-test-addon" class="com.atlassian.plugin.connect.test.filter.AddonTestFilter"
+                    location="after-encoding" weight="1">
+        <url-pattern>/ac-test-addon/*</url-pattern>
+    </servlet-filter>
+</atlassian-plugin>
