@@ -1,10 +1,13 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.testobjects;
 
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorBase;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.util.concurrent.Promise;
+import com.google.common.base.Supplier;
 
 import java.net.URI;
 import java.util.Map;
@@ -34,29 +37,26 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
     }
 
     @Override
+    public void remove(String pluginKey)
+    {
+        //do nothing
+    }
+
+    @Override
     public RemotablePluginAccessor get(final String pluginKey)
     {
-        return new RemotablePluginAccessor() {
+        Supplier<URI> supplier = new Supplier<URI>()
+        {
             @Override
-            public String getKey()
-            {
-                return pluginKey;
-            }
-
-            @Override
-            public URI getBaseUrl()
+            public URI get()
             {
                 return URI.create(baseUrl);
             }
-
+        };
+        return new DefaultRemotablePluginAccessorBase(pluginKey, pluginKey, supplier, null)
+        {
             @Override
             public String signGetUrl(URI targetPath, Map<String, String[]> params)
-            {
-                return "";
-            }
-
-            @Override
-            public String createGetUrl(URI targetPath, Map<String, String[]> params)
             {
                 return "";
             }
@@ -72,12 +72,12 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
             {
                 return null;
             }
-
-            @Override
-            public String getName()
-            {
-                return null;
-            }
         };
+    }
+
+    @Override
+    public RemotablePluginAccessor get(Plugin plugin)
+    {
+        return get(plugin.getKey());
     }
 }

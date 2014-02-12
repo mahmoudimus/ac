@@ -3,11 +3,10 @@ package com.atlassian.plugin.connect.plugin.installer;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
+import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectPluginEventHandler;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
@@ -15,6 +14,7 @@ import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.upm.spi.PluginInstallException;
+import com.google.common.base.Strings;
 import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
-
-import com.google.common.base.Strings;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
@@ -38,8 +34,9 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddonRegistry connectAddonRegistry;
-    private final ConnectEventHandler connectEventHandler;
+    private final ConnectPluginEventHandler connectEventHandler;
     private final SharedSecretService sharedSecretService;
+    private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final ConnectAddOnUserService connectAddOnUserService;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
@@ -53,9 +50,10 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                                         BeanToModuleRegistrar beanToModuleRegistrar,
                                         ConnectApplinkManager connectApplinkManager,
                                         ConnectAddonRegistry connectAddonRegistry,
-                                        ConnectEventHandler connectEventHandler,
+                                        ConnectPluginEventHandler connectEventHandler,
                                         SharedSecretService sharedSecretService,
-                                        ConnectAddOnUserService connectAddOnUserService)
+                                        ConnectAddOnUserService connectAddOnUserService,
+                                        ConnectAddonBeanFactory connectAddonBeanFactory)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -67,11 +65,12 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectAddonRegistry = connectAddonRegistry;
         this.connectEventHandler = connectEventHandler;
         this.sharedSecretService = sharedSecretService;
-        this.connectAddOnUserService = checkNotNull(connectAddOnUserService);
+        this.connectAddonBeanFactory = connectAddonBeanFactory;
+        this.connectAddOnUserService = connectAddOnUserService;
     }
 
     @Override
-    public Plugin install(final String username, final Document document)
+    public Plugin install(final String username, final Document document) throws PluginInstallException
     {
         String pluginKey = getPluginKey(document);
         removeOldPlugin(pluginKey);
@@ -95,12 +94,12 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     }
 
     @Override
-    public Plugin install(String username, String jsonDescriptor)
+    public Plugin install(String username, String jsonDescriptor) throws PluginInstallException
     {
         String pluginKey;
         try
         {
-            ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(jsonDescriptor, ConnectAddonBean.class);
+            ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
             pluginKey = addOn.getKey();
 
             removeOldPlugin(addOn.getKey());
@@ -117,8 +116,11 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
                 //applink, baseurl and secret MUST be created before any modules
-                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, connectAddOnUserService.getOrCreateUserKey(addOn.getKey()));
+                String userKey = connectAddOnUserService.getOrCreateUserKey(addOn.getKey());
+                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, userKey);
                 connectAddonRegistry.storeBaseUrl(pluginKey, addOn.getBaseUrl());
+                connectAddonRegistry.storeUserKey(pluginKey, userKey);
+                connectAddonRegistry.storeAuthType(pluginKey,authType);
                 
                 if(!Strings.isNullOrEmpty(sharedSecret))
                 {
@@ -132,18 +134,13 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 connectAddonRegistry.storeDescriptor(pluginKey, jsonDescriptor);
 
                 //make the sync callback if needed
-                connectEventHandler.pluginInstalled(addOn, sharedSecret);
+                connectEventHandler.pluginInstalled(installedPlugin, addOn, sharedSecret);
                 
                 /*
                 We need to manually fire the enabled event because the actual plugin enabled already fired and we ignored it.
                 This is so we can register webhooks during the module registration phase and they will get fired with this enabled event.
                  */
                 connectEventHandler.publishEnabledEvent(pluginKey);
-
-            }
-            catch (IllegalStateException e)
-            {
-                uninstallWithException(installedPlugin, e);
             }
             catch (Exception e)
             {

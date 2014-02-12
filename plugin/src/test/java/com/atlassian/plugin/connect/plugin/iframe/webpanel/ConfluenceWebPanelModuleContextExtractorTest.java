@@ -8,9 +8,6 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameter
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;

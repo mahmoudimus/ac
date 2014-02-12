@@ -45,12 +45,12 @@ public class LicenseRetriever
 
     public String getServiceEntitlementNumber(String pluginKey)
     {
-        return getLicense(pluginKey).map(new Function<PluginLicense, String>()
+        return getLicense(pluginKey).flatMap(new Function<PluginLicense, Option<String>>()
         {
             @Override
-            public String apply(final PluginLicense input)
+            public Option<String> apply(final PluginLicense input)
             {
-                return input.getSupportEntitlementNumber().get();
+                return input.getSupportEntitlementNumber();
             }
         }).getOrElse((String) null);
     }

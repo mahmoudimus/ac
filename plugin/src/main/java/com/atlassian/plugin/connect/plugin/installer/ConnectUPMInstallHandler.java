@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLoca
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
@@ -16,7 +17,6 @@ import com.atlassian.upm.spi.PluginInstallResult;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.dom4j.Document;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,20 +38,23 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     private final ConnectAddOnInstaller connectInstaller;
     private final UserManager userManager;
     private final FormatConverter formatConverter;
-    private final BundleContext bundleContext;
     private final JsonDescriptorValidator jsonDescriptorValidator;
     private final ConnectSchemaLocator schemaLocator;
+    private final ApplicationProperties applicationProperties;
 
     @Inject
-    public ConnectUPMInstallHandler(LegacyAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext, JsonDescriptorValidator jsonDescriptorValidator, ConnectSchemaLocator schemaLocator)
+    public ConnectUPMInstallHandler(LegacyAddOnIdentifierService connectIdentifier,
+            ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter,
+            JsonDescriptorValidator jsonDescriptorValidator, ConnectSchemaLocator schemaLocator,
+            final ApplicationProperties applicationProperties)
     {
         this.connectIdentifier = connectIdentifier;
         this.connectInstaller = connectInstaller;
         this.userManager = userManager;
         this.formatConverter = formatConverter;
-        this.bundleContext = bundleContext;
         this.jsonDescriptorValidator = jsonDescriptorValidator;
         this.schemaLocator = schemaLocator;
+        this.applicationProperties = applicationProperties;
     }
 
     @Override
@@ -105,18 +108,6 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             else
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                result = jsonDescriptorValidator.validate(json,schemaLocator.getSchemaForCurrentProduct());
-                Option<String> errorI18nKey = Option.some("connect.invalid.descriptor.install.exception");
-                
-                if(!result.isSuccess())
-                {
-                    String msg = "Invalid connect descriptor: " + result.getMessageReport();
-                    log.error(msg);
-                    
-                    //Note: currently UPM can only display static custom messages from I18n props. It will not display any dynamic strings.
-                    throw new PluginInstallException(msg,errorI18nKey,false);
-                }
-                
                 plugin = connectInstaller.install(username, json);
             }
 
@@ -128,9 +119,11 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         }
         catch (Exception e)
         {
+            // pretty sure if we end up here Connect has done something wrong, not the add-on, so let's describe it as
+            // an internal error and recommend contacting Atlassian support.
             log.error("Failed to install " + descriptorFile.getName() + ": " + e.getMessage(), e);
             throw new PluginInstallException("Unable to install connect add on. " + e.getMessage(),
-                    Option.some("connect.remote.upm.install.exception"));
+                    Option.some("connect.remote.upm.install.internal.error"));
         }
     }
 

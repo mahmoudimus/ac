@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.descriptor.WebSectionModuleDescriptorFactoryForTests;
@@ -25,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
@@ -43,7 +41,6 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     private WebSectionModuleDescriptor descriptor;
 
     @Mock private PluginForTests plugin;
-    @Mock private ConnectAutowireUtil connectAutowireUtil;
     @Mock private HostContainer hostContainer;
     @Mock private WebInterfaceManager webInterfaceManager;
     @Mock private UserManager userManager;
@@ -56,11 +53,10 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     @Before
     public void beforeEachTest() throws Exception
     {
-        ConnectWebSectionModuleDescriptorFactory webSectionFactory = new ConnectWebSectionModuleDescriptorFactory(connectAutowireUtil, conditionModuleFragmentFactory, new WebSectionModuleDescriptorFactoryForTests(webInterfaceManager));
+        ConnectWebSectionModuleDescriptorFactory webSectionFactory = new ConnectWebSectionModuleDescriptorFactory(conditionModuleFragmentFactory, new WebSectionModuleDescriptorFactoryForTests(webInterfaceManager));
         when(plugin.getKey()).thenReturn("my-awesome-plugin");
         when(plugin.getName()).thenReturn("My Plugin™");
         ConnectWebSectionModuleDescriptor aDescriptor = new ConnectWebSectionModuleDescriptor(webInterfaceManager);
-        when(connectAutowireUtil.createBean(ConnectWebSectionModuleDescriptor.class)).thenReturn(aDescriptor);
 
         when(conditionModuleFragmentFactory.createFragment(eq("my-awesome-plugin"), anyList(), anyString()))
                 .thenReturn(conditionElement());

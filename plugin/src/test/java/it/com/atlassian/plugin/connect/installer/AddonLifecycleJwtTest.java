@@ -1,0 +1,266 @@
+package it.com.atlassian.plugin.connect.installer;
+
+import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.jwt.JwtConstants;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
+import com.atlassian.plugin.util.WaitUntil;
+import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
+import com.google.gson.JsonParser;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import it.com.atlassian.plugin.connect.TestAuthenticator;
+import it.com.atlassian.plugin.connect.TestPluginInstaller;
+import it.com.atlassian.plugin.connect.filter.AddonTestFilterResults;
+import it.com.atlassian.plugin.connect.filter.JwtTestVerifier;
+import it.com.atlassian.plugin.connect.filter.ServletRequestSnaphot;
+
+import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static org.junit.Assert.*;
+
+@RunWith(AtlassianPluginsTestRunner.class)
+public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
+{
+
+    public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService)
+    {
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService);
+    }
+
+    @BeforeClass
+    public void setup() throws Exception
+    {
+        testAuthenticator.authenticateUser("admin");
+        
+        initBeans(newAuthenticationBean().withType(AuthenticationType.JWT).build());
+    }
+
+    @Test
+    public void installPostContainsSharedSecret() throws Exception
+    {
+        ConnectAddonBean addon = installOnlyBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            addonKey = plugin.getKey();
+            
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            String payload = request.getEntity();
+
+            boolean hasSharedSecret = new JsonParser().parse(payload).getAsJsonObject().has(SHARED_SECRET_FIELD_NAME);
+            assertTrue("field " + SHARED_SECRET_FIELD_NAME + " not found in request payload: " + payload, hasSharedSecret);
+
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void enabledPostContainsValidSharedSecret() throws Exception
+    {
+        ConnectAddonBean addon = installAndEnabledBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            addonKey = plugin.getKey();
+            final String finalKey = addonKey;
+            
+            ServletRequestSnaphot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
+            String installPayload = installRequest.getEntity();
+
+            String sharedSecret = new JsonParser().parse(installPayload).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString();
+            String clientKey = new JsonParser().parse(installPayload).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
+
+            WaitUntil.invoke(new WaitUntil.WaitCondition()
+            {
+                @Override
+                public boolean isFinished()
+                {
+                    return null != testFilterResults.getRequest(finalKey, ENABLED);
+                }
+
+                @Override
+                public String getWaitMessage()
+                {
+                    return "waiting for enable webhook post...";
+                }
+            });
+
+            ServletRequestSnaphot enableRequest = testFilterResults.getRequest(addonKey, ENABLED);
+
+            String jwtToken = enableRequest.getHeaders().get(JwtConstants.HttpRequests.AUTHORIZATION_HEADER.toLowerCase());
+
+            JwtTestVerifier verifier = new JwtTestVerifier(sharedSecret, clientKey);
+
+            assertTrue("unverified jwt token", verifier.jwtAndClientAreValid(jwtToken));
+
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, ENABLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void installPostContainsNoUserKey() throws Exception
+    {
+        ConnectAddonBean addon = installOnlyBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            addonKey = plugin.getKey();
+
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            String payload = request.getEntity();
+            boolean hasUserKey = new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME);
+
+            assertTrue("field " + USER_KEY_FIELD_NAME + " found in request payload: " + payload, !hasUserKey);
+
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void uninstallPostContainsValidJwt() throws Exception
+    {
+        ConnectAddonBean addon = installAndUninstallBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            addonKey = plugin.getKey();
+
+            ServletRequestSnaphot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
+            String installPayload = installRequest.getEntity();
+
+            String sharedSecret = new JsonParser().parse(installPayload).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString();
+            String clientKey = new JsonParser().parse(installPayload).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
+
+            testPluginInstaller.uninstallPlugin(plugin);
+            plugin = null;
+
+            ServletRequestSnaphot uninstallRequest = testFilterResults.getRequest(addonKey, UNINSTALLED);
+
+            String jwtToken = uninstallRequest.getHeaders().get(JwtConstants.HttpRequests.AUTHORIZATION_HEADER.toLowerCase());
+
+            JwtTestVerifier verifier = new JwtTestVerifier(sharedSecret, clientKey);
+
+            assertTrue("unverified jwt token", verifier.jwtAndClientAreValid(jwtToken));
+
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void uninstallPostContainsNoUserKey() throws Exception
+    {
+        ConnectAddonBean addon = installAndUninstallBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            addonKey = plugin.getKey();
+
+            testPluginInstaller.uninstallPlugin(plugin);
+            plugin = null;
+
+            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            String payload = request.getEntity();
+            boolean hasUserKey = new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME);
+
+            assertTrue("field " + USER_KEY_FIELD_NAME + " found in request payload: " + payload, !hasUserKey);
+
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void appLinkIsCreatedWithCorrectParameters() throws Exception
+    {
+        ConnectAddonBean addon = installOnlyBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            addonKey = plugin.getKey();
+
+            ApplicationLink appLink = connectApplinkManager.getAppLink(addon.getKey());
+
+            assertNotNull((appLink));
+            assertEquals(addon.getBaseUrl(), appLink.getDisplayUrl().toString());
+            assertEquals("addon_" + addon.getKey(), appLink.getProperty("user.key"));
+
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
+    }
+
+}

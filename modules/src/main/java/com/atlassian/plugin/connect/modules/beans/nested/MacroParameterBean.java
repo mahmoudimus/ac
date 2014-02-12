@@ -12,10 +12,19 @@ import java.util.List;
 
 /**
  * Describes a parameter input field for a macro.
- * <p/>
+ *
+ * Any declared parameters must also be included in the URL value of the macro in order to serialise this value. For
+ * example, for a macro with a parameter `view` it should be added to the macro url as follows:
+ *
+ *     "dynamicContentMacros": [{
+ *         ...
+ *         "url": "/render-map?pageTitle={page.title}&viewChoice={view}",
+ *         ...
+ *     }]
+ *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_PARAMS_EXAMPLE}
  * @schemaTitle Macro Input Parameter
  * @since 1.0
  */
@@ -42,9 +51,9 @@ public class MacroParameterBean extends BaseModuleBean
 
     /**
      * The type of parameter.
-     * <p/>
+     *
      * Currently the following parameter types are supported in the macro browser's UI:
-     * <p/>
+     *
      * * `attachment`: displays an autocomplete field for search on attachment filenames.
      * * `boolean`: displays a check box.
      * * `confluence-content`: displays an autocomplete field for search on page and blog titles.

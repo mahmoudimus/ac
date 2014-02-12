@@ -51,11 +51,14 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * * `page.title`: The page title, e.g. 'My Page'
      * * `page.type`: The page type, e.g. 'page'
      * * `page.version.id`: The page version, e.g. '6'
-     * * `space.id`: The space ID, e.g. 'ac'
-     * * `space.key`: The space key, e.g. '65537'
+     * * `space.id`: The space ID, e.g. '65537'
+     * * `space.key`: The space key, e.g. 'AC'
      * * `user.id`: The user ID, e.g. 'admin'
      * * `user.key`: The user key, e.g. 'ff80808143087d180143087d3a910004'
      * * `output.type`: The output type, e.g. 'display'
+     *
+     *Context parameters for macros are also required in the URL. Please see the
+     * [Macro Input Parameter](../fragment/macro-input-parameter.html) documentation for details.
      */
     @Required
     @StringSchemaAttributes(format = "uri-template")

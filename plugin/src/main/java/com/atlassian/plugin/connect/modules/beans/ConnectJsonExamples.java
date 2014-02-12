@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
@@ -57,6 +58,7 @@ public class ConnectJsonExamples
     public static final String LINK_EXAMPLE = createLinkExample();
     public static final String LINKS_EXAMPLE = createLinksExample();
     public static final String MACRO_EDITOR_EXAMPLE = createMacroEditorExample();
+    public static final String MACRO_PARAMS_EXAMPLE = createMacroParamsExample();
     public static final String PAGE_EXAMPLE = createPageExample();
     public static final String PANEL_LAYOUT_EXAMPLE = createPanelLayoutExample();
     public static final String PARAMS_EXAMPLE = createParamsExample();
@@ -177,6 +179,7 @@ public class ConnectJsonExamples
         WebItemModuleBean webItemModuleBean = WebItemModuleBean.newWebItemBean()
                 .withName(new I18nProperty("My Web Item", ""))
                 .withUrl("/my-web-item")
+                .withKey("web-item-example")
                 .withLocation("system.preset.filters")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(16).withWidth(16).build())
                 .withStyleClasses("webitem", "system-present-webitem")
@@ -191,6 +194,7 @@ public class ConnectJsonExamples
     {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withName(new I18nProperty("My Function", "my.function.name"))
+                .withKey("workflow-example")
                 .withDescription(new I18nProperty("My Description", "my.function.desc"))
                 .withTriggered(new UrlBean("/triggered"))
                 .withCreate(new UrlBean("/create"))
@@ -251,6 +255,7 @@ public class ConnectJsonExamples
     {
         DynamicContentMacroModuleBean macroModuleBean = DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
                 .withName(new I18nProperty("Maps", ""))
+                .withKey("dynamic-macro-example")
                 .withUrl("/render-map?pageTitle={page.title}")
                 .withAliases("map")
                 .withBodyType(MacroBodyType.NONE)
@@ -291,6 +296,7 @@ public class ConnectJsonExamples
     {
         StaticContentMacroModuleBean macroModuleBean = StaticContentMacroModuleBean.newStaticContentMacroModuleBean()
                 .withName(new I18nProperty("Maps", ""))
+                .withKey("static-macro-example")
                 .withUrl("/render-map?pageTitle={page.title}")
                 .withAliases("map")
                 .withBodyType(MacroBodyType.NONE)
@@ -325,6 +331,22 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("staticContentMacros", macroModuleBean));
     }
 
+    private static String createMacroParamsExample()
+    {
+        MacroParameterBean macroParameterBean = newMacroParameterBean()
+                .withIdentifier("view")
+                .withName(new I18nProperty("Map View", ""))
+                .withDescription(new I18nProperty("Allows switching between view types", ""))
+                .withType("enum")
+                .withDefaultValue("Map")
+                .withMultiple(false)
+                .withRequired(true)
+                .withValues("Map", "Satellite")
+                .build();
+
+        return gson.toJson(createModuleArray("parameters", macroParameterBean));
+    }
+
     private static String createSpaceToolsTabExample()
     {
         SpaceToolsTabModuleBean spaceToolsTabModuleBean = SpaceToolsTabModuleBean.newSpaceToolsTabBean()
@@ -351,7 +373,11 @@ public class ConnectJsonExamples
     private static String createWebitemTargetExample()
     {
         WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
-                .withType(WebItemTargetType.page).build();
+                .withType(WebItemTargetType.inlineDialog)
+                .withOption("offsetX", "30px")
+                .withOption("offsetY", "20px")
+                .withOption("onHover", true)
+                .build();
 
         return gson.toJson(createModuleObject("target", bean));
     }

@@ -1,10 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
 
 import org.dom4j.Element;
@@ -16,10 +15,10 @@ import org.springframework.stereotype.Component;
 public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebHookModuleBean, WebHookModuleDescriptor>
 {
     private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
-    private final ConnectAutowireUtil autowireUtil;
+    private final ConnectContainerUtil autowireUtil;
 
     @Autowired
-    public ConnectWebHookModuleDescriptorFactory(ParamsModuleFragmentFactory paramsModuleFragmentFactory, ConnectAutowireUtil autowireUtil)
+    public ConnectWebHookModuleDescriptorFactory(ParamsModuleFragmentFactory paramsModuleFragmentFactory, ConnectContainerUtil autowireUtil)
     {
         this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
         this.autowireUtil = autowireUtil;

@@ -37,6 +37,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+                .setAuthenticationToNone()
                 .addModule(
                         "adminPages",
                         newPageBean()

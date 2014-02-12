@@ -20,7 +20,7 @@ You may version these kinds of changes to your add-on in any way you want, inclu
 dates, others with commit hashes, and others use named versions.
 
 Regardless of how you version and release your add-on, the Marketplace must keep up with the latest version of your
-[descriptor file](../modules/). Whenever you change your add-on descriptor file ({{atlassian-connect.json}}), that file
+[descriptor file](../modules/). Whenever you change your add-on descriptor file (`atlassian-connect.json`), that file
 must be updated on the Marketplace and installed on all client instances before that change will take effect.
 
 ## Changing your add-on's descriptor file
@@ -41,7 +41,7 @@ approval, which usually takes 3-5 business days.
 but in addition any existing clients will have to approve the change to start paying for your add-on. They must choose
 either to approve or to uninstall the add-on.
 
-3. You change your add-on to require additional [scopes](./scopes.html) (a "scope" is a group of permissions). In this
+3. You change your add-on to require additional [scopes](../scopes/scopes.html) (a "scope" is a group of permissions). In this
 case, the marketplace update will happen automatically, but your clients must be given the opportunity to approve the
 new scopes. They must choose either to approve or to uninstall the add-on. 
 

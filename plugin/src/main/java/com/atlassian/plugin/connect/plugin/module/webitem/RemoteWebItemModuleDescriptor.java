@@ -15,6 +15,8 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 
+import java.net.URI;
+
 import static com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator.createLocalUrl;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
@@ -99,15 +101,14 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
 
     private void createIcon(final Element descriptor)
     {
-        String pluginBaseUrl = pluginAccessorFactory.get(plugin.getKey()).getBaseUrl().toString();
         Element iconElement = descriptor.element("icon");
         if (iconElement != null)
         {
             Element iconLinkElement = iconElement.element("link");
             if (iconLinkElement != null)
             {
-                String iconPath = iconLinkElement.getText();
-                iconLinkElement.setText(pluginBaseUrl + iconPath);
+                URI iconPath = URI.create(iconLinkElement.getText());
+                iconLinkElement.setText(pluginAccessorFactory.get(plugin.getKey()).getTargetUrl(iconPath).toString());
             }
             else
             {
@@ -148,7 +149,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
     private boolean isAbsolute()
     {
         boolean absolute = Boolean.parseBoolean(getOptionalAttribute(link, "absolute", "false"));
-        return absolute || url.startsWith("http") || url.startsWith("https");
+        return absolute || url.startsWith("http");
     }
 
 }

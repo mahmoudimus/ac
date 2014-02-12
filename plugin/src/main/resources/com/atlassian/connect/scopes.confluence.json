@@ -86,19 +86,19 @@
       "key": "content-api",
       "name": "api",
       "basePaths": ["/content($|/.*)"],
-      "versions": ["1", "1.0", "latest"]
+      "versions": []
     },
     {
       "key": "contentbody",
       "name": "api",
       "basePaths": ["/contentbody($|/.*)"],
-      "versions": ["1", "1.0", "latest"]
+      "versions": []
     },
     {
       "key": "space-api",
       "name": "api",
       "basePaths": ["/space($|/.*)"],
-      "versions": ["1", "1.0", "latest"]
+      "versions": []
     },
     {
       "key": "macro",

@@ -7,6 +7,8 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+
 @Component
 public class IconModuleFragmentFactory implements ConnectModuleFragmentFactory<IconBean>
 {
@@ -21,14 +23,14 @@ public class IconModuleFragmentFactory implements ConnectModuleFragmentFactory<I
     @Override
     public DOMElement createFragment(String pluginKey, IconBean bean)
     {
-        String addonBaseUrl = pluginAccessorFactory.get(pluginKey).getBaseUrl().toString();
+        URI url = pluginAccessorFactory.get(pluginKey).getTargetUrl(URI.create(bean.getUrl()));
 
         DOMElement element = new DOMElement("icon");
         element.addAttribute("width", Integer.toString(bean.getWidth()))
               .addAttribute("height", Integer.toString(bean.getHeight()))
               .addElement("link")
-              .addText(addonBaseUrl + bean.getUrl());
-        
+              .addText(url.toString());
+
         return element;
     }
 }

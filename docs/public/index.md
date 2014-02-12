@@ -1,16 +1,3 @@
-<div class="aui-message warning">
-    <p class="title">
-        <span class="aui-icon icon-warning"></span>
-        <strong>Important</strong>
-    </p>
-    You are currently browsing the _bleeding edge_ documentation for Atlassian Connect. We are determined to bring you the
-    best documentation and clearest set of guidelines we can, and we're making these pre-release notes available to you
-    for consideration and feedback.
-    <p>
-    Please see the [Release Notes](./resources/release-notes.html) guide for a summary of recent changes to the Atlassian Connect framework.
-</div>
-
-
 <img class="index-logo" src="./assets/images/ac_logo.png" width="720">
 
 <h1 class="index-heading">Build, install and sell add-ons in Atlassian OnDemand</h1>
@@ -25,8 +12,8 @@
     </div>
     <div class="aui-item">
         <div class="index-box">
-            [<img src="./assets/images/CharlieGears.png" width="100">](./guides/selling-on-marketplace.html)
-            [<h2>Share it with the world</h2>](./guides/selling-on-marketplace.html)
+            [<img src="./assets/images/CharlieGears.png" width="100">](./developing/selling-on-marketplace.html)
+            [<h2>Share it with the world</h2>](./developing/selling-on-marketplace.html)
             <p>Share your add-on with millions of developers on the Atlassian Marketplace.</p>
         </div>
     </div>
