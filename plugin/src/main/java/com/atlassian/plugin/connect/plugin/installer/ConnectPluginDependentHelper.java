@@ -43,6 +43,12 @@ public class ConnectPluginDependentHelper
         this.bundleContext = bundleContext;
     }
 
+    /**
+     * Returns whether the enabled state is persistent. e.g. should the plugin system enable this on a restart.
+     * Note that this method just returns if the enabled state equals true in the database. If there's no value at
+     * all for the plugin state in the db, the plugin system treats it as enabled=true, but this method will return false
+     * meaning the state is not actually persisted even though plug core will assume enabled=true
+     */
     public boolean isEnabledPersistent(Plugin plugin)
     {
         try
@@ -56,7 +62,7 @@ public class ConnectPluginDependentHelper
         }
         catch (Exception e)
         {
-            log.error("Unable to get persisten state for plugin '" + plugin.getKey() + "' : " + e.getMessage(), e);
+            log.error("Unable to get persistent state for plugin '" + plugin.getKey() + "' : " + e.getMessage(), e);
             //ignore the exception
             return false;
         }
@@ -64,6 +70,12 @@ public class ConnectPluginDependentHelper
         return false;
     }
 
+    /**
+     * Returns whether the disabled state is persistent. e.g. should the plugin system NOT enable this on a restart.
+     * Note that this method just returns (true) if the enabled state equals false in the database. If there's no value at
+     * all for the plugin state in the db, the plugin system treats it as enabled=true, and this method will return false
+     * meaning the state is not actually persisted even though plug core will assume enabled=true
+     */
     public boolean isDisabledPersistent(Plugin plugin)
     {
         try
@@ -76,7 +88,7 @@ public class ConnectPluginDependentHelper
         }
         catch (Exception e)
         {
-            log.error("Unable to get persisten state for plugin '" + plugin.getKey() + "' : " + e.getMessage(), e);
+            log.error("Unable to get persistent state for plugin '" + plugin.getKey() + "' : " + e.getMessage(), e);
 
             //ignore the exception
             return false;
@@ -121,7 +133,6 @@ public class ConnectPluginDependentHelper
         }
 
         connectRegistry.storePluginsToEnable(pluginsToEnableLater);
-        System.out.println(connectRegistry.hasPluginsToEnable());
     }
 
     /**
