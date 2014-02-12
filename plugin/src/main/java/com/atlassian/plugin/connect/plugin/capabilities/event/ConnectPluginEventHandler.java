@@ -338,7 +338,7 @@ public class ConnectPluginEventHandler implements InitializingBean, DisposableBe
             request.setEntity(jsonEventData);
 
             // It's important to use the plugin in the call to remotablePluginAccessorFactory.get(plugin) as we might be calling this due to an uninstall event
-            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(plugin).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, List<String>>emptyMap());
+            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(plugin).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap());
             if (authHeader.isDefined())
             {
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());
