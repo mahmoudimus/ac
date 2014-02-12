@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -274,7 +273,7 @@ public class ConnectAddonManager
             request.setEntity(jsonEventData);
 
             // It's important to use the plugin in the call to remotablePluginAccessorFactory.get(plugin) as we might be calling this due to an uninstall event
-            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(plugin).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, List<String>>emptyMap());
+            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(plugin).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap());
             if (authHeader.isDefined())
             {
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());

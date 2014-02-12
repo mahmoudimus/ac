@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.fugue.Option;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
@@ -29,10 +30,10 @@ public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginA
     private final OAuthLinkManager oAuthLinkManager;
 
     public OAuthSigningRemotablePluginAccessor(Plugin plugin,
-                                                Supplier<URI> baseUrl,
-                                                ServiceProvider serviceProvider,
-                                                HttpContentRetriever httpContentRetriever,
-                                                OAuthLinkManager oAuthLinkManager)
+                                               Supplier<URI> baseUrl,
+                                               ServiceProvider serviceProvider,
+                                               HttpContentRetriever httpContentRetriever,
+                                               OAuthLinkManager oAuthLinkManager)
     {
         super(plugin, baseUrl, httpContentRetriever);
         this.serviceProvider = serviceProvider;
@@ -91,7 +92,7 @@ public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginA
         return oAuthLinkManager.signAsParameters(serviceProvider, method, url, params);
     }
 
-    private class OAuthAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
+    private class OAuthAuthorizationGenerator implements AuthorizationGenerator
     {
         private final ServiceProvider serviceProvider;
         private final OAuthLinkManager oAuthLinkManager;
@@ -102,10 +103,9 @@ public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginA
             this.oAuthLinkManager = oAuthLinkManager;
         }
 
-        @Override
-        public Option<String> generate(HttpMethod method, URI url, Map<String, List<String>> parameters)
+        public Option<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters)
         {
-            return option(oAuthLinkManager.generateAuthorizationHeader(method, serviceProvider, url, parameters));
+            return option(oAuthLinkManager.generateAuthorizationHeader(method, serviceProvider, url, UriBuilderUtils.toListFormat(parameters)));
         }
     }
 }

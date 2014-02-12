@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -54,7 +53,7 @@ public class RemotePluginRequestSigner implements RequestSigner
 
     private Option<String> getAuthHeader(URI uri, String pluginKey)
     {
-        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, Collections.<String, List<String>>emptyMap());
+        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, Collections.<String, String[]>emptyMap());
     }
 
     private AuthorizationGenerator getAuthorizationGenerator(String pluginKey)
