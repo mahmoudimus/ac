@@ -98,6 +98,9 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
                                                 .withOption("onHover", "true")
+                                                .withOption("width", "321px")
+                                                .withOption("height", "201px")
+
                                                 .build()
                                 )
                                 .build(),
@@ -238,6 +241,21 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
+    public void testAbsoluteWebItemInlineDialogTargetOptionDimensions() throws Exception
+    {
+        loginAsAdmin();
+
+        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM_INLINE_DIALOG, Optional.<String>absent());
+        assertNotNull("Web item should be found", webItem);
+        assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
+        webItem.click();
+        assertEquals(webItem.getInlineDialogIframe().getSize().getHeight(), 201);
+        assertEquals(webItem.getInlineDialogIframe().getSize().getWidth(), 321);
+
+    }
+
+    @Test
     public void testAbsoluteWebItemDialog() throws Exception
     {
         loginAsAdmin();
@@ -274,8 +292,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
 
-        assertEquals(dialogPage.getIFrameSize().getHeight(), "200");
-        assertEquals(dialogPage.getIFrameSize().getWidth(), "300");
+        assertEquals(dialogPage.getIFrameSize().getHeight(), 200);
+        assertEquals(dialogPage.getIFrameSize().getWidth(), 300);
 
     }
 

@@ -148,4 +148,8 @@ public class RemoteWebItem
         return (dialog.isPresent() && dialog.isVisible());
     }
 
+    public PageElement getInlineDialogIframe(){
+        return elementFinder.find(By.cssSelector(".aui-inline-dialog iframe"));
+    }
+
 }

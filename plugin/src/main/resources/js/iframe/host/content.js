@@ -9,10 +9,10 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
     }
 
     function getWebItemPluginKey(target){
-        return target.attr('class').match(/ap-plugin-key-[^\s]*/)[0];
+        return target.attr('class').match(/ap-plugin-key-([^\s]*)/)[1];
     }
     function getWebItemModuleKey(target){
-        return target.attr('class').match(/ap-module-key-[^\s]*/)[0];
+        return target.attr('class').match(/ap-module-key-([^\s]*)/)[1];
     }
 
     function getOptionsForWebItem(target){
