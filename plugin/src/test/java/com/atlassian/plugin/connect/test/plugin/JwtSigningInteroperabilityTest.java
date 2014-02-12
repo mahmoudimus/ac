@@ -217,23 +217,37 @@ public class JwtSigningInteroperabilityTest
         tests.add(createAndSign("Key RFC-1738 Unsafe", "#1", "value"));
         tests.add(createAndSign("Key RFC-1738 Reserved", ":1", "value"));
         tests.add(createAndSign("Key RFC-1738 Special", "$1", "value"));
-        tests.add(createAndSign("Multiple Parameters Simple", ImmutableMap.of("a", new String[]{"x"},
+        tests.add(createAndSign("Multiple Parameters Simple", ImmutableMap.of(
+                "a", new String[]{"x"},
                 "b", new String[]{"y"})));
-        tests.add(createAndSign("Multiple Multi-value Parameters", ImmutableMap.of("a", new String[]{"x10", "x1"},
+        tests.add(createAndSign("Multiple Multi-value Parameters", ImmutableMap.of(
+                "a", new String[]{"x10", "x1"},
                 "b", new String[]{"y1", "y10"})));
-        tests.add(createAndSign("Multiple Parameters Spaces", ImmutableMap.of("a", new String[]{"one string", "another one"},
+        tests.add(createAndSign("Multiple Parameters Spaces", ImmutableMap.of(
+                "a", new String[]{"one string", "another one"},
                 "b", new String[]{"more here", "and yet more"})));
-        tests.add(createAndSign("Multiple Parameters Comma-delimited", ImmutableMap.of("a", new String[]{"1,2,3", "4,5,6"},
+        tests.add(createAndSign("Multiple Parameters Comma-delimited", ImmutableMap.of(
+                "a", new String[]{"1,2,3", "4,5,6"},
                 "b", new String[]{"a,b,c", "d,e,f"})));
-        tests.add(createAndSign("Parameter Order", ImmutableMap.of("a10", new String[]{"1"},
+        tests.add(createAndSign("Parameter Order", ImmutableMap.of(
+                "a10", new String[]{"1"},
                 "a1", new String[]{"2"},
                 "b1", new String[]{"3"},
                 "b10", new String[]{"4"})));
-        tests.add(createAndSign("Upper- and Lower-case Parameters", ImmutableMap.of("A", new String[]{"A"},
+        tests.add(createAndSign("Upper- and Lower-case Parameters", ImmutableMap.of(
+                "A", new String[]{"A"},
                 "a", new String[]{"a"},
                 "b", new String[]{"b"},
                 "B", new String[]{"B"})));
-
+        tests.add(createAndSign("Search Request View", ImmutableMap.of(
+                "link", new String[]{"http://ion:2990/jira/secure/IssueNavigator.jspa?reset=true"},
+                "jqlQuery", new String[]{"project+%3D+TEST"},
+                "issues", new String[]{"issues=TEST-2,TEST-1"})));
+        tests.add(createAndSign("BasePath only", ImmutableMap.<String,String[]>of()));
+        tests.add(createAndSign("BasePath with Delimiter", URI.create("/endsWithDelimiter/"), ImmutableMap.of("a", new String[]{"b"})));
+        tests.add(createAndSign("BasePath with Delimiter Only", URI.create("/endsWithDelimiter/"), ImmutableMap.<String,String[]>of()));
+        tests.add(createAndSign("BasePath RFC3986 Unreserved", URI.create("/path-._~"), ImmutableMap.of("a", new String[]{"b"})));
+        tests.add(createAndSign("BasePath RFC3986 Subdelimiters", URI.create("/path!$&'()*+,;="), ImmutableMap.of("a", new String[]{"b"})));
         write(tests);
     }
 
@@ -262,8 +276,14 @@ public class JwtSigningInteroperabilityTest
 
     private SignedUrlTest createAndSign(String name, Map<String, String[]> params) throws UnsupportedEncodingException
     {
+        return createAndSign(name, basePath, params);
+    }
+
+    private SignedUrlTest createAndSign(String name, URI basePath, Map<String, String[]> params) throws UnsupportedEncodingException
+    {
         String canonicalUrl = HttpRequestCanonicalizer.canonicalize(new CanonicalHttpUriRequest("GET", basePath.getPath(), "", params));
         String signedUrl = signer.signGetUrl(basePath, params);
         return new SignedUrlTest(name, canonicalUrl, signedUrl);
     }
+
 }
