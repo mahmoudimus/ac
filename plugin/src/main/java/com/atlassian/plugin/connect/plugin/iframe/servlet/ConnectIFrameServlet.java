@@ -1,10 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.servlet;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParser;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleViewParamParser;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleViewParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
@@ -34,17 +31,14 @@ public class ConnectIFrameServlet extends HttpServlet
 
     private final IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry;
     private final ModuleContextParser moduleContextParser;
-    private final ModuleViewParamParser moduleViewParamParser;
     private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
 
     public ConnectIFrameServlet(IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry,
                                 ModuleContextParser moduleContextParser,
-                                ModuleViewParamParser moduleViewParamParser,
                                 LegacyAddOnIdentifierService legacyAddOnIdentifierService)
     {
         this.IFrameRenderStrategyRegistry = IFrameRenderStrategyRegistry;
         this.moduleContextParser = moduleContextParser;
-        this.moduleViewParamParser = moduleViewParamParser;
         this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;
     }
 
@@ -75,8 +69,7 @@ public class ConnectIFrameServlet extends HttpServlet
                 if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
                 {
                     ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
-                    ModuleViewParameters moduleViewParameters = moduleViewParamParser.parseViewParameters(req);
-                    renderStrategy.render(moduleContextParameters, resp.getWriter(), Option.some(moduleViewParameters));
+                    renderStrategy.render(moduleContextParameters, resp.getWriter());
                 }
                 else
                 {

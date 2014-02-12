@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -16,7 +15,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleViewParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParametersImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -131,7 +129,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
                     JiraModuleContextFilter.POSTFUNCTION_CONFIG,
                     (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_CONFIG)
             );
-            renderStrategy.render(moduleContext, writer, Option.<ModuleViewParameters>none());
+            renderStrategy.render(moduleContext, writer);
         }
         else
         {
