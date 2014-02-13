@@ -16,37 +16,37 @@ import java.util.Map;
  *
  */
 @ConfluenceComponent
-public class ConfluenceWebPanelModuleContextExtractor implements WebPanelModuleContextExtractor
+public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor
 {
 
     @Override
-    public ModuleContextParameters extractParameters(final Map<String, Object> webPanelContext)
+    public ModuleContextParameters extractParameters(final Map<String, Object> webFragmentContext)
     {
         ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl();
 
         @SuppressWarnings("unchecked") // it is what it is
-        WebInterfaceContext webInterfaceContext = (WebInterfaceContext) webPanelContext.get("webInterfaceContext");
+        WebInterfaceContext webInterfaceContext = (WebInterfaceContext) webFragmentContext.get("webInterfaceContext");
         if (webInterfaceContext != null)
         {
             moduleContext.addPage(webInterfaceContext.getPage());
             moduleContext.addSpace(webInterfaceContext.getSpace());
         }
 
-        Space space = (Space) webPanelContext.get("space");
+        Space space = (Space) webFragmentContext.get("space");
         if (space != null)
         {
             moduleContext.addSpace(space);
         }
 
-        Page page = (Page) webPanelContext.get("page");
+        Page page = (Page) webFragmentContext.get("page");
         if (page != null)
         {
             moduleContext.addPage(page);
         }
 
-        if (webPanelContext.containsKey("action") && webPanelContext.get("action") instanceof AbstractPageAwareAction)
+        if (webFragmentContext.containsKey("action") && webFragmentContext.get("action") instanceof AbstractPageAwareAction)
         {
-            AbstractPageAwareAction pageAwareAction = (AbstractPageAwareAction)webPanelContext.get("action");
+            AbstractPageAwareAction pageAwareAction = (AbstractPageAwareAction) webFragmentContext.get("action");
             if (!moduleContext.containsKey(ConfluenceModuleContextFilter.PAGE_ID))
             {
                 moduleContext.addPage(pageAwareAction.getPage());

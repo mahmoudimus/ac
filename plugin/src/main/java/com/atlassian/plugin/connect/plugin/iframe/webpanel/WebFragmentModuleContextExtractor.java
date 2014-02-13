@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  *
  */
-public interface WebPanelModuleContextExtractor
+public interface WebFragmentModuleContextExtractor
 {
-    ModuleContextParameters extractParameters(Map<String, Object> webPanelContext);
+    ModuleContextParameters extractParameters(Map<String, Object> webFragmentContext);
 }

@@ -13,14 +13,14 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ConfluenceWebPanelModuleContextExtractorTest
+public class ConfluenceWebFragmentModuleContextExtractorTest
 {
-    private ConfluenceWebPanelModuleContextExtractor extractor;
+    private ConfluenceWebFragmentModuleContextExtractor extractor;
 
     @Before
     public void setup()
     {
-        extractor = new ConfluenceWebPanelModuleContextExtractor();
+        extractor = new ConfluenceWebFragmentModuleContextExtractor();
     }
 
     @Test
