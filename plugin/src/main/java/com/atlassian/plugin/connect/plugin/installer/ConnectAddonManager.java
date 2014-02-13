@@ -63,6 +63,8 @@ import static com.google.common.base.Strings.nullToEmpty;
  *
  * @see com.atlassian.plugin.connect.plugin.capabilities.event.ConnectMirrorPluginEventHandler for the actual
  * hooks into the plugin lifecycle
+ *
+ * @see com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler for legacy xml-descriptor add-ons.
  */
 @Named
 public class ConnectAddonManager
