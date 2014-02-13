@@ -15,6 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static it.TestConstants.BETTY_USERNAME;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -99,8 +101,9 @@ public class TestDialog extends ConnectWebDriverTestBase
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "servlet", "remotePluginGeneralOpenDialog", remotePlugin.getPluginKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey("my-dialog");
 
-        assertNotEquals("test dialog width is not 0", closeDialogPage.getIFrameSize().getWidth(), "0");
-        assertNotEquals("test dialog height is not 0", closeDialogPage.getIFrameSize().getHeight(), "0");
+        // check the dimensions are the same as those in the js (moustache file)
+        assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
+        assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
     }
 
 
@@ -115,8 +118,9 @@ public class TestDialog extends ConnectWebDriverTestBase
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "servlet", "remotePluginGeneralOpenDialog", remotePlugin.getPluginKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openUrl();
 
-        assertNotEquals("test dialog width is not 0", closeDialogPage.getIFrameSize().getWidth(), "0");
-        assertNotEquals("test dialog height is not 0", closeDialogPage.getIFrameSize().getHeight(), "0");
+        // check the dimensions are the same as those in the js (moustache file)
+        assertThat(closeDialogPage.getIFrameSize().getWidth(), is(654));
+        assertThat(closeDialogPage.getIFrameSize().getHeight(), is(918));
     }
 
 }

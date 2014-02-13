@@ -72,6 +72,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .condition(getCondition())
+                    .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .build();
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
 

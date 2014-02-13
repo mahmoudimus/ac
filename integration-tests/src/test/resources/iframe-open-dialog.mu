@@ -16,6 +16,8 @@
       AP.require(["_dollar", "dialog"], function($, dialog) {
         $("#dialog-open-button-url").bind("click", function() {
           dialog.create({
+            width: "654px",
+            height: "918px",
             url: "/dialog"
           }).on("close", function (data) {
             $("#dialog-close-data")[0].innerHTML = data;
@@ -25,8 +27,8 @@
       AP.require(["_dollar", "dialog"], function($, dialog) {
         $("#dialog-open-button-key").bind("click", function() {
           dialog.create({
-                width: "200px",
-                height: "200px",
+                width: "231px",
+                height: "356px",
                 key: "my-dialog"
           }).on("close", function (data) {
             $("#dialog-close-data")[0].innerHTML = data;

@@ -16,7 +16,8 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
         "plugin-key": pluginKey,
         "remote-url": options.url,
         "width": "100%",
-        "height": "100%"
+        "height": "100%",
+        "raw": "true"
       }
     });
   }
