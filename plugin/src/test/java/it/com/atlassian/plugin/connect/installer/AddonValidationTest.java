@@ -151,8 +151,7 @@ public class AddonValidationTest
                         .build())
                 .build();
 
-        installExpectingUpmErrorCode(bean, "Installation failed. The add-on defines features that require the READ "
-                + "scope, but does not request the READ scope in its descriptor.");
+        installExpectingUpmErrorCode(bean, missingScopeErrorMessage(ScopeName.READ));
     }
 
     @Test
@@ -195,8 +194,7 @@ public class AddonValidationTest
                         .build())
                 .build();
 
-        installExpectingUpmErrorCode(bean, "Installation failed. The add-on defines features that require the ADMIN "
-                + "scope, but does not request the ADMIN scope in its descriptor.");
+        installExpectingUpmErrorCode(bean, missingScopeErrorMessage(ScopeName.ADMIN));
     }
 
     @Test
@@ -253,19 +251,22 @@ public class AddonValidationTest
     @Test
     public void a404ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://atlassian.com").build(), "The add-on host returned HTTP response code 404 when we tried to contact it during installation. Please try again later or contact the add-on vendor.");
+        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://atlassian.com").build(),
+                i18nResolver.getText("connect.install.error.remote.host.bad.response", 404));
     }
 
     @Test
     public void aNonExistentDomainNameInInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://does.not.exist").build(), "The add-on host domain name \"does.not.exist\" does not exist. Please try again later or contact the add-on vendor.");
+        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://does.not.exist").build(),
+                i18nResolver.getText("connect.install.error.remote.host.bad.domain", "does.not.exist"));
     }
 
     @Test
     public void installedCallbackTimingOutResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://example.com").build(), "The add-on host did not respond when we tried to contact it at \"https://example.com/installed\" during installation (the attempt timed out). Please try again later or contact the add-on vendor.");
+        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://example.com").build(),
+                i18nResolver.getText("connect.install.error.remote.host.timeout", "https://example.com/installed"));
     }
 
     private ConnectAddonBeanBuilder testBeanBuilderWithJwtAndInstalledCallback()
@@ -277,6 +278,11 @@ public class AddonValidationTest
     private static ConnectAddonBeanBuilder testBeanBuilderWithJwt()
     {
         return testBeanBuilderWithAuth(AuthenticationType.JWT);
+    }
+
+    private String missingScopeErrorMessage(final ScopeName scope)
+    {
+        return i18nResolver.getText("connect.install.error.missing.scope", scope);
     }
 
     private String schemaValidationErrorMessage()
