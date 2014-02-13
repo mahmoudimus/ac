@@ -23,6 +23,11 @@ public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage i
     private ProjectInfoLocator projectInfoLocator;
     private final String projectKey;
 
+    public JiraProjectAdministrationTab(String projectKey, String moduleKey)
+    {
+        this(projectKey, moduleKey, "");
+    }
+
     public JiraProjectAdministrationTab(String projectKey, String moduleKey, String extraPrefix)
     {
         super(moduleKey, extraPrefix);
