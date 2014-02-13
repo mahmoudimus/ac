@@ -111,7 +111,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
     protected void augmentRenderContext(Map<String, Object> additionalRenderContext)
     {
-        // no additional context by default
+        additionalRenderContext.put("general", 1);
     }
 
     protected abstract String getDecorator();
