@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import java.net.SocketTimeoutException;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.Collections;
 
 import javax.inject.Inject;
@@ -37,6 +39,7 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
@@ -63,6 +66,8 @@ import static com.google.common.base.Strings.nullToEmpty;
  *
  * @see com.atlassian.plugin.connect.plugin.capabilities.event.ConnectMirrorPluginEventHandler for the actual
  * hooks into the plugin lifecycle
+ *
+ * @see com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler for legacy xml-descriptor add-ons.
  */
 @Named
 public class ConnectAddonManager
@@ -92,9 +97,10 @@ public class ConnectAddonManager
     private final BundleContext bundleContext;
     private final JwtApplinkFinder jwtApplinkFinder;
     private final ConnectApplinkManager connectApplinkManager;
+    private final I18nResolver i18nResolver;
 
     @Inject
-    public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager, RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient, JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry, BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService, EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties, LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext, JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager)
+    public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager, RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient, JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry, BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService, EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties, LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext, JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -112,6 +118,7 @@ public class ConnectAddonManager
         this.bundleContext = bundleContext;
         this.jwtApplinkFinder = jwtApplinkFinder;
         this.connectApplinkManager = connectApplinkManager;
+        this.i18nResolver = i18nResolver;
     }
 
     public void enableConnectAddon(Plugin plugin) throws ConnectAddOnUserInitException
@@ -290,18 +297,42 @@ public class ConnectAddonManager
                 switch (handler)
                 {
                     case INSTALLED:
-                        throw new PluginInstallException(handler.name() + ": " + message, errorI18nKey);
+                        String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.response", statusCode);
+                        throw new PluginInstallException(handler.name() + ": " + message, Option.some(i18nMessage));
                     case UNINSTALLED:
                         throw new PluginException(handler.name() + ": " + message);
                 }
             }
 
         }
+        catch (PluginInstallException e)
+        {
+            // don't wrap a PluginInstallException in another PluginInstallException
+            // because that is useless and obscures the original message
+            throw e;
+        }
+        catch (PluginException e)
+        {
+            // don't wrap a PluginException in another PluginException
+            // because that is useless and obscures the original message
+            throw e;
+        }
         catch (Exception e)
         {
             log.error("Error contacting remote application at " + callbackUrl + "  [" + e.getMessage() + "]", e);
-
             String message = "Error contacting remote application [" + e.getMessage() + "]";
+
+            if (e.getCause() instanceof UnknownHostException)
+            {
+                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.domain", e.getCause().getLocalizedMessage());
+                errorI18nKey = Option.some(i18nMessage);
+            }
+            else if (e.getCause() instanceof SocketTimeoutException)
+            {
+                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.timeout", callbackUrl);
+                errorI18nKey = Option.some(i18nMessage);
+            }
+
             switch (handler)
             {
                 case INSTALLED:
