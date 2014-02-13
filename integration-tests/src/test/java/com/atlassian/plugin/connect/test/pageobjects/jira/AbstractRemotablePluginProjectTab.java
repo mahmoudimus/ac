@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import com.atlassian.jira.pageobjects.pages.project.AbstractProjectTab;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.utils.WebItemUtils;
 
 public abstract class AbstractRemotablePluginProjectTab extends AbstractProjectTab
 {
@@ -15,7 +16,7 @@ public abstract class AbstractRemotablePluginProjectTab extends AbstractProjectT
 
     public AbstractRemotablePluginProjectTab(String projectKey, String pluginKey, String moduleKey)
     {
-        super(pluginKey + ":" + moduleKey + "-panel", projectKey);
+        super(WebItemUtils.linkId(pluginKey, moduleKey) + "-panel", projectKey);
         this.moduleKey = moduleKey;
     }
 
