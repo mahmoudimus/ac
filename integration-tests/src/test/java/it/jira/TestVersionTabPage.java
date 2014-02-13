@@ -4,11 +4,16 @@ import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.testkit.client.restclient.Version;
 import com.atlassian.jira.testkit.client.restclient.VersionClient;
 import com.atlassian.jira.tests.TestBase;
+import com.atlassian.plugin.connect.plugin.module.jira.versiontab.VersionTabPageModuleDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.VersionTabPageModule;
 import it.servlet.ConnectAppServlets;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.rmi.RemoteException;
 
@@ -23,10 +28,11 @@ public class TestVersionTabPage extends TestBase
     private static AtlassianConnectAddOnRunner remotePlugin;
 
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
-    private static final String JIRA_VERSION_TAB_PANEL = "jira-version-tab-panel";
+    private static final String MODULE_KEY = "jira-version-tab-panel";
+    private static final String ACTUAL_MODULE_KEY = VersionTabPageModuleDescriptor.VERSION_TAB_PAGE_MODULE_PREFIX + MODULE_KEY;
 
-    private String versionId;
     private static final String VERSION_NAME = "2.7.1";
+    private String versionId;
 
 
     @BeforeClass
@@ -34,7 +40,7 @@ public class TestVersionTabPage extends TestBase
     {
         remotePlugin = new AtlassianConnectAddOnRunner(jira().environmentData().getBaseUrl().toString())
                 .addOAuth()
-                .add(VersionTabPageModule.key(JIRA_VERSION_TAB_PANEL)
+                .add(VersionTabPageModule.key(MODULE_KEY)
                         .name("Version Tab Panel")
                         .path("/ipp?version_id=${version.id}&project_id=${project.id}&project_key=${project.key}")
                         .resource(ConnectAppServlets.apRequestServlet()))
@@ -69,7 +75,7 @@ public class TestVersionTabPage extends TestBase
     public void testVersionTabPanel() throws RemoteException
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, "version-tab-jira-version-tab");
+        JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, remotePlugin.getPluginKey(), ACTUAL_MODULE_KEY);
 
         versionTabPage.clickTab();
 

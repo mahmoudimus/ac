@@ -22,16 +22,19 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestProjectTabPanel extends JiraWebDriverTestBase
 {
+    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String MODULE_KEY = "ac-play-project-tab";
+
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(ConnectTabPanelModuleProvider.PROJECT_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("AC Play Project Tab", null))
-                        .withKey("ac-play-project-tab")
+                        .withKey(MODULE_KEY)
                         .withUrl("/ptp")
                         .withWeight(1234)
                         .build())
@@ -71,7 +74,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     {
         public AppProjectTabPage(final String projectKey)
         {
-            super(projectKey, "ac-play-project-tab");
+            super(projectKey, PLUGIN_KEY, MODULE_KEY); // my-plugin:ac-play-project-tab-panel
         }
     }
 }

@@ -81,9 +81,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
         }));
 
         final JiraProjectAdministrationTab remoteProjectAdministrationTab =
-                page.getTabs().gotoTab(JiraProjectAdministrationTab.MODULE_KEY,
-                        JiraProjectAdministrationTab.class,
-                        project.getKey());
+                page.getTabs().gotoTab(JiraProjectAdministrationTab.MODULE_KEY, JiraProjectAdministrationTab.class, project.getKey());
 
         // Test of workaround for JRA-26407.
         assertNotNull(remoteProjectAdministrationTab.getProjectHeader());

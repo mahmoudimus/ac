@@ -8,20 +8,20 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPag
 
 public abstract class AbstractRemotablePluginProjectTab extends AbstractProjectTab
 {
-    private final String projectTabId;
+    private final String moduleKey;
 
     @Inject
     PageBinder pageBinder;
 
-    public AbstractRemotablePluginProjectTab(String projectKey, String projectTabId)
+    public AbstractRemotablePluginProjectTab(String projectKey, String pluginKey, String moduleKey)
     {
-        super(projectTabId + "-panel", projectKey);
-        this.projectTabId = projectTabId;
+        super(pluginKey + ":" + moduleKey + "-panel", projectKey);
+        this.moduleKey = moduleKey;
     }
 
     public RemotePluginEmbeddedTestPage getEmbeddedPage()
     {
-        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, projectTabId);
+        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, moduleKey);
     }
 
 }

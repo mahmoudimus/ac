@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.test.pageobjects.confluence;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.test.pageobjects.AbstractConnectIFrameComponent;
-import it.TestConstants;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -23,7 +23,7 @@ public class RenderedMacro extends AbstractConnectIFrameComponent<RenderedMacro>
 
     public RenderedMacro(String idPrefix, int indexOnPage)
     {
-        this.idPrefix = TestConstants.IFRAME_ID_PREFIX + idPrefix;
+        this.idPrefix = IframeUtils.IFRAME_ID_PREFIX + idPrefix;
         this.indexOnPage = indexOnPage;
     }
 
