@@ -63,7 +63,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
                                       .urlTemplate(url)
                                       .context(moduleParams)
                                       .sign(false)
-                                      .includeStandardParams(false) // don't sign or pass context to absolute URLs
+                                      .includeStandardParams(false) // don't sign or pass non-explicitly requested parameters to absolute URLs
                                       .build();
     }
 
