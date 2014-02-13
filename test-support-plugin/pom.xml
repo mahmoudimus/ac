@@ -19,10 +19,6 @@
         </license>
     </licenses>
 
-    <!--
-    !!! NOTE: This plugin cannot depend on any connect libraries as it needs to uninstall connect during it's tests !!!
-    the dependency on the modules lib is marked as optional in OSGi land so it shouldn't force us to disable when connect goes away
-    -->
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -108,40 +104,10 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
-                    <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
-                    <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
-                    <testBundleExcludes>
-                        <testBundleExclude>
-                            <groupId>com.atlassian.plugin</groupId>
-                            <artifactId>atlassian-spring-scanner</artifactId>
-                        </testBundleExclude>
-                        <testBundleExclude>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>atlassian-connect-modules</artifactId>
-                        </testBundleExclude>
-                        <testBundleExclude>
-                            <groupId>com.google.code.gson</groupId>
-                            <artifactId>gson</artifactId>
-                        </testBundleExclude>
-                    </testBundleExcludes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>pluginLifecycle</id>
-            <properties>
-                <skipITs>false</skipITs>
-                <build.test.plugin>true</build.test.plugin>
-            </properties>
-        </profile>
-    </profiles>
-
-    <properties>
-        <skipITs>true</skipITs>
-        <build.test.plugin>false</build.test.plugin>
-    </properties>
 
 </project>

@@ -24,8 +24,8 @@
     <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService"/>
     <component-import key="salUserManager" interface="com.atlassian.sal.api.user.UserManager" />
 
-    <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.test.TestPluginInstaller" />
-    <component-import key="testFilterResults" interface="com.atlassian.plugin.connect.test.filter.AddonTestFilterResults" />
+    <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller" />
+    <component-import key="testFilterResults" interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults" />
     
     <component key="jiraTestAuthenticator" 
                class="it.com.atlassian.plugin.connect.JiraTestAuthenticator" 

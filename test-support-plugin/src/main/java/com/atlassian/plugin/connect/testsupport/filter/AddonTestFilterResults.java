@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.filter;
+package com.atlassian.plugin.connect.testsupport.filter;
 
 public interface AddonTestFilterResults
 {

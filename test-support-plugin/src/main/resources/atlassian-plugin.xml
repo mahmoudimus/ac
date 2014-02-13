@@ -1,6 +1,8 @@
-<atlassian-plugin key="com.atlassian.plugin.connect.test" name="${project.name} - Test" plugins-version="2">
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
     <plugin-info>
+        <description>${project.description}</description>
         <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <bundle-instructions>
             <Import-Package>
                 com.atlassian.plugin.connect.modules*;resolution:=optional,
@@ -12,8 +14,8 @@
                 *;resolution:=optional
             </Import-Package>
             <Export-Package>
-                com.atlassian.plugin.connect.test*,
-                com.atlassian.plugin.connect.test.filter*
+                com.atlassian.plugin.connect.testsupport*,
+                com.atlassian.plugin.connect.testsupport.filter*
             </Export-Package>
         </bundle-instructions>
     </plugin-info>
@@ -24,20 +26,19 @@
 
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
-
     <component key="testPluginInstaller" 
-               class="com.atlassian.plugin.connect.test.DefaultTestPluginInstaller" 
-               interface="com.atlassian.plugin.connect.test.TestPluginInstaller"
+               class="com.atlassian.plugin.connect.testsupport.DefaultTestPluginInstaller" 
+               interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller"
                public="true"
             />
 
     <component key="testFilterResults" 
-               class="com.atlassian.plugin.connect.test.filter.DefaultAddonTestFilterResults"
-               interface="com.atlassian.plugin.connect.test.filter.AddonTestFilterResults"
+               class="com.atlassian.plugin.connect.testsupport.filter.DefaultAddonTestFilterResults"
+               interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults"
                public="true"
             />
     
-    <servlet-filter key="connect-test-addon" class="com.atlassian.plugin.connect.test.filter.AddonTestFilter"
+    <servlet-filter key="connect-test-addon" class="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilter"
                     location="after-encoding" weight="1">
         <url-pattern>/ac-test-addon/*</url-pattern>
     </servlet-filter>

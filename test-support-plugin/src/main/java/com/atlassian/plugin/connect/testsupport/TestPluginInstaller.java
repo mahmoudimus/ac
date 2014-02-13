@@ -1,5 +1,6 @@
-package com.atlassian.plugin.connect.test;
+package com.atlassian.plugin.connect.testsupport;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.atlassian.plugin.Plugin;
@@ -9,6 +10,8 @@ public interface TestPluginInstaller
 {
 
     Plugin installPlugin(ConnectAddonBean bean) throws IOException;
+    
+    Plugin installPlugin(File jarFile) throws IOException;
 
     void uninstallPlugin(Plugin plugin) throws IOException;
 

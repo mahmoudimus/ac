@@ -1,19 +1,17 @@
-package com.atlassian.plugin.connect.test;
+package com.atlassian.plugin.connect.testsupport;
 
 import java.io.File;
 import java.io.IOException;
 
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginController;
+import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
-import com.atlassian.plugin.connect.test.filter.AddonTestFilter;
+import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallHandler;
-import com.atlassian.upm.spi.PluginInstallResult;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -24,7 +22,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.springframework.beans.factory.DisposableBean;
 
-import static com.atlassian.upm.api.util.Option.some;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DefaultTestPluginInstaller implements TestPluginInstaller, DisposableBean
@@ -32,12 +29,15 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     public static final String DESCRIPTOR_PREFIX = "connect-descriptor-";
     private ServiceTracker serviceTracker;
     private final PluginController pluginController;
+    private final PluginAccessor pluginAccessor;
     private final ApplicationProperties applicationProperties;
     private final BundleContext bundleContext;
+    private PluginArtifactFactory pluginArtifactFactory = new DefaultPluginArtifactFactory();
 
-    public DefaultTestPluginInstaller(PluginController pluginController, ApplicationProperties applicationProperties, BundleContext bundleContext)
+    public DefaultTestPluginInstaller(PluginController pluginController, PluginAccessor pluginAccessor, ApplicationProperties applicationProperties, BundleContext bundleContext)
     {
         this.pluginController = pluginController;
+        this.pluginAccessor = pluginAccessor;
         this.applicationProperties = applicationProperties;
         this.bundleContext = bundleContext;
     }
@@ -53,6 +53,14 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
         checkNotNull(handler);
         
         return handler.installPlugin(descriptor, Option.<String>some("application/json")).getPlugin();
+    }
+
+    @Override
+    public Plugin installPlugin(File jarFile) throws IOException
+    {
+        PluginArtifact artifact = pluginArtifactFactory.create(jarFile.toURI());
+        String key = pluginController.installPlugins(artifact).iterator().next();
+        return pluginAccessor.getPlugin(key);
     }
 
     @Override

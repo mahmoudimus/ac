@@ -29,6 +29,7 @@
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>
+        <module>plugin-lifecycle-tests</module>
     </modules>
 
     <profiles>

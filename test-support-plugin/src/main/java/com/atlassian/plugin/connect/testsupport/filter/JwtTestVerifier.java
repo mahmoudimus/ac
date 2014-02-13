@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.filter;
+package com.atlassian.plugin.connect.testsupport.filter;
 
 import com.atlassian.jwt.Jwt;
 import com.atlassian.jwt.JwtConstants;

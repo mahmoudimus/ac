@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.rest;
+package com.atlassian.plugin.connect.testsupport.rest;
 
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.user.UserManager;

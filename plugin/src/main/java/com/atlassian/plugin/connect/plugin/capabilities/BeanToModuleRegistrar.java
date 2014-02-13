@@ -69,6 +69,12 @@ public class BeanToModuleRegistrar
 
     public void registerDescriptorsForBeans(Plugin plugin, ConnectAddonBean addon) throws InvalidDescriptorException
     {
+        //don't register modules more than once
+        if(registrations.containsKey(plugin.getKey()))
+        {
+            return;
+        }
+        
         BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
         AutowireWithConnectPluginDecorator connectAutowiringPlugin = new AutowireWithConnectPluginDecorator((AutowireCapablePlugin) theConnectPlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
@@ -195,6 +201,8 @@ public class BeanToModuleRegistrar
         if (registrations.containsKey(plugin.getKey()))
         {
             DynamicDescriptorRegistration.Registration reg = registrations.get(plugin.getKey());
+            registrations.remove(plugin.getKey());
+            
             try
             {
                 reg.unregister();
@@ -204,7 +212,6 @@ public class BeanToModuleRegistrar
                 //service was already unregistered, just ignore
             }
 
-            registrations.remove(plugin.getKey());
         }
     }
 
