@@ -24,22 +24,6 @@ public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
     public static final String EXTRA_PREFIX = "servlet-";
     
     @Test
-    public void testSchemaContainsCustomScope() throws IOException, DocumentException
-    {
-        Document doc = getXml(product.getProductInstance().getBaseUrl() + "/rest/atlassian-connect/1/installer/schema/atlassian-plugin-remotable");
-        Element documentation = (Element) doc.selectSingleNode("//xs:enumeration[@value='resttest']/xs:annotation/xs:documentation");
-
-        assertNotNull(documentation);
-        assertEquals("Rest Test", documentation.element("name").getTextTrim());
-        assertEquals("A test resource", documentation.element("description").getTextTrim());
-        List<Element> resources = documentation.element("resources").elements("resource");
-        assertEquals("/rest/remoteplugintest/latest/user", resources.get(0).attributeValue("path"));
-        assertEquals("GET", resources.get(0).attributeValue("httpMethod"));
-        assertEquals("/rest/remoteplugintest/1/user", resources.get(1).attributeValue("path"));
-        assertEquals("GET", resources.get(1).attributeValue("httpMethod"));
-    }
-
-    @Test
     public void testChangedKey() throws Exception
     {
         product.visit(LoginPage.class).login("admin", "admin", HomePage.class);
