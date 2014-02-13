@@ -34,8 +34,8 @@ public class ConnectIFrameServlet extends HttpServlet
     private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
 
     public ConnectIFrameServlet(IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry,
-                                ModuleContextParser moduleContextParser,
-                                LegacyAddOnIdentifierService legacyAddOnIdentifierService)
+            ModuleContextParser moduleContextParser,
+            LegacyAddOnIdentifierService legacyAddOnIdentifierService)
     {
         this.IFrameRenderStrategyRegistry = IFrameRenderStrategyRegistry;
         this.moduleContextParser = moduleContextParser;
