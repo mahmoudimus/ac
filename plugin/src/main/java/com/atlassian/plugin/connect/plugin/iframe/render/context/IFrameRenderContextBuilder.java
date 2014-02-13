@@ -21,8 +21,7 @@ public interface IFrameRenderContextBuilder
 
     interface InitializedBuilder
     {
-        InitializedBuilder dialog(String dialogId);
-        InitializedBuilder simpleDialog(String simpleDialogId);
+        InitializedBuilder dialog(boolean isSimpleDialog);
         InitializedBuilder productContext(Map<String, Object> productContext);
         InitializedBuilder decorator(String decorator);
         InitializedBuilder title(String title);

@@ -30,33 +30,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
     private static ConnectRunner remotePlugin;
 
-    /* 
-    Here for manual testing 
-    To run this in idea, you need to add -DtestedProduct=confluence to the run config
-    */
-    public static void main(String[] args)
-    {
-        try
-        {
-            startConnectAddOn("http://localhost:1990/confluence");
-            while (true)
-            {
-                //do nothing
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-    
     @BeforeClass
     public static void startConnectAddOn() throws Exception
-    {
-        startConnectAddOn(product.getProductInstance().getBaseUrl());
-    }
-
-    public static void startConnectAddOn(String baseUrl) throws Exception
     {
         DynamicContentMacroModuleBean simpleMacro = createSimpleMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean allParameterTypesMacro = createAllParametersMacro(newDynamicContentMacroModuleBean());
@@ -76,7 +51,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .withHeight("30px")
                 .build();
 
-        remotePlugin = new ConnectRunner(baseUrl, "my-plugin")
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .setAuthenticationToNone()
                 .addModules("dynamicContentMacros",
                         simpleMacro,
@@ -121,7 +96,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         assertThat(content, is("Hello world"));
     }
 
-    //@Test TODO: Figure out double-encoding of url
+    @Test
     public void testBodyInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
@@ -159,7 +134,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         assertThat(hash, is(DigestUtils.md5Hex(body)));
     }
 
-    //@Test TODO: Figure out double-encoding of url
+    @Test
     public void testParameterInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);

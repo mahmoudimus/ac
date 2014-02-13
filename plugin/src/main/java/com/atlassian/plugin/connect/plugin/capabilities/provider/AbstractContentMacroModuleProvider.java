@@ -94,8 +94,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             descriptors.add(createEditorWebResource(plugin, macroBean));
         }
 
-        // TODO: Add Image Placeholder --> ACDEV-678
-
         return ImmutableList.copyOf(descriptors);
     }
 

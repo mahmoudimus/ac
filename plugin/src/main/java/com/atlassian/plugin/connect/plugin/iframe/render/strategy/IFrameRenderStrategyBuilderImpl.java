@@ -266,6 +266,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .iframeUri(signedUri)
                     .decorator(decorator)
                     .title(title)
+                    .dialog(isDialog)
                     .context(additionalRenderContext)
                     .context("contextParams", moduleContextParameters)
                     .context("width", width)

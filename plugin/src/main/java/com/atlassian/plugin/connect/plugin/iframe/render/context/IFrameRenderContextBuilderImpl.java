@@ -85,16 +85,13 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         }
 
         @Override
-        public InitializedBuilder dialog(String dialogId)
+        public InitializedBuilder dialog(final boolean isDialog)
         {
-            putIfNotNull("dialog", dialogId);
-            return this;
-        }
-
-        @Override
-        public InitializedBuilder simpleDialog(final String simpleDialogId)
-        {
-            putIfNotNull("simpleDialog", simpleDialogId);
+            if (isDialog)
+            {
+                additionalContext.put("dialog", "1");
+                additionalContext.put("simpleDialog", "1");
+            }
             return this;
         }
 

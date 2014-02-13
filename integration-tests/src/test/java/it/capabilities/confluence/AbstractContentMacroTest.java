@@ -289,7 +289,39 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     }
 
     @Test
-    public void testMacroEditor() throws Exception
+    public void testMacroEditorShowsAddOnContent() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
+        macro.select();
+
+        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+
+        String content = dialog.getEmbeddedPage().getValueById("hello-world-message");
+
+        assertThat(content, is("Hello world"));
+    }
+
+    @Test
+    public void testMacroEditorCancels() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
+        macro.select();
+
+        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+
+        String content = dialog.getEmbeddedPage().getValueById("hello-world-message");
+
+        assertThat(content, is("Hello world"));
+    }
+
+    @Test
+    public void testMacroEditorSubmits() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
 
