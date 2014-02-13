@@ -111,6 +111,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
     protected void augmentRenderContext(Map<String, Object> additionalRenderContext)
     {
+        // This is needed by the javascript to enabling the auto-resizer.
         additionalRenderContext.put("general", 1);
     }
 
