@@ -14,10 +14,6 @@ import javax.inject.Inject;
  */
 public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage implements ProjectConfigPageTab
 {
-    // TODO this PageObject should not be tied to a particular key
-    public static final String MODULE_KEY = "my-connect-project-config";
-    public static final String TAB_ID = "my-connect-project-config";
-
     @Inject
     private PageBinder pageBinder;
 
@@ -27,19 +23,9 @@ public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage i
     private ProjectInfoLocator projectInfoLocator;
     private final String projectKey;
 
-    public JiraProjectAdministrationTab()
+    public JiraProjectAdministrationTab(String projectKey, String moduleKey, String extraPrefix)
     {
-        this(null);
-    }
-
-    public JiraProjectAdministrationTab(final String projectKey)
-    {
-        this(projectKey, "");
-    }
-
-    public JiraProjectAdministrationTab(final String projectKey, final String extraPrefix)
-    {
-        super(TAB_ID, extraPrefix);
+        super(moduleKey, extraPrefix);
         this.projectKey = projectKey;
     }
 
