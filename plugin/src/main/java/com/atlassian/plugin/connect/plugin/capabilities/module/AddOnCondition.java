@@ -68,7 +68,7 @@ public class AddOnCondition implements Condition
 
         ModuleContextParameters moduleContext = webFragmentModuleContextExtractor.extractParameters(context);
 
-        // TODO should the moduleContext be permission filtered w.r.t. the remote user?
+        // TODO should the moduleContext be permission filtered w.r.t. the add-on user?
 
         String uri = iFrameUriBuilderFactory
                 .builder()
