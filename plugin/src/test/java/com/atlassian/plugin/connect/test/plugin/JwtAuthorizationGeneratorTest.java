@@ -27,14 +27,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,12 +42,15 @@ import static org.mockito.Mockito.when;
 public class JwtAuthorizationGeneratorTest
 {
     private static final String A_MOCK_JWT = "a.mock.jwt";
-    private static final Map<String,List<String>> PARAMS = ImmutableMap.of("a_param", asList("a_value"));
+    private static final Map<String, String[]> PARAMS = ImmutableMap.of("a_param", new String[]{"a_value"});
     private static final URI A_URI = URI.create("http://any.url/path?b_param=b+value+with+spaces&c_param=c_value");
 
-    @Mock private JwtService jwtService;
-    @Mock private ApplicationLink applicationLink;
-    @Mock private ConsumerService consumerService;
+    @Mock
+    private JwtService jwtService;
+    @Mock
+    private ApplicationLink applicationLink;
+    @Mock
+    private ConsumerService consumerService;
 
     private AuthorizationGenerator generator;
 

@@ -40,6 +40,7 @@ public interface IFrameRenderStrategyBuilder
         InitializedBuilder additionalRenderContext(String key, Object object);
         InitializedBuilder additionalRenderContext(Map<String, Object> additionalRenderContext);
         InitializedBuilder ensureUniqueNamespace(boolean uniqueNamespace);
+        InitializedBuilder dialog(boolean isDialog);
         IFrameRenderStrategy build();
     }
 }

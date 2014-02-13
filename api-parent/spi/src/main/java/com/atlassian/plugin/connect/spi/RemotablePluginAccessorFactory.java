@@ -4,8 +4,22 @@ import com.atlassian.plugin.Plugin;
 
 public interface RemotablePluginAccessorFactory
 {
+    /**
+     * Supplies an accessor for remote plugin operations. Instances are only meant to be used for the current operation
+     * and should not be cached across operations.
+     *
+     * @param pluginKey The plugin key
+     * @return An accessor for either local or remote plugin operations
+     */
     RemotablePluginAccessor get(String pluginKey);
 
+    /**
+     * Supplies an accessor for remote plugin operations. Instances are only meant to be used for the current operation
+     * and should not be cached across operations.
+     *
+     * @param plugin The plugin key
+     * @return An accessor for either local or remote plugin operations
+     */
     RemotablePluginAccessor get(Plugin plugin);
 
     RemotablePluginAccessor getOrThrow(String pluginKey) throws IllegalStateException;
