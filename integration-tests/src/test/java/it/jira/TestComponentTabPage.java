@@ -1,9 +1,11 @@
 package it.jira;
 
+import com.atlassian.confluence.plugin.descriptor.ComponentModuleDescriptor;
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.testkit.client.restclient.Component;
 import com.atlassian.jira.testkit.client.restclient.ComponentClient;
 import com.atlassian.jira.tests.TestBase;
+import com.atlassian.plugin.connect.plugin.module.jira.componenttab.ComponentTabPageModuleDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.ComponentTabPageModule;
@@ -21,7 +23,8 @@ public class TestComponentTabPage extends TestBase
     private static AtlassianConnectAddOnRunner remotePlugin;
 
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
-    private static final String JIRA_COMPONENT_TAB_PANEL = "jira-component-tab-panel";
+    private static final String MODULE_KEY = "jira-component-tab-panel";
+    private static final String ACTUAL_MODULE_KEY = ComponentTabPageModuleDescriptor.COMPONENT_TAB_PAGE_MODULE_PREFIX + MODULE_KEY;
 
     private String componentId;
     private static final String COMPONENT_NAME = "test-component";
@@ -32,7 +35,7 @@ public class TestComponentTabPage extends TestBase
     {
         remotePlugin = new AtlassianConnectAddOnRunner(jira().environmentData().getBaseUrl().toString())
                 .addOAuth()
-                .add(ComponentTabPageModule.key(JIRA_COMPONENT_TAB_PANEL)
+                .add(ComponentTabPageModule.key(MODULE_KEY)
                         .name("Component Tab Panel")
                         .path("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
                         .resource(ConnectAppServlets.apRequestServlet()))
@@ -68,7 +71,7 @@ public class TestComponentTabPage extends TestBase
     public void testComponentTabPanel() throws Exception
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, "component-tab-jira-component-tab");
+        JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, remotePlugin.getPluginKey(), ACTUAL_MODULE_KEY);
 
         componentTabPage.clickTab();
 
