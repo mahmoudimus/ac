@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.util.MapFunctions;
+import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
+import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -9,7 +10,6 @@ import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Maps;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.util.ParameterParser;
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Maps.transformValues;
 
 public abstract class DefaultRemotablePluginAccessorBase implements RemotablePluginAccessor
 {
@@ -36,8 +35,13 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
 
     protected DefaultRemotablePluginAccessorBase(Plugin plugin, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
     {
-        this.pluginKey = plugin.getKey();
-        this.pluginName = plugin.getName();
+        this(plugin.getKey(), plugin.getName(), baseUrlSupplier, httpContentRetriever);
+    }
+
+    protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
+    {
+        this.pluginKey = pluginKey;
+        this.pluginName = pluginName;
         this.baseUrlSupplier = baseUrlSupplier;
         this.httpContentRetriever = httpContentRetriever;
     }
@@ -45,19 +49,21 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     @Override
     public String createGetUrl(URI targetPath, Map<String, String[]> params)
     {
-        return new UriBuilder(Uri.fromJavaUri(getTargetUrl(targetPath))).addQueryParameters(transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING)).toString();
+        UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(getTargetUrl(targetPath)));
+        UriBuilderUtils.addQueryParameters(uriBuilder, params);
+        return uriBuilder.toString();
     }
 
     @Override
     public Promise<String> executeAsync(HttpMethod method,
                                         URI targetPath,
-                                        Map<String, String> params,
+                                        Map<String, String[]> params,
                                         Map<String, String> headers)
     {
         return httpContentRetriever.async(getAuthorizationGenerator(),
                 method,
                 getTargetUrl(targetPath),
-                Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING),
+                params,
                 headers,
                 getKey());
     }
@@ -80,21 +86,19 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
         return baseUrlSupplier.get();
     }
 
-    protected URI getTargetUrl(URI targetPath)
+    public URI getTargetUrl(URI targetPath)
     {
         if (targetPath.isAbsolute())
         {
             throw new IllegalArgumentException("Target url was absolute (" + targetPath.toString() + "). Expected relative path to base URL of add-on (" + getBaseUrl().toString() + ").");
         }
 
-        String path = targetPath.getRawPath();
-        if (!StringUtils.startsWith(path, "/"))
-        {
-            path = "/" + path;
-        }
-
         UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(getBaseUrl()));
-        uriBuilder.setPath(uriBuilder.getPath() + path);
+        String path = new PathBuilder()
+                .withPathFragment(uriBuilder.getPath())
+                .withPathFragment(targetPath.getRawPath())
+                .build();
+        uriBuilder.setPath(path);
         uriBuilder.setQuery(targetPath.getRawQuery());
 
         return uriBuilder.toUri().toJavaUri();

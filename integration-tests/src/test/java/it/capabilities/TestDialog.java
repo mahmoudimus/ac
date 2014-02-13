@@ -34,6 +34,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+                .setAuthenticationToNone()
                 .addModules("generalPages",
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))

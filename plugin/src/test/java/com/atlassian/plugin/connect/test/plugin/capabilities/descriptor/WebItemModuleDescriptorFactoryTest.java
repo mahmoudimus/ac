@@ -41,6 +41,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -222,7 +223,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
-        assertEquals("ap-dialog", descriptor.getStyleClass());
+        assertTrue(descriptor.getStyleClass().contains("ap-dialog"));
     }
 
     @Test
@@ -233,8 +234,7 @@ public class WebItemModuleDescriptorFactoryTest
                 .build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
-
-        assertEquals("ap-inline-dialog", descriptor.getStyleClass());
+        assertTrue(descriptor.getStyleClass().contains("ap-inline-dialog"));
     }
 
     @Test
@@ -247,7 +247,47 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
         descriptor.enabled();
 
-        assertThat(descriptor.getStyleClass(), allOf(containsString("batman"), containsString("robin"), containsString("ap-inline-dialog")));
+        assertThat(descriptor.getStyleClass(), allOf(containsString("batman"), containsString("robin")));
+    }
+
+    @Test
+    public void styleClassIsCorrectWithPluginKeyAndDialogTarget(){
+        WebItemModuleBean bean = createWebItemBeanBuilder()
+                .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
+                .build();
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
+        descriptor.enabled();
+        assertTrue(descriptor.getStyleClass().contains("ap-plugin-key-" + plugin.getKey()));
+    }
+
+    @Test
+    public void styleClassIsCorrectWithModuleKeyAndDialogTarget(){
+        WebItemModuleBean bean = createWebItemBeanBuilder()
+                .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
+                .build();
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
+        descriptor.enabled();
+        assertTrue(descriptor.getStyleClass().contains("ap-module-key-" + descriptor.getKey()));
+    }
+
+    @Test
+    public void styleClassIsCorrectWithPluginKeyAndInlineDialogTarget(){
+        WebItemModuleBean bean = createWebItemBeanBuilder()
+                .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
+                .build();
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
+        descriptor.enabled();
+        assertTrue(descriptor.getStyleClass().contains("ap-plugin-key-" + plugin.getKey()));
+    }
+
+    @Test
+    public void styleClassIsCorrectWithModuleKeyAndInlineDialogTarget(){
+        WebItemModuleBean bean = createWebItemBeanBuilder()
+                .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
+                .build();
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(plugin, bean);
+        descriptor.enabled();
+        assertTrue(descriptor.getStyleClass().contains("ap-module-key-" + descriptor.getKey()));
     }
 
     private WebItemModuleBeanBuilder createWebItemBeanBuilder()

@@ -4,7 +4,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -109,16 +108,6 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             else
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                result = jsonDescriptorValidator.validate(json, schemaLocator.getSchemaForCurrentProduct());
-                
-                if(!result.isSuccess())
-                {
-                    String msg = "Invalid connect descriptor: " + result.getMessageReport();
-                    log.error(msg);
-                    throw new InvalidDescriptorException(msg, "connect.install.error.remote.descriptor.validation." +
-                            applicationProperties.getDisplayName().toLowerCase());
-                }
-                
                 plugin = connectInstaller.install(username, json);
             }
 

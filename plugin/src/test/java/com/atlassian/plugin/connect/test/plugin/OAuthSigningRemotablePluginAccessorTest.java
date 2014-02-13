@@ -17,20 +17,25 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
-@RunWith (MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
 {
-    private static final Map<String,String> GET_PARAMS = Collections.singletonMap("param", "param value");
-    private static final Map<String,String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
+    private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
     private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
@@ -50,7 +55,7 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
     @Test
     public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever() throws ExecutionException, InterruptedException
     {
-        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS, UNAUTHED_GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
+        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS_STRING_ARRAY, UNAUTHED_GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
     }
 
     @Test
@@ -91,14 +96,33 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
         assertThat(createRemotePluginAccessor().getAuthorizationGenerator(), is(not(nullValue())));
     }
 
+    @Test
+    public void slashesAreNormalizedOnConcatenation() throws Exception
+    {
+        RemotablePluginAccessor accessor = createRemotePluginAccessor("https://example.com/addon/");
+        assertThat(accessor.createGetUrl(URI.create("/handler"), Collections.<String,String[]>emptyMap()), is("https://example.com/addon/handler"));
+    }
+
+    @Test
+    public void trailingSlashesAreLeftIntact() throws Exception
+    {
+        RemotablePluginAccessor accessor = createRemotePluginAccessor("https://example.com/addon");
+        assertThat(accessor.createGetUrl(URI.create("/handler/"), Collections.<String,String[]>emptyMap()), is("https://example.com/addon/handler/"));
+    }
+
     private RemotablePluginAccessor createRemotePluginAccessor() throws ExecutionException, InterruptedException
+    {
+        return createRemotePluginAccessor(BASE_URL);
+    }
+
+    private RemotablePluginAccessor createRemotePluginAccessor(final String baseUrl) throws ExecutionException, InterruptedException
     {
         Supplier<URI> baseUrlSupplier = new Supplier<URI>()
         {
             @Override
             public URI get()
             {
-                return URI.create(BASE_URL);
+                return URI.create(baseUrl);
             }
         };
         OAuthLinkManager oAuthLinkManager = new MockOAuthLinkManager(mock(ServiceProviderConsumerStore.class), mock(AuthenticationConfigurationManager.class), mock(ConsumerService.class, RETURNS_DEEP_STUBS));
@@ -121,9 +145,9 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
 
         @Override
         public List<Map.Entry<String, String>> signAsParameters(ServiceProvider serviceProvider,
-                HttpMethod method,
-                URI url,
-                Map<String, List<String>> originalParams)
+                                                                HttpMethod method,
+                                                                URI url,
+                                                                Map<String, List<String>> originalParams)
         {
             Map<String, List<String>> paramsWithPredicatableOAuthValues = new HashMap<String, List<String>>(originalParams.size());
 
@@ -156,9 +180,9 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
 
         @Override
         public String generateAuthorizationHeader(HttpMethod method,
-                ServiceProvider serviceProvider,
-                URI url,
-                Map<String, List<String>> originalParams)
+                                                  ServiceProvider serviceProvider,
+                                                  URI url,
+                                                  Map<String, List<String>> originalParams)
         {
             return null; // results in no Authorization header being added, allowing us to assert that headers-in == headers-out
         }

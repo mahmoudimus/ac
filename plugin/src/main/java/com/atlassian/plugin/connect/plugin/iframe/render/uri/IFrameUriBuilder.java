@@ -27,6 +27,7 @@ public interface IFrameUriBuilder
     interface InitializedBuilder
     {
         InitializedBuilder param(String key, String value);
+        InitializedBuilder dialog(boolean isDialog);
         String signAndBuild();
         String buildUnsigned();
     }

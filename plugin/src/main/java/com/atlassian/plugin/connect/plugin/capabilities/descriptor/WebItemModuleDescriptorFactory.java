@@ -17,12 +17,14 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;
 
 
 @Component
-public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebItemModuleBean, WebItemModuleDescriptor>
+public class WebItemModuleDescriptorFactory
+        implements ConnectModuleDescriptorFactory<WebItemModuleBean, WebItemModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(WebItemModuleDescriptorFactory.class);
     public static final String DIALOG_OPTION_PREFIX = "-acopt-";
@@ -36,9 +38,9 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
 
     @Autowired
     public WebItemModuleDescriptorFactory(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory,
-                                          IconModuleFragmentFactory iconModuleFragmentFactory,
-                                          ConditionModuleFragmentFactory conditionModuleFragmentFactory,
-                                          RemotablePluginAccessorFactory remotablePluginAccessorFactory, ParamsModuleFragmentFactory paramsModuleFragmentFactory)
+            IconModuleFragmentFactory iconModuleFragmentFactory,
+            ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory, ParamsModuleFragmentFactory paramsModuleFragmentFactory)
     {
         this.productWebItemDescriptorFactory = productWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
@@ -71,7 +73,8 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
 
         String linkId = plugin.getKey() + "-" + webItemKey;
         Element linkElement = webItemElement.addElement("link").addAttribute("linkId", linkId);
-        linkElement.setText(bean.getUrl());
+        String url = bean.getUrl();
+        linkElement.setText(url);
 
         List<String> styles = newArrayList(bean.getStyleClasses());
 
@@ -93,18 +96,26 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
         {
             styles.add("ap-inline-dialog");
         }
-        
-        Map<String,String> dialogOptions = bean.getTarget().getOptions();
-        Map<String,String> beanParams = bean.getParams();
-        
-        if(null != dialogOptions && !dialogOptions.isEmpty())
+
+        if (!bean.getTarget().isPageTarget())
+        {
+            styles.add("ap-plugin-key-" + plugin.getKey());
+            styles.add("ap-module-key-" + webItemKey);
+        }
+
+        Map<String, Object> dialogOptions = bean.getTarget().getOptions();
+        Map<String, String> beanParams = bean.getParams();
+
+        if (null != dialogOptions && !dialogOptions.isEmpty())
         {
             //TODO: use regex to escape special characters with \
-            for(Map.Entry<String,String> entry : dialogOptions.entrySet())
+            for (Map.Entry<String, Object> entry : dialogOptions.entrySet())
             {
-                beanParams.put(DIALOG_OPTION_PREFIX + entry.getKey(),entry.getValue());
+                beanParams.put(DIALOG_OPTION_PREFIX + entry.getKey(), entry.getValue().toString());
             }
         }
+
+        final boolean isDialog = bean.getTarget().isDialogTarget();
 
         paramsModuleFragmentFactory.addParamsToElement(webItemElement,bean.getParams());
 
@@ -118,21 +129,21 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
             log.debug("Created web item: " + printNode(webItemElement));
         }
 
-        return createWebItemDescriptor(plugin, webItemElement, webItemKey, bean.getUrl(), bean.isAbsolute(), bean.getContext());
+        return createWebItemDescriptor(plugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog);
     }
 
     private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String moduleKey, String url,
-                                                            boolean absolute, AddOnUrlContext urlContext)
+                                                            boolean absolute, AddOnUrlContext urlContext, boolean isDialog)
     {
         webItemElement.addAttribute("system", "true");
 
         final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(
                 url
-                ,plugin.getKey()
-                ,moduleKey
-                ,absolute
-                ,urlContext
-        );
+                , plugin.getKey()
+                , moduleKey
+                , absolute
+                , urlContext
+                , isDialog);
 
         descriptor.init(plugin, webItemElement);
 

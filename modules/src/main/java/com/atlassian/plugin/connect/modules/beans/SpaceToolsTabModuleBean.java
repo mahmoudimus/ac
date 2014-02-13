@@ -9,12 +9,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- *Space Tools Tab modules enable add-ons to insert tabs into Confluence Space Tools area. These can be automatically
+ * Space Tools Tab modules enable add-ons to insert tabs into Confluence Space Tools area. These can be automatically
  * resized to the width and height of your add-on's content. The location attribute defines which section the tab will
  * appear.
  *
- *Spaces page with the Documentation Theme do not support the Space Tools area, and instead display the
- * legacy Space Admin area. This module will insert a tab in a pre-defined location in Space Admin.
+ * Spaces page with the Documentation Theme do not support the Space Tools area, and instead display the
+ * legacy Space Admin area. This module will insert a tab in a pre-defined location in Space Admin (look below for a 
+ * complete list of existing locations).
  *
  *#### Example
  *

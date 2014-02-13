@@ -3,11 +3,10 @@ package com.atlassian.plugin.connect.plugin.installer;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectPluginEventHandler;
+import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectMirrorPluginEventHandler;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
@@ -24,8 +23,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 {
@@ -37,8 +34,9 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddonRegistry connectAddonRegistry;
-    private final ConnectPluginEventHandler connectEventHandler;
+    private final ConnectMirrorPluginEventHandler connectEventHandler;
     private final SharedSecretService sharedSecretService;
+    private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final ConnectAddOnUserService connectAddOnUserService;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
@@ -52,9 +50,10 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                                         BeanToModuleRegistrar beanToModuleRegistrar,
                                         ConnectApplinkManager connectApplinkManager,
                                         ConnectAddonRegistry connectAddonRegistry,
-                                        ConnectPluginEventHandler connectEventHandler,
+                                        ConnectMirrorPluginEventHandler connectEventHandler,
                                         SharedSecretService sharedSecretService,
-                                        ConnectAddOnUserService connectAddOnUserService)
+                                        ConnectAddOnUserService connectAddOnUserService,
+                                        ConnectAddonBeanFactory connectAddonBeanFactory)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -66,7 +65,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectAddonRegistry = connectAddonRegistry;
         this.connectEventHandler = connectEventHandler;
         this.sharedSecretService = sharedSecretService;
-        this.connectAddOnUserService = checkNotNull(connectAddOnUserService);
+        this.connectAddonBeanFactory = connectAddonBeanFactory;
+        this.connectAddOnUserService = connectAddOnUserService;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         String pluginKey;
         try
         {
-            ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(jsonDescriptor, ConnectAddonBean.class);
+            ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
             pluginKey = addOn.getKey();
 
             removeOldPlugin(addOn.getKey());

@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.validate.impl;
 
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
@@ -30,7 +29,7 @@ public class AuthRequiresTlsAndLifecycleValidator implements AddOnBeanValidator
     }
 
     @Override
-    public void validate(final Plugin plugin, final ConnectAddonBean addon) throws InvalidDescriptorException
+    public void validate(final ConnectAddonBean addon) throws InvalidDescriptorException
     {
         if (addon.getAuthentication() != null && addon.getAuthentication().getType() == JWT)
         {
@@ -43,7 +42,7 @@ public class AuthRequiresTlsAndLifecycleValidator implements AddOnBeanValidator
 
             if (addon.getLifecycle() == null || isNullOrEmpty(addon.getLifecycle().getInstalled()))
             {
-                throw new InvalidDescriptorException("The add-on (" + plugin.getKey() + ") requested authentication "
+                throw new InvalidDescriptorException("The add-on (" + addon.getKey() + ") requested authentication "
                         + "but did not specify an installed lifecycle callback in its descriptor.",
                         "connect.install.error.auth.with.no.installed.callback");
             }
