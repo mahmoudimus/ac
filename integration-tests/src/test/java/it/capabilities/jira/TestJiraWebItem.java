@@ -226,7 +226,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
         webItem.click();
-        product.getPageBinder().bind(RemoteInlineDialog.class).waitUntilContentLoaded();
+        product.getPageBinder().bind(RemoteInlineDialog.class).waitUntilContentElementNotEmpty("client-http-status");
         assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
     }
 
