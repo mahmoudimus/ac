@@ -351,8 +351,14 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       defer(doCreate);
     }
     else {
-      // if the document hasn't yet loaded, create immediately
-      doCreate();
+      AJS.toInit(function(){
+        // Load after confluence editor has finished loading content.
+        if(AJS.Confluence && AJS.Confluence.EditorLoader && AJS.Confluence.EditorLoader.load){
+          AJS.Confluence.EditorLoader.load(doCreate);
+        } else {
+          doCreate();
+        }
+      });
     }
   };
 
