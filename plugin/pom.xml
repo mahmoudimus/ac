@@ -39,7 +39,6 @@
             <scope>provided</scope>
         </dependency>
         
-        
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner</artifactId>
@@ -82,6 +81,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-spi</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-test-support-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>biz.aQute</groupId>
@@ -554,6 +559,11 @@
                                     <artifactId>json-schema-validator-atlassian-bundle</artifactId>
                                     <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>
@@ -607,6 +617,11 @@
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-scriptsfinished-plugin</artifactId>
                                     <version>${atlassian.confluence.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
+                                    <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 

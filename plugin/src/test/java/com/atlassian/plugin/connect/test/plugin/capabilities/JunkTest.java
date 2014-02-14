@@ -45,26 +45,27 @@ public class JunkTest
     @Test
     public void testAddon() throws Exception
     {
-        Map<String, String> links = new HashMap<String, String>();
-        links.put("self", "http://www.example.com/capabilities");
-        links.put("homepage", "http://www.example.com");
 
         ConnectAddonBean addon = newConnectAddonBean()
-                .withName("My Plugin")
-                .withKey("my-plugin")
-                .withVersion("1.0")
-                .withLinks(links)
+                .withName("Double Module Addon")
+                .withKey("double-module-addon")
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModule("webItems", newWebItemBean()
+                .withAuthentication(
+                        newAuthenticationBean().withType(AuthenticationType.NONE).build()
+                )
+                .withBaseurl("http://localhost/ac-test-addon")
+                .withModules("webItems", newWebItemBean()
                         .withName(new I18nProperty("My Web Item", "my.webitem"))
-                        .withUrl("/my-general-page")
+                        .withUrl("/webitem")
                         .withLocation("atl.admin/menu")
-                        .withWeight(100)
-                        .withTooltip(new I18nProperty("click me!", "click.me"))
-                        .withStyleClasses("ac-link", "aui-link")
-                        .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
-                        .build())
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
+                        .build()
+                        
+                        ,newWebItemBean()
+                        .withName(new I18nProperty("My Other Web Item", "my.other.webitem"))
+                        .withUrl("/other-webitem")
+                        .withLocation("atl.admin/menu")
+                        .build()
+                )
                 .build();
 
         Gson gson = ConnectModulesGsonFactory.getGson();
