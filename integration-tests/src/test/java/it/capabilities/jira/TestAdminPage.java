@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test of general page in JIRA
@@ -77,6 +78,18 @@ public class TestAdminPage extends JiraWebDriverTestBase
 
         RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
+    }
+
+    @Test
+    public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException
+    {
+        loginAsAdmin();
+        product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
+
+        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, GENERATED_PAGE_KEY, PAGE_NAME);
+
+        RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
+        assertTrue("Addon is full size", addonContentsPage.isFullSize());
     }
 
     @Test
