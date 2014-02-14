@@ -81,7 +81,7 @@ public class AddOnCondition implements Condition
 
         Promise<String> responsePromise = remotablePluginAccessorFactory.getOrThrow(cfg.getAddOnKey())
                 .executeAsync(HttpMethod.GET, URI.create(uri),
-                        Collections.<String, String>emptyMap(), Collections.<String, String>emptyMap());
+                        Collections.<String, String[]>emptyMap(), Collections.<String, String>emptyMap());
 
         String response;
         try
