@@ -5,6 +5,8 @@ import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.query.TimedCondition;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
+import com.atlassian.plugin.connect.test.utils.WebItemUtils;
 import org.openqa.selenium.By;
 
 import javax.inject.Inject;
@@ -16,30 +18,29 @@ public class JiraComponentTabPage extends AbstractJiraPage
 {
     private final String projectKey;
     private final String componentId;
-    private final String componentTabId;
+    private final String pluginKey;
+    private final String moduleKey;
 
     protected PageElement tabField;
 
-    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-";
-    private static final String IFRAME_ID_SUFFIX = "-panel_provider";
-    private PageElement iframe;
     private String iframeSrc;
 
     @Inject
     private PageElementFinder elementFinder;
 
-    public JiraComponentTabPage(final String projectKey, final String componentId, final String componentTabId)
+    public JiraComponentTabPage(String projectKey, String componentId, String pluginKey, String moduleKey)
     {
         this.projectKey = projectKey;
         this.componentId = componentId;
-        this.componentTabId = componentTabId;
+        this.pluginKey = pluginKey;
+        this.moduleKey = moduleKey;
     }
 
 
     @Override
     public TimedCondition isAt()
     {
-        final String componentTabPanelId = componentTabId + "-panel-panel";
+        final String componentTabPanelId = WebItemUtils.linkId(pluginKey, moduleKey) + "-panel";
         tabField = elementFinder.find(By.id(componentTabPanelId));
 
         return tabField.timed().isPresent();
@@ -49,8 +50,7 @@ public class JiraComponentTabPage extends AbstractJiraPage
     {
         tabField.click();
 
-        final String iframeId = IFRAME_ID_PREFIX + componentTabId + IFRAME_ID_SUFFIX;
-        iframe = elementFinder.find(By.id(iframeId));
+        PageElement iframe = elementFinder.find(By.id(IframeUtils.iframeId(moduleKey)));
         iframeSrc = iframe.getAttribute("src");
 
         iframe.timed().isPresent();

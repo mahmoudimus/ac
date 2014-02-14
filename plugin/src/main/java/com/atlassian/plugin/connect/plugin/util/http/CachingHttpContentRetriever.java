@@ -9,7 +9,7 @@ import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
-import com.atlassian.plugin.connect.plugin.util.MapFunctions;
+import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -19,7 +19,6 @@ import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,6 @@ import org.springframework.beans.factory.DisposableBean;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -90,7 +88,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
     public Promise<String> async(AuthorizationGenerator authorizationGenerator,
                                  HttpMethod method,
                                  URI url,
-                                 Map<String, String> parameters,
+                                 Map<String, String[]> parameters,
                                  Map<String, String> headers,
                                  String pluginKey)
     {
@@ -98,7 +96,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
 
         log.info("{}ing content from '{}'", method, url);
 
-        final Map<String, String> allParameters = getAllParameters(parameters, pluginKey);
+        final Map<String, String[]> allParameters = getAllParameters(parameters, pluginKey);
 
         Request.Builder request = httpClient.newRequest(getFullUrl(method, url, allParameters));
         request = request.setAttributes(getAttributes(pluginKey));
@@ -109,7 +107,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
         if (contains(METHODS_WITH_BODY, method))
         {
             request.setContentType("application/x-www-form-urlencoded");
-            request.setEntity(UriBuilder.joinParameters(transformParameters(allParameters)));
+            request.setEntity(UriBuilder.joinParameters(UriBuilderUtils.toListFormat(allParameters)));
         }
 
         ResponseTransformation<String> responseTransformation = httpClient.<String>transformation()
@@ -121,12 +119,12 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
         return request.execute(METHOD_MAPPING.get(method)).transform(responseTransformation);
     }
 
-    private String getFullUrl(HttpMethod method, URI url, Map<String, String> allParameters)
+    private String getFullUrl(HttpMethod method, URI url, Map<String, String[]> allParameters)
     {
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(url));
         if (contains(METHODS_WITH_QUERY_PARAMS, method))
         {
-            uriBuilder.addQueryParameters(allParameters);
+            UriBuilderUtils.addQueryParameters(uriBuilder, allParameters);
         }
         return uriBuilder.toString();
     }
@@ -149,22 +147,18 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
         return allHeaders.build();
     }
 
-    private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String> allParameters)
+    private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters)
     {
-        return authorizationGenerator.generate(method, url, transformParameters(allParameters));
+        return authorizationGenerator.generate(method, url, allParameters);
     }
 
-    private Map<String, List<String>> transformParameters(Map<String, String> allParameters)
+    private Map<String, String[]> getAllParameters(Map<String, String[]> parameters, String pluginKey)
     {
-        return Maps.transformValues(allParameters, MapFunctions.STRING_TO_LIST);
-    }
-
-    private Map<String, String> getAllParameters(Map<String, String> parameters, String pluginKey)
-    {
-        return ImmutableMap.<String, String>builder()
+        return ImmutableMap.<String, String[]>builder()
                 .putAll(parameters)
-                .put("lic", getLicenseStatusAsString(pluginKey))
-                .put("loc", getLocale()).build();
+                .put("lic", new String[]{getLicenseStatusAsString(pluginKey)})
+                .put("loc", new String[]{getLocale()})
+                .build();
     }
 
     private String getLicenseStatusAsString(String pluginKey)
@@ -175,17 +169,6 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
     private String getLocale()
     {
         return localeHelper.getLocaleTag();
-    }
-
-    @Override
-    public Promise<String> getAsync(AuthorizationGenerator authorizationGenerator,
-                                    String remoteUsername,
-                                    URI url,
-                                    Map<String, String> parameters,
-                                    Map<String, String> headers,
-                                    String pluginKey)
-    {
-        return async(authorizationGenerator, HttpMethod.GET, url, parameters, headers, pluginKey);
     }
 
     private static HttpClientOptions getHttpClientOptions(PluginRetrievalService pluginRetrievalService)

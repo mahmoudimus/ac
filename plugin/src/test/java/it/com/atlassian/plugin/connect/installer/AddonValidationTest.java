@@ -1,10 +1,7 @@
 package it.com.atlassian.plugin.connect.installer;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -260,6 +257,30 @@ public class AddonValidationTest
     public void testJwtAuthenticationWithNonUriBaseUrl() throws Exception
     {
         installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("this is not a URI").build(), schemaValidationErrorCode());
+    }
+
+    @Test
+    public void a404ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
+    {
+        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://atlassian.com").build(), "The add-on host returned HTTP response code 404 when we tried to contact it during installation. Please try again later or contact the add-on vendor.");
+    }
+
+    @Test
+    public void aNonExistentDomainNameInInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
+    {
+        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://does.not.exist").build(), "The add-on host domain name \"does.not.exist\" does not exist. Please try again later or contact the add-on vendor.");
+    }
+
+    @Test
+    public void installedCallbackTimingOutResultsInCorrespondingErrorCode() throws Exception
+    {
+        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://example.com").build(), "The add-on host did not respond when we tried to contact it at \"https://example.com/installed\" during installation (the attempt timed out). Please try again later or contact the add-on vendor.");
+    }
+
+    private ConnectAddonBeanBuilder testBeanBuilderWithJwtAndInstalledCallback()
+    {
+        return testBeanBuilderWithJwt()
+                .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build());
     }
 
     private static ConnectAddonBeanBuilder testBeanBuilderWithNoAuth()

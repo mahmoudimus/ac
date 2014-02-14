@@ -45,15 +45,15 @@ public class StaticContentMacroUrlTemplateTest extends AbstractContentMacroUrlTe
                 any(ConversionContext.class), any(RemotablePluginAccessor.class));
     }
 
-    private ArgumentMatcher<Map<String, String>> hasQueryParam(final String name, final String value)
+    private ArgumentMatcher<Map<String, String[]>> hasQueryParam(final String name, final String value)
     {
-        return new ArgumentMatcher<Map<String, String>>()
+        return new ArgumentMatcher<Map<String, String[]>>()
         {
             @Override
             public boolean matches(Object actual)
             {
                 Map<String, String[]> map = (Map<String, String[]>) actual;
-                return map.containsKey(name) && value.equals(map.get(name));
+                return map.containsKey(name) && map.get(name).length == 1 && value.equals(map.get(name)[0]);
             }
         };
     }
