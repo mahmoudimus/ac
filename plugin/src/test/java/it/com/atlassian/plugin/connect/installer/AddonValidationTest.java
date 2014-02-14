@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilde
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.collect.Sets;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -38,14 +39,17 @@ public class AddonValidationTest
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final ApplicationProperties applicationProperties;
+    private final I18nResolver i18nResolver;
 
     private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
 
-    public AddonValidationTest(TestPluginInstaller testPluginInstaller, final TestAuthenticator testAuthenticator, ApplicationProperties applicationProperties)
+    public AddonValidationTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
+            ApplicationProperties applicationProperties, I18nResolver i18nResolver)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.applicationProperties = applicationProperties;
+        this.i18nResolver = i18nResolver;
     }
 
     @BeforeClass
@@ -71,7 +75,7 @@ public class AddonValidationTest
         }
     }
 
-    private static ConnectAddonBeanBuilder testBeanBuilderWithDefaultAuth()
+    private static ConnectAddonBeanBuilder testBeanBuilderWithNoAuthSpecified()
     {
         return new ConnectAddonBeanBuilder()
                 .withKey("ac-test-" + System.currentTimeMillis())
@@ -80,15 +84,8 @@ public class AddonValidationTest
 
     private static ConnectAddonBeanBuilder testBeanBuilderWithAuth(AuthenticationType authenticationType)
     {
-        return testBeanBuilderWithDefaultAuth().withAuthentication(AuthenticationBean.newAuthenticationBean()
+        return testBeanBuilderWithNoAuthSpecified().withAuthentication(AuthenticationBean.newAuthenticationBean()
                 .withType(authenticationType).build());
-    }
-
-    private static ConnectAddonBeanBuilder testBeanBuilderWithAuthNone()
-    {
-        return testBeanBuilderWithDefaultAuth()
-                .withAuthentication(AuthenticationBean.newAuthenticationBean()
-                        .withType(AuthenticationType.NONE).build());
     }
 
     private void install(ConnectAddonBean addonBean) throws Exception
@@ -118,17 +115,9 @@ public class AddonValidationTest
     }
 
     @Test
-    public void testDefaultAuthenticationWithNoInstalledCallback() throws Exception
-    {
-        ConnectAddonBean bean = testBeanBuilderWithDefaultAuth().build(); // auth defaults to JWT
-
-        installExpectingUpmErrorCode(bean, "connect.install.error.auth.with.no.installed.callback");
-    }
-
-    @Test
     public void testNoAuthenticationWithNoInstalledCallback() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithNoAuth().build();
+        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE).build();
         install(bean);
     }
 
@@ -139,36 +128,46 @@ public class AddonValidationTest
                 .withBaseurl("http://example.com/no-tls")
                 .build();
 
-        installExpectingUpmErrorCode(bean, "connect.install.error.auth.with.no.tls");
+        installExpectingUpmErrorCode(bean, "connect.install.error.base_url.no_tls");
     }
 
     @Test
     public void testNoAuthenticationWithNoTls() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithNoAuth()
+        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE)
                 .withBaseurl("http://example.com/no-tls")
                 .build();
 
-        install(bean);
+        installExpectingUpmErrorCode(bean, "connect.install.error.base_url.no_tls");
+    }
+
+    @Test
+    public void testOAuthAuthenticationWithNoTls() throws Exception
+    {
+        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.OAUTH)
+                .withBaseurl("http://example.com/no-tls")
+                .build();
+
+        installExpectingUpmErrorCode(bean, "connect.install.error.base_url.no_tls");
     }
 
     @Test
     public void testWebhookRequiringReadScopeWithNoReadScope() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithAuthNone()
+        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE)
                 .withModule("webhooks", WebHookModuleBean.newWebHookBean()
                         .withEvent(WEBHOOK_REQUIRING_READ_SCOPE)
                         .withUrl("/hook")
                         .build())
                 .build();
 
-        installExpectingUpmErrorCode(bean, "connect.install.error.missing.scope.READ");
+        installExpectingUpmErrorCode(bean, missingScopeErrorMessage(ScopeName.READ));
     }
 
     @Test
     public void testWebhookRequiringReadScopeWithReadScope() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithAuthNone()
+        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE)
                 .withScopes(Sets.newHashSet(ScopeName.READ))
                 .withModule("webhooks", WebHookModuleBean.newWebHookBean()
                         .withEvent(WEBHOOK_REQUIRING_READ_SCOPE)
@@ -182,7 +181,7 @@ public class AddonValidationTest
     @Test
     public void testWebhookRequiringReadScopeWithImpliedReadScope() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithAuthNone()
+        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE)
                 .withScopes(Sets.newHashSet(ScopeName.ADMIN))
                 .withModule("webhooks", WebHookModuleBean.newWebHookBean()
                         .withEvent(WEBHOOK_REQUIRING_READ_SCOPE)
@@ -197,7 +196,7 @@ public class AddonValidationTest
     @Ignore("Currently all webhooks require only the READ scope")
     public void testWebhookRequiringAdminScopeWithNoAdminScope() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithAuthNone()
+        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE)
                 .withScopes(Sets.newHashSet(ScopeName.READ))
                 .withModule("webhooks", WebHookModuleBean.newWebHookBean()
                         .withEvent(WEBHOOK_REQUIRING_ADMIN_SCOPE)
@@ -205,14 +204,14 @@ public class AddonValidationTest
                         .build())
                 .build();
 
-        installExpectingUpmErrorCode(bean, "connect.install.error.missing.scope.ADMIN");
+        installExpectingUpmErrorCode(bean, missingScopeErrorMessage(ScopeName.ADMIN));
     }
 
     @Test
     @Ignore("Currently all webhooks require only the READ scope")
     public void testWebhookRequiringAdminScopeWithAdminScope() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithAuthNone()
+        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE)
                 .withScopes(Sets.newHashSet(ScopeName.ADMIN))
                 .withModule("webhooks", WebHookModuleBean.newWebHookBean()
                         .withEvent(WEBHOOK_REQUIRING_ADMIN_SCOPE)
@@ -226,7 +225,7 @@ public class AddonValidationTest
     @Test
     public void testJwtAuthenticationWithSchemelessBaseUrl() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("example.com").build(), "connect.install.error.auth.with.no.tls");
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("example.com").build(), "connect.install.error.base_url.no_scheme");
     }
 
     @Test
@@ -238,43 +237,46 @@ public class AddonValidationTest
     @Test
     public void testNoneAuthenticationWithSchemelessBaseUrl() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithNoAuth().withBaseurl("example.com").build(), "connect.install.error.base_url.no_scheme");
+        installExpectingUpmErrorCode(testBeanBuilderWithAuth(AuthenticationType.NONE).withBaseurl("example.com").build(), "connect.install.error.base_url.no_scheme");
     }
 
     @Test
     public void testJwtAuthenticationWithMissingBaseUrl() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl(null).build(), schemaValidationErrorCode());
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl(null).build(), schemaValidationErrorMessage());
     }
 
     @Test
     public void testJwtAuthenticationWithEmptyStringBaseUrl() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("").build(), schemaValidationErrorCode());
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("").build(), schemaValidationErrorMessage());
     }
 
     @Test
     public void testJwtAuthenticationWithNonUriBaseUrl() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("this is not a URI").build(), schemaValidationErrorCode());
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("this is not a URI").build(), schemaValidationErrorMessage());
     }
 
     @Test
     public void a404ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://atlassian.com").build(), "The add-on host returned HTTP response code 404 when we tried to contact it during installation. Please try again later or contact the add-on vendor.");
+        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://atlassian.com").build(),
+                i18nResolver.getText("connect.install.error.remote.host.bad.response", 404));
     }
 
     @Test
     public void aNonExistentDomainNameInInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://does.not.exist").build(), "The add-on host domain name \"does.not.exist\" does not exist. Please try again later or contact the add-on vendor.");
+        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://does.not.exist").build(),
+                i18nResolver.getText("connect.install.error.remote.host.bad.domain", "does.not.exist"));
     }
 
     @Test
     public void installedCallbackTimingOutResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://example.com").build(), "The add-on host did not respond when we tried to contact it at \"https://example.com/installed\" during installation (the attempt timed out). Please try again later or contact the add-on vendor.");
+        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://example.com").build(),
+                i18nResolver.getText("connect.install.error.remote.host.timeout", "https://example.com/installed"));
     }
 
     private ConnectAddonBeanBuilder testBeanBuilderWithJwtAndInstalledCallback()
@@ -283,18 +285,19 @@ public class AddonValidationTest
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build());
     }
 
-    private static ConnectAddonBeanBuilder testBeanBuilderWithNoAuth()
-    {
-        return testBeanBuilderWithAuth(AuthenticationType.NONE);
-    }
-
     private static ConnectAddonBeanBuilder testBeanBuilderWithJwt()
     {
         return testBeanBuilderWithAuth(AuthenticationType.JWT);
     }
 
-    private String schemaValidationErrorCode()
+    private String missingScopeErrorMessage(final ScopeName scope)
     {
-        return "connect.install.error.remote.descriptor.validation." + applicationProperties.getDisplayName().toLowerCase();
+        return i18nResolver.getText("connect.install.error.missing.scope", scope);
+    }
+
+    private String schemaValidationErrorMessage()
+    {
+        return i18nResolver.getText("connect.install.error.remote.descriptor.validation",
+                applicationProperties.getDisplayName());
     }
 }
