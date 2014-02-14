@@ -18,26 +18,26 @@ import java.util.Map;
  *
  */
 @JiraComponent
-public class JiraWebPanelModuleContextExtractor implements WebPanelModuleContextExtractor
+public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor
 {
     private final Iterable<ParameterExtractor<?>> parameterExtractors;
     private final UserManager userManager;
 
     @Autowired
-    public JiraWebPanelModuleContextExtractor(UserManager userManager)
+    public JiraWebFragmentModuleContextExtractor(UserManager userManager)
     {
         this.userManager = userManager;
         parameterExtractors = constructParameterExtractors();
     }
 
     @Override
-    public ModuleContextParameters extractParameters(final Map<String, Object> webPanelContext)
+    public ModuleContextParameters extractParameters(final Map<String, Object> webFragmentContext)
     {
         JiraModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
 
         for (ParameterExtractor extractor : parameterExtractors)
         {
-            Object obj = webPanelContext.get(extractor.getContextKey());
+            Object obj = webFragmentContext.get(extractor.getContextKey());
             if (obj != null)
             {
                 Class<?> type = extractor.getExpectedType();

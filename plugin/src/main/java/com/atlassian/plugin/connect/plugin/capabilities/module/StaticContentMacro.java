@@ -62,7 +62,8 @@ public class StaticContentMacro extends AbstractMacro
                 .namespace(moduleKey)
                 .urlTemplate(uriTemplate)
                 .context(moduleContext)
-                .buildUnsigned();
+                .sign(false)
+                .build();
 
         try
         {
