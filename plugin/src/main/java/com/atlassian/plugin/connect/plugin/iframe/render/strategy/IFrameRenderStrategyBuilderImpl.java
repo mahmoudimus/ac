@@ -278,9 +278,16 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         @Override
         public void renderAccessDenied(final Writer writer) throws IOException
         {
+            String deniedDecorator = decorator;
+            
+            if(decorator.contains("admin"))
+            {
+                deniedDecorator = "atl.general";
+            }
+               
             Map<String, Object> renderContext = ImmutableMap.<String, Object>builder()
                     .put("title", title)
-                    .put("decorator", decorator)
+                    .put("decorator", deniedDecorator)
                     .build();
 
             templateRenderer.render(accessDeniedTemplate, renderContext, writer);
