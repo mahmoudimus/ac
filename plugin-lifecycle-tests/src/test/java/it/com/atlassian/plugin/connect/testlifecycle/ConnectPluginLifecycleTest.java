@@ -14,6 +14,7 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,489 +28,323 @@ public class ConnectPluginLifecycleTest
     public static final String JSON_TEMPLATE_PREFIX = "/json/";
     public static final String SINGLE_MODULE_ADDON = "single-module.json";
     public static final String DOUBLE_MODULE_ADDON = "double-module.json";
-    
+
     private final LifecyclePluginInstaller testPluginInstaller;
     private final PluginController pluginController;
-    
+
+    private Plugin theConnectPlugin;
+    private Plugin singleModuleAddon;
+    private Plugin doubleModuleAddon;
+
     public ConnectPluginLifecycleTest(LifecyclePluginInstaller testPluginInstaller, PluginController pluginController)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.pluginController = pluginController;
     }
 
+    @After
+    public void tearDown()
+    {
+        if (null != theConnectPlugin)
+        {
+            try
+            {
+                testPluginInstaller.uninstallPlugin(theConnectPlugin);
+                theConnectPlugin = null;
+            }
+            catch (Exception e)
+            {
+                theConnectPlugin = null;
+            }
+        }
+
+        if (null != singleModuleAddon)
+        {
+            try
+            {
+                testPluginInstaller.uninstallPlugin(singleModuleAddon);
+                singleModuleAddon = null;
+            }
+            catch (Exception e)
+            {
+                singleModuleAddon = null;
+            }
+        }
+
+        if (null != doubleModuleAddon)
+        {
+            try
+            {
+                testPluginInstaller.uninstallPlugin(doubleModuleAddon);
+                doubleModuleAddon = null;
+            }
+            catch (Exception e)
+            {
+                doubleModuleAddon = null;
+            }
+        }
+    }
+
     @Test
     public void installConnectSucceeds() throws Exception
     {
-        Plugin connectPlugin = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            
-            assertEquals(PluginState.ENABLED,connectPlugin.getPluginState());
-        }
-        finally
-        {
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
+        Plugin theConnectPlugin = null;
+        theConnectPlugin = installConnectPlugin();
+
+        assertEquals(PluginState.ENABLED, theConnectPlugin.getPluginState());
     }
 
     @Test
     public void installConnectWithAddonSucceeds() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
 
-            assertEquals("first enabled check failed", PluginState.ENABLED,connectPlugin.getPluginState());
+        assertEquals("first enabled check failed", PluginState.ENABLED, theConnectPlugin.getPluginState());
 
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
-            
-            assertStateAndModuleCount(addonPlugin,PluginState.ENABLED,1,"second check");
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
+
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "second check");
     }
 
     @Test
     public void disablingAddonSucceeds() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
 
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
 
-            assertStateAndModuleCount(addonPlugin,PluginState.ENABLED,1,"first check");
-            
-            pluginController.disablePlugin(addonPlugin.getKey());
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
 
-            assertStateAndModuleCount(addonPlugin,PluginState.DISABLED,0,"second check");
-            
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
+        pluginController.disablePlugin(singleModuleAddon.getKey());
+
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
+
     }
 
     @Test
     public void disablingThenEnablingAddonSucceeds() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
 
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
 
-            assertStateAndModuleCount(addonPlugin,PluginState.ENABLED,1,"first check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
 
-            pluginController.disablePlugin(addonPlugin.getKey());
+        pluginController.disablePlugin(singleModuleAddon.getKey());
 
-            assertStateAndModuleCount(addonPlugin,PluginState.DISABLED,0,"second check");
-            
-            pluginController.enablePlugins(addonPlugin.getKey());
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
 
-            assertStateAndModuleCount(addonPlugin,PluginState.ENABLED,1,"third check");
+        pluginController.enablePlugins(singleModuleAddon.getKey());
 
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "third check");
+
     }
 
     @Test
     public void disablingConnectDisablesAddon() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
 
-            assertEquals("enabled check failed", PluginState.ENABLED,addonPlugin.getPluginState());
-            
-            pluginController.disablePlugin(connectPlugin.getKey());
+        assertEquals("enabled check failed", PluginState.ENABLED, singleModuleAddon.getPluginState());
 
-            assertStateAndModuleCount(addonPlugin,PluginState.DISABLED,0);
-            
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
+        pluginController.disablePlugin(theConnectPlugin.getKey());
+
+        assertEquals(PluginState.DISABLED,theConnectPlugin.getPluginState());
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0);
+
     }
 
     @Test
     public void disablingThenEnablingConnectDisablesAndEnablesAddon() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
 
-            assertStateAndModuleCount(addonPlugin,PluginState.ENABLED,1,"first check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
 
-            pluginController.disablePlugin(connectPlugin.getKey());
+        pluginController.disablePlugin(theConnectPlugin.getKey());
 
-            assertStateAndModuleCount(addonPlugin,PluginState.DISABLED,0,"second check");
-            
-            pluginController.enablePlugins(connectPlugin.getKey());
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
 
-            assertStateAndModuleCount(addonPlugin,PluginState.ENABLED,1, "third check");
+        pluginController.enablePlugins(theConnectPlugin.getKey());
 
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "third check");
     }
 
     @Test
     public void uninstallingConnectDisablesAddon() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
 
-            assertStateAndModuleCount(addonPlugin, PluginState.ENABLED, 1, "first check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
 
-            pluginController.uninstall(connectPlugin);
-            connectPlugin = null;
+        pluginController.uninstall(theConnectPlugin);
+        theConnectPlugin = null;
 
-            assertStateAndModuleCount(addonPlugin,PluginState.DISABLED,0,"second check");
-
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
     }
 
     @Test
     public void uninstallingAndThenInstallingConnectDisablesAndEnablesAddon() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
 
-            assertStateAndModuleCount(addonPlugin, PluginState.ENABLED, 1, "first check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
 
-            pluginController.uninstall(connectPlugin);
-            connectPlugin = null;
+        pluginController.uninstall(theConnectPlugin);
+        theConnectPlugin = null;
 
-            assertStateAndModuleCount(addonPlugin, PluginState.DISABLED, 0, "second check");
-            
-            connectPlugin = installConnectPlugin();
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
 
-            assertStateAndModuleCount(addonPlugin, PluginState.ENABLED, 1, "third check");
+        theConnectPlugin = installConnectPlugin();
 
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "third check");
+
     }
 
     @Test
     public void upgradingConnectEnablesAddon() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
-            
-            assertStateAndModuleCount(addonPlugin,PluginState.ENABLED,1, "first check");
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
 
-            connectPlugin = installConnectPlugin();
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
 
-            assertStateAndModuleCount(addonPlugin,PluginState.ENABLED,1, "second check");
+        theConnectPlugin = installConnectPlugin();
 
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "second check");
+
     }
 
     @Test
     public void disablingConnectDisablesMultipleAddons() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        Plugin addonPlugin2 = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
-            addonPlugin2 = installAddon(DOUBLE_MODULE_ADDON);
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        Plugin doubleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
+        doubleModuleAddon = installAddon(DOUBLE_MODULE_ADDON);
 
-            assertStateAndModuleCount(addonPlugin,PluginState.ENABLED,1, "first check");
-            assertStateAndModuleCount(addonPlugin2,PluginState.ENABLED,2, "first check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "first check");
 
-            pluginController.disablePlugin(connectPlugin.getKey());
+        pluginController.disablePlugin(theConnectPlugin.getKey());
 
-            assertStateAndModuleCount(addonPlugin,PluginState.DISABLED,0, "second check");
-            assertStateAndModuleCount(addonPlugin,PluginState.DISABLED,0, "second check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
 
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != addonPlugin2)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin2);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
     }
 
     @Test
     public void disablingThenEnablingConnectDisablesAndEnablesMultipleAddons() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        Plugin addonPlugin2 = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
-            addonPlugin2 = installAddon(DOUBLE_MODULE_ADDON);
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        Plugin doubleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
+        doubleModuleAddon = installAddon(DOUBLE_MODULE_ADDON);
 
-            assertStateAndModuleCount(addonPlugin, PluginState.ENABLED, 1, "first check");
-            assertStateAndModuleCount(addonPlugin2, PluginState.ENABLED, 2, "first check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "first check");
 
-            pluginController.disablePlugin(connectPlugin.getKey());
+        pluginController.disablePlugin(theConnectPlugin.getKey());
 
-            assertStateAndModuleCount(addonPlugin, PluginState.DISABLED, 0, "second check");
-            assertStateAndModuleCount(addonPlugin2, PluginState.DISABLED, 0, "second check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.DISABLED, 0, "second check");
 
-            pluginController.enablePlugins(connectPlugin.getKey());
+        pluginController.enablePlugins(theConnectPlugin.getKey());
 
-            assertStateAndModuleCount(addonPlugin, PluginState.ENABLED, 1, "third check");
-            assertStateAndModuleCount(addonPlugin2, PluginState.ENABLED, 2, "third check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "third check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "third check");
 
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != addonPlugin2)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin2);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
     }
 
     @Test
     public void uninstallingConnectDisablesMultipleAddons() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        Plugin addonPlugin2 = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
-            addonPlugin2 = installAddon(DOUBLE_MODULE_ADDON);
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        Plugin doubleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
+        doubleModuleAddon = installAddon(DOUBLE_MODULE_ADDON);
 
-            assertStateAndModuleCount(addonPlugin,PluginState.ENABLED,1, "first check");
-            assertStateAndModuleCount(addonPlugin2,PluginState.ENABLED,2, "first check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "first check");
 
-            pluginController.uninstall(connectPlugin);
-            connectPlugin = null;
+        pluginController.uninstall(theConnectPlugin);
+        theConnectPlugin = null;
 
-            assertStateAndModuleCount(addonPlugin, PluginState.DISABLED, 0, "second check");
-            assertStateAndModuleCount(addonPlugin2, PluginState.DISABLED, 0, "second check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.DISABLED, 0, "second check");
 
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != addonPlugin2)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin2);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
     }
 
     @Test
     public void uninstallingAndThenInstallingConnectDisablesAndEnablesMultipleAddons() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        Plugin addonPlugin2 = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
-            addonPlugin2 = installAddon(DOUBLE_MODULE_ADDON);
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        Plugin doubleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
+        doubleModuleAddon = installAddon(DOUBLE_MODULE_ADDON);
 
-            assertStateAndModuleCount(addonPlugin, PluginState.ENABLED, 1, "first check");
-            assertStateAndModuleCount(addonPlugin2, PluginState.ENABLED, 2, "first check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "first check");
 
-            pluginController.uninstall(connectPlugin);
-            connectPlugin = null;
+        pluginController.uninstall(theConnectPlugin);
+        theConnectPlugin = null;
 
-            assertStateAndModuleCount(addonPlugin, PluginState.DISABLED, 0, "second check");
-            assertStateAndModuleCount(addonPlugin2, PluginState.DISABLED, 0, "second check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.DISABLED, 0, "second check");
 
-            connectPlugin = installConnectPlugin();
+        theConnectPlugin = installConnectPlugin();
 
-            assertStateAndModuleCount(addonPlugin, PluginState.ENABLED, 1, "third check");
-            assertStateAndModuleCount(addonPlugin2, PluginState.ENABLED, 2, "third check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "third check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "third check");
 
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != addonPlugin2)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin2);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
     }
 
     @Test
     public void upgradingConnectEnablesMultipleAddons() throws Exception
     {
-        Plugin connectPlugin = null;
-        Plugin addonPlugin = null;
-        Plugin addonPlugin2 = null;
-        try
-        {
-            connectPlugin = installConnectPlugin();
-            addonPlugin = installAddon(SINGLE_MODULE_ADDON);
-            addonPlugin2 = installAddon(DOUBLE_MODULE_ADDON);
+        Plugin theConnectPlugin = null;
+        Plugin singleModuleAddon = null;
+        Plugin doubleModuleAddon = null;
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
+        doubleModuleAddon = installAddon(DOUBLE_MODULE_ADDON);
 
-            assertStateAndModuleCount(addonPlugin, PluginState.ENABLED, 1, "first check");
-            assertStateAndModuleCount(addonPlugin2, PluginState.ENABLED, 2, "first check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "first check");
 
-            connectPlugin = installConnectPlugin();
+        theConnectPlugin = installConnectPlugin();
 
-            assertStateAndModuleCount(addonPlugin, PluginState.ENABLED, 1, "second check");
-            assertStateAndModuleCount(addonPlugin2, PluginState.ENABLED, 2, "second check");
+        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "second check");
+        assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "second check");
 
-        }
-        finally
-        {
-            if(null != addonPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin);
-            }
-            if(null != addonPlugin2)
-            {
-                testPluginInstaller.uninstallPlugin(addonPlugin2);
-            }
-            if(null != connectPlugin)
-            {
-                testPluginInstaller.uninstallPlugin(connectPlugin);
-            }
-        }
     }
 
     private Plugin installConnectPlugin() throws IOException
@@ -526,7 +361,7 @@ public class ConnectPluginLifecycleTest
     {
         InputStream is = this.getClass().getResourceAsStream(CONNECT_PLUGIN_PATH);
         String path = IOUtils.toString(is);
-        
+
         return new File(path);
     }
 
@@ -538,39 +373,39 @@ public class ConnectPluginLifecycleTest
         return json;
     }
 
-    private void assertStateAndModuleCount(Plugin addonPlugin, PluginState state, int moduleCount)
+    private void assertStateAndModuleCount(Plugin singleModuleAddon, PluginState state, int moduleCount)
     {
-        assertStateAndModuleCount(addonPlugin, state, moduleCount,"");
+        assertStateAndModuleCount(singleModuleAddon, state, moduleCount, "");
     }
 
-    private void assertStateAndModuleCount(Plugin addonPlugin, PluginState state, int moduleCount, String prefix)
+    private void assertStateAndModuleCount(Plugin singleModuleAddon, PluginState state, int moduleCount, String prefix)
     {
         StringBuilder sb = new StringBuilder();
-        
-        if(!Strings.isNullOrEmpty(prefix))
+
+        if (!Strings.isNullOrEmpty(prefix))
         {
             sb.append(prefix).append(" - ");
         }
-        
-        sb.append(addonPlugin.getKey()).append(": ");
-        
-        PluginState addonState = addonPlugin.getPluginState();
-        Collection<ModuleDescriptor<?>> addonModules = addonPlugin.getModuleDescriptors();
+
+        sb.append(singleModuleAddon.getKey()).append(": ");
+
+        PluginState addonState = singleModuleAddon.getPluginState();
+        Collection<ModuleDescriptor<?>> addonModules = singleModuleAddon.getModuleDescriptors();
         int addonModuleCount = addonModules.size();
 
         boolean failed = false;
-        if(!state.equals(addonState))
+        if (!state.equals(addonState))
         {
             sb.append("expected state ").append(state.name()).append(" but was ").append(addonState.name());
             failed = true;
         }
-        if(moduleCount != addonModuleCount)
+        if (moduleCount != addonModuleCount)
         {
             sb.append(", expected module size ").append(moduleCount).append(" but was ").append(addonModuleCount);
             failed = true;
         }
 
-        if(failed)
+        if (failed)
         {
             fail(sb.toString());
         }

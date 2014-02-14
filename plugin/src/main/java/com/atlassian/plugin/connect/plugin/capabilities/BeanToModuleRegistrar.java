@@ -11,7 +11,10 @@ import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
@@ -47,7 +50,7 @@ import static com.google.common.collect.Lists.newArrayList;
 public class BeanToModuleRegistrar
 {
     private static final String WEBHOOKS_FIELD = "webhooks";
-    
+
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
 
     private final ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration> registrations;
@@ -57,8 +60,8 @@ public class BeanToModuleRegistrar
 
     @Autowired
     public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration,
-            PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor,
-            ApplicationProperties applicationProperties)
+                                 PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor,
+                                 ApplicationProperties applicationProperties)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.productAccessor = productAccessor;
@@ -67,14 +70,14 @@ public class BeanToModuleRegistrar
         this.registrations = new ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration>();
     }
 
-    public void registerDescriptorsForBeans(Plugin plugin, ConnectAddonBean addon) throws InvalidDescriptorException
+    public synchronized void registerDescriptorsForBeans(Plugin plugin, ConnectAddonBean addon) throws InvalidDescriptorException
     {
         //don't register modules more than once
-        if(registrations.containsKey(plugin.getKey()))
+        if (registrations.containsKey(plugin.getKey()))
         {
             return;
         }
-        
+
         BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
         AutowireWithConnectPluginDecorator connectAutowiringPlugin = new AutowireWithConnectPluginDecorator((AutowireCapablePlugin) theConnectPlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
@@ -83,7 +86,7 @@ public class BeanToModuleRegistrar
 
         //we MUST add in the lifecycle webhooks first
         ModuleList moduleList = getCapabilitiesWithLifecycleWebhooks(addon);
-        
+
         //now process the module fields
         processFields(moduleList, ctx, descriptorsToRegister);
 
@@ -94,27 +97,47 @@ public class BeanToModuleRegistrar
         }
     }
 
+    public synchronized void unregisterDescriptorsForPlugin(Plugin plugin)
+    {
+        if (registrations.containsKey(plugin.getKey()))
+        {
+            DynamicDescriptorRegistration.Registration reg = registrations.remove(plugin.getKey());
+
+            if (null != reg)
+            {
+                try
+                {
+                    reg.unregister();
+                }
+                catch (IllegalStateException e)
+                {
+                    //service was already unregistered, just ignore
+                }
+            }
+        }
+    }
+
     private ModuleList getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
     {
         LifecycleBean lifecycle = addon.getLifecycle();
         ConnectAddonBeanBuilder builder = newConnectAddonBean(addon);
-        
-        if(!Strings.isNullOrEmpty(lifecycle.getEnabled()))
+
+        if (!Strings.isNullOrEmpty(lifecycle.getEnabled()))
         {
             //add webhook
             builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
         }
-        if(!Strings.isNullOrEmpty(lifecycle.getDisabled()))
+        if (!Strings.isNullOrEmpty(lifecycle.getDisabled()))
         {
             //add webhook
             builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
         }
-        if(!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
+        if (!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
         {
             //add webhook
             builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
         }
-        
+
         return builder.build().getModules();
     }
 
@@ -171,8 +194,8 @@ public class BeanToModuleRegistrar
 
             ContainerAccessor accessor = theConnectPlugin.getContainerAccessor();
             Collection<? extends ConnectModuleProvider> providers = accessor.getBeansOfType(theProviderClass);
-            
-            
+
+
             if (!providers.isEmpty())
             {
                 ConnectModuleProvider provider = providers.iterator().next();
@@ -193,25 +216,6 @@ public class BeanToModuleRegistrar
         else
         {
             return Collections.EMPTY_LIST;
-        }
-    }
-
-    public void unregisterDescriptorsForPlugin(Plugin plugin)
-    {
-        if (registrations.containsKey(plugin.getKey()))
-        {
-            DynamicDescriptorRegistration.Registration reg = registrations.get(plugin.getKey());
-            registrations.remove(plugin.getKey());
-            
-            try
-            {
-                reg.unregister();
-            }
-            catch (IllegalStateException e)
-            {
-                //service was already unregistered, just ignore
-            }
-
         }
     }
 

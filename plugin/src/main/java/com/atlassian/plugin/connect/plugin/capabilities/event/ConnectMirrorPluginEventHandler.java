@@ -39,7 +39,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     /*
     This is a workaround for PLUGDEV-38. e.g. we must make sure the connect plugin is enabled before we do anything with dependent plugins/addons
      */
-    private AtomicBoolean connectPluginFullyEnabled;
+    private final AtomicBoolean connectPluginFullyEnabled;
 
     private final ConnectAddonManager connectAddonManager;
     private final ConnectPluginDependentHelper dependentHelper;
