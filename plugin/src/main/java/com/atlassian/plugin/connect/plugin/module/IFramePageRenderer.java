@@ -76,11 +76,18 @@ public class IFramePageRenderer
         }
         catch (PermissionDeniedException ex)
         {
+            String deniedDecorator = pageInfo.getDecorator();
+            
+            if(pageInfo.getDecorator().contains("admin"))
+            {
+                deniedDecorator = "atl.general";
+            }
+            
             templateRenderer.render(
                     "velocity/deprecated/iframe-page-accessdenied" + pageInfo.getTemplateSuffix() + ".vm",
                     ImmutableMap.<String, Object>of(
                             "title", pageInfo.getTitle(),
-                            "decorator", pageInfo.getDecorator()), writer);
+                            "decorator", deniedDecorator), writer);
         }
     }
 
