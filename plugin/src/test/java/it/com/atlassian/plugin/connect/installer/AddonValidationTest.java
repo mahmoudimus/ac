@@ -142,6 +142,16 @@ public class AddonValidationTest
     }
 
     @Test
+    public void testOAuthAuthenticationWithNoTls() throws Exception
+    {
+        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.OAUTH)
+                .withBaseurl("http://example.com/no-tls")
+                .build();
+
+        installExpectingUpmErrorCode(bean, "connect.install.error.base_url.no_tls");
+    }
+
+    @Test
     public void testWebhookRequiringReadScopeWithNoReadScope() throws Exception
     {
         ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE)
