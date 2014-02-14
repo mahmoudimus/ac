@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -19,22 +21,28 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
+     * The URL of the add-on resource that provides the web panel content.
+     */
+    @Required
+    @StringSchemaAttributes(format = "uri-template")
+    private String url;
+
+    /**
      * Location in the application interface for this panel.
      * <p/>
      * Product location documentation:
      * 
      * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
      * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
-     */ 
+     */
+    @Required
     private String location;
+
     /**
      * The width and height of the web panel on the page.
      */
     private WebPanelLayout layout;
-    /**
-     * The URL of the add-on resource that provides the web panel content.
-     */
-    private String url;
+
     /**
      * Determines the order in which web panels appear. Web panels are displayed top to bottom or left to right in order
      * of ascending weight. The "lightest" weight is displayed first, while the "heaviest" weights sink to the bottom.
