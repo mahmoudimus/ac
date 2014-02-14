@@ -32,6 +32,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
     private static final String TEMPLATE_ACCESS_DENIED_PAGE = TEMPLATE_PATH + "iframe-page-accessdenied.vm";
     private static final String TEMPLATE_ACCESS_DENIED_GENERIC_BODY = TEMPLATE_PATH + "iframe-body-accessdenied.vm";
+    public static final String ATL_GENERAL = "atl.general";
 
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
@@ -294,16 +295,10 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         @Override
         public void renderAccessDenied(final Writer writer) throws IOException
         {
-            String deniedDecorator = decorator;
-            
-            if(decorator.contains("admin"))
-            {
-                deniedDecorator = "atl.general";
-            }
                
             Map<String, Object> renderContext = ImmutableMap.<String, Object>builder()
                     .put("title", title)
-                    .put("decorator", deniedDecorator)
+                    .put("decorator", ATL_GENERAL)
                     .build();
 
             templateRenderer.render(accessDeniedTemplate, renderContext, writer);
