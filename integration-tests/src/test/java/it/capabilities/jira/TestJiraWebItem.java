@@ -42,6 +42,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static final String ADDON_DIRECT_WEBITEM = "ac-direct-to-addon-web-item";
     private static final String PRODUCT_WEBITEM = "quick-project-link";
     private static final String ABSOLUTE_WEBITEM = "google-link";
+    private static final String ABSOLUTE_WEBITEM_INLINE_DIALOG = "wikipedia-link";
     private static final String ADDON_WEBITEM_INLINE_DIALOG = "ac-general-web-item-inline-dialog";
     private static final String ADDON_WEBITEM_DIALOG = "ac-general-web-item-dialog";
 
@@ -88,6 +89,19 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build()
                                         , newSingleConditionBean().withCondition("/onlyBettyCondition").build()
+                                )
+                                .build(),
+                        newWebItemBean()
+                                .withName(new I18nProperty("wikipedia link", "ac.ild"))
+                                .withKey(ABSOLUTE_WEBITEM_INLINE_DIALOG)
+                                .withLocation("system.top.navigation.bar")
+                                .withWeight(1)
+                                .withContext(AddOnUrlContext.addon)
+                                .withUrl("http://www.wikipedia.org")
+                                .withTarget(
+                                        newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
+                                                .withOption("onHover", "true")
+                                                .build()
                                 )
                                 .build(),
                         newWebItemBean()
@@ -218,6 +232,19 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
     @Test
     public void testAbsoluteWebItemInlineDialog() throws Exception
+    {
+        loginAsAdmin();
+
+        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM_INLINE_DIALOG, Optional.<String>absent());
+        assertNotNull("Web item should be found", webItem);
+        assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
+        webItem.click();
+        assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
+    }
+
+    @Test
+    public void testAddonWebItemInlineDialog() throws Exception
     {
         loginAsAdmin();
 

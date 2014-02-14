@@ -17,9 +17,6 @@ import org.slf4j.LoggerFactory;
  */
 public class RemoteInlineDialog extends AbstractConnectIFrameComponent<RemoteInlineDialog>
 {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-";
-
     @Inject
     protected AtlassianWebDriver driver;
 
