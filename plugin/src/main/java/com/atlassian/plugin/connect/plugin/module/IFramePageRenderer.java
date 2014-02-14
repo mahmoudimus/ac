@@ -21,6 +21,7 @@ import static com.google.common.collect.Maps.newHashMap;
 @Named
 public class IFramePageRenderer
 {
+    public static final String ATL_GENERAL = "atl.general";
     private final TemplateRenderer templateRenderer;
     private final IFrameRenderer iframeRenderer;
     private final HostApplicationInfo hostApplicationInfo;
@@ -76,18 +77,11 @@ public class IFramePageRenderer
         }
         catch (PermissionDeniedException ex)
         {
-            String deniedDecorator = pageInfo.getDecorator();
-            
-            if(pageInfo.getDecorator().contains("admin"))
-            {
-                deniedDecorator = "atl.general";
-            }
-            
             templateRenderer.render(
                     "velocity/deprecated/iframe-page-accessdenied" + pageInfo.getTemplateSuffix() + ".vm",
                     ImmutableMap.<String, Object>of(
                             "title", pageInfo.getTitle(),
-                            "decorator", deniedDecorator), writer);
+                            "decorator", ATL_GENERAL), writer);
         }
     }
 
