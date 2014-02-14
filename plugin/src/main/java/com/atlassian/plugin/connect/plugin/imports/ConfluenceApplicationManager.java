@@ -12,12 +12,14 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.application.RemoteAddress;
 import com.atlassian.crowd.search.query.entity.EntityQuery;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.component.ComponentLocator;
 
 import java.util.List;
 import java.util.Set;
 
 @ConfluenceComponent
+@ExportAsDevService
 public class ConfluenceApplicationManager implements ApplicationManager
 {
     private final ApplicationManager delegate;

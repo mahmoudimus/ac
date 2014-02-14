@@ -4,6 +4,8 @@ import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
+import com.atlassian.crowd.manager.application.ApplicationManager;
+import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -41,9 +43,9 @@ import static org.mockito.Mockito.verify;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 {
-    protected AddonLifecycleOAuthTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService,UserManager userManager)
+    protected AddonLifecycleOAuthTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService,UserManager userManager,ApplicationService applicationService,ApplicationManager applicationManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager);
     }
 
     @BeforeClass
