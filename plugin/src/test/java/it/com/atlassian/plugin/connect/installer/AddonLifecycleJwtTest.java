@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.testsupport.filter.JwtTestVerifier;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.user.UserManager;
 
 import com.google.gson.JsonParser;
 
@@ -29,9 +30,9 @@ import static org.junit.Assert.*;
 public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 {
 
-    public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService)
+    public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService, UserManager userManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager);
     }
 
     @BeforeClass
