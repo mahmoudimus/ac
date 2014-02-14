@@ -186,7 +186,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         loginAs(BETTY_USERNAME, BETTY_USERNAME);
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(CONTEXT_PARAMETERIZED_WEBITEM, Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADMIN_RIGHTS_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -196,7 +196,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         loginAs(BARNEY_USERNAME, BARNEY_USERNAME);
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(CONTEXT_PARAMETERIZED_WEBITEM));
+        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(ADMIN_RIGHTS_WEBITEM));
     }
 
     @Test
@@ -205,7 +205,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(CONTEXT_PARAMETERIZED_WEBITEM, Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADMIN_RIGHTS_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
 
