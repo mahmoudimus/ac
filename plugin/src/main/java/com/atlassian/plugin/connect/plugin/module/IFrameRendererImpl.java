@@ -109,7 +109,6 @@ public final class IFrameRendererImpl implements IFrameRenderer
         allParams.put("user_key", new String[]{user == null ? "" : user.getUserKey().getStringValue()});
         allParams.put("xdm_e", new String[]{hostUrl.toString()});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
-        allParams.put("xdm_p", new String[]{"1"});
         allParams.put("cp", new String[]{ hostApplicationInfo.getContextPath()});
         allParams.put("tz", new String[]{timeZone});
         allParams.put("loc", new String[]{localeHelper.getLocaleTag()});

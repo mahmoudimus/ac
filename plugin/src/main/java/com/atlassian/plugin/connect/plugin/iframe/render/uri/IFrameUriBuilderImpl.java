@@ -148,7 +148,6 @@ public class IFrameUriBuilderImpl
             // XDM parameters
             uriBuilder.addQueryParameter("xdm_e", hostApplicationInfo.getUrl().toString());
             uriBuilder.addQueryParameter("xdm_c", "channel-" + namespace);
-            uriBuilder.addQueryParameter("xdm_p", "1");
             uriBuilder.addQueryParameter("cp", hostApplicationInfo.getContextPath());
 
             // licensing parameters
