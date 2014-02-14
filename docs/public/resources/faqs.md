@@ -22,14 +22,13 @@ Just visit `https://HOSTNAME:PORT/CONTEXT_PATH/atlassian-connect/docs/`. This wi
 documentation for the version of Atlassian Connect that is currently running in your product, so the
 documentation is always guaranteed to be in sync.
 
-
 ### What other information resources exist?
 - [Google group](https://groups.google.com/forum/?fromgroups#!forum/atlassian-connect-dev)
 - [JIRA issue tracker for Atlassian Connect](https://ecosystem.atlassian.net/browse/AC)
 - [Atlassian Connect on Atlassian Answers](https://answers.atlassian.com/tags/atlassian-connect)
 
 ### What products support Atlassian Connect?
-Atlassian Connect is available in JIRA and Confluence OnDemand for beta development and use.
+Atlassian Connect is available in JIRA and Confluence OnDemand for development and use.
 
 Atlassian Connect currently supports:
 
@@ -61,13 +60,7 @@ instances.
 An Atlassian Connect add-on is simply a web application that describes itself with an Atlassian
 Connect descriptor file. That descriptor includes authentication settings and declares the add-on's
 capabilities. Capabilities take the form of modules. A module specifies an HTTP
-resource exposed by the add-on and the place where that resrouce interacts with the Atlassian app.
-
-For example, a webhook module requires a URL that can accept a webhook that is sent from the host
-application. A general-page capability requires a URL on the remote site that can return HTML to be
-displayed in the host application. Atlassian Connect is ideal for an external site that wants to
-provide integration into an Atlassian application no matter what language that external service is
-written in.
+resource exposed by the add-on and the place where that resource interacts with the Atlassian app.
 
 ### What languages, frameworks, & hosts will be supported
 Because your remote add-on is decoupled from the Atlassian application, using only HTTP and
@@ -81,20 +74,13 @@ No. You may choose from the many great PaaS or hosting providers.
 Add-ons are listed on the Atlassian Marketplace and installed via the Add-on manager in every
 Atlassian application.
 
-### How does Atlassian Connect relate to Application Links or UAL?
-Atlassian Connect uses Application Links to store the relationship between the Atlassian application
-and the external add-on which includes authentication information. This means that an Atlassian
-Connect add-on appears as a regular Application Link when viewed through the Application Links
-administration UI. Atlassian Connect can allow third-parties to provide a "one-click" user
-experience for customers that want to enable the integration.
-
-### To what extent are Atlassian Connect add-ons supported by Atlassian?
-Atlassian Connect add-ons receive the same level of support that Plugins 2 add-ons do today. Atlassian
+### How are Atlassian Connect add-ons supported by Atlassian?
+Atlassian Connect add-ons receive the same level of support that traditional add-ons do today. Atlassian
 supports the platform, the SDK and the documentation. Vendors are responsible for supporting the
 add-ons they build and the customers who use those add-ons.
 
 ### How should add-on vendors support their customers?
-Vendors must provide a support channel when listing on the marketplace. That support channel should
+Vendors must provide a support channel when listing on the Marketplace. That support channel should
 be an issue tracker or ticketing system where a customer can file and track issues. An email address
 is insufficient. We can provide a JIRA instance for vendors who wish to use it for support and issue
 tracking. Atlassian believes in a policy of transparency, and that information should be open by
@@ -114,14 +100,51 @@ add-on's current status and uptime and make that information available to custom
 way that [OnDemand does so](https://www.atlassian.com/software/ondemand/status). We encourage
 add-on providers to strive for 99.9% uptime.
 
+### What policies must add-ons observe about customer data?
+
+As an Atlassian Connect developer, you must be responsible with the data entrusted to you by your
+customers. Atlassian Connect developers must create and display a Data Security & Privacy Statement
+and include that in your Marketplace Listing. Including simple and easily described information
+about your service in your Data Security & Privacy Statement will reassure your customers that you
+are acting as a professional and trustworthy provider of hosted software.
+
+For reference, here are Atlassian's relevant policies:
+
+* [Atlassian OnDemand Security Statement](https://www.atlassian.com/hosted/security)
+* [Atlassian OnDemand Data Policies](https://www.atlassian.com/hosted/security)
+* [Atlassian's Privacy Policy](https://www.atlassian.com/company/privacy)
+* [Atlassian's Security Advisory Policy](https://confluence.atlassian.com/display/Support/Security+Advisory+Publishing+Policy)
+
+Your policy may cover the following areas:
+
+* **Data storage and location:** Explain where your application will store data from your customers
+and where (physically) the data will be stored. It is your responsibility to comply with all local
+laws.
+* **Backups:** Explain your backup and recovery policy for customer data. You should publish your
+RTO and RPO targets, and explain if and when data is moved offsite. For Atlassian OnDemand, backups
+are made daily, and stored offsite on a weekly basis.
+* **Account removal and data retention:** Explain how a customer can close an account and completely
+remove their data from your service. For Atlassian OnDemand, customer data is retained for 15 days
+after account removal and then unrecoverably deleted after that time.
+* **Data portability:** Explain if and how a customer can extract their data from your service. For
+example, is possible to move from your hosted service to a downloaded version of your software?
+* **Application and infrastructure security:** Explain what security measures you've taken in your
+application and infrastructure to keep your data security, for example on-disk data encryption or
+encrypted data transfer between servers.
+* **Security disclosure:** Explain how and under what circumstances you would notify customers about
+security breaches or vulnerabilities.
+* **Privacy:** Explain that data collected during the use of your add-on will not be shared with
+third parties except as required by law.
+
 ### How can add-ons change code safely?
 Atlassian Connect is designed to decouple add-ons from the Atlassian application. Because you are
 running a remote service, you can change your underlying application at any time and as often as you
 find necessary. The only part of your application controlled by Atlassian is your add-on descriptor
 file, which is stored on the [Atlassian Marketplace](https://marketplace.atlassian.com/). You can
-change your descriptor by uploading a new version to the Marketplace, which will automatically be
-pushed to all your customers. By versioning your API, paying attention to the versioning and careful
-deprecation of the Atlassian application's API, you can move forward with more confidence.
+change your descriptor by deploying a new version. The Marketplace will recognize the new descriptor
+and it will automatically be pushed to all your customers. By versioning your API, paying attention
+to the versioning and careful deprecation of the Atlassian application's API, you can move forward
+with more confidence.
 
 See [Upgrades](../developing/upgrades.html) for more details.
 
