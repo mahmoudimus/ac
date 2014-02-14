@@ -6,6 +6,7 @@ import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,4 +79,10 @@ public class RemoteCloseDialogPage
     {
         return RemotePageUtil.findInContext(iframe.getAttribute("src"), key);
     }
+
+    public Dimension getIFrameSize()
+    {
+        return iframe.getSize();
+    }
+
 }
