@@ -78,7 +78,6 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
                 .module(key)
                 .dialogTemplate()
                 .urlTemplate(url)
-                .additionalRenderContext("dialog", "1")
                 .dialog(true)
                 .build();
         iFrameRenderStrategyRegistry.register(plugin.getKey(), key, DIALOG_CLASSIFIER,
@@ -89,8 +88,7 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
                 .module(key)
                 .dialogTemplate()
                 .urlTemplate(url)
-                .additionalRenderContext("simpleDialog", "1")
-                .dialog(true)
+                .simpleDialog(true)
                 .build();
         iFrameRenderStrategyRegistry.register(plugin.getKey(), key, SIMPLE_DIALOG_CLASSIFIER,
                 simpleDialogStrategy);
