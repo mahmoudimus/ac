@@ -105,7 +105,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 )
                                 .build(),
                         newWebItemBean()
-                                .withName(new I18nProperty("Webitem inlineDialog Target", "ac.ild"))
+                                .withName(new I18nProperty("Webitem inlineDialog Target", null))
                                 .withKey(ADDON_WEBITEM_INLINE_DIALOG)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
