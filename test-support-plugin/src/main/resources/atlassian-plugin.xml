@@ -21,7 +21,7 @@
     </plugin-info>
 
     <rest key="rest" path="/remoteplugintest" version="1">
-        <package>com.atlassian.plugin.connect.test.rest</package>
+        <package>com.atlassian.plugin.connect.testsupport.rest</package>
     </rest>
 
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
