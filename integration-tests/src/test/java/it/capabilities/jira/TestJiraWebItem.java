@@ -105,7 +105,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 )
                                 .build(),
                         newWebItemBean()
-                                .withName(new I18nProperty("Webitem inlineDialog Target", null))
+                                .withName(new I18nProperty("Webitem inlineDialog Target", "ac.awidt"))
                                 .withKey(ADDON_WEBITEM_INLINE_DIALOG)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
@@ -121,7 +121,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 )
                                 .build(),
                         newWebItemBean()
-                                .withName(new I18nProperty("Webitem Dialog Target", null))
+                                .withName(new I18nProperty("Webitem Dialog Target", "ac.widt"))
                                 .withKey(ADDON_WEBITEM_DIALOG)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
