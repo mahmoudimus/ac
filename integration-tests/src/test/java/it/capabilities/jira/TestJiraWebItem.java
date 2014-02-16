@@ -45,7 +45,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static final String ABSOLUTE_WEBITEM_INLINE_DIALOG = "wikipedia-link";
     private static final String ADDON_WEBITEM_INLINE_DIALOG = "ac-general-web-item-inline-dialog";
     private static final String ADDON_WEBITEM_DIALOG = "ac-general-web-item-dialog";
-    private static final String MORE_LINK_ID = "aui-responsive-header-dropdown-trigger-0";
 
     private static ConnectRunner remotePlugin;
 
@@ -161,7 +160,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAs(BETTY_USERNAME, BETTY_USERNAME);
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
         assertTrue("Web item link should be absolute", webItem.isPointingToACInternalUrl());
@@ -174,7 +173,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
         assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
@@ -188,7 +187,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_DIRECT_WEBITEM, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_DIRECT_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
         assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
@@ -202,7 +201,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(PRODUCT_WEBITEM, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(PRODUCT_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
         webItem.click();
@@ -218,7 +217,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAs(BETTY_USERNAME, BETTY_USERNAME);
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -239,7 +238,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM_INLINE_DIALOG, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM_INLINE_DIALOG, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
         webItem.click();
@@ -252,7 +251,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_INLINE_DIALOG, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_INLINE_DIALOG, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
         webItem.click();
@@ -266,7 +265,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_INLINE_DIALOG, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_INLINE_DIALOG, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
         webItem.click();
@@ -282,7 +281,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_INLINE_DIALOG, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_INLINE_DIALOG, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
         webItem.hover();
@@ -296,7 +295,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_DIALOG, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_DIALOG, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be a dialog", webItem.isDialog());
         webItem.click();
@@ -309,7 +308,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_DIALOG, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_DIALOG, Optional.<String>absent());
         webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class).waitUntilContentElementNotEmpty("client-http-status");
         assertEquals("Success", dialogPage.getIFrameElementText("message"));
@@ -323,7 +322,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_DIALOG, Optional.of(MORE_LINK_ID));
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM_DIALOG, Optional.<String>absent());
         webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
 
