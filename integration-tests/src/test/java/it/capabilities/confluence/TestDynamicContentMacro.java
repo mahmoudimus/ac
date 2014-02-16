@@ -7,6 +7,7 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -65,7 +66,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         editorMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())
-                .addRoute("/render-editor", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/render-editor", ConnectAppServlets.macroEditor())
+                .addRoute("/echo/params", ConnectAppServlets.echoQueryParametersServlet())
                 .addRoute("/render-no-resize-macro", ConnectAppServlets.noResizeServlet())
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/images/macro-icon.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
@@ -174,7 +176,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         RenderedMacro renderedMacro2 = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 1);
         String content2 = renderedMacro2.getIFrameElementText("hello-world-message");
 
-        assertThat(content1, is(content2));
+        assertThat(content1, is("Hello world"));
+        assertThat(content2, is("Hello world"));
     }
 
     @Test
@@ -192,6 +195,25 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         assertThat(renderedMacro.getIFrameSize(), both(hasProperty("width", is(60))).and(hasProperty("height", is(30))));
     }
 
+    @Test
+    public void testMacroEditorSavesParameters() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        editorPage.setTitle("Macro Editor_" + System.currentTimeMillis());
+
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
+        macro.select();
+
+        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+        dialog.submit();
+
+        savedPage = editorPage.save();
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(EDITOR_MACRO_KEY);
+        String content = renderedMacro.getIFrameElementText("footy");
+
+        assertThat(content, is("footy: American Football"));
+    }
 
     @Override
     protected String getAddonBaseUrl()

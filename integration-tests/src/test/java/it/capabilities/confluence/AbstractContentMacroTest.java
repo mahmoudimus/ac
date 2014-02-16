@@ -55,8 +55,8 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     private static final String IMAGE_PLACEHOLDER_MACRO_NAME = "Image Placeholder Macro";
     private static final String IMAGE_PLACEHOLDER_MACRO_KEY = "image-placeholder-macro";
 
-    private static final String EDITOR_MACRO_NAME = "Editor Macro";
-    private static final String EDITOR_MACRO_KEY = "editor-macro";
+    protected static final String EDITOR_MACRO_NAME = "Editor Macro";
+    protected static final String EDITOR_MACRO_KEY = "editor-macro";
 
     protected ViewPage savedPage;
 
@@ -195,7 +195,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         return builder
                 .withKey(EDITOR_MACRO_KEY)
-                .withUrl(DEFAULT_MACRO_URL)
+                .withUrl("/echo/params?footy={footy}")
                 .withName(new I18nProperty(EDITOR_MACRO_NAME, ""))
                 .withEditor(MacroEditorBean.newMacroEditorBean()
                         .withEditTitle(new I18nProperty("Edit Title", ""))
@@ -299,9 +299,9 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
         RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
 
-        String content = dialog.getEmbeddedPage().getValueById("hello-world-message");
+        String content = dialog.getEmbeddedPage().getValueById("description");
 
-        assertThat(content, is("Hello world"));
+        assertThat(content, is("Select from:"));
     }
 
     @Test
@@ -315,9 +315,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
         RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
 
-        String content = dialog.getEmbeddedPage().getValueById("hello-world-message");
-
-        assertThat(content, is("Hello world"));
+        assertThat(dialog.cancel(), is(true));
     }
 
     @Test
@@ -331,11 +329,11 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
         RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
 
-        String content = dialog.getEmbeddedPage().getValueById("hello-world-message");
+        boolean submitted = dialog.submit();
 
-        assertThat(content, is("Hello world"));
+        editorPage.cancel();
+        assertThat(submitted, is(true));
     }
-
 
     protected abstract String getAddonBaseUrl();
 

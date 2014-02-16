@@ -6,6 +6,7 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -44,6 +45,21 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
     public boolean submit()
     {
         submitButton.click();
+        return isDialogClosed();
+    }
+
+    /**
+     * Hits the "Cancel" button on the dialog. Returns true if the dialog was dismissed. Returns false if the dialog is still
+     * visible.
+     */
+    public boolean cancel()
+    {
+        cancelButton.click();
+        return isDialogClosed();
+    }
+
+    private boolean isDialogClosed()
+    {
         final By dialogContentLocator = By.className("ap-dialog-content");
         try
         {
@@ -62,10 +78,4 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
             }
         }
     }
-
-    public void cancel()
-    {
-        cancelButton.click();
-    }
-
 }
