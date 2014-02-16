@@ -27,14 +27,15 @@
         <module>json-schemagen</module>
         <module>api-parent</module>
         <module>modules</module>
+        <module>test-support-plugin</module>
         <module>plugin</module>
+        <module>plugin-lifecycle-tests</module>
     </modules>
 
     <profiles>
         <profile>
             <id>it</id>
             <modules>
-                <module>rest-test-plugin</module>
                 <module>integration-tests</module>
             </modules>
         </profile>

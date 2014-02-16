@@ -214,7 +214,6 @@ public class JwtSigningInteroperabilityTest
                 .put("user_key", new String[]{"admin"})
                 .put("xdm_e", new String[]{"http://ion.local:2990"})
                 .put("xdm_c", new String[]{"channel-acmodule-1564427223927602208"})
-                .put("xdm_p", new String[]{"1"})
                 .put("cp", new String[]{"jira"})
                 .put("lic", new String[]{"none"})
                 .build()

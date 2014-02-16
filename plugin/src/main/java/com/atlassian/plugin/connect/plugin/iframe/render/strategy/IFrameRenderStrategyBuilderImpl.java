@@ -271,7 +271,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .urlTemplate(urlTemplate)
                     .context(moduleContextParameters)
                     .dialog(isDialog)
-                    .signAndBuild();
+                    .build();
 
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
                     .addOn(addOnKey)

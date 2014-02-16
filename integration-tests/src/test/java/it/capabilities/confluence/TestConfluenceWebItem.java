@@ -209,7 +209,6 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
     }
 
-
     private Pair<ConfluenceViewPage, RemoteWebItem> findViewPageWebItem(String webItemId) throws Exception
     {
         ConfluenceViewPage viewPage = createAndVisitViewPage();

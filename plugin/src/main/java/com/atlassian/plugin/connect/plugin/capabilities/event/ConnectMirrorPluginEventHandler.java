@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.event;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,7 +39,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     /*
     This is a workaround for PLUGDEV-38. e.g. we must make sure the connect plugin is enabled before we do anything with dependent plugins/addons
      */
-    private boolean connectPluginFullyEnabled;
+    private final AtomicBoolean connectPluginFullyEnabled;
 
     private final ConnectAddonManager connectAddonManager;
     private final ConnectPluginDependentHelper dependentHelper;
@@ -58,6 +59,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.pluginEventManager = pluginEventManager;
         this.descriptorRegistry = descriptorRegistry;
+        this.connectPluginFullyEnabled = new AtomicBoolean(false);
     }
 
     /**
@@ -91,8 +93,8 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
 
         if (isTheConnectPlugin(plugin))
         {
-            this.connectPluginFullyEnabled = true;
-
+            
+            this.connectPluginFullyEnabled.set(true);
             return;
         }
 
@@ -100,13 +102,13 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
          Workaround for PLUGDEV-38. At this point the addon is marked as enabled, but we need it's state to be disabled so we
          get the enabled event again for the addon after connect is fully enabled
          */
-        if (connectIdentifier.isConnectAddOn(plugin) && !connectPluginFullyEnabled && PluginState.ENABLED.equals(plugin.getPluginState()))
+        if (connectIdentifier.isConnectAddOn(plugin) && !connectPluginFullyEnabled.get() && PluginState.ENABLED.equals(plugin.getPluginState()))
         {
             setPluginState(plugin, PluginState.DISABLED);
             return;
         }
 
-        if (!connectPluginFullyEnabled)
+        if (!connectPluginFullyEnabled.get())
         {
             return;
         }
@@ -118,7 +120,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     @SuppressWarnings("unused")
     public void onPluginModuleEnabled(PluginModuleEnabledEvent event) throws IOException
     {
-        if (!connectPluginFullyEnabled)
+        if (!connectPluginFullyEnabled.get())
         {
             return;
         }
@@ -135,12 +137,12 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
 
         if (isTheConnectPlugin(plugin))
         {
-            this.connectPluginFullyEnabled = false;
+            this.connectPluginFullyEnabled.set(false);
         }
 
         if (connectIdentifier.isConnectAddOn(plugin))
         {
-            //we need to publish the disabled event to the remote addon BEFORE we actually do the enable
+            //we need to publish the disabled event to the remote addon BEFORE we actually do the disable
             // so that the webhook modules that actually make the call are still available
             connectAddonManager.publishDisabledEvent(plugin.getKey());
         }

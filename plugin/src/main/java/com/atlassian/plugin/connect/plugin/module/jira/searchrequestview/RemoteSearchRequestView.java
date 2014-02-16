@@ -15,26 +15,17 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.uri.Uri;
-import com.atlassian.uri.UriBuilder;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
-import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * A remote search request review that will do an html redirect to the remote plugin
@@ -104,7 +95,7 @@ public class RemoteSearchRequestView implements SearchRequestView
                 .param("endIssue", endIssues)
                 .param("totalIssues", String.valueOf(totalIssues))
                 .param("issues", issueKeysValue)
-                .signAndBuild();
+                .build();
 
         try
         {

@@ -40,11 +40,12 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void removeAll(String pluginKey)
     {
-        settings().remove(key(CONNECT_DESCRIPTOR_PREFIX, pluginKey));
-        settings().remove(key(CONNECT_BASEURL_PREFIX, pluginKey));
-        settings().remove(key(CONNECT_SECRET_PREFIX, pluginKey));
-        settings().remove(key(CONNECT_USER_PREFIX, pluginKey));
-        settings().remove(key(CONNECT_AUTH_PREFIX, pluginKey));
+        PluginSettings settings = settings();
+        settings.remove(key(CONNECT_DESCRIPTOR_PREFIX, pluginKey));
+        settings.remove(key(CONNECT_BASEURL_PREFIX, pluginKey));
+        settings.remove(key(CONNECT_SECRET_PREFIX, pluginKey));
+        settings.remove(key(CONNECT_USER_PREFIX, pluginKey));
+        settings.remove(key(CONNECT_AUTH_PREFIX, pluginKey));
     }
 
     @Override
