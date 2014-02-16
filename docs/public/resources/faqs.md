@@ -105,13 +105,14 @@ add-on providers to strive for 99.9% uptime.
 As an Atlassian Connect developer, you must be responsible with the data entrusted to you by your
 customers. Atlassian Connect developers must create and display a Data Security & Privacy Statement
 and include that in your Marketplace Listing. Including simple and easily described information
-about your service in your Data Security & Privacy Statement will reassure your customers that you
+about your service in your Data Security and Privacy Statement will reassure your customers that you
 are acting as a professional and trustworthy provider of hosted software.
 
 For reference, here are Atlassian's relevant policies:
 
 * [Atlassian OnDemand Security Statement](https://www.atlassian.com/hosted/security)
-* [Atlassian OnDemand Data Policies](https://www.atlassian.com/hosted/security)
+* [Atlassian OnDemand Storage Policy](https://confluence.atlassian.com/display/AOD/OnDemand+Storage+Policy)
+* [Atlassian OnDemand Data Policy](https://confluence.atlassian.com/display/AOD/About+Your+Data)
 * [Atlassian's Privacy Policy](https://www.atlassian.com/company/privacy)
 * [Atlassian's Security Advisory Policy](https://confluence.atlassian.com/display/Support/Security+Advisory+Publishing+Policy)
 
@@ -121,18 +122,20 @@ Your policy may cover the following areas:
 and where (physically) the data will be stored. It is your responsibility to comply with all local
 laws.
 * **Backups:** Explain your backup and recovery policy for customer data. You should publish your
-RTO and RPO targets, and explain if and when data is moved offsite. For Atlassian OnDemand, backups
-are made daily, and stored offsite on a weekly basis.
+[RTO](http://en.wikipedia.org/wiki/Recovery_time_objective) and [RPO](http://en.wikipedia.org/wiki/Recovery_point_objective)
+targets, and explain if and when data is moved offsite. For Atlassian OnDemand, backups are made daily, and stored
+offsite on a weekly basis.
 * **Account removal and data retention:** Explain how a customer can close an account and completely
 remove their data from your service. For Atlassian OnDemand, customer data is retained for 15 days
 after account removal and then unrecoverably deleted after that time.
 * **Data portability:** Explain if and how a customer can extract their data from your service. For
-example, is possible to move from your hosted service to a downloaded version of your software?
+example, is it possible to move from your hosted service to a downloaded version of your software?
 * **Application and infrastructure security:** Explain what security measures you've taken in your
-application and infrastructure to keep your data security, for example on-disk data encryption or
-encrypted data transfer between servers.
+application and infrastructure, for example on-disk data encryption or encrypted data transfer between servers.
 * **Security disclosure:** Explain how and under what circumstances you would notify customers about
-security breaches or vulnerabilities.
+security breaches or vulnerabilities. You should also indicate how a user or security researcher should
+disclose a vulnerability found in your add-on to you. (Example from Atlassian:
+[How to report a security issue](https://confluence.atlassian.com/display/DOC/How+to+Report+a+Security+Issue))
 * **Privacy:** Explain that data collected during the use of your add-on will not be shared with
 third parties except as required by law.
 

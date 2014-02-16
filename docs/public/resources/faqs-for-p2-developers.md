@@ -31,10 +31,3 @@ Yes. Atlassian-developed add-ons will be taking advantage of the same sandboxed 
 that are the core components of Atlassian Connect. We recognize that making use of these will make
 our add-ons more decoupled and help increase the value of the platform for everyone. However, some
 Atlassian add-ons will continue to run in-process in OnDemand and on-premises.
-
-### How does Atlassian Connect relate to Application Links or UAL?
-Atlassian Connect uses Application Links to store the relationship between the Atlassian application
-and the external add-on which includes authentication information. This means that an Atlassian
-Connect add-on appears as a regular Application Link when viewed through the Application Links
-administration UI. Atlassian Connect can allow third-parties to provide a "one-click" user
-experience for customers that want to enable the integration.

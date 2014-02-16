@@ -5,27 +5,33 @@ customers prefer to buy Atlassian tools as a service because Atlassian will hand
 hosting, upgrades and more.
 
 Atlassian Connect is built to integrate with our OnDemand applications, so it's important that
-add-ons developers have a basic understanding of how OnDemand works.
+add-on developers have a basic understanding of how OnDemand works.
 
 ## Architecture
-* Each JIRA and Confluence OnDemand account is a separate instance of that product.
-* All hardware, network, CPU and memory resources are shared between many customers.
-* Each instance of JIRA or Confluence can be identified by it's tenant id. An instance URL is liable
+* Each JIRA and Confluence OnDemand account is a separate instance of that product. Although an OnDemand
+instance offers a unified product feel, the actual JIRA and Confluence servers are individual applications
+running in separate isolated JVMs, that communicate with each other only over HTTP.
+* Although each application is isolated from a security perspective, the underlying hardware resources, such as
+hardware, network, CPU and memory may be shared between many customers.
+* Each instance of JIRA or Confluence can be identified by its tenant id. An instance URL is liable
 to change without warning.
 * Each instance of JIRA or Confluence has a set of users.
 * Email addresses are unique within an instance, but may be used across multiple instances.
 * You should identify users by key, rather than name or email. Keys are also unique within an
 instance but may not be across instances.
 * OnDemand admins will install your add-on by registering your descriptor into an instance. That
-makes your add-on available to all users of that instance. You will not receive any communication from an instance that does not have your descriptor installed, and you will not be able to communicate with them.
+makes your add-on available to all users of that instance. You will not receive any communication from an
+instance that does not have your descriptor installed, and you will not be able to communicate with them.
 * Atlassian OnDemand only serves content over HTTPS. Your add-on must also only request content via
 HTTPS.
+* Only descriptors with a base url that starts with HTTPS are installable in OnDemand servers.
 * No Atlassian OnDemand user can log in as a sysadmin, and your add-on cannot access any
 functionality that is reserved for sysadmins. Only Atlassian can access sysadmin-level functionality.
 * Atlassian OnDemand supports the following browsers: [JIRA](https://confluence.atlassian.com/display/JIRA/Supported+Platforms),
 [Confluence](https://confluence.atlassian.com/display/JIRA/Supported+Platforms).
 * Atlassian OnDemand supports these [languages](https://confluence.atlassian.com/display/AOD/Language+Support+in+Atlassian+OnDemand).
 * Atlassian OnDemand servers are physically located in the US. Read more [here](https://www.atlassian.com/hosted/security).
+* Atlassian OnDemand [FAQ](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+FAQ)
 
 #### Therefore, your add-on should:
 * Store user data against an identifier combined from tenant id and user key.
@@ -44,7 +50,7 @@ contain an update, it may still be restarted.
 from errors or to facilitate support.
 * During either kind of restart, your add-on may choose to receive a webhook from each instance that
 your add-on is installed on.
-* The first access of each instance after a restart may have higher latency as caches are repopulated.
+* The first request to each instance after a restart may have higher latency as caches are repopulated.
 
 #### Therefore, your add-on should:
 * Be resilient to an OnDemand instance being slow or temporarily unavailable.
@@ -58,7 +64,7 @@ will be between 31 days and 61 days, with an average of 45 days.
 * OnDemand customers may cancel their accounts, or cancel individual products or add-ons. Cancelled
 accounts remain valid and active until the end of the billing period.
 * OnDemand customer data is removed fifteen days after cancellation. You should publish your own data
-retention policy as described [here](../resources/faqs.html).
+retention policy as described [in the FAQ](../resources/faqs.html).
 * Add-on installation and add-on licensing are separate concerns. It is possible for an OnDemand
 instance to have your add-on descriptor installed but not have a valid license. You should always
 check the [license status](../concepts/licensing.html) on each request and serve an appropriate
@@ -66,4 +72,4 @@ response.
 
 #### Therefore, your add-on should:
 * Always check the license parameter on each request and observe the appropriate restrictions.
-* Publish your own [data handling policies](../resources/faqs.html).
+* Publish your own [data retention policies](../resources/faqs.html).
