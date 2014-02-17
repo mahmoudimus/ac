@@ -15,17 +15,20 @@ AP.require(
 
   // This is required for connect to work correctly in IE8
   function injectRenderModeMeta(){
-    var i, metas = $("meta");
+    var i,
+      metas = $("meta"),
+      meta = document.createElement("meta"),
+      head = document.head || document.getElementsByTagName("head")[0];
+
     //don't stomp on existing meta tag.
-    for(var i in metas){
+    for(i in metas){
       if(metas[i].getAttribute && metas[i].getAttribute('http-equiv') === 'X-UA-Compatible'){
         return;
       }
     }
-    var meta = document.createElement("meta");
+
       meta.setAttribute("http-equiv","X-UA-Compatible");
       meta.setAttribute("content","IE=edge");
-      var head = document.head || document.getElementsByTagName("head")[0];
       head.appendChild(meta);
   }
 
