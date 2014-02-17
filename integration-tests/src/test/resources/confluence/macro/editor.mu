@@ -6,6 +6,7 @@
     <script src="{{baseurl}}/atlassian-connect/all-debug.js" type="text/javascript"></script>
   </head>
   <body>
+    <p id="description">Select from:</p>
     <select id="footy">
       <option name="American Football">American Football</option>
       <option name="Soccer">Soccer</option>
@@ -16,8 +17,9 @@
       AP.require(["confluence", "dialog"], function (confluence, dialog) {
         dialog.getButton("submit").bind(function() {
           var footy = document.getElementById("footy");
+          var selectedValue = footy.options[footy.selectedIndex].value;
           confluence.saveMacro({
-            footy: footy.val()
+            footy: selectedValue
           });
           return true;
         });

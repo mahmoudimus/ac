@@ -72,6 +72,10 @@ public class JiraRestScopesTest extends AbstractScopesTest
                         {ScopeName.WRITE, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
                         {ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
                         {ScopeName.ADMIN, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", true},
+
+                        // groups picker requires READ
+                        {null, HttpMethod.GET, "/jira/rest/api/2/groups/picker", false},
+                        {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/groups/picker", true},
                 }));
 
         // never allow an add-on to change a user's details or password

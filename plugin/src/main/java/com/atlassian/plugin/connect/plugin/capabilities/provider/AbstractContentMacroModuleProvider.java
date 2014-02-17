@@ -94,8 +94,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             descriptors.add(createEditorWebResource(plugin, macroBean));
         }
 
-        // TODO: Add Image Placeholder --> ACDEV-678
-
         return ImmutableList.copyOf(descriptors);
     }
 
@@ -164,7 +162,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .urlTemplate(editor.getUrl())
                 .title(macroBean.getDisplayName())
                 .dimensions(editor.getWidth(), editor.getHeight())
-                .dialog(true)
+                .simpleDialog(true)
                 .build();
 
         iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), renderStrategy);
