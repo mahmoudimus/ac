@@ -52,6 +52,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
       dialog.remove();
     });
     dialog.show();
+    AJS.dim();
     return dialog;
   }
 
