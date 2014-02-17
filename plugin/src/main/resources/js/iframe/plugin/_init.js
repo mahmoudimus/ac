@@ -13,6 +13,27 @@ AP.require(
     });
   }
 
+  // This is required for connect to work correctly in IE8
+  function injectRenderModeMeta(){
+    var meta = document.createElement("meta"),
+      head = document.head || document.getElementsByTagName("head")[0],
+      tagExists = false;
+
+    //don't stomp on existing meta tag.
+    $("meta").each(function(i, m){
+      if(m.getAttribute('http-equiv') === 'X-UA-Compatible'){
+        tagExists = true;
+        return false;
+      }
+    });
+
+    if(tagExists === false){
+      meta.setAttribute("http-equiv","X-UA-Compatible");
+      meta.setAttribute("content","IE=edge");
+      head.appendChild(meta);
+    }
+  }
+
   function injectMargin() {
     // set a context-sensitive margin value
     var margin = dialog.isDialog ? "10px 10px 0 10px" : "0";
@@ -32,6 +53,13 @@ AP.require(
         // inject an appropriate base tag
         injectBase(options);
       }
+
+      //JSON is undefined if you're in IE8 without the meta tag.
+      if(options.injectRenderModeMeta !== false || this.JSON === undefined){
+        // sets IE's render mode. It is required for connect and IE8.
+        injectRenderModeMeta();
+      }
+
       if (options.sizeToParent) {
         env.sizeToParent();
       }

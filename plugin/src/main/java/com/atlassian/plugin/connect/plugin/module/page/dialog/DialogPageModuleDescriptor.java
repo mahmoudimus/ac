@@ -78,7 +78,6 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
                 .module(key)
                 .dialogTemplate()
                 .urlTemplate(url)
-                .additionalRenderContext("dialog", "1")
                 .dialog(true)
                 .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                 .build();
@@ -90,8 +89,7 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
                 .module(key)
                 .dialogTemplate()
                 .urlTemplate(url)
-                .additionalRenderContext("simpleDialog", "1")
-                .dialog(true)
+                .simpleDialog(true)
                 .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                 .build();
         iFrameRenderStrategyRegistry.register(plugin.getKey(), key, SIMPLE_DIALOG_CLASSIFIER,
