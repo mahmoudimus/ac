@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebPanelModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
@@ -24,35 +24,37 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
 {
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+    private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
     private final String url;
     private final String pluginKey;
     private final String moduleKey;
     private final boolean absolute;
     private final AddOnUrlContext addOnUrlContext;
+    private final boolean isDialog;
 
     public RemoteWebLink(WebFragmentModuleDescriptor webFragmentModuleDescriptor, WebFragmentHelper webFragmentHelper,
-            IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
-            WebPanelModuleContextExtractor webPanelModuleContextExtractor, ModuleContextFilter moduleContextFilter,
-            String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
+                         IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
+                         WebFragmentModuleContextExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
+                         String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.webPanelModuleContextExtractor = webPanelModuleContextExtractor;
+        this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
         this.moduleContextFilter = moduleContextFilter;
         this.url = url;
         this.pluginKey = pluginKey;
         this.moduleKey = moduleKey;
         this.absolute = absolute;
         this.addOnUrlContext = addOnUrlContext;
+        this.isDialog = isDialog;
     }
 
     @Override
     public String getRenderedUrl(final Map<String, Object> context)
     {
-        ModuleContextParameters moduleParams = webPanelModuleContextExtractor.extractParameters(context);
+        ModuleContextParameters moduleParams = webFragmentModuleContextExtractor.extractParameters(context);
         moduleParams = moduleContextFilter.filter(moduleParams);
 
         return iFrameUriBuilderFactory.builder()
@@ -60,7 +62,9 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
                                       .namespace(moduleKey)
                                       .urlTemplate(url)
                                       .context(moduleParams)
-                                      .buildUnsigned();
+                                      .sign(false)
+                                      .includeStandardParams(false) // don't sign or pass non-explicitly requested parameters to absolute URLs
+                                      .build();
     }
 
     @Override
@@ -72,7 +76,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         }
         else
         {
-            ModuleContextParameters moduleContext = webPanelModuleContextExtractor.extractParameters(context);
+            ModuleContextParameters moduleContext = webFragmentModuleContextExtractor.extractParameters(context);
             moduleContext = moduleContextFilter.filter(moduleContext);
 
             if (addOnUrlContext == addon)
@@ -82,7 +86,8 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
                                               .namespace(moduleKey)
                                               .urlTemplate(url)
                                               .context(moduleContext)
-                                              .signAndBuild();
+                                              .dialog(isDialog)
+                                              .build();
             }
             else
             {

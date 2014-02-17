@@ -1,0 +1,46 @@
+{
+    "key": "double-module-addon",
+    "name": "Double Module Addon",
+    "version": "1.0",
+    "vendor": {
+        "name": "Atlassian",
+        "url": "http://www.atlassian.com"
+    },
+    "baseUrl": "http://localhost/ac-test-addon2",
+    "authentication": {
+        "type": "none"
+    },
+    "modules": {
+        "webItems": [
+            {
+                "url": "/webitem",
+                "location": "atl.admin/menu",
+                "context": "addon",
+                "weight": 100,
+                "target": {
+                    "type": "page",
+                    "options": {}
+                },
+                "name": {
+                    "value": "My Web Item",
+                    "i18n": "my.webitem"
+                }
+            },
+            {
+                "url": "/other-webitem",
+                "location": "atl.admin/menu",
+                "context": "addon",
+                "weight": 100,
+                "target": {
+                    "type": "page",
+                    "options": {}
+                },
+                "name": {
+                    "value": "My Other Web Item",
+                    "i18n": "my.other.webitem"
+                }
+            }
+        ]
+    },
+    "scopes": []
+}

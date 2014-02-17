@@ -6,7 +6,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebPanelModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -28,7 +28,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+    private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
 
     @Autowired
@@ -37,12 +37,12 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
             WebInterfaceManager webInterfaceManager,
             IFrameUriBuilderFactory iFrameUriBuilderFactory,
             JiraAuthenticationContext jiraAuthenticationContext,
-            WebPanelModuleContextExtractor webPanelModuleContextExtractor,
+            WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
             ModuleContextFilter moduleContextFilter,
             UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.webPanelModuleContextExtractor = checkNotNull(webPanelModuleContextExtractor);
+        this.webFragmentModuleContextExtractor = checkNotNull(webFragmentModuleContextExtractor);
         this.moduleContextFilter = checkNotNull(moduleContextFilter);
         this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
         this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
@@ -51,10 +51,10 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
     {
         return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
-                iFrameUriBuilderFactory, urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext);
+                iFrameUriBuilderFactory, urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog);
     }
 
     private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor
@@ -62,13 +62,14 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         private final WebFragmentHelper webFragmentHelper;
         private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
         private final UrlVariableSubstitutor urlVariableSubstitutor;
-        private final WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+        private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
         private final ModuleContextFilter moduleContextFilter;
         private final String url;
         private final String pluginKey;
         private final String moduleKey;
         private boolean absolute;
         private final AddOnUrlContext addOnUrlContext;
+        private final boolean isDialog;
 
         public RemoteJiraWebItemModuleDescriptor(
                 JiraAuthenticationContext jiraAuthenticationContext,
@@ -76,32 +77,33 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
                 WebFragmentHelper webFragmentHelper,
                 IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 UrlVariableSubstitutor urlVariableSubstitutor,
-                WebPanelModuleContextExtractor webPanelModuleContextExtractor,
+                WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
                 ModuleContextFilter moduleContextFilter,
                 String url,
                 String pluginKey,
                 String moduleKey,
-                boolean absolute, AddOnUrlContext addOnUrlContext)
+                boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
         {
             super(jiraAuthenticationContext, webInterfaceManager);
             this.webFragmentHelper = webFragmentHelper;
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.urlVariableSubstitutor = urlVariableSubstitutor;
-            this.webPanelModuleContextExtractor = webPanelModuleContextExtractor;
+            this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
             this.moduleContextFilter = moduleContextFilter;
             this.url = url;
             this.pluginKey = pluginKey;
             this.moduleKey = moduleKey;
             this.absolute = absolute;
             this.addOnUrlContext = addOnUrlContext;
+            this.isDialog = isDialog;
         }
 
         @Override
         public WebLink getLink()
         {
             return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory,
-                    urlVariableSubstitutor, webPanelModuleContextExtractor, moduleContextFilter, url, pluginKey,
-                    moduleKey, absolute, addOnUrlContext), authenticationContext);
+                    urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey,
+                    moduleKey, absolute, addOnUrlContext, isDialog), authenticationContext);
         }
 
         @Override

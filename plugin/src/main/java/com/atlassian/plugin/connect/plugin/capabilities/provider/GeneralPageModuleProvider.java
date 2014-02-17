@@ -43,9 +43,4 @@ public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
         return "atl.general";
     }
 
-    @Override
-    protected void augmentRenderContext(final Map<String, Object> additionalRenderContext)
-    {
-        additionalRenderContext.put("general", 1);
-    }
 }

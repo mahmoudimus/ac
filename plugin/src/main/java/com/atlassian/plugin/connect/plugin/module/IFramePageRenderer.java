@@ -43,13 +43,22 @@ public class IFramePageRenderer
             }
 
             Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
-            if (queryParams.get("width") != null)
+
+            if (queryParams.get("raw") != null)
             {
-                iframeContext.getIFrameParams().setParam("width", queryParams.get("width")[0]);
+                iframeContext.getIFrameParams().setParam("width", "100%");
+                iframeContext.getIFrameParams().setParam("height", "100%");
             }
-            if (queryParams.get("height") != null)
+            else
             {
-                iframeContext.getIFrameParams().setParam("height", queryParams.get("height")[0]);
+                if (queryParams.get("width") != null)
+                {
+                    iframeContext.getIFrameParams().setParam("width", queryParams.get("width")[0]);
+                }
+                if (queryParams.get("height") != null)
+                {
+                    iframeContext.getIFrameParams().setParam("height", queryParams.get("height")[0]);
+                }
             }
 
             ctx.put("queryParams", contextQueryParameters(queryParams));

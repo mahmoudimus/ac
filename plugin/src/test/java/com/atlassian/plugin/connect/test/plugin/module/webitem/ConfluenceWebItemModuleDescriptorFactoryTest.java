@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstit
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebPanelModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.module.webitem.ConfluenceWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
@@ -55,7 +55,7 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
     private IFrameUriBuilderFactory iFrameUriBuilderFactory;
 
     @Mock
-    private WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+    private WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
 
     @Mock
     private UrlVariableSubstitutor urlVariableSubstitutor;
@@ -72,7 +72,7 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
 
         ConfluenceWebItemModuleDescriptorFactory webItemFactory =
                 new ConfluenceWebItemModuleDescriptorFactory(webFragmentHelper, iFrameUriBuilderFactory,
-                        webPanelModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
+                        webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 
@@ -84,8 +84,8 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
                 "my-key",
                 "myLinkId",
                 false,
-                product
-        );
+                product,
+                false);
         
         descriptor.init(plugin, createElement());
         descriptor.enabled();

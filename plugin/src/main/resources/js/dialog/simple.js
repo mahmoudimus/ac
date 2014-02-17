@@ -90,10 +90,17 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
       show: function() {
         dialog.show();
 
-        var $panelBody = $dialog.find(".ap-dialog-content");
-        contentUrl += (contentUrl.indexOf("?") > 0 ? "&" : "?") + "dialog=1&simpleDialog=1";
-        contentUrl = setDimension(contentUrl, "width", $panelBody.width());
-        contentUrl = setDimension(contentUrl, "height", $panelBody.height());
+        var $panelBody = $dialog.find(".ap-dialog-content"),
+        contentUrlObj = new uri.init(contentUrl);
+
+        // for legacy xml descriptors we add the dialog flags when we send to the host for signing
+        if(!contentUrlObj.scheme()){
+            contentUrlObj.replaceQueryParam("dialog", "1").replaceQueryParam("simpleDialog", "1");
+        }
+
+        if(!contentUrlObj.getQueryParamValue("dialog") || !contentUrlObj.getQueryParamValue("simpleDialog")){
+          throw "Missing dialog or simpleDialog url parameters";
+        }
 
         function enableButtons() {
           buttons.setEnabled(true);
@@ -134,10 +141,10 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
         buttons.setEnabled(false);
 
         //check for json descriptor add-ons
-        var scheme = new uri.init(contentUrl).scheme();
+        var scheme =contentUrlObj.scheme();
         if(scheme){
           var cont = $('<div />').appendTo('.ap-servlet-placeholder');
-          displayDialogContent(cont, contentUrl);
+          displayDialogContent(cont, contentUrlObj.toString());
           return;
         }
 
@@ -155,7 +162,7 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
         }
 
         // support XML descriptors
-        $.ajax(contentUrl, {
+        $.ajax(contentUrlObj.toString(), {
           dataType: "html",
           success: function(data) {
             preventTimeout();

@@ -3,6 +3,7 @@ package it.jira;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
+import com.atlassian.plugin.connect.plugin.module.jira.projecttab.ProjectTabPageModuleDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
@@ -26,21 +27,26 @@ import static org.junit.Assert.*;
  */
 public class TestProjectTabPage extends JiraWebDriverTestBase
 {
-    private static AtlassianConnectAddOnRunner remotePlugin;
+    private static final String PROJECT_TAB_MODULE_KEY = "project-tab";
+    private static final String ACTUAL_PROJECT_TAB_MODULE_KEY = ProjectTabPageModuleDescriptor.PROJECT_TAB_PAGE_MODULE_PREFIX + PROJECT_TAB_MODULE_KEY;
+    private static final String PROJECT_TAB_NAME = "Project Tab";
 
-    private static final String REMOTE_PROJECT_CONFIG_TAB_NAME = "Remotable Project Config";
+    private static final String PROJECT_CONFIG_MODULE_KEY = "project-config-tab";
+    private static final String PROJECT_CONFIG_TAB_NAME = "Project Config Tab";
+
+    private static AtlassianConnectAddOnRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
-                .add(ProjectTabPageModule.key("jira-remotePluginProjectTab")
-                         .name("AC Play Project Tab")
+                .add(ProjectTabPageModule.key(PROJECT_TAB_MODULE_KEY)
+                         .name(PROJECT_TAB_NAME)
                          .path("/ptp")
                          .resource(ConnectAppServlets.apRequestServlet()))
-                .add(ProjectConfigTabModule.key(JiraProjectAdministrationTab.MODULE_KEY)
-                         .name("Remotable Project Config")
+                .add(ProjectConfigTabModule.key(PROJECT_CONFIG_MODULE_KEY)
+                         .name(PROJECT_CONFIG_TAB_NAME)
                          .path("/pct")
                          .weight("10")
                          .location("projectgroup3")
@@ -70,25 +76,21 @@ public class TestProjectTabPage extends JiraWebDriverTestBase
             @Override
             public boolean matchesSafely(final ProjectConfigTabs.Tab tab)
             {
-                return tab.getName().equals(REMOTE_PROJECT_CONFIG_TAB_NAME);
+                return tab.getName().equals(PROJECT_CONFIG_TAB_NAME);
             }
 
             @Override
             public void describeTo(final Description description)
             {
-                description.appendText("Project Configuration Tabs should contain Remotable Project Config tab");
+                description.appendText("Project Configuration Tabs should contain tab: " + PROJECT_CONFIG_TAB_NAME);
             }
         }));
 
-        final JiraProjectAdministrationTab remoteProjectAdministrationTab =
-                page.getTabs().gotoTab(
-                        JiraProjectAdministrationTab.MODULE_KEY,
-                        JiraProjectAdministrationTab.class,
-                        project.getKey(), TestJira.EXTRA_PREFIX);
+        final JiraProjectAdministrationTab remoteProjectAdministrationTab = page.getTabs().gotoTab(PROJECT_CONFIG_MODULE_KEY, JiraProjectAdministrationTab.class, project.getKey(), PROJECT_CONFIG_MODULE_KEY, TestJira.EXTRA_PREFIX);
 
         // Test of workaround for JRA-26407.
         assertNotNull(remoteProjectAdministrationTab.getProjectHeader());
-        assertEquals(REMOTE_PROJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
+        assertEquals(PROJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
         assertEquals(project.getKey(), remoteProjectAdministrationTab.getProjectKey());
         assertEquals("Success", remoteProjectAdministrationTab.getMessage());
     }
@@ -115,7 +117,7 @@ public class TestProjectTabPage extends JiraWebDriverTestBase
     {
         public AppProjectTabPage(final String projectKey)
         {
-            super(projectKey, "project-tab-jira-remotePluginProjectTab");
+            super(projectKey, remotePlugin.getPluginKey(), ACTUAL_PROJECT_TAB_MODULE_KEY);
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
-import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.collect.ImmutableMap;
@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 
@@ -21,17 +20,10 @@ import java.util.Map;
 @ConfluenceComponent
 public class MacroContentLinkParser
 {
-    private final SettingsManager confluenceSettingsManager;
     private static final Logger log = LoggerFactory.getLogger(MacroContentLinkParser.class);
 
-    @Autowired
-    public MacroContentLinkParser(SettingsManager confluenceSettingsManager)
-    {
-        this.confluenceSettingsManager = confluenceSettingsManager;
-    }
-
     // this used to be implemented via a regex, but turned out to be very slow for large content
-    public String parse(RemotablePluginAccessor remotablePluginAccessor, String content, Map<String, String> macroParameters)
+    public String parse(RemotablePluginAccessor remotablePluginAccessor, String content, Map<String, String[]> macroParameters)
     {
         if (content == null)
         {
@@ -70,7 +62,7 @@ public class MacroContentLinkParser
                             {
                                 target = Uri.parse(rawRelativeUrl);
                                 UriBuilder b = new UriBuilder(target);
-                                b.addQueryParameters(macroParameters);
+                                UriBuilderUtils.addQueryParameters(b, macroParameters);
 
                                 String urlToEmbed =
                                         remotablePluginAccessor.signGetUrl(b.toUri().toJavaUri(), ImmutableMap.<String, String[]>of());

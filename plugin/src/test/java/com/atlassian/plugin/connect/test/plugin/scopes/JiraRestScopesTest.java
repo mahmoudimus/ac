@@ -41,6 +41,37 @@ public class JiraRestScopesTest extends AbstractScopesTest
                         // just in case someone ever adds the insanity of getting a password
                         {null, HttpMethod.GET, "/jira/rest/api/2/myself/password", false},
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/myself/password", false},
+
+                        // issueLinkType reads require READ
+                        {null, HttpMethod.GET, "/jira/rest/api/2/issueLinkType", false},
+                        {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/issueLinkType", true},
+                        {ScopeName.WRITE, HttpMethod.GET, "/jira/rest/api/2/issueLinkType", true},
+                        {ScopeName.DELETE, HttpMethod.GET, "/jira/rest/api/2/issueLinkType", true},
+                        {ScopeName.ADMIN, HttpMethod.GET, "/jira/rest/api/2/issueLinkType", true},
+                        {null, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", false},
+                        {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", true},
+                        {ScopeName.WRITE, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", true},
+                        {ScopeName.DELETE, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", true},
+                        {ScopeName.ADMIN, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", true},
+
+                        // issueLinkType creations and edits require ADMIN
+                        {null, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", false},
+                        {ScopeName.READ, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", false},
+                        {ScopeName.WRITE, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", false},
+                        {ScopeName.DELETE, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", false},
+                        {ScopeName.ADMIN, HttpMethod.POST, "/jira/rest/api/2/issueLinkType", true},
+                        {null, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", false},
+                        {ScopeName.READ, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", false},
+                        {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", false},
+                        {ScopeName.DELETE, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", false},
+                        {ScopeName.ADMIN, HttpMethod.PUT, "/jira/rest/api/2/issueLinkType/abc", true},
+
+                        // issueLinkType deletes require ADMIN
+                        {null, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
+                        {ScopeName.READ, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
+                        {ScopeName.WRITE, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
+                        {ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
+                        {ScopeName.ADMIN, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", true},
                 }));
 
         // never allow an add-on to change a user's details or password

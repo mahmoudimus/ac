@@ -86,6 +86,9 @@ public class IFrameUriBuilderImpl
         private final String namespace;
         private final UriBuilder uriBuilder;
 
+        private boolean sign = true;
+        private boolean includeStandardParams = true;
+
         private InitializedBuilderImpl(final String addonKey, final String namespace, final UriBuilder uriBuilder)
         {
             this.addonKey = addonKey;
@@ -101,24 +104,53 @@ public class IFrameUriBuilderImpl
         }
 
         @Override
-        public String signAndBuild()
+        public InitializedBuilder dialog(boolean isDialog)
         {
-            addDefaultIFrameUrlParameters();
-
-            URI uri = uriBuilder.toUri().toJavaUri();
-            return pluginAccessorFactory.getOrThrow(addonKey).signGetUrl(uri, ImmutableMap.<String, String[]>of());
+            if (isDialog)
+            {
+                uriBuilder.addQueryParameter("dialog", "1");
+                uriBuilder.addQueryParameter("simpleDialog", "1"); // TODO(chrisw): Do we still need this on the client?
+            }
+            return this;
         }
 
         @Override
-        public String buildUnsigned()
+        public InitializedBuilder sign(final boolean sign)
         {
-            return uriBuilder.toUri().toString();
+            this.sign = sign;
+            return this;
+        }
+
+        @Override
+        public InitializedBuilder includeStandardParams(final boolean includeStandardParams)
+        {
+            this.includeStandardParams = includeStandardParams;
+            return this;
+        }
+
+        @Override
+        public String build()
+        {
+            if (includeStandardParams)
+            {
+                addStandardIFrameUrlParameters();
+            }
+
+            if (sign)
+            {
+                URI uri = uriBuilder.toUri().toJavaUri();
+                return pluginAccessorFactory.getOrThrow(addonKey).signGetUrl(uri, ImmutableMap.<String, String[]>of());
+            }
+            else
+            {
+                return uriBuilder.toUri().toString();
+            }
         }
 
         /**
          * Append query parameters common to all remote iframes.
          */
-        private void addDefaultIFrameUrlParameters()
+        private void addStandardIFrameUrlParameters()
         {
             UserProfile profile = userManager.getRemoteUser();
 
@@ -137,7 +169,6 @@ public class IFrameUriBuilderImpl
             // XDM parameters
             uriBuilder.addQueryParameter("xdm_e", hostApplicationInfo.getUrl().toString());
             uriBuilder.addQueryParameter("xdm_c", "channel-" + namespace);
-            uriBuilder.addQueryParameter("xdm_p", "1");
             uriBuilder.addQueryParameter("cp", hostApplicationInfo.getContextPath());
 
             // licensing parameters

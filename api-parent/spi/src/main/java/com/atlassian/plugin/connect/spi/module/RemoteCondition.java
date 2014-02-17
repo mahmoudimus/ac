@@ -43,10 +43,10 @@ public final class RemoteCondition implements Condition
     private static final Logger log = LoggerFactory.getLogger(RemoteCondition.class);
 
     public RemoteCondition(ProductAccessor productAccessor,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            BigPipeManager bigPipeManager,
-            UserManager userManager,
-            TemplateRenderer templateRenderer)
+                           RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                           BigPipeManager bigPipeManager,
+                           UserManager userManager,
+                           TemplateRenderer templateRenderer)
     {
         this.productAccessor = productAccessor;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
@@ -117,18 +117,18 @@ public final class RemoteCondition implements Condition
         // always return true as the link will be disabled by default via the 'hidden' class
     }
 
-    private Map<String, String> getParameters(Map<String, Object> context)
+    private Map<String, String[]> getParameters(Map<String, Object> context)
     {
-        Map<String, String> params = newHashMap();
+        Map<String, String[]> params = newHashMap();
         for (String contextParam : contextParams)
         {
-            params.put(contextParam, templateRenderer.renderFragment(productAccessor.getLinkContextParams().get(contextParam), context));
+            params.put(contextParam, new String[]{templateRenderer.renderFragment(productAccessor.getLinkContextParams().get(contextParam), context)});
         }
         UserProfile remoteUser = userManager.getRemoteUser();
         if (remoteUser != null)
         {
-            params.put("user_id", remoteUser.getUsername());
-            params.put("user_key", remoteUser.getUserKey().getStringValue());
+            params.put("user_id", new String[]{remoteUser.getUsername()});
+            params.put("user_key", new String[]{remoteUser.getUserKey().getStringValue()});
         }
         return params;
     }

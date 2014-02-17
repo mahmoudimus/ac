@@ -72,6 +72,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .condition(getCondition())
+                    .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .build();
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
 
@@ -111,7 +112,8 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
     protected void augmentRenderContext(Map<String, Object> additionalRenderContext)
     {
-        // no additional context by default
+        // This is needed by the javascript to enabling the auto-resizer.
+        additionalRenderContext.put("general", 1);
     }
 
     protected abstract String getDecorator();

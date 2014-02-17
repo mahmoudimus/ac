@@ -15,6 +15,8 @@ import org.openqa.selenium.support.pagefactory.ByChained;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -105,7 +107,8 @@ public class RemotePage
             @Override
             public Boolean apply(WebDriver webDriver)
             {
-                return iframe().getAttribute("class").contains(cssClass);
+                List<String> classes = Arrays.asList(iframe().getAttribute("class").split(" "));
+                return classes.contains(cssClass);
             }
         });
         return true;

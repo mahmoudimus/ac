@@ -3,8 +3,8 @@
 
 ## [1.0-m31](../release-notes/1-0-m31.html)
 * Support for Inline Dialogs
-* Add-ons that request JWT authentication (or don't specify an [authentication type](../modules/authentication.html),
-which defaults the add-on to JWT) will now fail to install if they do not specify an ``"installed"``
+* The [`authentication`](../modules/authentication.html) module is now required
+* Add-ons that request JWT authentication will now fail to install if they do not specify an ``"installed"``
 [lifecycle callback](../modules/lifecycle.html). To opt out of JWT authentication, you may specify an authentication
 type of ``"none"``.
 

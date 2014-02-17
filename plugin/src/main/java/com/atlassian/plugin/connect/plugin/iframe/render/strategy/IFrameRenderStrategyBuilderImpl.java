@@ -50,6 +50,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private String width;
     private String height;
     private boolean uniqueNamespace;
+    private boolean isDialog;
 
     public IFrameRenderStrategyBuilderImpl(
             final IFrameUriBuilderFactory iFrameUriBuilderFactory,
@@ -185,11 +186,17 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
+    public InitializedBuilder dialog(boolean isDialog) {
+        this.isDialog = isDialog;
+        return this;
+    }
+
+    @Override
     public IFrameRenderStrategy build()
     {
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
-                decorator, condition, additionalRenderContext, width, height, uniqueNamespace);
+                decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog);
     }
 
     private static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
@@ -209,6 +216,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final String width;
         private final String height;
         private final boolean uniqueNamespace;
+        private final boolean isDialog;
         private final String decorator;
         private final Condition condition;
 
@@ -218,7 +226,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                 final String template, final String accessDeniedTemplate, final String urlTemplate,
                 final String title, final String decorator, final Condition condition,
                 final Map<String, Object> additionalRenderContext, String width, String height,
-                final boolean uniqueNamespace)
+                final boolean uniqueNamespace, final boolean isDialog)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -235,6 +243,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.width = width;
             this.height = height;
             this.uniqueNamespace = uniqueNamespace;
+            this.isDialog = isDialog;
         }
 
         @Override
@@ -248,7 +257,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .namespace(namespace)
                     .urlTemplate(urlTemplate)
                     .context(moduleContextParameters)
-                    .signAndBuild();
+                    .dialog(isDialog)
+                    .build();
 
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
                     .addOn(addOnKey)
