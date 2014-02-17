@@ -51,6 +51,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private String height;
     private boolean uniqueNamespace;
     private boolean isDialog;
+    private boolean isSimpleDialog;
+    private boolean resizeToParent;
 
     public IFrameRenderStrategyBuilderImpl(
             final IFrameUriBuilderFactory iFrameUriBuilderFactory,
@@ -169,16 +171,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public InitializedBuilder additionalRenderContext(final Map<String, Object> additionalRenderContext)
-    {
-        if (additionalRenderContext != null)
-        {
-            this.additionalRenderContext.putAll(additionalRenderContext);
-        }
-        return this;
-    }
-
-    @Override
     public InitializedBuilder ensureUniqueNamespace(boolean uniqueNamespace)
     {
         this.uniqueNamespace = uniqueNamespace;
@@ -192,11 +184,28 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
+    public InitializedBuilder simpleDialog(boolean isSimpleDialog) {
+        if (isSimpleDialog)
+        {
+            this.isDialog = true;
+        }
+        this.isSimpleDialog = isSimpleDialog;
+        return this;
+    }
+
+    @Override
+    public InitializedBuilder resizeToParent(boolean resizeToParent)
+    {
+        this.resizeToParent = resizeToParent;
+        return this;
+    }
+
+    @Override
     public IFrameRenderStrategy build()
     {
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
-                decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog);
+                decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog, resizeToParent);
     }
 
     private static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
@@ -217,8 +226,10 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final String height;
         private final boolean uniqueNamespace;
         private final boolean isDialog;
+        private final boolean isSimpleDialog;
         private final String decorator;
         private final Condition condition;
+        private final boolean resizeToParent;
 
         private IFrameRenderStrategyImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
@@ -226,7 +237,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                 final String template, final String accessDeniedTemplate, final String urlTemplate,
                 final String title, final String decorator, final Condition condition,
                 final Map<String, Object> additionalRenderContext, String width, String height,
-                final boolean uniqueNamespace, final boolean isDialog)
+                final boolean uniqueNamespace, final boolean isDialog, final boolean isSimpleDialog, final boolean resizeToParent)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -244,6 +255,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.height = height;
             this.uniqueNamespace = uniqueNamespace;
             this.isDialog = isDialog;
+            this.isSimpleDialog = isDialog;
+            this.resizeToParent = resizeToParent;
         }
 
         @Override
@@ -266,6 +279,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .iframeUri(signedUri)
                     .decorator(decorator)
                     .title(title)
+                    .dialog(isDialog)
+                    .simpleDialog(isSimpleDialog)
+                    .resizeToParent(resizeToParent)
                     .context(additionalRenderContext)
                     .context("contextParams", moduleContextParameters)
                     .context("width", width)
