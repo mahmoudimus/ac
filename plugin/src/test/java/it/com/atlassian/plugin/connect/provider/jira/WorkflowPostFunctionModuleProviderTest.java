@@ -17,9 +17,9 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameter
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParametersImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.TestPluginInstaller;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
