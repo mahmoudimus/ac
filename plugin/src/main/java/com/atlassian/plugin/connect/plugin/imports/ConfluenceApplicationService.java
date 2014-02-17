@@ -19,6 +19,7 @@ import com.atlassian.crowd.model.webhook.Webhook;
 import com.atlassian.crowd.search.query.entity.EntityQuery;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.component.ComponentLocator;
 
 import javax.annotation.Nullable;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 @ConfluenceComponent
+@ExportAsDevService
 public class ConfluenceApplicationService implements ApplicationService
 {
     private  final ApplicationService delegate;
