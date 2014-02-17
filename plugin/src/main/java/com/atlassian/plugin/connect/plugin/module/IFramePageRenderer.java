@@ -21,6 +21,7 @@ import static com.google.common.collect.Maps.newHashMap;
 @Named
 public class IFramePageRenderer
 {
+    public static final String ATL_GENERAL = "atl.general";
     private final TemplateRenderer templateRenderer;
     private final IFrameRenderer iframeRenderer;
     private final HostApplicationInfo hostApplicationInfo;
@@ -80,7 +81,7 @@ public class IFramePageRenderer
                     "velocity/deprecated/iframe-page-accessdenied" + pageInfo.getTemplateSuffix() + ".vm",
                     ImmutableMap.<String, Object>of(
                             "title", pageInfo.getTitle(),
-                            "decorator", pageInfo.getDecorator()), writer);
+                            "decorator", ATL_GENERAL), writer);
         }
     }
 
