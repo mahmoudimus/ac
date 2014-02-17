@@ -1,6 +1,13 @@
 
 # Release Notes
 
+## [1.0.0-rc](../release-notes/1-0-rc.html)
+* Installing an add-on into OnDemand will not work unless the base url starts with https
+* Support for context parameters on remote conditions
+* The add-on key must now be less than or equal to 80 characters. Any add-ons with larger keys will need to be shortened
+* The [`authentication`](../modules/authentication.html) module is now required
+* WebPanel url and location fields are now required
+
 ## [1.0-m31](../release-notes/1-0-m31.html)
 * Support for Inline Dialogs
 * The [`authentication`](../modules/authentication.html) module is now required
