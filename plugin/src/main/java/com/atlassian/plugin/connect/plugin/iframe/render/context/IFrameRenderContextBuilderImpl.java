@@ -85,16 +85,16 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         }
 
         @Override
-        public InitializedBuilder dialog(String dialogId)
+        public InitializedBuilder dialog(final boolean isDialog)
         {
-            putIfNotNull("dialog", dialogId);
+            additionalContext.put("dialog", isDialog ? "1" : "");
             return this;
         }
 
         @Override
-        public InitializedBuilder simpleDialog(final String simpleDialogId)
+        public InitializedBuilder simpleDialog(final boolean isSimpleDialog)
         {
-            putIfNotNull("simpleDialog", simpleDialogId);
+            additionalContext.put("simpleDialog", isSimpleDialog ? "1" : "");
             return this;
         }
 
@@ -109,6 +109,13 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         public InitializedBuilder title(final String title)
         {
             putIfNotNull("title", title);
+            return this;
+        }
+
+        @Override
+        public InitializedBuilder resizeToParent(boolean resizeToParent)
+        {
+            additionalContext.put("general", resizeToParent ? "1" : "");
             return this;
         }
 

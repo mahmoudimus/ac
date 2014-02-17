@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow", "myself"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "groups picker", "user", "filter", "workflow", "myself"],
       "pathKeys": ["download attachments"],
       "methods": ["GET"]
     },
@@ -32,6 +32,11 @@
       "key": "ADMIN",
       "restPathKeys": ["field", "workflowscheme"],
       "methods": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "key": "ADMIN",
+      "restPathKeys": ["issueLinkType"],
+      "methods": ["POST", "PUT", "DELETE"]
     }
   ],
   "restPaths": [
@@ -45,6 +50,12 @@
       "key": "group",
       "name": "api",
       "basePaths": ["/group($|/.*)"],
+      "versions": ["2", "2.0.alpha1", "latest"]
+    },
+    {
+      "key": "groups picker",
+      "name": "api",
+      "basePaths": ["/groups/picker"],
       "versions": ["2", "2.0.alpha1", "latest"]
     },
     {

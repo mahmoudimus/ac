@@ -32,6 +32,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
     private static final String TEMPLATE_ACCESS_DENIED_PAGE = TEMPLATE_PATH + "iframe-page-accessdenied.vm";
     private static final String TEMPLATE_ACCESS_DENIED_GENERIC_BODY = TEMPLATE_PATH + "iframe-body-accessdenied.vm";
+    public static final String ATL_GENERAL = "atl.general";
 
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
@@ -50,6 +51,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private String width;
     private String height;
     private boolean uniqueNamespace;
+    private boolean isDialog;
+    private boolean isSimpleDialog;
+    private boolean resizeToParent;
 
     public IFrameRenderStrategyBuilderImpl(
             final IFrameUriBuilderFactory iFrameUriBuilderFactory,
@@ -168,19 +172,32 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public InitializedBuilder additionalRenderContext(final Map<String, Object> additionalRenderContext)
+    public InitializedBuilder ensureUniqueNamespace(boolean uniqueNamespace)
     {
-        if (additionalRenderContext != null)
-        {
-            this.additionalRenderContext.putAll(additionalRenderContext);
-        }
+        this.uniqueNamespace = uniqueNamespace;
         return this;
     }
 
     @Override
-    public InitializedBuilder ensureUniqueNamespace(boolean uniqueNamespace)
+    public InitializedBuilder dialog(boolean isDialog) {
+        this.isDialog = isDialog;
+        return this;
+    }
+
+    @Override
+    public InitializedBuilder simpleDialog(boolean isSimpleDialog) {
+        if (isSimpleDialog)
+        {
+            this.isDialog = true;
+        }
+        this.isSimpleDialog = isSimpleDialog;
+        return this;
+    }
+
+    @Override
+    public InitializedBuilder resizeToParent(boolean resizeToParent)
     {
-        this.uniqueNamespace = uniqueNamespace;
+        this.resizeToParent = resizeToParent;
         return this;
     }
 
@@ -189,7 +206,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     {
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
-                decorator, condition, additionalRenderContext, width, height, uniqueNamespace);
+                decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog, resizeToParent);
     }
 
     private static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
@@ -209,8 +226,11 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final String width;
         private final String height;
         private final boolean uniqueNamespace;
+        private final boolean isDialog;
+        private final boolean isSimpleDialog;
         private final String decorator;
         private final Condition condition;
+        private final boolean resizeToParent;
 
         private IFrameRenderStrategyImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
@@ -218,7 +238,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                 final String template, final String accessDeniedTemplate, final String urlTemplate,
                 final String title, final String decorator, final Condition condition,
                 final Map<String, Object> additionalRenderContext, String width, String height,
-                final boolean uniqueNamespace)
+                final boolean uniqueNamespace, final boolean isDialog, final boolean isSimpleDialog, final boolean resizeToParent)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -235,6 +255,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.width = width;
             this.height = height;
             this.uniqueNamespace = uniqueNamespace;
+            this.isDialog = isDialog;
+            this.isSimpleDialog = isDialog;
+            this.resizeToParent = resizeToParent;
         }
 
         @Override
@@ -248,7 +271,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .namespace(namespace)
                     .urlTemplate(urlTemplate)
                     .context(moduleContextParameters)
-                    .signAndBuild();
+                    .dialog(isDialog)
+                    .build();
 
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
                     .addOn(addOnKey)
@@ -256,6 +280,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .iframeUri(signedUri)
                     .decorator(decorator)
                     .title(title)
+                    .dialog(isDialog)
+                    .simpleDialog(isSimpleDialog)
+                    .resizeToParent(resizeToParent)
                     .context(additionalRenderContext)
                     .context("contextParams", moduleContextParameters)
                     .context("width", width)
@@ -268,9 +295,10 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         @Override
         public void renderAccessDenied(final Writer writer) throws IOException
         {
+               
             Map<String, Object> renderContext = ImmutableMap.<String, Object>builder()
                     .put("title", title)
-                    .put("decorator", decorator)
+                    .put("decorator", ATL_GENERAL)
                     .build();
 
             templateRenderer.render(accessDeniedTemplate, renderContext, writer);

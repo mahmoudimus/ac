@@ -4,30 +4,27 @@ import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.crowd.manager.application.ApplicationManager;
+import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.user.UserManager;
 
 import com.google.gson.JsonParser;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openssl.PEMWriter;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.filter.AddonTestFilterResults;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.TestPluginInstaller;
-import it.com.atlassian.plugin.connect.filter.ServletRequestSnaphot;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -38,7 +35,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.AdditionalMatchers.not;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
@@ -47,9 +43,9 @@ import static org.mockito.Mockito.verify;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 {
-    protected AddonLifecycleOAuthTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService)
+    protected AddonLifecycleOAuthTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService,UserManager userManager,ApplicationService applicationService,ApplicationManager applicationManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager);
     }
 
     @BeforeClass

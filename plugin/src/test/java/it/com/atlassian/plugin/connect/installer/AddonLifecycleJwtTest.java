@@ -1,14 +1,21 @@
 package it.com.atlassian.plugin.connect.installer;
 
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.crowd.manager.application.ApplicationManager;
+import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
+import com.atlassian.plugin.connect.testsupport.filter.JwtTestVerifier;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.user.UserManager;
 
 import com.google.gson.JsonParser;
 
@@ -17,10 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.TestPluginInstaller;
-import it.com.atlassian.plugin.connect.filter.AddonTestFilterResults;
-import it.com.atlassian.plugin.connect.filter.JwtTestVerifier;
-import it.com.atlassian.plugin.connect.filter.ServletRequestSnaphot;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static org.junit.Assert.*;
@@ -29,9 +32,9 @@ import static org.junit.Assert.*;
 public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 {
 
-    public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService)
+    public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService, UserManager userManager,ApplicationService applicationService,ApplicationManager applicationManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager);
     }
 
     @BeforeClass

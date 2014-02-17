@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m31</version>
+        <version>1.0.0-rc1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -320,7 +320,7 @@
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-rest-test-plugin</artifactId>
+                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
@@ -379,7 +379,7 @@
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-rest-test-plugin</artifactId>
+                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>

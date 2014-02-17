@@ -25,18 +25,20 @@ import static org.junit.Assert.assertThat;
  */
 public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 {
-    private static final String REMOTE_PROJECT_CONFIG_TAB_NAME = "My Connect Project Config";
-    private static final String REMOTE_PROJECT_CONFIG_TAB_KEY = "my-connect-project-config";
+    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String PROJECT_CONFIG_MODULE_KEY = "my-connect-project-config";
+    private static final String PROJECT_CONFIG_TAB_NAME = "My Connect Project Config";
+
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
-                        .withName(new I18nProperty(REMOTE_PROJECT_CONFIG_TAB_NAME, null))
-                        .withKey(REMOTE_PROJECT_CONFIG_TAB_KEY)
+                        .withName(new I18nProperty(PROJECT_CONFIG_TAB_NAME, null))
+                        .withKey(PROJECT_CONFIG_MODULE_KEY)
                         .withUrl("/pct")
                         .withWeight(10)
                         .withLocation("projectgroup4")
@@ -67,27 +69,22 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
             @Override
             public boolean matchesSafely(final ProjectConfigTabs.Tab tab)
             {
-                System.out.println(tab.getName());
-                System.out.println(tab.getName().equals(REMOTE_PROJECT_CONFIG_TAB_NAME));
-                System.out.println(tab.getId());
-                return tab.getName().equals(REMOTE_PROJECT_CONFIG_TAB_NAME);
+                return tab.getName().equals(PROJECT_CONFIG_TAB_NAME);
             }
 
             @Override
             public void describeTo(final Description description)
             {
-                description.appendText("Project Configuration Tabs should contain " + REMOTE_PROJECT_CONFIG_TAB_NAME + " tab");
+                description.appendText("Project Configuration Tabs should contain " + PROJECT_CONFIG_TAB_NAME + " tab");
             }
         }));
 
         final JiraProjectAdministrationTab remoteProjectAdministrationTab =
-                page.getTabs().gotoTab(JiraProjectAdministrationTab.MODULE_KEY,
-                        JiraProjectAdministrationTab.class,
-                        project.getKey());
+                page.getTabs().gotoTab(PROJECT_CONFIG_MODULE_KEY, JiraProjectAdministrationTab.class, project.getKey(), PROJECT_CONFIG_MODULE_KEY);
 
         // Test of workaround for JRA-26407.
         assertNotNull(remoteProjectAdministrationTab.getProjectHeader());
-        assertEquals(REMOTE_PROJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
+        assertEquals(PROJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
         assertEquals(project.getKey(), remoteProjectAdministrationTab.getProjectKey());
         assertEquals("Success", remoteProjectAdministrationTab.getMessage());
     }

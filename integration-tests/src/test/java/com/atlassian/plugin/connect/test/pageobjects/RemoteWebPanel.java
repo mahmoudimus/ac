@@ -1,18 +1,15 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
-import static it.TestConstants.IFRAME_ID_SUFFIX;
 
 /**
  * A remote web-panel that is expected to contain some test values.
  */
 public class RemoteWebPanel extends AbstractConnectIFrameComponent<RemoteWebPanel>
 {
-    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-";
-
     private final String id;
     /**
      * For retrieving web panels registered by legacy descriptors.
@@ -35,7 +32,7 @@ public class RemoteWebPanel extends AbstractConnectIFrameComponent<RemoteWebPane
 
     protected String getFrameId()
     {
-        return IFRAME_ID_PREFIX + extraPrefix + id + IFRAME_ID_SUFFIX;
+        return IframeUtils.iframeId(extraPrefix + id);
     }
 
     public String getUserId()

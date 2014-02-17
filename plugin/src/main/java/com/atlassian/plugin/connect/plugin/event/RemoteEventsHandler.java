@@ -50,6 +50,9 @@ import static com.google.common.collect.Maps.newHashMap;
 
 //import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 
+/**
+ * For handling legacy xml-descriptor add-ons. See {@link com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager} for JSON-descriptor add-ons.
+ */
 @Component
 public class RemoteEventsHandler implements InitializingBean, DisposableBean
 {
@@ -183,7 +186,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
     }
 
 //    @PluginEventListener
-//    public void pluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
+//    public void beforePluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
 //    {
 //        final Plugin plugin = pluginDisabledEvent.getPlugin();
 //        if (connectIdentifier.isConnectAddOn(plugin))

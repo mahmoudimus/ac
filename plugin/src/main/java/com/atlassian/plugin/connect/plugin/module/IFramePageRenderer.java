@@ -21,6 +21,7 @@ import static com.google.common.collect.Maps.newHashMap;
 @Named
 public class IFramePageRenderer
 {
+    public static final String ATL_GENERAL = "atl.general";
     private final TemplateRenderer templateRenderer;
     private final IFrameRenderer iframeRenderer;
     private final HostApplicationInfo hostApplicationInfo;
@@ -43,13 +44,22 @@ public class IFramePageRenderer
             }
 
             Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
-            if (queryParams.get("width") != null)
+
+            if (queryParams.get("raw") != null)
             {
-                iframeContext.getIFrameParams().setParam("width", queryParams.get("width")[0]);
+                iframeContext.getIFrameParams().setParam("width", "100%");
+                iframeContext.getIFrameParams().setParam("height", "100%");
             }
-            if (queryParams.get("height") != null)
+            else
             {
-                iframeContext.getIFrameParams().setParam("height", queryParams.get("height")[0]);
+                if (queryParams.get("width") != null)
+                {
+                    iframeContext.getIFrameParams().setParam("width", queryParams.get("width")[0]);
+                }
+                if (queryParams.get("height") != null)
+                {
+                    iframeContext.getIFrameParams().setParam("height", queryParams.get("height")[0]);
+                }
             }
 
             ctx.put("queryParams", contextQueryParameters(queryParams));
@@ -71,7 +81,7 @@ public class IFramePageRenderer
                     "velocity/deprecated/iframe-page-accessdenied" + pageInfo.getTemplateSuffix() + ".vm",
                     ImmutableMap.<String, Object>of(
                             "title", pageInfo.getTitle(),
-                            "decorator", pageInfo.getDecorator()), writer);
+                            "decorator", ATL_GENERAL), writer);
         }
     }
 

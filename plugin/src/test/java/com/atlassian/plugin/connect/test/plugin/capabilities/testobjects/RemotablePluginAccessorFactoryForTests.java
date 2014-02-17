@@ -62,7 +62,7 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
             }
 
             @Override
-            public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String> params, Map<String, String> headers)
+            public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers)
             {
                 return null;
             }

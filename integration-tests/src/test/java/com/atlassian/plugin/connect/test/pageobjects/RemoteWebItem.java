@@ -3,13 +3,13 @@ package com.atlassian.plugin.connect.test.pageobjects;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.google.common.base.Optional;
 import org.openqa.selenium.By;
 
 import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
-import static it.TestConstants.IFRAME_ID_SUFFIX;
 
 /**
  * A remote web-item, which link is expected to pass context.
@@ -18,9 +18,7 @@ public class RemoteWebItem
 {
     public static enum ItemMatchingMode { ID, LINK_TEXT }
 
-    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-servlet-";
     private static final String INLINE_DIALOG_ACTIVE_CLASS = "active";
-    private static final String DIALOG_ACTIVE_CLASS = "active";
 
     @Inject
     private PageElementFinder elementFinder;
@@ -52,7 +50,8 @@ public class RemoteWebItem
 
         if (!isPointingToOldXmlInternalUrl() && !isPointingToACInternalUrl())
         {
-            path = elementFinder.find(By.id(IFRAME_ID_PREFIX + matchValue + IFRAME_ID_SUFFIX)).getAttribute("src");
+            String iframeId = IframeUtils.iframeId("servlet-" + matchValue);
+            path = elementFinder.find(By.id(iframeId)).getAttribute("src");
         }
         else
         {
@@ -92,6 +91,15 @@ public class RemoteWebItem
             elementFinder.find(By.id(dropDownLinkId.get())).click();
         }
         webItem.click();
+    }
+
+    public void hover()
+    {
+        if (dropDownLinkId.isPresent())
+        {
+            elementFinder.find(By.id(dropDownLinkId.get())).click();
+        }
+        webItem.javascript().mouse().mouseover();
     }
 
     public boolean isVisible()

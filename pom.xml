@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m31</version>
+    <version>1.0.0-rc1</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -27,14 +27,15 @@
         <module>json-schemagen</module>
         <module>api-parent</module>
         <module>modules</module>
+        <module>test-support-plugin</module>
         <module>plugin</module>
+        <module>plugin-lifecycle-tests</module>
     </modules>
 
     <profiles>
         <profile>
             <id>it</id>
             <modules>
-                <module>rest-test-plugin</module>
                 <module>integration-tests</module>
             </modules>
         </profile>
@@ -609,7 +610,7 @@
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.httpclient.version>0.17.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>6.2-OD-08-034</atlassian.jira.version>
+        <atlassian.jira.version>6.3-OD-01-030</atlassian.jira.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
         <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
         <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>

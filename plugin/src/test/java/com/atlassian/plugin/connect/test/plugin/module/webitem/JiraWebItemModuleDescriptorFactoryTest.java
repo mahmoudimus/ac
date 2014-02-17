@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstit
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebPanelModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.module.webitem.JiraWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
@@ -52,7 +52,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
     private IFrameUriBuilderFactory iFrameUriBuilderFactory;
 
     @Mock
-    private WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+    private WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
 
     @Mock
     private UrlVariableSubstitutor urlVariableSubstitutor;
@@ -69,7 +69,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
 
         JiraWebItemModuleDescriptorFactory webItemFactory = new JiraWebItemModuleDescriptorFactory(
                 webFragmentHelper, webInterfaceManager, iFrameUriBuilderFactory, jiraAuthenticationContext,
-                webPanelModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
+                webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 
@@ -78,8 +78,8 @@ public class JiraWebItemModuleDescriptorFactoryTest
                 "my-key",
                 "myLinkId",
                 false,
-                product
-        );
+                product,
+                false);
         
         descriptor.init(plugin, createElement());
         descriptor.enabled();

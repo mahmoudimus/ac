@@ -14,12 +14,11 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestParams;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.uri.Uri;
-import com.atlassian.uri.UriBuilder;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 
@@ -27,10 +26,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
-import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * A remote search request review that will do an html redirect to the remote plugin
@@ -40,22 +35,31 @@ public class RemoteSearchRequestView implements SearchRequestView
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
-    private final URI path;
-    private final String name;
-    private final RemotablePluginAccessor remotablePluginAccessor;
+    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+
+    private final String pluginKey;
+    private final String moduleKey;
+    private final URI createUri;
+    private final String displayName;
 
     public RemoteSearchRequestView(
             ApplicationProperties applicationProperties,
-            final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
-            TemplateRenderer templateRenderer, URI path, String name,
-            RemotablePluginAccessor remotablePluginAccessor)
+            SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
+            TemplateRenderer templateRenderer,
+            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            String pluginKey,
+            String moduleKey,
+            URI createUri,
+            String displayName)
     {
         this.applicationProperties = applicationProperties;
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
         this.templateRenderer = templateRenderer;
-        this.path = path;
-        this.name = name;
-        this.remotablePluginAccessor = checkNotNull(remotablePluginAccessor);
+        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+        this.createUri = createUri;
+        this.displayName = displayName;
+        this.pluginKey = pluginKey;
+        this.moduleKey = moduleKey;
     }
 
     @Override
@@ -64,8 +68,7 @@ public class RemoteSearchRequestView implements SearchRequestView
     }
 
     @Override
-    public void writeHeaders(SearchRequest searchRequest, RequestHeaders requestHeaders,
-            SearchRequestParams searchRequestParams)
+    public void writeHeaders(SearchRequest searchRequest, RequestHeaders requestHeaders, SearchRequestParams searchRequestParams)
     {
     }
 
@@ -73,35 +76,33 @@ public class RemoteSearchRequestView implements SearchRequestView
     public void writeSearchResults(final SearchRequest searchRequest, final SearchRequestParams searchRequestParams, final Writer writer)
     {
         JiraAuthenticationContext jiraAuthenticationContext = ComponentManager.getInstance().getJiraAuthenticationContext();
-        Map<String,String> queryParams = newHashMap();
         String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
-        queryParams.put("link", SearchRequestViewUtils.getLink(searchRequest,
-                baseUrl, jiraAuthenticationContext.getLoggedInUser()));
 
+        String link = SearchRequestViewUtils.getLink(searchRequest, baseUrl, jiraAuthenticationContext.getUser().getDirectoryUser());
         int startIssue = searchRequestParams.getPagerFilter().getStart();
-        queryParams.put("startIssue", String.valueOf(startIssue));
-
         long totalIssues = getSearchCount(searchRequest, searchRequestParams);
-        queryParams.put("totalIssues", String.valueOf(totalIssues));
-
-        final long tempMax = searchRequestParams.getPagerFilter().getMax() < 0 ? 0 : searchRequestParams.getPagerFilter().getMax();
-        queryParams.put("endIssue", String.valueOf(Math.min(startIssue + tempMax, totalIssues)));
-
+        long tempMax = searchRequestParams.getPagerFilter().getMax() < 0 ? 0 : searchRequestParams.getPagerFilter().getMax();
+        String endIssues = String.valueOf(Math.min(startIssue + tempMax, totalIssues));
         String issueKeysValue = getIssueKeysList(searchRequest, searchRequestParams);
-        queryParams.put("issues", issueKeysValue);
 
-        Uri target = Uri.fromJavaUri(path);
-        UriBuilder b = new UriBuilder(target);
-        b.addQueryParameters(queryParams);
-
-        String signedAddonURL = remotablePluginAccessor.signGetUrl(b.toUri().toJavaUri(), ImmutableMap.<String, String[]>of());
+        String signedAddonURL = iFrameUriBuilderFactory.builder()
+                .addOn(pluginKey)
+                .namespace(moduleKey)
+                .urlTemplate(createUri.toString())
+                .context(new HashMapModuleContextParameters())
+                .param("link", link)
+                .param("startIssue", String.valueOf(startIssue))
+                .param("endIssue", endIssues)
+                .param("totalIssues", String.valueOf(totalIssues))
+                .param("issues", issueKeysValue)
+                .build();
 
         try
         {
             templateRenderer.render("velocity/view-search-request-redirect.vm", ImmutableMap.<String,
                     Object>of(
                     "redirectUrl", signedAddonURL,
-                    "name", name
+                    "name", displayName
 
             ), writer);
         }
@@ -112,7 +113,7 @@ public class RemoteSearchRequestView implements SearchRequestView
     }
 
     private String getIssueKeysList(SearchRequest searchRequest,
-            SearchRequestParams searchRequestParams)
+                                    SearchRequestParams searchRequestParams)
     {
         StringWriter issueKeys = new StringWriter();
         final SingleIssueWriter singleIssueWriter = new SingleIssueWriter()

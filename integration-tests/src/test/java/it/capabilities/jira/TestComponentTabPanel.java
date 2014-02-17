@@ -20,6 +20,9 @@ import static org.junit.Assert.assertThat;
  */
 public class TestComponentTabPanel extends TestBase
 {
+    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String MODULE_KEY = "component-tab-panel";
+
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
     private static final String COMPONENT_NAME = "test-component";
     private static ConnectRunner remotePlugin;
@@ -30,11 +33,11 @@ public class TestComponentTabPanel extends TestBase
     @BeforeClass
     public static void setUpClassTest() throws Exception
     {
-        remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
+        remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(ConnectTabPanelModuleProvider.COMPONENT_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Component Tab Panel", null))
-                        .withKey("component-tab-panel")
+                        .withKey(MODULE_KEY)
                         .withUrl("/ipp?component_id={component.id}&project_id={project.id}&project_key={project.key}")
                         .withWeight(1234)
                         .build())
@@ -71,7 +74,7 @@ public class TestComponentTabPanel extends TestBase
     public void testComponentTabPanel() throws Exception
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, "component-tab");
+        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, PLUGIN_KEY, MODULE_KEY);
 
         componentTabPage.clickTab();
 

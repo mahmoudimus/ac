@@ -4,9 +4,11 @@ import javax.inject.Inject;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 
 import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
+import com.google.common.base.Optional;
 import org.openqa.selenium.By;
 
 /**
@@ -60,4 +62,10 @@ public class JiraViewIssuePage implements Page
     {
         return pageBinder.bind(RemoteXdmEventPanel.class, panelId);
     }
+
+    public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownMenuId)
+    {
+        return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownMenuId);
+    }
+
 }

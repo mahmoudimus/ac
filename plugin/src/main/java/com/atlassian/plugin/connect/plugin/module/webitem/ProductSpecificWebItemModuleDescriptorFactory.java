@@ -14,6 +14,6 @@ public interface ProductSpecificWebItemModuleDescriptorFactory
             , String pluginKey
             , String moduleKey
             , boolean absolute
-            ,AddOnUrlContext addOnUrlContext
-    );
+            , AddOnUrlContext addOnUrlContext
+            , boolean isDialog);
 }

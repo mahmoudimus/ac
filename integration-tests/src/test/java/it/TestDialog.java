@@ -15,7 +15,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static it.TestConstants.BETTY_USERNAME;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class TestDialog extends ConnectWebDriverTestBase
 {
@@ -86,4 +89,38 @@ public class TestDialog extends ConnectWebDriverTestBase
         String response = dialogOpeningPage.waitForValue("dialog-close-data");
         assertEquals("test dialog close data", response);
     }
+
+    @Test
+    public void testOpenCloseDialogKeyDimensions() throws Exception
+    {
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog", EXTRA_PREFIX);
+
+        page.clickRemotePluginLink();
+
+        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "servlet", "remotePluginGeneralOpenDialog", remotePlugin.getPluginKey());
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey("my-dialog");
+
+        // check the dimensions are the same as those in the js (moustache file)
+        assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
+        assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
+    }
+
+
+    @Test
+    public void testOpenCloseDialogUrlDimensions() throws Exception
+    {
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog", EXTRA_PREFIX);
+
+        page.clickRemotePluginLink();
+
+        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "servlet", "remotePluginGeneralOpenDialog", remotePlugin.getPluginKey());
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openUrl();
+
+        // check the dimensions are the same as those in the js (moustache file)
+        assertThat(closeDialogPage.getIFrameSize().getWidth(), is(654));
+        assertThat(closeDialogPage.getIFrameSize().getHeight(), is(918));
+    }
+
 }

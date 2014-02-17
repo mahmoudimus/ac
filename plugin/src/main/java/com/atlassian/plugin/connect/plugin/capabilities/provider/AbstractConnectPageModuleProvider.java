@@ -49,9 +49,6 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
         for (ConnectPageModuleBean bean : beans)
         {
-            Map<String, Object> additionalRenderContext = Maps.newHashMap();
-            augmentRenderContext(additionalRenderContext);
-
             // register a render strategy for our iframe page
             IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(plugin.getKey())
@@ -61,7 +58,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .decorator(getDecorator())
                     .condition(getCondition())
                     .title(bean.getDisplayName())
-                    .additionalRenderContext(additionalRenderContext)
+                    .resizeToParent(true)
                     .build();
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), pageRenderStrategy);
 
@@ -72,6 +69,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .condition(getCondition())
+                    .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .build();
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
 
@@ -107,11 +105,6 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
     protected boolean hasWebItem()
     {
         return true;
-    }
-
-    protected void augmentRenderContext(Map<String, Object> additionalRenderContext)
-    {
-        // no additional context by default
     }
 
     protected abstract String getDecorator();

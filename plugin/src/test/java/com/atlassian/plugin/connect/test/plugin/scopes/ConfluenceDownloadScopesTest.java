@@ -24,15 +24,21 @@ public class ConfluenceDownloadScopesTest extends AbstractScopesTest
         {
                 // basic case
                 {ScopeName.READ, HttpMethod.GET, "/confluence/download/temp/", true},
+                {ScopeName.READ, HttpMethod.GET, "/confluence/download/attachments/", true},
 
                 // suffix
                 {ScopeName.READ, HttpMethod.GET, "/confluence/download/temp/1234", true},
+                {ScopeName.READ, HttpMethod.GET, "/confluence/download/attachments/1234/name", true},
 
                 // higher scopes
                 {ScopeName.WRITE, HttpMethod.GET, "/confluence/download/temp/", true},
                 {ScopeName.DELETE, HttpMethod.GET, "/confluence/download/temp/", true},
                 // TODO: reinstate when we have a PROJECT_ADMIN scope in scopes.confluence.json {ScopeName.PROJECT_ADMIN, HttpMethod.GET, "/confluence/download/temp/", true},
                 {ScopeName.ADMIN, HttpMethod.GET, "/confluence/download/temp/", true},
+
+                {ScopeName.WRITE, HttpMethod.POST, "/confluence/download/temp/", false},
+                {ScopeName.DELETE, HttpMethod.POST, "/confluence/download/temp/", false},
+                {ScopeName.ADMIN, HttpMethod.POST, "/confluence/download/temp/", false},
 
                 // one-thing-wrong cases
                 {ScopeName.READ, HttpMethod.GET, "/confluence/download/temp", false}, // missing ending slash - this is what the old scopes did

@@ -42,10 +42,12 @@ public class EchoQueryParametersServlet extends ContextServlet
 
     private void render(PrintWriter writer, List<NameValuePair> nameValuePairs)
     {
+        writer.write(" <p id=\"hello-world-message\">Hello world</p>\n");
+
         writer.write("<ul>");
         for (NameValuePair pair : nameValuePairs)
         {
-            writer.write("<li>");
+            writer.write(String.format("<li id=\"%s\">", pair.getName()));
             writer.write(pair.getName());
             writer.write(": ");
             writer.write(pair.getValue());

@@ -12,6 +12,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 public class TestDialog extends ConnectWebDriverTestBase
@@ -80,10 +82,16 @@ public class TestDialog extends ConnectWebDriverTestBase
 
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, ADDON_GENERALPAGE, remotePlugin.getAddon().getKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(ADDON_DIALOG);
+
+        // check the dimensions are the same as those in the js (moustache file)
+        assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
+        assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
+
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();
         String response = dialogOpeningPage.waitForValue("dialog-close-data");
         assertEquals("test dialog close data", response);
+
     }
 
 }
