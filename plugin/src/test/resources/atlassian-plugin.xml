@@ -25,7 +25,7 @@
     <component-import key="salUserManager" interface="com.atlassian.sal.api.user.UserManager" />
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
     <component-import key="workflowPostFunctionModuleProvider" application="jira" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider" />
-    <!--<component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry" />-->
+    <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry" />
 
     <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller" />
     <component-import key="testFilterResults" interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults" />

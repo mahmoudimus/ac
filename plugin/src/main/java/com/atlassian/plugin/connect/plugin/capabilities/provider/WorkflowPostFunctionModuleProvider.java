@@ -14,9 +14,11 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
+@ExportAsDevService
 public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider<WorkflowPostFunctionModuleBean>
 {
     private final WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory;
