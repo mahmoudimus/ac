@@ -8,6 +8,22 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         return AJS.contextPath() + "/plugins/servlet/ac/" + encodeURIComponent(pluginKey) + "/" + encodeURIComponent(capability.key);
     }
 
+    function getWebItemPluginKey(target){
+        var m = target.attr('class').match(/ap-plugin-key-([^\s]*)/);
+        return $.isArray(m) ? m[1] : false;
+    }
+    function getWebItemModuleKey(target){
+        var m = target.attr('class').match(/ap-module-key-([^\s]*)/);
+        return $.isArray(m) ? m[1] : false;
+    }
+
+    function getOptionsForWebItem(target){
+        var pluginKey = getWebItemPluginKey(target),
+            moduleKey = getWebItemModuleKey(target),
+            type = target.hasClass('ap-inline-dialog') ? 'inlineDialog' : 'dialog';
+            return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
+    }
+
     function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
         var contentUrl = this.getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
@@ -29,8 +45,8 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
 
         function domEventHandler(event) {
             event.preventDefault();
-            var $el = $(event.target),
-            href = $el.closest("a").attr("href"),
+            var $el = $(event.target).closest(selector),
+            href = $el.attr("href"),
             url = new uri.init(href),
             options = {
                 bindTo: $el,
@@ -39,17 +55,19 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
                 height: url.getQueryParamValue('height'),
                 cp:     url.getQueryParamValue('cp')
             };
-            callback(href, options);
+            callback(href, options, event.type);
         }
 
-        $(window.document).on("click", selector, domEventHandler);
+        $(window.document).on(action, selector, domEventHandler);
 
     }
 
     return {
         getContentUrl: getContentUrl,
         getIframeHtmlForKey: getIframeHtmlForKey,
-        eventHandler: eventHandler
+        eventHandler: eventHandler,
+        getOptionsForWebItem: getOptionsForWebItem,
+
     };
 
 
