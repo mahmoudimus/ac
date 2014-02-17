@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<atlassian-plugin key="myaddon_helloworld" name="Hello World" plugins-version="2">
+    <plugin-info>
+        <description>Atlassian Connect add-on</description>
+        <version>1</version>
+        <vendor name="My Organization, Inc" url="https://developer.atlassian.com" />
+        <bundle-instructions>
+            <Remote-Plugin>installer;user="{{user}}";date="{{currentTimeMillis}}"</Remote-Plugin>
+        </bundle-instructions>
+        <permissions>
+            <permission>create_oauth_link</permission>
+        </permissions>
+    </plugin-info>
+    <remote-plugin-container key="container" display-url="{{localBaseUrl}}">
+        <oauth>
+            <public-key>-----BEGIN PUBLIC KEY-----
+                MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuNwJVGkY9XWtuNe7p8PMOEr8O
+                WetSAqMxWldFfmNYTbRsI/8ZX/S/5gm4UKZyFUDOICtVddYv1tWW/P31OA5khyQT
+                XLp8sYpyNDBuwg00kfmBGleBgcKvePxMAr2y4La1OBz4aE+xK1HJojl2ToAubVY+
+                qikVwxXolycVkz8AzQIDAQAB
+                -----END PUBLIC KEY-----</public-key>
+        </oauth>
+    </remote-plugin-container>
+    <general-page key="general" name="Greeting" url="/v1/helloworld.html">
+    </general-page>
+</atlassian-plugin>
