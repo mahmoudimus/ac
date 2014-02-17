@@ -8,11 +8,10 @@ import java.util.Map;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.spi.module.RemoteCondition;
+import com.atlassian.plugin.connect.plugin.capabilities.module.AddOnCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
 import org.dom4j.dom.DOMElement;
@@ -106,7 +105,7 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
     }
 
 
-    private DOMElement createSingleCondition(String pluginKey, SingleConditionBean bean, String toHideSelector, List<String> contextParams)
+    private DOMElement createSingleCondition(String addOnKey, SingleConditionBean bean, String toHideSelector, List<String> contextParams)
     {
         String className = "";
         DOMElement element = null;
@@ -114,26 +113,9 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
 
         if (isRemoteCondition(bean))
         {
-            String conditionUrl = bean.getCondition();
-
-            className = RemoteCondition.class.getName();
-
-            params.put("pluginKey", pluginKey);
-            params.put("url", conditionUrl);
-
-            if (Strings.isNullOrEmpty(toHideSelector))
-            {
-                String hash = createUniqueUrlHash(pluginKey, conditionUrl);
-                toHideSelector = "." + hash;
-            }
-
-            params.put("toHideSelector", toHideSelector);
-
-            if (null != contextParams && !contextParams.isEmpty())
-            {
-                params.put("contextParams", Joiner.on(",").join(contextParams));
-            }
-
+            className = AddOnCondition.class.getName();
+            params.put(AddOnCondition.ADDON_KEY, addOnKey);
+            params.put(AddOnCondition.URL, bean.getCondition());
         }
         else
         {

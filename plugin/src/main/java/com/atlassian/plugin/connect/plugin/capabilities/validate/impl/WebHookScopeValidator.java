@@ -6,10 +6,11 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.WebHookScopeService;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.sal.api.message.I18nResolver;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 
@@ -22,11 +23,13 @@ import javax.inject.Named;
 public class WebHookScopeValidator implements AddOnBeanValidator
 {
     private final WebHookScopeService webHookScopeService;
+    private final I18nResolver i18nResolver;
 
-    @Autowired
-    public WebHookScopeValidator(final WebHookScopeService webHookScopeService)
+    @Inject
+    public WebHookScopeValidator(final WebHookScopeService webHookScopeService, I18nResolver i18nResolver)
     {
         this.webHookScopeService = webHookScopeService;
+        this.i18nResolver = i18nResolver;
     }
 
     @Override
@@ -41,7 +44,8 @@ public class WebHookScopeValidator implements AddOnBeanValidator
                 String exceptionMessage = String.format("Add-on '%s' requests web hook '%s' but not the '%s' scope "
                         + "required to receive it. Please request this scope in your descriptor.", addon.getKey(),
                         webHookModuleBean.getEvent(), requiredScope);
-                throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.missing.scope." + requiredScope.name());
+                String i18nMessage = i18nResolver.getText("connect.install.error.missing.scope", requiredScope);
+                throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
             }
         }
     }

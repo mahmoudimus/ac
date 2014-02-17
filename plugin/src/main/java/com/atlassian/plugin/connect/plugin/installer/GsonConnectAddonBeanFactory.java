@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLoca
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.message.I18nResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +27,19 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     private final JsonDescriptorValidator jsonDescriptorValidator;
     private final ConnectSchemaLocator connectSchemaLocator;
     private final ApplicationProperties applicationProperties;
+    private final I18nResolver i18nResolver;
     private final AddOnBeanValidatorService addOnBeanValidatorService;
 
     @Autowired
     public GsonConnectAddonBeanFactory(final JsonDescriptorValidator jsonDescriptorValidator,
             final AddOnBeanValidatorService addOnBeanValidatorService, final ConnectSchemaLocator connectSchemaLocator,
-            final ApplicationProperties applicationProperties)
+            final ApplicationProperties applicationProperties, I18nResolver i18nResolver)
     {
         this.jsonDescriptorValidator = jsonDescriptorValidator;
         this.addOnBeanValidatorService = addOnBeanValidatorService;
         this.connectSchemaLocator = connectSchemaLocator;
         this.applicationProperties = applicationProperties;
+        this.i18nResolver = i18nResolver;
     }
 
     @Override
@@ -55,10 +58,10 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
         DescriptorValidationResult result = jsonDescriptorValidator.validate(jsonDescriptor, schema);
         if (!result.isSuccess())
         {
-            String msg = "Invalid connect descriptor: " + result.getMessageReport();
-            log.error(msg);
-            throw new InvalidDescriptorException(msg, "connect.install.error.remote.descriptor.validation." +
-                    applicationProperties.getDisplayName().toLowerCase());
+            String exceptionMessage = "Invalid connect descriptor: " + result.getMessageReport();
+            log.error(exceptionMessage);
+            String i18nMessage = i18nResolver.getText("connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
+            throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
         }
 
         ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor);

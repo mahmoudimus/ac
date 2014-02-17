@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebPanelModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.webitem.RemoteWebLink;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -53,7 +53,7 @@ public class RemoteWebLinkTest
     private IFrameUriBuilderFactory iFrameUriBuilderFactory;
 
     @Mock
-    private WebPanelModuleContextExtractor webPanelModuleContextExtractor;
+    private WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
 
     @Mock
     private UrlVariableSubstitutor urlVariableSubstitutor;
@@ -96,7 +96,7 @@ public class RemoteWebLinkTest
                 webFragmentHelper,
                 iFrameUriBuilderFactory,
                 urlVariableSubstitutor,
-                webPanelModuleContextExtractor,
+                webFragmentModuleContextExtractor,
                 moduleContextFilter,
                 URL,
                 PLUGIN_KEY,

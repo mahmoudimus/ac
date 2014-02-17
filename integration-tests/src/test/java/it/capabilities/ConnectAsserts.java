@@ -7,7 +7,8 @@ import java.util.Map;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.google.common.base.Strings;
 
-import static it.matcher.MatchesPattern.matchesPattern;
+import static it.matcher.ParamMatchers.isLocale;
+import static it.matcher.ParamMatchers.isTimeZone;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -64,8 +65,8 @@ public class ConnectAsserts
     {
         //example tz:  America/Los_Angeles
         //example loc: en-GB
-        assertThat(webItem.getFromQueryString("tz"), matchesPattern("[A-Za-z0-9_\\-]+/[A-Za-z0-9_\\-]+"));
-        assertThat(webItem.getFromQueryString("loc"), matchesPattern("[A-Za-z0-9]{2,}-[A-Za-z0-9]{2,}"));
+        assertThat(webItem.getFromQueryString("tz"), isTimeZone());
+        assertThat(webItem.getFromQueryString("loc"), isLocale());
         assertThat(webItem.getFromQueryString("cp"), is(equalTo(context)));
         assertThat(webItem.getFromQueryString("lic"), is(equalTo("none")));
     }
