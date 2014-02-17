@@ -40,8 +40,8 @@ public class WorkflowPostFunctionModuleProviderTest
     public static final String CONTEXT_PATH = "http://ondemand.com/jira";
     public static final String PLUGIN_KEY = "my-plugin";
     public static final String PLUGIN_NAME = "My Plugin";
-    public static final String MODULE_NAME = "My Web Item";
-    public static final String MODULE_KEY = "my-web-item";
+    public static final String MODULE_NAME = "My Post Function";
+    public static final String MODULE_KEY = "my-post-function";
     public static final String BASE_URL = "http://my.connect.addon.com";
     public static final String PROJECT_KEY = "TEST";
     public static final Long PROJECT_ID = 1234L;
@@ -98,12 +98,9 @@ public class WorkflowPostFunctionModuleProviderTest
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            List<ModuleDescriptor> descriptors = workflowPostFunctionModuleProvider.provideModules(plugin, "jiraWorkflowPostFunctions", newArrayList(bean));
-
-            assertEquals(1, descriptors.size());
-
-            WorkflowFunctionModuleDescriptor descriptor = (WorkflowFunctionModuleDescriptor) descriptors.get(0);
-            descriptor.enabled();
+            //NOTE: we have to get the descriptor from the enabled plugin instead of using the module provider directly
+            //due to a crappy class forname call in the descript itself
+            WorkflowFunctionModuleDescriptor descriptor = (WorkflowFunctionModuleDescriptor) plugin.getModuleDescriptor(MODULE_KEY);
 
             ModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
             StringWriter sw = new StringWriter();
