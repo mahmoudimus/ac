@@ -7,6 +7,9 @@
         <bundle-instructions>
             <Remote-Plugin>installer;user="{{user}}";date="{{currentTimeMillis}}"</Remote-Plugin>
         </bundle-instructions>
+        <permissions>
+            <permission>create_oauth_link</permission>
+        </permissions>
     </plugin-info>
     <remote-plugin-container key="container" display-url="{{localBaseUrl}}">
         <oauth>
