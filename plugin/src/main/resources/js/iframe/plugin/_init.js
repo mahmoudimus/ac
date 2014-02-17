@@ -53,9 +53,6 @@ AP.require(
         // inject an appropriate base tag
         injectBase(options);
       }
-      if (options.sizeToParent) {
-        env.sizeToParent();
-      }
 
       //JSON is undefined if you're in IE8 without the meta tag.
       if(options.injectRenderModeMeta !== false || this.JSON === undefined){
@@ -63,6 +60,9 @@ AP.require(
         injectRenderModeMeta();
       }
 
+      if (options.sizeToParent) {
+        env.sizeToParent();
+      }
       else if (options.resize !== false) {
         var rate = options.resize;
         rate = rate === "auto" ? 125 : +rate;
