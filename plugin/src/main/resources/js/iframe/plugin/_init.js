@@ -13,6 +13,22 @@ AP.require(
     });
   }
 
+  // This is required for connect to work correctly in IE8
+  function injectRenderModeMeta(){
+    var i, metas = $("meta");
+    //don't stomp on existing meta tag.
+    for(var i in metas){
+      if(metas[i].getAttribute && metas[i].getAttribute('http-equiv') === 'X-UA-Compatible'){
+        return;
+      }
+    }
+    var meta = document.createElement("meta");
+      meta.setAttribute("http-equiv","X-UA-Compatible");
+      meta.setAttribute("content","IE=edge");
+      var head = document.head || document.getElementsByTagName("head")[0];
+      head.appendChild(meta);
+  }
+
   function injectMargin() {
     // set a context-sensitive margin value
     var margin = dialog.isDialog ? "10px 10px 0 10px" : "0";
@@ -35,6 +51,12 @@ AP.require(
       if (options.sizeToParent) {
         env.sizeToParent();
       }
+
+      if(options.injectRenderModeMeta !== false){
+        // sets IE's render mode. It is required for connect and IE8.
+        injectRenderModeMeta();
+      }
+
       else if (options.resize !== false) {
         var rate = options.resize;
         rate = rate === "auto" ? 125 : +rate;
