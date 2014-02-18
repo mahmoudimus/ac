@@ -1,10 +1,13 @@
 package it.com.atlassian.plugin.connect.provider.jira;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
+import com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -25,13 +28,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -74,7 +80,7 @@ public class WorkflowPostFunctionModuleProviderTest
     }
 
     @Test
-    public void singleAddonLinkWithReplacement() throws Exception
+    public void workflowLinksAreAbsoluteToBaseUrl() throws Exception
     {
         WorkflowPostFunctionModuleBean bean = newWorkflowPostFunctionBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
@@ -83,7 +89,7 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withTriggered(new UrlBean("/triggered"))
                 .withCreate(new UrlBean("/create"))
                 .withEdit(new UrlBean("/edit"))
-                .withView(new UrlBean("/view"))
+                .withView(new UrlBean(BASE_URL + "/view"))
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
@@ -100,38 +106,16 @@ public class WorkflowPostFunctionModuleProviderTest
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            //NOTE: we have to get the descriptor from the enabled plugin instead of using the module provider directly
-            //due to a crappy class forname call in the descript itself
-            WorkflowFunctionModuleDescriptor descriptor = (WorkflowFunctionModuleDescriptor) plugin.getModuleDescriptor(MODULE_KEY);
-
-            ModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
-            StringWriter sw = new StringWriter();
-            IFrameRenderStrategy createRenderStrategy = iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
-            createRenderStrategy.render(moduleContextParameters, sw);
-
-            // I'm not gonna lie to you. It's gonna get weird. Two dragons.
-            // Sadly as we don't have a clean REST service but instead use velocity to create some html and js this is impossible to test unflakely
-            final String velocityFart = sw.toString();
-            final int startIndex = velocityFart.indexOf(SRC);
-            final int endIndex = velocityFart.indexOf(",", startIndex);
-            final String iframeUrlStr = velocityFart.substring(startIndex + SRC.length() + 1, endIndex - 1);
-            final URI iframeUrl = new URI(iframeUrlStr);
-            final String baseUrl = iframeUrl.getScheme() + "://" + iframeUrl.getAuthority();
-
-            assertThat(baseUrl, is(BASE_URL));
-            assertThat(iframeUrl.getPath(), is("/create"));
-
-//            Map<String, Object> context = new HashMap<String, Object>();
-//            Project project = mock(Project.class);
-//            when(project.getKey()).thenReturn(PROJECT_KEY);
-//            when(project.getId()).thenReturn(PROJECT_ID);
-//
-//            context.put("project",project);
-//
-//            String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
-//
-//            assertTrue("wrong url prefix. expected: " + BASE_URL + "/my/addon but got: " + convertedUrl,convertedUrl.startsWith(BASE_URL + "/my/addon"));
-//            assertTrue("project key not found in: " + convertedUrl, convertedUrl.contains("myProject=" + PROJECT_KEY));
+            checkWorkflowUrlIsAbsolute(RESOURCE_NAME_INPUT_PARAMETERS, "/create");
+            checkWorkflowUrlIsAbsolute(RESOURCE_NAME_EDIT_PARAMETERS, "/edit");
+            try
+            {
+                // Url's must be relative
+                // avoiding an extra test case so as not to slow tests down unnecessarily
+                checkWorkflowUrlIsAbsolute(RESOURCE_NAME_VIEW, "/view");
+                fail("Should have thrown IllegalArgumentException");
+            }
+            catch (IllegalArgumentException e) {}
         }
         finally
         {
@@ -140,5 +124,25 @@ public class WorkflowPostFunctionModuleProviderTest
                 testPluginInstaller.uninstallPlugin(plugin);
             }
         }
+    }
+
+    private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
+    {
+        ModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
+        IFrameRenderStrategy createRenderStrategy = iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
+        StringWriter sw = new StringWriter();
+        createRenderStrategy.render(moduleContextParameters, sw);
+
+        // I'm not gonna lie to you. It's gonna get weird. Two dragons.
+        // Sadly as we don't have a clean REST service but instead use velocity to create some html and js this is impossible to test unflakely
+        final String velocityFart = sw.toString();
+        final int startIndex = velocityFart.indexOf(SRC);
+        final int endIndex = velocityFart.indexOf(",", startIndex);
+        final String iframeUrlStr = velocityFart.substring(startIndex + SRC.length() + 1, endIndex - 1);
+        final URI iframeUrl = new URI(iframeUrlStr);
+        final String baseUrl = iframeUrl.getScheme() + "://" + iframeUrl.getAuthority();
+
+        assertThat(baseUrl, is(BASE_URL));
+        assertThat(iframeUrl.getPath(), is(workflowUrl));
     }
 }
