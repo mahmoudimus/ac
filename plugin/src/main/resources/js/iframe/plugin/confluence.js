@@ -1,5 +1,5 @@
-AP.define("confluence", ["_dollar", "_rpc", "events"],
-    function ($, rpc, events) {
+AP.define("confluence", ["_dollar", "_rpc"],
+    function ($, rpc) {
     "use strict";
 
     return rpc.extend(function (remote) {
