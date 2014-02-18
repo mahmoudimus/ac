@@ -34,11 +34,11 @@ functionality that is reserved for sysadmins. Only Atlassian can access sysadmin
 * Atlassian OnDemand [FAQ](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+FAQ)
 
 #### Therefore, your add-on should:
-* Store user data against an identifier combined from tenant id and user key.
-* Only serve content to OnDemand via HTTPS.
-* Test and support the supported browsers.
-* Use the localization parameters with each request to serve content in the appropriate language.
-* Publish a security statement about your own data storage practices.
+* Store user data against an identifier combined from tenant id and user key
+* Only serve content to OnDemand [via HTTPS](../developing/installing-in-ondemand.html)
+* Test and support the supported browsers
+* Use the localization parameters with each request to serve content in the appropriate language
+* Publish a security statement about your own data storage practices
 
 # Software upgrades and system restarts
 * Every OnDemand instance restarts during a maintenance window as described in the
