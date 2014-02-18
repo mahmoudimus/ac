@@ -2,6 +2,7 @@ package it.com.atlassian.plugin.connect.provider.jira;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.List;
 
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
@@ -45,6 +46,7 @@ public class WorkflowPostFunctionModuleProviderTest
     public static final String BASE_URL = "http://my.connect.addon.com";
     public static final String PROJECT_KEY = "TEST";
     public static final Long PROJECT_ID = 1234L;
+    private static final String SRC = "src:";
 
     private final WorkflowPostFunctionModuleProvider workflowPostFunctionModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
@@ -106,7 +108,18 @@ public class WorkflowPostFunctionModuleProviderTest
             StringWriter sw = new StringWriter();
             IFrameRenderStrategy createRenderStrategy = iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
             createRenderStrategy.render(moduleContextParameters, sw);
-            assertThat(sw.toString(), is("foo"));
+
+            // I'm not gonna lie to you. It's gonna get weird. Two dragons.
+            // Sadly as we don't have a clean REST service but instead use velocity to create some html and js this is impossible to test unflakely
+            final String velocityFart = sw.toString();
+            final int startIndex = velocityFart.indexOf(SRC);
+            final int endIndex = velocityFart.indexOf(",", startIndex);
+            final String iframeUrlStr = velocityFart.substring(startIndex + SRC.length() + 1, endIndex - 1);
+            final URI iframeUrl = new URI(iframeUrlStr);
+            final String baseUrl = iframeUrl.getScheme() + "://" + iframeUrl.getAuthority();
+
+            assertThat(baseUrl, is(BASE_URL));
+            assertThat(iframeUrl.getPath(), is("/create"));
 
 //            Map<String, Object> context = new HashMap<String, Object>();
 //            Project project = mock(Project.class);
