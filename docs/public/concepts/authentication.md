@@ -3,6 +3,20 @@
 Atlassian Connect employs usage of a technology called [JWT (JSON Web Token)](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token‎)
  to authenticate add-ons. There is a [nicely presented copy](http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html) of the specification.
 
+Before diving into the details, here is a high-level overview of what a JWT token means for an add-on:
+
+A JWT token comes with a signature, which can be verified using the shared key that is exchanged when the add-on is installed. Successful verification of the signature
+means that the integrity of the token is guaranteed: No-one has tampered with it.
+
+Part of the JWT claims is a query hash `qsh`. This is a hash across all query parameters of the HTTP request. Successful verification of the `qsh` means
+that none of the query parameters were altered after the request was signed.
+
+In addition, variables in a URL that refer to product entities like JIRA issues or Confluence pages are inserted and signed only after a permission check.
+If a user doesn't have permissions to see e.g. a JIRA issue, the variable in `/addon/callback?id={issue.key}` would remain empty.
+
+So the signature also guarantees that the user who triggered the request to the add-on had permissions to view the referenced entity.
+
+
 ## JWT
 
 The JWT protocol describes the format and verification of individual JWT tokens, which are base-64 encoded UTF-8 strings. It does not prescribe a method
@@ -338,13 +352,13 @@ Here is an example in Java using json-smart, guava and commons-codec:
 
 <pre><code data-lang="java">import com.google.common.collect.ImmutableMap;
     import net.minidev.json.JSONObject;
-    
+
     import javax.crypto.Mac;
     import javax.crypto.SecretKey;
     import javax.crypto.spec.SecretKeySpec;
     import java.security.InvalidKeyException;
     import java.security.NoSuchAlgorithmException;
-    
+
     import static org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString;
 
     public String jsonToHmacSha256Jwt(JSONObject claimsSet) throws NoSuchAlgorithmException, InvalidKeyException
@@ -382,7 +396,7 @@ Here is an example in Java using nimbus-jose-jwt:
         // Create JWS object
         JWSObject jwsObject = new JWSObject(header, new Payload(claimsSetAsJsonString));
         jwsObject.sign(new MACSigner("shared secret"));
-        
+
         return jwsObject;
     }
 </code></pre>
