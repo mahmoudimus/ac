@@ -54,12 +54,4 @@ public interface ConnectAddonRegistry
     AuthenticationType getAuthType(String pluginKey);
 
     boolean hasAuthType(String pluginKey);
-
-    void storePluginsToEnable(List<String> pluginKeys);
-
-    void removePluginsToEnable();
-
-    List<String> getPluginsToEnable();
-
-    boolean hasPluginsToEnable();
 }
