@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
+import com.atlassian.plugin.connect.plugin.capabilities.module.ConnectConditionFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -15,21 +16,23 @@ public class IFrameRenderStrategyBuilderFactoryImpl implements IFrameRenderStrat
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
     private final TemplateRenderer templateRenderer;
+    private final ConnectConditionFactory connectConditionFactory;
 
     @Autowired
-    public IFrameRenderStrategyBuilderFactoryImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
-            final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
-            final TemplateRenderer templateRenderer)
+    public IFrameRenderStrategyBuilderFactoryImpl(IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory, TemplateRenderer templateRenderer,
+            ConnectConditionFactory connectConditionFactory)
     {
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
         this.templateRenderer = templateRenderer;
+        this.connectConditionFactory = connectConditionFactory;
     }
 
     @Override
     public IFrameRenderStrategyBuilder builder()
     {
         return new IFrameRenderStrategyBuilderImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                templateRenderer);
+                templateRenderer, connectConditionFactory);
     }
 }

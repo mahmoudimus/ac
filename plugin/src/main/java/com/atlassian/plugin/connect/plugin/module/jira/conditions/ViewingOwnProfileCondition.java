@@ -11,6 +11,7 @@ import java.util.Map;
  * See PlugableUserProfileFragment#getFragmentHtml in JIRA for reference
  */
 public class ViewingOwnProfileCondition implements Condition {
+
     private static final String PROFILE_USER = "profileUser";
     private static final String CURRENT_USER = "currentUser";
 

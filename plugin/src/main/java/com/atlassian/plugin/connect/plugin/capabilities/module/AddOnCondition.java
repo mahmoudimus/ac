@@ -51,12 +51,15 @@ public class AddOnCondition implements Condition
         this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
     }
 
+    /**
+     * Initializer used when created as a plugins2 web fragment condition.
+     */
     @Override
     public void init(final Map<String, String> params) throws PluginParseException
     {
         Configuration cfg = new ConfigurationImpl(
-                checkNotNull(params.get(URL), URL),
-                checkNotNull(params.get(ADDON_KEY), ADDON_KEY)
+            checkNotNull(params.get(ADDON_KEY), ADDON_KEY),
+            checkNotNull(params.get(URL), URL)
         );
         configuration.set(cfg);
     }
@@ -67,8 +70,6 @@ public class AddOnCondition implements Condition
         Configuration cfg = checkNotNull(configuration.get(), "configuration has not been set - init() not called?");
 
         ModuleContextParameters moduleContext = webFragmentModuleContextExtractor.extractParameters(context);
-
-        // TODO should the moduleContext be permission filtered w.r.t. the add-on user?
 
         String uri = iFrameUriBuilderFactory
                 .builder()
@@ -122,23 +123,23 @@ public class AddOnCondition implements Condition
 
     private static final class ConfigurationImpl implements Configuration
     {
-        private final String url;
         private final String addonKey;
+        private final String url;
 
-        private ConfigurationImpl(String url, String addonKey)
+        private ConfigurationImpl(String addonKey, String url)
         {
-            this.url = url;
             this.addonKey = addonKey;
-        }
-
-        public String getUrl()
-        {
-            return url;
+            this.url = url;
         }
 
         public String getAddOnKey()
         {
             return addonKey;
+        }
+
+        public String getUrl()
+        {
+            return url;
         }
 
         @Override
