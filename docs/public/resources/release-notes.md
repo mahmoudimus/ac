@@ -7,6 +7,7 @@
 * The add-on key must now be less than or equal to 80 characters. Any add-ons with larger keys will need to be shortened
 * The [`authentication`](../modules/authentication.html) module is now required
 * WebPanel url and location fields are now required
+* Only add-ons with a [`baseUrl`](../modules#baseUrl) starting with ``https://`` can be installed in OnDemand servers. ``http://`` may still be used for testing locally.
 
 ## [1.0-m31](../release-notes/1-0-m31.html)
 * Support for Inline Dialogs
