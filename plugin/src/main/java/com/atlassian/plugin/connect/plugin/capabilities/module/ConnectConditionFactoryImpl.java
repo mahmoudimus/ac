@@ -21,18 +21,18 @@ import static com.atlassian.plugin.web.baseconditions.AbstractConditionElementPa
 @Named
 public class ConnectConditionFactoryImpl implements ConnectConditionFactory
 {
-    private final PluginRetrievalService pluginRetrievalService;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     private final ConditionElementParser conditionElementParser;
+    private final Plugin theConnectPlugin;
 
     @Inject
     public ConnectConditionFactoryImpl(WebInterfaceManager webInterfaceManager,
             PluginRetrievalService pluginRetrievalService,
             ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
-        this.pluginRetrievalService = pluginRetrievalService;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
         this.conditionElementParser = constructConditionParser(webInterfaceManager);
+        this.theConnectPlugin = pluginRetrievalService.getPlugin();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class ConnectConditionFactoryImpl implements ConnectConditionFactory
     {
         DOMElement conditionFragment = conditionModuleFragmentFactory
                 .createFragment(addOnKey, conditionalBeans, additionalConditions);
-        return conditionElementParser.makeConditions(pluginRetrievalService.getPlugin(), conditionFragment, CompositeType.AND);
+        return conditionElementParser.makeConditions(theConnectPlugin, conditionFragment, CompositeType.AND);
     }
 
     private static ConditionElementParser constructConditionParser(final WebInterfaceManager webInterfaceManager)
