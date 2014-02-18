@@ -231,6 +231,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           _AP.require("confluence/macro/editor", function (editor) {
             editor.close();
           });
+        },
+        getMacroData: function(callback){
+          _AP.require("confluence/macro/editor", function (editor) {
+            editor.getMacroData(callback);
+          });
         }
       }
     });
