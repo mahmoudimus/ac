@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.web.Condition;
 
-import java.util.Map;
 
 /**
  *
@@ -42,9 +41,10 @@ public interface IFrameRenderStrategyBuilder
         InitializedBuilder dimensions(String width, String height);
         InitializedBuilder decorator(String decorator);
         InitializedBuilder additionalRenderContext(String key, Object object);
-        InitializedBuilder additionalRenderContext(Map<String, Object> additionalRenderContext);
         InitializedBuilder ensureUniqueNamespace(boolean uniqueNamespace);
         InitializedBuilder dialog(boolean isDialog);
+        InitializedBuilder simpleDialog(boolean isSimpleDialog);
+        InitializedBuilder resizeToParent(boolean resizeToParent);
         IFrameRenderStrategy build();
     }
 }

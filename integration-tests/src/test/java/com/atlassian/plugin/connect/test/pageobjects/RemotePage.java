@@ -51,7 +51,7 @@ public class RemotePage
     {
         PageElement containerDivElement = elementFinder.find(ByJquery.$("#embedded-" + extraPrefix + key + ".iframe-init"));
         waitUntilTrue(containerDivElement.timed().isPresent());
-        
+
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
     }
 

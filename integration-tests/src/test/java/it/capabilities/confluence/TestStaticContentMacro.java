@@ -75,7 +75,8 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                         editorMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.wrapContextAwareServlet(parameterServlet))
-                .addRoute("/render-editor", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/render-editor", ConnectAppServlets.macroEditor())
+                .addRoute("/echo/params", ConnectAppServlets.echoQueryParametersServlet())
                 .addRoute("/render-context", ConnectAppServlets.wrapContextAwareServlet(contextServlet))
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/render-storage-format", ConnectAppServlets.resourceServlet("confluence/test-static-content-macro.xhtml", "application/xhtml+xml"))

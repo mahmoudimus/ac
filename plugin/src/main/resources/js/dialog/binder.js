@@ -8,6 +8,8 @@ _AP.require(["dialog/simple", "host/content"], function(simpleDialog, hostConten
         var action = "click",
             selector = ".ap-dialog",
             callback = function(href, options){
+                var webItemOptions = hostContentUtilities.getOptionsForWebItem(options.bindTo);
+                $.extend(options, webItemOptions);
                 simpleDialog(href, options).show();
             };
 

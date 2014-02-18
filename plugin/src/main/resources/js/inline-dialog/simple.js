@@ -34,14 +34,19 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function(
             return false;
         };
 
-        //Create the AUI inline dialog with a unique ID.
-        $inlineDialog = AJS.InlineDialog(
-            options.bindTo,
-            //assign unique id to inline Dialog
-            "ap-inline-dialog-content-" + itemId,
-            displayInlineDialog,
-            options
-        );
+        var dialogElementIdentifier = "ap-inline-dialog-content-" + itemId;
+
+        $inlineDialog = $("#inline-dialog-" + dialogElementIdentifier);
+        if($inlineDialog.length === 0){
+            //Create the AUI inline dialog with a unique ID.
+            $inlineDialog = AJS.InlineDialog(
+                options.bindTo,
+                //assign unique id to inline Dialog
+                dialogElementIdentifier,
+                displayInlineDialog,
+                options
+            );
+        }
 
         return {
             id: $inlineDialog.attr('id'),

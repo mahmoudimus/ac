@@ -37,6 +37,9 @@
         },
         "licensing.html": {
             "title": "Licensing"
+        },
+        "understanding-ondemand.html": {
+            "title": "Understanding OnDemand"
         }
     },
     "scopes": {

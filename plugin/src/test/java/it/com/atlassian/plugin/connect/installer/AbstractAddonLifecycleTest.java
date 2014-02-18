@@ -1,5 +1,9 @@
 package it.com.atlassian.plugin.connect.installer;
 
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.manager.application.ApplicationManager;
+import com.atlassian.crowd.manager.application.ApplicationService;
+import com.atlassian.crowd.model.application.Application;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -37,6 +41,7 @@ public abstract class AbstractAddonLifecycleTest
     public static final String POST = "POST";
     public static final String CONNECT_ADDON_USER_GROUP = "atlassian-addons";
     public static final String ADD_ON_USER_KEY_PREFIX = "addon_";
+    public static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
@@ -44,6 +49,8 @@ public abstract class AbstractAddonLifecycleTest
     protected final ConnectApplinkManager connectApplinkManager;
     protected final ConnectAddOnUserService connectAddOnUserService;
     private final UserManager userManager;
+    private final ApplicationService applicationService;
+    private final ApplicationManager applicationManager;
 
     protected ConnectAddonBean baseBean;
     protected ConnectAddonBean installOnlyBean;
@@ -53,7 +60,7 @@ public abstract class AbstractAddonLifecycleTest
     protected ConnectAddonBean installAndUninstallBean;
     protected ConnectAddonBean fullLifecycleBean;
 
-    protected AbstractAddonLifecycleTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService, UserManager userManager)
+    protected AbstractAddonLifecycleTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService, UserManager userManager, ApplicationService applicationService, ApplicationManager applicationManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -61,6 +68,8 @@ public abstract class AbstractAddonLifecycleTest
         this.connectApplinkManager = connectApplinkManager;
         this.connectAddOnUserService = connectAddOnUserService;
         this.userManager = userManager;
+        this.applicationService = applicationService;
+        this.applicationManager = applicationManager;
     }
 
     protected void initBeans(AuthenticationBean authBean)
@@ -269,6 +278,44 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    public void addonUserIsRecreatedAfterInstall() throws Exception
+    {
+        ConnectAddonBean addon = installAndUninstallBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            addonKey = plugin.getKey();
+
+            assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
+            
+            applicationService.removeUser(getApplication(),ADD_ON_USER_KEY_PREFIX + addonKey);
+
+            testPluginInstaller.uninstallPlugin(plugin);
+            plugin = null;
+
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
+            UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
+            assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
+    }
+
+    @Test
     public void disabledAddonHadDisabledUser() throws Exception
     {
         ConnectAddonBean addon = installAndDisabledBean;
@@ -393,5 +440,10 @@ public abstract class AbstractAddonLifecycleTest
                 testPluginInstaller.uninstallPlugin(plugin);
             }
         }
+    }
+
+    private Application getApplication() throws ApplicationNotFoundException
+    {
+        return applicationManager.findByName(CROWD_APPLICATION_NAME);
     }
 }

@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
-import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -23,7 +22,6 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 
 /**
  * Ensure that Connect supports add-ons updating from OAuth to JWT authentication.
@@ -35,16 +33,14 @@ public class OAuthToJwtUpdateWithSaasMigrationTest
 
     private final TestPluginInstaller testPluginInstaller;
     private final ConnectAddonRegistry connectAddonRegistry;
-    private final AddonTestFilterResults testFilterResults;
     private Plugin oAuthPlugin;
     private Plugin jwtPlugin;
     private ConnectAddonBean oAuthAddOnBean;
 
-    public OAuthToJwtUpdateWithSaasMigrationTest(TestPluginInstaller testPluginInstaller, ConnectAddonRegistry connectAddonRegistry, AddonTestFilterResults testFilterResults)
+    public OAuthToJwtUpdateWithSaasMigrationTest(TestPluginInstaller testPluginInstaller, ConnectAddonRegistry connectAddonRegistry)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.connectAddonRegistry = connectAddonRegistry;
-        this.testFilterResults = testFilterResults;
     }
 
     @BeforeClass
