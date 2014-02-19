@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.plugin.connect.test.utils.WebItemUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 
 import javax.inject.Inject;
 
@@ -40,15 +41,21 @@ public class JiraComponentTabPage extends AbstractJiraPage
     @Override
     public TimedCondition isAt()
     {
-        final String componentTabPanelId = WebItemUtils.linkId(pluginKey, moduleKey) + "-panel";
-        tabField = elementFinder.find(By.id(componentTabPanelId));
+        return elementFinder.find(By.id("project-tab")).timed().isPresent(); // check that the project tab section has loaded
+    }
 
-        return tabField.timed().isPresent();
+    public boolean isAddOnTabPresent()
+    {
+        return findAddOnTab().timed().isPresent().byDefaultTimeout();
     }
 
     public void clickTab()
     {
-        tabField.click();
+        if (!isAddOnTabPresent())
+        {
+            throw new NoSuchElementException("Couldn't find add-on tab with id " + componentTabPanelId());
+        }
+        findAddOnTab().click();
 
         PageElement iframe = elementFinder.find(By.id(IframeUtils.iframeId(moduleKey)));
         iframeSrc = iframe.getAttribute("src");
@@ -56,6 +63,19 @@ public class JiraComponentTabPage extends AbstractJiraPage
         iframe.timed().isPresent();
     }
 
+    private PageElement findAddOnTab()
+    {
+        if (tabField == null)
+        {
+            tabField = elementFinder.find(By.id(componentTabPanelId()));
+        }
+        return tabField;
+    }
+
+    private String componentTabPanelId()
+    {
+        return WebItemUtils.linkId(pluginKey, moduleKey) + "-panel";
+    }
 
     @Override
     public String getUrl()

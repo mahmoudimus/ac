@@ -10,10 +10,12 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import org.junit.*;
+import org.junit.rules.TestRule;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -30,6 +32,8 @@ public class TestComponentTabPanel extends TestBase
 
     private String componentId;
 
+    @Rule
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
     public static void setUpClassTest() throws Exception
@@ -78,10 +82,23 @@ public class TestComponentTabPanel extends TestBase
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, PLUGIN_KEY, MODULE_KEY);
 
+        assertThat("The addon tab should be present", componentTabPage.isAddOnTabPresent(), is(true));
+
         componentTabPage.clickTab();
 
         assertThat(componentTabPage.getComponentId(), equalTo(componentId));
         assertThat(componentTabPage.getProjectKey(), equalTo(PROJECT_KEY));
+    }
+
+    @Test
+    public void tabIsNotAccessibleWithFalseCondition() throws Exception
+    {
+        remotePlugin.setToggleableConditionShouldDisplay(false);
+
+        jira().gotoLoginPage().loginAsSysadminAndGoToHome();
+        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, PLUGIN_KEY, MODULE_KEY);
+
+        assertThat("The addon tab SHOULD NOT be present", componentTabPage.isAddOnTabPresent(), is(false));
     }
 
 }
