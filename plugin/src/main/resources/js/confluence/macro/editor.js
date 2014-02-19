@@ -7,9 +7,13 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
     // values - they only need to pass back the updated values - and works because only
     // a single macro editor can be open at a time.
     var saveMacro,
-        macroEditorDialog;
+        macroEditorDialog,
+        openEditorMacroData;
 
     return {
+        getMacroData: function(callback){
+            return callback(openEditorMacroData);
+        },
         /**
          * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>saveMacro</code>
          * before closing the editor.
@@ -39,6 +43,7 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
         openCustomEditor: function(macroData, opts) {
             AJS.Rte.BookmarkManager.storeBookmark();
 
+            openEditorMacroData = macroData.params;
             saveMacro = function(updatedParameters) {
                 // Render the macro
                 var macroRenderRequest = {
