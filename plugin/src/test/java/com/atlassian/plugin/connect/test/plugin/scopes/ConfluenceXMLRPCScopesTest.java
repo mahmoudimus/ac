@@ -35,10 +35,8 @@ public class ConfluenceXMLRPCScopesTest extends AbstractScopesTest
                 {ScopeName.WRITE, "confluence2.addPermissionsToSpace", false},
                 {ScopeName.SPACE_ADMIN, "confluence1.addPermissionsToSpace", true},
                 {ScopeName.WRITE, "confluence1.addPermissionsToSpace", false},
-                {ScopeName.ADMIN, "confluence2.addUserToGroup", true},
-                {ScopeName.SPACE_ADMIN, "confluence2.addUserToGroup", false},
-                {ScopeName.ADMIN, "confluence1.addUserToGroup", true},
-                {ScopeName.SPACE_ADMIN, "confluence1.addUserToGroup", false},
+                {ScopeName.ADMIN, "confluence2.addUserToGroup", false},
+                {ScopeName.ADMIN, "confluence1.addUserToGroup", false},
         });
     }
 
