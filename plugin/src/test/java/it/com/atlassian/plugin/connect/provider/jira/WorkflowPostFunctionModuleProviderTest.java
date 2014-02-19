@@ -36,11 +36,11 @@ import static org.hamcrest.Matchers.is;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class WorkflowPostFunctionModuleProviderTest
 {
-    public static final String PLUGIN_KEY = "my-plugin";
-    public static final String PLUGIN_NAME = "My Plugin";
-    public static final String MODULE_NAME = "My Post Function";
-    public static final String MODULE_KEY = "my-post-function";
-    public static final String BASE_URL = "http://my.connect.addon.com";
+    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String PLUGIN_NAME = "My Plugin";
+    private static final String MODULE_NAME = "My Post Function";
+    private static final String MODULE_KEY = "my-post-function";
+    private static final String BASE_URL = "http://my.connect.addon.com";
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
