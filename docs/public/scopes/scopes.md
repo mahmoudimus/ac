@@ -7,8 +7,10 @@ and does not guarantee that every attempt to every endpoint them will succeed at
 
 For example:
 
-* Within a particular product instance an administrator may further limit the actions that an add-on may perform. This is valuable because it allows administrators to safely install add-ons that they otherwise would not.
-* The scopes may allow the *potential* to access beta or non-public APIs that are later changed in or removed from the Atlassian product. The inclusion of the API endpoint in a scope does not imply that the product makes this endpoint public: read the product's API documentation for API details.
+* Within a particular product instance an administrator may further limit the actions that an add-on may perform. This is valuable because it allows administrators
+to safely install add-ons that they otherwise would not.
+* The scopes may allow the *potential* to access beta or non-public APIs that are later changed in or removed from the Atlassian product. The inclusion of the API
+endpoint in a scope does not imply that the product makes this endpoint public: read the product's API documentation for API details.
 
 The following scopes are available for use by Atlassian Connect add-ons:
 
