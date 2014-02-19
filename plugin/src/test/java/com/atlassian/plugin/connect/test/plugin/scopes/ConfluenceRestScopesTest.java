@@ -30,14 +30,12 @@ public class ConfluenceRestScopesTest extends AbstractScopesTest
                 {ScopeName.WRITE, HttpMethod.PUT, "/confluence/rest/api/content/12345", true},
                 {ScopeName.DELETE, HttpMethod.DELETE, "/confluence/rest/api/content/12345", true},
 
-                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/applinks/2.0/applicationlink/uuid", false},
-                {ScopeName.ADMIN, HttpMethod.GET, "/confluence/rest/applinks/2.0/applicationlink/uuid", true},
+                {ScopeName.ADMIN, HttpMethod.GET, "/confluence/rest/applinks/2.0/applicationlink/uuid", false},
 
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/atlassian-connect/1/license", true},
                 {null, HttpMethod.GET, "/confluence/rest/atlassian-connect/1/license", false},
 
-                {ScopeName.WRITE, HttpMethod.DELETE, "/confluence/rest/atlassian-connect/1/macro/app/bar/foo", false},
-                {ScopeName.DELETE, HttpMethod.DELETE, "/confluence/rest/atlassian-connect/1/macro/app/bar/foo", true},
+                {ScopeName.DELETE, HttpMethod.DELETE, "/confluence/rest/atlassian-connect/1/macro/app/bar/foo", false},
 
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/mywork/1/status/notification/count", true},
                 {ScopeName.READ, HttpMethod.POST, "/confluence/rest/mywork/1/notification/metadata", false},
@@ -46,8 +44,8 @@ public class ConfluenceRestScopesTest extends AbstractScopesTest
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/prototype/1/buildInfo", true},
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/prototype/1/search", true},
 
-                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/ui/1.0/content/152453/labels", true},
-                {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/ui/1.0/content/152453/labels", true},
+                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/ui/1.0/content/152453/labels", false},
+                {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/ui/1.0/content/152453/labels", false},
 
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/prototype/1/user/current", true},
                 {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/prototype/1/user/current", false},
