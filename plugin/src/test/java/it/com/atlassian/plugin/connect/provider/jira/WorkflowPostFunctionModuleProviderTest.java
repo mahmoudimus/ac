@@ -44,7 +44,6 @@ import static org.mockito.Mockito.when;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class WorkflowPostFunctionModuleProviderTest
 {
-    public static final String CONTEXT_PATH = "http://ondemand.com/jira";
     public static final String PLUGIN_KEY = "my-plugin";
     public static final String PLUGIN_NAME = "My Plugin";
     public static final String MODULE_NAME = "My Post Function";
@@ -52,15 +51,13 @@ public class WorkflowPostFunctionModuleProviderTest
     public static final String BASE_URL = "http://my.connect.addon.com";
     private static final String SRC = "src:";
 
-    private final WorkflowPostFunctionModuleProvider workflowPostFunctionModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
-    public WorkflowPostFunctionModuleProviderTest(WorkflowPostFunctionModuleProvider workflowPostFunctionModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
+    public WorkflowPostFunctionModuleProviderTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
                                                   IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
-        this.workflowPostFunctionModuleProvider = workflowPostFunctionModuleProvider;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
