@@ -15,8 +15,8 @@ import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModu
  *     res.setHeader('Cache-Control', ['max-age=3600', 's-maxage=3600']);
  *
  * This response header tells the cache to use the response for an hour without asking the service again.
- * Because we declare the macro body and parameters as URL variables, the URL will automatically change when the macro is changed.
- * And Connect will bypass the cache and fetch the context from the add-on again.
+ * Because we declare the macro hash and parameters as URL variables, the URL will automatically change when the macro is changed.
+ * This change will cause Connect to bypass the cache and to fetch the content from the add-on again.
  * So doing non-conditional caching works very well for this case. If the content of the macro varies with other data,
  * you could use `ETag` and `If-None-Match` to render the macro conditionally.
  *
