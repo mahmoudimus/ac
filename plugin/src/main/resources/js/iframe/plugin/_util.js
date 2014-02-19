@@ -54,7 +54,7 @@ AP.define("_util", function () {
     }
   }
 
-  function decodeConnectURIComponent(encodedURI) {
+  function decodeQueryComponent(encodedURI) {
     return encodedURI == null ? null : decodeURIComponent( encodedURI.replace(/\+/g, '%20') );
   }
 
@@ -122,7 +122,7 @@ AP.define("_util", function () {
       }
     },
 
-    decodeConnectURIComponent: decodeConnectURIComponent
+    decodeQueryComponent: decodeQueryComponent
   };
 
 });
