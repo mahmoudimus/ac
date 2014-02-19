@@ -12,6 +12,17 @@ use it internally. This is because OnDemand applications only accept add-ons tha
 through the Marketplace.
 
 ## Before starting
+
+<div class="aui-message warning">
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Important</strong>
+    </p>
+    In order to install an add-on into an OnDemand instance, it must be served over TLS. An add-on
+    _must_ have a [`baseUrl`](../modules/#baseUrl) which starts with `https://`; a baseUrl of the form
+    `http://my-server.com:443/` will not be accepted. Additionally, the TLS certificate cannot not be self-signed.
+</div>
+
 To create a listing, you'll need a Marketplace user account that's associated with a vendor. You can
 create a new profile for a vendor when creating the listing, or have your account added to an
 existing vendor profile by someone already associated with that profile. To get an account on the

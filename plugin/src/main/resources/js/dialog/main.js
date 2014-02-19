@@ -87,6 +87,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
     } else {
         AJS.$('.aui-dialog .ap-servlet-placeholder').trigger('ra.dialog.close');
     }
+    AJS.undim();
   }
 
   return {
