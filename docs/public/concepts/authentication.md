@@ -5,11 +5,11 @@ Atlassian Connect employs usage of a technology called [JWT (JSON Web Token)](ht
 
 Before diving into the details, here is a high-level overview of what a JWT token means for an add-on:
 
-A JWT token comes with a signature, which can be verified using the shared key that is exchanged when the add-on is installed. Successful verification of the signature
+A JWT token comes with a signature, which can be verified using the key that is exchanged when the add-on is installed. Successful verification of the signature
 means that the integrity of the token is guaranteed: No-one has tampered with it.
 
 Part of the JWT claims is a query hash `qsh`. This is a hash across all query parameters of the HTTP request. Successful verification of the `qsh` means
-that none of the query parameters were altered after the request was signed.
+that none of the query parameters were altered after the request was signed, nor the path (not including context path) nor the HTTP method.
 
 In addition, variables in a URL that refer to product entities like JIRA issues or Confluence pages are inserted and signed only after a permission check.
 If a user doesn't have permissions to see e.g. a JIRA issue, the variable in `/addon/callback?id={issue.key}` would remain empty.
