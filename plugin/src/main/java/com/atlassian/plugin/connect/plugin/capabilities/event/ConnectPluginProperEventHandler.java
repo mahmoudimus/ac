@@ -57,8 +57,6 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
     {
         if (isTheConnectPlugin(beforePluginDisabledEvent.getPlugin()))
         {
-            dependentHelper.isDisabledPersistent(beforePluginDisabledEvent.getPlugin());
-
             //PLUGDEV-38 - we need to force the mirror handler to know we're disabling!!!
             mirrorPluginEventHandler.beforePluginDisabled(beforePluginDisabledEvent);
 
