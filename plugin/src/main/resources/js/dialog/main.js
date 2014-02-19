@@ -7,6 +7,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
 
   // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
   // Will be removed - plugins should pass key of the <dialog-page>, NOT the url.
+  // TODO: Remove this class when support for XML Descriptors goes away
   function getIframeHtmlForUrl(pluginKey, options) {
     var contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
     return $.ajax(contentUrl, {
