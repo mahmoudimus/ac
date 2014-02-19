@@ -20,12 +20,14 @@ define(["confluence", "_rpc"], function(confluence, _rpc) {
 
   xdmMock.saveMacro = sinon.spy();
   xdmMock.closeMacroEditor = sinon.spy();
+  xdmMock.getMacroData = sinon.spy();
   _rpc.init();
 
   module("Confluence Plugin", {
     setup: function() {
       xdmMock.saveMacro.reset();
       xdmMock.closeMacroEditor.reset();
+      xdmMock.getMacroData.reset();
     }
   });
 
@@ -38,5 +40,12 @@ define(["confluence", "_rpc"], function(confluence, _rpc) {
     confluence.closeMacroEditor();
     ok(xdmMock.closeMacroEditor.calledOnce);
   });
+
+  test("getMacroData", function() {
+    var callback = sinon.spy();
+    confluence.getMacroData(callback);
+    ok(xdmMock.getMacroData.calledOnce);
+  });
+
 
 });
