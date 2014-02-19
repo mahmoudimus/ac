@@ -115,24 +115,14 @@ public class ConnectPluginDependentHelper
         return persistentState.getPluginStateMap(plugin);
     }
 
-    public boolean dependentIsWaitingToEnable(String depenentKey)
-    {
-        return connectRegistry.getPluginsToEnable().contains(depenentKey);
-    }
-
     public void disableDependentPluginsWithoutPersistingState(Plugin plugin)
     {
         Set<Plugin> dependents = getDependentPluginsToReEnable(plugin);
 
-        List<String> pluginsToEnableLater = new ArrayList<String>();
-
         for (Plugin dependent : dependents)
         {
             pluginController.disablePluginWithoutPersisting(dependent.getKey());
-            pluginsToEnableLater.add(dependent.getKey());
         }
-
-        connectRegistry.storePluginsToEnable(pluginsToEnableLater);
     }
 
     /**
@@ -175,22 +165,11 @@ public class ConnectPluginDependentHelper
 
     public void enableDependentPluginsIfNeeded(Plugin plugin)
     {
-        if (connectRegistry.hasPluginsToEnable())
+        for (Plugin dependent : getDependentPluginsToReEnable(plugin))
         {
-            try
+            if (null != dependent)
             {
-                for (String pluginKey : connectRegistry.getPluginsToEnable())
-                {
-                    Plugin dependent = pluginAccessor.getPlugin(pluginKey);
-                    if (null != dependent)
-                    {
-                        pluginController.enablePlugin(dependent.getKey());
-                    }
-                }
-            }
-            finally
-            {
-                connectRegistry.removePluginsToEnable();
+                pluginController.enablePlugin(dependent.getKey());
             }
         }
     }
@@ -199,15 +178,15 @@ public class ConnectPluginDependentHelper
     {
         Set<Plugin> pluginsToReEnable = new HashSet<Plugin>();
         Set<Plugin> allDependents = getDependentPlugins(plugin, pluginAccessor.getPlugins());
-        
-        for(Plugin dependent : allDependents)
+
+        for (Plugin dependent : allDependents)
         {
-            if(PluginState.ENABLED.equals(dependent.getPluginState()) || !isDisabledPersistent(dependent))
+            if (PluginState.ENABLED.equals(dependent.getPluginState()) || !isDisabledPersistent(dependent))
             {
                 pluginsToReEnable.add(dependent);
             }
         }
-        
+
         return pluginsToReEnable;
     }
 
