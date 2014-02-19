@@ -50,16 +50,12 @@ public class WorkflowPostFunctionModuleProviderTest
     public static final String MODULE_NAME = "My Post Function";
     public static final String MODULE_KEY = "my-post-function";
     public static final String BASE_URL = "http://my.connect.addon.com";
-    public static final String PROJECT_KEY = "TEST";
-    public static final Long PROJECT_ID = 1234L;
     private static final String SRC = "src:";
 
     private final WorkflowPostFunctionModuleProvider workflowPostFunctionModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-
-    private HttpServletRequest servletRequest;
 
     public WorkflowPostFunctionModuleProviderTest(WorkflowPostFunctionModuleProvider workflowPostFunctionModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
                                                   IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
@@ -73,9 +69,6 @@ public class WorkflowPostFunctionModuleProviderTest
     @BeforeClass
     public void setup()
     {
-        this.servletRequest = mock(HttpServletRequest.class);
-        when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
-
         testAuthenticator.authenticateUser("admin");
     }
 
