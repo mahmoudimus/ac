@@ -24,7 +24,6 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private static final String CONNECT_SECRET_PREFIX = "ac.secret.";
     private static final String CONNECT_USER_PREFIX = "ac.user.";
     private static final String CONNECT_AUTH_PREFIX = "ac.auth.";
-    private static final String CONNECT_PLUGINSTOENABLE_KEY = "ac.pluginsToEnable";
 
     private final PluginSettingsFactory pluginSettingsFactory;
     private File pluginsToEnableFile;
@@ -166,40 +165,6 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     public boolean hasAuthType(String pluginKey)
     {
         return has(get(key(CONNECT_AUTH_PREFIX, pluginKey)));
-    }
-
-    @Override
-    public void storePluginsToEnable(List<String> pluginKeys)
-    {
-        settings().put(CONNECT_PLUGINSTOENABLE_KEY, pluginKeys);
-    }
-
-    @Override
-    public void removePluginsToEnable()
-    {
-        settings().remove(CONNECT_PLUGINSTOENABLE_KEY);
-    }
-
-    @Override
-    public List<String> getPluginsToEnable()
-    {
-        List<String> pluginsToEnable = (List<String>) settings().get(CONNECT_PLUGINSTOENABLE_KEY);
-
-        if (null == pluginsToEnable)
-        {
-            pluginsToEnable = Collections.emptyList();
-        }
-
-        return pluginsToEnable;
-    }
-
-    @Override
-    public boolean hasPluginsToEnable()
-    {
-        List<String> value = getPluginsToEnable();
-        boolean hasPlugins = (null != value && !value.isEmpty());
-
-        return hasPlugins;
     }
 
     private boolean has(String value)

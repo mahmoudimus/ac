@@ -130,7 +130,9 @@ public class ConnectAddonBean extends BaseModuleBean
     private LifecycleBean lifecycle;
 
     /**
-     * The base url of the remote add on
+     * The base url of the remote add on.
+     * Only add-ons with a baseUrl starting with ``https://`` can be [installed in OnDemand](../developing/installing-in-ondemand.html)
+     * servers. ``http://`` may still be used for testing locally.
      */
     @Required
     @StringSchemaAttributes(format = "uri")
