@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParametersImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -28,6 +29,7 @@ import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RES
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
+import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl.IFrameRenderStrategyImpl;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -107,16 +109,9 @@ public class WorkflowPostFunctionModuleProviderTest
     private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
     {
         ModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
-        IFrameRenderStrategy createRenderStrategy = iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
-        StringWriter sw = new StringWriter();
-        createRenderStrategy.render(moduleContextParameters, sw);
+        IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
 
-        // I'm not gonna lie to you. It's gonna get weird. Two dragons.
-        // Sadly as we don't have a clean REST service but instead use velocity to create some html and js this is impossible to test unflakely
-        final String velocityFart = sw.toString();
-        final int startIndex = velocityFart.indexOf(SRC);
-        final int endIndex = velocityFart.indexOf(",", startIndex);
-        final String iframeUrlStr = velocityFart.substring(startIndex + SRC.length() + 1, endIndex - 1);
+        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters);
         final URI iframeUrl = new URI(iframeUrlStr);
         final String baseUrl = iframeUrl.getScheme() + "://" + iframeUrl.getAuthority();
 
