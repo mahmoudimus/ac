@@ -32,7 +32,7 @@ public class JiraDownloadScopesTest extends AbstractScopesTest
                 // higher scopes
                 {ScopeName.WRITE, HttpMethod.GET, "/jira/secure/attachment", true},
                 {ScopeName.DELETE, HttpMethod.GET, "/jira/secure/attachment", true},
-                // TODO: reinstate when we have a PROJECT_ADMIN scope in scopes.jira.json {ScopeName.PROJECT_ADMIN, HttpMethod.GET, "/jira/secure/attachment", true},
+                {ScopeName.PROJECT_ADMIN, HttpMethod.GET, "/jira/secure/attachment", true},
                 {ScopeName.ADMIN, HttpMethod.GET, "/jira/secure/attachment", true},
 
                 // one-thing-wrong cases
