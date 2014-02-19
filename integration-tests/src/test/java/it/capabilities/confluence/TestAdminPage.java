@@ -5,17 +5,23 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminPage;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.TestConstants;
+import it.servlet.condition.ToggleableConditionServlet;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import java.net.URI;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static it.servlet.condition.ToggleableConditionServlet.TOGGLE_CONDITION_URL;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -29,9 +35,13 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     private static final String PLUGIN_KEY = "my-plugin";
 
     private static final String PAGE_NAME = "My Admin Page";
-    private static final String GENERATED_PAGE_KEY = "my-admin-page";
+    private static final String PAGE_KEY = "my-admin-page";
 
     private static ConnectRunner remotePlugin;
+
+    public static final ToggleableConditionServlet TOGGLEABLE_CONDITION_SERVLET = new ToggleableConditionServlet(true);
+    @Rule
+    public TestRule resetToggleableCondition = TOGGLEABLE_CONDITION_SERVLET.resetToInitialValueRule();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -42,11 +52,15 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
                         "adminPages",
                         newPageBean()
                                 .withName(new I18nProperty(PAGE_NAME, null))
-                                .withKey(GENERATED_PAGE_KEY)
+                                .withKey(PAGE_KEY)
                                 .withUrl("/pg")
                                 .withWeight(1234)
+                                .withConditions(
+                                    newSingleConditionBean().withCondition(TOGGLE_CONDITION_URL).build()
+                                )
                                 .build())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
+                .addRoute(ToggleableConditionServlet.TOGGLE_CONDITION_URL, TOGGLEABLE_CONDITION_SERVLET)
                 .start();
     }
 
@@ -65,12 +79,12 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         loginAsAdmin();
         product.visit(ConfluenceAdminHomePage.class);
 
-        ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, GENERATED_PAGE_KEY);
+        ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, PAGE_KEY);
 
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(adminPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/" + GENERATED_PAGE_KEY));
+        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/" + PAGE_KEY));
 
         // TODO Admin page web-item location has incorrect text ("OSGi")
 
@@ -82,9 +96,27 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     public void nonAdminCanNotSeePage()
     {
         loginAs(TestConstants.BARNEY_USERNAME, TestConstants.BARNEY_USERNAME);
-        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", GENERATED_PAGE_KEY);
+        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }
+
+    @Test
+    public void pageIsNotAccessibleWithFalseCondition()
+    {
+        TOGGLEABLE_CONDITION_SERVLET.setShouldDisplay(false);
+
+        loginAsAdmin();
+
+        // web item should not be displayed
+        ConnectConfluenceAdminHomePage adminPage = product.visit(ConnectConfluenceAdminHomePage.class);
+        assertThat("Expected web-item for page to NOT be present", adminPage.getWebItem(PAGE_KEY).isPresent(), is(false));
+
+        // directly retrieving page should result in access denied
+        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, "my-plugin", PAGE_KEY);
+        assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
+        assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("My Admin Page"));
+    }
+
 
 }

@@ -8,8 +8,8 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPa
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
-import it.capabilities.CheckUsernameConditionServlet;
-import it.capabilities.ParameterCapturingConditionServlet;
+import it.servlet.condition.CheckUsernameConditionServlet;
+import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

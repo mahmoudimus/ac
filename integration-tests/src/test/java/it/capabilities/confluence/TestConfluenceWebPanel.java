@@ -10,17 +10,22 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import it.servlet.condition.ToggleableConditionServlet;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static it.servlet.condition.ToggleableConditionServlet.TOGGLE_CONDITION_URL;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -50,6 +55,10 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     private static WebPanelModuleBean viewWebPanel;
     private static WebPanelModuleBean profileWebPanel;
 
+    public static final ToggleableConditionServlet TOGGLEABLE_CONDITION_SERVLET = new ToggleableConditionServlet(true);
+    @Rule
+    public TestRule resetToggleableCondition = TOGGLEABLE_CONDITION_SERVLET.resetToInitialValueRule();
+
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
@@ -68,6 +77,9 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .withLocation("atl.general")
                 .withUrl(IFRAME_URL_VIEW + IFRAME_URL_PARAMETERS)
                 .withLayout(new WebPanelLayout(px(IFRAME_WIDTH), px(IFRAME_VIEW_HEIGHT)))
+                .withConditions(
+                    newSingleConditionBean().withCondition(TOGGLE_CONDITION_URL).build()
+                )
                 .withWeight(1)
                 .build();
 
@@ -85,6 +97,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .addModule(WEB_PANELS, editorWebPanel)
                 .addModule(WEB_PANELS, viewWebPanel)
                 .addModule(WEB_PANELS, profileWebPanel)
+                .addRoute(TOGGLE_CONDITION_URL, TOGGLEABLE_CONDITION_SERVLET)
                 .addRoute(IFRAME_URL_EDIT, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_EDIT, false))
                 .addRoute(IFRAME_URL_VIEW, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_VIEW, false))
                 .addRoute(IFRAME_URL_PROFILE, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_PROFILE, false))
@@ -155,6 +168,14 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     {
         RemoteWebPanel webPanel = findViewPageWebPanel();
         assertThat(webPanel, is(not(nullValue())));
+    }
+
+    @Test
+    public void webPanelIsNotAccessibleWithFalseCondition() throws Exception
+    {
+        TOGGLEABLE_CONDITION_SERVLET.setShouldDisplay(false);
+        createAndVisitPage(ConfluenceViewPage.class); // revisit the view page now that condition has been set to false
+        assertThat(connectPageOperations.webPanelDoesNotExist(viewWebPanel.getKey()), is(true));
     }
 
     @Test

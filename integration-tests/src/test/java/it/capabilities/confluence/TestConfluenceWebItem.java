@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
-import it.capabilities.CheckUsernameConditionServlet;
+import it.servlet.condition.CheckUsernameConditionServlet;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
