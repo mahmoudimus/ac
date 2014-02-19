@@ -1,22 +1,16 @@
 package it.com.atlassian.plugin.connect.provider.jira;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
-import com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants;
-import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParametersImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -24,6 +18,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,13 +28,8 @@ import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RES
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
-import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class WorkflowPostFunctionModuleProviderTest
@@ -54,6 +44,7 @@ public class WorkflowPostFunctionModuleProviderTest
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private Plugin plugin;
 
     public WorkflowPostFunctionModuleProviderTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
                                                   IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
@@ -64,14 +55,10 @@ public class WorkflowPostFunctionModuleProviderTest
     }
 
     @BeforeClass
-    public void setup()
+    public void setup() throws IOException
     {
         testAuthenticator.authenticateUser("admin");
-    }
 
-    @Test
-    public void workflowLinksAreAbsoluteToBaseUrl() throws Exception
-    {
         WorkflowPostFunctionModuleBean bean = newWorkflowPostFunctionBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -90,30 +77,31 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withModules("jiraWorkflowPostFunctions", bean)
                 .build();
 
-        Plugin plugin = null;
+        plugin = testPluginInstaller.installPlugin(addon);
+    }
 
-        try
+    @AfterClass
+    public void cleanup() throws IOException
+    {
+        if (null != plugin)
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            testPluginInstaller.uninstallPlugin(plugin);
+        }
 
-            checkWorkflowUrlIsAbsolute(RESOURCE_NAME_INPUT_PARAMETERS, "/create");
-            checkWorkflowUrlIsAbsolute(RESOURCE_NAME_EDIT_PARAMETERS, "/edit");
-            try
-            {
-                // Url's must be relative
-                // avoiding an extra test case so as not to slow tests down unnecessarily
-                checkWorkflowUrlIsAbsolute(RESOURCE_NAME_VIEW, "/view");
-                fail("Should have thrown IllegalArgumentException");
-            }
-            catch (IllegalArgumentException e) {}
-        }
-        finally
-        {
-            if(null != plugin)
-            {
-                testPluginInstaller.uninstallPlugin(plugin);
-            }
-        }
+    }
+
+    @Test
+    public void workflowLinksAreAbsoluteToBaseUrl() throws Exception
+    {
+        checkWorkflowUrlIsAbsolute(RESOURCE_NAME_INPUT_PARAMETERS, "/create");
+        checkWorkflowUrlIsAbsolute(RESOURCE_NAME_EDIT_PARAMETERS, "/edit");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void absoluteWorkflowLinksAreRejected() throws Exception
+    {
+        // Url's must be relative
+        checkWorkflowUrlIsAbsolute(RESOURCE_NAME_VIEW, "/view");
     }
 
     private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
