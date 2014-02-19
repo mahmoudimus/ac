@@ -41,7 +41,6 @@ public class WorkflowPostFunctionModuleProviderTest
     public static final String MODULE_NAME = "My Post Function";
     public static final String MODULE_KEY = "my-post-function";
     public static final String BASE_URL = "http://my.connect.addon.com";
-    private static final String SRC = "src:";
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
