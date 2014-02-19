@@ -192,7 +192,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
         ConfluenceViewPage viewPage = createAndVisitViewPage();
-        assertTrue("Web item should NOT be found", viewPage.webItemDoesNotExist(ABSOLUTE_WEBITEM));
+        assertFalse("Web item should NOT be found", viewPage.existsWebItem(ABSOLUTE_WEBITEM));
     }
 
 

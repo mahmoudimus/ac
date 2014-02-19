@@ -86,19 +86,24 @@ public class ConnectPageOperations
         });
     }
 
-    public Boolean webItemDoesNotExist(String webItemId)
+    public boolean existsWebItem(String webItemId)
     {
-        return elementWithIdDoesNotExist(webItemId);
+        return existsElementWithId(webItemId);
     }
 
-    public Boolean webPanelDoesNotExist(String webPanelId)
+    public boolean existsWebPanel(String webPanelId)
     {
-        return elementWithIdDoesNotExist(IframeUtils.iframeId(webPanelId));
+        return existsElementWithId(IframeUtils.iframeId(webPanelId));
     }
 
-    private boolean elementWithIdDoesNotExist(final String id)
+    public boolean existsTabPanel(String tabPanelId)
     {
-        return !driver.elementExists(By.id(id));
+        return existsElementWithId(tabPanelId);
+    }
+
+    private boolean existsElementWithId(final String id)
+    {
+        return driver.elementExists(By.id(id));
     }
 
     public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)

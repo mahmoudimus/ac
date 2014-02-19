@@ -97,7 +97,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 
         // web item should not be displayed
         createAndVisitViewPage();
-        assertThat("Expected web-item for page to NOT be present", connectPageOperations.webItemDoesNotExist(PAGE_KEY), is(true));
+        assertThat("Expected web-item for page to NOT be present", connectPageOperations.existsWebItem(PAGE_KEY), is(false));
 
         // directly retrieving page should result in access denied
         InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, "my-plugin", PAGE_KEY);

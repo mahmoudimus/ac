@@ -169,7 +169,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     {
         remotePlugin.setToggleableConditionShouldDisplay(false);
         createAndVisitPage(ConfluenceViewPage.class); // revisit the view page now that condition has been set to false
-        assertThat(connectPageOperations.webPanelDoesNotExist(viewWebPanel.getKey()), is(true));
+        assertThat(connectPageOperations.existsWebPanel(viewWebPanel.getKey()), is(false));
     }
 
     @Test

@@ -5,16 +5,21 @@ import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.InsufficientPermissionsViewProfileTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -24,6 +29,9 @@ import static org.junit.Assert.assertThat;
 public class TestProfileTabPanel extends ConnectWebDriverTestBase
 {
     private static ConnectRunner remotePlugin;
+
+    @Rule
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -36,6 +44,7 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
                                 .withKey("profile-tab-panel")
                                 .withUrl("/myProfileAddon")
                                 .withWeight(1234)
+                                .withConditions(toggleableConditionBean())
                                 .build())
                 .addRoute("/myProfileAddon", ConnectAppServlets.apRequestServlet())
                 .start();
@@ -62,6 +71,19 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
         assertThat(remotePage.getMessage(), equalTo("Success"));
     }
 
+    @Test
+    public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
+    {
+        loginAsAdmin();
+
+        remotePlugin.setToggleableConditionShouldDisplay(false);
+        ViewProfilePage profilePage = product.visit(ViewProfilePage.class);
+
+        InsufficientPermissionsViewProfileTab profileTab =
+                profilePage.openTab(InsufficientPermissionsViewProfileTab.class);
+        assertThat(profileTab.getErrorMessage(),
+                containsString("You do not have the correct permissions to view the page Profile Tab Panel."));
+    }
 
 
 }

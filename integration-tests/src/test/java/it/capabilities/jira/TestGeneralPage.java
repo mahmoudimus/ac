@@ -90,13 +90,13 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         loginAsAdmin();
 
         // web item should be displayed
-        assertThat("Expected web-item for page to be present", connectPageOperations.webItemDoesNotExist(KEY_MY_AWESOME_PAGE), is(false));
+        assertThat("Expected web-item for page to be present", connectPageOperations.existsWebItem(KEY_MY_AWESOME_PAGE), is(true));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         product.visit(HomePage.class);
         // web item should not be displayed
-        assertThat("Expected web-item for page to NOT be present", connectPageOperations.webItemDoesNotExist(KEY_MY_AWESOME_PAGE), is(true));
+        assertThat("Expected web-item for page to NOT be present", connectPageOperations.existsWebItem(KEY_MY_AWESOME_PAGE), is(false));
 
         // directly retrieving page should result in access denied
         InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, PLUGIN_KEY, KEY_MY_AWESOME_PAGE);
