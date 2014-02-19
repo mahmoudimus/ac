@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -29,6 +30,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertThat;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class PageToWebItemAndServletConverterTest
 {

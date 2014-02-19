@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.AdminPageModuleProvider;
 import com.atlassian.sal.api.user.UserManager;
 
@@ -9,6 +10,7 @@ import org.mockito.Mock;
 
 import static org.mockito.Mockito.verify;
 
+@ConvertToWiredTest
 @Ignore("Replace with wired tests")
 public class AdminPageModuleProviderTest extends AbstractPageModuleProviderTest<AdminPageModuleProvider>
 {

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -31,6 +32,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectWebSectionModuleDescriptorFactoryTest
 {

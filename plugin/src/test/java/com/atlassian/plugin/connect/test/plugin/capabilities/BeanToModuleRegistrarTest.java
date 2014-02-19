@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities;
 
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
@@ -28,6 +29,7 @@ import java.util.HashSet;
 
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class BeanToModuleRegistrarTest
 {

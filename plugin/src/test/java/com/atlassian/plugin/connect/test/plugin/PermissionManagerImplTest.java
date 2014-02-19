@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.plugin;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
@@ -40,6 +41,7 @@ import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class PermissionManagerImplTest
 {

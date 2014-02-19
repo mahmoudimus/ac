@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @Ignore("convert to wired test")
 @RunWith (MockitoJUnitRunner.class)
 public class SpaceToolsTabModuleProviderTest

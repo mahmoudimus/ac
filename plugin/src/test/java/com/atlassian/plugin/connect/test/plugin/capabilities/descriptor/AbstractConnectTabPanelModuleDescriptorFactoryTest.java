@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
@@ -26,7 +27,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
 {

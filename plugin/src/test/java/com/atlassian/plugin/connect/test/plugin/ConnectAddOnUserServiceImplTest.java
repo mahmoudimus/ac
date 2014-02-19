@@ -7,6 +7,7 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.model.user.UserTemplate;
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserGroupsService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
@@ -31,6 +32,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectAddOnUserServiceImplTest
 {

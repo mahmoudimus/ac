@@ -7,6 +7,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
@@ -40,6 +41,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class WorkflowPostFunctionModuleDescriptorFactoryTest
 {

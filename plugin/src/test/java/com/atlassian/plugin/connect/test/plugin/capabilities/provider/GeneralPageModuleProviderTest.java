@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider;
 
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
+@ConvertToWiredTest
 @Ignore("Replace with wired tests")
 public class GeneralPageModuleProviderTest extends AbstractPageModuleProviderTest<GeneralPageModuleProvider>
 {
