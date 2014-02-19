@@ -19,8 +19,7 @@ import org.junit.rules.TestRule;
 import java.net.URI;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static it.servlet.condition.ToggleableConditionServlet.TOGGLE_CONDITION_URL;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -53,9 +52,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
                                 .withKey(PAGE_KEY)
                                 .withUrl("/pg")
                                 .withWeight(1234)
-                                .withConditions(
-                                    newSingleConditionBean().withCondition(TOGGLE_CONDITION_URL).build()
-                                )
+                                .withConditions(toggleableConditionBean())
                                 .build())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                 .start();

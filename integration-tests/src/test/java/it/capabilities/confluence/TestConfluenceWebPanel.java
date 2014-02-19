@@ -23,8 +23,7 @@ import redstone.xmlrpc.XmlRpcFault;
 import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static it.servlet.condition.ToggleableConditionServlet.TOGGLE_CONDITION_URL;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -75,9 +74,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .withLocation("atl.general")
                 .withUrl(IFRAME_URL_VIEW + IFRAME_URL_PARAMETERS)
                 .withLayout(new WebPanelLayout(px(IFRAME_WIDTH), px(IFRAME_VIEW_HEIGHT)))
-                .withConditions(
-                    newSingleConditionBean().withCondition(TOGGLE_CONDITION_URL).build()
-                )
+                .withConditions(toggleableConditionBean())
                 .withWeight(1)
                 .build();
 

@@ -20,9 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.jira.TestJira.EXTRA_PREFIX;
-import static it.servlet.condition.ToggleableConditionServlet.TOGGLE_CONDITION_URL;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -54,9 +53,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
                         newPageBean()
                                 .withName(new I18nProperty(PAGE_NAME, null))
                                 .withKey(PAGE_KEY)
-                                .withConditions(
-                                    newSingleConditionBean().withCondition(TOGGLE_CONDITION_URL).build()
-                                )
+                                .withConditions(toggleableConditionBean())
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())

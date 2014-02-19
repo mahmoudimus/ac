@@ -22,8 +22,7 @@ import java.net.URI;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static it.servlet.condition.ToggleableConditionServlet.TOGGLE_CONDITION_URL;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -55,9 +54,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
                                 .withKey(PAGE_KEY)
                                 .withUrl("/pg?page_id={page.id}")
                                 .withWeight(1234)
-                                .withConditions(
-                                    newSingleConditionBean().withCondition(TOGGLE_CONDITION_URL).build()
-                                )
+                                .withConditions(toggleableConditionBean())
                                 .build())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .start();

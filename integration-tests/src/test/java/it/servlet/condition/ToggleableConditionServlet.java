@@ -1,5 +1,6 @@
 package it.servlet.condition;
 
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -11,12 +12,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+
 /**
  *
  */
 public class ToggleableConditionServlet extends HttpServlet
 {
     public static final String TOGGLE_CONDITION_URL = "/toggleableCondition";
+
+    public static ConditionalBean toggleableConditionBean()
+    {
+        return newSingleConditionBean().withCondition(TOGGLE_CONDITION_URL).build();
+    }
 
     private final AtomicBoolean shouldDisplay;
     private final boolean initialValue;

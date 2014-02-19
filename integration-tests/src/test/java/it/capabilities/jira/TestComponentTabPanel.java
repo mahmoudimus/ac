@@ -12,6 +12,7 @@ import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -39,6 +40,7 @@ public class TestComponentTabPanel extends TestBase
                         .withName(new I18nProperty("Component Tab Panel", null))
                         .withKey(MODULE_KEY)
                         .withUrl("/ipp?component_id={component.id}&project_id={project.id}&project_key={project.key}")
+                        .withConditions(toggleableConditionBean())
                         .withWeight(1234)
                         .build())
                 .addRoute("/ipp", ConnectAppServlets.apRequestServlet())
