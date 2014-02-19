@@ -66,8 +66,10 @@ This can be helpful when trying to trace errors or debug the add-on javascript.
 ## Note on URL Encoding
 URL query parameters are encoded as `application/x-www-form-urlencoded`. 
 This converts spaces to `+` which can cause issues when using JavaScript functions such as `decodeURIComponent`. 
-A simple way to handle this is to convert `+` to `%20` before decoding. e.g
+A simple way to handle this is to convert `+` to `%20` before decoding. A utility function is provided for this purpose. e.g
 
 ```
-decodeURIComponent(('str').replace(/\+/g, '%20'));
+AP.require("_util", function(util){
+  alert(util.decodeConnectURIComponent(window.location.href));
+});
 ``` 
