@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.0-rc1</version>
+        <version>1.0.0-rc2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -35,18 +35,18 @@
 
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-connect-plugin</artifactId>
+            <version>1.0-m30.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-bridge</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-test-support-plugin</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -95,80 +95,12 @@
                             <groupId>com.google.code.gson</groupId>
                             <artifactId>gson</artifactId>
                         </testBundleExclude>
+                        <testBundleExclude>
+                            <groupId>com.atlassian.plugins</groupId>
+                            <artifactId>atlassian-connect-plugin</artifactId>
+                        </testBundleExclude>
                     </testBundleExcludes>
                     <instructions>
-                        <!-- <Import-Package>
-                            com.atlassian.upm.*,
-                            com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
-                            com.atlassian.confluence.plugin.webresource;resolution:=optional,
-                            com.atlassian.confluence.security.websudo;resolution:=optional,
-                            com.atlassian.jira;resolution:=optional,
-                            com.atlassian.jira.config;resolution:=optional,
-                            com.atlassian.jira.plugin.webfragment.descriptors;resolution:=optional,
-                            com.atlassian.jira.security;resolution:=optional,
-                            com.atlassian.jira.security.websudo;resolution:=optional,
-                            com.atlassian.oauth*;version="(1.2,2.0]",
-                            com.atlassian.jwt.*;version="${atlassian.jwt.version}",
-
-                            com.atlassian.plugin;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.descriptors;resolution:="optional",
-                            com.atlassian.plugin.elements;resolution:="optional",
-                            com.atlassian.plugin.event;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.event.events;resolution:="optional",
-                            com.atlassian.plugin.hostcontainer;resolution:="optional",
-                            com.atlassian.plugin.module;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.schema.descriptor;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.schema.spi;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.servlet;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.servlet.descriptors;resolution:="optional",
-                            com.atlassian.plugin.servlet.filter ;resolution:="optional",
-                            com.atlassian.plugin.servlet.util;resolution: ="optional",
-                            com.atlassian.plugin.tracker;resolution:="optional",
-                            com.atlassian.plugin.util;resolution:="optional",
-                            com.atlassian.plugin.web;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.web.conditions;resolution:="optional",
-                            com.atlassian.plugin.web.descriptors;resolution:="optional",
-                            com.atlassian.plugin.web.model;resolution:="optional",
-                            com.atlassian.plugin.webresource;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.webresource.transformer;resolution:="optional",
-
-                            com.atlassian.templaterenderer;version="1.4.0",
-                            com.atlassian.refapp.auth.external;resolution:=optional,
-                            com.atlassian.sal.api.*;version="(2.4,3.0]",
-                            com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
-                            com.atlassian.crowd.embedded.api.*;version="2.0";resolution:=optional,
-                            com.atlassian.webhooks.spi*;version="${atlassian.webhooks.api.version}",
-                            com.atlassian.httpclient.api*;version="${atlassian.httpclient.api.version}",
-                            com.sun.mail.handlers;resolution:=optional,
-                            net.oauth*,
-                            javax.servlet;version="0.0.0",
-                            javax.servlet.http;version="0.0.0",
-                            javax.inject;version="1",
-                            javax.xml*,
-                            org.apache.commons.lang.*;version="2.4",
-                            org.dom4j*,
-                            org.joda.time*;version="1.6",
-                            org.slf4j*;version="1.5",
-                            org.xml.sax*,
-                            com.atlassian.plugin.connect.api*;version="${project.version}",
-                            com.atlassian.plugin.connect.spi*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin*;version="${project.version}",
-                            *;resolution:=optional
-                        </Import-Package> -->
-                        <Export-Package>
-                            com.atlassian.plugin.connect.api*;version="${project.version}",
-                            com.atlassian.plugin.connect.api.*;version="${project.version}",
-                            com.atlassian.plugin.connect.spi*;version="${project.version}",
-                            com.atlassian.plugin.connect.spi.*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.product*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.product.*;version="${project.version}",
-                            com.atlassian.plugin.connect.modules*,
-                            com.atlassian.plugin.connect.modules.*,
-                            com.atlassian.plugin.connect.modules.beans*,
-                            com.atlassian.plugin.connect.modules.beans.*
-                        </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
                         <!-- DO NOT put Atlassian-Plugin-Key here!! it will bypass all transforms and component-imports will break -->
@@ -229,16 +161,6 @@
                                     <artifactId>json-schema-validator-atlassian-bundle</artifactId>
                                     <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-plugin</artifactId>
-                                    <version>${project.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
-                                    <version>${project.version}</version>
-                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>
@@ -292,16 +214,6 @@
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-scriptsfinished-plugin</artifactId>
                                     <version>${atlassian.confluence.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-plugin</artifactId>
-                                    <version>${project.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
-                                    <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 
@@ -357,6 +269,26 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.5.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-old-connect-plugin</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>atlassian-connect-plugin</includeArtifactIds>
+                            <excludeTransitive>true</excludeTransitive>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
                 <executions>
@@ -373,6 +305,7 @@
                                     <directory>src/test/resources</directory>
                                     <includes>
                                         <include>connect-plugin-path.txt</include>
+                                        <include>old-connect-plugin-path.txt</include>
                                     </includes>
                                     <filtering>true</filtering>
                                 </resource>
