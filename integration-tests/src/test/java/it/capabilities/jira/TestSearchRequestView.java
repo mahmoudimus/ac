@@ -12,9 +12,12 @@ import it.servlet.ConnectAppServlets;
 import it.servlet.EchoQueryParametersServlet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,6 +31,9 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
 
     private static ConnectRunner remotePlugin;
     private static EchoQueryParametersServlet searchRequestViewServlet;
+
+    @Rule
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -43,8 +49,9 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
                         .withName(new I18nProperty(LABEL, null))
                         .withDescription(new I18nProperty("A description", null))
                         .withConditions(
-                                newSingleConditionBean().withCondition("user_is_logged_in").build())
-                        .build())
+                            newSingleConditionBean().withCondition("user_is_logged_in").build(),
+                            toggleableConditionBean()
+                        ).build())
                 .addRoute(SERVLET_URL, ConnectAppServlets.wrapContextAwareServlet(searchRequestViewServlet))
                 .start();
     }
@@ -72,6 +79,17 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     {
         IssueNavigatorViewsMenu.ViewEntry entry = findSearchRequestViewEntry();
 
+        assertThat(entry.isPresent(), is(false));
+    }
+
+    @Test
+    public void verifyEntryIsNotPresentWhenAddOnConditionIsFalse() throws Exception
+    {
+        loginAsAdmin();
+
+        remotePlugin.setToggleableConditionShouldDisplay(false);
+
+        IssueNavigatorViewsMenu.ViewEntry entry = findSearchRequestViewEntry();
         assertThat(entry.isPresent(), is(false));
     }
 
