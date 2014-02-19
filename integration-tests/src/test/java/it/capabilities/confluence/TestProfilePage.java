@@ -34,7 +34,7 @@ public class TestProfilePage extends AbstractPageTst
     @Test
     public void pageIsNotAccessibleWithFalseCondition()
     {
-        TOGGLEABLE_CONDITION_SERVLET.setShouldDisplay(false);
+        remotePlugin.setToggleableConditionShouldDisplay(false);
 
         loginAsAdmin();
 

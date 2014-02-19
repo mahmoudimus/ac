@@ -17,6 +17,12 @@ public class JiraAdministrationHomePage extends AbstractJiraPage
 
     private final String extraPrefix;
 
+    public JiraAdministrationHomePage()
+    {
+        this("");
+    }
+
+    @Deprecated // used to provide legacy ID prefixes for modules provided by XML add-ons
     public JiraAdministrationHomePage(String extraPrefix)
     {
         this.extraPrefix = extraPrefix;

@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminP
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.TestConstants;
-import it.servlet.condition.ToggleableConditionServlet;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
@@ -39,9 +38,8 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
 
     private static ConnectRunner remotePlugin;
 
-    public static final ToggleableConditionServlet TOGGLEABLE_CONDITION_SERVLET = new ToggleableConditionServlet(true);
     @Rule
-    public TestRule resetToggleableCondition = TOGGLEABLE_CONDITION_SERVLET.resetToInitialValueRule();
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -60,7 +58,6 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
                                 )
                                 .build())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
-                .addRoute(ToggleableConditionServlet.TOGGLE_CONDITION_URL, TOGGLEABLE_CONDITION_SERVLET)
                 .start();
     }
 
@@ -104,7 +101,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     @Test
     public void pageIsNotAccessibleWithFalseCondition()
     {
-        TOGGLEABLE_CONDITION_SERVLET.setShouldDisplay(false);
+        remotePlugin.setToggleableConditionShouldDisplay(false);
 
         loginAsAdmin();
 

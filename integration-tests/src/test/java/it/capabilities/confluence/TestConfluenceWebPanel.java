@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.servlet.condition.ToggleableConditionServlet;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
@@ -55,9 +54,8 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     private static WebPanelModuleBean viewWebPanel;
     private static WebPanelModuleBean profileWebPanel;
 
-    public static final ToggleableConditionServlet TOGGLEABLE_CONDITION_SERVLET = new ToggleableConditionServlet(true);
     @Rule
-    public TestRule resetToggleableCondition = TOGGLEABLE_CONDITION_SERVLET.resetToInitialValueRule();
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -97,7 +95,6 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .addModule(WEB_PANELS, editorWebPanel)
                 .addModule(WEB_PANELS, viewWebPanel)
                 .addModule(WEB_PANELS, profileWebPanel)
-                .addRoute(TOGGLE_CONDITION_URL, TOGGLEABLE_CONDITION_SERVLET)
                 .addRoute(IFRAME_URL_EDIT, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_EDIT, false))
                 .addRoute(IFRAME_URL_VIEW, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_VIEW, false))
                 .addRoute(IFRAME_URL_PROFILE, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_PROFILE, false))
@@ -173,7 +170,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     @Test
     public void webPanelIsNotAccessibleWithFalseCondition() throws Exception
     {
-        TOGGLEABLE_CONDITION_SERVLET.setShouldDisplay(false);
+        remotePlugin.setToggleableConditionShouldDisplay(false);
         createAndVisitPage(ConfluenceViewPage.class); // revisit the view page now that condition has been set to false
         assertThat(connectPageOperations.webPanelDoesNotExist(viewWebPanel.getKey()), is(true));
     }

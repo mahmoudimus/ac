@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPag
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.servlet.condition.ToggleableConditionServlet;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
@@ -31,11 +30,10 @@ public class AbstractPageTst extends ConnectWebDriverTestBase
     protected static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
     protected static final String URL = "/" + MY_AWESOME_PAGE_KEY;
 
-    private static ConnectRunner remotePlugin;
+    protected static ConnectRunner remotePlugin;
 
-    public static final ToggleableConditionServlet TOGGLEABLE_CONDITION_SERVLET = new ToggleableConditionServlet(true);
     @Rule
-    public TestRule resetToggleableCondition = TOGGLEABLE_CONDITION_SERVLET.resetToInitialValueRule();
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     protected static void startConnectAddOn(String fieldName) throws Exception
     {
@@ -56,7 +54,6 @@ public class AbstractPageTst extends ConnectWebDriverTestBase
                 .addModule(fieldName, pageBeanBuilder.build())
                 .setAuthenticationToNone()
                 .addRoute(URL, ConnectAppServlets.apRequestServlet())
-                .addRoute(TOGGLE_CONDITION_URL, TOGGLEABLE_CONDITION_SERVLET)
                 .start();
     }
 
