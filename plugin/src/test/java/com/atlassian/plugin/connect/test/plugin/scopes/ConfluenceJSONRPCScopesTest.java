@@ -35,10 +35,8 @@ public class ConfluenceJSONRPCScopesTest extends AbstractScopesTest
             {ScopeName.WRITE, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v2/addPermissionsToSpace", false},
             {ScopeName.SPACE_ADMIN, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v1/addPermissionsToSpace", true},
             {ScopeName.WRITE, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v1/addPermissionsToSpace", false},
-            {ScopeName.ADMIN, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v2/addUserToGroup", true},
-            {ScopeName.SPACE_ADMIN, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v2/addUserToGroup", false},
-            {ScopeName.ADMIN, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v1/addUserToGroup", true},
-            {ScopeName.SPACE_ADMIN, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v1/addUserToGroup", false},
+            {ScopeName.ADMIN, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v2/addUserToGroup", false},
+            {ScopeName.ADMIN, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v1/addUserToGroup", false},
         });
     }
 

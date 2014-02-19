@@ -68,32 +68,6 @@ public class ConnectPluginLifecycleTest
     @After
     public void tearDown()
     {
-        if (null != theConnectPlugin)
-        {
-            try
-            {
-                testPluginInstaller.uninstallPlugin(theConnectPlugin);
-                theConnectPlugin = null;
-            }
-            catch (Exception e)
-            {
-                theConnectPlugin = null;
-            }
-        }
-
-        if (null != theOLDConnectPlugin)
-        {
-            try
-            {
-                testPluginInstaller.uninstallPlugin(theOLDConnectPlugin);
-                theOLDConnectPlugin = null;
-            }
-            catch (Exception e)
-            {
-                theOLDConnectPlugin = null;
-            }
-        }
-
         if (null != singleModuleAddon)
         {
             try
@@ -117,6 +91,32 @@ public class ConnectPluginLifecycleTest
             catch (Exception e)
             {
                 doubleModuleAddon = null;
+            }
+        }
+        
+        if (null != theConnectPlugin)
+        {
+            try
+            {
+                testPluginInstaller.uninstallPlugin(theConnectPlugin);
+                theConnectPlugin = null;
+            }
+            catch (Exception e)
+            {
+                theConnectPlugin = null;
+            }
+        }
+
+        if (null != theOLDConnectPlugin)
+        {
+            try
+            {
+                testPluginInstaller.uninstallPlugin(theOLDConnectPlugin);
+                theOLDConnectPlugin = null;
+            }
+            catch (Exception e)
+            {
+                theOLDConnectPlugin = null;
             }
         }
 
@@ -157,7 +157,6 @@ public class ConnectPluginLifecycleTest
         assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
 
     }
-
     @Test
     public void disablingThenEnablingAddonSucceeds() throws Exception
     {
@@ -365,7 +364,11 @@ public class ConnectPluginLifecycleTest
         theConnectPlugin = installConnectPlugin();
 
         assertEquals(PluginState.ENABLED, theConnectPlugin.getPluginState());
+        
+        //TODO: figure out why module count is wrong only in confluence only for this specific check
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "second check");
+
+        assertEquals(PluginState.ENABLED, singleModuleAddon.getPluginState());
 
     }
 

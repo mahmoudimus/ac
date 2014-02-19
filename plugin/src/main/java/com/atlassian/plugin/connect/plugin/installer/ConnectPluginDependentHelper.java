@@ -62,7 +62,7 @@ public class ConnectPluginDependentHelper
         }
         catch (Exception e)
         {
-            log.error("Unable to get persistent state for plugin '" + plugin.getKey() + "' : " + e.getMessage(), e);
+            //log.error("Unable to get persistent state for plugin '" + plugin.getKey() + "' : " + e.getMessage(), e);
             //ignore the exception
             return false;
         }
@@ -88,7 +88,7 @@ public class ConnectPluginDependentHelper
         }
         catch (Exception e)
         {
-            log.error("Unable to get persistent state for plugin '" + plugin.getKey() + "' : " + e.getMessage(), e);
+            //log.error("Unable to get persistent state for plugin '" + plugin.getKey() + "' : " + e.getMessage(), e);
 
             //ignore the exception
             return false;

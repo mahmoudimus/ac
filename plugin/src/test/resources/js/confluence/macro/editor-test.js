@@ -127,5 +127,16 @@ define(['confluence/macro/editor'], function() {
         ok(tinymce.confluence.MacroUtils.insertMacro.calledOnce, 'saveMacro calls the confluence macro save function');
     });
 
+    test("getMacroData returns the macro data", function () {
+        MacroData.params = {
+            foo: 'bar'
+        };
+        MacroEditorOpts.url = '/abc/';
+        confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
+        var spy = sinon.spy();
+        confluenceMacroEditor.getMacroData(spy);
+        equal(spy.args[0][0], MacroData.params, 'getMacroData passes the macro data to the callback function');
+    });
+
   });
 });
