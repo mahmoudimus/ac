@@ -37,7 +37,6 @@ public class JiraComponentTabPage extends AbstractJiraPage
         this.moduleKey = moduleKey;
     }
 
-
     @Override
     public TimedCondition isAt()
     {
