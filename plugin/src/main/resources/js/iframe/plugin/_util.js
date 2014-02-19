@@ -55,7 +55,7 @@ AP.define("_util", function () {
   }
 
   function decodeConnectURIComponent(encodedURI) {
-    return decodeURIComponent( encodedURI.replace(/\+/g, '%20') );
+    return encodedURI == null ? null : decodeURIComponent( encodedURI.replace(/\+/g, '%20') );
   }
 
   return {
