@@ -55,8 +55,8 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
     );
 
     private final HttpClient httpClient;
-    private final LicenseRetriever licenseRetriever;
-    private final LocaleHelper localeHelper;
+//    private final LicenseRetriever licenseRetriever;
+//    private final LocaleHelper localeHelper;
     private final HttpClientFactory factory;
 
     @Inject
@@ -72,8 +72,8 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
 
     CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClient httpClient, HttpClientFactory factory)
     {
-        this.licenseRetriever = checkNotNull(licenseRetriever);
-        this.localeHelper = checkNotNull(localeHelper);
+//        this.licenseRetriever = checkNotNull(licenseRetriever);
+//        this.localeHelper = checkNotNull(localeHelper);
         this.httpClient = checkNotNull(httpClient);
         this.factory = factory;
     }
@@ -96,18 +96,18 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
 
         log.info("{}ing content from '{}'", method, url);
 
-        final Map<String, String[]> allParameters = getAllParameters(parameters, pluginKey);
+//        final Map<String, String[]> allParameters = getAllParameters(parameters, pluginKey);
 
-        Request.Builder request = httpClient.newRequest(getFullUrl(method, url, allParameters));
+        Request.Builder request = httpClient.newRequest(getFullUrl(method, url, parameters));
         request = request.setAttributes(getAttributes(pluginKey));
-        Option<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, allParameters);
+        Option<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, parameters);
         Map<String, String> allHeaders = getAllHeaders(headers, authHeaderValue);
         request = request.setHeaders(allHeaders);
 
         if (contains(METHODS_WITH_BODY, method))
         {
             request.setContentType("application/x-www-form-urlencoded");
-            request.setEntity(UriBuilder.joinParameters(UriBuilderUtils.toListFormat(allParameters)));
+            request.setEntity(UriBuilder.joinParameters(UriBuilderUtils.toListFormat(parameters)));
         }
 
         ResponseTransformation<String> responseTransformation = httpClient.<String>transformation()
@@ -152,24 +152,24 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
         return authorizationGenerator.generate(method, url, allParameters);
     }
 
-    private Map<String, String[]> getAllParameters(Map<String, String[]> parameters, String pluginKey)
-    {
-        return ImmutableMap.<String, String[]>builder()
-                .putAll(parameters)
-                .put("lic", new String[]{getLicenseStatusAsString(pluginKey)})
-                .put("loc", new String[]{getLocale()})
-                .build();
-    }
-
-    private String getLicenseStatusAsString(String pluginKey)
-    {
-        return licenseRetriever.getLicenseStatus(pluginKey).value();
-    }
-
-    private String getLocale()
-    {
-        return localeHelper.getLocaleTag();
-    }
+//    private Map<String, String[]> getAllParameters(Map<String, String[]> parameters, String pluginKey)
+//    {
+//        return ImmutableMap.<String, String[]>builder()
+//                .putAll(parameters)
+//                .put("lic", new String[]{getLicenseStatusAsString(pluginKey)})
+//                .put("loc", new String[]{getLocale()})
+//                .build();
+//    }
+//
+//    private String getLicenseStatusAsString(String pluginKey)
+//    {
+//        return licenseRetriever.getLicenseStatus(pluginKey).value();
+//    }
+//
+//    private String getLocale()
+//    {
+//        return localeHelper.getLocaleTag();
+//    }
 
     private static HttpClientOptions getHttpClientOptions(PluginRetrievalService pluginRetrievalService)
     {
