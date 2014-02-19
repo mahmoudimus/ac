@@ -1,7 +1,7 @@
 AP.define("dialog", ["_dollar", "_rpc"],
 
   /**
-   * The Dialog module provides a mechanism for launching modal dialogs from within an add-on's iframe.
+   * The Dialog module provides a mechanism for launching an add-on's modules as modal dialogs from within an add-on's iframe.
    * A modal dialog displays information without requiring the user to leave the current page.
    * The dialog is opened over the entire window, rather than within the iframe itself.
    * ###Styling your dialog to look like a standard Atlassian dialog
@@ -34,7 +34,11 @@ AP.define("dialog", ["_dollar", "_rpc"],
       * @param {DialogOptions} options configuration object of dialog options.
       * @example
       * AP.require('dialog', function(dialog){
-      *   dialog.create('mydialog');
+      *   dialog.create({
+      *     key: 'my-module-key',
+      *     width: '500px',
+      *     height: '200px'
+      *   });
       * });
       */
       create: function(options) {
