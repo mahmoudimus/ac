@@ -6,21 +6,20 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.spi.module.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
-import com.atlassian.sal.api.user.UserManager;
+
+import java.util.Collections;
 
 public abstract class AbstractAdminPageModuleProvider extends AbstractConnectPageModuleProvider
 {
     private final ProductAccessor productAccessor;
-    private final UserIsAdminCondition userIsAdminCondition;
 
     public AbstractAdminPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            ProductAccessor productAccessor, UserManager userManager)
+            ProductAccessor productAccessor)
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
         this.productAccessor = productAccessor;
-        userIsAdminCondition = new UserIsAdminCondition(userManager);
     }
 
     @Override
@@ -42,9 +41,9 @@ public abstract class AbstractAdminPageModuleProvider extends AbstractConnectPag
     }
 
     @Override
-    protected Condition getCondition()
+    protected Iterable<Class<? extends Condition>> getConditionClasses()
     {
-        return userIsAdminCondition;
+        return Collections.<Class<? extends Condition>>singletonList(UserIsAdminCondition.class);
     }
 
 }

@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextFilter.PROJECT_KEY;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Module Provider for a Connect Project Admin TabPanel Module. Note that there is actually no P2 module descriptor.
@@ -39,15 +37,13 @@ public class ConnectProjectAdminTabPanelModuleProvider
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private final ConnectContainerUtil connectContainerUtil;
 
     @Autowired
     public ConnectProjectAdminTabPanelModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, ConnectContainerUtil connectContainerUtil)
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
-        this.connectContainerUtil = connectContainerUtil;
-        this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
+        this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
@@ -56,6 +52,8 @@ public class ConnectProjectAdminTabPanelModuleProvider
     public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
+
+
 
         for (ConnectProjectAdminTabPanelModuleBean bean : beans)
         {
@@ -71,9 +69,11 @@ public class ConnectProjectAdminTabPanelModuleProvider
                     .withContext(AddOnUrlContext.page)
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())
+                    .withConditions(bean.getConditions())
                     .build();
 
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemModuleBean));
+            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemModuleBean,
+                    IsProjectAdminCondition.class));
 
             // register a render strategy for the servlet backing our iframe tab
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
@@ -82,7 +82,8 @@ public class ConnectProjectAdminTabPanelModuleProvider
                     .projectAdminTabTemplate()
                     .urlTemplate(bean.getUrl())
                     .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey())
-                    .condition(connectContainerUtil.createBean(IsProjectAdminCondition.class))
+                    .conditions(bean.getConditions())
+                    .conditionClass(IsProjectAdminCondition.class)
                     .title(bean.getDisplayName())
                     .build();
 

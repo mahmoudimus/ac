@@ -5,7 +5,6 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
-import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactory;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -36,7 +35,7 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
-    private final ConditionDescriptorFactory conditionDescriptorFactory;
+    private final ConnectConditionDescriptorFactory conditionDescriptorFactory;
     private final JiraAuthenticationContext authenticationContext;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final SearchRequestURLHandler urlHandler;
@@ -52,7 +51,8 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
             SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
             TemplateRenderer templateRenderer,
             IFrameUriBuilderFactory iFrameUriBuilderFactory,
-            DelegatingComponentAccessor componentAccessor)
+            DelegatingComponentAccessor componentAccessor,
+            ConnectConditionDescriptorFactory connectConditionDescriptorFactory)
     {
         super(moduleFactory);
         this.authenticationContext = authenticationContext;
@@ -62,7 +62,7 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
         this.applicationProperties = checkNotNull(applicationProperties);
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
         this.templateRenderer = checkNotNull(templateRenderer);
-        this.conditionDescriptorFactory = checkNotNull(componentAccessor.getComponent(ConditionDescriptorFactory.class));
+        this.conditionDescriptorFactory = checkNotNull(connectConditionDescriptorFactory);
     }
 
     @Override

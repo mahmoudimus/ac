@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
-
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,29 +39,29 @@ public class ConnectTabPanelModuleDescriptorFactory
         DOMElement element = new DOMElement(hints.getDomElementName());
 
         element
-                .addAttribute(KEY,bean.getKey())
-                .addAttribute(NAME,bean.getName().getValue())
-                .addAttribute(URL,bean.getUrl());
-        
-        if(null != hints.getModuleClass())
+                .addAttribute(KEY, bean.getKey())
+                .addAttribute(NAME, bean.getName().getValue())
+                .addAttribute(URL, bean.getUrl());
+
+        if (null != hints.getModuleClass())
         {
             element.addAttribute(CLASS, hints.getModuleClass().getName());
         }
-        
-        element.addElement(ORDER).setText(Integer.toString(bean.getWeight()));
-        
-        element.addElement(LABEL)
-               .addAttribute(KEY, bean.getName().getI18n())
-               .setText(bean.getName().getValue());
 
-        if(!bean.getConditions().isEmpty())
+        element.addElement(ORDER).setText(Integer.toString(bean.getWeight()));
+
+        element.addElement(LABEL)
+                .addAttribute(KEY, bean.getName().getI18n())
+                .setText(bean.getName().getValue());
+
+        if (!bean.getConditions().isEmpty())
         {
-            element.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + bean.getKey()));
+            element.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions()));
         }
 
         ModuleDescriptor descriptor = connectContainerUtil.createBean(hints.getDescriptorClass());
         descriptor.init(plugin, element);
-        
+
         return descriptor;
     }
 }

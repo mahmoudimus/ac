@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.DisposableBean;
@@ -16,6 +17,7 @@ import java.util.Map;
  * Maintains a map of plugin + module key -> iframe rendering strategy.
  */
 @Component
+@ExportAsDevService
 public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyRegistry, InitializingBean, DisposableBean
 {
     private final EventPublisher eventPublisher;
