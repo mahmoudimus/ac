@@ -41,40 +41,61 @@ public class IsProjectAdminCondition implements Condition
     {
         ProjectService.GetProjectResult getProjectResult = projectService.getProjectByKeyForAction(
                 authenticationContext.getUser(),
-                getProject().getKey(),
+                getProject(ctx).getKey(),
                 ProjectAction.EDIT_PROJECT_CONFIG
         );
         return getProjectResult != null && getProjectResult.isValid();
     }
 
     /**
-     * Workaround JRA-26407 by attempting to resolve the project from a request attribute or the project.key query
-     * parameter.
+     * Resolve the project object from the context if present, otherwise workaround JRA-26407 by attempting to resolve
+     * the project from a request attribute or the project.key query parameter.
+     *
      * @return the context project
      */
-    private Project getProject()
+    private Project getProject(final Map<String, Object> ctx)
     {
         HttpServletRequest req = ExecutingHttpRequest.get();
-        if (req == null)
+        Project project;
+
+        // first try to resolve the project from the context
+        Object projectObj = ctx.get("project");
+        if (projectObj instanceof Project)
         {
-            throw new IllegalStateException("No " + HttpServletRequest.class.getSimpleName() + " context, can't resolve project!");
+            project = (Project) projectObj;
         }
-        Project project = (Project) req.getAttribute(PROJECT_REQ_ATTR);
-        if (project == null)
+        else
         {
-            Object projectKey = req.getParameterMap().get(PROJECT_KEY);
-            if (!(projectKey instanceof String[]))
+            // otherwise check to see if it's been cached as a request attribute
+            if (req == null)
             {
-                throw new IllegalStateException("No " + PROJECT_KEY + " parameter found in the query string!");
+                throw new IllegalStateException("No " + HttpServletRequest.class.getSimpleName() +
+                        " context, can't resolve project!");
             }
-            final String key = ((String[]) projectKey)[0];
-            project = ComponentManager.getComponent(ProjectManager.class).getProjectObjByKey(key);
+            project = (Project) req.getAttribute(PROJECT_REQ_ATTR);
             if (project == null)
             {
-                throw new IllegalStateException("No project with key " + key + "!");
+                // otherwise see if there's a request parameter specifying the project
+                Object projectKey = req.getParameterMap().get(PROJECT_KEY);
+                if (!(projectKey instanceof String[]))
+                {
+                    throw new IllegalStateException("No " + PROJECT_KEY + " parameter found in the query string!");
+                }
+                final String key = ((String[]) projectKey)[0];
+                project = ComponentManager.getComponent(ProjectManager.class).getProjectObjByKey(key);
+                if (project == null)
+                {
+                    throw new IllegalStateException("No project with key " + key + "!");
+                }
             }
+        }
+
+        if (req != null)
+        {
+            // cache project as request attribute
             req.setAttribute(PROJECT_REQ_ATTR, project);
         }
+
         return project;
     }
 }

@@ -28,9 +28,9 @@ public abstract class ConfluenceBasePage implements Page
     }
 
     @Deprecated // use it.ConnectWebDriverTestBase#connectPageOperations
-    public Boolean webItemDoesNotExist(String webItemId)
+    public Boolean existsWebItem(String webItemId)
     {
-        return connectPageOperations.webItemDoesNotExist(webItemId);
+        return connectPageOperations.existsWebItem(webItemId);
     }
 
 }

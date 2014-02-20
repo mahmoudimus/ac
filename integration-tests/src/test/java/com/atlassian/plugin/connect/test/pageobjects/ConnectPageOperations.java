@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.pageobjects;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
 import com.google.common.base.Function;
@@ -85,10 +86,24 @@ public class ConnectPageOperations
         });
     }
 
-    public Boolean webItemDoesNotExist(String webItemId)
+    public boolean existsWebItem(String webItemId)
     {
-//        Check.elementExists(By.id(webItemId));
-        return !driver.elementExists(By.id(webItemId));
+        return existsElementWithId(webItemId);
+    }
+
+    public boolean existsWebPanel(String webPanelId)
+    {
+        return existsElementWithId(IframeUtils.iframeId(webPanelId));
+    }
+
+    public boolean existsTabPanel(String tabPanelId)
+    {
+        return existsElementWithId(tabPanelId);
+    }
+
+    private boolean existsElementWithId(final String id)
+    {
+        return driver.elementExists(By.id(id));
     }
 
     public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)

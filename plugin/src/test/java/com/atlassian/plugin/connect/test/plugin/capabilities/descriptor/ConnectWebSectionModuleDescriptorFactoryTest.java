@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
@@ -56,9 +55,8 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
         ConnectWebSectionModuleDescriptorFactory webSectionFactory = new ConnectWebSectionModuleDescriptorFactory(conditionModuleFragmentFactory, new WebSectionModuleDescriptorFactoryForTests(webInterfaceManager));
         when(plugin.getKey()).thenReturn("my-awesome-plugin");
         when(plugin.getName()).thenReturn("My Plugin™");
-        ConnectWebSectionModuleDescriptor aDescriptor = new ConnectWebSectionModuleDescriptor(webInterfaceManager);
 
-        when(conditionModuleFragmentFactory.createFragment(eq("my-awesome-plugin"), anyList(), anyString()))
+        when(conditionModuleFragmentFactory.createFragment(eq("my-awesome-plugin"), anyList()))
                 .thenReturn(conditionElement());
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
         when(webFragmentHelper.loadCondition(eq(CONDITION_CLASSNAME), eq(plugin))).thenReturn(condition);

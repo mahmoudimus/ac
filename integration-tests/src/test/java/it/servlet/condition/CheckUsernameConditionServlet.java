@@ -1,4 +1,4 @@
-package it.capabilities;
+package it.servlet.condition;
 
 import java.io.IOException;
 

@@ -70,7 +70,8 @@ public class WebItemModuleDescriptorFactoryTest
         RemotablePluginAccessorFactoryForTests pluginAccessorFactory = new RemotablePluginAccessorFactoryForTests();
         pluginAccessorFactory.withBaseUrl(ADDON_BASE_URL);
         webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager),
-                new IconModuleFragmentFactory(pluginAccessorFactory), conditionModuleFragmentFactory, pluginAccessorFactory, new ParamsModuleFragmentFactory());
+                new IconModuleFragmentFactory(pluginAccessorFactory), conditionModuleFragmentFactory,
+                new ParamsModuleFragmentFactory());
 
         when(servletRequest.getContextPath()).thenReturn("http://ondemand.com/jira");
 

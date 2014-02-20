@@ -46,6 +46,7 @@ This tells UPM to check and report licensing status to the plugin. On the other 
 using a plugin strictly for internal use or you plan to distribute it freely on the Marketplace,
 this should be set to false.
 
+<a name="license-status"></a>
 ## Handling Requests with the License Status
 
 Each incoming request from the Atlassian application instance includes a query parameter named lic.
