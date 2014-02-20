@@ -48,10 +48,8 @@ configure a new vendor profile for your add-on.
 5. Choose **Private** as the add-on visibility option. If you intend to use the add-on for
 internal-use only, it can remain private for the life of the listing. If you choose to make the
 listing public later, you can.
-6. Click **Upload add-on file**.
-7. In the file picker, select the add-on descriptor (`atlassian-connect.json` file) for your add-on.
-Many of the form fields are automatically populated with values from the descriptor.
-8. Follow the on-screen instructions to configure the remaining fields and options on the form.
+6. Provide the url to your descriptor (`atlassian-connect.json` file).
+7. Follow the on-screen instructions to configure the remaining fields and options on the form.
 There are a few fields that require a little more explanation for an Atlassian Connect add-on
 listing:
 	- **Payment Model**: You can only choose paid via Atlassian or free, because Atlassian Connect
@@ -70,7 +68,7 @@ private, even if they were previously published as public versions.
 stage only. Select this option if you intend to list the add-on publicly, but it isn't ready yet.
 	- **Compatible application**: For an Atlassian Connect add-on, after you choose the product you
 are targeting and the minimum version, the **Compatible to** version is uneditable (that is, it defaults to **Any**). Because Atlassian Connect add-ons use stable, forward-compatible web APIs and OnDemand versions are frequently updated, the notion of a latest-compatible version is absent for Atlassian Connect add-ons. It is applicable, however, to downloadable Java add-ons.
-9. Click Submit when done.
+8. Click Submit when done.
 
 You can now generate test license tokens for your add-on and install it in OnDemand instances,
 either through MyAtlassian for live OnDemand instances, or through the descriptor link of the
