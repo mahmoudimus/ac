@@ -231,7 +231,7 @@ public class ModuleList extends BaseModuleBean
      *
      * @schemaTitle Workflow Post Function
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider", products = {ProductFilter.JIRA})
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWorkflowPostFunctionModuleProvider", products = {ProductFilter.JIRA})
     private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
 
     /**

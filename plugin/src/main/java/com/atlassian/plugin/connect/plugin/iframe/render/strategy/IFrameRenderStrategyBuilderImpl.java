@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFac
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -60,7 +61,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
             final TemplateRenderer templateRenderer)
     {
-
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
         this.templateRenderer = templateRenderer;
@@ -209,7 +209,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                 decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog, resizeToParent);
     }
 
-    private static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
+    @VisibleForTesting
+    public static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
     {
 
         private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
@@ -264,15 +265,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         public void render(final ModuleContextParameters moduleContextParameters, final Writer writer)
                 throws IOException
         {
-            String namespace = uniqueNamespace ? ModuleKeyGenerator.randomName(moduleKey) : moduleKey;
+            String namespace = generateNamespace();
 
-            String signedUri = iFrameUriBuilderFactory.builder()
-                    .addOn(addOnKey)
-                    .namespace(namespace)
-                    .urlTemplate(urlTemplate)
-                    .context(moduleContextParameters)
-                    .dialog(isDialog)
-                    .build();
+            String signedUri = buildUrl(moduleContextParameters, namespace);
 
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
                     .addOn(addOnKey)
@@ -290,6 +285,28 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .build();
 
             templateRenderer.render(template, renderContext, writer);
+        }
+
+        private String generateNamespace()
+        {
+            return uniqueNamespace ? ModuleKeyGenerator.randomName(moduleKey) : moduleKey;
+        }
+
+        @VisibleForTesting
+        public String buildUrl(ModuleContextParameters moduleContextParameters)
+        {
+            return buildUrl(moduleContextParameters, generateNamespace());
+        }
+
+        private String buildUrl(ModuleContextParameters moduleContextParameters, String namespace)
+        {
+            return iFrameUriBuilderFactory.builder()
+                            .addOn(addOnKey)
+                            .namespace(namespace)
+                            .urlTemplate(urlTemplate)
+                            .context(moduleContextParameters)
+                            .dialog(isDialog)
+                            .build();
         }
 
         @Override
