@@ -56,7 +56,7 @@ public class ConnectWebSectionModuleDescriptorFactory implements ConnectModuleDe
 
         if (!bean.getConditions().isEmpty())
         {
-            webSectionElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions(), "#" + webSectionKey));
+            webSectionElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions()));
         }
 
         if (log.isDebugEnabled())
