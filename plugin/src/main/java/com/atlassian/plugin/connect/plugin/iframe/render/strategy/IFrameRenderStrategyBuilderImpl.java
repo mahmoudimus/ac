@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
-import com.atlassian.plugin.connect.plugin.capabilities.module.ConnectConditionFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionFactory;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;

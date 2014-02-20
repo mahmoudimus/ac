@@ -1,12 +1,10 @@
-package com.atlassian.plugin.connect.plugin.capabilities.module;
+package com.atlassian.plugin.connect.plugin.capabilities.condition;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.web.Condition;
-import com.atlassian.plugin.web.WebInterfaceManager;
-import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.ConditionElementParser;
 import com.google.common.collect.Lists;
 import org.dom4j.dom.DOMElement;
@@ -26,12 +24,12 @@ public class ConnectConditionFactoryImpl implements ConnectConditionFactory
     private final Plugin theConnectPlugin;
 
     @Inject
-    public ConnectConditionFactoryImpl(WebInterfaceManager webInterfaceManager,
+    public ConnectConditionFactoryImpl(ConditionElementParserFactory conditionElementParserFactory,
             PluginRetrievalService pluginRetrievalService,
             ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
-        this.conditionElementParser = constructConditionParser(webInterfaceManager);
+        this.conditionElementParser = conditionElementParserFactory.getConditionElementParser();
         this.theConnectPlugin = pluginRetrievalService.getPlugin();
     }
 
@@ -59,23 +57,4 @@ public class ConnectConditionFactoryImpl implements ConnectConditionFactory
         return conditionElementParser.makeConditions(theConnectPlugin, conditionFragment, CompositeType.AND);
     }
 
-    private static ConditionElementParser constructConditionParser(final WebInterfaceManager webInterfaceManager)
-    {
-        return new ConditionElementParser(new WebInterfaceManagerConditionFactory(webInterfaceManager));
-    }
-
-    private static class WebInterfaceManagerConditionFactory implements ConditionElementParser.ConditionFactory
-    {
-        private final WebInterfaceManager webInterfaceManager;
-
-        private WebInterfaceManagerConditionFactory(final WebInterfaceManager webInterfaceManager)
-        {
-            this.webInterfaceManager = webInterfaceManager;
-        }
-
-        public Condition create(String className, Plugin plugin) throws ConditionLoadingException
-        {
-            return webInterfaceManager.getWebFragmentHelper().loadCondition(className, plugin);
-        }
-    }
 }

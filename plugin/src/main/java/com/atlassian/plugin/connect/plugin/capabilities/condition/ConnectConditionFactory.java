@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.module;
+package com.atlassian.plugin.connect.plugin.capabilities.condition;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.web.Condition;
