@@ -7,8 +7,6 @@ import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponseTransformation;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -55,25 +53,21 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
     );
 
     private final HttpClient httpClient;
-//    private final LicenseRetriever licenseRetriever;
-//    private final LocaleHelper localeHelper;
     private final HttpClientFactory factory;
 
     @Inject
-    public CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClientFactory httpClientFactory, PluginRetrievalService pluginRetrievalService)
+    public CachingHttpContentRetriever(HttpClientFactory httpClientFactory, PluginRetrievalService pluginRetrievalService)
     {
-        this(licenseRetriever, localeHelper, httpClientFactory, getHttpClientOptions(checkNotNull(pluginRetrievalService, "pluginRetrievalService")));
+        this(httpClientFactory, getHttpClientOptions(checkNotNull(pluginRetrievalService, "pluginRetrievalService")));
     }
 
-    CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClientFactory httpClientFactory, HttpClientOptions httpClientOptions)
+    CachingHttpContentRetriever(HttpClientFactory httpClientFactory, HttpClientOptions httpClientOptions)
     {
-        this(licenseRetriever, localeHelper, checkNotNull(httpClientFactory, "httpClientFactory").create(checkNotNull(httpClientOptions, "httpClientOptions")), httpClientFactory);
+        this(checkNotNull(httpClientFactory, "httpClientFactory").create(checkNotNull(httpClientOptions, "httpClientOptions")), httpClientFactory);
     }
 
-    CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClient httpClient, HttpClientFactory factory)
+    CachingHttpContentRetriever(HttpClient httpClient, HttpClientFactory factory)
     {
-//        this.licenseRetriever = checkNotNull(licenseRetriever);
-//        this.localeHelper = checkNotNull(localeHelper);
         this.httpClient = checkNotNull(httpClient);
         this.factory = factory;
     }
@@ -95,8 +89,6 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
         checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
 
         log.info("{}ing content from '{}'", method, url);
-
-//        final Map<String, String[]> allParameters = getAllParameters(parameters, pluginKey);
 
         Request.Builder request = httpClient.newRequest(getFullUrl(method, url, parameters));
         request = request.setAttributes(getAttributes(pluginKey));
@@ -151,25 +143,6 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
     {
         return authorizationGenerator.generate(method, url, allParameters);
     }
-
-//    private Map<String, String[]> getAllParameters(Map<String, String[]> parameters, String pluginKey)
-//    {
-//        return ImmutableMap.<String, String[]>builder()
-//                .putAll(parameters)
-//                .put("lic", new String[]{getLicenseStatusAsString(pluginKey)})
-//                .put("loc", new String[]{getLocale()})
-//                .build();
-//    }
-//
-//    private String getLicenseStatusAsString(String pluginKey)
-//    {
-//        return licenseRetriever.getLicenseStatus(pluginKey).value();
-//    }
-//
-//    private String getLocale()
-//    {
-//        return localeHelper.getLocaleTag();
-//    }
 
     private static HttpClientOptions getHttpClientOptions(PluginRetrievalService pluginRetrievalService)
     {
