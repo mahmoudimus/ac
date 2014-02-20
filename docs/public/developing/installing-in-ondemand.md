@@ -18,9 +18,9 @@ through the Marketplace.
         <span class="aui-icon icon-warning"></span>
         <strong>Important</strong>
     </p>
-    In order to install an add-on into an OnDemand instance, it must be served over TLS. An add-on
+    In order to install an add-on into an OnDemand instance, it must be served over HTTPS. An add-on
     _must_ have a [`baseUrl`](../modules/#baseUrl) which starts with `https://`; a baseUrl of the form
-    `http://my-server.com:443/` will not be accepted. Additionally, the TLS certificate cannot not be self-signed.
+    `http://my-server.com:443/` will not be accepted. Additionally, the HTTPS certificate cannot not be self-signed.
 </div>
 
 To create a listing, you'll need a Marketplace user account that's associated with a vendor. You can
@@ -116,7 +116,8 @@ the listing. To do so, follow these steps:
 1. Log in to the Atlassian Marketplace using the credentials associated with your vendor contact account.
 2. Click the **Manage Add-on** link.
 3. Click on the name of the add-on.
-4. Scroll down to the listing information section of the page and click the **Create a token** button.
+4. Click on the **Private Listings** tab.
+5. Scroll down to the listing information section of the page and click the **Create a token** button.
 Keep in mind that this button appears only in the manage page for OnDemand add-ons. If you do not
 see the button on the manage page for your add-on, make sure you have a properly configured listing.
 
