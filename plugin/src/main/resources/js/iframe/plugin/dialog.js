@@ -30,7 +30,7 @@ AP.define("dialog", ["_dollar", "_rpc"],
 
     exports = {
       /**
-      * Creates a dialog for a module key
+      * Creates a dialog for a web-item, web-panel or page module key.
       * @param {DialogOptions} options configuration object of dialog options.
       * @example
       * AP.require('dialog', function(dialog){
