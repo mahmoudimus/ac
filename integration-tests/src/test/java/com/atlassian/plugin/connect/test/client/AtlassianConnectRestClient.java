@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.client;
 
 import cc.plural.jsonij.JSON;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -176,11 +177,24 @@ public final class AtlassianConnectRestClient
 
     private String getTokenHeaderExceptionMessage(String prefix, HttpResponse response)
     {
+        String responseBody = null;
+
+        try
+        {
+            responseBody = IOUtils.toString(response.getEntity().getContent());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            responseBody = "<failed to read due to IOException: " + e.getLocalizedMessage() + ">";
+        }
+
         return prefix + ": expected-header-name=" + UPM_TOKEN_HEADER
                 + ", headers=" + headersToString(response.getAllHeaders())
                 + ", status-code=" + response.getStatusLine().getStatusCode()
                 + ", reason=" + response.getStatusLine().getReasonPhrase()
-                + ", protocol-version=" + response.getStatusLine().getProtocolVersion();
+                + ", protocol-version=" + response.getStatusLine().getProtocolVersion()
+                + ", response-body=" + responseBody;
     }
 
     private String headersToString(Header[] tokenHeaders)
