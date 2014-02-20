@@ -181,24 +181,11 @@ public final class AtlassianConnectRestClient
 
     private String getTokenHeaderExceptionMessage(String prefix, HttpResponse response)
     {
-        String responseBody;
-
-        try
-        {
-            responseBody = IOUtils.toString(response.getEntity().getContent());
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            responseBody = "<failed to read due to IOException: " + e.getLocalizedMessage() + ">";
-        }
-
         return prefix + ": expected-header-name=" + UPM_TOKEN_HEADER
                 + ", headers=" + headersToString(response.getAllHeaders())
                 + ", status-code=" + response.getStatusLine().getStatusCode()
                 + ", reason=" + response.getStatusLine().getReasonPhrase()
-                + ", protocol-version=" + response.getStatusLine().getProtocolVersion()
-                + ", response-body=" + responseBody;
+                + ", protocol-version=" + response.getStatusLine().getProtocolVersion();
     }
 
     private String headersToString(Header[] tokenHeaders)
