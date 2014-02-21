@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.iframe.render.context;
 
 import com.atlassian.html.encode.JavascriptEncoder;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
@@ -120,7 +121,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         }
 
         @Override
-        public InitializedBuilder productContext(final Map<String, Object> productContext)
+        public InitializedBuilder productContext(ModuleContextParameters productContext)
         {
             String json = new JSONObject(productContext).toString();
             StringWriter writer = new StringWriter();
