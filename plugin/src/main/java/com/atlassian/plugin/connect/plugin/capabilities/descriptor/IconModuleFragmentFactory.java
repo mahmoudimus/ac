@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 
 @Component
-public class IconModuleFragmentFactory implements ConnectModuleFragmentFactory<IconBean>
+public class IconModuleFragmentFactory
 {
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
 
@@ -20,7 +20,6 @@ public class IconModuleFragmentFactory implements ConnectModuleFragmentFactory<I
         this.pluginAccessorFactory = pluginAccessorFactory;
     }
 
-    @Override
     public DOMElement createFragment(String pluginKey, IconBean bean)
     {
         URI url = pluginAccessorFactory.get(pluginKey).getTargetUrl(URI.create(bean.getUrl()));

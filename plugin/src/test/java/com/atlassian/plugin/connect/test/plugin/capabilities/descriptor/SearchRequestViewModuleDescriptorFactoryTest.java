@@ -17,10 +17,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleF
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.ConnectConditionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
+import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +59,10 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     private HostContainer hostContainer;
     @Mock
     private IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    @Mock
+    private ConnectConditionDescriptorFactory connectConditionDescriptorFactory;
+    @Mock
+    private Condition condition;
 
     private SearchRequestViewModuleDescriptorImpl descriptor;
 
@@ -74,9 +81,12 @@ public class SearchRequestViewModuleDescriptorFactoryTest
         when(componentAccessor.getComponent(SearchRequestURLHandler.class)).thenReturn(urlHandler);
         when(componentAccessor.getComponent(ConditionDescriptorFactory.class)).thenReturn(conditionDescriptorFactory);
 
+        when(connectConditionDescriptorFactory.retrieveCondition(any(Plugin.class), any(Element.class))).thenReturn(condition);
+
         SearchRequestViewModuleDescriptorFactory factory = new SearchRequestViewModuleDescriptorFactory(
                 authenticationContext,
                 conditionModuleFragmentFactory,
+                connectConditionDescriptorFactory,
                 applicationProperties,
                 searchRequestViewBodyWriterUtil,
                 templateRenderer,

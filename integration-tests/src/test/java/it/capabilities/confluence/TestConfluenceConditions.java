@@ -8,8 +8,8 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPa
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
-import it.capabilities.CheckUsernameConditionServlet;
-import it.capabilities.ParameterCapturingConditionServlet;
+import it.servlet.condition.CheckUsernameConditionServlet;
+import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -29,9 +29,9 @@ import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 {
@@ -133,7 +133,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         loginAsBarney();
 
         ConfluenceEditPage editPage = visitEditPage();
-        assertTrue("Web item should NOT be found", editPage.webItemDoesNotExist(ONLY_BETTY_WEBITEM));
+        assertFalse("Web item should NOT be found", editPage.existsWebItem(ONLY_BETTY_WEBITEM));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         loginAsAdmin();
 
         ConfluenceEditPage editPage = visitEditPage();
-        assertTrue("Web item should NOT be found", editPage.webItemDoesNotExist(ONLY_BETTY_WEBITEM));
+        assertFalse("Web item should NOT be found", editPage.existsWebItem(ONLY_BETTY_WEBITEM));
     }
 
     @Test
@@ -171,7 +171,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         loginAsAdmin();
 
         ConfluenceEditPage editPage = visitEditPage();
-        assertTrue("Web item should NOT be found", editPage.webItemDoesNotExist(BETTY_AND_BARNEY_WEBITEM));
+        assertFalse("Web item should NOT be found", editPage.existsWebItem(BETTY_AND_BARNEY_WEBITEM));
     }
 
     @Test
@@ -190,7 +190,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         loginAsBarney();
 
         ConfluenceEditPage editPage = visitEditPage();
-        assertTrue("Web item should NOT be found", editPage.webItemDoesNotExist(ADMIN_RIGHTS_WEBITEM));
+        assertFalse("Web item should NOT be found", editPage.existsWebItem(ADMIN_RIGHTS_WEBITEM));
     }
 
     @Test

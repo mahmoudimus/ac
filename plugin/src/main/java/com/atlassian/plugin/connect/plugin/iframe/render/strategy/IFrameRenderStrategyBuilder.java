@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.web.Condition;
 
 
@@ -32,7 +33,10 @@ public interface IFrameRenderStrategyBuilder
 
     interface InitializedBuilder
     {
-        InitializedBuilder condition(Condition condition);
+        InitializedBuilder condition(ConditionalBean condition);
+        InitializedBuilder conditions(Iterable<ConditionalBean> conditions);
+        InitializedBuilder conditionClass(Class<? extends Condition> condition);
+        InitializedBuilder conditionClasses(Iterable<Class<? extends Condition>> conditions);
         InitializedBuilder title(String title);
         InitializedBuilder dimensions(String width, String height);
         InitializedBuilder decorator(String decorator);

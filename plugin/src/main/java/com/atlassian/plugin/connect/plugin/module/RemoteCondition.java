@@ -1,7 +1,9 @@
-package com.atlassian.plugin.connect.spi.module;
+package com.atlassian.plugin.connect.plugin.module;
 
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager;
+import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -39,6 +41,8 @@ public final class RemoteCondition implements Condition
     private final BigPipeManager bigPipeManager;
     private final UserManager userManager;
     private final TemplateRenderer templateRenderer;
+    private final LicenseRetriever licenseRetriever;
+    private final LocaleHelper localeHelper;
 
     private static final Logger log = LoggerFactory.getLogger(RemoteCondition.class);
 
@@ -46,13 +50,17 @@ public final class RemoteCondition implements Condition
                            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
                            BigPipeManager bigPipeManager,
                            UserManager userManager,
-                           TemplateRenderer templateRenderer)
+                           TemplateRenderer templateRenderer,
+                           LicenseRetriever licenseRetriever,
+                           LocaleHelper localeHelper)
     {
         this.productAccessor = productAccessor;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.bigPipeManager = bigPipeManager;
         this.userManager = userManager;
         this.templateRenderer = templateRenderer;
+        this.licenseRetriever = licenseRetriever;
+        this.localeHelper = localeHelper;
     }
 
     @Override
@@ -129,7 +137,19 @@ public final class RemoteCondition implements Condition
         {
             params.put("user_id", new String[]{remoteUser.getUsername()});
             params.put("user_key", new String[]{remoteUser.getUserKey().getStringValue()});
+            params.put("lic", new String[]{getLicenseStatusAsString(pluginKey)});
+            params.put("loc", new String[]{getLocale()});
         }
         return params;
+    }
+
+    private String getLicenseStatusAsString(String pluginKey)
+    {
+        return licenseRetriever.getLicenseStatus(pluginKey).value();
+    }
+
+    private String getLocale()
+    {
+        return localeHelper.getLocaleTag();
     }
 }

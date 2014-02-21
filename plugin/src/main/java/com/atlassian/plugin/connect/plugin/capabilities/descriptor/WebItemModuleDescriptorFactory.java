@@ -4,7 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.base.Joiner;
 import org.dom4j.Element;
@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -33,24 +33,32 @@ public class WebItemModuleDescriptorFactory
 
     private final IconModuleFragmentFactory iconModuleFragmentFactory;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
 
     @Autowired
     public WebItemModuleDescriptorFactory(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory,
             IconModuleFragmentFactory iconModuleFragmentFactory,
             ConditionModuleFragmentFactory conditionModuleFragmentFactory,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory, ParamsModuleFragmentFactory paramsModuleFragmentFactory)
+            ParamsModuleFragmentFactory paramsModuleFragmentFactory)
     {
         this.productWebItemDescriptorFactory = productWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
-        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
     }
 
     @Override
     public WebItemModuleDescriptor createModuleDescriptor(Plugin plugin, WebItemModuleBean bean)
+    {
+        return createModuleDescriptor(plugin, bean, Collections.<Class<? extends Condition>>emptyList());
+    }
+
+    public WebItemModuleDescriptor createModuleDescriptor(Plugin plugin, WebItemModuleBean bean, Class<? extends Condition> additionalCondition)
+    {
+        return createModuleDescriptor(plugin, bean, Collections.<Class<? extends Condition>>singletonList(additionalCondition));
+    }
+
+    public WebItemModuleDescriptor createModuleDescriptor(Plugin plugin, WebItemModuleBean bean, Iterable<Class<? extends Condition>> additionalConditions)
     {
         Element webItemElement = new DOMElement("web-item");
 
@@ -85,7 +93,8 @@ public class WebItemModuleDescriptorFactory
 
         if (!bean.getConditions().isEmpty())
         {
-            webItemElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions(), "#" + webItemKey));
+            webItemElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions(),
+                    additionalConditions));
         }
 
         if (bean.getTarget().isDialogTarget())
