@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.util.Collections;
+import java.util.Map;
+
 import com.atlassian.fugue.Effect;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -21,20 +24,25 @@ public class ConnectPluginXmlFactory
 {
     public String createPluginXml(ConnectAddonBean bean)
     {
+        return createPluginXml(bean, Collections.EMPTY_MAP);
+    }
+
+    public String createPluginXml(ConnectAddonBean bean, Map<String,String> i18nProps)
+    {
         Document doc = DocumentFactory.getInstance().createDocument();
         Element root = new DOMElement("atlassian-plugin");
         doc.setRootElement(root);
 
         root.addAttribute("key", bean.getKey())
-                .addAttribute("name", bean.getName())
-                .addAttribute("plugins-version", "2");
+            .addAttribute("name", bean.getName())
+            .addAttribute("plugins-version", "2");
 
         final Element info = new DOMElement("plugin-info");
         info.addElement("description").setText(bean.getDescription());
         info.addElement("version").setText(bean.getVersion());
         info.addElement("vendor")
-                .addAttribute("name", bean.getVendor().getName())
-                .addAttribute("url", bean.getVendor().getUrl());
+            .addAttribute("name", bean.getVendor().getName())
+            .addAttribute("url", bean.getVendor().getUrl());
 
         if (null != bean.getEnableLicensing() && bean.getEnableLicensing())
         {
@@ -52,6 +60,15 @@ public class ConnectPluginXmlFactory
         });
 
         root.add(info);
+        
+        if(null != i18nProps && ! i18nProps.isEmpty())
+        {
+            //<resource type="i18n" name="i18n" location="some-key.properties"/>
+            final Element i18n = new DOMElement("resource");
+            i18n.addAttribute("type","i18n").addAttribute("name","i18n").addAttribute("location",bean.getKey());
+            
+            root.add(i18n);
+        }
 
         return doc.asXML();
 

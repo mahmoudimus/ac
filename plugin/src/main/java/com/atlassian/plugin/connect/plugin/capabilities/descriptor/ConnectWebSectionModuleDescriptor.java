@@ -21,4 +21,10 @@ public class ConnectWebSectionModuleDescriptor extends DefaultWebSectionModuleDe
         checkNotNull(element.attributeValue("key"));
         super.init(plugin, element);
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

@@ -139,4 +139,10 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
             throw new PluginParseException(ex);
         }
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

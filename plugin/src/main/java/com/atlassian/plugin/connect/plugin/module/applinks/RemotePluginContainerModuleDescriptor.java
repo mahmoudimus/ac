@@ -78,4 +78,10 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     {
         return null;
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

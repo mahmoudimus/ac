@@ -78,4 +78,10 @@ public final class ConfigurePageModuleDescriptor extends AbstractModuleDescripto
             registration.unregister();
         }
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

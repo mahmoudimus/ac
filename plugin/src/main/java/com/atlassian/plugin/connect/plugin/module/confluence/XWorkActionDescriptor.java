@@ -87,4 +87,10 @@ public class XWorkActionDescriptor extends AbstractModuleDescriptor implements C
             throw new IllegalStateException("The ModuleFactory for " + moduleDescriptor.getModuleClass().getName() + " is expected to never be called.");
         }
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

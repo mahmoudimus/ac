@@ -165,4 +165,10 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     {
         return getRequiredAttribute(element, "location");
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

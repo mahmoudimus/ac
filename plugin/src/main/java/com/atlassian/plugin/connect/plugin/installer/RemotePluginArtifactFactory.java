@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import java.util.Map;
 public class RemotePluginArtifactFactory
 {
     private static final String ATLASSIAN_PLUGIN_KEY = "Atlassian-Plugin-Key";
+    private static final String LS = System.getProperty("line.separator");
     private final ConnectPluginXmlFactory pluginXmlFactory;
     private final BundleContext bundleContext;
     private final ContainerManagedPlugin theConnectPlugin;
@@ -72,16 +74,38 @@ public class RemotePluginArtifactFactory
 
     public PluginArtifact create(ConnectAddonBean addOn, String username) throws IOException
     {
+        return create(addOn,username, Collections.EMPTY_MAP);
+    }
+    
+    public PluginArtifact create(ConnectAddonBean addOn, String username, Map<String,String> i18nProps) throws IOException
+    {
         ConnectAddOnBundleBuilder builder = new ConnectAddOnBundleBuilder();
 
         //create a proper manifest
         builder.manifest(createManifest(addOn, username));
 
         //create the plugin.xml
-        builder.addResource(Filenames.ATLASSIAN_PLUGIN_XML, pluginXmlFactory.createPluginXml(addOn));
+        builder.addResource(Filenames.ATLASSIAN_PLUGIN_XML, pluginXmlFactory.createPluginXml(addOn,i18nProps));
         builder.addResource(Filenames.ATLASSIAN_ADD_ON_JSON, ConnectModulesGsonFactory.getGson().toJson(addOn));
+        
+        if(null != i18nProps && !i18nProps.isEmpty())
+        {
+            builder.addResource(addOn.getKey() + ".properties",createPropertiesContent(i18nProps));
+        }
 
         return new JarPluginArtifact(builder.build(addOn.getKey().replaceAll(CLEAN_FILENAME_PATTERN, "-").toLowerCase()));
+    }
+
+    private String createPropertiesContent(Map<String, String> i18nProps)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        for(Map.Entry<String,String> entry : i18nProps.entrySet())
+        {
+            sb.append(entry.getKey()).append("=").append(entry.getValue()).append(LS);    
+        }
+        
+        return sb.toString();
     }
 
     private Map<String, String> createManifest(ConnectAddonBean addOn, String username)

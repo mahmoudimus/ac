@@ -34,5 +34,10 @@ public class ConnectIssueTabPanelModuleDescriptor extends IssueTabPanelModuleDes
         return new ConnectIFrameIssueTabPanel(renderStrategy, moduleContextFilter);
     }
 
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 
 }

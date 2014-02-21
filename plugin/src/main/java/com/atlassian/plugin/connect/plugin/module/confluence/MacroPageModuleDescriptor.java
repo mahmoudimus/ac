@@ -89,4 +89,10 @@ public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Vo
             registration.unregister();
         }
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

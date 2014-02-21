@@ -90,4 +90,10 @@ public final class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<
             registration.unregister();
         }
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

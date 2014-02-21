@@ -151,4 +151,10 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         }
     }
 
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+
 }

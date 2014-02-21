@@ -193,4 +193,11 @@ public final class DefaultPermissionModuleDescriptor extends AbstractModuleDescr
             return delegate.getApiResourceInfos();
         }
     }
+    
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+    
 }

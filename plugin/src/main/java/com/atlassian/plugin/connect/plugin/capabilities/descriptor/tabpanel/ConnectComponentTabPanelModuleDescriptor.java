@@ -34,4 +34,9 @@ public class ConnectComponentTabPanelModuleDescriptor extends ComponentTabPanelM
         return new ConnectIFrameComponentTabPanel(renderStrategy, moduleContextFilter);
     }
 
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

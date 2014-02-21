@@ -59,4 +59,11 @@ public final class ProjectConfigWebPanelModuleDescriptor extends RemoteWebPanelM
             throw new PluginParseException("project-config-panel is missing valid location.");
         }
     }
+    
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+    
 }

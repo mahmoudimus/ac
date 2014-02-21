@@ -68,4 +68,10 @@ public final class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<
             registration.unregister();
         }
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

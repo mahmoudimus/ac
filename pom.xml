@@ -81,6 +81,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <skipTests>${skipUnits}</skipTests>
                     <excludes>
                         <exclude>**/*$*</exclude>
                         <exclude>it/**</exclude>
@@ -577,7 +578,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <dependencies />
+
     <!-- REMOVE WHEN JGITFLOW IS FINAL -->
     <pluginRepositories>
         <!-- REMOVE WHEN JGITFLOW IS FINAL -->
@@ -654,6 +655,7 @@
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
         <atlassian.spring.scanner.version>1.0-m9</atlassian.spring.scanner.version>
+        <skipUnits>${skipTests}</skipUnits>
     </properties>
 
     <repositories>

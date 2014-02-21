@@ -66,4 +66,10 @@ public final class ComponentTabPageModuleDescriptor extends AbstractJiraTabPageM
         return IFrameComponentTab.class;
     }
 
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+
 }

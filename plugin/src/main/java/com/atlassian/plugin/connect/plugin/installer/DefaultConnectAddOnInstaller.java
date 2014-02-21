@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -99,11 +101,12 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         String pluginKey;
         try
         {
-            ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
+            Map<String,String> i18nProps = new HashMap<String, String>();
+            ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nProps);
             pluginKey = addOn.getKey();
 
             removeOldPlugin(addOn.getKey());
-            final PluginArtifact pluginArtifact = remotePluginArtifactFactory.create(addOn, username);
+            final PluginArtifact pluginArtifact = remotePluginArtifactFactory.create(addOn, username, i18nProps);
 
             long startTime = System.currentTimeMillis();
             Plugin installedPlugin = installPlugin(pluginArtifact, pluginKey, username);

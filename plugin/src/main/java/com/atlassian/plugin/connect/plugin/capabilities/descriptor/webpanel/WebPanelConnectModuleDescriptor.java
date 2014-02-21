@@ -37,4 +37,10 @@ public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescri
         return new ConnectIFrameWebPanel(renderStrategy, moduleContextFilter, webFragmentModuleContextExtractor);
     }
 
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+
 }

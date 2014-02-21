@@ -64,4 +64,10 @@ public class ProfilePageModuleDescriptor extends AbstractModuleDescriptor<Void>
             registration.unregister();
         }
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

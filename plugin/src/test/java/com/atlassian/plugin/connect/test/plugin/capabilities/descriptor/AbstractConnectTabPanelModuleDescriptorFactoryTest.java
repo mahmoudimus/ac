@@ -1,11 +1,12 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.connect.ConvertToWiredTest;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.DefaultConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.test.plugin.util.matchers.dom4j.Dom4JElementMatchers;
@@ -79,7 +80,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
 
     protected ConnectTabPanelModuleDescriptorFactory createDescriptorFactory(ConnectContainerUtil connectContainerUtil)
     {
-        return new ConnectTabPanelModuleDescriptorFactory(mock(ConditionModuleFragmentFactory.class), connectContainerUtil);
+        return new DefaultConnectTabPanelModuleDescriptorFactory(mock(ConditionModuleFragmentFactory.class), connectContainerUtil);
     }
 
     protected ConnectTabPanelModuleBean createModuleBean(String name, String i18NameKey, String key, String url, int weight)

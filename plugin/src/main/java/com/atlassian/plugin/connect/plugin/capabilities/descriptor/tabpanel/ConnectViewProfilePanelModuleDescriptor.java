@@ -38,4 +38,10 @@ public class ConnectViewProfilePanelModuleDescriptor extends ViewProfilePanelMod
         return new ConnectIFrameProfileTabPanel(renderStrategy, moduleContextFilter, userManager);
     }
 
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+
 }
