@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,13 +102,12 @@ public class StorageFormatMacro extends AbstractRemoteMacro
         return remotablePluginAccessorFactory.get(pluginKey);
     }
 
-    private Map<String, String> getAllParameters(Map<String, String> parameters, String pluginKey)
+    private Map<String, String> getAllParameters(Map<String, String> macroParameters, String pluginKey)
     {
-        return ImmutableMap.<String, String>builder()
-                .putAll(parameters)
-                .put("lic", getLicenseStatusAsString(pluginKey))
-                .put("loc", getLocale())
-                .build();
+        Map<String, String> parameters = Maps.newHashMap(macroParameters);
+        parameters.put("lic", getLicenseStatusAsString(pluginKey));
+        parameters.put("loc", getLocale());
+        return parameters;
     }
 
     private String getLicenseStatusAsString(String pluginKey)
