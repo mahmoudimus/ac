@@ -6,6 +6,8 @@ import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -19,6 +21,9 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test of remote issue tab panel in JIRA
@@ -42,12 +47,6 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
                 .setAuthenticationToNone()
                 .addModules(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS,
                         newTabPanelBean()
-                                .withName(new I18nProperty("Issue Tab Panel", null))
-                                .withKey("issue-tab-panel")
-                                .withUrl("/ipp?issue_id={issue.id}&project_id={project.id}&project_key={project.key}")
-                                .withWeight(1234)
-                                .build(),
-                        newTabPanelBean()
                                 .withName(new I18nProperty("Issue Tab Panel W Dialog", null))
                                 .withKey(ISSUE_TAB_PANEL_W_DIALOG)
                                 .withUrl("/ippd?issue_id={issue.id}&project_id={project.id}&project_key={project.key}")
@@ -58,14 +57,10 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
                         // this general page is so that we'll have a servlet backing the dialog which we create via js
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_DIALOG_NAME, null))
-                                .withUrl("/my-dialog-url?myproject_key={project.key}")
+                                .withUrl("/my-dialog-url?myproject_key={project.key}&myissue_key={issue.key}")
                                 .withKey(ADDON_DIALOG)
                                 .build()
                 )
-
-
-//        "my-dialog"
-                .addRoute("/ipp", ConnectAppServlets.apRequestServlet())
                 .addRoute("/ippd", ConnectAppServlets.openDialogServlet())
                 .addRoute("/my-dialog-url", ConnectAppServlets.closeDialogServlet())
                 .start();
@@ -95,20 +90,24 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
     }
 
     @Test
-    public void testIssueTabPanel() throws RemoteException
-    {
-        jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issueKey, PLUGIN_KEY);
-        Assert.assertEquals("Success", page.getMessage());
-    }
-
-    @Test
     public void testIssueTabPanelWithJSDialog() throws RemoteException
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
                 JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_W_DIALOG, issueKey, PLUGIN_KEY);
-        Assert.assertEquals("Success", page.getMessage());
+//        Assert.assertEquals("Success", page.getMessage());
+
+
+        RemoteDialogOpeningPage dialogOpeningPage = jira().getPageBinder().bind(RemoteDialogOpeningPage.class, null, ISSUE_TAB_PANEL_W_DIALOG, remotePlugin.getAddon().getKey());
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(ADDON_DIALOG);
+
+        assertThat(closeDialogPage.getFromQueryString("myproject_key"), is(PROJECT_KEY));
+        assertThat(closeDialogPage.getFromQueryString("myissue_key"), is(issueKey));
+
+        closeDialogPage.close();
+        closeDialogPage.waitUntilClosed();
+        String response = dialogOpeningPage.waitForValue("dialog-close-data");
+        assertEquals("test dialog close data", response);
+
     }
 }
