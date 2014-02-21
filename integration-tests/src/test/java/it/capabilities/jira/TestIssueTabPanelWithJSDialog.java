@@ -95,8 +95,6 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
                 JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_W_DIALOG, issueKey, PLUGIN_KEY);
-//        Assert.assertEquals("Success", page.getMessage());
-
 
         RemoteDialogOpeningPage dialogOpeningPage = jira().getPageBinder().bind(RemoteDialogOpeningPage.class, null, ISSUE_TAB_PANEL_W_DIALOG, remotePlugin.getAddon().getKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(ADDON_DIALOG);
@@ -108,6 +106,5 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
         closeDialogPage.waitUntilClosed();
         String response = dialogOpeningPage.waitForValue("dialog-close-data");
         assertEquals("test dialog close data", response);
-
     }
 }
