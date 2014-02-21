@@ -4,7 +4,6 @@ import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
-import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactory;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -12,8 +11,8 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.ConnectConditionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.RemoteSearchRequestView;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -31,7 +30,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
 {
     private final JiraAuthenticationContext authenticationContext;
     private final SearchRequestURLHandler urlHandler;
-    private final ConditionDescriptorFactory conditionDescriptorFactory;
+    private final ConnectConditionDescriptorFactory conditionDescriptorFactory;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
@@ -41,6 +40,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     @Autowired
     public SearchRequestViewModuleDescriptorFactory(JiraAuthenticationContext authenticationContext,
                                                     ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+                                                    ConnectConditionDescriptorFactory conditionDescriptorFactory,
                                                     ApplicationProperties applicationProperties,
                                                     SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
                                                     TemplateRenderer templateRenderer,
@@ -49,7 +49,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     {
         this.authenticationContext = checkNotNull(authenticationContext);
         this.urlHandler = checkNotNull(componentAccessor.getComponent(SearchRequestURLHandler.class));
-        this.conditionDescriptorFactory = checkNotNull(componentAccessor.getComponent(ConditionDescriptorFactory.class));
+        this.conditionDescriptorFactory = checkNotNull(conditionDescriptorFactory);
         this.conditionModuleFragmentFactory = checkNotNull(conditionModuleFragmentFactory);
         this.applicationProperties = checkNotNull(applicationProperties);
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);

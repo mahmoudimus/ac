@@ -53,7 +53,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
 
         if (!bean.getConditions().isEmpty())
         {
-            DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions(), "#" + webPanelKey);
+            DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions());
             webPanelElement.add(conditionFragment);
         }
 

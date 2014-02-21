@@ -22,7 +22,7 @@ import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteC
 import static com.google.common.collect.Maps.newHashMap;
 
 @Component
-public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFactory<List<ConditionalBean>>
+public class ConditionModuleFragmentFactory
 {
     private static final String TYPE_KEY = "type";
 
@@ -30,45 +30,41 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
     private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
 
     @Autowired
-    public ConditionModuleFragmentFactory(ProductAccessor productAccessor, ParamsModuleFragmentFactory paramsModuleFragmentFactory)
+    public ConditionModuleFragmentFactory(ProductAccessor productAccessor,
+            ParamsModuleFragmentFactory paramsModuleFragmentFactory)
     {
         this.productAccessor = productAccessor;
         this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
     }
 
-    @Override
     public DOMElement createFragment(String pluginKey, List<ConditionalBean> beans)
     {
-        return createFragment(pluginKey, beans, null, Collections.<String>emptyList());
+        return createFragment(pluginKey, beans, Collections.<Class<? extends Condition>>emptyList());
     }
 
-    public DOMElement createFragment(String pluginKey, List<ConditionalBean> beans, String toHideSelector)
-    {
-        return createFragment(pluginKey, beans, toHideSelector, Collections.<String>emptyList());
-    }
-
-    public DOMElement createFragment(String pluginKey, List<ConditionalBean> beans, List<String> contextParams)
-    {
-        return createFragment(pluginKey, beans, null, contextParams);
-    }
-
-    public DOMElement createFragment(String pluginKey, List<ConditionalBean> beans, String toHideSelector, List<String> contextParams)
+    public DOMElement createFragment(String pluginKey, List<ConditionalBean> beans,
+            Iterable<Class<? extends Condition>> additionalStaticConditions)
     {
         DOMElement element = new DOMElement("conditions");
         element.addAttribute(TYPE_KEY, "AND");
 
-        List<DOMElement> conditions = processConditionBeans(pluginKey, beans, toHideSelector, contextParams);
+        List<DOMElement> conditions = processConditionBeans(pluginKey, beans);
 
         for (DOMElement condition : conditions)
         {
             element.add(condition);
         }
 
+        for (Class<? extends Condition> conditionClass : additionalStaticConditions)
+        {
+            element.add(createSingleCondition(conditionClass));
+        }
+
         return element;
 
     }
 
-    private List<DOMElement> processConditionBeans(String pluginKey, List<ConditionalBean> beans, String toHideSelector, List<String> contextParams)
+    private List<DOMElement> processConditionBeans(String pluginKey, List<ConditionalBean> beans)
     {
         List<DOMElement> elements = new ArrayList<DOMElement>();
 
@@ -76,7 +72,7 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
         {
             if (SingleConditionBean.class.isAssignableFrom(bean.getClass()))
             {
-                DOMElement element = createSingleCondition(pluginKey, (SingleConditionBean) bean, toHideSelector, contextParams);
+                DOMElement element = createSingleCondition(pluginKey, (SingleConditionBean) bean);
 
                 if (null != element)
                 {
@@ -90,7 +86,7 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
 
                 composite.addAttribute(TYPE_KEY, ccb.getType().toString().toUpperCase());
 
-                List<DOMElement> subConditions = processConditionBeans(pluginKey, ccb.getConditions(), toHideSelector, contextParams);
+                List<DOMElement> subConditions = processConditionBeans(pluginKey, ccb.getConditions());
 
                 for (DOMElement subcondition : subConditions)
                 {
@@ -105,7 +101,7 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
     }
 
 
-    private DOMElement createSingleCondition(String addOnKey, SingleConditionBean bean, String toHideSelector, List<String> contextParams)
+    private DOMElement createSingleCondition(String addOnKey, SingleConditionBean bean)
     {
         String className = "";
         DOMElement element = null;
@@ -139,8 +135,11 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
         return element;
     }
 
-    private String createUniqueUrlHash(String pluginKey, String cUrl)
+    private DOMElement createSingleCondition(Class<? extends Condition> conditionClass)
     {
-        return "ap-hash-" + (cUrl + ":" + pluginKey).hashCode();
+        DOMElement element = new DOMElement("condition");
+        element.addAttribute("class", conditionClass.getName());
+        return element;
     }
+
 }

@@ -9,18 +9,24 @@ import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 
 public class TestWebPanel extends JiraWebDriverTestBase
 {
+    private static final String WEB_PANEL_KEY = "hip-chat-discussions";
+
     private static ConnectRunner remotePlugin;
 
-    private RemoteWebPanel webPanel;
+    @Rule
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -29,12 +35,13 @@ public class TestWebPanel extends JiraWebDriverTestBase
                 .setAuthenticationToNone()
                 .addModule("webPanels", newWebPanelBean()
                         .withName(new I18nProperty("HipChat Discussions", "hipchat.discussions"))
-                        .withKey("hip-chat-discussions")
+                        .withKey(WEB_PANEL_KEY)
                         // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
                         .withUrl("/myWebPanelPage?issueId{issue.id}")
                         .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                         .withLayout(new WebPanelLayout("100%", "200px"))
                         .withWeight(1234)
+                        .withConditions(toggleableConditionBean())
                         .build()).start();
     }
 
@@ -51,19 +58,35 @@ public class TestWebPanel extends JiraWebDriverTestBase
     public void beforeEachTest()
     {
         loginAsAdmin();
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        webPanel = viewProjectPage.findWebPanel("hip-chat-discussions");
     }
 
     @Test
     public void webPanelExists()
     {
-        assertThat(webPanel, is(not(nullValue())));
+        JiraViewProjectPage viewProjectPage = visitViewProjectPage();
+        assertThat(viewProjectPage.findWebPanel(WEB_PANEL_KEY), is(not(nullValue())));
+    }
+
+    @Test
+    public void panelIsNotVisibleWithFalseCondition()
+    {
+        visitViewProjectPage();
+        assertThat("AddOn web panel should be present", connectPageOperations.existsWebPanel(WEB_PANEL_KEY), is(true));
+        remotePlugin.setToggleableConditionShouldDisplay(false);
+        visitViewProjectPage();
+        assertThat("AddOn web panel should NOT be present", connectPageOperations.existsWebPanel(WEB_PANEL_KEY), is(false));
     }
 
     @Test
     public void urlIsCorrect()
     {
+        JiraViewProjectPage viewProjectPage = visitViewProjectPage();
+        RemoteWebPanel webPanel = viewProjectPage.findWebPanel(WEB_PANEL_KEY);
         assertThat(webPanel.getIFrameSourceUrl(), startsWith(remotePlugin.getAddon().getBaseUrl() + "/myWebPanelPage"));
+    }
+
+    private JiraViewProjectPage visitViewProjectPage()
+    {
+        return product.visit(JiraViewProjectPage.class, project.getKey());
     }
 }

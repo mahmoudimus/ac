@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.client;
 
 import cc.plural.jsonij.JSON;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -29,11 +30,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static java.util.Collections.singletonList;
 
@@ -161,14 +158,81 @@ public final class AtlassianConnectRestClient
         String upmToken;
         HttpResponse response = getDefaultHttpClient(defaultUsername, defaultPassword).execute(upmGet);
         Header[] tokenHeaders = response.getHeaders(UPM_TOKEN_HEADER);
-        if (tokenHeaders == null || tokenHeaders.length != 1)
+
+        if (tokenHeaders == null || tokenHeaders.length == 0)
         {
-            throw new IOException("UPM Token Header missing from response.");
+            throw new IOException(getTokenHeaderExceptionMessage("UPM Token Header missing from response", response));
         }
+
+        if (tokenHeaders.length > 1)
+        {
+            throw new IOException(getTokenHeaderExceptionMessage("Multiple UPM Token Headers found on response", response));
+        }
+
         upmToken = tokenHeaders[0].getValue();
         EntityUtils.consume(response.getEntity());
 
         return upmToken;
+    }
+
+    private String getTokenHeaderExceptionMessage(String prefix, HttpResponse response)
+    {
+        String responseBody = null;
+
+        try
+        {
+            responseBody = IOUtils.toString(response.getEntity().getContent());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            responseBody = "<failed to read due to IOException: " + e.getLocalizedMessage() + ">";
+        }
+
+        return prefix + ": expected-header-name=" + UPM_TOKEN_HEADER
+                + ", headers=" + headersToString(response.getAllHeaders())
+                + ", status-code=" + response.getStatusLine().getStatusCode()
+                + ", reason=" + response.getStatusLine().getReasonPhrase()
+                + ", protocol-version=" + response.getStatusLine().getProtocolVersion()
+                + ", response-body=" + responseBody;
+    }
+
+    private String headersToString(Header[] tokenHeaders)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        if (null == tokenHeaders)
+        {
+            sb.append("null");
+        }
+        else
+        {
+            sb.append('[');
+            boolean notFirst = false;
+
+            for (Header header : tokenHeaders)
+            {
+                if (notFirst)
+                {
+                    sb.append(", ");
+                }
+
+                notFirst = true;
+
+                if (null == header)
+                {
+                    sb.append("null");
+                }
+                else
+                {
+                    sb.append(header.getName()).append('=').append(header.getValue());
+                }
+            }
+
+            sb.append(']');
+        }
+
+        return sb.toString();
     }
 
     public <T> T sendRequestAsUser(HttpRequest request, ResponseHandler<T> handler, String username, String password) throws Exception

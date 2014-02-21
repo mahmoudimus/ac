@@ -1,22 +1,23 @@
 package it.capabilities.jira;
 
 import com.atlassian.jira.functest.framework.FunctTestConstants;
-import com.atlassian.jira.plugin.versionpanel.VersionTabPanelModuleDescriptor;
 import com.atlassian.jira.testkit.client.restclient.Version;
 import com.atlassian.jira.testkit.client.restclient.VersionClient;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
-import com.atlassian.plugin.connect.plugin.module.jira.versiontab.VersionTabPageModuleDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import org.junit.*;
+import org.junit.rules.TestRule;
 
 import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -33,6 +34,8 @@ public class TestVersionTabPanel extends TestBase
     private String versionId;
     private static final String VERSION_NAME = "2.7.1";
 
+    @Rule
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -44,6 +47,7 @@ public class TestVersionTabPanel extends TestBase
                         .withKey(MODULE_KEY)
                         .withUrl("/ipp?version_id={version.id}&project_id={project.id}&project_key={project.key}")
                         .withWeight(1234)
+                        .withConditions(toggleableConditionBean())
                         .build())
                 .addRoute("/ipp", ConnectAppServlets.apRequestServlet())
                 .start();
@@ -78,9 +82,21 @@ public class TestVersionTabPanel extends TestBase
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, PLUGIN_KEY, MODULE_KEY);
 
+        assertThat("The addon tab should be present", versionTabPage.isAddOnTabPresent(), is(true));
         versionTabPage.clickTab();
 
         assertThat(versionTabPage.getVersionId(), equalTo(versionId));
         assertThat(versionTabPage.getProjectKey(), equalTo(PROJECT_KEY));
+    }
+
+    @Test
+    public void tabIsNotAccessibleWithFalseCondition() throws Exception
+    {
+        remotePlugin.setToggleableConditionShouldDisplay(false);
+
+        jira().gotoLoginPage().loginAsSysadminAndGoToHome();
+        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, PLUGIN_KEY, MODULE_KEY);
+
+        assertThat("The addon tab SHOULD NOT be present", versionTabPage.isAddOnTabPresent(), is(false));
     }
 }

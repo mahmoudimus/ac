@@ -16,12 +16,14 @@ import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.google.common.collect.ImmutableMap;
 import it.servlet.ContextServlet;
 import it.servlet.HttpContextServlet;
+import it.servlet.condition.ToggleableConditionServlet;
 import net.oauth.signature.RSA_SHA1;
 import org.bouncycastle.openssl.PEMWriter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.junit.rules.TestRule;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -59,6 +61,8 @@ public class ConnectRunner
     private final ConnectAddonBeanBuilder addonBuilder;
     private final String pluginKey;
     private final Set<ScopeName> scopes = new HashSet<ScopeName>();
+
+    private ToggleableConditionServlet toggleableConditionServlet;
     private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
     
@@ -270,6 +274,9 @@ public class ConnectRunner
             context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
         }
 
+        toggleableConditionServlet = new ToggleableConditionServlet(true);
+        context.addServlet(new ServletHolder(toggleableConditionServlet), ToggleableConditionServlet.TOGGLE_CONDITION_URL);
+
         list.addHandler(context);
         server.start();
 
@@ -286,6 +293,19 @@ public class ConnectRunner
     public static HttpServlet newMustacheServlet(String resource)
     {
         return newServlet(new MustacheServlet(resource));
+    }
+
+    /**
+     * @return a {@link org.junit.rules.TestRule} that reverts the condition back to it's initial value.
+     */
+    public TestRule resetToggleableConditionRule()
+    {
+        return toggleableConditionServlet.resetToInitialValueRule();
+    }
+
+    public void setToggleableConditionShouldDisplay(boolean shouldDisplay)
+    {
+        toggleableConditionServlet.setShouldDisplay(shouldDisplay);
     }
 
     private ImmutableMap<String, Object> getBaseContext()

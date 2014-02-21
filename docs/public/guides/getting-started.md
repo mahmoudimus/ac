@@ -130,7 +130,7 @@ You can start JIRA or Confluence with Atlassian Connect as follows:
 #### Confluence
 <pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.4-OD-5 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0-rc2,com.atlassian.jwt:jwt-plugin:1.0-m8,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
-####Note:
+#### Note:
 We recommend you start the host application using the SDK command shown here. Atlassian Connect is
 only present in Atlassian OnDemand and not yet included with Download instances of our software.
 Therefore certain components, including the Atlassian Connect Framework itself, are included here in
