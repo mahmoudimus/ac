@@ -68,6 +68,7 @@ public class ModuleContextParserImpl implements ModuleContextParser
     }
 
 
+    // the product context may be passed from the client as a json object. If so we pull them out and pretend they were request params. Not pretty but hey
     private Map<String, String[]> tryExtractContextFromJson(Map<String, String[]> requestParams) throws InvalidContextParameterException
     {
         if (!requestParams.containsKey(CONTEXT_PARAMETER_KEY))
