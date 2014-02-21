@@ -82,7 +82,7 @@ public class MacroModuleContextExtractorImpl implements MacroModuleContextExtrac
         moduleContext.put("page.id", pageId);
         moduleContext.put("page.title", pageTitle);
         moduleContext.put("page.type", pageType);
-        moduleContext.put("page.version.id", versionId);
+        moduleContext.put("page.version", versionId);
 
         moduleContext.put("space.id", spaceId);
         moduleContext.put("space.key", spaceKey);
