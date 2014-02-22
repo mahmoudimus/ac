@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.webpanel;
 
 import com.atlassian.confluence.pages.AbstractPage;
+import com.atlassian.confluence.pages.BlogPost;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.spaces.Space;
@@ -64,5 +65,15 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
         assertEquals("123", params.get("page.id"));
         assertEquals("321", params.get("space.id"));
         assertEquals("SPACE", params.get("space.key"));
+    }
+
+    @Test
+    public void testExtractBlogPostFromContext()
+    {
+        BlogPost blogPost = mock(BlogPost.class);
+        when(blogPost.getId()).thenReturn(123L);
+
+        ModuleContextParameters params = extractor.extractParameters(ImmutableMap.<String, Object>of("page", blogPost));
+        assertEquals("123", params.get("page.id"));
     }
 }
