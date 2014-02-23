@@ -29,6 +29,8 @@ public class ConfluenceModuleContextFilter implements ModuleContextFilter
     private static final Logger log = LoggerFactory.getLogger(ConfluenceModuleContextFilter.class);
 
     public static final String PAGE_ID = "page.id";
+    public static final String PAGE_VERSION = "page.version";
+    public static final String PAGE_TYPE = "page.type";
     public static final String SPACE_ID = "space.id";
     public static final String SPACE_KEY = "space.key";
 
