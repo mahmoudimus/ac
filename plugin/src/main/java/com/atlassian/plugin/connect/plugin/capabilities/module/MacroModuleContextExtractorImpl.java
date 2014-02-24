@@ -63,13 +63,17 @@ public class MacroModuleContextExtractorImpl implements MacroModuleContextExtrac
             pageId = entity.getIdAsString();
             pageTitle = StringUtils.defaultString(entity.getTitle());
             pageType = entity.getType();
+            versionId = Integer.toString(entity.getVersion());
+
             if (entity instanceof Spaced)
             {
                 Space space = ((Spaced) entity).getSpace();
-                spaceKey = space.getKey();
-                spaceId = Long.toString(space.getId());
+                if (space != null)
+                {
+                    spaceKey = space.getKey();
+                    spaceId = Long.toString(space.getId());
+                }
             }
-            versionId = Integer.toString(entity.getVersion());
         }
 
         UserProfile currentUser = userManager.getRemoteUser();
