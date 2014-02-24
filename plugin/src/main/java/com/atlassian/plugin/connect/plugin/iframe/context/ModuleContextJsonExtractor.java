@@ -37,12 +37,10 @@ public class ModuleContextJsonExtractor
     {
         if (!requestParams.containsKey(CONTEXT_PARAMETER_KEY))
         {
-            return requestParams;
+            return ImmutableMap.copyOf(requestParams);
         }
 
         final String[] contextParam = requestParams.get(CONTEXT_PARAMETER_KEY);
-        if (contextParam == null)
-            return ImmutableMap.copyOf(requestParams);
 
         final String contextJsonStr = contextParam[0];
         ObjectMapper objectMapper = new ObjectMapper();
@@ -54,11 +52,11 @@ public class ModuleContextJsonExtractor
             mutableParams.remove(CONTEXT_PARAMETER_KEY);
             final Map<String, String[]> contextParams = transformToPathForm(contextMap);
             checkSameParams(mutableParams, contextParams);
-            return ImmutableMap.<String, String[]>builder()
-                    .putAll(mutableParams)
-                            // context params take precedence and will overwrite any params with same key from the url query
-                    .putAll(contextParams)
-                    .build();
+            final Map<String, String[]> m = Maps.newHashMap();
+            m.putAll(mutableParams);
+            // context params take precedence and will overwrite any params with same key from the url query
+            m.putAll(contextParams);
+            return ImmutableMap.copyOf(m);
         }
         catch (IOException e)
         {
