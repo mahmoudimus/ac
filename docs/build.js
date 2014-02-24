@@ -329,7 +329,8 @@ function convertRestScopesToViewModel(scopeDefinitions) {
                     path: path,
                     id: slugify(path),
                     versions: restPath.versions.sort(),
-                    scopes: scopesByKey[restPath.key]
+                    scopes: scopesByKey[restPath.key],
+                    public: restPath.public
                 }
             });
         });
@@ -345,7 +346,8 @@ function convertRestScopesToViewModel(scopeDefinitions) {
                     path: path,
                     id: slugify(path),
                     versions: [],
-                    scopes: scopesByKey[downloadPath.key]
+                    scopes: scopesByKey[downloadPath.key],
+                    public: downloadPath.public
                 }
             });
         });
