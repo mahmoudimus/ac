@@ -51,17 +51,30 @@ public class ModuleContextJsonExtractorTest
     }
 
     @Test
+    public void doesNotModifyParamsIfContextParamNotProvided()
+    {
+        final Map<String, String[]> requestParams = ImmutableMap.of(
+                "project.id", new String[]{"10"},
+                "project.key", new String[]{"myKey"},
+                "other.blah", new String[]{"stuff"});
+
+        final Map<String, String[]> processedParams = extractor.tryExtractContextFromJson(requestParams);
+
+        assertThat(processedParams.entrySet(), is(requestParams.entrySet()));
+    }
+
+    @Test
     public void shouldExtractContextAndAddToParamMap()
     {
-        String[] contextStr = new String[]{"{\"project\":{\"id\":10100}}"};
+        String[] contextJsonStr = new String[]{"{\"project\":{\"id\":10100}}"};
 
-        Map<String, String[]> requestParams = ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextStr, "someparam", new String[]{"somevalue"});
+        Map<String, String[]> requestParams = ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextJsonStr, "someparam", new String[]{"somevalue"});
 
-        final Map<String, String[]> contextMap = extractor.tryExtractContextFromJson(requestParams);
-        assertThat(contextMap, hasEntry("project.id", new String[]{"10100"}));
-        assertThat(contextMap, hasEntry("someparam", new String[]{"somevalue"}));
-        assertThat(contextMap, not(hasKey((Object) CONTEXT_PARAMETER_KEY)));
-        assertThat(contextMap.size(), is(2));
+        final Map<String, String[]> processedParams = extractor.tryExtractContextFromJson(requestParams);
+        assertThat(processedParams, hasEntry("project.id", new String[]{"10100"}));
+        assertThat(processedParams, hasEntry("someparam", new String[]{"somevalue"}));
+        assertThat(processedParams, not(hasKey((Object) CONTEXT_PARAMETER_KEY)));
+        assertThat(processedParams.size(), is(2));
     }
 
     // TODO: more tests. negative tests. corner cases
