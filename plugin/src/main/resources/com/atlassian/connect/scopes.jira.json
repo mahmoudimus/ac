@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow", "myself", "screens"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow", "myself", "screens", "applicationProperties"],
       "pathKeys": ["download attachments"],
       "methods": ["GET"]
     },
@@ -23,6 +23,11 @@
       "soapRpcPathKeys": ["jirasoapservice-v2-write"],
       "jsonRpcPathKeys": ["jira-json-service-v2-write"],
       "methods": ["POST"]
+    },
+    {
+      "key": "WRITE",
+      "restPathKeys": ["applicationProperties"],
+      "methods": ["PUT"]
     },
     {
       "key": "DELETE",
@@ -212,6 +217,12 @@
       "key": "myself",
       "name": "api",
       "basePaths": ["/myself"],
+      "versions": ["2", "latest"]
+    },
+    {
+      "key": "applicationProperties",
+      "name": "api",
+      "basePaths": ["/application-properties($|/.*)"],
       "versions": ["2", "latest"]
     }
   ],
