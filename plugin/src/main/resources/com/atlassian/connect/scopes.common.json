@@ -2,34 +2,16 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["entities", "license", "remoteplugintest"],
+      "restPathKeys": ["entities", "license"],
       "methods": ["GET"]
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["applicationlink", "applicationlinkInfo", "listApplicationLinks", "entitylink", "entitylink_primary", "manifest", "type_entity"],
+      "restPathKeys": ["entitylink", "entitylink_primary", "manifest", "type_entity"],
       "methods": ["GET", "POST", "PUT", "DELETE"]
     }
   ],
   "restPaths": [
-    {
-      "key": "remoteplugintest",
-      "name": "remoteplugintest",
-      "basePaths": ["/user($|/.*)"],
-      "versions": ["1", "latest"]
-    },
-    {
-      "key": "applicationlink",
-      "name": "applinks",
-      "basePaths": ["/applicationlink($|/.*)"],
-      "versions": ["1.0", "2.0", "latest"]
-    },
-    {
-      "key": "applicationlinkInfo",
-      "name": "applinks",
-      "basePaths": ["/applicationlinkInfo($|/.*)"],
-      "versions": ["1.0", "2.0", "latest"]
-    },
     {
       "key": "entities",
       "name": "applinks",
@@ -40,12 +22,6 @@
       "key": "entitylink",
       "name": "applinks",
       "basePaths": ["/entitylink($|/.*)"],
-      "versions": ["1.0", "2.0", "latest"]
-    },
-    {
-      "key": "listApplicationLinks",
-      "name": "applinks",
-      "basePaths": ["/listApplicationLinks($|/.*)"],
       "versions": ["1.0", "2.0", "latest"]
     },
     {

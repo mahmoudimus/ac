@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "groups picker", "user", "filter", "workflow", "myself"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow", "myself", "screens"],
       "pathKeys": ["download attachments"],
       "methods": ["GET"]
     },
@@ -14,19 +14,31 @@
     },
     {
       "key": "WRITE",
-      "restPathKeys": ["issue", "attachment", "version", "component", "search", "priority", "comment", "worklog", "customFieldOption"],
+      "restPathKeys": ["issue", "attachment", "search", "comment", "worklog"],
       "methods": ["POST", "PUT"]
     },
     {
       "key": "WRITE",
+      "restPathKeys": ["issueLink"],
       "soapRpcPathKeys": ["jirasoapservice-v2-write"],
       "jsonRpcPathKeys": ["jira-json-service-v2-write"],
       "methods": ["POST"]
     },
     {
       "key": "DELETE",
-      "restPathKeys": ["component", "priority", "issue", "attachment", "comment", "worklog", "customFieldOption", "version"],
+      "restPathKeys": ["issue", "issueLink", "attachment", "comment", "worklog"],
       "methods": ["DELETE"]
+    },
+    {
+      "key": "PROJECT_ADMIN",
+      "restPathKeys": ["component", "priority", "project", "version"],
+      "methods": ["PUT", "POST", "DELETE"]
+    },
+    {
+      "key": "PROJECT_ADMIN",
+      "soapRpcPathKeys": ["jirasoapservice-v2-project-admin"],
+      "jsonRpcPathKeys": ["jira-json-service-v2-project-admin"],
+      "methods": ["POST"]
     },
     {
       "key": "ADMIN",
@@ -35,11 +47,23 @@
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["issueLinkType"],
+      "restPathKeys": ["issueLinkType", "screens"],
       "methods": ["POST", "PUT", "DELETE"]
+    },
+    {
+      "key": "ADMIN",
+      "soapRpcPathKeys": ["jirasoapservice-v2-admin"],
+      "jsonRpcPathKeys": ["jira-json-service-v2-admin"],
+      "methods": ["POST"]
     }
   ],
   "restPaths": [
+    {
+      "key": "screens",
+      "name": "api",
+      "basePaths": ["/screens/.*"],
+      "versions": ["2", "2.0.alpha1", "latest"]
+    },
     {
       "key": "user",
       "name": "api",
@@ -49,13 +73,7 @@
     {
       "key": "group",
       "name": "api",
-      "basePaths": ["/group($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
-    },
-    {
-      "key": "groups picker",
-      "name": "api",
-      "basePaths": ["/groups/picker"],
+      "basePaths": ["/group($|/.*)", "/groups/picker"],
       "versions": ["2", "2.0.alpha1", "latest"]
     },
     {
@@ -155,6 +173,12 @@
       "versions": ["2", "2.0.alpha1", "latest"]
     },
     {
+      "key": "issueLink",
+      "name": "api",
+      "basePaths": ["/issueLink($|/.*)"],
+      "versions": ["2", "2.0.alpha1", "latest"]
+    },
+    {
       "key": "issueLinkType",
       "name": "api",
       "basePaths": ["/issueLinkType($|/.*)"],
@@ -201,6 +225,16 @@
       "key": "jirasoapservice-v2-write",
       "paths": ["/jirasoapservice-v2"],
       "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
+    },
+    {
+      "key": "jirasoapservice-v2-project-admin",
+      "paths": ["/jirasoapservice-v2"],
+      "rpcMethods": ["createProjectRole", "deleteProjectAvatar", "deleteProjectRole", "setNewProjectAvatar", "setProjectAvatar", "updateProject", "updateProjectRole"]
+    },
+    {
+      "key": "jirasoapservice-v2-admin",
+      "paths": ["/jirasoapservice-v2"],
+      "rpcMethods": ["createProject", "createProjectFromObject", "deleteProject"]
     }
   ],
   "jsonRpcPaths": [
@@ -213,6 +247,16 @@
       "key": "jira-json-service-v2-write",
       "paths": ["/jirasoapservice-v2"],
       "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
+    },
+    {
+      "key": "jira-json-service-v2-project-admin",
+      "paths": ["/jirasoapservice-v2"],
+      "rpcMethods": ["createProjectRole", "deleteProjectAvatar", "deleteProjectRole", "setNewProjectAvatar", "setProjectAvatar", "updateProject", "updateProjectRole"]
+    },
+    {
+      "key": "jira-json-service-v2-admin",
+      "paths": ["/jirasoapservice-v2"],
+      "rpcMethods": ["createProject", "createProjectFromObject", "deleteProject"]
     }
   ],
   "paths": [

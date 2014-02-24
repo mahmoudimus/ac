@@ -33,7 +33,7 @@ public class ConfluenceDownloadScopesTest extends AbstractScopesTest
                 // higher scopes
                 {ScopeName.WRITE, HttpMethod.GET, "/confluence/download/temp/", true},
                 {ScopeName.DELETE, HttpMethod.GET, "/confluence/download/temp/", true},
-                // TODO: reinstate when we have a PROJECT_ADMIN scope in scopes.confluence.json {ScopeName.PROJECT_ADMIN, HttpMethod.GET, "/confluence/download/temp/", true},
+                {ScopeName.SPACE_ADMIN, HttpMethod.GET, "/confluence/download/temp/", true},
                 {ScopeName.ADMIN, HttpMethod.GET, "/confluence/download/temp/", true},
 
                 {ScopeName.WRITE, HttpMethod.POST, "/confluence/download/temp/", false},

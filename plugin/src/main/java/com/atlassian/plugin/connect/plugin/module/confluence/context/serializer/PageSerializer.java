@@ -18,7 +18,11 @@ public class PageSerializer implements ParameterSerializer<AbstractPage>
     public Map<String, Object> serialize(final AbstractPage page)
     {
         return ImmutableMap.<String, Object>of("page",
-                ImmutableMap.of("id", page.getId())
+                ImmutableMap.of(
+                        "id", page.getId(),
+                        "version", page.getVersion(),
+                        "type", page.getType()
+                )
         );
     }
 }

@@ -9,9 +9,12 @@ import java.util.Set;
 @JiraComponent
 public class JiraConnectAddOnUserGroupsService implements ConnectAddOnUserGroupsService
 {
+    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("jira-users");
+
     @Override
     public Set<String> getDefaultProductGroups()
     {
-        return ImmutableSet.of();
+        // jira-hipchat-discussions revealed that users can't modify issues if not in this group
+        return GROUPS;
     }
 }

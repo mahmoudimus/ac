@@ -3,7 +3,7 @@
     <parent>
         <artifactId>json-schemagen</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.0-rc2</version>
+        <version>1.0.0-rc3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -19,9 +19,6 @@
         <dependency>
             <groupId>com.sun</groupId>
             <artifactId>tools</artifactId>
-            <version>1.6.0</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

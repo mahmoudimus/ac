@@ -103,14 +103,28 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     public void disabled()
     {
         //TODO: This should not be tied to the lifecycle of the add-on instance
-        workflowConfigurator.unregisterTypeResolver(RemoteWorkflowPostFunctionProvider.class.getName(), remoteWorkflowTypeResolver);
+        if(null != remoteWorkflowTypeResolver)
+        {
+            workflowConfigurator.unregisterTypeResolver(RemoteWorkflowPostFunctionProvider.class.getName(), remoteWorkflowTypeResolver);
+        }
+        
         webHookConsumerRegistry.unregister(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
                 plugin.getKey(),
                 triggeredUri,
                 new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
-        super.disabled();
+        
+        //need to wrap since the pluginTypeResolver may have already gone away
+        
+        try
+        {
+            super.disabled();
+        }
+        catch (Exception e)
+        {
+            //ignore
+        }
     }
 
     @Override

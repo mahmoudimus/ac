@@ -14,8 +14,6 @@ import com.atlassian.plugin.connect.plugin.*;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
@@ -56,15 +54,13 @@ public class DefaultRemotablePluginAccessorFactoryTest
     @Mock private EventPublisher eventPublisher;
     @Mock private ConnectAddOnIdentifierService connectIdentifier;
     @Mock private OAuthLinkManager oAuthLinkManager;
-    @Mock private LicenseRetriever licenseRetriever;
-    @Mock private LocaleHelper localeHelper;
     @Mock private PluginRetrievalService pluginRetrievalService;
     @Mock private JwtService jwtService;
     @Mock private ConsumerService consumerService;
     @Mock private UserManager userManager;
 
     private DefaultRemotablePluginAccessorFactory factory;
-    
+
     private Plugin plugin;
 
     @Before
@@ -227,7 +223,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
 
     private CachingHttpContentRetriever mockCachingHttpContentRetriever()
     {
-        return new CachingHttpContentRetriever(licenseRetriever, localeHelper, mock(HttpClientFactory.class, RETURNS_DEEP_STUBS), mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
+        return new CachingHttpContentRetriever(mock(HttpClientFactory.class, RETURNS_DEEP_STUBS), mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
     }
 
     private void removePluginAppLink(String pluginKey)

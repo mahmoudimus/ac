@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 
@@ -21,15 +22,17 @@ public class JiraViewIssuePage implements Page
 
     @Inject
     private com.atlassian.webdriver.AtlassianWebDriver driver;
-
     @Inject
     private PageBinder pageBinder;
+    @Inject
+    private PageElementFinder pageElementFinder;
 
     public JiraViewIssuePage(String issueKey)
     {
-        this(issueKey,"");
+        this(issueKey, "");
     }
 
+    @Deprecated // takes an extra ID prefix for modules provided by XML modules
     public JiraViewIssuePage(String issueKey, String extraPrefix)
     {
         this.issueKey = issueKey;
@@ -66,6 +69,11 @@ public class JiraViewIssuePage implements Page
     public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownMenuId)
     {
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownMenuId);
+    }
+
+    public boolean isTabPanelPresent(String id)
+    {
+        return pageElementFinder.find(By.id(id)).timed().isPresent().byDefaultTimeout();
     }
 
 }

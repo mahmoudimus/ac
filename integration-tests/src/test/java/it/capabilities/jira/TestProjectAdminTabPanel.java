@@ -13,10 +13,16 @@ import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
+
+import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -31,6 +37,9 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 
     private static ConnectRunner remotePlugin;
 
+    @Rule
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
+
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
@@ -42,6 +51,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                         .withUrl("/pct")
                         .withWeight(10)
                         .withLocation("projectgroup4")
+                        .withConditions(toggleableConditionBean())
                         .build())
                 .addRoute("/pct", ConnectAppServlets.apRequestServlet())
                 .start();
@@ -60,24 +70,9 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     public void testViewProjectAdminTab() throws Exception
     {
         loginAsAdmin();
-        final ProjectSummaryPageTab page =
-                product.visit(ProjectSummaryPageTab.class, project.getKey());
+        final ProjectSummaryPageTab page = product.visit(ProjectSummaryPageTab.class, project.getKey());
 
-        assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(new TypeSafeMatcher<ProjectConfigTabs.Tab>()
-        {
-
-            @Override
-            public boolean matchesSafely(final ProjectConfigTabs.Tab tab)
-            {
-                return tab.getName().equals(PROJECT_CONFIG_TAB_NAME);
-            }
-
-            @Override
-            public void describeTo(final Description description)
-            {
-                description.appendText("Project Configuration Tabs should contain " + PROJECT_CONFIG_TAB_NAME + " tab");
-            }
-        }));
+        assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
         final JiraProjectAdministrationTab remoteProjectAdministrationTab =
                 page.getTabs().gotoTab(PROJECT_CONFIG_MODULE_KEY, JiraProjectAdministrationTab.class, project.getKey(), PROJECT_CONFIG_MODULE_KEY);
@@ -87,6 +82,41 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
         assertEquals(PROJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
         assertEquals(project.getKey(), remoteProjectAdministrationTab.getProjectKey());
         assertEquals("Success", remoteProjectAdministrationTab.getMessage());
+    }
+
+    @Test
+    public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
+    {
+        loginAsAdmin();
+
+        ProjectSummaryPageTab page = product.visit(ProjectSummaryPageTab.class, project.getKey());
+        assertThat("AddOn project config tab should be present", page.getTabs().getTabs(),
+                IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
+
+        remotePlugin.setToggleableConditionShouldDisplay(false);
+
+        page = product.visit(ProjectSummaryPageTab.class, project.getKey());
+        assertThat("AddOn project config tab should NOT be present", page.getTabs().getTabs(),
+                not(IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME))));
+    }
+
+    private TypeSafeMatcher<ProjectConfigTabs.Tab> projectConfigTabMatcher(final String tabName)
+    {
+        return new TypeSafeMatcher<ProjectConfigTabs.Tab>()
+        {
+
+            @Override
+            public boolean matchesSafely(final ProjectConfigTabs.Tab tab)
+            {
+                return tab.getName().equals(tabName);
+            }
+
+            @Override
+            public void describeTo(final Description description)
+            {
+                description.appendText("Project Configuration Tabs should contain " + tabName + " tab");
+            }
+        };
     }
 
 }

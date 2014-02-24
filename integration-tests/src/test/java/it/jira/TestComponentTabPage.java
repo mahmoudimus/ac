@@ -1,6 +1,5 @@
 package it.jira;
 
-import com.atlassian.confluence.plugin.descriptor.ComponentModuleDescriptor;
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.testkit.client.restclient.Component;
 import com.atlassian.jira.testkit.client.restclient.ComponentClient;

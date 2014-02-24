@@ -1,17 +1,23 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
+import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionFactory;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -37,6 +43,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
     private final TemplateRenderer templateRenderer;
+    private final ConnectConditionFactory connectConditionFactory;
 
     private final Map<String, Object> additionalRenderContext = Maps.newHashMap();
 
@@ -47,7 +54,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private String urlTemplate;
     private String title;
     private String decorator;
-    private Condition condition;
     private String width;
     private String height;
     private boolean uniqueNamespace;
@@ -55,15 +61,18 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private boolean isSimpleDialog;
     private boolean resizeToParent;
 
+    private final List<ConditionalBean> conditionalBeans = Lists.newArrayList();
+    private final List<Class<? extends Condition>> conditionClasses = Lists.newArrayList();
+
     public IFrameRenderStrategyBuilderImpl(
             final IFrameUriBuilderFactory iFrameUriBuilderFactory,
             final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
-            final TemplateRenderer templateRenderer)
+            final TemplateRenderer templateRenderer, final ConnectConditionFactory connectConditionFactory)
     {
-
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
         this.templateRenderer = templateRenderer;
+        this.connectConditionFactory = connectConditionFactory;
     }
 
     @Override
@@ -136,9 +145,36 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public InitializedBuilder condition(final Condition condition)
+    public InitializedBuilder condition(final ConditionalBean condition)
     {
-        this.condition = condition;
+        if (condition != null)
+        {
+            conditionalBeans.add(condition);
+        }
+        return this;
+    }
+
+    @Override
+    public InitializedBuilder conditions(final Iterable<ConditionalBean> conditions)
+    {
+        Iterables.addAll(conditionalBeans, conditions);
+        return this;
+    }
+
+    @Override
+    public InitializedBuilder conditionClass(final Class<? extends Condition> condition)
+    {
+        if (condition != null)
+        {
+            conditionClasses.add(condition);
+        }
+        return this;
+    }
+
+    @Override
+    public InitializedBuilder conditionClasses(final Iterable<Class<? extends Condition>> conditions)
+    {
+        Iterables.addAll(conditionClasses, conditions);
         return this;
     }
 
@@ -204,12 +240,15 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     @Override
     public IFrameRenderStrategy build()
     {
+        Condition condition = connectConditionFactory.createCondition(addOnKey, conditionalBeans, conditionClasses);
+
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
                 decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog, resizeToParent);
     }
 
-    private static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
+    @VisibleForTesting
+    public static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
     {
 
         private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
@@ -264,15 +303,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         public void render(final ModuleContextParameters moduleContextParameters, final Writer writer)
                 throws IOException
         {
-            String namespace = uniqueNamespace ? ModuleKeyGenerator.randomName(moduleKey) : moduleKey;
+            String namespace = generateNamespace();
 
-            String signedUri = iFrameUriBuilderFactory.builder()
-                    .addOn(addOnKey)
-                    .namespace(namespace)
-                    .urlTemplate(urlTemplate)
-                    .context(moduleContextParameters)
-                    .dialog(isDialog)
-                    .build();
+            String signedUri = buildUrl(moduleContextParameters, namespace);
 
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
                     .addOn(addOnKey)
@@ -290,6 +323,28 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .build();
 
             templateRenderer.render(template, renderContext, writer);
+        }
+
+        private String generateNamespace()
+        {
+            return uniqueNamespace ? ModuleKeyGenerator.randomName(moduleKey) : moduleKey;
+        }
+
+        @VisibleForTesting
+        public String buildUrl(ModuleContextParameters moduleContextParameters)
+        {
+            return buildUrl(moduleContextParameters, generateNamespace());
+        }
+
+        private String buildUrl(ModuleContextParameters moduleContextParameters, String namespace)
+        {
+            return iFrameUriBuilderFactory.builder()
+                            .addOn(addOnKey)
+                            .namespace(namespace)
+                            .urlTemplate(urlTemplate)
+                            .context(moduleContextParameters)
+                            .dialog(isDialog)
+                            .build();
         }
 
         @Override

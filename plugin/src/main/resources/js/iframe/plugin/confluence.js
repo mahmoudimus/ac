@@ -1,4 +1,4 @@
-AP.define("confluence", ["_dollar", "_rpc"], 
+AP.define("confluence", ["_dollar", "_rpc"],
     function ($, rpc) {
     "use strict";
 
@@ -20,6 +20,20 @@ AP.define("confluence", ["_dollar", "_rpc"],
                 saveMacro: function (macroParameters) {
                     remote.saveMacro(macroParameters);
                 },
+                /**
+                * Get the data saved in the saveMacro method.
+                * @param {Function} callback to be passed the macro data.
+                * @example
+                * AP.require('confluence', function(confluence){
+                *   var macroData = confluence.getMacroData(function(data){
+                *       alert(data);
+                *   });
+                * });
+                */
+                getMacroData: function (callback) {
+                    remote.getMacroData(callback);
+                },
+
                 /**
                 * Closes the macro editor, if it is open.
                 * This call does not save any modified parameters to the macro, and saveMacro should be called first if necessary.

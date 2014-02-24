@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.webpanel;
 
-import com.atlassian.confluence.pages.Page;
+import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
@@ -38,7 +38,7 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
             moduleContext.addSpace(space);
         }
 
-        Page page = (Page) webFragmentContext.get("page");
+        AbstractPage page = (AbstractPage) webFragmentContext.get("page");
         if (page != null)
         {
             moduleContext.addPage(page);

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.webpanel;
 
 import com.atlassian.confluence.pages.AbstractPage;
+import com.atlassian.confluence.pages.BlogPost;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.spaces.Space;
@@ -28,9 +29,13 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
     {
         Page page = mock(Page.class);
         when(page.getId()).thenReturn(123L);
+        when(page.getVersion()).thenReturn(2);
+        when(page.getType()).thenReturn("page");
 
         ModuleContextParameters params = extractor.extractParameters(ImmutableMap.<String, Object>of("page", page));
         assertEquals("123", params.get("page.id"));
+        assertEquals("2", params.get("page.version"));
+        assertEquals("page", params.get("page.type"));
     }
 
     @Test
@@ -54,6 +59,8 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
 
         AbstractPage page = mock(AbstractPage.class);
         when(page.getId()).thenReturn(123L);
+        when(page.getVersion()).thenReturn(2);
+        when(page.getType()).thenReturn("page");
         when(page.getSpace()).thenReturn(space);
 
         AbstractPageAwareAction pageAwareAction = mock(AbstractPageAwareAction.class);
@@ -62,7 +69,19 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
         ModuleContextParameters params = extractor.extractParameters(ImmutableMap.<String, Object>of("action", pageAwareAction));
 
         assertEquals("123", params.get("page.id"));
+        assertEquals("2", params.get("page.version"));
+        assertEquals("page", params.get("page.type"));
         assertEquals("321", params.get("space.id"));
         assertEquals("SPACE", params.get("space.key"));
+    }
+
+    @Test
+    public void testExtractBlogPostFromContext()
+    {
+        BlogPost blogPost = mock(BlogPost.class);
+        when(blogPost.getId()).thenReturn(123L);
+
+        ModuleContextParameters params = extractor.extractParameters(ImmutableMap.<String, Object>of("page", blogPost));
+        assertEquals("123", params.get("page.id"));
     }
 }

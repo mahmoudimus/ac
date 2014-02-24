@@ -15,12 +15,15 @@ import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
+import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -50,6 +53,9 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     private static WebPanelModuleBean viewWebPanel;
     private static WebPanelModuleBean profileWebPanel;
 
+    @Rule
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
+
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
@@ -68,6 +74,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .withLocation("atl.general")
                 .withUrl(IFRAME_URL_VIEW + IFRAME_URL_PARAMETERS)
                 .withLayout(new WebPanelLayout(px(IFRAME_WIDTH), px(IFRAME_VIEW_HEIGHT)))
+                .withConditions(toggleableConditionBean())
                 .withWeight(1)
                 .build();
 
@@ -155,6 +162,14 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     {
         RemoteWebPanel webPanel = findViewPageWebPanel();
         assertThat(webPanel, is(not(nullValue())));
+    }
+
+    @Test
+    public void webPanelIsNotAccessibleWithFalseCondition() throws Exception
+    {
+        remotePlugin.setToggleableConditionShouldDisplay(false);
+        createAndVisitPage(ConfluenceViewPage.class); // revisit the view page now that condition has been set to false
+        assertThat(connectPageOperations.existsWebPanel(viewWebPanel.getKey()), is(false));
     }
 
     @Test

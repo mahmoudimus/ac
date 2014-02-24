@@ -8,7 +8,6 @@
         "buildInfo",
         "content-api",
         "content-prototype",
-        "content-ui",
         "label",
         "notification",
         "search",
@@ -35,7 +34,6 @@
         "action",
         "content-api",
         "content-prototype",
-        "content-ui",
         "label",
         "notification",
         "task"
@@ -54,9 +52,7 @@
         "action",
         "content-api",
         "content-prototype",
-        "content-ui",
         "label",
-        "macro",
         "notification",
         "task"
       ],
@@ -99,12 +95,6 @@
       "name": "api",
       "basePaths": ["/space($|/.*)"],
       "versions": []
-    },
-    {
-      "key": "macro",
-      "name": "atlassian-connect",
-      "basePaths": ["/macro($|/.*)"],
-      "versions": ["1", "latest"]
     },
     {
       "key": "action",
@@ -183,12 +173,6 @@
       "name": "searchv3",
       "basePaths": ["/search($|/.*)"],
       "versions": ["1", "1.0", "latest"]
-    },
-    {
-      "key": "content-ui",
-      "name": "ui",
-      "basePaths": ["/content($|/.*)"],
-      "versions": ["1", "1.0", "latest"]
     }
   ],
   "jsonRpcPaths": [
@@ -259,8 +243,6 @@
         "addLabelByName",
         "addLabelByNameToSpace",
         "addLabelByObject",
-        "addPersonalSpace",
-        "addPersonalSpaceWithDefaultPermissions",
         "addProfilePicture",
         "editComment",
         "moveAttachment",
@@ -304,15 +286,9 @@
         "addAnonymousPermissionsToSpace",
         "addPermissionToSpace",
         "addPermissionsToSpace",
-        "addSpace",
-        "addSpaceGroup",
-        "addSpaceWithDefaultPermissions",
         "removeAnonymousPermissionFromSpace",
         "removePermissionFromSpace",
-        "removeSpace",
-        "removeSpaceGroup",
-        "setSpaceStatus",
-        "storeSpace"
+        "setSpaceStatus"
       ]
     },
     {
@@ -323,15 +299,13 @@
         "addAnonymousViewUserProfilePermission",
         "addGlobalPermission",
         "addGlobalPermissions",
-        "addGroup",
-        "addUser",
-        "addUserToGroup",
-        "clearIndexQueue",
-        "deactivateUser",
-        "editUser",
+        "addPersonalSpace",
+        "addPersonalSpaceWithDefaultPermissions",
+        "addSpace",
+        "addSpaceGroup",
+        "addSpaceWithDefaultPermissions",
         "exportSite",
         "exportSpace",
-        "flushIndexQueue",
         "getActiveUsers",
         "getClusterInformation",
         "getClusterNodeStatuses",
@@ -349,22 +323,13 @@
         "hasUser",
         "importSpace",
         "isActiveUser",
-        "isPluginEnabled",
-        "isPluginInstalled",
-        "reactivateUser",
         "removeAllPermissionsForGroup",
         "removeAnonymousUsePermission",
         "removeAnonymousViewUserProfilePermission",
         "removeGlobalPermission",
-        "removeGroup",
-        "removeUser",
-        "removeUserFromGroup",
-        "renameUser",
-        "renameUsers",
-        "setUserInformation",
-        "setUserPreferenceBoolean",
-        "setUserPreferenceLong",
-        "setUserPreferenceString"
+        "removeSpace",
+        "removeSpaceGroup",
+        "storeSpace"
       ]
     }
   ],
@@ -444,7 +409,6 @@
         "movePage",
         "movePageToTopLevel",
         "setContentPermissions",
-        "setEnableWysiwyg",
         "storeBlogEntry",
         "storePage",
         "updatePage",
@@ -500,15 +464,8 @@
         "addAnonymousViewUserProfilePermission",
         "addGlobalPermission",
         "addGlobalPermissions",
-        "addGroup",
-        "addUser",
-        "addUserToGroup",
-        "clearIndexQueue",
-        "deactivateUser",
-        "editUser",
         "exportSite",
         "exportSpace",
-        "flushIndexQueue",
         "getActiveUsers",
         "getClusterInformation",
         "getClusterNodeStatuses",
@@ -526,22 +483,10 @@
         "hasUser",
         "importSpace",
         "isActiveUser",
-        "isPluginEnabled",
-        "isPluginInstalled",
-        "reactivateUser",
         "removeAllPermissionsForGroup",
         "removeAnonymousUsePermission",
         "removeAnonymousViewUserProfilePermission",
-        "removeGlobalPermission",
-        "removeGroup",
-        "removeUser",
-        "removeUserFromGroup",
-        "renameUser",
-        "renameUsers",
-        "setUserInformation",
-        "setUserPreferenceBoolean",
-        "setUserPreferenceLong",
-        "setUserPreferenceString"
+        "removeGlobalPermission"
       ]
     }
   ],

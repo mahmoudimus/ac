@@ -62,9 +62,9 @@ public class JiraSoapRpcScopesTest extends AbstractScopesTest
 
             // implied scopes
             {ScopeName.WRITE, HttpMethod.POST, PATH, "getIssue", true},
-            // TODO: when we have some PROJECT_ADMIN paths in the static jira scopes {ScopeName.PROJECT_ADMIN, HttpMethod.POST, PATH, "getIssue", true},
+            {ScopeName.PROJECT_ADMIN, HttpMethod.POST, PATH, "getIssue", true},
             {ScopeName.ADMIN, HttpMethod.POST, PATH, "getIssue", true},
-            // TODO: when we have some PROJECT_ADMIN paths in the static jira scopes {ScopeName.PROJECT_ADMIN, HttpMethod.POST, PATH, "updateIssue", true},
+            {ScopeName.PROJECT_ADMIN, HttpMethod.POST, PATH, "updateIssue", true},
             {ScopeName.ADMIN, HttpMethod.POST, PATH, "updateIssue", true},
 
             // one thing wrong

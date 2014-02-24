@@ -5,9 +5,6 @@ import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
-import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -31,7 +28,7 @@ public abstract class BaseSigningRemotablePluginAccessorTest
     protected static final Map<String, String> UNAUTHED_GET_HEADERS = Collections.singletonMap("header", "header value");
     protected static final String EXPECTED_GET_RESPONSE = "expected";
     protected static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
-    protected static final String GET_FULL_URL = OUTGOING_FULL_GET_URL + "&lic=active&loc=whatever";
+    protected static final String GET_FULL_URL = OUTGOING_FULL_GET_URL;
 
     protected abstract Map<String, String> getPostSigningHeaders(Map<String,String> preSigningHeaders);
 
@@ -52,17 +49,11 @@ public abstract class BaseSigningRemotablePluginAccessorTest
 
     protected HttpContentRetriever mockCachingHttpContentRetriever()
     {
-        LicenseRetriever licenseRetriever = mock(LicenseRetriever.class);
-        when(licenseRetriever.getLicenseStatus(PLUGIN_KEY)).thenReturn(LicenseStatus.ACTIVE);
-
-        LocaleHelper localeHelper = mock(LocaleHelper.class);
-        when(localeHelper.getLocaleTag()).thenReturn("whatever");
-
         HttpClientFactory httpClientFactory = mock(HttpClientFactory.class);
         HttpClient httpClient = mockHttpClient(mockRequest(EXPECTED_GET_RESPONSE));
         when(httpClientFactory.create(any(HttpClientOptions.class))).thenReturn(httpClient);
 
-        return new CachingHttpContentRetriever(licenseRetriever, localeHelper, httpClientFactory, mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
+        return new CachingHttpContentRetriever(httpClientFactory, mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
     }
 
     private HttpClient mockHttpClient(Request.Builder request)

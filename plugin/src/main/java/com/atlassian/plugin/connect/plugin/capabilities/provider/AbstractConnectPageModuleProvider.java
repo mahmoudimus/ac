@@ -13,6 +13,7 @@ import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +57,8 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .pageTemplate()
                     .urlTemplate(bean.getUrl())
                     .decorator(getDecorator())
-                    .condition(getCondition())
+                    .conditions(bean.getConditions())
+                    .conditionClasses(getConditionClasses())
                     .title(bean.getDisplayName())
                     .resizeToParent(true)
                     .build();
@@ -68,7 +70,8 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .module(bean.getKey())
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
-                    .condition(getCondition())
+                    .conditions(bean.getConditions())
+                    .conditionClasses(getConditionClasses())
                     .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .build();
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
@@ -90,16 +93,16 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                         .withConditions(bean.getConditions())
                         .build();
 
-                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemBean));
+                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemBean, getConditionClasses()));
             }
         }
 
         return builder.build();
     }
 
-    protected Condition getCondition()
+    protected Iterable<Class<? extends Condition>> getConditionClasses()
     {
-        return null;
+        return Collections.emptyList();
     }
 
     protected boolean hasWebItem()

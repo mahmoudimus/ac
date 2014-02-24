@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
@@ -28,26 +30,32 @@ public final class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             MacroModuleDescriptorCreator macroModuleDescriptorCreator,
             MacroContentManager macroContentManager,
-            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            LicenseRetriever licenseRetriever,
+            LocaleHelper localeHelper)
     {
         super(moduleFactory);
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.macroModuleDescriptorCreatorBuilder = newMacroModuleDescriptorCreatorBuilder(
                 checkNotNull(macroModuleDescriptorCreator),
                 checkNotNull(macroContentManager),
-                checkNotNull(remotablePluginAccessorFactory));
+                checkNotNull(remotablePluginAccessorFactory),
+                checkNotNull(licenseRetriever),
+                checkNotNull(localeHelper));
     }
 
     private static MacroModuleDescriptorCreator.Builder newMacroModuleDescriptorCreatorBuilder(final MacroModuleDescriptorCreator macroModuleDescriptorCreator,
                                                                                                final MacroContentManager macroContentManager,
-                                                                                               final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
+                                                                                               final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                                                                                               final LicenseRetriever licenseRetriever,
+                                                                                               final LocaleHelper localeHelper)
     {
         return macroModuleDescriptorCreator.newBuilder().setMacroFactory(new MacroModuleDescriptorCreator.MacroFactory()
         {
             @Override
             public RemoteMacro create(RemoteMacroInfo remoteMacroInfo)
             {
-                return new StorageFormatMacro(remoteMacroInfo, macroContentManager, remotablePluginAccessorFactory);
+                return new StorageFormatMacro(remoteMacroInfo, macroContentManager, remotablePluginAccessorFactory, licenseRetriever, localeHelper);
             }
         });
     }
