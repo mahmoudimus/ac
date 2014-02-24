@@ -18,7 +18,7 @@ The `atlassian-plugin.xml` descriptor format is deprecated in favour of the new 
         <h5>OnDemand removal</h5>
     </div>
     <div class="aui-item">
-        __28th February, 2014__
+        __May, 2014__
     </div>
 </div>
 <div class="aui-group">
