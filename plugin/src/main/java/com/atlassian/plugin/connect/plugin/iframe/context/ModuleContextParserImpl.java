@@ -84,7 +84,7 @@ public class ModuleContextParserImpl implements ModuleContextParser
         ObjectMapper objectMapper = new ObjectMapper();
         try
         {
-            Map<String, String[]> contextMap = objectMapper.readValue(contextJsonStr, MAP_TYPE_REFERENCE);
+            Map<String, Object> contextMap = objectMapper.readValue(contextJsonStr, MAP_TYPE_REFERENCE);
 
             final Map<String, String[]> mutableParams = Maps.newHashMap(requestParams);
             mutableParams.remove(CONTEXT_PARAMETER_KEY);
@@ -100,7 +100,7 @@ public class ModuleContextParserImpl implements ModuleContextParser
 
     }
 
-    private Map<String, String[]> transformToPathForm(Map<String, String[]> nestedMapsParams)
+    private Map<String, String[]> transformToPathForm(Map<String, Object> nestedMapsParams)
     {
         final ImmutableMap.Builder<String, String[]> builder = ImmutableMap.builder();
         final Iterable<Pair<List<String>, String[]>> pairs = transformToPathFormPairs(nestedMapsParams);
