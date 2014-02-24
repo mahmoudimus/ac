@@ -83,103 +83,120 @@
       "key": "content-api",
       "name": "api",
       "basePaths": ["/content($|/.*)"],
-      "versions": []
+      "versions": [],
+      "public": true
     },
     {
       "key": "contentbody",
       "name": "api",
       "basePaths": ["/contentbody($|/.*)"],
-      "versions": []
+      "versions": [],
+      "public": true
     },
     {
       "key": "space-api",
       "name": "api",
       "basePaths": ["/space($|/.*)"],
-      "versions": []
+      "versions": [],
+      "public": true
     },
     {
       "key": "create-dialog-spaces",
       "name": "create-dialog",
       "basePaths": ["/spaces"],
-      "versions": ["1.0", "latest"]
+      "versions": ["1.0", "latest"],
+      "public": false
     },
     {
       "key": "action",
       "name": "mywork",
       "basePaths": ["/action($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "notification",
       "name": "mywork",
       "basePaths": ["/notification($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "status",
       "name": "mywork",
       "basePaths": ["/status($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "task",
       "name": "mywork",
       "basePaths": ["/task($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "attachment",
       "name": "prototype",
       "basePaths": ["/attachment($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "breadcrumb",
       "name": "prototype",
       "basePaths": ["/breadcrumb($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "buildInfo",
       "name": "prototype",
       "basePaths": ["/buildInfo($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "content-prototype",
       "name": "prototype",
       "basePaths": ["/content($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "search",
       "name": "prototype",
       "basePaths": ["/search($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "space",
       "name": "prototype",
       "basePaths": ["/space($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "user",
       "name": "prototype",
       "basePaths": ["/user($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "label",
       "name": "prototype",
       "basePaths": ["/label($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "searchv3",
       "name": "searchv3",
       "basePaths": ["/search($|/.*)"],
-      "versions": ["1", "1.0", "latest"]
+      "versions": ["1", "1.0", "latest"],
+      "public": false
     }
   ],
   "jsonRpcPaths": [
@@ -498,10 +515,10 @@
     }
   ],
   "paths": [
-      {
-        "key": "download",
-        "paths": ["/download/temp/.*", "/download/attachments/.*"]
-      }
+    {
+      "key": "download",
+      "paths": ["/download/temp/.*", "/download/attachments/.*"]
+    }
   ]
 }
 

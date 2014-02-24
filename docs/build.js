@@ -282,7 +282,7 @@ function removeTrailingPattern(path) {
 }
 
 /**
- * Generic transformer for RPC style APIs that iteratates over one or more scope files
+ * Generic transformer for RPC style APIs that iterates over one or more scope files
  * and invokes a callback for every entry in an array specified by 'keyProperty'. It looks
  * up the matching scope first and passes that into the callback as well.
  */
