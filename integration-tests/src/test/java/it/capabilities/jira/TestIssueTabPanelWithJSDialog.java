@@ -22,6 +22,7 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
@@ -101,6 +102,7 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
 
         assertThat(closeDialogPage.getFromQueryString("myproject_key"), is(PROJECT_KEY));
         assertThat(closeDialogPage.getFromQueryString("myissue_key"), is(issueKey));
+        assertThat(closeDialogPage.getFromQueryString("jwt"), is(notNullValue()));
 
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();

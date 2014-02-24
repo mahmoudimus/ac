@@ -88,9 +88,12 @@ public class ModuleContextParserImpl implements ModuleContextParser
 
             final Map<String, String[]> mutableParams = Maps.newHashMap(requestParams);
             mutableParams.remove(CONTEXT_PARAMETER_KEY);
+            final Map<String, String[]> contextParams = transformToPathForm(contextMap);
+            checkSameParams(mutableParams, contextParams);
             return ImmutableMap.<String, String[]>builder()
                     .putAll(mutableParams)
-                    .putAll(transformToPathForm(contextMap))
+                    // context params take precedence and will overwrite any params with same key from the url query
+                    .putAll(contextParams)
                     .build();
         }
         catch (IOException e)
@@ -98,6 +101,17 @@ public class ModuleContextParserImpl implements ModuleContextParser
             throw new InvalidContextParameterException("Failed to parse context Json", e);
         }
 
+    }
+
+    private void checkSameParams(Map<String, String[]> mutableParams, Map<String, String[]> contextParams)
+    {
+        for (String key : contextParams.keySet())
+        {
+            if (mutableParams.containsKey(key))
+            {
+                log.warn("same parameter key ({}) found in both url query and context json. Value from URL query will be overridden");
+            }
+        }
     }
 
     private Map<String, String[]> transformToPathForm(Map<String, Object> nestedMapsParams)
