@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.context.confluence;
 
+import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.security.Permission;
@@ -144,7 +145,7 @@ public class ConfluenceModuleContextFilter implements ModuleContextFilter
                     @Override
                     boolean hasPermission(final long pageId, final ConfluenceUser user)
                     {
-                        Page page = pageManager.getPage(pageId);
+                        AbstractPage page = pageManager.getAbstractPage(pageId);
                         return page != null && permissionManager.hasPermission(user, Permission.VIEW, page);
                     }
                 }
