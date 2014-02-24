@@ -8,6 +8,7 @@
         "buildInfo",
         "content-api",
         "content-prototype",
+        "create-dialog-spaces",
         "label",
         "notification",
         "search",
@@ -95,6 +96,12 @@
       "name": "api",
       "basePaths": ["/space($|/.*)"],
       "versions": []
+    },
+    {
+      "key": "create-dialog-spaces",
+      "name": "create-dialog",
+      "basePaths": ["/spaces"],
+      "versions": ["1.0", "latest"]
     },
     {
       "key": "action",
