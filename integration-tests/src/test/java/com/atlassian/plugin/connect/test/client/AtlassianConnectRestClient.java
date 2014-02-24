@@ -13,6 +13,7 @@ import org.apache.http.client.AuthCache;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -22,7 +23,7 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
@@ -30,7 +31,11 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.singletonList;
 
@@ -151,12 +156,11 @@ public final class AtlassianConnectRestClient
         // order to send a valid plugin upload request.
         // UPM does not seem to honour the "X-Atlassian-Token: no-check" header that can normally be used to disable
         // XSRF token checking for a request.
-        HttpGet upmGet = new HttpGet(getUpmPluginsRestURL(baseUrl, true) + "&" +
-                URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")),
-                        "UTF-8"));
-        upmGet.addHeader("Accept", "application/vnd.atl.plugins.installed+json"); // UPM returns custom JSON content types.
-        String upmToken;
-        HttpResponse response = getDefaultHttpClient(defaultUsername, defaultPassword).execute(upmGet);
+        String authType = URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8");
+        HttpHead upmTokenRequest = new HttpHead(getUpmPluginsRestURL(baseUrl, true) + "&" + authType);
+        upmTokenRequest.addHeader("Accept", "application/vnd.atl.plugins.installed+json"); // UPM returns custom JSON content types.
+
+        HttpResponse response = getDefaultHttpClient(defaultUsername, defaultPassword).execute(upmTokenRequest);
         Header[] tokenHeaders = response.getHeaders(UPM_TOKEN_HEADER);
 
         if (tokenHeaders == null || tokenHeaders.length == 0)
@@ -169,7 +173,7 @@ public final class AtlassianConnectRestClient
             throw new IOException(getTokenHeaderExceptionMessage("Multiple UPM Token Headers found on response", response));
         }
 
-        upmToken = tokenHeaders[0].getValue();
+        String upmToken = tokenHeaders[0].getValue();
         EntityUtils.consume(response.getEntity());
 
         return upmToken;
@@ -177,7 +181,7 @@ public final class AtlassianConnectRestClient
 
     private String getTokenHeaderExceptionMessage(String prefix, HttpResponse response)
     {
-        String responseBody = null;
+        String responseBody;
 
         try
         {
@@ -257,7 +261,7 @@ public final class AtlassianConnectRestClient
 
     private DefaultHttpClient getDefaultHttpClient(String username, String password)
     {
-        DefaultHttpClient httpclient = new DefaultHttpClient(new SingleClientConnManager());
+        DefaultHttpClient httpclient = new DefaultHttpClient(new BasicClientConnectionManager());
         httpclient.getCredentialsProvider().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
 
         return httpclient;
