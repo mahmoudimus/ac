@@ -64,6 +64,16 @@ public class ModuleContextJsonExtractorTest
         final Map<String, String[]> processedParams = extractor.tryExtractContextFromJson(requestParams);
         assertThat(processedParams.entrySet(), hasSize(1));
         assertThat(processedParams.get("project.id"), is(new String[]{"10100"}));
+    }
 
+    @Test
+    public void jsonArraysConvertToStringArrayValues()
+    {
+        String[] contextJsonStr = new String[]{"{\"project\":{\"ids\": [10100, 500]}}"};
+
+        Map<String, String[]> requestParams = ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextJsonStr);
+        final Map<String, String[]> processedParams = extractor.tryExtractContextFromJson(requestParams);
+        assertThat(processedParams.entrySet(), hasSize(1));
+        assertThat(processedParams.get("project.ids"), is(new String[]{"10100", "500"}));
     }
 }

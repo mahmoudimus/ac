@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.iframe.context;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,12 +126,47 @@ public class ModuleContextJsonExtractor
     private Iterable<Pair<List<String>, String[]>> transformNestedValue(Object value)
     {
         if (value instanceof Map)
+        {
             return transformToPathFormPairs((Map<?, ?>) value);
+        }
 
-        String[] arrValue = value instanceof String[] ? (String[]) value : new String[]{value.toString()};
+        String[] arrValue = toStringArray(value);
 
         return ImmutableList.of(Pair.of((List<String>) ImmutableList.<String>of(), arrValue));
     }
 
+    private String[] toStringArray(Object value)
+    {
+        if (value instanceof String[])
+        {
+            return (String[]) value;
+        }
+
+        if (value.getClass().isArray())
+        {
+            return iterableToStringArray(Arrays.asList((Object[])value));
+        }
+
+        if (value instanceof Iterable<?>)
+        {
+            return iterableToStringArray((Iterable<?>)value);
+        }
+
+
+        return new String[]{value.toString()};
+    }
+
+    private String[] iterableToStringArray(Iterable<?> iterable)
+    {
+        final Iterable<String> strings = Iterables.transform(iterable, new Function<Object, String>()
+        {
+            @Override
+            public String apply(@Nullable Object input)
+            {
+                return input == null ? "" : input.toString();
+            }
+        });
+        return Iterables.toArray(strings, String.class);
+    }
 
 }
