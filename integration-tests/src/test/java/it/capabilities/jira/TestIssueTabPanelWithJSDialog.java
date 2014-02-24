@@ -102,7 +102,6 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
 
         assertThat(closeDialogPage.getFromQueryString("myproject_key"), is(PROJECT_KEY));
         assertThat(closeDialogPage.getFromQueryString("myissue_key"), is(issueKey));
-        assertThat(closeDialogPage.getFromQueryString("jwt"), is(notNullValue()));
 
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();
