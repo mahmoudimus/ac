@@ -81,8 +81,9 @@ public class JiraRestScopesTest extends AbstractScopesTest
                         {null, HttpMethod.GET, "/jira/rest/api/2/application-properties", false},
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/application-properties", true},
                         {ScopeName.READ, HttpMethod.PUT, "/jira/rest/api/2/application-properties/jira.home", false},
-                        {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/api/2/application-properties/jira.home", true},
-                        {ScopeName.WRITE, HttpMethod.POST, "/jira/rest/api/2/application-properties/jira.home", false},
+                        {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/api/2/application-properties/jira.home", false},
+                        {ScopeName.ADMIN, HttpMethod.PUT, "/jira/rest/api/2/application-properties/jira.home", true},
+                        {ScopeName.ADMIN, HttpMethod.POST, "/jira/rest/api/2/application-properties/jira.home", false},
                 }));
 
         // never allow an add-on to change a user's details or password
