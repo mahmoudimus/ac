@@ -42,6 +42,10 @@ public class ModuleContextJsonExtractor
         }
 
         final String[] contextParam = requestParams.get(CONTEXT_PARAMETER_KEY);
+        if (contextParam.length > 1)
+        {
+            throw new InvalidContextParameterException("Multiple product-context parameters not supported");
+        }
 
         final String contextJsonStr = contextParam[0];
         ObjectMapper objectMapper = new ObjectMapper();
@@ -72,7 +76,7 @@ public class ModuleContextJsonExtractor
         {
             if (mutableParams.containsKey(key))
             {
-                log.warn("same parameter key ({}) found in both url query and context json. Value from URL query will be overridden");
+                log.warn("same parameter key ({}) found in both url query and context json. Value from URL query will be overridden", key);
             }
         }
     }
