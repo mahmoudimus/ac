@@ -1,9 +1,11 @@
 
 var request = require('request'),
     _ = require('lodash'),
+    fs = require('fs'),
     util = require('util');
 
-var baseUrl = "https://marketplace.atlassian.com";
+var downloadDestination = "descriptors/",
+    baseUrl = "https://marketplace.atlassian.com";
     uri = baseUrl + "/rest/1.0/plugins?hosting=ondemand&addOnType=three&limit=20";
 
 var getAddonPage = function (uri) {
@@ -38,9 +40,9 @@ var getAddonPage = function (uri) {
                     return;
                 }
 
-                var descriptor = _.find(version.links, { 'rel': 'descriptor' }).href;
+                var descriptorUrl = _.find(version.links, { 'rel': 'descriptor' }).href;
 
-                console.log(key, '\t', descriptor);
+                downloadDescriptor(key, descriptorUrl);
             });
 
             if (!!nextRequestUri) {
@@ -50,4 +52,32 @@ var getAddonPage = function (uri) {
     });
 };
 
-getAddonPage(uri);
+var downloadDescriptor = function (addonKey, descriptorUrl) {
+    request({
+        uri: descriptorUrl,
+        method: "GET"
+    }, function (error, response, body) {
+        if (error) {
+            console.log("Unable to download descriptor for add-on", addonKey);
+        } else { 
+
+            var fileName = "descriptors/" + addonKey + '-descriptor';
+            fs.writeFile(fileName, body, function (err) {
+                if (err) {
+                    console.log("Unable to write descriptor for add-on " + addonKey + " to disk", err);
+                } else {
+                    console.log("Downloaded descriptor", fileName);
+                }
+            });
+        }
+    });
+}
+
+function go() {
+    if (!fs.existsSync(downloadDestination)) {
+        fs.mkdirSync(downloadDestination);
+    }
+    getAddonPage(uri);
+};
+
+go();
