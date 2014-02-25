@@ -282,7 +282,7 @@ function removeTrailingPattern(path) {
 }
 
 /**
- * Generic transformer for RPC style APIs that iteratates over one or more scope files
+ * Generic transformer for RPC style APIs that iterates over one or more scope files
  * and invokes a callback for every entry in an array specified by 'keyProperty'. It looks
  * up the matching scope first and passes that into the callback as well.
  */
@@ -329,7 +329,8 @@ function convertRestScopesToViewModel(scopeDefinitions) {
                     path: path,
                     id: slugify(path),
                     versions: restPath.versions.sort(),
-                    scopes: scopesByKey[restPath.key]
+                    scopes: scopesByKey[restPath.key],
+                    public: restPath.public
                 }
             });
         });
@@ -345,7 +346,8 @@ function convertRestScopesToViewModel(scopeDefinitions) {
                     path: path,
                     id: slugify(path),
                     versions: [],
-                    scopes: scopesByKey[downloadPath.key]
+                    scopes: scopesByKey[downloadPath.key],
+                    public: downloadPath.public
                 }
             });
         });
