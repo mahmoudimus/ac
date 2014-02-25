@@ -1,0 +1,9 @@
+{
+  "name": "atlassian-connect-marketplacea-scripts",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "request": "~2.33.0",
+    "lodash": "~2.4.1"
+  }
+}
