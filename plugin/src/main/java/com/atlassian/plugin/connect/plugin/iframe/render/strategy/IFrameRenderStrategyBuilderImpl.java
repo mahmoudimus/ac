@@ -318,6 +318,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .resizeToParent(resizeToParent)
                     .context(additionalRenderContext)
                     .context("contextParams", moduleContextParameters)
+                    .productContext(moduleContextParameters)
                     .context("width", width)
                     .context("height", height)
                     .build();
