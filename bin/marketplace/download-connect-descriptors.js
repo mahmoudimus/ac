@@ -7,12 +7,29 @@ var request = require('request'),
 
 var downloadDestination = "descriptors/",
     baseUrl = "https://marketplace.atlassian.com";
-    uri = baseUrl + "/rest/1.0/plugins?hosting=ondemand&addOnType=three&limit=50";
+    uri = baseUrl + "/rest/1.0/plugins?hosting=ondemand&addOnType=three&includePrivate=true&limit=50";
+
+var opts = require("nomnom")
+   .option('debug', {
+      abbr: 'd',
+      flag: true,
+      help: 'Print debugging info'
+   })
+   .option('user', {
+      abbr: 'u',
+      help: 'Marketplace username'
+   })
+   .option('pass', {
+      help: 'Marketplace password'
+   })
+   .parse();
 
 var getAddonPage = function (uri) {
     return request({
         uri: uri,
         method: "GET",
+        username: opts.user,
+        password: opts.pass,
         json: true
     }, function (error, response, body) {
         if (error) {
