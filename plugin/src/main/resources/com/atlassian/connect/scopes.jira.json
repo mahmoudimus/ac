@@ -300,7 +300,8 @@
   "paths": [
       {
         "key": "download attachments",
-        "paths": ["/secure/attachment($|/.*)"]
+        "paths": ["/secure/attachment($|/.*)"],
+        "public": true
       }
   ]
 }
