@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 
 var request = require('request'),
     _ = require('lodash'),
@@ -6,7 +7,7 @@ var request = require('request'),
 
 var downloadDestination = "descriptors/",
     baseUrl = "https://marketplace.atlassian.com";
-    uri = baseUrl + "/rest/1.0/plugins?hosting=ondemand&addOnType=three&limit=20";
+    uri = baseUrl + "/rest/1.0/plugins?hosting=ondemand&addOnType=three&limit=50";
 
 var getAddonPage = function (uri) {
     return request({
