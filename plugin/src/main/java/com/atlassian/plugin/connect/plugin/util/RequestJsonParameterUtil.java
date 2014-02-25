@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.iframe.context;
+package com.atlassian.plugin.connect.plugin.util;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.atlassian.plugin.connect.plugin.iframe.context.InvalidContextParameterException;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;

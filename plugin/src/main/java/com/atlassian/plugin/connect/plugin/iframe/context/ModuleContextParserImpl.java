@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.iframe.context;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+import com.atlassian.plugin.connect.plugin.util.RequestJsonParameterUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

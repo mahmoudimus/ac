@@ -1,15 +1,17 @@
-package com.atlassian.plugin.connect.plugin.iframe.context;
+package com.atlassian.plugin.connect.plugin.util;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import com.atlassian.plugin.connect.plugin.iframe.context.InvalidContextParameterException;
+import com.atlassian.plugin.connect.plugin.util.RequestJsonParameterUtil;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static com.atlassian.plugin.connect.plugin.iframe.context.RequestJsonParameterUtil.CONTEXT_PARAMETER_KEY;
+import static com.atlassian.plugin.connect.plugin.util.RequestJsonParameterUtil.CONTEXT_PARAMETER_KEY;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
