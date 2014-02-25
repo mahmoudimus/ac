@@ -1,22 +1,8 @@
 package com.atlassian.plugin.connect.plugin.iframe.context;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +21,7 @@ public class ModuleContextParserImpl implements ModuleContextParser
 
 
     private final ModuleContextFilter moduleContextFilter;
-    private final ModuleContextJsonExtractor moduleContextJsonExtractor = new ModuleContextJsonExtractor();
+    private final RequestJsonParameterUtil requestJsonParameterUtil = new RequestJsonParameterUtil();
 
     @Autowired
     public ModuleContextParserImpl(ModuleContextFilter moduleContextFilter)
@@ -47,7 +33,7 @@ public class ModuleContextParserImpl implements ModuleContextParser
     public ModuleContextParameters parseContextParameters(final HttpServletRequest req)
     {
         ModuleContextParameters unfiltered = new HashMapModuleContextParameters();
-        final Map<String, String[]> parameterMap = moduleContextJsonExtractor.tryExtractContextFromJson(req.getParameterMap());
+        final Map<String, String[]> parameterMap = requestJsonParameterUtil.tryExtractContextFromJson(req.getParameterMap());
         for (Map.Entry<String, String[]> entry : parameterMap.entrySet())
         {
             String key = entry.getKey();

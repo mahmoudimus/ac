@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class ModuleContextJsonExtractor
+public class RequestJsonParameterUtil
 {
     public static final String CONTEXT_PARAMETER_KEY = "product-context";
     private static final Joiner PATH_COMPONENT_JOINER = Joiner.on('.');
@@ -31,7 +31,7 @@ public class ModuleContextJsonExtractor
             {
             };
 
-    private static final Logger log = LoggerFactory.getLogger(ModuleContextJsonExtractor.class);
+    private static final Logger log = LoggerFactory.getLogger(RequestJsonParameterUtil.class);
 
     // the product context may be passed from the client as a json object. If so we pull them out and pretend they were request params. Not pretty but hey
     public Map<String, String[]> tryExtractContextFromJson(Map<String, String[]> requestParams) throws InvalidContextParameterException

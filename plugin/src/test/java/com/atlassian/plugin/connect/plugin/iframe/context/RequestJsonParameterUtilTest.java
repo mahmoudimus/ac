@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextJsonExtractor.CONTEXT_PARAMETER_KEY;
+import static com.atlassian.plugin.connect.plugin.iframe.context.RequestJsonParameterUtil.CONTEXT_PARAMETER_KEY;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
@@ -19,9 +19,9 @@ import static org.junit.Assert.assertThat;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class ModuleContextJsonExtractorTest
+public class RequestJsonParameterUtilTest
 {
-    ModuleContextJsonExtractor extractor = new ModuleContextJsonExtractor();
+    RequestJsonParameterUtil extractor = new RequestJsonParameterUtil();
 
     @Test
     public void doesNotModifyParamsIfContextParamNotProvided()
