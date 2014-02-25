@@ -7,11 +7,9 @@ mixin scope(key)
         block
 
 mixin public(public)
-    if (public)
-        span.aui-lozenge.aui-lozenge-subtle.aui-lozenge-success Public
-    else
-        span.aui-lozenge.aui-lozenge-subtle.aui-lozenge-error Private
-    block
+    if (!public)
+        span.aui-lozenge.aui-lozenge-current Beta
+            block
 
 p
 | The required scope for your add-on depends on how you interact with the resources that are exposed by the REST API.
@@ -59,7 +57,7 @@ ul
 p
 | will require your add-on to declare the <strong>READ</strong> scope.
 | The example also shows that this specific resource only supports <strong>GET</strong>, but no other HTTP verbs.
-| Lastly, the API is <strong>PUBLIC</strong>, which means it is fully supported and will be kept stable across releases.
+| Lastly, the API is not <strong>BETA</strong>, which means it is fully supported and will be kept stable across releases.
 
 
 h2 Resources and their Associated Scopes
