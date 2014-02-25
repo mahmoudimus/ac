@@ -1,10 +1,11 @@
-package it.com.atlassian.plugin.connect.descriptor.tabpanel.jira;
+package it.com.atlassian.plugin.connect.descriptor.jira;
 
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectViewProfilePanelModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
 import org.junit.Test;
@@ -14,6 +15,7 @@ import it.com.atlassian.plugin.connect.TestAuthenticator;
 
 import static org.junit.Assert.assertEquals;
 
+@Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ProfileTabPanelDescriptorFactoryTest extends AbstractTabPanelDescriptorFactoryTest
 {

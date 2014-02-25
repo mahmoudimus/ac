@@ -1,10 +1,12 @@
-package com.atlassian.plugin.connect.plugin.iframe.webpanel;
+package com.atlassian.plugin.connect.test.plugin.iframe.webpanel;
 
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.ConfluenceWebFragmentModuleContextExtractor;
+
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;

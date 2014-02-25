@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.AfterClass;
@@ -33,6 +34,7 @@ import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameR
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+@Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
 public class WorkflowPostFunctionModuleProviderTest
 {

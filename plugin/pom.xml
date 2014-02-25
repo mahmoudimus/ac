@@ -412,6 +412,7 @@
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
+                    <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>com.atlassian.plugin</groupId>
@@ -427,64 +428,6 @@
                         </testBundleExclude>
                     </testBundleExcludes>
                     <instructions>
-                        <!-- <Import-Package>
-                            com.atlassian.upm.*,
-                            com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
-                            com.atlassian.confluence.plugin.webresource;resolution:=optional,
-                            com.atlassian.confluence.security.websudo;resolution:=optional,
-                            com.atlassian.jira;resolution:=optional,
-                            com.atlassian.jira.config;resolution:=optional,
-                            com.atlassian.jira.plugin.webfragment.descriptors;resolution:=optional,
-                            com.atlassian.jira.security;resolution:=optional,
-                            com.atlassian.jira.security.websudo;resolution:=optional,
-                            com.atlassian.oauth*;version="(1.2,2.0]",
-                            com.atlassian.jwt.*;version="${atlassian.jwt.version}",
-
-                            com.atlassian.plugin;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.descriptors;resolution:="optional",
-                            com.atlassian.plugin.elements;resolution:="optional",
-                            com.atlassian.plugin.event;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.event.events;resolution:="optional",
-                            com.atlassian.plugin.hostcontainer;resolution:="optional",
-                            com.atlassian.plugin.module;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.schema.descriptor;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.schema.spi;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.servlet;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.servlet.descriptors;resolution:="optional",
-                            com.atlassian.plugin.servlet.filter ;resolution:="optional",
-                            com.atlassian.plugin.servlet.util;resolution: ="optional",
-                            com.atlassian.plugin.tracker;resolution:="optional",
-                            com.atlassian.plugin.util;resolution:="optional",
-                            com.atlassian.plugin.web;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.web.conditions;resolution:="optional",
-                            com.atlassian.plugin.web.descriptors;resolution:="optional",
-                            com.atlassian.plugin.web.model;resolution:="optional",
-                            com.atlassian.plugin.webresource;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.webresource.transformer;resolution:="optional",
-
-                            com.atlassian.templaterenderer;version="1.4.0",
-                            com.atlassian.refapp.auth.external;resolution:=optional,
-                            com.atlassian.sal.api.*;version="(2.4,3.0]",
-                            com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
-                            com.atlassian.crowd.embedded.api.*;version="2.0";resolution:=optional,
-                            com.atlassian.webhooks.spi*;version="${atlassian.webhooks.api.version}",
-                            com.atlassian.httpclient.api*;version="${atlassian.httpclient.api.version}",
-                            com.sun.mail.handlers;resolution:=optional,
-                            net.oauth*,
-                            javax.servlet;version="0.0.0",
-                            javax.servlet.http;version="0.0.0",
-                            javax.inject;version="1",
-                            javax.xml*,
-                            org.apache.commons.lang.*;version="2.4",
-                            org.dom4j*,
-                            org.joda.time*;version="1.6",
-                            org.slf4j*;version="1.5",
-                            org.xml.sax*,
-                            com.atlassian.plugin.connect.api*;version="${project.version}",
-                            com.atlassian.plugin.connect.spi*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin*;version="${project.version}",
-                            *;resolution:=optional
-                        </Import-Package> -->
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
                             com.atlassian.plugin.connect.api.*;version="${project.version}",
@@ -1088,7 +1031,7 @@
         <devmode>true</devmode>
         <fastdev.version>2.2</fastdev.version>
         <toolbox.version>2.0.6</toolbox.version>
-        <plugin.testrunner.version>1.1.3</plugin.testrunner.version>
+        <plugin.testrunner.version>1.1.4-SNAPSHOT</plugin.testrunner.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>

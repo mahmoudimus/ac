@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.descriptor.tabpanel.jira;
+package it.com.atlassian.plugin.connect.descriptor.jira;
 
 import java.io.IOException;
 
