@@ -25,7 +25,7 @@ public interface IFrameRenderContextBuilder
     {
         InitializedBuilder dialog(boolean isDialog);
         InitializedBuilder simpleDialog(boolean isSimpleDialog);
-        InitializedBuilder productContext(Map<String, Object> productContext);
+        <T extends Map<String, String>> InitializedBuilder productContext(T productContext);
         InitializedBuilder decorator(String decorator);
         InitializedBuilder title(String title);
         InitializedBuilder resizeToParent(boolean resizeToParent);
