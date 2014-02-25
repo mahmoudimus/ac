@@ -63,6 +63,7 @@ public class TestEntityProperty
                         "jiraEntityProperties",
                         newEntityPropertyModuleBean()
                                 .withName(new I18nProperty("JIRA Attachment indexing", "jira.attachment.indexing"))
+                                .withKey("jira-attachment-indexing")
                                 .withKeyConfiguration(keyConfigurationBean)
                                 .withEntityType(EntityPropertyType.issue)
                                 .build()
