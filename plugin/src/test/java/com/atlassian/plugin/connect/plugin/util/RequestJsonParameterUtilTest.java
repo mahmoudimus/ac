@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.atlassian.plugin.connect.plugin.iframe.context.InvalidContextParameterException;
-import com.atlassian.plugin.connect.plugin.util.RequestJsonParameterUtil;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.junit.Test;
