@@ -1,3 +1,12 @@
+<div class="aui-message warning">
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Important</strong>
+    </p>
+    This automatic versioning strategy will be coming into effect on March 3rd, 2014.
+</div>
+
+
 # Upgrading and Versioning your Add-on
 
 You can upgrade your add-on any time once it's listed in the [Marketplace](https://marketplace.atlassian.com/) as either
