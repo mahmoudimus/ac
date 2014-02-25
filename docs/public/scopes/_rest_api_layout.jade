@@ -16,6 +16,13 @@ p
 | The table below shows the required scope for GET, POST, PUT and DELETE operations on a resource path. REST resources
 | are versioned by a path segment that varies with the version. The supported versions are listed below the path.
 
+p
+| Some APIs below are marked as &nbsp;
++public(false)
+| . As opposed to Public APIs, private APIs are not following the principles described in the <a href="https://developer.atlassian.com/display/HOME/Atlassian+REST+API+policy">REST API Policy</a>. While
+| we strive to keep private APIs backward-compatible, we cannot guarantee compatibility. Private APIs can also be replaced
+| by new Public APIs and may become deprecated over time.
+
 h2 Example
 
 table.aui
@@ -57,7 +64,7 @@ ul
 p
 | will require your add-on to declare the <strong>READ</strong> scope.
 | The example also shows that this specific resource only supports <strong>GET</strong>, but no other HTTP verbs.
-| Lastly, the API is not <strong>BETA</strong>, which means it is fully supported and will be kept stable across releases.
+
 
 
 h2 Resources and their Associated Scopes
