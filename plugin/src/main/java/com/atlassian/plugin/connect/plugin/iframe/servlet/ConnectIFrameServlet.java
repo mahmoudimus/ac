@@ -66,16 +66,16 @@ public class ConnectIFrameServlet extends HttpServlet
             if (renderStrategy != null)
             {
                 resp.setContentType("text/html");
-                //TODO: fix AC-986 properly by finding a way to use the conditions
-//                if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
-//                {
+                //TODO: fix AC-986 properly
+                if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
+                {
                     ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
                     renderStrategy.render(moduleContextParameters, resp.getWriter());
-//                }
-//                else
-//                {
-//                    renderStrategy.renderAccessDenied(resp.getWriter());
-//                }
+                }
+                else
+                {
+                    renderStrategy.renderAccessDenied(resp.getWriter());
+                }
 
                 return;
             }
