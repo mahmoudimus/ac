@@ -66,8 +66,7 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         getContentUrl: getContentUrl,
         getIframeHtmlForKey: getIframeHtmlForKey,
         eventHandler: eventHandler,
-        getOptionsForWebItem: getOptionsForWebItem,
-
+        getOptionsForWebItem: getOptionsForWebItem
     };
 
 

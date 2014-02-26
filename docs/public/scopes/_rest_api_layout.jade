@@ -6,10 +6,22 @@ mixin scope(key)
     span.aui-lozenge.aui-lozenge-subtle.aui-lozenge-complete #{key}
         block
 
+mixin public(public)
+    if (!public)
+        span.aui-lozenge.aui-lozenge-current Private
+            block
+
 p
 | The required scope for your add-on depends on how you interact with the resources that are exposed by the REST API.
 | The table below shows the required scope for GET, POST, PUT and DELETE operations on a resource path. REST resources
 | are versioned by a path segment that varies with the version. The supported versions are listed below the path.
+
+p
+| Some APIs below are marked as &nbsp;
++public(false)
+| . As opposed to public APIs, private APIs are not following the principles described in the <a href="https://developer.atlassian.com/display/HOME/Atlassian+REST+API+policy">REST API Policy</a>. While
+| we strive to keep private APIs backward-compatible, we cannot guarantee compatibility. Private APIs can also be replaced
+| by new public APIs and may become deprecated over time.
 
 h2 Example
 
@@ -17,6 +29,7 @@ table.aui
     thead
         tr
             th Path
+            th
             th GET
             th POST
             th PUT
@@ -28,6 +41,8 @@ table.aui
                 p
                     span.aui-label 1
                     span.aui-label latest
+            td
+                +public(true)
             td
                 +scope("READ")
             td
@@ -51,12 +66,14 @@ p
 | The example also shows that this specific resource only supports <strong>GET</strong>, but no other HTTP verbs.
 
 
+
 h2 Resources and their Associated Scopes
 
 table.aui
     thead
         tr
             th Path
+            th
             th GET
             th POST
             th PUT
@@ -72,6 +89,8 @@ table.aui
                         - each version in api.versions
                             span.aui-label
                                 != version
+                td
+                    +public(api.public)
                 - each method in ["GET", "POST", "PUT", "DELETE"]
                     td
                         - if (api.scopes[method])

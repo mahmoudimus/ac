@@ -45,7 +45,7 @@ public class TestDialog extends ConnectWebDriverTestBase
                                 .build(),
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_DIALOG_NAME, null))
-                                .withUrl("/my-dialog")
+                                .withUrl("/my-dialog-url?page_id{page.id}&myuserid={user.id}")
                                 .withKey(ADDON_DIALOG)
                                 .build(),
                         newPageBean()
@@ -56,7 +56,7 @@ public class TestDialog extends ConnectWebDriverTestBase
                 )
 
                 .addRoute("/pg", ConnectAppServlets.openDialogServlet())
-                .addRoute("/my-dialog", ConnectAppServlets.closeDialogServlet())
+                .addRoute("/my-dialog-url", ConnectAppServlets.closeDialogServlet())
                 .start();
     }
 

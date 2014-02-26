@@ -24,7 +24,8 @@
                 "name": {
                     "value": "My Web Item",
                     "i18n": "my.webitem"
-                }
+                },
+                "key":"my-single-web-item"
             }
         ]
     },

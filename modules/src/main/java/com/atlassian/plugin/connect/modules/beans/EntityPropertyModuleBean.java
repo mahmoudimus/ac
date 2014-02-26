@@ -21,7 +21,7 @@ import java.util.List;
  * @schemaTitle Entity Property
  * @since 1.0
  */
-public class EntityPropertyModuleBean extends GeneratedKeyBean
+public class EntityPropertyModuleBean extends RequiredKeyBean
 {
     /**
      * List of properties from which selected values are indexed.
