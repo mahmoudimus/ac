@@ -42,7 +42,7 @@ Add-on vendors cannot possibly know about the myriad product instances into whic
 need a way of statically specifying the maximum set of actions that their add-on may perform. This is expressed in the
 scopes in the add-on descriptor and is presented to the administrator during installation.
 
-Read more details in our [scopes documentation](../scopes/scopes/html).
+Read more details in our [scopes documentation](../scopes/scopes.html).
 
 ### Run-time Authorisation: Add-on Users
 
