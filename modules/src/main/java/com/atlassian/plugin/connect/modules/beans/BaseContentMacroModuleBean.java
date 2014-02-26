@@ -54,7 +54,7 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * * `page.id`: The page ID, e.g. `1376295`
      * * `page.title`: The page title, e.g. `My Page`
      * * `page.type`: The page type, e.g. `page`
-     * * `page.version.id`: The page version, e.g. `6`
+     * * `page.version`: The page version, e.g. `6`
      * * `space.id`: The space ID, e.g. `65537`
      * * `space.key`: The space key, e.g. `AC`
      * * `user.id`: The user ID, e.g. `admin`
