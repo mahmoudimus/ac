@@ -1,7 +1,7 @@
 # Upgrading and Versioning your Add-on
 
 You can upgrade your add-on any time once it's listed in the [Marketplace](https://marketplace.atlassian.com/) as either
-an [approved public add-on](./selling-on-marketplace.html), or a [private listing](./installing-in-ondemand.html).
+an [approved public add-on](./selling-on-marketplace.html) or a [private listing](./installing-in-ondemand.html).
 
 Almost all changes you make to your add-on will be to code inside your add-on's web app. For example, tweaking the look
 of a web panel, adding a configuration option or catching a previously unhandled exception can all be done by writing
@@ -42,8 +42,6 @@ product administrator so they can approve and update the add-on.
 
 These scenarios require manual customer approval:  
 
-* Your listing changes from __private to public__: In this case, your change triggers a manual Marketplace approval,
-which usually takes 3-5 business days.
 * Your listing changes from __free to paid__: Your change triggers a Marketplace approval. Existing customers need to
 approve the change to start paying for your add-on, otherwise they will need to uninstall it.
 * Your listing involves __additional [scopes](../scopes/scopes.html)__: Marketplace updates happen automatically (no
