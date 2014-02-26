@@ -23,6 +23,9 @@
         }
     },
     "concepts": {
+        "security.html": {
+            "title": "Security"
+        },
         "authentication.html": {
             "title": "Authentication"
         },

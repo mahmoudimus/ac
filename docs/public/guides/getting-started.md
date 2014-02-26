@@ -206,7 +206,7 @@ Browser->User:Requested page\nrendered
 For most Atlassian Connect add-ons, the next step for the developer would be to add code that relies
 on the Atlassian application REST APIs. This requires implementing the
 [authentication](../concepts/authentication.html) used between Atlassian applications and Atlassian
-Connect add-ons.
+Connect add-ons. For an overview of authentication and authorisation you may wish to read about [security](../concepts/security.html).
 
 You can do this using any language or framework that you wish, and many languages already provide
 libraries to help you with implement JWT authentication.
