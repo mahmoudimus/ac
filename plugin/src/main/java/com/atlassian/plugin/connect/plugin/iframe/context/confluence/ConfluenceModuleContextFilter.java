@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.context.confluence;
 
 import com.atlassian.confluence.pages.AbstractPage;
-import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.security.Permission;
 import com.atlassian.confluence.security.PermissionManager;
@@ -15,8 +14,6 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameter
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +37,6 @@ public class ConfluenceModuleContextFilter implements ModuleContextFilter
     private final UserManager userManager;
     private final SpaceManager spaceManager;
     private final PageManager pageManager;
-    private final Iterable<PermissionCheck> permissionChecks;
 
     @Autowired
     public ConfluenceModuleContextFilter(PermissionManager permissionManager, UserAccessor userAccessor,
@@ -51,7 +47,6 @@ public class ConfluenceModuleContextFilter implements ModuleContextFilter
         this.userManager = userManager;
         this.spaceManager = spaceManager;
         this.pageManager = pageManager;
-        permissionChecks = constructPermissionChecks();
     }
 
     @Override
@@ -62,94 +57,63 @@ public class ConfluenceModuleContextFilter implements ModuleContextFilter
         UserKey userKey = userManager.getRemoteUserKey();
         ConfluenceUser currentUser = userAccessor.getExistingUserByKey(userKey);
 
-        for (PermissionCheck permissionCheck : permissionChecks)
+        String spaceKey = unfiltered.get(SPACE_KEY);
+        String spaceIdValue = unfiltered.get(SPACE_ID);
+        Long spaceId = parseLong(spaceIdValue, SPACE_ID);
+
+        Space space;
+        boolean checkSpaceIdPermission = true;
+
+        if (spaceKey != null)
         {
-            String value = unfiltered.get(permissionCheck.getParameterName());
-            if (!Strings.isNullOrEmpty(value) && permissionCheck.hasPermission(value, currentUser))
+            space = spaceManager.getSpace(spaceKey);
+            if (space != null && permissionManager.hasPermission(currentUser, Permission.VIEW, space))
             {
-                filtered.put(permissionCheck.getParameterName(), value);
+                filtered.put(SPACE_KEY, spaceKey);
+                if (spaceId != null && space.getId() == spaceId)
+                {
+                    filtered.put(SPACE_ID, spaceIdValue);
+                    checkSpaceIdPermission = false;
+                }
             }
         }
+
+        if (spaceId != null && checkSpaceIdPermission)
+        {
+            space = spaceManager.getSpace(spaceId);
+            if (space != null && permissionManager.hasPermission(currentUser, Permission.VIEW, space))
+            {
+                filtered.put(SPACE_ID, spaceIdValue);
+            }
+        }
+
+        String pageIdValue = unfiltered.get(PAGE_ID);
+        Long pageId = parseLong(pageIdValue, PAGE_ID);
+        if (pageId != null)
+        {
+            AbstractPage page = pageManager.getAbstractPage(pageId);
+            if (page != null && permissionManager.hasPermission(currentUser, Permission.VIEW, page))
+            {
+                filtered.put(PAGE_ID, pageIdValue);
+                filtered.put(PAGE_VERSION, unfiltered.get(PAGE_VERSION));
+                filtered.put(PAGE_TYPE, unfiltered.get(PAGE_TYPE));
+            }
+        }
+
         return filtered;
     }
 
-    private static interface PermissionCheck
-    {
-        String getParameterName();
 
-        boolean hasPermission(String value, ConfluenceUser user);
-    }
-
-    private static abstract class LongValuePermissionCheck implements PermissionCheck
+    Long parseLong(String value, String field)
     {
-        @Override
-        public boolean hasPermission(final String value, final ConfluenceUser user)
+        try
         {
-            long longValue;
-            try
-            {
-                longValue = Long.parseLong(value);
-            }
-            catch (NumberFormatException e)
-            {
-                log.debug("Failed to parse " + getParameterName(), e);
-                return false;
-            }
-            return hasPermission(longValue, user);
+            return value == null ? null : Long.parseLong(value);
         }
-
-        abstract boolean hasPermission(long value, ConfluenceUser user);
+        catch (NumberFormatException e)
+        {
+            log.debug("Failed to parse " + field + " " + value + " as a number", e);
+        }
+        return null;
     }
-
-    private Iterable<PermissionCheck> constructPermissionChecks()
-    {
-        return ImmutableList.of(
-                new PermissionCheck()
-                {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return SPACE_KEY;
-                    }
-
-                    @Override
-                    public boolean hasPermission(final String spaceKey, final ConfluenceUser user)
-                    {
-                        Space space = spaceManager.getSpace(spaceKey);
-                        return space != null && permissionManager.hasPermission(user, Permission.VIEW, space);
-                    }
-                },
-                new LongValuePermissionCheck()
-                {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return SPACE_ID;
-                    }
-
-                    @Override
-                    boolean hasPermission(final long spaceId, final ConfluenceUser user)
-                    {
-                        Space space = spaceManager.getSpace(spaceId);
-                        return space != null && permissionManager.hasPermission(user, Permission.VIEW, space);
-                    }
-                },
-                new LongValuePermissionCheck()
-                {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return PAGE_ID;
-                    }
-
-                    @Override
-                    boolean hasPermission(final long pageId, final ConfluenceUser user)
-                    {
-                        AbstractPage page = pageManager.getAbstractPage(pageId);
-                        return page != null && permissionManager.hasPermission(user, Permission.VIEW, page);
-                    }
-                }
-        );
-    }
-
 }
