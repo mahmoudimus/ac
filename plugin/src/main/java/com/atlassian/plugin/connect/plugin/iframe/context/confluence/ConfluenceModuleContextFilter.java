@@ -61,15 +61,20 @@ public class ConfluenceModuleContextFilter implements ModuleContextFilter
         String spaceIdValue = unfiltered.get(SPACE_ID);
         Long spaceId = parseLong(spaceIdValue, SPACE_ID);
 
-        Space space = spaceManager.getSpace(spaceKey);
+        Space space;
         boolean checkSpaceIdPermission = true;
-        if (space != null && permissionManager.hasPermission(currentUser, Permission.VIEW, space))
+
+        if (spaceKey != null)
         {
-            filtered.put(SPACE_KEY, spaceKey);
-            if (spaceId != null && space.getId() == spaceId)
+            space = spaceManager.getSpace(spaceKey);
+            if (space != null && permissionManager.hasPermission(currentUser, Permission.VIEW, space))
             {
-                filtered.put(SPACE_ID, spaceIdValue);
-                checkSpaceIdPermission = false;
+                filtered.put(SPACE_KEY, spaceKey);
+                if (spaceId != null && space.getId() == spaceId)
+                {
+                    filtered.put(SPACE_ID, spaceIdValue);
+                    checkSpaceIdPermission = false;
+                }
             }
         }
 
