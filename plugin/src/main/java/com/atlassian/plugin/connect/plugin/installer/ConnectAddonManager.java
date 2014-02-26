@@ -135,7 +135,7 @@ public class ConnectAddonManager
             if (null != addon)
             {
                 beanToModuleRegistrar.registerDescriptorsForBeans(plugin, addon);
-                connectAddOnUserService.getOrCreateUserKey(pluginKey);
+                enableAddOnUser(pluginKey);
                 publishEnabledEvent(pluginKey);
 
                 if (log.isDebugEnabled())
@@ -246,6 +246,21 @@ public class ConnectAddonManager
         }
 
         connectAddOnUserService.disableAddonUser(addOnKey);
+    }
+
+    private void enableAddOnUser(String addOnKey) throws ConnectAddOnUserInitException
+    {
+        String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey);
+        ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
+
+        if (null != applicationLink)
+        {
+            applicationLink.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, userKey);
+        }
+        else
+        {
+            log.error("Unable to set the ApplicationLink user key property for add-on '{}' because the add-on has no ApplicationLink!", addOnKey);
+        }
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation

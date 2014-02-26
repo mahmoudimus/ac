@@ -54,6 +54,10 @@ AP.define("_util", function () {
     }
   }
 
+  function decodeQueryComponent(encodedURI) {
+    return encodedURI == null ? null : decodeURIComponent( encodedURI.replace(/\+/g, '%20') );
+  }
+
   return {
 
     each: each,
@@ -116,8 +120,9 @@ AP.define("_util", function () {
       if (!log.apply(this, err && err.message ? [err, err.message] : [err])) {
         throw err;
       }
-    }
+    },
 
+    decodeQueryComponent: decodeQueryComponent
   };
 
 });

@@ -66,6 +66,7 @@ public class ConnectIFrameServlet extends HttpServlet
             if (renderStrategy != null)
             {
                 resp.setContentType("text/html");
+                //TODO: fix AC-986 properly
                 if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
                 {
                     ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);

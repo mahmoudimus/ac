@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
-public class EntityPropertyModuleBeanBuilder extends GeneratedKeyBeanBuilder<EntityPropertyModuleBeanBuilder, EntityPropertyModuleBean>
+public class EntityPropertyModuleBeanBuilder extends RequiredKeyBeanBuilder<EntityPropertyModuleBeanBuilder, EntityPropertyModuleBean>
 {
     private List<EntityPropertyIndexKeyConfigurationBean> keyConfigurations;
     private EntityPropertyType entityPropertyType;

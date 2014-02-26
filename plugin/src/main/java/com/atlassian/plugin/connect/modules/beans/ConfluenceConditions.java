@@ -69,7 +69,7 @@ public class ConfluenceConditions extends ConditionsProvider
         Map<String, Class<? extends Condition>> conditionMap = newHashMap();
 
         conditionMap.put(NOT_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.NotPersonalSpaceCondition.class);
-        conditionMap.put(USER_IS_CONFLUENCE_ADMINISTRATOR, com.atlassian.confluence.plugin.descriptor.web.conditions.ConfluenceAdministratorCondition.class);
+        conditionMap.put(USER_IS_CONFLUENCE_ADMINISTRATOR, com.atlassian.plugin.connect.spi.module.UserIsAdminCondition.class);
         conditionMap.put(USER_CAN_USE_CONFLUENCE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserCanUseConfluenceCondition.class);
         conditionMap.put(USER_CAN_UPDATE_USER_STATUS, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserCanUpdateUserStatusCondition.class);
         conditionMap.put(EMAIL_ADDRESS_PUBLIC, com.atlassian.confluence.plugin.descriptor.web.conditions.EmailAddressPublicCondition.class);
@@ -80,10 +80,10 @@ public class ConfluenceConditions extends ConditionsProvider
         conditionMap.put(HAS_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.HasSpaceCondition.class);
         conditionMap.put(TARGET_USER_CAN_SET_STATUS, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserCanSetStatusCondition.class);
         conditionMap.put(USER_FAVOURITING_TARGET_USER_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserFavouritingTargetUserPersonalSpaceCondition.class);
-        conditionMap.put(USER_IS_SYSADMIN, com.atlassian.confluence.plugin.descriptor.web.conditions.SystemAdministratorCondition.class);
+        conditionMap.put(USER_IS_SYSADMIN, com.atlassian.plugin.connect.spi.module.UserIsSysAdminCondition.class);
         conditionMap.put(FAVOURITE_PAGE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouritePageCondition.class);
         conditionMap.put(THREADED_COMMENTS, com.atlassian.confluence.plugin.descriptor.web.conditions.ThreadedCommentsCondition.class);
-        conditionMap.put(USER_IS_LOGGED_IN, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserLoggedInCondition.class);
+        conditionMap.put(USER_IS_LOGGED_IN, com.atlassian.plugin.connect.spi.module.UserIsLoggedInCondition.class);
         conditionMap.put(USER_HAS_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserHasPersonalSpaceCondition.class);
         conditionMap.put(CAN_SIGNUP, com.atlassian.confluence.plugin.descriptor.web.conditions.user.CanSignupCondition.class);
         conditionMap.put(TARGET_USER_HAS_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserHasPersonalSpaceCondition.class);
