@@ -7,7 +7,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0.0-rc4   <organization>
+    <version>1.0.0-rc4</version>
+    <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
     </organization>
@@ -28,7 +29,6 @@
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>
-      dule>
         <module>plugin-lifecycle-tests</module>
     </modules>
 
