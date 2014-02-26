@@ -24,7 +24,8 @@
     },
     "concepts": {
         "security.html": {
-            "title": "Security"
+            "title": "Security",
+            "new": true
         },
         "authentication.html": {
             "title": "Authentication"

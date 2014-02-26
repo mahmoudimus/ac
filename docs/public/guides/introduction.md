@@ -65,7 +65,7 @@ can only perform activities it declares in its descriptor, and which are accepte
 for example, permissions governing reading content, creating pages, creating issues, and more. This helps to ensure the
 security and stability of the OnDemand instance.
 
-You can read more about security [here](../concepts/security.html).
+Read our [security overview](../concepts/security.html) for more details.
 
 ## About this guide
 This guide is written for any developer who wants to create Atlassian Connect add-ons to extend Atlassian OnDemand or

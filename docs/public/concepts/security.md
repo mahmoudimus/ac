@@ -4,7 +4,7 @@ Connect security enables us to treat our customers with respect, by protecting t
 from malicious or accidental changes, and encourages them to install more Connect add-ons by assuring them that they can
 install add-ons without compromising their data.
 
-Connect security's goals are to
+Connect's security goals are to
 * identifies add-ons,
 * work out what each add-on can do,
 * accept allowed actions with minimal friction,
@@ -13,7 +13,7 @@ Connect security's goals are to
 * allow administrators to arbitrarily limit the actions that each add-on can take.
 
 There are two main branches of security, [authentication](./authentication.html) and authorisation, with authorisation
-further divided into [static](../scopes/scopes/html) and run-time authorisation.
+further divided into [static](../scopes/scopes.html) and run-time authorisation.
 
 ## Authentication
 
@@ -21,7 +21,7 @@ Authentication tells the product the identity of the add-on and is the basis of 
 you are talking to you cannot work out what they are allowed to do. On each incoming API request the identity of the
 add-on is established, with requests that do not contain authentication information being treated as anonymous.
 
-Our authentication is described in more detail [here](./authentication.html).
+Read more details in our [authentication documentation](./authentication.html).
 
 ## Authorisation
 
@@ -42,7 +42,7 @@ Add-on vendors cannot possibly know about the myriad product instances into whic
 need a way of statically specifying the maximum set of actions that their add-on may perform. This is expressed in the
 scopes in the add-on descriptor and is presented to the administrator during installation.
 
-Our scopes are described in more detail [here](../scopes/scopes/html).
+Read more details in our [scopes documentation](../scopes/scopes/html).
 
 ### Run-time Authorisation: Add-on Users
 
@@ -68,9 +68,9 @@ Currently, in-browser requests are assigned the user at the browser.
 
 The set of actions that an add-on is capable of performing is the intersection of the static scopes and the permissions
 of the user assigned to the request. It is entirely possible that any request may be rejected because the assigned user
-lacks the necessary permission, so the add-on should always defensively detect a
-[HTTP 401 unauthorised](http://en.wikipedia.org/wiki/HTTP_401#4xx_Client_Error) response from the product and, if
-possible, display an appropriate message to the user.
+lacks the necessary permission, so the add-on should always defensively detect
+[HTTP 403 forbidden](http://en.wikipedia.org/wiki/HTTP_403) responses from the product and, if possible, display an
+appropriate message to the user.
 
 
 ### Road Map

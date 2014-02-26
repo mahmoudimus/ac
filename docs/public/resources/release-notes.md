@@ -8,7 +8,7 @@
 * Module `key` attributes are now required
 * WebPanel url and location fields are now required
 * Only add-ons with a [`baseUrl`](../modules#baseUrl) starting with ``https://`` can be installed in OnDemand servers. ``http://`` may still be used for testing locally.
-* Add-ons are assigned a user in each product instance in which they are installed and server-to-server requests go through authorisation checks as this user. Read more [here](../concepts/security.html).
+* Increased [security](../concepts/security.html): add-ons are assigned a user in each product instance in which they are installed and server-to-server requests go through authorisation checks as this user.
 
 ## [1.0-m31](../release-notes/1-0-m31.html)
 * Support for Inline Dialogs
