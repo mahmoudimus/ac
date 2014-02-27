@@ -79,6 +79,22 @@ public class UrlVariableSubstitutor
     }
 
     /**
+     * Appends (rather than substitutes) a map of parameters to the end of the url.
+     * @return the URL, with the supplied parameters appended
+     */
+    public String append(String source, Map<String, String> parameters)
+    {
+        StringBuilder sb = new StringBuilder(source);
+        String sep = source.contains("?") ? "&" : "?";
+        for (Map.Entry<String, String> entry : parameters.entrySet())
+        {
+            sb.append(sep).append(entry.getKey()).append("=").append(encodeQuery(entry.getValue()));
+            sep = "&";
+        }
+        return sb.toString();
+    }
+
+    /**
      * Parses from the given URL a {@link Map} of name-in-source to context-variable-name.
      * @param source string containing variables (e.g. "http://server:80/path?my_page_id={page.id}" or "my_page_id={page.id}")
      * @return {@link Map} of name-in-source to context-variable-name (e.g. "my_page_id" => "page.id")
