@@ -5,6 +5,8 @@
   "dependencies": {
     "request": "~2.33.0",
     "nomnom": "~1.6.1",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "xml2js": "~0.4.1",
+    "node.extend": "~1.0.9"
   }
 }
