@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleViewParameters;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,7 +19,7 @@ public class IFrameRenderStrategyUtil
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try
         {
-            iFrameRenderStrategy.render(moduleContextParameters, new OutputStreamWriter(out));
+            iFrameRenderStrategy.render(moduleContextParameters, new OutputStreamWriter(out), Option.<ModuleViewParameters>none());
         }
         catch (IOException e)
         {

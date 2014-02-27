@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleViewParameters;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -15,7 +17,7 @@ public interface IFrameRenderStrategy
 
     void shouldShowOrThrow(Map<String, Object> conditionContext);
 
-    void render(ModuleContextParameters moduleContextParameters, Writer writer) throws IOException;
+    void render(ModuleContextParameters moduleContextParameters, Writer writer, Option<ModuleViewParameters> moduleViewParameters) throws IOException;
 
     void renderAccessDenied(Writer writer) throws IOException;
 }
