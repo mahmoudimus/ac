@@ -78,13 +78,13 @@ public class JiraConditions extends ConditionsProvider
         conditionMap.put(USER_IS_THE_LOGGED_IN_USER, ViewingOwnProfileCondition.class);
         conditionMap.put(HAS_LAST_SEARCH_REQUEST, com.atlassian.jira.plugin.webfragment.conditions.HasLastSearchRequestCondition.class);
         conditionMap.put(NOT_VERSION_CONTEXT, com.atlassian.jira.plugin.webfragment.conditions.NotVersionContextCondition.class);
-        conditionMap.put(USER_IS_SYSADMIN, com.atlassian.jira.plugin.webfragment.conditions.UserIsSysAdminCondition.class);
+        conditionMap.put(USER_IS_SYSADMIN, com.atlassian.plugin.connect.spi.module.UserIsSysAdminCondition.class);
         conditionMap.put(HAS_LINK_TYPES_AVAILABLE, com.atlassian.jira.plugin.webfragment.conditions.HasLinkTypesAvailableCondition.class);
         conditionMap.put(CAN_CREATE_SHARED_OBJECTS, com.atlassian.jira.plugin.webfragment.conditions.CanCreateSharedObjectsCondition.class);
-        conditionMap.put(USER_IS_LOGGED_IN, com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition.class);
+        conditionMap.put(USER_IS_LOGGED_IN, com.atlassian.plugin.connect.spi.module.UserIsLoggedInCondition.class);
         conditionMap.put(WATCHING_ENABLED, com.atlassian.jira.plugin.webfragment.conditions.WatchingEnabledCondition.class);
         conditionMap.put(IS_KEYBOARD_SHORTCUTS_ENABLED, com.atlassian.jira.plugin.webfragment.conditions.IsKeyboardShortcutsEnabledCondition.class);
-        conditionMap.put(USER_IS_ADMIN, com.atlassian.jira.plugin.webfragment.conditions.UserIsAdminCondition.class);
+        conditionMap.put(USER_IS_ADMIN, com.atlassian.plugin.connect.spi.module.UserIsAdminCondition.class);
         conditionMap.put(IS_ADMIN_MODE, com.atlassian.jira.plugin.webfragment.conditions.IsAdminModeCondition.class);
 
         // issue conditions
