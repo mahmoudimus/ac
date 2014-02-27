@@ -173,14 +173,9 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) plugin.getModuleDescriptor(MODULE_KEY);
 
-            assertEquals(1, descriptors.size());
-
-            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
-            descriptor.enabled();
-
-            assertEquals(MODULE_NAME,descriptor.getName());
+            assertEquals(MODULE_NAME,descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class),new HashMap<String, Object>()));
         }
         finally
         {
