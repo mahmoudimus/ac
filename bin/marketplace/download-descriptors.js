@@ -4,20 +4,19 @@ var request = require('request'),
     _ = require('lodash'),
     fs = require('fs'),
     extend = require('node.extend'),
-    nomnom = require('nomnom')
+    nomnom = require('nomnom'),
+    colors = require('colors'),
     util = require('util');
 
 var getAddonPage = function(opts) {
     if (opts.debug) {
         console.log("downloading: " + opts.baseUrl + opts.uri);
     }
+    
     return request({
         uri: opts.baseUrl + opts.uri,
         method: "GET",
-        auth: {
-            username: opts.user,
-            password: opts.pass
-        },
+        auth: opts.auth,
         json: true
     }, function(error, response, body) {
         if (error) {
@@ -50,7 +49,7 @@ var getAddonPage = function(opts) {
                     'rel': 'descriptor'
                 }).href;
 
-                downloadDescriptor(opts, key, descriptorUrl);
+                downloadDescriptor(opts, key, addon, descriptorUrl);
             });
 
             if (opts.debug) {
@@ -65,38 +64,47 @@ var getAddonPage = function(opts) {
     });
 };
 
-var downloadDescriptor = function(opts, addonKey, descriptorUrl) {
+var downloadDescriptor = function(opts, addonKey, addon, descriptorUrl) {
     request({
         uri: descriptorUrl,
         method: "GET",
-        auth: {
-            username: opts.user,
-            password: opts.pass
-        }
+        auth: opts.auth
     }, function(error, response, body) {
         if (error) {
             console.log("Unable to download descriptor for add-on", addonKey);
         } else {
-            var type = 'xml';
+            var type = 'xml',
+                typeColor = 'yellow';
             try {
                 JSON.parse(body);
                 type = 'json';
+                typeColor = 'green';
             } catch (e) {}
-            var filename = "descriptors/" + addonKey + '-descriptor' + "." + type;
-            fs.writeFile(filename, body, function(err) {
-                if (err) {
-                    console.log("Unable to write descriptor for add-on " + addonKey + " to disk", err);
-                    return;
-                }
 
-                if (opts.debug) {
-                    console.log(type, '\t', filename);
-                }
+            if (!opts.type || opts.type === type) {
+                var filename = "descriptors/" + addonKey + '-descriptor' + "." + type;
+                fs.writeFile(filename, body, function(err) {
+                    if (err) {
+                        console.log("Unable to write descriptor for add-on " + addonKey + " to disk", err);
+                        return;
+                    }
 
-                if (opts.descriptorDownloadedCallback) {
-                    opts.descriptorDownloadedCallback(addonKey, filename, type, body, opts);
-                }
-            });
+                    var status = addon.approval.status.toLowerCase(),
+                        statusColor = status === 'public' ? 'blue' : 'red';
+
+                    var url = opts.baseUrl + _.find(addon.links, {
+                            'rel': opts.auth ? 'tiny-url' : 'alternate' // no tiny-url for unauthenticated requests?
+                        }).href;
+                    console.log(addonKey, "(" + type[typeColor] + ", " + status[statusColor] + ")", opts.debug ? url.grey : "");
+
+                    if (opts.descriptorDownloadedCallback) {
+                        opts.descriptorDownloadedCallback(addonKey, filename, type, body, opts);
+                    }
+                });
+            } else if (opts.debug) {
+                var t = "Ignored add-on " + addonKey + " (" + type + ")");
+                console.log(t.grey);
+            }
         }
     });
 }
@@ -116,26 +124,53 @@ var getCliOpts = function() {
             abbr: 'p',
             help: 'Marketplace password'
         })
-        .parse();
+        .option('includePrivate', {
+            flag: true,
+            help: 'Include private add-ons'
+        })
+        .option('type', {
+            abbr: 't',
+            help: 'Add-on type to filter by. Valid options: [json, xml]',
+            choices: ['json', 'xml']
+        });
 }
 
 var defaultOpts = {
     baseUrl: "https://marketplace.atlassian.com",
-    uri: "/rest/1.0/plugins?hosting=ondemand&addOnType=three&includePrivate=true&limit=50",
+    uri: "/rest/1.0/plugins?hosting=ondemand&addOnType=three&limit=50",
     downloadDestination: "descriptors/"
 }
 
 exports.run = function(runOpts) {
+    var nomnom = getCliOpts();
+
     var opts = extend({}, defaultOpts);
     opts = extend(opts, runOpts);
-    opts = extend(opts, getCliOpts());
+    opts = extend(opts, nomnom.parse());
 
     if (!fs.existsSync(opts.downloadDestination)) {
         fs.mkdirSync(opts.downloadDestination);
     }
 
-    if (!opts.user || !opts.pass) {
-        console.log("WARNING: No credentials provided, only public add-ons will be retrieved.");
+    if (opts.includePrivate) {
+        opts.uri = opts.uri + "&includePrivate=true";
+    }
+
+    if (opts.user && opts.pass) {
+        opts.auth = {
+            username: opts.user,
+            password: opts.pass
+        }
+    }
+
+    if (!opts.auth) {
+        if (!opts.includePrivate) {
+            console.log("WARNING: No credentials provided, only public add-ons will be retrieved.");
+        } else {
+            nomnom.help();
+            console.log("ERROR: To retrieve private add-ons, credentials are required.");
+            return;
+        }
     }
 
     getAddonPage(opts);
