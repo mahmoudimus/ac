@@ -53,8 +53,10 @@ var getAddonPage = function(opts) {
                 downloadDescriptor(opts, key, descriptorUrl);
             });
 
-            console.log("next: " + nextRequestUri);
-            if ( !! nextRequestUri) {
+            if (opts.debug) {
+                console.log("next: " + nextRequestUri);
+            }
+            if (nextRequestUri) {
                 var nextOpts = extend({}, opts);
                 nextOpts.uri = nextRequestUri;
                 getAddonPage(nextOpts);
@@ -66,7 +68,11 @@ var getAddonPage = function(opts) {
 var downloadDescriptor = function(opts, addonKey, descriptorUrl) {
     request({
         uri: descriptorUrl,
-        method: "GET"
+        method: "GET",
+        auth: {
+            username: opts.user,
+            password: opts.pass
+        }
     }, function(error, response, body) {
         if (error) {
             console.log("Unable to download descriptor for add-on", addonKey);
@@ -126,6 +132,10 @@ exports.run = function(runOpts) {
 
     if (!fs.existsSync(opts.downloadDestination)) {
         fs.mkdirSync(opts.downloadDestination);
+    }
+
+    if (!opts.user || !opts.pass) {
+        console.log("WARNING: No credentials provided, only public add-ons will be retrieved.");
     }
 
     getAddonPage(opts);
