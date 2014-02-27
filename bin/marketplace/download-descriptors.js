@@ -10,13 +10,14 @@ var request = require('request'),
 var getAddonPage = function(opts) {
     if (opts.debug) {
         console.log("downloading: " + opts.baseUrl + opts.uri);
-        console.log(opts.user, opts.pass);
     }
     return request({
         uri: opts.baseUrl + opts.uri,
         method: "GET",
-        username: opts.user,
-        password: opts.pass,
+        auth: {
+            username: opts.user,
+            password: opts.pass
+        },
         json: true
     }, function(error, response, body) {
         if (error) {
