@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.uri;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 
@@ -64,6 +65,8 @@ public interface IFrameUriBuilder
          * parameter generation defaults to {@code true}, so you only need call this method if you wish to disable it.
          */
         InitializedBuilder includeStandardParams(boolean includeStandardParams);
+
+        InitializedBuilder uiParams(Option<String> uiParameters);
 
         /**
          * @return the constructed (and signed, if requested) URL.

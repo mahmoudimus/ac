@@ -306,7 +306,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         {
             String namespace = generateNamespace();
 
-            String signedUri = buildUrl(moduleContextParameters, namespace);
+            String signedUri = buildUrl(moduleContextParameters, uiParameters, namespace);
 
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
                     .addOn(addOnKey)
@@ -322,7 +322,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .productContext(moduleContextParameters)
                     .context("width", width)
                     .context("height", height)
-                    .context("uiParams", uiParameters.getOrNull())
                     .build();
 
             templateRenderer.render(template, renderContext, writer);
@@ -334,18 +333,19 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @VisibleForTesting
-        public String buildUrl(ModuleContextParameters moduleContextParameters)
+        public String buildUrl(ModuleContextParameters moduleContextParameters, Option<String> uiParameters)
         {
-            return buildUrl(moduleContextParameters, generateNamespace());
+            return buildUrl(moduleContextParameters, uiParameters, generateNamespace());
         }
 
-        private String buildUrl(ModuleContextParameters moduleContextParameters, String namespace)
+        private String buildUrl(ModuleContextParameters moduleContextParameters, Option<String> uiParameters, String namespace)
         {
             return iFrameUriBuilderFactory.builder()
                             .addOn(addOnKey)
                             .namespace(namespace)
                             .urlTemplate(urlTemplate)
                             .context(moduleContextParameters)
+                            .uiParams(uiParameters)
                             .dialog(isDialog)
                             .build();
         }
