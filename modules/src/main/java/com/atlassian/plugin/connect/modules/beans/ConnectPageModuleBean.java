@@ -47,7 +47,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
                 description = 
                         "Conditions can be added to display only when all the given conditions are true." +
                         "\n\nThe ONLY supported conditions for pages are:" +
-                        "\n{@see com.atlassian.plugin.connect.modules.beans.PageConditions#CONDITION_LIST}"
+                        "\n{@see com.atlassian.plugin.connect.modules.beans.PageConditions#CONDITION_LIST_MD}"
             )
     }
 )
