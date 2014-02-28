@@ -18,6 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters.PROFILE_KEY;
+import static com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters.PROFILE_NAME;
+
 /**
  *
  */
@@ -99,6 +102,10 @@ public class ConfluenceModuleContextFilter implements ModuleContextFilter
                 filtered.put(PAGE_TYPE, unfiltered.get(PAGE_TYPE));
             }
         }
+
+        // TODO figure out permissions for profile users (for this and JIRA)
+        filtered.put(PROFILE_NAME, unfiltered.get(PROFILE_NAME));
+        filtered.put(PROFILE_KEY, unfiltered.get(PROFILE_KEY));
 
         return filtered;
     }

@@ -33,8 +33,6 @@ public class JiraModuleContextFilter implements ModuleContextFilter
     public static final String PROJECT_KEY          = "project.key";
     public static final String VERSION_ID           = "version.id";
     public static final String COMPONENT_ID         = "component.id";
-    public static final String PROFILE_NAME         = "profileUser.name";
-    public static final String PROFILE_KEY          = "profileUser.key";
     public static final String POSTFUNCTION_ID      = "postFunction.id";
     public static final String POSTFUNCTION_CONFIG  = "postFunction.config";
 
@@ -231,7 +229,7 @@ public class JiraModuleContextFilter implements ModuleContextFilter
                     @Override
                     public String getParameterName()
                     {
-                        return PROFILE_NAME;
+                        return HashMapModuleContextParameters.PROFILE_NAME;
                     }
 
                     @Override
@@ -246,7 +244,7 @@ public class JiraModuleContextFilter implements ModuleContextFilter
                     @Override
                     public String getParameterName()
                     {
-                        return PROFILE_KEY;
+                        return HashMapModuleContextParameters.PROFILE_KEY;
                     }
 
                     @Override

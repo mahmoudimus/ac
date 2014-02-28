@@ -2,9 +2,11 @@ package it.capabilities.confluence;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import it.capabilities.AbstractPageTst;
 import org.junit.BeforeClass;
@@ -22,13 +24,15 @@ public class TestProfilePage extends AbstractPageTst
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        startConnectAddOn("profilePages");
+        startConnectAddOn("profilePages", "/my-awesome-profile?profile_user={profileUser.name}");
     }
 
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none());
+        RemotePluginEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none());
+        Map<String,String> queryParams = page.getIframeQueryParams();
+        assertThat(queryParams.get("profile_user"), is("admin"));
     }
 
     @Test
