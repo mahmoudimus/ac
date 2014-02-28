@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.webfragment;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +113,10 @@ public class UrlVariableSubstitutor
 
     private String encodeQuery(String value)
     {
+        if (StringUtils.isEmpty(value))
+        {
+            return "";
+        }
         try
         {
             return URIUtil.encodeWithinQuery(value);
