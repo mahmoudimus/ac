@@ -22,6 +22,11 @@ AP.define("dialog", ["_dollar", "_rpc", "_ui-params"],
     var isDialog = Boolean(UiParams.fromUrl(window.location.toString()).dlg),
       exports;
 
+    // if it has been set to a dialog on the server.
+    if(window.location.toString().indexOf("dialog=1") > 0){
+      isDialog = true;
+    }
+
   rpc.extend(function (remote) {
 
     // dialog-related sub-api for use when the remote plugin is running as the content of a host dialog
