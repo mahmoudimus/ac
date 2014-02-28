@@ -151,7 +151,7 @@ public class IFrameUriBuilderImpl
                 @Override
                 public void apply(String uiParam)
                 {
-                    uriBuilder.addQueryParameter("ui-param", uiParam);
+                    uriBuilder.addQueryParameter("ui-params", uiParam);
                 }
             });
 
