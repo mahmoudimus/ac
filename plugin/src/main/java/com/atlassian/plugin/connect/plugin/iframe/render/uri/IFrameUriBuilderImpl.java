@@ -90,7 +90,7 @@ public class IFrameUriBuilderImpl
 
         private boolean sign = true;
         private boolean includeStandardParams = true;
-        private Option<String> uiParameters;
+        private Option<String> uiParameters = Option.none();
 
         private InitializedBuilderImpl(final String addonKey, final String namespace, final UriBuilder uriBuilder)
         {
