@@ -1,7 +1,7 @@
 /**
  * Utility methods for rendering connect addons in AUI components
  */
-_AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
+_AP.define("host/content", ["_dollar", "_uri", "_base64"], function ($, uri, base64) {
     "use strict";
 
     function getContentUrl(pluginKey, capability){
@@ -29,7 +29,7 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
-                "dialog": true,
+                "ui-params": base64.encode('{"dialog": "1"}'),
                 "plugin-key": pluginKey,
                 "product-context": productContextJson,
                 "key": capability.key,
