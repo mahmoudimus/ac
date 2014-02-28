@@ -89,8 +89,11 @@ public class UrlVariableSubstitutor
         String sep = source.contains("?") ? "&" : "?";
         for (Map.Entry<String, String> entry : parameters.entrySet())
         {
-            sb.append(sep).append(entry.getKey()).append("=").append(encodeQuery(entry.getValue()));
-            sep = "&";
+            if (!StringUtils.isEmpty(entry.getValue()))
+            {
+                sb.append(sep).append(entry.getKey()).append("=").append(encodeQuery(entry.getValue()));
+                sep = "&";
+            }
         }
         return sb.toString();
     }
