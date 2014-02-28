@@ -1,9 +1,14 @@
-_AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtilities) {
+_AP.define("dialog", ["_dollar", "host/content", "_ui-params"], function($, hostContentUtilities, UiParams) {
 
     // Should be ok to reference the nexus at this level since there should only be one dialog open at a time
   var $nexus;
 
   var $dialog; // active dialog element
+
+
+  var uiOptions = {
+    dlg: 1
+  };
 
   // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
   // Will be removed - plugins should pass key of the <dialog-page>, NOT the url.
@@ -14,6 +19,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
       dataType: "html",
       data: {
         "dialog": true,
+        "ui-params": UiParams.encode(uiOptions),
         "plugin-key": pluginKey,
         "remote-url": options.url,
         "width": "100%",
@@ -24,9 +30,6 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
   }
 
   function createDialog(pluginKey, productContextJson, options) {
-    var uiOptions = {
-      dlg: 1
-    };
 
     if ($nexus) throw new Error("Only one dialog can be open at once");
 
