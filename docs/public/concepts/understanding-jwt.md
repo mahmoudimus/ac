@@ -1,7 +1,10 @@
 # Understanding JWT
 
 There is a [nicely presented copy](http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html) of the specification. 
-JSON Web Token (JWT) is a compact URL-safe means of representing claims to be transferred between two parties. The claims in a JWT are encoded as a JavaScript Object Notation (JSON) object that is used as the payload of a JSON Web Signature (JWS) structure or as the plaintext of a JSON Web Encryption (JWE) structure, enabling the claims to be digitally signed or MACed and/or encrypted.
+JSON Web Token (JWT) is a compact URL-safe means of representing claims to be transferred between two parties. 
+The claims in a JWT are encoded as a JavaScript Object Notation (JSON) object that is used as the payload of a 
+JSON Web Signature (JWS) structure or as the plaintext of a JSON Web Encryption (JWE) structure, enabling the claims to 
+be digitally signed or MACed and/or encrypted.
 
 ## Structure of a JWT Token
 
@@ -44,7 +47,9 @@ The JWT Header declares that the encoded object is a JSON Web Token (JWT) and th
         <td>"typ" (mandatory)</td><td>String</td><td>Type for the token, defaulted to "JWT". Specifies that this is a JWT token</td>
 	</tr>
 	<tr>
-		<td>"alg" (mandatory)</td><td>String</td><td>Algorithm. specifies the algorithm used to sign the token. In atlassian-connect version 1.0 we support the HMAC SHA-256 algorithm, which the [JWT specification](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13) identifies using the string ["HS256"](http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-18#section-3.1).</td>
+		<td>"alg" (mandatory)</td><td>String</td><td>Algorithm. specifies the algorithm used to sign the token. 
+			In atlassian-connect version 1.0 we support the HMAC SHA-256 algorithm, which the 
+			[JWT specification](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13) identifies using the string ["HS256"](http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-18#section-3.1).</td>
 	</tr>
 </table>
 
@@ -74,18 +79,22 @@ The JWT claims object contains security information about the message. For examp
 		<td>String</td>
         <td>the issuer of the claim. Connect uses it to identify the application making the call. for example: 
 
- * If the Atlassian product is the calling application: contains the unique identifier of the tenant. This is the `clientKey` that you receive in the `installed` callback. You should reject unrecognised issuers.
- * If the add-on is the calling application: the add-on key specified in the add-on descriptor, and received during the installation handshake.</td>
+ * If the Atlassian product is the calling application: contains the unique identifier of the tenant. 
+ This is the `clientKey` that you receive in the `installed` callback. You should reject unrecognised issuers.
+ * If the add-on is the calling application: the add-on key specified in the add-on descriptor</td>
     </tr>
     <tr>
         <td>`iat` (mandatory)</td>
 		<td>Long</td>
-        <td>Issued-at time. Contains the UTC Unix time at which this token was issued. There are no hard requirements around this claim but it does not make sense for it to be significantly in the future. Also, significantly old issued-at times may indicate the replay of suspiciously old tokens. </td>
+        <td>Issued-at time. Contains the UTC Unix time at which this token was issued. There are no hard 
+			requirements around this claim but it does not make sense for it to be significantly in the future. 
+			Also, significantly old issued-at times may indicate the replay of suspiciously old tokens. </td>
     </tr>
     <tr>
         <td>`exp` (mandatory)</td>
 		<td>Long</td>
-        <td>Expiration time. It contains the UTC Unix time after which you should no longer accept this token. It should be after the issued-at and not-before times (if specified).</td>
+        <td>Expiration time. It contains the UTC Unix time after which you should no longer accept this token. 
+			It should be after the issued-at time.</td>
     </tr>
     <tr>
         <td>`qsh` (mandatory)</td>
@@ -95,18 +104,24 @@ The JWT claims object contains security information about the message. For examp
     <tr>
         <td>`sub` (optional)</td>
 		<td>String</td>
-        <td>The subject of this token. In atlassian-connect pre 1.0 we use this to identify the user key of the user that the add-on wishes to impersonate with this call; from 1.0 onwards this claim will be ignored, as user impersonation will not be possible.</td>
+        <td>The subject of this token. In atlassian-connect pre 1.0 we use this to identify the user key 
+			of the user that the add-on wishes to impersonate with this call; from 1.0 onwards this claim 
+			will be ignored, as user impersonation will not be possible.</td>
     </tr>
 
 </table>
 
-You should use a little leeway when processing time-based claims, as clocks may drift apart. The JWT specification suggests no more than a few minutes.
-Judicious use of the time-based claims allows for replays within a limited window. This can be useful when all or part of a page is refreshed or when it is valid for a user to repeatedly perform identical actions (e.g. clicking the same button).
+You should use a little leeway when processing time-based claims, as clocks may drift apart. 
+The JWT specification suggests no more than a few minutes.
+Judicious use of the time-based claims allows for replays within a limited window. 
+This can be useful when all or part of a page is refreshed or when it is valid for a user to 
+repeatedly perform identical actions (e.g. clicking the same button).
 
 <a name="jwtlib"></a>
 ## JWT Libraries
 
-Most modern languages have JWT libraries available. We recommend you use one of these libraries (or other JWT-compatible libraries) before trying to hand-craft the JWT token.
+Most modern languages have JWT libraries available. We recommend you use one of these libraries 
+(or other JWT-compatible libraries) before trying to hand-craft the JWT token.
 
 <table class='aui'>
     <thead>
@@ -130,46 +145,64 @@ The [JWT decoder from Heroku](http://jwt-decoder.herokuapp.com/jwt/decode) is a 
 Here is an example of creating a JWT token, in Java, using atlassian-jwt and nimbus-jwt:
 
 <pre><code data-lang="java">
-long issuedAt = System.currentTimeMillis() / 1000L
-long expiresAt = currentTime + 180L; 
-String key = "atlassian-connect-addon"; //the key from the add-on descriptor	
-String sharedSecret = //the sharedsecret key received during the addon installation handshake
-String method = "GET";
-String baseUrl = "http://localhost:2990/jira";
-String contextPath = "/jira";
-String apiPath = "/rest/api/latest/serverInfo"
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import com.atlassian.jwt.*;
+import com.atlassian.jwt.core.writer.*;
+import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import com.atlassian.jwt.writer.JwtJsonBuilder;
+import com.atlassian.jwt.writer.JwtWriterFactory;
+
+public class JWTSample {
 	
-JwtJsonBuilder jwtBuilder = new JsonSmartJwtJsonBuilder()
-		.issuedAt(issuedAt)
-		.expirationTime(expiresAt)
-		.issuer(key);
-		
-CanonicalHttpUriRequest canonical = new CanonicalHttpUriRequest(method,
-		apiPath, contextPath, new HashMap());
-JwtClaimsBuilder.appendHttpRequestClaims(jwtBuilder, canonical);
-	
-JwtWriterFactory jwtWriterFactory = new NimbusJwtWriterFactory();
-String jwtbuilt = jwtBuilder.build();
-String jwt = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256,
-		sharedSecret).jsonToJwt(jwtbuilt);
-					
-String restAPIUrl = baseUrl + apiPath + "?jwt=" + jwt;</code></pre>
+	public String createUriWithJwt() 
+			throws UnsupportedEncodingException, NoSuchAlgorithmException {
+		long issuedAt = System.currentTimeMillis() / 1000L;
+		long expiresAt = issuedAt + 180L; 
+		String key = "atlassian-connect-addon"; //the key from the add-on descriptor    
+		String sharedSecret = "..."; 	//the sharedsecret key received 
+										//during the addon installation handshake
+		String method = "GET";
+		String baseUrl = "http://localhost:2990/jira";
+		String contextPath = "/jira";
+		String apiPath = "/rest/api/latest/serverInfo";
+
+		JwtJsonBuilder jwtBuilder = new JsonSmartJwtJsonBuilder()
+		        .issuedAt(issuedAt)
+		        .expirationTime(expiresAt)
+		        .issuer(key);
+
+		CanonicalHttpUriRequest canonical = new CanonicalHttpUriRequest(method,
+		        apiPath, contextPath, new HashMap());
+		JwtClaimsBuilder.appendHttpRequestClaims(jwtBuilder, canonical);
+
+		JwtWriterFactory jwtWriterFactory = new NimbusJwtWriterFactory();
+		String jwtbuilt = jwtBuilder.build();
+		String jwtToken = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256,
+		        sharedSecret).jsonToJwt(jwtbuilt);
+
+		String apiUrl = baseUrl + apiPath + "?jwt=" + jwtToken;
+		return apiUrl;
+	}
+}</code></pre>
 
 <a name='decode'></a>
 ## Decoding and Verifying a JWT Token 
 
 ### Decoding a JWT Token
 
-Decoding the JWT token reverses the steps followed during the creation of the token, to extract the header, claims and signature. Here is an example in pseudo code:
+Decoding the JWT token reverses the steps followed during the creation of the token, 
+to extract the header, claims and signature. Here is an example in Java:
 
 <pre><code data-lang="java">
-jwtToken = ...;//e.g. extracted from the request
-base64EncodedSegments = jwtToken.split('.');
-base64EncodedHeader = base64EncodedSegments[0];
-base64EncodedClaims = base64EncodedSegments[1];
-signature = base64EncodedSegments[2];
-header = base64decode(base64EncodedHeader);
-claims = base64decode(base64EncodedClaims);
+String jwtToken = ...;//e.g. extracted from the request
+String[] base64EncodedSegments = jwtToken.split('.');
+String base64EncodedHeader = base64EncodedSegments[0];
+String base64EncodedClaims = base64EncodedSegments[1];
+String signature = base64EncodedSegments[2];
+String header = base64decode(base64EncodedHeader);
+String claims = base64decode(base64EncodedClaims);
 </code></pre>
 
 This gives us the following:
@@ -228,7 +261,8 @@ A query string hash is a signed canonical request for the URI of the API you wan
 	qsh = `sign(canonical-request)`
 	canonical-request = `canonical-method + '&' + canonical-URI + '&' + canonical-query-string` 
 
-A canonical request is a normalised representation of the URI. Here is an example. For the following URL, assuming you want to do a "GET" operation:
+A canonical request is a normalised representation of the URI. Here is an example. For the following URL, 
+assuming you want to do a "GET" operation:
 
         "http://localhost:2990/path/to/service?zee_last=param&repeated=parameter 1&first=param&repeated=parameter 2"
 
@@ -285,7 +319,8 @@ To create a query string hash, follow the detailed instructions below:
 The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded claims>.<signature>```.
 
 * Each section is separated from the others by a period character (```.```).
-* Each section is base-64 encoded, so you will need to decode each one to make them human-readable. There is a [handy JWT decoder from Heroku](http://jwt-decoder.herokuapp.com/jwt/decode).
+* Each section is base-64 encoded, so you will need to decode each one to make them human-readable. 
+There is a [handy JWT decoder from Heroku](http://jwt-decoder.herokuapp.com/jwt/decode).
 * The header specifies a very small amount of information that the receiver needs in order to parse and verify the JWT token.
  * All JWT token headers state that the type is "JWT".
  * The algorithm used to sign the JWT token is needed so that the receiver can verify the signature.
@@ -293,7 +328,8 @@ The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded 
  * Some, like the "iss" claim, which identifies the issuer of this JWT token, have standard names and uses.
  * Others are custom claims. We limit our use of custom claims as much as possible, for ease of implementation.
 * The signature is computed by using an algorithm such as HMAC SHA-256 plus the header and claims sections.
- * The receiver verifies that the signature must have been computed using the genuine JWT header and claims sections, the indicated algorithm and a previously established secret.
+ * The receiver verifies that the signature must have been computed using the genuine JWT header and claims sections, 
+ the indicated algorithm and a previously established secret.
  * An attacker tampering with the header or claims will cause signature verification to fail.
  * An attacker signing with a different secret will cause signature verification to fail.
  * There are various algorithm choices legal in the JWT spec. In atlassian-connect version 1.0 we support HMAC SHA-256.
@@ -335,79 +371,84 @@ public class JwtHeader {
 [...]
 
 import static org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString;
+import static org.apache.commons.codec.binary.Hex.encodeHexString;
+import java.io.UnsupportedEncodingException;
 import java.security.*;
 import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
 import com.google.gson.Gson;
-	 
+
 public class JwtBuilder {
 
-	public static String generateJWTToken(String requestUrl, String canonicalUrl, 
- 		String key, String sharedSecret) {}
+    public static String generateJWTToken(String requestUrl, String canonicalUrl, 
+        String key, String sharedSecret) 
+        		 throws NoSuchAlgorithmException, UnsupportedEncodingException, 
+        		 InvalidKeyException {
 
-	 	JwtClaims claims = new JwtClaims();
-		claims.setIss(key);
-		claims.setIat(System.currentTimeMillis() / 1000L);
-		claims.setExp(claims.getIat() + 180L);
+        JwtClaims claims = new JwtClaims();
+        claims.setIss(key);
+        claims.setIat(System.currentTimeMillis() / 1000L);
+        claims.setExp(claims.getIat() + 180L);
 
-		claims.setQsh(getQueryStringHash(canonicalUrl));
-		String jwtToken = sign(claims, sharedSecret);
-		return jwtToken;
-	}
+        claims.setQsh(getQueryStringHash(canonicalUrl));
+        String jwtToken = sign(claims, sharedSecret);
+        return jwtToken;
+    }
 
-	private static String sign(JwtClaims claims, String sharedSecret) 
-			throws InvalidKeyException, NoSuchAlgorithmException {
-	 	String signingInput = getSigningInput(claims, sharedSecret);
-	 	String signed256 = signHmac256(signingInput, sharedSecret);
-	 	return signingInput + "." + signed256;
-	 }
-	
-	 private static String getSigningInput(JwtClaims claims, String sharedSecret) 
-			throws InvalidKeyException, NoSuchAlgorithmException {
-	 	JwtHeader header = new JwtHeader();
-	 	header.alg = "HS256";
-	 	header.typ = "JWT";
-	 	Gson gson = new Gson();
-	 	String headerJsonString = gson.toJson(header);
-	 	String claimsJsonString = gson.toJson(claims);
-	 	String signingInput = encodeBase64URLSafeString(headerJsonString
-	 			.getBytes())
-	 			+ "."
-	 			+ encodeBase64URLSafeString(claimsJsonString.getBytes());
-	 	return signingInput;
-	 }
-	 
-	 private static String signHmac256(String signingInput, String sharedSecret) 
-			throws NoSuchAlgorithmException, InvalidKeyException {
-		SecretKey key = new SecretKeySpec(sharedSecret.getBytes(), "HmacSHA256");
-		Mac mac = Mac.getInstance("HmacSHA256");
-		mac.init(key);
-		return encodeBase64URLSafeString(mac.doFinal(signingInput.getBytes()));
-	}	 
-		 
-	private static String getQueryStringHash(String canonicalUrl) 
-			throws NoSuchAlgorithmException,UnsupportedEncodingException {
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
-	 	md.update(canonicalUrl.getBytes("UTF-8"));
-	 	byte[] digest = md.digest();
-	 	return encodeHexString(digest);
-	 }
+    private static String sign(JwtClaims claims, String sharedSecret) 
+            throws InvalidKeyException, NoSuchAlgorithmException {
+         String signingInput = getSigningInput(claims, sharedSecret);
+         String signed256 = signHmac256(signingInput, sharedSecret);
+         return signingInput + "." + signed256;
+     }
+
+     private static String getSigningInput(JwtClaims claims, String sharedSecret) 
+            throws InvalidKeyException, NoSuchAlgorithmException {
+         JwtHeader header = new JwtHeader();
+         header.alg = "HS256";
+         header.typ = "JWT";
+         Gson gson = new Gson();
+         String headerJsonString = gson.toJson(header);
+         String claimsJsonString = gson.toJson(claims);
+         String signingInput = encodeBase64URLSafeString(headerJsonString
+                 .getBytes())
+                 + "."
+                 + encodeBase64URLSafeString(claimsJsonString.getBytes());
+         return signingInput;
+     }
+
+     private static String signHmac256(String signingInput, String sharedSecret) 
+            throws NoSuchAlgorithmException, InvalidKeyException {
+        SecretKey key = new SecretKeySpec(sharedSecret.getBytes(), "HmacSHA256");
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(key);
+        return encodeBase64URLSafeString(mac.doFinal(signingInput.getBytes()));
+    }     
+
+    private static String getQueryStringHash(String canonicalUrl) 
+            throws NoSuchAlgorithmException,UnsupportedEncodingException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+         md.update(canonicalUrl.getBytes("UTF-8"));
+         byte[] digest = md.digest();
+         return encodeHexString(digest);
+     }
  }
 		
 [...]
 		
 public class Sample {
-	public String getUrlSample() {
-   		//Generating the JWT token:
+	public String getUrlSample() throws Exception {
     	String requestUrl = 
 			"http://localhost:2990/jira/rest/atlassian-connect/latest/license";
-   		String canonicalUrl = "GET&/rest/atlassian-connect/latest/license&";
-		String key = ...; 	//from the add-on descriptor 
+		String canonicalUrl = "GET&/rest/atlassian-connect/latest/license&";
+		String key = "..."; 	//from the add-on descriptor 
 							//and received during installation handshake
-		String sharedSecret = ...; //received during installation Handshake
+		String sharedSecret = "..."; //received during installation Handshake
 							
 		String jwtToken = JwtBuilder.generateJWTToken(
 			requestUrl, canonicalUrl, key, sharedSecret);
-		String restAPIUrl = requestUrl + "?jwt=" + jwtToken
+		String restAPIUrl = requestUrl + "?jwt=" + jwtToken;
+		return restAPIUrl;
 	}
 } 
  </code></pre>
