@@ -122,7 +122,7 @@ public class WorkflowPostFunctionModuleProviderTest
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>some("blah"));
         final URI iframeUrl = new URI(iframeUrlStr);
-        assertThat(iframeUrl.getQuery(), containsString("ui-params=\"blah\""));
+        assertThat(iframeUrl.getQuery(), containsString("ui-params=blah"));
     }
 
     private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
