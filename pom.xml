@@ -29,7 +29,6 @@
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>
-        <module>plugin-lifecycle-tests</module>
     </modules>
 
     <profiles>
@@ -37,6 +36,12 @@
             <id>it</id>
             <modules>
                 <module>integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>pluginLifecycle</id>
+            <modules>
+                <module>plugin-lifecycle-tests</module>
             </modules>
         </profile>
     </profiles>
