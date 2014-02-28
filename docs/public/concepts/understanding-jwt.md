@@ -20,7 +20,7 @@ In other words:
 * You create a signature for the URI (we'll get into that later). Then you encode it in base64
 * You concatenate the three items, with the "." separator
 
-You shouldn't actually have to do this manually, as there are libraries available in most languages, as we describe in the [Creating a JWT Token](#create) section. 
+You shouldn't actually have to do this manually, as there are libraries available in most languages, as we describe in the [JWT libraries](#jwtlib) section. 
 However it is important you understand the fields in the JSON header and claims objects described in the next sections:
 
 ### Header
@@ -103,20 +103,29 @@ The JWT claims object contains security information about the message. For examp
 You should use a little leeway when processing time-based claims, as clocks may drift apart. The JWT specification suggests no more than a few minutes.
 Judicious use of the time-based claims allows for replays within a limited window. This can be useful when all or part of a page is refreshed or when it is valid for a user to repeatedly perform identical actions (e.g. clicking the same button).
 
-
-<a name='create'></a>
-## Creating a JWT Token 
+<a name="jwtlib"></a>
+## JWT Libraries
 
 Most modern languages have JWT libraries available. We recommend you use one of these libraries (or other JWT-compatible libraries) before trying to hand-craft the JWT token.
 
-* Java (Atlassian) - [atlassian-jwt](https://bitbucket.org/atlassian/atlassian-jwt/)
-* Java - [jsontoken](https://code.google.com/p/jsontoken/)
-* Node.js - [node-jwt-simple](https://github.com/hokaccha/node-jwt-simple)
-* Ruby - [ruby-jwt](https://github.com/progrium/ruby-jwt)
-* PHP - [firebase php-jwt](https://github.com/firebase/php-jwt) and [luciferous jwt](https://github.com/luciferous/jwt)
-* .NET - [jwt](https://github.com/johnsheehan/jwt)
+<table class='aui'>
+    <thead>
+        <tr>
+            <th>Language</th>
+			<th>Library</th>
+        </tr>
+    </thead>
+	<tr><td>Java</td><td>[atlassian-jwt](https://bitbucket.org/atlassian/atlassian-jwt/) and [jsontoken](https://code.google.com/p/jsontoken/)</td></tr>
+	<tr><td>Node.js</td><td>[node-jwt-simple](https://github.com/hokaccha/node-jwt-simple)</td></tr>
+	<tr><td>Ruby</td><td>[ruby-jwt](https://github.com/progrium/ruby-jwt)</td></tr>
+	<tr><td>PHP</td><td>[firebase php-jwt](https://github.com/firebase/php-jwt) and [luciferous jwt](https://github.com/luciferous/jwt)</td></tr>
+	<tr><td>.NET</td><td>[jwt](https://github.com/johnsheehan/jwt)</td></tr>
+</table>
 
 The [JWT decoder from Heroku](http://jwt-decoder.herokuapp.com/jwt/decode) is a handy web based decoder of JWT tokens.
+
+<a name='create'></a>
+## Creating a JWT Token 
 
 Here is an example of creating a JWT token, in Java, using atlassian-jwt and nimbus-jwt:
 
@@ -149,7 +158,7 @@ String restAPIUrl = baseUrl + apiPath + "?jwt=" + jwt;</code></pre>
 <a name='decode'></a>
 ## Decoding and Verifying a JWT Token 
 
-### Decoding
+### Decoding a JWT Token
 
 Decoding the JWT token reverses the steps followed during the creation of the token, to extract the header, claims and signature. Here is an example in pseudo code:
 
@@ -188,7 +197,7 @@ Signature:
 <a name='verify'></a>
 ### Verifying a JWT token
 
-JWT libraries typically provide methods to be able to validate a received JWT token. 
+JWT libraries typically provide methods to be able to verify a received JWT token. 
 Here is an example using nimbus-jose-jwt and json-smart:
 
 <pre><code data-lang="java">import com.nimbusds.jose.JOSEException;
@@ -210,6 +219,55 @@ public JWTClaimsSet read(String jwt, JWSVerifier verifier) throws ParseException
     return JWTClaimsSet.parse(jsonPayload);
 }
 </code></pre>
+
+<a name='qsh'></a>
+## Creating a Query Hash
+
+A query string hash is a signed canonical request for the URI of the API you want to call. 
+
+	qsh = `sign(canonical-request)`
+	canonical-request = `canonical-method + '&' + canonical-URI + '&' + canonical-query-string` 
+
+A canonical request is a normalised representation of the URI. Here is an example. For the following URL, assuming you want to do a "GET" operation:
+
+        "http://localhost:2990/path/to/service?zee_last=param&repeated=parameter 1&first=param&repeated=parameter 2"
+
+The canonical request is
+
+        "GET&/path/to/service&first=param&repeated=parameter%201,parameter%202&zee_last=param"
+
+To create a query string hash, follow the detailed instructions below:
+
+1. Compute canonical method
+  *  Simply the upper-case of the method name (e.g. `"GET"` or `"PUT"`)<br><br>
+2. Append the character `'&'`<br><br>
+3. Compute canonical URI
+  *  Discard the protocol, server, port, context path and query parameters from the full URL.
+  *  Removing the context path allows a reverse proxy to redirect incoming requests for `"jira.example.com/getsomething"`
+   to `"example.com/jira/getsomething"` without breaking authentication. The requester cannot know that the reverse proxy
+   will prepend the context path `"/jira"` to the originally requested path `"/getsomething"`
+  *  Empty-string is not permitted; use `"/"` instead.
+  *  Do not suffix with a `'/'` character unless it is the only character. e.g.
+     *  Canonical URI of `"http://localhost:2990/jira/some/path/?param=value"` is `"/some/path"`
+     *  Canonical URI of `"http://localhost:2990"` is `"/"`
+    <br><br>
+4. Append the character `'&'`<br><br>
+5. Compute canonical query string
+  *  Sort the query parameters primarily by their percent-encoded names and secondarily by their percent-encoded values
+  *  Sorting is by codepoint: `sort(["a", "A", "b", "B"]) => ["A", "B", "a", "b"]`
+  *  For each parameter append its percent-encoded name, the `'='` character and then its percent-encoded value.
+  *  In the case of repeated parameters append the `','` character and subsequent percent-encoded values.
+  *  Ignore the `jwt` parameter, if present.
+  *  Some particular values to be aware of:
+    *  `"+"` is encoded as `"%20"`,
+    *  `"*"` as `"%2A"` and
+    *  `"~"` as `"~"`.<br>
+    (These values used for consistency with OAuth1.)
+
+6. Convert the canonical request string to bytes
+   *  The encoding used to represent characters as bytes is `UTF-8`<br><br>
+7. Hash the canonical request bytes using the `SHA-256` algorithm
+   * e.g. The `SHA-256` hash of `"foo"` is `"2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae
 
 ## Advanced: Creating a JWT Token Manually
 
@@ -353,58 +411,3 @@ public class Sample {
 	}
 } 
  </code></pre>
-
-
- <a name='qsh'></a>
- ## Creating a Query Hash
-
- A query string hash is a signed canonical request for the URI of the API you want to call. 
- 
- 	qsh = `sign(canonical-request)`
- 	canonical-request = `canonical-method + '&' + canonical-URI + '&' + canonical-query-string` 
-	
- A canonical request is a normalised representation of the URI. Here is an example. For the following URL, assuming you want to do a "GET" operation:
-
-         "http://localhost:2990/path/to/service?zee_last=param&repeated=parameter 1&first=param&repeated=parameter 2"
-
- The canonical request is
-
-         "GET&/path/to/service&first=param&repeated=parameter%201,parameter%202&zee_last=param"
- 
- To create a query string hash, follow the detailed instructions below:
- 
- 1. Compute canonical method
-   *  Simply the upper-case of the method name (e.g. `"GET"` or `"PUT"`)<br><br>
- 2. Append the character `'&'`<br><br>
- 3. Compute canonical URI
-   *  Discard the protocol, server, port, context path and query parameters from the full URL.
-   *  Removing the context path allows a reverse proxy to redirect incoming requests for `"jira.example.com/getsomething"`
-    to `"example.com/jira/getsomething"` without breaking authentication. The requester cannot know that the reverse proxy
-    will prepend the context path `"/jira"` to the originally requested path `"/getsomething"`
-   *  Empty-string is not permitted; use `"/"` instead.
-   *  Do not suffix with a `'/'` character unless it is the only character. e.g.
-      *  Canonical URI of `"http://localhost:2990/jira/some/path/?param=value"` is `"/some/path"`
-      *  Canonical URI of `"http://localhost:2990"` is `"/"`
-     <br><br>
- 4. Append the character `'&'`<br><br>
- 5. Compute canonical query string
-   *  Sort the query parameters primarily by their percent-encoded names and secondarily by their percent-encoded values
-   *  Sorting is by codepoint: `sort(["a", "A", "b", "B"]) => ["A", "B", "a", "b"]`
-   *  For each parameter append its percent-encoded name, the `'='` character and then its percent-encoded value.
-   *  In the case of repeated parameters append the `','` character and subsequent percent-encoded values.
-   *  Ignore the `jwt` parameter, if present.
-   *  Some particular values to be aware of:
-     *  `"+"` is encoded as `"%20"`,
-     *  `"*"` as `"%2A"` and
-     *  `"~"` as `"~"`.<br>
-     (These values used for consistency with OAuth1.)
-
- 6. Convert the canonical request string to bytes
-    *  The encoding used to represent characters as bytes is `UTF-8`<br><br>
- 7. Hash the canonical request bytes using the `SHA-256` algorithm
-    * e.g. The `SHA-256` hash of `"foo"` is `"2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae
-
-
-
- 
- 
