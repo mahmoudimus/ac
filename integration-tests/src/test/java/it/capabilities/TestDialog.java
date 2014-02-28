@@ -15,6 +15,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestDialog extends ConnectWebDriverTestBase
 {
@@ -86,7 +87,7 @@ public class TestDialog extends ConnectWebDriverTestBase
         // check the dimensions are the same as those in the js (moustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
-        assertThat(closeDialogPage.getFromQueryString("dialog"), is("1")); // TODO: This assertion will need to change once the JS is done
+        assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
 
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();

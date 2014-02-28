@@ -1,7 +1,7 @@
 /**
  * Utility methods for rendering connect addons in AUI components
  */
-_AP.define("host/content", ["_dollar", "_uri", "_base64"], function ($, uri, base64) {
+_AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, UiParams) {
     "use strict";
 
     function getContentUrl(pluginKey, capability){
@@ -24,12 +24,12 @@ _AP.define("host/content", ["_dollar", "_uri", "_base64"], function ($, uri, bas
             return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
     }
 
-    function getIframeHtmlForKey(pluginKey, productContextJson, capability, uiParams) {
+    function getIframeHtmlForKey(pluginKey, productContextJson, capability, params) {
         var contentUrl = this.getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
-                "ui-params": base64.encode(JSON.stringify(uiParams)),
+                "ui-params": UiParams.encode(params),
                 "plugin-key": pluginKey,
                 "product-context": productContextJson,
                 "key": capability.key,

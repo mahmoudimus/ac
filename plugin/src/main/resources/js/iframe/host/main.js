@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_base64", "_uri"], function ($, XdmRpc, addons, statusHelper, messages, base64, Uri) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params"], function ($, XdmRpc, addons, statusHelper, messages, uiParams) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -15,7 +15,8 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
 
   function create(options) {
 
-    $.extend(options, getUiParams());
+    $.extend(options, uiParams.fromUrl(options.src));
+
     var ns = options.ns,
         homeId = "ap-" + ns,
         $home = $("#" + homeId),
@@ -32,16 +33,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         // json string representing product context
         productContextJson = options.productCtx,
         isInited;
-
-    function getUiParams(){
-      var url = new Uri.init(window.location.href),
-          params = url.getQueryParamValue('ui-params');
-
-      if(params && params.length > 0){
-        params = JSON.decode(base64.decode(params));
-      }
-      return params;
-    }
 
     function publish(name, props) {
       props = $.extend(props || {}, {moduleKey: ns});

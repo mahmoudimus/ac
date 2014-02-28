@@ -93,6 +93,7 @@
         <resource type="download" name="_addons.js" location="/js/iframe/host/_addons.js" />
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="_base64.js" location="js/iframe/_base64.js" />
+        <resource type="download" name="_ui-params.js" location="/js/iframe/_ui-params.js" />
         <resource type="download" name="content.js" location="/js/iframe/host/content.js" />
         <resource type="download" name="_status_helper.js" location="/js/iframe/host/_status_helper.js" />
     </web-resource>
