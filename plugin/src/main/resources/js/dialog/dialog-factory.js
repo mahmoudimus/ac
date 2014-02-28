@@ -2,9 +2,9 @@ _AP.define("dialog-factory", ["_dollar", "dialog/aui-dialog", "dialog/simple-dia
     return function(href, options) {
         var dialog = simpleDialog;
 
-        //if dialog needs aui chrome. Extend the base object with aui methods.
+        //if dialog needs aui chrome. return an aui dialog instead
         if(options.chrome) {
-            $.extend(simpleDialog, auiDialog);
+            dialog = auiDialog;
         }
 
         return dialog(href, options);
