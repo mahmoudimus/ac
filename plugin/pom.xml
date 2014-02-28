@@ -24,7 +24,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>json-schemagen-core</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
@@ -861,6 +861,7 @@
                         <configuration>
                             <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
                             <sourcepath>src/main/java:../modules/src/main/java</sourcepath>
+                            <debug>${debugSchemaGen}</debug>
                         </configuration>
                     </execution>
                     <execution>
@@ -1092,5 +1093,6 @@
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
+        <debugSchemaGen>false</debugSchemaGen>
     </properties>
 </project>

@@ -101,7 +101,6 @@ public abstract class AbstractSchemaGenMojo extends AbstractMojo
         {
             docletPaths.addAll(project.getCompileClasspathElements());
             docletPaths.addAll(project.getRuntimeClasspathElements());
-            docletPaths.addAll(project.getRuntimeClasspathElements());
             docletPaths.addAll(project.getSystemClasspathElements());
 
             DependencyResolutionResult result = resolver.resolve(new DefaultDependencyResolutionRequest(project, reposession));

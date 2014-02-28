@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
-import com.atlassian.json.schema.annotation.Required;
-import com.atlassian.json.schema.annotation.StringSchemaAttributes;
+import java.util.List;
+
+import com.atlassian.json.schema.annotation.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.google.common.base.Objects;
@@ -41,6 +41,17 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PAGE_EXAMPLE}
  * @since 1.0
  */
+@ObjectSchemaAttributes(maxProperties = 10000, docOverrides = {@FieldDocOverride
+            (
+                fieldName = "conditions",
+                description = 
+                        "Conditions can be added to display only when all the given conditions are true." +
+                        "\n\nThe ONLY supported conditions for pages are:" +
+                        "\n{@see com.atlassian.plugin.connect.modules.beans.PageConditions#CONDITION_LIST}"
+            )
+    }
+)
+@TestAnno(max = 1000)
 public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
@@ -57,6 +68,14 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     private String location;
 
     private IconBean icon;
+
+    //here only to override documentation
+    /**
+     * Conditions can be added to display only when all the given conditions are true.
+     * 
+     * The ONLY conditions supported by pages are:
+     * 
+     */
 
     public ConnectPageModuleBean()
     {
