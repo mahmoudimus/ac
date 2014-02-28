@@ -20,7 +20,7 @@ In other words:
 * You create a signature for the URI (we'll get into that later). Then you encode it in base64
 * You concatenate the three items, with the "." separator
 
-You shouldn't actually have to do this manually, as there are libraries available in most languages, as we describe in [this section](#create). 
+You shouldn't actually have to do this manually, as there are libraries available in most languages, as we describe in the [Creating a JWT Token](#create) section. 
 However it is important you understand the fields in the JSON header and claims objects described in the next sections:
 
 ### Header
@@ -147,7 +147,9 @@ String jwt = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256,
 String restAPIUrl = baseUrl + apiPath + "?jwt=" + jwt;</code></pre>
 
 <a name='decode'></a>
-## Decoding a JWT Token 
+## Decoding and Verifying a JWT Token 
+
+### Decoding
 
 Decoding the JWT token reverses the steps followed during the creation of the token, to extract the header, claims and signature. Here is an example in pseudo code:
 
@@ -184,7 +186,7 @@ Signature:
     uKqU9dTB6gKwG6jQCuXYAiMNdfNRw98Hw_IWuA5MaMo
 
 <a name='verify'></a>
-## Verifying a JWT token
+### Verifying a JWT token
 
 JWT libraries typically provide methods to be able to validate a received JWT token. 
 Here is an example using nimbus-jose-jwt and json-smart:
@@ -354,7 +356,7 @@ public class Sample {
 
 
  <a name='qsh'></a>
- ## Creating a query string hash
+ ## Creating a Query Hash
 
  A query string hash is a signed canonical request for the URI of the API you want to call. 
  

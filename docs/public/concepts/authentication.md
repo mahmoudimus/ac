@@ -150,9 +150,17 @@ When the add-on is installed, the Atlassian application invokes a callback endpo
 </table>
 
 
-### Making a Service Call
+### Understanding JWT
 
-Please make sure you read [this section](understanding-jwt) if you are new to JWT.
+<div class="aui-message">
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Prerequisite</strong>
+    </p>
+	<p>
+Please make sure you read the [Understanding JWT](understanding-jwt.html) documentation if you are unfamiliar with JWT.</p></div>
+
+### Making a Service Call
 
 The JWT protocol describes the format and verification of individual JWT tokens. However it does not prescribe a method
 of transportation. Connect transports JWT tokens as query-string parameters and as authorization headers. 
@@ -170,28 +178,24 @@ Headers example:
     POST http://localhost:2990/jira/rest/api/2/issue/AC-1/attachments
     "Authorization" header value: "JWT <insert jwt-token here>"
 
-For more details on how to create a jwt token, see [creating a JWT Token](understanding-jwt#create)
+For more details on how to create a jwt token, see [Creating a JWT Token](understanding-jwt#create).
 
 <a name='incoming'></a>
 ### Exposing a Service
-
-Please make sure you read [this section](understanding-jwt) to understand how to create and validate a JWT Token.
 
 All incoming requests (requests coming from an Atlassian product) should check for the presence of the `jwt` query string parameter, which needs to be decoded and
 verified. In particular, the verification should:
 
 1. Extract the JWT token from the request's `jwt` query parameter.
-* Decode the JWT token, without verification. This gives you a header JSON object, a claims JSON object, and a signature. Examples are provided in [this section](understanding-jwt#decode).
+* Decode the JWT token, without verification. This gives you a header JSON object, a claims JSON object, and a signature.
 * Extract the issuer ('iss') claim from the decoded, unverified claims object. This is the `clientKey` for the tenant - an identifier for the Atlassian application making the call, which should have been stored by the add-on as part of the [installation handshake](#installation).
-* Look up the `sharedSecret` for the `clientKey`, as stored by the add-on during the [installation handshake](#installation)
-* Verify the signature with the `sharedSecret` and the algorithm specified in the header's `alg` field. Examples are provided in [this section](understanding-jwt#verify).
-* Verify the query has not been tampered by [creating a query hash](understanding-jwt#qsh) and comparing it against the `qsh` claim on the verified token.
-* The JWT specification lists some [standard claims](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13#section-4.1.1) that, if present, you should verify. Issuers include these to help you ensure that tokens you receive are used according to the intentions of the issuer and with the best possible results. All claims issued by Atlassian products are listed in [this section](understanding-jwt#claims).
+* Look up the `sharedSecret` for the `clientKey`, as stored by the add-on during the installation handshake
+* Verify the signature with the `sharedSecret` and the algorithm specified in the header's `alg` field. 
+* Verify the query has not been tampered by [Creating a Query Hash](understanding-jwt#qsh) and comparing it against the `qsh` claim on the verified token.
+* The JWT specification lists some [standard claims](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13#section-4.1.1) that, if present, you should verify. Issuers include these to help you ensure that tokens you receive are used according to the intentions of the issuer and with the best possible results.
 
 These steps must be executed before processing the request, and the request must be rejected if any of these steps fail.
 
-
-
-
+For more details on how to decode and validate a JWT token, see [Decoding and Validating a JWT Token](understanding-jwt#decode), which also provides a comprehensive list of claims supported by Atlassian products that you need to validate.
 
 
