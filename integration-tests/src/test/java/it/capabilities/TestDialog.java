@@ -86,7 +86,7 @@ public class TestDialog extends ConnectWebDriverTestBase
         // check the dimensions are the same as those in the js (moustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
-        assertThat(closeDialogPage.getFromQueryString("dialog"), is("1"));
+        assertThat(closeDialogPage.getFromQueryString("dialog"), is("1")); // TODO: This assertion will need to change once the JS is done
 
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();

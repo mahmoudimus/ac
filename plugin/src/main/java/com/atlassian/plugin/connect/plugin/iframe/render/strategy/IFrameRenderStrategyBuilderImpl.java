@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
@@ -11,14 +10,12 @@ import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionFactory;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleViewParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -304,7 +301,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @Override
-        public void render(final ModuleContextParameters moduleContextParameters, final Writer writer, Option<ModuleViewParameters> moduleViewParameters)
+        public void render(final ModuleContextParameters moduleContextParameters, final Writer writer, Option<String> uiParameters)
                 throws IOException
         {
             String namespace = generateNamespace();
@@ -325,7 +322,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                     .productContext(moduleContextParameters)
                     .context("width", width)
                     .context("height", height)
-                    .context("uiParams", moduleViewParameters.getOrNull())
+                    .context("uiParams", uiParameters.getOrNull())
                     .build();
 
             templateRenderer.render(template, renderContext, writer);
