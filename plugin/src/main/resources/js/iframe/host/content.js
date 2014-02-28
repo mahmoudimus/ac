@@ -24,12 +24,12 @@ _AP.define("host/content", ["_dollar", "_uri", "_base64"], function ($, uri, bas
             return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
     }
 
-    function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
+    function getIframeHtmlForKey(pluginKey, productContextJson, capability, uiParams) {
         var contentUrl = this.getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
-                "ui-params": base64.encode('{"dialog": "1"}'),
+                "ui-params": base64.encode(JSON.stringify(uiParams)),
                 "plugin-key": pluginKey,
                 "product-context": productContextJson,
                 "key": capability.key,

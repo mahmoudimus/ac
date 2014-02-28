@@ -24,9 +24,13 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
   }
 
   function createDialog(pluginKey, productContextJson, options) {
+    var uiOptions = {
+      dlg: 1
+    };
 
     if ($nexus) throw new Error("Only one dialog can be open at once");
-    var promise = options.url ? getIframeHtmlForUrl(pluginKey, options) : hostContentUtilities.getIframeHtmlForKey(pluginKey, productContextJson, options);
+
+    var promise = options.url ? getIframeHtmlForUrl(pluginKey, options) : hostContentUtilities.getIframeHtmlForKey(pluginKey, productContextJson, options, uiOptions);
 
     promise
       .done(function(data) {
