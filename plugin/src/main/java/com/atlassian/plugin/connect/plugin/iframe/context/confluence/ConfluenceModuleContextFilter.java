@@ -103,9 +103,31 @@ public class ConfluenceModuleContextFilter implements ModuleContextFilter
             }
         }
 
-        // TODO figure out permissions for profile users (for this and JIRA)
-        filtered.put(PROFILE_NAME, unfiltered.get(PROFILE_NAME));
-        filtered.put(PROFILE_KEY, unfiltered.get(PROFILE_KEY));
+        String profileKey = unfiltered.get(PROFILE_KEY);
+        String profileName = unfiltered.get(PROFILE_NAME);
+        boolean checkProfileNamePermission = true;
+        if (profileKey != null)
+        {
+            ConfluenceUser profileUser = userAccessor.getExistingUserByKey(new UserKey(profileKey));
+            if (profileUser != null && permissionManager.hasPermission(currentUser, Permission.VIEW, profileUser))
+            {
+                filtered.put(PROFILE_KEY, profileKey);
+                if (profileUser.getName().equals(profileName))
+                {
+                    filtered.put(PROFILE_NAME, profileName);
+                    checkProfileNamePermission = false;
+                }
+            }
+        }
+
+        if (checkProfileNamePermission && profileName != null)
+        {
+            ConfluenceUser profileUser = userAccessor.getUserByName(profileName);
+            if (profileUser != null && permissionManager.hasPermission(currentUser, Permission.VIEW, profileUser))
+            {
+                filtered.put(PROFILE_NAME, profileName);
+            }
+        }
 
         return filtered;
     }

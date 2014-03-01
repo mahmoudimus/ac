@@ -22,6 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters.PROFILE_KEY;
+import static com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters.PROFILE_NAME;
+
 @JiraComponent
 public class JiraModuleContextFilter implements ModuleContextFilter
 {
@@ -121,6 +124,20 @@ public class JiraModuleContextFilter implements ModuleContextFilter
         public boolean hasPermission(final String value, final ApplicationUser user)
         {
             return true;
+        }
+    }
+
+    private static class MustBeLoggedInPermissionCheck extends AlwaysAllowedPermissionCheck
+    {
+        private MustBeLoggedInPermissionCheck(String parameterName)
+        {
+            super(parameterName);
+        }
+
+        @Override
+        public boolean hasPermission(final String value, final ApplicationUser user)
+        {
+            return user != null;
         }
     }
 
@@ -224,36 +241,9 @@ public class JiraModuleContextFilter implements ModuleContextFilter
                         return component != null && projectService.getProjectById(user, component.getProjectId()).isValid();
                     }
                 },
-                new PermissionCheck()
-                {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return HashMapModuleContextParameters.PROFILE_NAME;
-                    }
-
-                    @Override
-                    public boolean hasPermission(final String value, final ApplicationUser user)
-                    {
-                        // TODO determine what permissions are needed to view a user's profile
-                        return true;
-                    }
-                },
-                new PermissionCheck()
-                {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return HashMapModuleContextParameters.PROFILE_KEY;
-                    }
-
-                    @Override
-                    public boolean hasPermission(final String value, final ApplicationUser user)
-                    {
-                        // TODO determine what permissions are needed to view a user's profile
-                        return true;
-                    }
-                },
+                // users must be logged in to see another user's profile
+                new MustBeLoggedInPermissionCheck(PROFILE_NAME),
+                new MustBeLoggedInPermissionCheck(PROFILE_KEY),
                 // post-functions are not explicitly protected, the context user will have project admin privileges
                 new AlwaysAllowedPermissionCheck(POSTFUNCTION_ID),
                 new AlwaysAllowedPermissionCheck(POSTFUNCTION_CONFIG)
