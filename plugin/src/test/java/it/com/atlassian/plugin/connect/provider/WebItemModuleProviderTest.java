@@ -149,6 +149,44 @@ public class WebItemModuleProviderTest
     }
 
     @Test
+    public void singlePageLinkName() throws Exception
+    {
+        WebItemModuleBean bean = newWebItemBean()
+                .withName(new I18nProperty(MODULE_NAME, ""))
+                .withKey(MODULE_KEY)
+                .withUrl("some-page-key")
+                .withLocation("atl.admin/menu")
+                .withContext(AddOnUrlContext.page)
+                .build();
+
+        ConnectAddonBean addon = newConnectAddonBean()
+                .withName(PLUGIN_NAME)
+                .withKey(PLUGIN_KEY)
+                .withBaseurl(BASE_URL)
+                .withAuthentication(AuthenticationBean.none())
+                .withModules("webItems", bean)
+                .build();
+
+        Plugin plugin = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(addon);
+
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) plugin.getModuleDescriptor(MODULE_KEY);
+
+            assertEquals(MODULE_NAME,descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class),new HashMap<String, Object>()));
+        }
+        finally
+        {
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallPlugin(plugin);
+            }
+        }
+    }
+
+    @Test
     public void singleProductLink() throws Exception
     {
         WebItemModuleBean bean = newWebItemBean()
