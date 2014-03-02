@@ -66,6 +66,12 @@ public interface IFrameUriBuilder
          */
         InitializedBuilder includeStandardParams(boolean includeStandardParams);
 
+        /**
+         * uiParameters is an opaque (to the server) object where the client code can pass in the request and have the server
+         * return it as part of the signed iFrame url. As it has it's own query parameter "ui-params" the contents should not
+         * be confused with the resource keys (e.g. issue.key) so we don't need to validate them even though they end up
+         * in the signed url
+         */
         InitializedBuilder uiParams(Option<String> uiParameters);
 
         /**
