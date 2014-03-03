@@ -3,14 +3,52 @@
 <h2 class="index-heading">Build, install and sell add-ons for JIRA and Confluence OnDemand</h1>
 
 <div class="index-video-container">
-    <iframe class="inner" src="//fast.wistia.net/embed/iframe/3e1auia2xi" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen width="640" height="360"></iframe>
+    <a href="//fast.wistia.net/embed/iframe/3e1auia2xi?popover=true" class="wistia-popover[height=540,playerColor=205081,width=960,helpers.overlay.css.backgroundColor=#000,helpers.overlay.opacity=1,padding=20]">
+        <div class="inner video-thumbnail">
+            <div class="playButton"></div>
+        </div>
+    </a>
+<script charset="ISO-8859-1" src="//fast.wistia.com/assets/external/popover-v1.js"></script>
 </div>
 
-## Get Started
 
-Start with our [Introduction to Atlassian Connect](./guides/introduction.html) and learn about the powerful ways you can
-enhance your Atlassian application.
+## What is Atlassian Connect?
+An Atlassian Connect add-on is any web application that extends an Atlassian application, like JIRA or Confluence. It may be an existing app that you integrate with the Atlassian app or a new service that you create to add features to an Atlassian app. Atlassian Connect add-ons operate remotely over HTTP and can be written with any programming
+language and web framework.
 
-## Need help?
+Fundamentally, Atlassian Connect add-ons have three major capabilities. Add-ons can:
 
-We're always happy to help out with any questions you might have. Check out the ways you can [Get Help](./resources/getting-help.html).
+1. Insert content in [certain defined places](../modules) in the Atlassian application's UI.
+2. Make calls to the Atlassian application's [REST API](../rest-apis/product-api-browser.html).
+3. Listen and respond to [WebHooks](../modules/jira/webhooks.html) fired by the Atlassian application.
+
+<div class="index-button">
+<form action="/guides/getting-started"><button class="primary-cta aui-button aui-button-primary">Build Hello World in 10 minutes</button></form>
+</div>
+
+
+## Interacting with Atlassian OnDemand
+While Atlassian Connect add-ons run seaparately from the Atlassian application, to an
+end user, the add-on appears as a fully integrated part of the Atlassian application. After subscribing to the add-on, the features are delivered from within the UI and workflows of the host application.
+
+Most Atlassian Connect developers will choose to implement their add-ons as multi-tenant services. This means that a single Atlassian Connect application must take into account multiple subscribing organizations. For example, each add-on will maintain subscriber-specific data and configuration. For more about multi-tenancy design considerations, see [Add-on Design Considerations](https://developer.atlassian.com/display/AC/Add-on+Design+Considerations).
+
+<div id="architecture-graphic">
+</div>
+
+Security is a important concern in a distributed component model such as Atlassian Connect. Atlassian Connect relies on HTTPS and JWT authentication to secure communication between the add-on, the Atlassian product instance and the end-user's browser.
+
+Read our [security overview](../concepts/security.html) for more details.
+
+<div class="closing-cta">
+    <form action="guides/getting-started">
+        <button class="primary-cta aui-button aui-button-primary">
+            Try the Hello World example
+        </button>
+    </form>
+    <p><a href="guides/introduction.html">or read the detailed introduction</a></p>
+</div>
+
+
+
+

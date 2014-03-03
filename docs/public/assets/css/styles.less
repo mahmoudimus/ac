@@ -104,7 +104,7 @@ div.CodeMirror span.CodeMirror-matchingbracket {
 }
 
 .index-video-container {
-	margin-top: 40px;	
+	margin: 40px auto;	
 }
 
 .index-video-container .inner {
@@ -114,6 +114,37 @@ div.CodeMirror span.CodeMirror-matchingbracket {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
+	height: 360px;
+	width: 640px;
+}
+
+.index-video-container .inner:hover {
+	border-color: #999999;
+}
+
+.video-thumbnail {
+	background-image: url('../images/video-thumbnail.png');
+	background-size: 640px 360px;
+}
+
+.playButton {
+    background:transparent url('../images/playButtonSprite.png') no-repeat;
+    position:absolute;
+    width:70px;
+    height:70px;
+    background-size:70px;
+    top:145px;
+    left:285px;
+    overflow:hidden
+}
+
+.index-video-container a .inner {
+    position: relative;
+    display: block;
+}
+
+.index-video-container .inner:hover .playButton {
+    background-position-y:-70px
 }
 
 h1.index-heading {
@@ -129,6 +160,33 @@ h2.index-heading {
     color: #707070;
     line-height: 1.5;
     margin-top: 10px;
+}
+
+.index-button {
+	margin-top: 30px;
+}
+
+.index-button button {
+	display: block;
+	margin: auto auto;
+}
+
+.primary-cta {
+	font-size: 16px
+}
+
+#architecture-graphic {
+	display: block;
+	margin: auto auto;
+	background-image: url('../images/DocDiagram.png');
+	height: 600px;
+	width: 650px;
+	margin-bottom: 20px;
+}
+
+.closing-cta {
+	margin-top: 30px;
+	text-align: center;
 }
 
 div.error {
