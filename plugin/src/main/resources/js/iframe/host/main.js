@@ -21,13 +21,13 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
   * @property {String}  w             width of the iframe
   * @property {String}  h             height of the iframe
   * @property {String}  dlg           is a dialog (disables the resizer)
-  * @property {String}  simpleDlg     unknown, looks to be set when a confluence macro editor is being rendered as a dialog
+  * @property {String}  simpleDlg     deprecated, looks to be set when a confluence macro editor is being rendered as a dialog
   * @property {Boolean} general       is a page that can be resized
   * @property {String}  productCtx    context to pass back to the server (project id, space id, etc)
   * @property {String}  key           addon key from the descriptor
   * @property {String}  uid           id of the current user
   * @property {String}  ukey          user key
-  * @property {String}  data.timeZone addon key from the descriptor
+  * @property {String}  data.timeZone timezone of the current user
   * @property {String}  cp            context path
   */
 
