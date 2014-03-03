@@ -5,7 +5,7 @@
 
             module('Ui Params', {
                 setup: function(){
-                    this.paramObj = { foo: 'bar' };
+                    this.paramObj = { foo: 'bar', a: "b" };
                     this.encodedParamObj = base64.encode(JSON.stringify(this.paramObj));
                 }
             });
@@ -18,6 +18,18 @@
                 var decoded = uiParams.decode(this.encodedParamObj);
                 deepEqual(decoded, this.paramObj);
             });
+
+            test("decoding an invalid set of options returns a blank object", function(){
+                var invalid = this.encodedParamObj + 'a!bc';
+                deepEqual(uiParams.decode(invalid), {});
+            });
+
+            test("decoding an encoded object returns the original", function(){
+                var encoded = uiParams.encode(this.paramObj);
+                var decoded = uiParams.decode(encoded);
+                deepEqual(this.paramObj, decoded);
+            });
+
 
             test('fromUrl returns the param object from a url', function() {
                 var remoteUrl = 'http://www.example.com?a=jira:12345&ui-params=' + this.encodedParamObj;

@@ -1,4 +1,4 @@
-AP.define("dialog", ["_dollar", "_rpc", "_ui-params"],
+AP.define("dialog", ["_dollar", "_rpc", "_ui-params", "_uri"],
 
   /**
    * The Dialog module provides a mechanism for launching an add-on's modules as modal dialogs from within an add-on's iframe.
@@ -16,14 +16,15 @@ AP.define("dialog", ["_dollar", "_rpc", "_ui-params"],
    * @exports Dialog
    */
 
-  function ($, rpc, UiParams) {
+  function ($, rpc, UiParams, Uri) {
   "use strict";
 
     var isDialog = Boolean(UiParams.fromUrl(window.location.toString()).dlg),
-      exports;
+      exports,
+      url = new Uri.init(window.location.toString());
 
     // if it has been set to a dialog on the server.
-    if(window.location.toString().indexOf("dialog=1") > 0){
+    if(url.getQueryParamValue("dialog") === "1"){
       isDialog = true;
     }
 
