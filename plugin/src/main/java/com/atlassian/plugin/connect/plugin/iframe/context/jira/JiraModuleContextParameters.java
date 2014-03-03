@@ -7,7 +7,7 @@ import com.atlassian.jira.project.version.Version;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 
 /**
- *
+ * @since 1.0
  */
 public interface JiraModuleContextParameters extends ModuleContextParameters
 {
