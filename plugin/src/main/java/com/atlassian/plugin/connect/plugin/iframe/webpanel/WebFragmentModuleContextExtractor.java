@@ -9,5 +9,5 @@ import java.util.Map;
  */
 public interface WebFragmentModuleContextExtractor
 {
-    ModuleContextParameters extractParameters(Map<String, Object> webFragmentContext);
+    ModuleContextParameters extractParameters(Map<String, ? extends Object> webFragmentContext);
 }

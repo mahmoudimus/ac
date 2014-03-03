@@ -31,8 +31,13 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
     }
 
     @Override
-    public ModuleContextParameters extractParameters(final Map<String, Object> webFragmentContext)
+    public ModuleContextParameters extractParameters(final Map<String, ? extends Object> webFragmentContext)
     {
+        if(ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
+        {
+            return (ModuleContextParameters) webFragmentContext;
+        }
+        
         JiraModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
 
         for (ParameterExtractor extractor : parameterExtractors)
