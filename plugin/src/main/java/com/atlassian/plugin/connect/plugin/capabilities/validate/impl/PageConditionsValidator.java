@@ -1,23 +1,25 @@
 package com.atlassian.plugin.connect.plugin.capabilities.validate.impl;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Named;
 
-import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.modules.beans.PageConditions;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.sal.api.message.I18nResolver;
 
 import com.google.common.collect.ImmutableList;
 import com.nimbusds.jwt.JWT;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * If the add-on has ConnectPageModuleBean with conditions, this validator checks that conditions are either remote conditions
@@ -28,6 +30,7 @@ import com.nimbusds.jwt.JWT;
 @Named("page-conditions-validator")
 public class PageConditionsValidator implements AddOnBeanValidator
 {
+    private static final Logger log = LoggerFactory.getLogger(PageConditionsValidator.class);
     private final I18nResolver i18nResolver;
 
     public PageConditionsValidator(I18nResolver i18nResolver)
@@ -95,14 +98,41 @@ public class PageConditionsValidator implements AddOnBeanValidator
     private List<ConnectPageModuleBean> getPageModules(ConnectAddonBean addonBean)
     {
         List<ConnectPageModuleBean> pages = new ArrayList<ConnectPageModuleBean>();
-        pages.addAll(addonBean.getModules().getAdminPages());
-        pages.addAll(addonBean.getModules().getGeneralPages());
+
+        Field[] fields = ModuleList.class.getDeclaredFields();
         
-        if(null != addonBean.getModules().getConfigurePage())
+        for(Field field : fields)
         {
-            pages.addAll(ImmutableList.of(addonBean.getModules().getConfigurePage()));
+            try
+            {
+                if(ConnectPageModuleBean.class.isAssignableFrom(field.getType()))
+                {
+                    field.setAccessible(true);
+                    ConnectPageModuleBean pageModule = (ConnectPageModuleBean) field.get(addonBean.getModules());
+                    
+                    if(null != pageModule)
+                    {
+                        pages.add(pageModule);
+                    }
+                }
+                else if(ConnectReflectionHelper.isParameterizedListWithType(field.getGenericType(),ConnectPageModuleBean.class))
+                {
+                    field.setAccessible(true);
+
+                    List<ConnectPageModuleBean> pageModuleList = (List<ConnectPageModuleBean>) field.get(addonBean.getModules());
+
+                    if(null != pageModuleList)
+                    {
+                        pages.addAll(pageModuleList);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.error("Error reflectively looking up page modules for validation", e);
+            }
         }
-        
+       
         return pages;
     }
 }
