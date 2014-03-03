@@ -1,22 +1,9 @@
-<img class="index-logo" src="./assets/images/ac_logo.png" width="720">
+<h1 class="index-heading">Introducing Atlassian Connect</h1>
 
-<h1 class="index-heading">Build, install and sell add-ons in Atlassian OnDemand</h1>
+<h2 class="index-heading">Build, install and sell add-ons for JIRA and Confluence OnDemand</h1>
 
-<div class="aui-group">
-    <div class="aui-item">
-        <div class="index-box">
-            [<img src="./assets/images/gears.png" width="100">](./guides/introduction.html)
-            [<h2>Customize your product</h2>](./guides/introduction.html)
-            <p>Build an add-on to enhance, extend or integrate your Atlassian product.</p>
-        </div>
-    </div>
-    <div class="aui-item">
-        <div class="index-box">
-            [<img src="./assets/images/CharlieGears.png" width="100">](./developing/selling-on-marketplace.html)
-            [<h2>Share it with the world</h2>](./developing/selling-on-marketplace.html)
-            <p>Share your add-on with millions of developers on the Atlassian Marketplace.</p>
-        </div>
-    </div>
+<div class="index-video-container">
+    <iframe class="inner" src="//fast.wistia.net/embed/iframe/3e1auia2xi" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen width="640" height="360"></iframe>
 </div>
 
 ## Get Started
