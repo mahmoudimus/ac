@@ -4,6 +4,34 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
     var $global = $(window);
     var idSeq = 0;
 
+    var base = {
+        dummy: 'simple dialog',
+        createDialogElement: function(options){
+            // TODO: copied from AUI dialog2 soy. Should make it use that when it's in products.
+            var $el = AJS.$("<section></section>")
+              .addClass("aui-layer aui-layer-hidden aui-layer-modal")
+              .addClass("aui-dialog2 aui-dialog2-" + (options.size || "medium"))
+              .addClass("ap-aui-dialog2")
+              .attr("role", "dialog")
+              .attr("data-aui-blanketed", "true")
+              .attr("data-aui-focus-selector", ".aui-dialog2-content :input:visible:enabled");
+
+              $el.attr("id", options.id);
+
+            if (options.titleId) {
+              $el.attr("aria-labelledby", options.titleId);
+            }
+            return $el;
+        },
+        displayDialogContent: function($container, options){
+            $container.attr('id', 'ap-' + options.ns);
+            $container.append('<div id="embedded-' + options.ns + '" class="ap-dialog-container" />');
+            options.dlg = true; //REMOVE THIS
+//          container.append(statusHelper.createStatusMessages());
+            _AP.create(options);
+        }
+    };
+
     function parseDimension(value, viewport) {
         if (typeof value === "string") {
             var percent = value.indexOf("%") === value.length - 1;
@@ -40,7 +68,12 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
     * @param {String|Number} [options.height="50%"] height of the dialog, expressed as either absolute pixels (eg 600) or percent (eg 50%)
     * @param {String} [options.id] ID attribute to assign to the dialog. Default to "ap-dialog-n" where n is an autoincrementing id.
     */
-    return function (contentUrl, options) {
+    return function (options, extend) {
+
+        if(extend){
+            base = extend;
+        }
+
         var $nexus;
         var hasClosed = false;
 
@@ -52,32 +85,19 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
 
         var dialogId = options.id || "ap-dialog-" + (idSeq += 1);
         var mergedOptions = $.extend({id: dialogId}, defaultOptions, options);
-        mergedOptions.width = parseDimension(mergedOptions.width, $global.width());
-        mergedOptions.height = parseDimension(mergedOptions.height, $global.height());
+        mergedOptions.w = parseDimension(mergedOptions.width, $global.width());
+        mergedOptions.h = parseDimension(mergedOptions.height, $global.height());
 
-
-        function createDialogElement(options){
-            // TODO: copied from AUI dialog2 soy. Should make it use that when it's in products.
-            var $el = AJS.$("<section></section>")
-              .addClass("aui-layer aui-layer-hidden aui-layer-modal")
-              .addClass("aui-dialog2 aui-dialog2-" + (options.size || "medium"))
-              .addClass("ap-aui-dialog2")
-              .attr("role", "dialog")
-              .attr("data-aui-blanketed", "true")
-              .attr("data-aui-focus-selector", ".aui-dialog2-content :input:visible:enabled");
-
-            if (options.id) {
-              $el.attr("id", id);
-            }
-            if (options.titleId) {
-              $el.attr("aria-labelledby", options.titleId);
-            }
-            return $el;
+        if(options.size){
+            mergedOptions.w = "100%";
+            mergedOptions.h = "100%";
         }
 
-        var dialogElement = this.createDialogElement(mergedOptions);
-        var dialog = AJS.Dialog2(dialogElement);
+        var dialogElement = base.createDialogElement(mergedOptions);
 
+        var dialog = AJS.dialog2(dialogElement);
+        $nexus = $("<div class='ap-servlet-placeholder ap-dialog-container'></div>").appendTo(dialog.$el);
+        base.displayDialogContent($nexus, mergedOptions);
 
         function closeDialog() {
           if (hasClosed) return;
@@ -90,8 +110,6 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
 
         // the dialog automatically closes on ESC. but we also want to do our clean up
         $(document).keydown(function(e){ if (e.keyCode === 27) { this.closeDialog(); }});
-
-        $nexus = dialog.find(".ap-servlet-placeholder");
 
         return {
             id: dialogId,

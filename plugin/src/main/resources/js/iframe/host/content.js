@@ -59,7 +59,6 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         }
 
         $(window.document).on(action, selector, domEventHandler);
-
     }
 
     return {

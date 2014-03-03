@@ -143,7 +143,6 @@
     </web-resource>
 
     <web-resource key="dialog-page-resource">
-        <resource type="download" name="dialog-binder.js" location="/js/dialog/binder.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog</dependency>
     </web-resource>

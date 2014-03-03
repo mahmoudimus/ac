@@ -1,5 +1,5 @@
-_AP.define("dialog-factory", ["_dollar", "dialog/aui-dialog", "dialog/simple-dialog"], function($, auiDialog, simpleDialog) {
-    return function(href, options) {
+_AP.define("dialog/dialog-factory", ["_dollar", "dialog/aui-dialog", "dialog/simple-dialog"], function($, auiDialog, simpleDialog) {
+    return function(options) {
         var dialog = simpleDialog;
 
         //if dialog needs aui chrome. return an aui dialog instead
@@ -7,6 +7,7 @@ _AP.define("dialog-factory", ["_dollar", "dialog/aui-dialog", "dialog/simple-dia
             dialog = auiDialog;
         }
 
-        return dialog(href, options);
+        options.dlg = true;
+        return new dialog(options);
     }
 });
