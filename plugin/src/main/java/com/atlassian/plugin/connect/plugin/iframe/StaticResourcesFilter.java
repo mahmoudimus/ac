@@ -102,6 +102,7 @@ public class StaticResourcesFilter implements Filter
                 "_events.js",
                 "_uri.js",
                 "_xdm.js",
+                "_ui-params.js",
                 "plugin/_rpc.js",
                 "plugin/events.js",
                 "plugin/env.js",
