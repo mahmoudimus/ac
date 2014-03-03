@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestDialog extends ConnectWebDriverTestBase
 {
@@ -48,24 +49,24 @@ public class TestDialog extends ConnectWebDriverTestBase
                 .addModules("generalPages",
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))
-                                .withUrl("/pg?page_id{page.id}")
+                                .withUrl("/pg")
                                 .withKey(ADDON_GENERALPAGE)
                                 .build(),
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_DIALOG_NAME, null))
-                                .withUrl("/my-dialog-url?page_id={page.id}&myuserid={user.id}")
+                                .withUrl("/my-dialog-url?myuserid={user.id}")
                                 .withKey(ADDON_DIALOG)
                                 .build(),
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG, null))
-                                .withUrl("/general-page?page_id={page.id}")
+                                .withUrl("/general-page")
                                 .withKey(ADDON_GENERALPAGE_WEBITEM_DIALOG)
                                 .build()
                 )
                 .addModule("webItems",
                         newWebItemBean()
                                 .withName(new I18nProperty(ADDON_WEBITEM_DIALOG_NAME, null))
-                                .withUrl("/my-webitem-dialog?page_id={page.id}&myuserid={user.id}")
+                                .withUrl("/my-webitem-dialog?myuserid={user.id}")
                                 .withKey(ADDON_WEBITEM_DIALOG)
                                 .withLocation("none")
                                 .withContext(AddOnUrlContext.addon)
@@ -108,7 +109,7 @@ public class TestDialog extends ConnectWebDriverTestBase
         // check the dimensions are the same as those in the js (mustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
-        assertThat(closeDialogPage.getFromQueryString("page_id"), is(not("")));
+        assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
         assertThat(closeDialogPage.getFromQueryString("user_id"), is(not("")));
 
         closeDialogPage.close();
@@ -130,7 +131,7 @@ public class TestDialog extends ConnectWebDriverTestBase
         // check the dimensions are the same as those in the js (mustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
-        assertThat(closeDialogPage.getFromQueryString("page_id"), is(not("")));
+        assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
         assertThat(closeDialogPage.getFromQueryString("user_id"), is(not("")));
 
         closeDialogPage.close();

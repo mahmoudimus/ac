@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -25,13 +26,11 @@ import com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.FunctionProvider;
 import com.opensymphony.workflow.TypeResolver;
 import com.opensymphony.workflow.WorkflowException;
-
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,7 +142,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
                     JiraModuleContextFilter.POSTFUNCTION_CONFIG,
                     (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_CONFIG)
             );
-            renderStrategy.render(moduleContext, writer);
+            renderStrategy.render(moduleContext, writer, Option.<String>none());
         }
         else
         {
