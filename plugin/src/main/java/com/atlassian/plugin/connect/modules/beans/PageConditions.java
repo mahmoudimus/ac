@@ -6,6 +6,7 @@ import java.util.Set;
 import com.atlassian.plugin.web.Condition;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newTreeMap;
 
 public class PageConditions extends ConditionsProvider
 {
@@ -18,7 +19,7 @@ public class PageConditions extends ConditionsProvider
     
     protected static Map<String, Class<? extends Condition>> getConditionMap()
     {
-        Map<String, Class<? extends Condition>> conditionMap = newHashMap();
+        Map<String, Class<? extends Condition>> conditionMap = newTreeMap();
 
         conditionMap.put(USER_IS_SYSADMIN, com.atlassian.plugin.connect.spi.module.UserIsSysAdminCondition.class);
         conditionMap.put(USER_IS_LOGGED_IN, com.atlassian.plugin.connect.spi.module.UserIsLoggedInCondition.class);
