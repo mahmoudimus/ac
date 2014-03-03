@@ -110,7 +110,7 @@ public class TestDialog extends ConnectWebDriverTestBase
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
         assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
-        assertThat(closeDialogPage.getFromQueryString("user_id"), is(not("")));
+        assertThat(closeDialogPage.getFromQueryString("user_id"), is("admin"));
 
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();
@@ -132,7 +132,7 @@ public class TestDialog extends ConnectWebDriverTestBase
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
         assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
-        assertThat(closeDialogPage.getFromQueryString("user_id"), is(not("")));
+        assertThat(closeDialogPage.getFromQueryString("user_id"), is("admin"));
 
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();
