@@ -8,7 +8,7 @@ the page.
 Various types of modules accept conditions, including `generalPages`, `adminPages`, and `webItems`. To see whether a certain
 module accepts conditions, see their specific module documentation page.
 
-For a list of the available conditions for each product, [see the documentation for the Single Condition](../modules/fragment/single-condition.html)
+For a list of the available conditions for each product, [see the documentation for the Single Condition](../modules/fragment/single-condition.html).
 
 ## Remote Conditions
 
@@ -99,5 +99,5 @@ In this case, the user must have not just access to the issue but resolve permis
 
 
 # Product Specific Conditions
-For a list of the available conditions for each product, [see the documentation for the Single Condition](../modules/fragment/single-condition.html)
+For a list of the available conditions for each product, [see the documentation for the Single Condition](../modules/fragment/single-condition.html).
 

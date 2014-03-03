@@ -21,6 +21,8 @@ import com.nimbusds.jwt.JWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
+
 /**
  * If the add-on has ConnectPageModuleBean with conditions, this validator checks that conditions are either remote conditions
  * or are in the list of allowed conditions for pages
@@ -55,11 +57,6 @@ public class PageConditionsValidator implements AddOnBeanValidator
                 throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
             }
         }
-    }
-
-    private boolean isRemoteCondition(String conditionString)
-    {
-        return (conditionString.startsWith("http") || conditionString.startsWith("/"));
     }
 
     private List<SingleConditionBean> getPageModuleConditions(ConnectAddonBean addonBean)
