@@ -55,7 +55,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
                         newPageBean()
                                 .withName(new I18nProperty("My Awesome Page", null))
                                 .withKey(PAGE_KEY)
-                                .withUrl("/pg?page_id={page.id}")
+                                .withUrl("/pg?page_id={page.id}&page_version={page.version}&page_type={page.type}")
                                 .withWeight(1234)
                                 .withConditions(toggleableConditionBean())
                                 .build())
@@ -94,6 +94,8 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
         verifyContainsStandardAddOnQueryParamters(iframeQueryParams, product.getProductInstance().getContextPath());
         assertThat(iframeQueryParams, hasEntry("page_id", createdPage.getPageId()));
+        assertThat(iframeQueryParams, hasEntry("page_version", "1"));
+        assertThat(iframeQueryParams, hasEntry("page_type", "page"));
     }
 
     @Test
