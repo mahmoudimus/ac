@@ -13,6 +13,7 @@ Some of these aspects need to be addressed very early in the design, as implemen
 Atlassian introduced the [Verified Program](https://developer.atlassian.com/display/MARKET/The+Atlassian+Verified+program) 
 to reward vendors who provide exemplary customer experiences. If you intend to sell your add-ons, you should definitely check it out!
 
+<a name="sla"></a>
 ## Defining your Service Level Agreement (SLA)
 
 To start with, you should define your targets, which you can validate during [performance testing](#perftesting), use as a basis to 
@@ -150,6 +151,23 @@ This is one step towards becoming Atlassian Verified.</p>
 
 <a name="performance"></a>
 ##Managing Performance
+<a name="scalability"></a>
+### Scalability
+
+There are two ways to design your add-ons to scale with a growing number of installations and users:
+
+- Vertical scaling: you scale by adding more resources (e.g. CPU, memory) to existing nodes
+- Horizontal scaling: you scale by adding more nodes (e.g. servers) 
+
+It may be difficult to predict exactly how much resources your add-ons will need. For this reason, and because 
+your add-ons will be operating in a cloud environment targetting thousands of customers, we encourage you to design 
+your add-ons to scale horizontally. This will of course depend on your hosting strategy.
+
+Existing cloud platforms can help you scale your implementations. One example of is [Heroku](www.heroku.com), 
+a cloud application platform that can host applications developed in Java, Node.js, Pyton, Ruby, Scala or Closure. 
+Heroku leverages [Amazon AWS](http://www.aws.amazon.com) (Amazon Web Services) technology, and mostly supports horizontal 
+scaling. Other examples include [Google Cloud](http://cloud.google.com) and [SalesForce1](www.salesforce.com/salesforce1). 
+These platforms are built to help you scale for the web. 
 <a name="perftesting"></a>
 ### Performance testing
 We recommend you run performance tests for your add-ons. This will help you define the resources required 
@@ -212,35 +230,22 @@ for this purpose.
 There are a number of tools to help you design and run performance tests for your add-ons. One example of 
 Java Load Testing Framework is [The Grinder](http://grinder.sourceforge.net), that helps you run a distributed 
 test using many load injector machines.
-<a name="scalability"></a>
-### Scalability
 
-There are two ways to design your add-ons to scale with a growing number of installations and users:
-
-- Vertical scaling: you scale by adding more resources (e.g. CPU, memory) to existing nodes
-- Horizontal scaling: you scale by adding more nodes (e.g. servers) 
-
-It may be difficult to predict exactly how much resources your add-ons will need. For this reason, and because 
-your add-ons will be operating in a cloud environment targetting thousands of customers, we encourage you to design 
-your add-ons to scale horizontally. This will of course depend on your hosting strategy.
-
-Existing cloud providers can help you scale your implementations. One example of such providers is [Heroku](www.heroku.com), 
-a cloud application platform that can host applications developed in Java, Node.js, Pyton, Ruby, Scala or Closure. 
-Heroku leverages [Amazon AWS](http://www.aws.amazon.com) (Amazon Web Services) technology, and mostly supports horizontal 
-scaling.
 <a name="monitoring"></a>
 ### Monitoring your SLA
 
 You should have tools to monitor your add-on performance at runtime, and procedures in place to scale resources once specific 
 thresholds are met. To start with, you should at least monitor the utilization of the resources allocated to your add-ons 
-(CPU, memory, disk space, etc.).
+(CPU, memory, disk space, etc.), and progressively move to the monitoring of application based performance indicators 
+(e.g. response times).
 <a name="maintenance"></a>
 ## Maintenance Windows
 
 For more information on how to upgrade your add-on, you should read the [Upgrading your Add-on](upgrades.html) section.
 Although you can decide when to upgrade your add-ons, as much as possible you should aim to align with the 
 [Atlassian OnDemand Maintenance Windows](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+maintenance+windows) 
-as it will minimize disruption for your customers. 
+as it will minimize disruption for your customers. You should define your standard maintenance windows and publish them with
+your [Service Level Agreement](#sla)
 
 <div class="aui-message success">
 	    <p class="title">
@@ -254,14 +259,18 @@ Verified.</p></div>
 ## Business Continuity Planning
 You should address the following aspects when looking at potential major outages:
 
-- Data backups: you should have a data backup strategy that ensures your RPO (Recovery Point Objective) is met. For example, 
-for a RPO of 24h, you should do a full backup of all add-on data overnight, keeping the backups on a different site to the one 
-that is running the add-on. 
+- Backups: you should have a data backup strategy that ensures your RPO (Recovery Point Objective) is met. For example, 
+for a RPO of 24h, you should do a full backup of all data overnight, keeping the backups on a different site to the one 
+that is running the add-on. You should back up the following data:
+ - Code: if you are using a DVCS like Git with BitBucket this is taken care of for you
+ - Add-on data in databases 
 - Recovery procedures: you should have procedures in place to restore your add-ons in the case of a major outage, 
 and we suggest you do a few dry runs. Ideally, you should be testing your disaster recovery procedures regularly. 
 Hope for the best, plan for the worst! 
 
-Note that using an enterprise-class cloud provider minimises the risk of a major outage impacting your add-ons.
+Note that using an enterprise-class cloud provider can largely minimise the risk of a major outage impacting your add-ons. 
+For example, [Heroku](http://www.heroku.com) automatically restores (and withing applications deployed on the platform, and Postgres 
+databases, in case of a outage in one of their data centres, within seconds.  
 
 <a name="support"></a>
 ## Support
