@@ -103,7 +103,7 @@ public class JsonSchemaDoclet
                 {
                     docForField.setRawCommentText(fieldDocOverrides.get(fieldDoc.name()));
                     
-                    //this sucks, but setting the comment tezt does NOT clear the tag cache
+                    //this sucks, but setting the comment text does NOT clear the tag cache
                     Field inlineTagsField = DocImpl.class.getDeclaredField("inlineTags");
                     inlineTagsField.setAccessible(true);
                     inlineTagsField.set(docForField,null);

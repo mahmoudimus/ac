@@ -50,7 +50,7 @@ public class PageConditionsValidator implements AddOnBeanValidator
             String conditionString = condition.getCondition();
             if (!PageConditions.CONDITION_SET.contains(conditionString) && !isRemoteCondition(conditionString))
             {
-                String exceptionMessage = String.format("The add-on (%s) inludes a Page Module with an unsupported condition (%s)", addonBean.getKey(),conditionString);
+                String exceptionMessage = String.format("The add-on (%s) includes a Page Module with an unsupported condition (%s)", addonBean.getKey(),conditionString);
 
                 String i18nMessage = i18nResolver.getText("connect.install.error.page.with.invalid.condition", addonBean.getKey(),conditionString);
                 

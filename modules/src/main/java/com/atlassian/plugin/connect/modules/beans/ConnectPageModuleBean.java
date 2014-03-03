@@ -51,7 +51,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
             )
     }
 )
-@TestAnno(max = 1000)
 public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
@@ -68,14 +67,6 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     private String location;
 
     private IconBean icon;
-
-    //here only to override documentation
-    /**
-     * Conditions can be added to display only when all the given conditions are true.
-     * 
-     * The ONLY conditions supported by pages are:
-     * 
-     */
 
     public ConnectPageModuleBean()
     {
