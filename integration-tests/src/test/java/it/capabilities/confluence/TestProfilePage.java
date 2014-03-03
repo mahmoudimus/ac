@@ -12,6 +12,7 @@ import it.capabilities.AbstractPageTst;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static it.matcher.IsNotBlank.isNotBlank;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -24,7 +25,7 @@ public class TestProfilePage extends AbstractPageTst
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        startConnectAddOn("profilePages", "/my-awesome-profile?profile_user={profileUser.name}");
+        startConnectAddOn("profilePages", "/my-awesome-profile?profile_user={profileUser.name}&profile_key={profileUser.key}");
     }
 
     @Test
@@ -33,6 +34,7 @@ public class TestProfilePage extends AbstractPageTst
         RemotePluginEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none());
         Map<String,String> queryParams = page.getIframeQueryParams();
         assertThat(queryParams.get("profile_user"), is("admin"));
+        assertThat(queryParams.get("profile_key"), isNotBlank());
     }
 
     @Test
