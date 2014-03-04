@@ -21,6 +21,7 @@ import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +41,7 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
     private final PermissionSchemeManager permissionSchemeManager;
     private final UserManager userManager;
 
+    @Autowired
     public JiraConnectAddOnUserProvisioningService(ProjectRoleService projectRoleService, ProjectManager projectManager, PermissionSchemeManager permissionSchemeManager, UserManager userManager)
     {
         this.projectRoleService = projectRoleService;
@@ -79,7 +81,7 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
                         errorCollection);
             }
         }
-        // TODO: get the error collection back to the installer
+        // TODO: throw the error collection back to the installer
     }
 
     private void removeProjectAdminScopePermissions(ApplicationUser addOnUser)
@@ -98,7 +100,7 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
                         errorCollection);
             }
         }
-        // TODO: get the error collection back to the installer
+        // TODO: throw the error collection back to the installer
     }
 
     private ProjectRole establishConnectProjectRole(ErrorCollection errorCollection)
