@@ -19,11 +19,14 @@ import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static it.capabilities.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -52,7 +55,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
                         newPageBean()
                                 .withName(new I18nProperty("My Awesome Page", null))
                                 .withKey(PAGE_KEY)
-                                .withUrl("/pg?page_id={page.id}")
+                                .withUrl("/pg?page_id={page.id}&page_version={page.version}&page_type={page.type}")
                                 .withWeight(1234)
                                 .withConditions(toggleableConditionBean())
                                 .build())
@@ -74,7 +77,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
 
-        createAndVisitViewPage();
+        ConfluenceViewPage createdPage = createAndVisitViewPage();
         ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, PAGE_KEY,
                 "My Awesome Page", true);
 
@@ -86,6 +89,13 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         RemotePluginTestPage addonContentsPage = generalPage.clickRemotePluginLink();
 
         assertThat(addonContentsPage.isFullSize(), is(true));
+
+        // check iframe url params
+        Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
+        verifyContainsStandardAddOnQueryParamters(iframeQueryParams, product.getProductInstance().getContextPath());
+        assertThat(iframeQueryParams, hasEntry("page_id", createdPage.getPageId()));
+        assertThat(iframeQueryParams, hasEntry("page_version", "1"));
+        assertThat(iframeQueryParams, hasEntry("page_type", "page"));
     }
 
     @Test

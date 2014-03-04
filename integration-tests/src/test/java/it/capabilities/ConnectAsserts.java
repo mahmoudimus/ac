@@ -6,10 +6,11 @@ import java.util.Map;
 
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import org.hamcrest.collection.IsMapContaining;
 
 import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -61,15 +62,24 @@ public class ConnectAsserts
         return map;
     }
 
-    public static void verifyStandardAddOnRelativeQueryParameters(final RemoteWebItem webItem, String context)
+    public static void verifyStandardAddOnRelativeQueryParameters(final RemoteWebItem webItem, String contextPath)
+    {
+        Map<String, String> parameters = Maps.newHashMap();
+        for (String key : new String[] {"tz", "loc", "cp", "lic"})
+        {
+            parameters.put(key, webItem.getFromQueryString(key));
+        }
+        verifyContainsStandardAddOnQueryParamters(parameters, contextPath);
+    }
+
+    public static void verifyContainsStandardAddOnQueryParamters(Map<String, String> parameters, String contextPath)
     {
         //example tz:  America/Los_Angeles
         //example loc: en-GB
-        assertThat(webItem.getFromQueryString("tz"), isTimeZone());
-        assertThat(webItem.getFromQueryString("loc"), isLocale());
-        assertThat(webItem.getFromQueryString("cp"), is(equalTo(context)));
-        assertThat(webItem.getFromQueryString("lic"), is(equalTo("none")));
+        assertThat(parameters, IsMapContaining.hasEntry(is("tz"), isTimeZone()));
+        assertThat(parameters, IsMapContaining.hasEntry(is("loc"), isLocale()));
+        assertThat(parameters, IsMapContaining.hasEntry(is("cp"), is(contextPath)));
+        assertThat(parameters, IsMapContaining.hasEntry(is("lic"), is("none")));
     }
-
 
 }
