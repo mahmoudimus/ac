@@ -222,6 +222,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         HashSet<ScopeName> normalizedScopes = Sets.newHashSet();
         for (ScopeName scopeName : scopes)
         {
+            normalizedScopes.add(scopeName);
             normalizedScopes.addAll(scopeName.getImplied());
         }
         return normalizedScopes;

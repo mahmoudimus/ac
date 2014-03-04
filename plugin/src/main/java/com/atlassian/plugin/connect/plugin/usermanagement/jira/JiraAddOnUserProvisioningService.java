@@ -101,10 +101,12 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     public void provisionAddonUserForScopes(final String userKey, final Set<ScopeName> scopes)
     {
         ApplicationUser user = userManager.getUserByKey(userKey);
-        // Assuming normalized set of scopes
         if (scopes.contains(ScopeName.PROJECT_ADMIN))
         {
-            updateProjectAdminScopePermissions(user);
+            if (!scopes.contains(ScopeName.ADMIN))
+            {
+                updateProjectAdminScopePermissions(user);
+            }
         }
         else
         {
