@@ -5,6 +5,10 @@
         },
         "getting-started.html": {
             "title": "Getting Started"
+        },
+        "components.html": {
+            "title": "Components Summary",
+			"new": true
         }
     },
     "developing": {
