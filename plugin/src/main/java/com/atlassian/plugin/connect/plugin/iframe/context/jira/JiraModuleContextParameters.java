@@ -5,10 +5,9 @@ import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.version.Version;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.sal.api.user.UserProfile;
 
 /**
- *
+ * @since 1.0
  */
 public interface JiraModuleContextParameters extends ModuleContextParameters
 {
@@ -16,5 +15,4 @@ public interface JiraModuleContextParameters extends ModuleContextParameters
     void addProject(Project project);
     void addVersion(Version version);
     void addComponent(ProjectComponent projectComponent, Project project);
-    void addProfileUser(UserProfile userProfile);
 }

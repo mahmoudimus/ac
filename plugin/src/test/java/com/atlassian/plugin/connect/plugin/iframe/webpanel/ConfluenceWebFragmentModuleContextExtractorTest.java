@@ -5,23 +5,46 @@ import com.atlassian.confluence.pages.BlogPost;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.spaces.Space;
+import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RunWith (MockitoJUnitRunner.class)
 public class ConfluenceWebFragmentModuleContextExtractorTest
 {
+    @Mock
+    private UserManager userManager;
+    @InjectMocks
     private ConfluenceWebFragmentModuleContextExtractor extractor;
 
-    @Before
-    public void setup()
+    @Test
+    public void testExtractProfileFromContext()
     {
-        extractor = new ConfluenceWebFragmentModuleContextExtractor();
+        ConfluenceUser user = mock(ConfluenceUser.class);
+        UserProfile profile = mock(UserProfile.class);
+        UserKey userKey = new UserKey("test-key");
+
+        when(user.getKey()).thenReturn(userKey);
+        when(userManager.getUserProfile(eq(userKey))).thenReturn(profile);
+        when(profile.getUserKey()).thenReturn(userKey);
+        when(profile.getUsername()).thenReturn("tpettersen");
+
+        ModuleContextParameters params = extractor.extractParameters(ImmutableMap.<String, Object>of("targetUser", user));
+        assertEquals("test-key", params.get("profileUser.key"));
+        assertEquals("tpettersen", params.get("profileUser.name"));
     }
 
     @Test

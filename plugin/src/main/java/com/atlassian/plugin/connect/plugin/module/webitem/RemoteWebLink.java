@@ -16,6 +16,7 @@ import com.atlassian.plugin.web.model.AbstractWebItem;
 import com.atlassian.plugin.web.model.WebLink;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
 
 /**
  * Link which points to the dialog, inline-dialog or general page coming from the add-on.
@@ -89,7 +90,11 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
                                               .dialog(isDialog)
                                               .build();
             }
-            else
+            else if (addOnUrlContext == page)
+            {
+                return req.getContextPath() + urlVariableSubstitutor.append(url, moduleContext);
+            }
+            else // if (addOnUrlContext == product)
             {
                 return req.getContextPath() + urlVariableSubstitutor.replace(url, moduleContext);
             }

@@ -9,10 +9,10 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableList;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.security.Principal;
 import java.util.Map;
+import javax.inject.Inject;
 
 /**
  *
@@ -23,7 +23,7 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
     private final Iterable<ParameterExtractor<?>> parameterExtractors;
     private final UserManager userManager;
 
-    @Autowired
+    @Inject
     public JiraWebFragmentModuleContextExtractor(UserManager userManager)
     {
         this.userManager = userManager;

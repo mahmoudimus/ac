@@ -21,8 +21,10 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static it.capabilities.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -99,6 +101,12 @@ public class TestGeneralPage extends JiraWebDriverTestBase
 
         RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
         assertThat(addonContentsPage.isFullSize(), is(true));
+
+        // check iframe url params
+        Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
+        verifyContainsStandardAddOnQueryParamters(iframeQueryParams, product.getProductInstance().getContextPath());
+        assertThat(iframeQueryParams, hasEntry("project_key", project.getKey()));
+        assertThat(iframeQueryParams, hasEntry("project_id", project.getId()));
     }
 
     @Test
