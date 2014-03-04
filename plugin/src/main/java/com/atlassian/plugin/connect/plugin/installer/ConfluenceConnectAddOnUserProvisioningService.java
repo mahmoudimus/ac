@@ -43,7 +43,7 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
     }
 
     @Override
-    public void provisionAddonUserForScopes(String userKey, Collection<ScopeName> scopes)
+    public void provisionAddonUserForScopes(String userKey, Set<ScopeName> scopes)
     {
         provisionAddonUserInSpacesForScopes(userKey, scopes);
     }

@@ -3,9 +3,9 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 
-import java.util.Collection;
+import java.util.Set;
 
 public interface ConnectAddOnUserProvisioningService
 {
-    void provisionAddonUserForScopes(String userKey, Collection<ScopeName> scopes);
+    void provisionAddonUserForScopes(String userKey, Set<ScopeName> scopes);
 }

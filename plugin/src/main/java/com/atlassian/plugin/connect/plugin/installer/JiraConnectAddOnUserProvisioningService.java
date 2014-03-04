@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.permission.PermissionSchemeManager;
@@ -10,23 +9,25 @@ import com.atlassian.jira.scheme.SchemeEntity;
 import com.atlassian.jira.security.roles.ProjectRole;
 import com.atlassian.jira.security.roles.ProjectRoleImpl;
 import com.atlassian.jira.security.roles.actor.UserRoleActorFactory;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 @JiraComponent
+@ExportAsDevService
 public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
 {
     private static final String CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME = "Connect Project Admin Add-Ons";
@@ -37,37 +38,32 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
     private final ProjectRoleService projectRoleService;
     private final ProjectManager projectManager;
     private final PermissionSchemeManager permissionSchemeManager;
+    private final UserManager userManager;
 
-    public JiraConnectAddOnUserProvisioningService(ProjectRoleService projectRoleService, ProjectManager projectManager, PermissionSchemeManager permissionSchemeManager)
+    public JiraConnectAddOnUserProvisioningService(ProjectRoleService projectRoleService, ProjectManager projectManager, PermissionSchemeManager permissionSchemeManager, UserManager userManager)
     {
         this.projectRoleService = projectRoleService;
         this.projectManager = projectManager;
         this.permissionSchemeManager = permissionSchemeManager;
+        this.userManager = userManager;
     }
 
     @Override
-    public void provisionAddonUserForScopes(String userKey, Collection<ScopeName> scopes)
+    public void provisionAddonUserForScopes(String userKey, Set<ScopeName> scopes)
     {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void establishScopePermissions(User addOnUser, ScopeName scope)
-    {
-        if (ScopeName.PROJECT_ADMIN.equals(scope))
+        ApplicationUser user = userManager.getUserByKey(userKey);
+        // Assuming normalized set of scopes
+        if (scopes.contains(ScopeName.PROJECT_ADMIN))
         {
-            establishProjectAdminScopePermissions(addOnUser);
+            establishProjectAdminScopePermissions(user);
+        }
+        else
+        {
+            removeProjectAdminScopePermissions(user);
         }
     }
 
-    public void removeScopePermissions(User addOnUser, ScopeName scope)
-    {
-        if (ScopeName.PROJECT_ADMIN.equals(scope))
-        {
-            removeProjectAdminScopePermissions(addOnUser);
-        }
-    }
-
-    private void establishProjectAdminScopePermissions(User addOnUser)
+    private void establishProjectAdminScopePermissions(ApplicationUser addOnUser)
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
         ProjectRole projectRole = establishConnectProjectRole(errorCollection);
@@ -86,7 +82,7 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
         // TODO: get the error collection back to the installer
     }
 
-    private void removeProjectAdminScopePermissions(User addOnUser)
+    private void removeProjectAdminScopePermissions(ApplicationUser addOnUser)
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
         ProjectRole projectRole = projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME, errorCollection);
