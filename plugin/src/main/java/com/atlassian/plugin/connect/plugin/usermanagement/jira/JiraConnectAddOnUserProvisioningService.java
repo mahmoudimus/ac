@@ -1,11 +1,12 @@
 package com.atlassian.plugin.connect.plugin.usermanagement.jira;
 
 import com.atlassian.crowd.embedded.api.Group;
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.Permissions;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -30,12 +31,15 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
 
     private final GlobalPermissionManager jiraPermissionManager;
     private final ProjectService projectService;
+    private final UserManager userManager;
 
     @Inject
-    public JiraConnectAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager, ProjectService projectService)
+    public JiraConnectAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager, ProjectService projectService,
+            UserManager userManager)
     {
-        this.projectService = projectService;
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
+        this.projectService = projectService;
+        this.userManager = userManager;
     }
 
     @Override
@@ -73,11 +77,12 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
     {
         // TODO: is this correct? does getAllProjects(user) only return projects that the add-on has visibility too now
         // but may have after the permission grant?!
-        User user = null;
+        ApplicationUser user = userManager.getUserByKey(userKey);
         final List<Project> projects = projectService.getAllProjects(user).getReturnedValue();
         for (Project project : projects)
         {
-
+            // todo
         }
+        throw new UnsupportedOperationException("NIH");
     }
 }

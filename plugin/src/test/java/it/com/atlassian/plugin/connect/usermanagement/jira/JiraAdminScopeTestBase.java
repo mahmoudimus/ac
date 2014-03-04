@@ -3,7 +3,6 @@ package it.com.atlassian.plugin.connect.usermanagement.jira;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.ApplicationUsers;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -25,13 +24,18 @@ public abstract class JiraAdminScopeTestBase extends AdminScopeTestBase
     }
 
     @Override
-    protected boolean isAdmin(String username)
+    protected boolean isUserKeyAdmin(String userKey)
     {
-        return jiraPermissionManager.hasPermission(Permissions.Permission.ADMINISTER.getId(), ApplicationUsers.byKey(username));
+        return jiraPermissionManager.hasPermission(Permissions.Permission.ADMINISTER.getId(), getUserByKey(userKey));
     }
 
     protected ApplicationUser getAddonUser()
     {
-        return userManager.getUserByKey(getAddonUserKey());
+        return getUserByKey(getAddonUserKey());
+    }
+
+    private ApplicationUser getUserByKey(String key)
+    {
+        return userManager.getUserByKey(key);
     }
 }
