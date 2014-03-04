@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.atlassian.confluence.security.SpacePermission;
 import com.atlassian.confluence.security.SpacePermissionManager;
@@ -16,6 +17,7 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableSet;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
+import static com.google.common.collect.ImmutableSet.Builder;
 
 @SuppressWarnings("unused")
 @ConfluenceComponent
@@ -72,8 +74,28 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
         return userAccessor.getExistingUserByKey(userProfile.getUserKey());
     }
 
-    private Iterable<String> getSpacePermissionsImpliedBy(Collection<ScopeName> scope)
+    private Set<String> getSpacePermissionsImpliedBy(Collection<ScopeName> scopes)
     {
-        return ImmutableSet.of(ADMINISTER_SPACE_PERMISSION); // TODO: actual mapping
+        final Builder<String> builder = ImmutableSet.builder();
+        for (ScopeName scope : scopes)
+        {
+            builder.addAll(getSpacePermissionsImpliedBy(scope));
+        }
+        return builder.build();
+    }
+
+    private Set<String> getSpacePermissionsImpliedBy(ScopeName scope)
+    {
+        if (scope == ScopeName.SPACE_ADMIN)
+        {
+            return ImmutableSet.of(ADMINISTER_SPACE_PERMISSION);
+        }
+
+        final Builder<String> builder = ImmutableSet.builder();
+        for (ScopeName implied : scope.getImplied())
+        {
+            builder.addAll(getSpacePermissionsImpliedBy(scope));
+        }
+        return builder.build();
     }
 }
