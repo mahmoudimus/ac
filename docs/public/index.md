@@ -18,12 +18,12 @@ language and web framework.
 
 Fundamentally, Atlassian Connect add-ons have three major capabilities. Add-ons can:
 
-1. Insert content in [certain defined places](../modules) in the Atlassian application's UI.
-2. Make calls to the Atlassian application's [REST API](../rest-apis/product-api-browser.html).
-3. Listen and respond to [WebHooks](../modules/jira/webhooks.html) fired by the Atlassian application.
+1. Insert content in [certain defined places](./modules.html) in the Atlassian application's UI.
+2. Make calls to the Atlassian application's [REST API](./rest-apis/product-api-browser.html).
+3. Listen and respond to [WebHooks](./modules/jira/webhooks.html) fired by the Atlassian application.
 
 <div class="index-button">
-<a href="/guides/getting-started.html"><button class="primary-cta aui-button aui-button-primary">Build Hello World in 10 minutes</button></a>
+<a href="./guides/getting-started.html"><button class="primary-cta aui-button aui-button-primary">Build Hello World in 10 minutes</button></a>
 </div>
 
 
@@ -35,7 +35,7 @@ After subscribing to the add-on, the features are delivered from within the UI a
 Most Atlassian Connect add-ons will be implemented as multi-tenanted services. 
 This means that a single Atlassian Connect application must take into account multiple subscribing organizations. 
 For example, each add-on will maintain subscriber-specific data and configuration. 
-For more about multi-tenancy design considerations, see [Add-on Design Considerations](https://developer.atlassian.com/display/AC/Add-on+Design+Considerations).
+For more about multi-tenancy design considerations, see [Understand OnDemand](./concepts/understanding-ondemand.html).
 
 <div id="architecture-graphic">
 </div>
@@ -44,15 +44,15 @@ Security is a important concern in a distributed component model such as Atlassi
 Atlassian Connect relies on HTTPS and JWT authentication to secure communication between the add-on, 
 the Atlassian product instance and the end-user's browser.
 
-Read our [security overview](../concepts/security.html) for more details.
+Read our [security overview](./concepts/security.html) for more details.
 
 <div class="closing-cta">
-    <a href="guides/getting-started.html">
+    <a href="./guides/getting-started.html">
         <button class="primary-cta aui-button aui-button-primary">
             Try the Hello World example
         </button>
     </a>
-    <p><a href="guides/introduction.html">or read the detailed introduction</a></p>
+    <p><a href="./guides/introduction.html">or read the detailed introduction</a></p>
 </div>
 
 
