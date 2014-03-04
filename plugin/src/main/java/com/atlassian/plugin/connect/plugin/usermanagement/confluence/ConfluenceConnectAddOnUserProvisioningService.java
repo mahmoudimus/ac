@@ -20,13 +20,16 @@ import com.google.common.collect.ImmutableSet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.Builder;
 
-@SuppressWarnings("unused")
+@SuppressWarnings ("unused")
 @ConfluenceComponent
 @ExportAsDevService
 public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
 {
+    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("confluence-users");
+
     private final SpacePermissionManager spacePermissionManager;
     private final SpaceManager spaceManager;
     private final UserAccessor userAccessor;
@@ -34,7 +37,7 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
 
     @Autowired
     public ConfluenceConnectAddOnUserProvisioningService(SpacePermissionManager spacePermissionManager, SpaceManager spaceManager,
-                                                         UserAccessor userAccessor, UserManager userManager)
+            UserAccessor userAccessor, UserManager userManager)
     {
         this.spacePermissionManager = spacePermissionManager;
         this.spaceManager = spaceManager;
@@ -46,6 +49,30 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
     public void provisionAddonUserForScopes(String userKey, Collection<ScopeName> scopes)
     {
         provisionAddonUserInSpacesForScopes(userKey, scopes);
+    }
+
+    @Override
+    public Set<String> getDefaultProductGroups()
+    {
+        // As reported by Sam Day, without the "confluence-users" group the add-on user can't
+        // even get the page summary of a page that is open to anonymous access.
+        return GROUPS;
+    }
+
+    @Override
+    public void ensureGroupHasProductAdminPermission(String groupKey)
+    {
+        if (!groupHasProductAdminPermission(groupKey))
+        {
+            throw new UnsupportedOperationException("NIH");
+        }
+    }
+
+    @Override
+    public boolean groupHasProductAdminPermission(String groupKey)
+    {
+        checkNotNull(groupKey);
+        return false;//confluencePermissionManager.
     }
 
     private void provisionAddonUserInSpacesForScopes(String userKey, Collection<ScopeName> scopes)

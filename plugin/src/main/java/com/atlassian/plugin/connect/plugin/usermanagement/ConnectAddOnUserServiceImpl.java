@@ -38,7 +38,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 {
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
-    private final ConnectAddOnUserGroupsService connectAddOnUserGroupsService;
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
 
     private static final String ADD_ON_USER_KEY_PREFIX = "addon_";
@@ -59,13 +58,11 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Autowired
     public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
                                        ApplicationManager applicationManager,
-                                       ConnectAddOnUserGroupsService connectAddOnUserGroupsService,
                                        ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService)
     {
-        this.connectAddOnUserProvisioningService = connectAddOnUserProvisioningService;
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
-        this.connectAddOnUserGroupsService = checkNotNull(connectAddOnUserGroupsService);
+        this.connectAddOnUserProvisioningService = connectAddOnUserProvisioningService;
     }
 
     @Override
@@ -180,7 +177,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         User user = ensureUserExists(userKey);
         ensureUserIsInGroup(user.getName(), ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
 
-        for (String group : connectAddOnUserGroupsService.getDefaultProductGroups())
+        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroups())
         {
             try
             {
@@ -327,9 +324,9 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
         if (created)
         {
-            connectAddOnUserGroupsService.ensureIsAdmin(groupKey);
+            connectAddOnUserProvisioningService.ensureGroupHasProductAdminPermission(groupKey);
         }
-        else if (!connectAddOnUserGroupsService.isAdmin(groupKey))
+        else if (!connectAddOnUserProvisioningService.groupHasProductAdminPermission(groupKey))
         {
             throw new ConnectAddOnUserInitException(String.format("Group '%s' already exists and is NOT an administrators group. " +
                     "Cannot make it an administrators group because that would elevate the privileges of existing users in this group. " +
