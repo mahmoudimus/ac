@@ -12,15 +12,19 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.google.common.collect.ImmutableSet.Builder;
 
 @SuppressWarnings("unused")
 @ConfluenceComponent
+@ExportAsDevService
 public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
 {
     private final SpacePermissionManager spacePermissionManager;
@@ -28,6 +32,7 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
     private final UserAccessor userAccessor;
     private final UserManager userManager;
 
+    @Autowired
     public ConfluenceConnectAddOnUserProvisioningService(SpacePermissionManager spacePermissionManager, SpaceManager spaceManager,
                                                          UserAccessor userAccessor, UserManager userManager)
     {
