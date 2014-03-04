@@ -6,15 +6,15 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
@@ -81,7 +81,7 @@ public class JiraProjectAdminUserManagementTest
         {
             plugin = testPluginInstaller.installPlugin(spaceAdminAddon);
 
-            String addonUserKey = connectAddOnUserService.getOrCreateUserKey(ADDON_KEY);
+            String addonUserKey = connectAddOnUserService.getOrCreateUserKey(ADDON_KEY, ImmutableSet.of(ScopeName.PROJECT_ADMIN));
             ApplicationUser addonUser = userManager.getUserByKey(addonUserKey);
 
             List<Project> allProjects = projectService.getAllProjects(addonUser).getReturnedValue();
@@ -118,7 +118,7 @@ public class JiraProjectAdminUserManagementTest
         {
             plugin = testPluginInstaller.installPlugin(spaceAdminAddon);
 
-            String addonUserKey = connectAddOnUserService.getOrCreateUserKey(ADDON_KEY);
+            String addonUserKey = connectAddOnUserService.getOrCreateUserKey(ADDON_KEY, ImmutableSet.of(ScopeName.PROJECT_ADMIN));
             ApplicationUser addonUser = userManager.getUserByKey(addonUserKey);
 
             ApplicationUser admin = userManager.getUserByKey(ADMIN);

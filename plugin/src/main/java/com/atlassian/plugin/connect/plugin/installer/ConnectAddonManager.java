@@ -1,14 +1,5 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.UnknownHostException;
-import java.util.Collections;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
@@ -32,6 +23,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
@@ -45,14 +39,20 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.Collections;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
@@ -250,16 +250,26 @@ public class ConnectAddonManager
 
     private void enableAddOnUser(String addOnKey) throws ConnectAddOnUserInitException
     {
-        String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey);
-        ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
+        String descriptor = descriptorRegistry.getDescriptor(addOnKey);
 
-        if (null != applicationLink)
+        if (null == descriptor)
         {
-            applicationLink.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, userKey);
+            log.error(String.format("Failed to ensure that the user exists for Connect add-on '%s' because it has no descriptor in the Connect registry. It will not be able to use the APIs. Uninstalling and reinstalling it will re-attempt this operation. Ignoring so as not to interfere with other add-ons...", addOnKey));
         }
         else
         {
-            log.error("Unable to set the ApplicationLink user key property for add-on '{}' because the add-on has no ApplicationLink!", addOnKey);
+            ConnectAddonBean addonBean = ConnectModulesGsonFactory.getGson().fromJson(descriptor, ConnectAddonBean.class);
+            String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey, addonBean.getScopes());
+            ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
+
+            if (null != applicationLink)
+            {
+                applicationLink.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, userKey);
+            }
+            else
+            {
+                log.error("Unable to set the ApplicationLink user key property for add-on '{}' because the add-on has no ApplicationLink!", addOnKey);
+            }
         }
     }
 

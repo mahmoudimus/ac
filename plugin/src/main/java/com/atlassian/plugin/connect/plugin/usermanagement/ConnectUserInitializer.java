@@ -1,8 +1,11 @@
-package com.atlassian.plugin.connect.plugin.installer;
+package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.predicate.PluginPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,17 +21,20 @@ public class ConnectUserInitializer implements InitializingBean
     private final ConnectAddOnUserService connectAddOnUserService;
     private final PluginAccessor pluginAccessor;
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
+    private final ConnectAddonRegistry connectAddonRegistry;
 
     private static final Logger log = LoggerFactory.getLogger(ConnectUserInitializer.class);
 
     @Autowired
     public ConnectUserInitializer(ConnectAddOnUserService connectAddOnUserService,
                                   PluginAccessor pluginAccessor,
-                                  JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService)
+                                  JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
+                                  ConnectAddonRegistry connectAddonRegistry)
     {
         this.connectAddOnUserService = checkNotNull(connectAddOnUserService);
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
+        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
     }
 
     @Override
@@ -40,15 +46,25 @@ public class ConnectUserInitializer implements InitializingBean
         }
     }
 
-    private void initAddOnUser(Plugin plugin)
+    private void initAddOnUser(Plugin connectAddOn)
     {
         try
         {
-            connectAddOnUserService.getOrCreateUserKey(plugin.getKey());
+            String descriptor = connectAddonRegistry.getDescriptor(connectAddOn.getKey());
+
+            if (null == descriptor)
+            {
+                log.error(String.format("Failed to ensure that the user exists for Connect add-on '%s' because it has no descriptor in the Connect registry. It will not be able to use the APIs. Uninstalling and reinstalling it will re-attempt this operation. Ignoring so as not to interfere with other add-ons...", connectAddOn.getKey()));
+            }
+            else
+            {
+                ConnectAddonBean addonBean = ConnectModulesGsonFactory.getGson().fromJson(descriptor, ConnectAddonBean.class);
+                connectAddOnUserService.getOrCreateUserKey(connectAddOn.getKey(), addonBean.getScopes());
+            }
         }
         catch (ConnectAddOnUserInitException e)
         {
-            log.error(String.format("Failed to ensure that the user exists for Connect add-on '%s' on Connect startup. It will not be able to use the APIs. Uninstalling and reinstalling it will re-attempt this operation. Ignoring so as not to interfere with other add-ons...", plugin.getKey()), e);
+            log.error(String.format("Failed to ensure that the user exists for Connect add-on '%s' on Connect startup. It will not be able to use the APIs. Uninstalling and reinstalling it will re-attempt this operation. Ignoring so as not to interfere with other add-ons...", connectAddOn.getKey()), e);
         }
     }
 
