@@ -1,22 +1,36 @@
-package com.atlassian.plugin.connect.plugin.installer;
+package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.crowd.exception.*;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidCredentialException;
+import com.atlassian.crowd.exception.InvalidGroupException;
+import com.atlassian.crowd.exception.InvalidUserException;
+import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+import javax.annotation.Nullable;
+
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.any;
 
 @ExportAsDevService
 @Component
@@ -24,10 +38,11 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 {
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
-    private final ConnectAddOnUserGroupsService connectAddOnUserGroupsService;
+    private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
 
     private static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     private static final String ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY = "atlassian-addons"; // in order to not occupy a license this has to match constant in user-provisioning-plugin/src/main/java/com/atlassian/crowd/plugin/usermanagement/userprovisioning/Constants.java
+    private static final String ATLASSIAN_ADDONS_ADMIN_GROUP_KEY = "atlassian-addons-admin";
     private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
     // Use a "no reply" email address for add-on users so that
@@ -43,20 +58,20 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Autowired
     public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
                                        ApplicationManager applicationManager,
-                                       ConnectAddOnUserGroupsService connectAddOnUserGroupsService)
+                                       ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService)
     {
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
-        this.connectAddOnUserGroupsService = checkNotNull(connectAddOnUserGroupsService);
+        this.connectAddOnUserProvisioningService = connectAddOnUserProvisioningService;
     }
 
     @Override
-    public String getOrCreateUserKey(String addOnKey) throws ConnectAddOnUserInitException
+    public String getOrCreateUserKey(String addOnKey, Set<ScopeName> scopes) throws ConnectAddOnUserInitException
     {
         // Oh how I long for Java 7's conciser catch semantics.
         try
         {
-            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey);
+            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey, scopes);
         }
         catch (InvalidCredentialException e)
         {
@@ -156,13 +171,13 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return null != user && user.isActive();
     }
 
-    private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException
+    private String createOrEnableAddOnUser(String userKey, Set<ScopeName> scopes) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
         ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
         User user = ensureUserExists(userKey);
         ensureUserIsInGroup(user.getName(), ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
 
-        for (String group : connectAddOnUserGroupsService.getDefaultProductGroups())
+        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroups())
         {
             try
             {
@@ -176,7 +191,27 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             }
         }
 
+        if (isAdminScoped(scopes))
+        {
+            ensureGroupExistsAndIsAdmin(ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
+            ensureUserIsInGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
+        }
+
+        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, scopes);
+
         return user.getName();
+    }
+
+    private static boolean isAdminScoped(Set<ScopeName> scopes)
+    {
+        return null != scopes && !scopes.isEmpty() && any(scopes, new Predicate<ScopeName>()
+        {
+            @Override
+            public boolean apply(@Nullable ScopeName scope)
+            {
+                return null != scope && (ScopeName.ADMIN.equals(scope) || scope.getImplied().contains(ScopeName.ADMIN));
+            }
+        });
     }
 
     private void ensureUserIsInGroup(String userKey, String groupKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException, ApplicationNotFoundException
@@ -250,13 +285,20 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private void ensureGroupExists(String groupKey) throws OperationFailedException, ApplicationPermissionException, ApplicationNotFoundException
+    /**
+     * Create the group if it does not exist. Do nothing if it previously existed.
+     * @return {@code true} if the group previously existed, otherwise {@code false}
+     */
+    private boolean ensureGroupExists(String groupKey) throws OperationFailedException, ApplicationPermissionException, ApplicationNotFoundException
     {
+        boolean created = false;
+
         if (null == findGroupByKey(groupKey))
         {
             try
             {
                 applicationService.addGroup(getApplication(), new GroupTemplate(groupKey));
+                created = true;
             }
             catch (InvalidGroupException ige)
             {
@@ -270,6 +312,26 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                             ApplicationService.class.getSimpleName(), applicationService, Group.class.getSimpleName(), groupKey));
                 }
             }
+        }
+
+        return created;
+    }
+
+    private void ensureGroupExistsAndIsAdmin(String groupKey) throws ConnectAddOnUserInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException
+    {
+        final boolean created = ensureGroupExists(groupKey);
+
+        if (created)
+        {
+            connectAddOnUserProvisioningService.ensureGroupHasProductAdminPermission(groupKey);
+        }
+        else if (!connectAddOnUserProvisioningService.groupHasProductAdminPermission(groupKey))
+        {
+            throw new ConnectAddOnUserInitException(String.format("Group '%s' already exists and is NOT an administrators group. " +
+                    "Cannot make it an administrators group because that would elevate the privileges of existing users in this group. " +
+                    "Consequently, add-on users that need to be admins cannot be made admins by adding them to this group and making it an administrators group. " +
+                    "Aborting user setup.",
+                    groupKey));
         }
     }
 

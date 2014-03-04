@@ -5,6 +5,7 @@ import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.plugin.descriptor.web.ConfluenceWebFragmentHelper;
 import com.atlassian.confluence.security.PermissionManager;
+import com.atlassian.confluence.security.SpacePermissionManager;
 import com.atlassian.confluence.security.websudo.WebSudoManager;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.SpaceManager;
@@ -37,6 +38,7 @@ public class ConfluenceImports
             @ConfluenceImport ("confluencePermissionManager") PermissionManager permissionManager,
             @ConfluenceImport SettingsManager settingsManager,
             @ConfluenceImport SpaceManager spaceManager,
+            @ConfluenceImport SpacePermissionManager spacePermissionManager,
             @ConfluenceImport StorageFormatCleaner storageFormatCleaner,
             @ConfluenceImport SystemInformationService systemInformationService,
             @ConfluenceImport WebSudoManager webSudoManager,

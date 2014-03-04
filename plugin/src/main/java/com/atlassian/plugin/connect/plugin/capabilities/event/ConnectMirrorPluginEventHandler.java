@@ -14,6 +14,8 @@ import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.installer.*;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
@@ -83,7 +85,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
      * We may need to ignore this until connect specific stuff is setup.
      *
      * @param pluginEnabledEvent
-     * @throws ConnectAddOnUserInitException
+     * @throws com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException
      */
     @PluginEventListener
     @SuppressWarnings("unused")
