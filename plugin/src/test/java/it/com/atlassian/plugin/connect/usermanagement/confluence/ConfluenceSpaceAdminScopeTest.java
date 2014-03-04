@@ -47,7 +47,7 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
     }
 
     @Test
-    public void addonIsMadeAdminOfExistingProject() throws Exception
+    public void addonIsMadeAdminOfExistingSpace() throws Exception
     {
         List<Space> allSpaces = spaceManager.getAllSpaces();
 
