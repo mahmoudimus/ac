@@ -31,8 +31,13 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
     }
 
     @Override
-    public ModuleContextParameters extractParameters(final Map<String, Object> webFragmentContext)
+    public ModuleContextParameters extractParameters(final Map<String, ? extends Object> webFragmentContext)
     {
+        if(ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
+        {
+            return (ModuleContextParameters) webFragmentContext;
+        }
+        
         ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl();
 
         @SuppressWarnings("unchecked") // it is what it is
