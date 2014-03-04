@@ -10,6 +10,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 
@@ -24,7 +25,8 @@ import static com.google.common.collect.Iterables.any;
 
 @SuppressWarnings ("unused")
 @JiraComponent
-public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
+@ExportAsDevService
+public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
 {
     private static final ImmutableSet<String> GROUPS = ImmutableSet.of("jira-users");
     private static final int ADMIN_PERMISSION = Permissions.ADMINISTER;
@@ -34,7 +36,7 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
     private final UserManager userManager;
 
     @Inject
-    public JiraConnectAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager, ProjectService projectService,
+    public JiraAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager, ProjectService projectService,
             UserManager userManager)
     {
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);

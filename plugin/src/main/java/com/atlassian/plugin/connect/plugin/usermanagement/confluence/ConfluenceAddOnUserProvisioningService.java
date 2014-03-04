@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.plugin.usermanagement.confluence;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import com.atlassian.confluence.security.SpacePermission;
 import com.atlassian.confluence.security.SpacePermissionManager;
 import com.atlassian.confluence.spaces.Space;
@@ -17,17 +13,26 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.ImmutableSet.Builder;
 
 @SuppressWarnings ("unused")
 @ConfluenceComponent
 @ExportAsDevService
-public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
+public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
 {
+    private static final Logger log = LoggerFactory.getLogger(ConfluenceAddOnUserProvisioningService.class);
+
+    // As reported by Sam Day, without the "confluence-users" group the add-on user can't
+    // even get the page summary of a page that is open to anonymous access.
     private static final ImmutableSet<String> GROUPS = ImmutableSet.of("confluence-users");
 
     private final SpacePermissionManager spacePermissionManager;
@@ -36,7 +41,7 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
     private final UserManager userManager;
 
     @Autowired
-    public ConfluenceConnectAddOnUserProvisioningService(SpacePermissionManager spacePermissionManager, SpaceManager spaceManager,
+    public ConfluenceAddOnUserProvisioningService(SpacePermissionManager spacePermissionManager, SpaceManager spaceManager,
             UserAccessor userAccessor, UserManager userManager)
     {
         this.spacePermissionManager = spacePermissionManager;
@@ -46,16 +51,30 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
     }
 
     @Override
-    public void provisionAddonUserForScopes(String userKey, Collection<ScopeName> scopes)
+    public void provisionAddonUserForScopes(String addonUserKey, Collection<ScopeName> scopes)
     {
-        provisionAddonUserInSpacesForScopes(userKey, scopes);
+        checkNotNull(scopes);
+
+        final ConfluenceUser confluenceAddonUser = getConfluenceUser(addonUserKey);
+
+        if (scopes.contains(ScopeName.ADMIN))
+        {
+            // set global admin permission
+        }
+        else if (scopes.contains(ScopeName.SPACE_ADMIN))
+        {
+            // add space admin to all spaces
+            final List<Space> spaces = spaceManager.getAllSpaces();
+            for (Space space : spaces)
+            {
+                grantAddonUserSpaceAdmin(space, confluenceAddonUser);
+            }
+        }
     }
 
     @Override
     public Set<String> getDefaultProductGroups()
     {
-        // As reported by Sam Day, without the "confluence-users" group the add-on user can't
-        // even get the page summary of a page that is open to anonymous access.
         return GROUPS;
     }
 
@@ -75,28 +94,6 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
         return false;//confluencePermissionManager.
     }
 
-    private void provisionAddonUserInSpacesForScopes(String userKey, Collection<ScopeName> scopes)
-    {
-        final List<Space> spaces = spaceManager.getAllSpaces();
-        for (Space space : spaces)
-        {
-            provisionAddonUserInSpaceForScopes(userKey, scopes, space);
-        }
-    }
-
-    private void provisionAddonUserInSpaceForScopes(String userKey, Collection<ScopeName> scopes, Space space)
-    {
-        final Set<String> permissions = getSpacePermissionsImpliedBy(scopes);
-        final ConfluenceUser user = getConfluenceUser(userKey);
-        for (String permissionType : permissions)
-        {
-            final SpacePermission spacePermission = new SpacePermission(permissionType, space, null, user);
-            if (!spacePermissionManager.hasPermission(permissionType, space, user))
-            {
-                spacePermissionManager.savePermission(spacePermission);
-            }
-        }
-    }
 
     private ConfluenceUser getConfluenceUser(String userKeyString)
     {
@@ -110,28 +107,16 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
         return userAccessor.getExistingUserByKey(userProfile.getUserKey());
     }
 
-    private Set<String> getSpacePermissionsImpliedBy(Collection<ScopeName> scopes)
+    private void grantAddonUserSpaceAdmin(Space space, ConfluenceUser confluenceAddonUser)
     {
-        final Builder<String> builder = ImmutableSet.builder();
-        for (ScopeName scope : scopes)
+        if (!spacePermissionManager.hasPermission(ADMINISTER_SPACE_PERMISSION, space, confluenceAddonUser))
         {
-            builder.addAll(getSpacePermissionsImpliedBy(scope));
+            SpacePermission permission = new SpacePermission(ADMINISTER_SPACE_PERMISSION, space, null, confluenceAddonUser);
+            spacePermissionManager.savePermission(permission);
         }
-        return builder.build();
-    }
-
-    private Set<String> getSpacePermissionsImpliedBy(ScopeName scope)
-    {
-        if (scope == ScopeName.SPACE_ADMIN)
+        else
         {
-            return ImmutableSet.of(ADMINISTER_SPACE_PERMISSION);
+            log.info("Add-on user {} already has admin permission on space {}", confluenceAddonUser.getName(), space.getKey());
         }
-
-        final Builder<String> builder = ImmutableSet.builder();
-        for (ScopeName implied : scope.getImplied())
-        {
-            builder.addAll(getSpacePermissionsImpliedBy(implied));
-        }
-        return builder.build();
     }
 }
