@@ -40,7 +40,23 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         });
     }
 
-
+    // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
+    // Will be removed - plugins should pass key of the <dialog-page>, NOT the url.
+    // TODO: Remove this class when support for XML Descriptors goes away
+    function getIframeHtmlForUrl(pluginKey, options) {
+        var contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
+        return $.ajax(contentUrl, {
+            dataType: "html",
+            data: {
+                "dialog": true,
+                "plugin-key": pluginKey,
+                "remote-url": options.url,
+                "width": "100%",
+                "height": "100%",
+                "raw": "true"
+            }
+        });
+    }
     function eventHandler(action, selector, callback) {
 
         function domEventHandler(event) {

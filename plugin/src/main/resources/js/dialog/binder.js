@@ -1,4 +1,4 @@
-_AP.require(["dialog/dialog-factory", "host/content", "_uri"], function(dialogFactory, hostContentUtilities, uri) {
+_AP.require(["dialog/simple-dialog", "host/content", "_uri"], function(simpleDialog, hostContentUtilities, uri) {
 
   /**
    * Binds all elements with the class "ap-dialog" to open dialogs.
@@ -26,11 +26,9 @@ _AP.require(["dialog/dialog-factory", "host/content", "_uri"], function(dialogFa
                 if(options.chrome === undefined || options.chrome === ""){
                   options.chrome = true;
                 }
-
-
                 options.chrome = true;
 
-                dialogFactory(options).show();
+                simpleDialog.create(options);
 //                simpleDialog(href, options).show();
             };
 
