@@ -104,22 +104,26 @@ div.CodeMirror span.CodeMirror-matchingbracket {
 }
 
 .index-video-container {
-	margin: 40px auto;	
-}
-
-.index-video-container .inner {
-	display: block;
-	margin: auto auto;
-	border: 1px solid #205081;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	height: 360px;
-	width: 640px;
-}
-
-.index-video-container .inner:hover {
-	border-color: #999999;
+	margin: 40px auto;
+	a {
+		.inner {
+			position: relative;
+    		display: block;
+			margin: auto auto;
+			border: 1px solid #205081;
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+			height: 360px;
+			width: 640px;
+			&:hover {
+				border-color: #999999;
+				.playButton {
+				    background-position-y:-70px	
+				}		
+			}
+		}
+    }
 }
 
 .video-thumbnail {
@@ -136,15 +140,6 @@ div.CodeMirror span.CodeMirror-matchingbracket {
     top:145px;
     left:285px;
     overflow:hidden
-}
-
-.index-video-container a .inner {
-    position: relative;
-    display: block;
-}
-
-.index-video-container .inner:hover .playButton {
-    background-position-y:-70px
 }
 
 h1.index-heading {
@@ -164,16 +159,24 @@ h2.index-heading {
 
 .index-button {
 	margin-top: 30px;
-}
-
-.index-button button {
-	display: block;
-	margin: auto auto;
+	a {
+		text-decoration: none;
+	}
+	button {
+		display: block;
+		margin: auto auto;
+	}
 }
 
 .primary-cta {
 	font-size: 16px
 }
+
+.closing-cta {
+	margin-top: 30px;
+	text-align: center;
+}
+
 
 #architecture-graphic {
 	display: block;
@@ -182,11 +185,6 @@ h2.index-heading {
 	height: 600px;
 	width: 650px;
 	margin-bottom: 20px;
-}
-
-.closing-cta {
-	margin-top: 30px;
-	text-align: center;
 }
 
 div.error {

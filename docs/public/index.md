@@ -23,29 +23,35 @@ Fundamentally, Atlassian Connect add-ons have three major capabilities. Add-ons 
 3. Listen and respond to [WebHooks](../modules/jira/webhooks.html) fired by the Atlassian application.
 
 <div class="index-button">
-<form action="/guides/getting-started"><button class="primary-cta aui-button aui-button-primary">Build Hello World in 10 minutes</button></form>
+<a href="/guides/getting-started.html"><button class="primary-cta aui-button aui-button-primary">Build Hello World in 10 minutes</button></a>
 </div>
 
 
 ## Interacting with Atlassian OnDemand
 While Atlassian Connect add-ons run seaparately from the Atlassian application, to an
-end user, the add-on appears as a fully integrated part of the Atlassian application. After subscribing to the add-on, the features are delivered from within the UI and workflows of the host application.
+end user, the add-on appears as a fully integrated part of the Atlassian application. 
+After subscribing to the add-on, the features are delivered from within the UI and workflows of the host application.
 
-Most Atlassian Connect developers will choose to implement their add-ons as multi-tenant services. This means that a single Atlassian Connect application must take into account multiple subscribing organizations. For example, each add-on will maintain subscriber-specific data and configuration. For more about multi-tenancy design considerations, see [Add-on Design Considerations](https://developer.atlassian.com/display/AC/Add-on+Design+Considerations).
+Most Atlassian Connect add-ons will be implemented as multi-tenanted services. 
+This means that a single Atlassian Connect application must take into account multiple subscribing organizations. 
+For example, each add-on will maintain subscriber-specific data and configuration. 
+For more about multi-tenancy design considerations, see [Add-on Design Considerations](https://developer.atlassian.com/display/AC/Add-on+Design+Considerations).
 
 <div id="architecture-graphic">
 </div>
 
-Security is a important concern in a distributed component model such as Atlassian Connect. Atlassian Connect relies on HTTPS and JWT authentication to secure communication between the add-on, the Atlassian product instance and the end-user's browser.
+Security is a important concern in a distributed component model such as Atlassian Connect. 
+Atlassian Connect relies on HTTPS and JWT authentication to secure communication between the add-on, 
+the Atlassian product instance and the end-user's browser.
 
 Read our [security overview](../concepts/security.html) for more details.
 
 <div class="closing-cta">
-    <form action="guides/getting-started">
+    <a href="guides/getting-started.html">
         <button class="primary-cta aui-button aui-button-primary">
             Try the Hello World example
         </button>
-    </form>
+    </a>
     <p><a href="guides/introduction.html">or read the detailed introduction</a></p>
 </div>
 
