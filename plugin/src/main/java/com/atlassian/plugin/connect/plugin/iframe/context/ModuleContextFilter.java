@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.context;
 
 /**
- *
+ * @since 1.0
  */
 public interface ModuleContextFilter
 {
