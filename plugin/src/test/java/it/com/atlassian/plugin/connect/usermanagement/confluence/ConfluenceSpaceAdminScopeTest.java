@@ -13,6 +13,7 @@ import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.user.UserManager;
 import com.google.common.collect.Lists;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,10 +28,14 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
 {
     private final SpaceManager spaceManager;
 
-    public ConfluenceSpaceAdminScopeTest(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder,
-            PermissionManager confluencePermissionManager, UserManager userManager, SpaceManager spaceManager)
+    public ConfluenceSpaceAdminScopeTest(TestPluginInstaller testPluginInstaller,
+                                         JwtApplinkFinder jwtApplinkFinder,
+                                         PermissionManager confluencePermissionManager,
+                                         UserManager userManager,
+                                         SpaceManager spaceManager,
+                                         TestAuthenticator testAuthenticator)
     {
-        super(testPluginInstaller, jwtApplinkFinder, confluencePermissionManager, userManager);
+        super(testPluginInstaller, jwtApplinkFinder, confluencePermissionManager, userManager, testAuthenticator);
         this.spaceManager = spaceManager;
     }
 

@@ -6,8 +6,8 @@ import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelpe
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.sal.api.user.UserKey;
-import com.atlassian.user.EntityException;
 import com.atlassian.user.UserManager;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.usermanagement.AdminScopeTestBase;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -18,11 +18,12 @@ public abstract class ConfluenceAdminScopeTestBase extends AdminScopeTestBase
     protected final UserManager userManager;
 
     public ConfluenceAdminScopeTestBase(TestPluginInstaller testPluginInstaller,
-            JwtApplinkFinder jwtApplinkFinder,
-            PermissionManager confluencePermissionManager,
-            UserManager userManager)
+                                        JwtApplinkFinder jwtApplinkFinder,
+                                        PermissionManager confluencePermissionManager,
+                                        UserManager userManager,
+                                        TestAuthenticator testAuthenticator)
     {
-        super(testPluginInstaller, jwtApplinkFinder);
+        super(testPluginInstaller, jwtApplinkFinder, testAuthenticator);
         this.confluencePermissionManager = checkNotNull(confluencePermissionManager);
         this.userManager = checkNotNull(userManager);
     }

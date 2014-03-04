@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.collect.Lists;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +27,14 @@ public class JiraProjectAdminScopeTest extends JiraAdminScopeTestBase
 {
     private final ProjectService projectService;
 
-    public JiraProjectAdminScopeTest(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder,
-            PermissionManager jiraPermissionManager, ProjectService projectService, UserManager userManager)
+    public JiraProjectAdminScopeTest(TestPluginInstaller testPluginInstaller,
+                                     JwtApplinkFinder jwtApplinkFinder,
+                                     PermissionManager jiraPermissionManager,
+                                     ProjectService projectService,
+                                     UserManager userManager,
+                                     TestAuthenticator testAuthenticator)
     {
-        super(testPluginInstaller, jwtApplinkFinder, jiraPermissionManager, userManager);
+        super(testPluginInstaller, jwtApplinkFinder, jiraPermissionManager, userManager, testAuthenticator);
         this.projectService = projectService;
     }
 
