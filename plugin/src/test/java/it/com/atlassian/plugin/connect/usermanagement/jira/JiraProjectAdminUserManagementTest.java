@@ -11,7 +11,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -44,7 +44,6 @@ public class JiraProjectAdminUserManagementTest
     private final ProjectService projectService;
     private final UserManager userManager;
     private final TestPluginInstaller testPluginInstaller;
-    private static Set<ScopeName> NO_SCOPES = ImmutableSet.of();
 
     private ConnectAddonBean projectAdminAddOn;
 

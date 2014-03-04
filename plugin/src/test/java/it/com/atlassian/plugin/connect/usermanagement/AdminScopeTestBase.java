@@ -37,12 +37,12 @@ public abstract class AdminScopeTestBase
     @Test
     public void hasCorrectAdminStatus()
     {
-        assertEquals(shouldBeAdmin(), isAdmin(getAddonUserKey()));
+        assertEquals(shouldBeAdmin(), isUserKeyAdmin(getAddonUserKey()));
     }
 
     protected abstract ScopeName getScope();
     protected abstract boolean shouldBeAdmin();
-    protected abstract boolean isAdmin(String username);
+    protected abstract boolean isUserKeyAdmin(String userKey);
 
     protected String getAddonUserKey()
     {

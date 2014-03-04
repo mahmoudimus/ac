@@ -1,8 +1,9 @@
 package it.com.atlassian.plugin.connect.usermanagement.jira;
 
-import com.atlassian.jira.security.GlobalPermissionManager;
+import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
-import com.atlassian.jira.user.ApplicationUsers;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import it.com.atlassian.plugin.connect.usermanagement.AdminScopeTestBase;
@@ -11,17 +12,30 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class JiraAdminScopeTestBase extends AdminScopeTestBase
 {
-    private final GlobalPermissionManager jiraPermissionManager;
+    protected final PermissionManager jiraPermissionManager;
+    protected final UserManager userManager;
 
-    public JiraAdminScopeTestBase(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder, GlobalPermissionManager jiraPermissionManager)
+    public JiraAdminScopeTestBase(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder,
+            PermissionManager jiraPermissionManager, UserManager userManager)
     {
         super(testPluginInstaller, jwtApplinkFinder);
+        this.userManager = userManager;
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
     }
 
     @Override
-    protected boolean isAdmin(String username)
+    protected boolean isUserKeyAdmin(String userKey)
     {
-        return jiraPermissionManager.hasPermission(Permissions.Permission.ADMINISTER.getId(), ApplicationUsers.byKey(username));
+        return jiraPermissionManager.hasPermission(Permissions.Permission.ADMINISTER.getId(), getUserByKey(userKey));
+    }
+
+    protected ApplicationUser getAddonUser()
+    {
+        return getUserByKey(getAddonUserKey());
+    }
+
+    private ApplicationUser getUserByKey(String key)
+    {
+        return userManager.getUserByKey(key);
     }
 }

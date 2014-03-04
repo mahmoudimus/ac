@@ -1,6 +1,7 @@
 package it.com.atlassian.plugin.connect.usermanagement.jira;
 
-import com.atlassian.jira.security.GlobalPermissionManager;
+import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -12,9 +13,10 @@ import org.junit.runner.RunWith;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class JiraAdminScopeTest extends JiraAdminScopeTestBase
 {
-    public JiraAdminScopeTest(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder, GlobalPermissionManager jiraPermissionManager)
+    public JiraAdminScopeTest(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder,
+            PermissionManager jiraPermissionManager, UserManager userManager)
     {
-        super(testPluginInstaller, jwtApplinkFinder, jiraPermissionManager);
+        super(testPluginInstaller, jwtApplinkFinder, jiraPermissionManager, userManager);
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectMirrorPluginEventHandler;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;

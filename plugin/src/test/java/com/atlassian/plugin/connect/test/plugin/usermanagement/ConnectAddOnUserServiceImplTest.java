@@ -1,18 +1,24 @@
-package com.atlassian.plugin.connect.test.plugin;
+package com.atlassian.plugin.connect.test.plugin.usermanagement;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
-import com.atlassian.crowd.exception.*;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidCredentialException;
+import com.atlassian.crowd.exception.InvalidUserException;
+import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserGroupsService;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserServiceImpl;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserServiceImpl;
 import com.google.common.collect.ImmutableSet;
 import org.hamcrest.Description;
 import org.junit.Before;
@@ -32,28 +38,31 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectAddOnUserServiceImplTest
 {
     private static final String GROUP_KEY = "atlassian-addons";
     private static final String ADD_ON_EMAIL_ADDRESS = "noreply@mailer.atlassian.com";
-    private ConnectAddOnUserService connectAddOnUserService;
 
     private @Mock ApplicationService applicationService;
     private @Mock ApplicationManager applicationManager;
     private @Mock Application application;
     private @Mock User user;
-    private @Mock ConnectAddOnUserGroupsService connectAddOnUserGroupsService;
     private @Mock ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
+    private ConnectAddOnUserService connectAddOnUserService;
 
-    @Captor
-    private ArgumentCaptor<String> captor;
+    @SuppressWarnings ("UnusedDeclaration")
+    @Captor private ArgumentCaptor<String> captor;
 
     private static final String ADD_ON_KEY = "my-cool-thingamajig";
     private static final String USER_KEY = "addon_my-cool-thingamajig";
-    private static Set<ScopeName> NO_SCOPES = ImmutableSet.of();
+    private static final Set<ScopeName> NO_SCOPES = ImmutableSet.of();
 
     @Test
     public void returnsCorrectUserKeyWhenItCreatesTheUser() throws ConnectAddOnUserInitException
@@ -118,7 +127,7 @@ public class ConnectAddOnUserServiceImplTest
     @Test
     public void userIsCreatedWithDefaultProductGroups() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
     {
-        when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, NO_SCOPES);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
@@ -128,7 +137,7 @@ public class ConnectAddOnUserServiceImplTest
     public void userIsAddedToDefaultProductGroupsIfItExistedAndWasNotAMember() throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, ConnectAddOnUserInitException, GroupNotFoundException, MembershipAlreadyExistsException
     {
         theUserExists();
-        when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, NO_SCOPES);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
@@ -138,7 +147,7 @@ public class ConnectAddOnUserServiceImplTest
     public void userIsNotAddedToDefaultProductGroupsIfItWasAlreadyAMember() throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, ConnectAddOnUserInitException, GroupNotFoundException, MembershipAlreadyExistsException
     {
         theUserExists();
-        when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
         when(applicationService.isUserDirectGroupMember(eq(application), eq(USER_KEY), eq("product group"))).thenReturn(true);
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, NO_SCOPES);
         verify(applicationService, never()).addUserToGroup(eq(application), eq(USER_KEY), eq("product group"));
@@ -182,7 +191,7 @@ public class ConnectAddOnUserServiceImplTest
         when(applicationManager.findByName("crowd-embedded")).thenReturn(application);
         when(applicationService.addUser(eq(application), eq(new UserTemplate(USER_KEY)), eq(PasswordCredential.NONE))).thenReturn(user);
         when(user.getName()).thenReturn(USER_KEY);
-        when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
-        connectAddOnUserService = new ConnectAddOnUserServiceImpl(applicationService, applicationManager, connectAddOnUserGroupsService, connectAddOnUserProvisioningService);
+        when(connectAddOnUserProvisioningService.getDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
+        connectAddOnUserService = new ConnectAddOnUserServiceImpl(applicationService, applicationManager, connectAddOnUserProvisioningService);
     }
 }

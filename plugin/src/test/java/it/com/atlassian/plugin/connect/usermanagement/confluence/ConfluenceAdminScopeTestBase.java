@@ -5,6 +5,7 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.user.EntityException;
 import com.atlassian.user.UserManager;
 import it.com.atlassian.plugin.connect.usermanagement.AdminScopeTestBase;
@@ -17,9 +18,9 @@ public abstract class ConfluenceAdminScopeTestBase extends AdminScopeTestBase
     protected final UserManager userManager;
 
     public ConfluenceAdminScopeTestBase(TestPluginInstaller testPluginInstaller,
-                                        JwtApplinkFinder jwtApplinkFinder,
-                                        PermissionManager confluencePermissionManager,
-                                        UserManager userManager)
+            JwtApplinkFinder jwtApplinkFinder,
+            PermissionManager confluencePermissionManager,
+            UserManager userManager)
     {
         super(testPluginInstaller, jwtApplinkFinder);
         this.confluencePermissionManager = checkNotNull(confluencePermissionManager);
@@ -27,20 +28,19 @@ public abstract class ConfluenceAdminScopeTestBase extends AdminScopeTestBase
     }
 
     @Override
-    protected boolean isAdmin(String username)
+    protected boolean isUserKeyAdmin(String userKey)
     {
-        try
-        {
-            return confluencePermissionManager.isConfluenceAdministrator(userManager.getUser(username));
-        }
-        catch (EntityException e)
-        {
-            throw new RuntimeException(e);
-        }
+        return confluencePermissionManager.isConfluenceAdministrator(getUserByKey(userKey));
     }
 
     protected ConfluenceUser getAddonUser()
     {
-        return FindUserHelper.getUserByUsername(getAddonUserKey());
+        return getUserByKey(getAddonUserKey());
+    }
+
+    private ConfluenceUser getUserByKey(String userKey)
+    {
+        UserKey key = new UserKey(userKey);
+        return FindUserHelper.getUserByUserKey(key);
     }
 }

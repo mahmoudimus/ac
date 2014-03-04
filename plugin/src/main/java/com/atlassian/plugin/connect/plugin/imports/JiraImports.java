@@ -21,6 +21,7 @@ import com.atlassian.jira.issue.watchers.WatcherManager;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
+import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
@@ -83,7 +84,8 @@ public class JiraImports
             @JiraImport WebFragmentHelper webFragmentHelper,
             @JiraImport WorklogService worklogService,
             @JiraImport ApplicationService applicationService,
-            @JiraImport ApplicationManager applicationManager)
+            @JiraImport ApplicationManager applicationManager,
+            @JiraImport GlobalPermissionManager globalPermissionManager)
     {
     }
 }

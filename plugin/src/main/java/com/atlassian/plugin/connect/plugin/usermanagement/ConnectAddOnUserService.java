@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.installer;
+package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
