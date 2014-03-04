@@ -33,12 +33,12 @@
             <scope>test</scope>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.atlassian.plugins</groupId>-->
-            <!--<artifactId>atlassian-connect-plugin</artifactId>-->
-            <!--<version>1.0-m30.1</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-connect-plugin</artifactId>
+            <version>1.0-m30.1</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi</artifactId>
