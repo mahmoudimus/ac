@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.predicate.PluginPredicate;
 import org.slf4j.Logger;
@@ -20,12 +21,18 @@ public class ConnectUserInitializer implements InitializingBean
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
 
     private static final Logger log = LoggerFactory.getLogger(ConnectUserInitializer.class);
+    private final ConnectAddonRegistry connectAddonRegistry;
+    private final ConnectAddonBeanFactory connectAddonBeanFactory;
 
     @Autowired
     public ConnectUserInitializer(ConnectAddOnUserService connectAddOnUserService,
                                   PluginAccessor pluginAccessor,
-                                  JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService)
+                                  JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
+                                  ConnectAddonRegistry connectAddonRegistry,
+                                  ConnectAddonBeanFactory connectAddonBeanFactory)
     {
+        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
+        this.connectAddonBeanFactory = checkNotNull(connectAddonBeanFactory);
         this.connectAddOnUserService = checkNotNull(connectAddOnUserService);
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
@@ -44,7 +51,10 @@ public class ConnectUserInitializer implements InitializingBean
     {
         try
         {
-            connectAddOnUserService.getOrCreateUserKey(plugin.getKey());
+            final String descriptor = connectAddonRegistry.getDescriptor(plugin.getKey());
+            ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(descriptor);
+
+            connectAddOnUserService.getOrCreateUserKey(plugin.getKey(), addOn.getScopes());
         }
         catch (ConnectAddOnUserInitException e)
         {

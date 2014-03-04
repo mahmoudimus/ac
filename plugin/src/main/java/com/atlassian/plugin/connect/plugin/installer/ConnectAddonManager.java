@@ -250,7 +250,7 @@ public class ConnectAddonManager
 
     private void enableAddOnUser(String addOnKey) throws ConnectAddOnUserInitException
     {
-        String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey);
+        String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey, );
         ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
 
         if (null != applicationLink)

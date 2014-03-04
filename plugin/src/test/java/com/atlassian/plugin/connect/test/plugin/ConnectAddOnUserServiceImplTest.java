@@ -53,13 +53,13 @@ public class ConnectAddOnUserServiceImplTest
     @Test
     public void returnsCorrectUserKeyWhenItCreatesTheUser() throws ConnectAddOnUserInitException
     {
-        assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY), is(USER_KEY));
+        assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ), is(USER_KEY));
     }
 
     @Test
     public void findsUserByKey() throws ConnectAddOnUserInitException, UserNotFoundException
     {
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, );
         verify(applicationService).findUserByName(eq(application), eq(USER_KEY));
     }
 
@@ -67,13 +67,13 @@ public class ConnectAddOnUserServiceImplTest
     public void returnsCorrectUserKeyWhenTheUserAlreadyExists() throws ConnectAddOnUserInitException, UserNotFoundException, InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException
     {
         theUserExists();
-        assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY), is(USER_KEY));
+        assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ), is(USER_KEY));
     }
 
     @Test
     public void userIsAddedToGroupWhenItCreatesTheUser() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
     {
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, );
         verify(applicationService).addUserToGroup(eq(application), eq(USER_KEY), eq(GROUP_KEY));
     }
 
@@ -81,7 +81,7 @@ public class ConnectAddOnUserServiceImplTest
     public void userIsAddedToGroupWhenTheUserAlreadyExistsButIsNotAMember() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException, InvalidCredentialException, InvalidUserException
     {
         theUserExists();
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, );
         verify(applicationService).addUserToGroup(eq(application), eq(USER_KEY), eq(GROUP_KEY));
     }
 
@@ -90,14 +90,14 @@ public class ConnectAddOnUserServiceImplTest
     {
         theUserExists();
         when(applicationService.isUserDirectGroupMember(eq(application), eq(USER_KEY), eq(GROUP_KEY))).thenReturn(true);
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, );
         verify(applicationService, never()).addUserToGroup(eq(application), eq(USER_KEY), eq(GROUP_KEY));
     }
 
     @Test
     public void userIsCreatedWithCorrectEmailAddress() throws ConnectAddOnUserInitException, InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException
     {
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, );
         verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
     }
 
@@ -106,7 +106,7 @@ public class ConnectAddOnUserServiceImplTest
     {
         theUserExists();
         when(user.getEmailAddress()).thenReturn("wrong");
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, );
         verify(applicationService).updateUser(eq(application), argThat(hasExpectedEmailAddress()));
     }
 
@@ -114,7 +114,7 @@ public class ConnectAddOnUserServiceImplTest
     public void userIsCreatedWithDefaultProductGroups() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
     {
         when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, );
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
     }
@@ -124,7 +124,7 @@ public class ConnectAddOnUserServiceImplTest
     {
         theUserExists();
         when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, );
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
     }
@@ -135,7 +135,7 @@ public class ConnectAddOnUserServiceImplTest
         theUserExists();
         when(connectAddOnUserGroupsService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
         when(applicationService.isUserDirectGroupMember(eq(application), eq(USER_KEY), eq("product group"))).thenReturn(true);
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, );
         verify(applicationService, never()).addUserToGroup(eq(application), eq(USER_KEY), eq("product group"));
     }
 
@@ -143,7 +143,7 @@ public class ConnectAddOnUserServiceImplTest
     public void passwordIsResetIfTheUserExists() throws ConnectAddOnUserInitException, UserNotFoundException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, InvalidUserException
     {
         theUserExists();
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, );
         verify(applicationService).updateUserCredential(eq(application), eq(USER_KEY), eq(PasswordCredential.NONE));
     }
 
