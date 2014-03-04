@@ -52,6 +52,8 @@ public class ConfluenceConditions extends PageConditions
     public static final String USER_WATCHING_PAGE = "user_watching_page";
     public static final String FAVOURITE_SPACE = "favourite_space";
     public static final String SPACE_SIDEBAR = "space_sidebar";
+    
+    public static final String USER_IS_CONFLUENCE_ADMIN = "user_is_confluence_administrator";
 
     public ConfluenceConditions()
     {
@@ -99,6 +101,9 @@ public class ConfluenceConditions extends PageConditions
         conditionMap.put(USER_WATCHING_PAGE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingPageCondition.class);
         conditionMap.put(FAVOURITE_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouriteSpaceCondition.class);
         conditionMap.put(SPACE_SIDEBAR, com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition.class);
+        
+        //just here for backwards compatibility.
+        conditionMap.put(USER_IS_CONFLUENCE_ADMIN, com.atlassian.plugin.connect.spi.module.UserIsAdminCondition.class);
 
         return conditionMap;
     }
