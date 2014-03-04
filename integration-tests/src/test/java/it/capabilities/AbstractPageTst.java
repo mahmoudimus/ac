@@ -36,21 +36,29 @@ public class AbstractPageTst extends ConnectWebDriverTestBase
 
     protected static void startConnectAddOn(String fieldName) throws Exception
     {
-        startConnectAddOn(fieldName, newPageBean());
+        startConnectAddOn(fieldName, URL);
     }
 
-    protected static void startConnectAddOn(String fieldName, ConnectPageModuleBeanBuilder pageBeanBuilder) throws Exception
+    protected static void startConnectAddOn(String fieldName, String url) throws Exception
+    {
+        startConnectAddOn(fieldName, url, newPageBean());
+    }
+
+    protected static void startConnectAddOn(String fieldName, String url, ConnectPageModuleBeanBuilder pageBeanBuilder) throws Exception
     {
         pageBeanBuilder.withName(new I18nProperty(MY_AWESOME_PAGE, null))
                 .withKey(MY_AWESOME_PAGE_KEY)
-                .withUrl(URL)
+                .withUrl(url)
                 .withConditions(toggleableConditionBean())
                 .withWeight(1234);
+
+        int query = url.indexOf("?");
+        String route = query > -1 ? url.substring(0, query) : url;
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .addModule(fieldName, pageBeanBuilder.build())
                 .setAuthenticationToNone()
-                .addRoute(URL, ConnectAppServlets.apRequestServlet())
+                .addRoute(route, ConnectAppServlets.apRequestServlet())
                 .start();
     }
 
@@ -63,7 +71,7 @@ public class AbstractPageTst extends ConnectWebDriverTestBase
         }
     }
 
-    protected <T extends Page> void runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)
+    protected <T extends Page> RemotePluginEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)
             throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
@@ -78,6 +86,11 @@ public class AbstractPageTst extends ConnectWebDriverTestBase
 
         assertThat(addonContentPage.isLoaded(), equalTo(true));
         assertThat(addonContentPage.getMessage(), equalTo("Success"));
+
+        ConnectAsserts.verifyContainsStandardAddOnQueryParamters(addonContentPage.getIframeQueryParams(),
+                product.getProductInstance().getContextPath());
+
+        return addonContentPage;
     }
 
     protected <T extends Page> void revealLinkIfNecessary(T page)

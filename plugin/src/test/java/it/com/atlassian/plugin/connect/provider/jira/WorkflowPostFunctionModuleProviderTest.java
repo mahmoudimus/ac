@@ -11,8 +11,8 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParametersImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
@@ -110,7 +110,7 @@ public class WorkflowPostFunctionModuleProviderTest
     @Test
     public void uiParamsNotInUrlWhenNotProvided() throws URISyntaxException
     {
-        ModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>none());
         final URI iframeUrl = new URI(iframeUrlStr);
@@ -120,7 +120,7 @@ public class WorkflowPostFunctionModuleProviderTest
     @Test
     public void uiParamsInUrlWhenProvided() throws URISyntaxException
     {
-        ModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>some("blah"));
         final URI iframeUrl = new URI(iframeUrlStr);
@@ -129,7 +129,7 @@ public class WorkflowPostFunctionModuleProviderTest
 
     private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
     {
-        ModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
 
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>none());

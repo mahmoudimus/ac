@@ -8,35 +8,33 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
-import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.context.AbstractModuleContextFilter;
+import com.atlassian.plugin.connect.plugin.iframe.context.PermissionCheck;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
  */
 @ConfluenceComponent
-public class ConfluenceModuleContextFilter implements ModuleContextFilter
+public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<ConfluenceUser>
 {
-    private static final Logger log = LoggerFactory.getLogger(ConfluenceModuleContextFilter.class);
-
-    public static final String PAGE_ID = "page.id";
-    public static final String PAGE_VERSION = "page.version";
-    public static final String PAGE_TYPE = "page.type";
-    public static final String SPACE_ID = "space.id";
-    public static final String SPACE_KEY = "space.key";
+    public static final String PAGE_ID          = "page.id";
+    public static final String PAGE_VERSION     = "page.version";
+    public static final String PAGE_TYPE        = "page.type";
+    public static final String SPACE_ID         = "space.id";
+    public static final String SPACE_KEY        = "space.key";
 
     private final PermissionManager permissionManager;
     private final UserAccessor userAccessor;
     private final UserManager userManager;
     private final SpaceManager spaceManager;
     private final PageManager pageManager;
+
+    private final Iterable<PermissionCheck<ConfluenceUser>> permissionChecks;
 
     @Autowired
     public ConfluenceModuleContextFilter(PermissionManager permissionManager, UserAccessor userAccessor,
@@ -47,73 +45,103 @@ public class ConfluenceModuleContextFilter implements ModuleContextFilter
         this.userManager = userManager;
         this.spaceManager = spaceManager;
         this.pageManager = pageManager;
+        permissionChecks = constructPermissionChecks();
     }
 
     @Override
-    public ModuleContextParameters filter(final ModuleContextParameters unfiltered)
+    protected ConfluenceUser getCurrentUser()
     {
-        final ModuleContextParameters filtered = new HashMapModuleContextParameters();
-
         UserKey userKey = userManager.getRemoteUserKey();
-        ConfluenceUser currentUser = userAccessor.getExistingUserByKey(userKey);
+        return userKey == null ? null : userAccessor.getExistingUserByKey(userKey);
+    }
 
-        String spaceKey = unfiltered.get(SPACE_KEY);
-        String spaceIdValue = unfiltered.get(SPACE_ID);
-        Long spaceId = parseLong(spaceIdValue, SPACE_ID);
+    @Override
+    protected Iterable<PermissionCheck<ConfluenceUser>> getPermissionChecks()
+    {
+        return permissionChecks;
+    }
 
-        Space space;
-        boolean checkSpaceIdPermission = true;
-
-        if (spaceKey != null)
-        {
-            space = spaceManager.getSpace(spaceKey);
-            if (space != null && permissionManager.hasPermission(currentUser, Permission.VIEW, space))
+    private Iterable<PermissionCheck<ConfluenceUser>> constructPermissionChecks()
+    {
+        return ImmutableList.of(
+            new PermissionCheck<ConfluenceUser>()
             {
-                filtered.put(SPACE_KEY, spaceKey);
-                if (spaceId != null && space.getId() == spaceId)
+                @Override
+                public String getParameterName()
                 {
-                    filtered.put(SPACE_ID, spaceIdValue);
-                    checkSpaceIdPermission = false;
+                    return SPACE_KEY;
+                }
+
+                @Override
+                public boolean hasPermission(final String spaceKey, final ConfluenceUser user)
+                {
+                    Space space = spaceManager.getSpace(spaceKey);
+                    return space != null && permissionManager.hasPermission(user, Permission.VIEW, space);
+                }
+            },
+            new PermissionCheck.LongValue<ConfluenceUser>()
+            {
+                @Override
+                public String getParameterName()
+                {
+                    return SPACE_ID;
+                }
+
+                @Override
+                public boolean hasPermission(final long spaceId, final ConfluenceUser user)
+                {
+                    Space space = spaceManager.getSpace(spaceId);
+                    return space != null && permissionManager.hasPermission(user, Permission.VIEW, space);
+                }
+            },
+            new PermissionCheck.LongValue<ConfluenceUser>()
+            {
+                @Override
+                public String getParameterName()
+                {
+                    return PAGE_ID;
+                }
+
+                @Override
+                public boolean hasPermission(final long pageId, final ConfluenceUser user)
+                {
+                    AbstractPage page = pageManager.getAbstractPage(pageId);
+                    return page != null && permissionManager.hasPermission(user, Permission.VIEW, page);
+                }
+            },
+            new PermissionCheck.AlwaysAllowed<ConfluenceUser>(PAGE_TYPE),
+            new PermissionCheck.AlwaysAllowed<ConfluenceUser>(PAGE_VERSION),
+            new PermissionCheck<ConfluenceUser>()
+            {
+                @Override
+                public String getParameterName()
+                {
+                    return PROFILE_KEY;
+                }
+
+                @Override
+                public boolean hasPermission(final String profileKey, final ConfluenceUser currentUser)
+                {
+                    ConfluenceUser profileUser = userAccessor.getExistingUserByKey(new UserKey(profileKey));
+                    return profileUser != null && permissionManager.hasPermission(currentUser, Permission.VIEW, profileUser);
+                }
+            },
+            new PermissionCheck<ConfluenceUser>()
+            {
+                @Override
+                public String getParameterName()
+                {
+                    return PROFILE_NAME;
+                }
+
+                @Override
+                public boolean hasPermission(final String profileName, final ConfluenceUser currentUser)
+                {
+                    ConfluenceUser profileUser = userAccessor.getUserByName(profileName);
+                    return profileUser != null && permissionManager.hasPermission(currentUser, Permission.VIEW, profileUser);
                 }
             }
-        }
-
-        if (spaceId != null && checkSpaceIdPermission)
-        {
-            space = spaceManager.getSpace(spaceId);
-            if (space != null && permissionManager.hasPermission(currentUser, Permission.VIEW, space))
-            {
-                filtered.put(SPACE_ID, spaceIdValue);
-            }
-        }
-
-        String pageIdValue = unfiltered.get(PAGE_ID);
-        Long pageId = parseLong(pageIdValue, PAGE_ID);
-        if (pageId != null)
-        {
-            AbstractPage page = pageManager.getAbstractPage(pageId);
-            if (page != null && permissionManager.hasPermission(currentUser, Permission.VIEW, page))
-            {
-                filtered.put(PAGE_ID, pageIdValue);
-                filtered.put(PAGE_VERSION, unfiltered.get(PAGE_VERSION));
-                filtered.put(PAGE_TYPE, unfiltered.get(PAGE_TYPE));
-            }
-        }
-
-        return filtered;
+        );
     }
 
-
-    Long parseLong(String value, String field)
-    {
-        try
-        {
-            return value == null ? null : Long.parseLong(value);
-        }
-        catch (NumberFormatException e)
-        {
-            log.debug("Failed to parse " + field + " " + value + " as a number", e);
-        }
-        return null;
-    }
 }

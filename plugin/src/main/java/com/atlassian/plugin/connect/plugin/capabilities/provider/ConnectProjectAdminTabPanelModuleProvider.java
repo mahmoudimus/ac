@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModule
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
@@ -20,7 +19,7 @@ import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextFilter.PROJECT_KEY;
+import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.iFrameServletPath;
 
 /**
  * Module Provider for a Connect Project Admin TabPanel Module. Note that there is actually no P2 module descriptor.
@@ -53,19 +52,13 @@ public class ConnectProjectAdminTabPanelModuleProvider
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
-
-
         for (ConnectProjectAdminTabPanelModuleBean bean : beans)
         {
             // render a web item for our tab
-            String webItemUri = ConnectIFrameServlet.iFrameServletPath(plugin.getKey(), bean.getKey());
-            // we can't pass projectKey as an "extra param" to relativeAddOnUrlConverter as it will encode the {}
-            webItemUri = appendProjectKeyParam(webItemUri);
-
             WebItemModuleBean webItemModuleBean = newWebItemBean()
                     .withName(bean.getName())
                     .withKey(bean.getKey())
-                    .withUrl(webItemUri)
+                    .withUrl(iFrameServletPath(plugin.getKey(), bean.getKey()))
                     .withContext(AddOnUrlContext.page)
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())
@@ -91,11 +84,6 @@ public class ConnectProjectAdminTabPanelModuleProvider
         }
 
         return builder.build();
-    }
-
-    private String appendProjectKeyParam(final String relativeUri)
-    {
-        return String.format("%s?%s={%s}", relativeUri, PROJECT_KEY, PROJECT_KEY);
     }
 
 }
