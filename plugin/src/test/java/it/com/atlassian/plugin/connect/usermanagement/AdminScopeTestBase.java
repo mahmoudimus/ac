@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class AdminScopeTestBase
 {
-    private final TestPluginInstaller testPluginInstaller;
+    protected final TestPluginInstaller testPluginInstaller;
     private final JwtApplinkFinder jwtApplinkFinder;
 
     private Plugin plugin;
@@ -38,14 +38,18 @@ public abstract class AdminScopeTestBase
     @Test
     public void hasCorrectAdminStatus() throws EntityException
     {
-        ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
-        String username = (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
-        assertEquals(shouldBeAdmin(), isAdmin(username));
+        assertEquals(shouldBeAdmin(), isAdmin(getAddonUserKey()));
     }
 
     protected abstract ScopeName getScope();
     protected abstract boolean shouldBeAdmin();
     protected abstract boolean isAdmin(String username) throws EntityException;
+
+    protected String getAddonUserKey()
+    {
+        ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
+        return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
+    }
 
     @BeforeClass
     public void setUp() throws IOException
