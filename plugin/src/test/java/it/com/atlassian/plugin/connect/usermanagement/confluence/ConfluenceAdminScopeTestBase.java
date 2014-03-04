@@ -27,9 +27,16 @@ public abstract class ConfluenceAdminScopeTestBase extends AdminScopeTestBase
     }
 
     @Override
-    protected boolean isAdmin(String username) throws EntityException
+    protected boolean isAdmin(String username)
     {
-        return confluencePermissionManager.isConfluenceAdministrator(userManager.getUser(username));
+        try
+        {
+            return confluencePermissionManager.isConfluenceAdministrator(userManager.getUser(username));
+        }
+        catch (EntityException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     protected ConfluenceUser getAddonUser()

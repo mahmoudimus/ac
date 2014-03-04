@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
-import com.atlassian.user.EntityException;
 import com.google.common.collect.ImmutableSet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,14 +35,14 @@ public abstract class AdminScopeTestBase
     }
 
     @Test
-    public void hasCorrectAdminStatus() throws EntityException
+    public void hasCorrectAdminStatus()
     {
         assertEquals(shouldBeAdmin(), isAdmin(getAddonUserKey()));
     }
 
     protected abstract ScopeName getScope();
     protected abstract boolean shouldBeAdmin();
-    protected abstract boolean isAdmin(String username) throws EntityException;
+    protected abstract boolean isAdmin(String username);
 
     protected String getAddonUserKey()
     {
