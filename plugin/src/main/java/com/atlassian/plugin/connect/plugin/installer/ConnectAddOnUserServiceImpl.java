@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import java.util.Collection;
+
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.*;
@@ -9,6 +11,8 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
@@ -39,24 +43,27 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     private static final String NO_REPLY_EMAIL_ADDRESS = "noreply@mailer.atlassian.com";
 
     private static final Logger log = LoggerFactory.getLogger(ConnectAddOnUserServiceImpl.class);
+    private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
 
     @Autowired
     public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
                                        ApplicationManager applicationManager,
-                                       ConnectAddOnUserGroupsService connectAddOnUserGroupsService)
+                                       ConnectAddOnUserGroupsService connectAddOnUserGroupsService,
+                                       ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService)
     {
+        this.connectAddOnUserProvisioningService = connectAddOnUserProvisioningService;
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
         this.connectAddOnUserGroupsService = checkNotNull(connectAddOnUserGroupsService);
     }
 
     @Override
-    public String getOrCreateUserKey(String addOnKey) throws ConnectAddOnUserInitException
+    public String getOrCreateUserKey(String addOnKey, Collection<ScopeName> scopes) throws ConnectAddOnUserInitException
     {
         // Oh how I long for Java 7's conciser catch semantics.
         try
         {
-            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey);
+            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey, scopes);
         }
         catch (InvalidCredentialException e)
         {
@@ -156,7 +163,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return null != user && user.isActive();
     }
 
-    private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException
+    private String createOrEnableAddOnUser(String userKey, Collection<ScopeName> scopes) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException
     {
         ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
         User user = ensureUserExists(userKey);
@@ -175,6 +182,8 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 // TODO ACDEV-938: propagate this error
             }
         }
+
+        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, scopes);
 
         return user.getName();
     }
