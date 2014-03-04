@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
+import java.util.Map;
+
 import com.atlassian.plugin.connect.modules.beans.BeanWithKeyAndParams;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
-public class BeanWithKeyAndParamsBuilder<T extends BeanWithKeyAndParamsBuilder, B extends BeanWithKeyAndParams> extends GeneratedKeyBeanBuilder<T, B>
+public class BeanWithKeyAndParamsBuilder<T extends BeanWithKeyAndParamsBuilder, B extends BeanWithKeyAndParams> extends RequiredKeyBeanBuilder<T, B>
 {
     private Map<String, String> params;
 

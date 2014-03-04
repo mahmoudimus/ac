@@ -27,6 +27,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 public class TestSearchRequestView extends JiraWebDriverTestBase
 {
     private static final String LABEL = "A Search Request View";
+    private static final String MODULE_KEY = "my-search-request-view";
     private static final String SERVLET_URL = "/search";
 
     private static ConnectRunner remotePlugin;
@@ -47,6 +48,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
                         .withWeight(100)
                         .withUrl(SERVLET_URL)
                         .withName(new I18nProperty(LABEL, null))
+                        .withKey(MODULE_KEY)
                         .withDescription(new I18nProperty("A description", null))
                         .withConditions(
                             newSingleConditionBean().withCondition("user_is_logged_in").build(),

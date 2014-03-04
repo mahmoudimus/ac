@@ -23,6 +23,10 @@
         }
     },
     "concepts": {
+        "security.html": {
+            "title": "Security",
+            "new": true
+        },
         "authentication.html": {
             "title": "Authentication"
         },

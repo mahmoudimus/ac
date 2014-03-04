@@ -112,11 +112,6 @@ public class WebItemTargetBean extends BaseModuleBean
      *            <td>Number | String</td>
      *            <td>sets how high the inline-dialog is in pixels</td>
      *        </tr>
-     *        <tr>
-     *            <td><code>size</code></td>
-     *            <td>String</td>
-     *            <td>opens the dialog at a preset size: small, medium, large, x-large or maximum (full screen)</td>
-     *        </tr>
      *    </tbody>
      * </table>
      * <a id="reveal-text-trigger2" data-replace-text="Collapse" data-replace-selector=".reveal-text-trigger-text" class="aui-expander-trigger aui-expander-reveal-text" aria-controls="modalDialog">
