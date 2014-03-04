@@ -59,11 +59,15 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
 
     private void provisionAddonUserInSpaceForScopes(String userKey, Collection<ScopeName> scopes, Space space)
     {
-        final Iterable<String> permissions = getSpacePermissionsImpliedBy(scopes);
-        for (String permission : permissions)
+        final Set<String> permissions = getSpacePermissionsImpliedBy(scopes);
+        for (String permissionType : permissions)
         {
-            final SpacePermission spacePermission = new SpacePermission(permission, space, null, getConfluenceUser(userKey));
-            spacePermissionManager.savePermission(spacePermission);
+            final ConfluenceUser user = getConfluenceUser(userKey);
+            final SpacePermission spacePermission = new SpacePermission(permissionType, space, null, user);
+            if (!spacePermissionManager.hasPermission(permissionType, space, user))
+            {
+                spacePermissionManager.savePermission(spacePermission);
+            }
         }
     }
 
