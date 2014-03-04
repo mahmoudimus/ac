@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 
 import java.io.ByteArrayOutputStream;
@@ -17,7 +18,7 @@ public class IFrameRenderStrategyUtil
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try
         {
-            iFrameRenderStrategy.render(moduleContextParameters, new OutputStreamWriter(out));
+            iFrameRenderStrategy.render(moduleContextParameters, new OutputStreamWriter(out), Option.<String>none());
         }
         catch (IOException e)
         {
