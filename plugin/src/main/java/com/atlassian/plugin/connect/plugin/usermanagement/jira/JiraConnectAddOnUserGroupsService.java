@@ -1,8 +1,9 @@
-package com.atlassian.plugin.connect.plugin.usermanagement;
+package com.atlassian.plugin.connect.plugin.usermanagement.jira;
 
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.Permissions;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupsService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;

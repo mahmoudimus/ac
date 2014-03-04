@@ -100,7 +100,13 @@ public class ConnectAddonManager
     private final I18nResolver i18nResolver;
 
     @Inject
-    public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager, RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient, JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry, BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService, EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties, LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext, JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver)
+    public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient,
+            JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry,
+            BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
+            EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
+            LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
+            JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -432,6 +438,7 @@ public class ConnectAddonManager
             UserProfile user = userManager.getRemoteUser();
             if (null != user)
             {
+                //noinspection deprecation
                 dataBuilder.withUserKey(user.getUserKey().getStringValue());
             }
 

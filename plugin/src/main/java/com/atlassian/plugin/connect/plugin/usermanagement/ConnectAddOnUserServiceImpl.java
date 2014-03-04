@@ -2,7 +2,15 @@ package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.crowd.exception.*;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidCredentialException;
+import com.atlassian.crowd.exception.InvalidGroupException;
+import com.atlassian.crowd.exception.InvalidUserException;
+import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
@@ -18,8 +26,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
@@ -31,10 +39,11 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserGroupsService connectAddOnUserGroupsService;
+    private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
 
     private static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     private static final String ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY = "atlassian-addons"; // in order to not occupy a license this has to match constant in user-provisioning-plugin/src/main/java/com/atlassian/crowd/plugin/usermanagement/userprovisioning/Constants.java
-    private static final String ATLASSIAN_CONNECT_ADD_ONS_ADMIN_GROUP_KEY = "atlassian-addons-admin";
+    private static final String ATLASSIAN_ADDONS_ADMIN_GROUP_KEY = "atlassian-addons-admin";
     private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
     // Use a "no reply" email address for add-on users so that
@@ -50,8 +59,10 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Autowired
     public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
                                        ApplicationManager applicationManager,
-                                       ConnectAddOnUserGroupsService connectAddOnUserGroupsService)
+                                       ConnectAddOnUserGroupsService connectAddOnUserGroupsService,
+                                       ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService)
     {
+        this.connectAddOnUserProvisioningService = connectAddOnUserProvisioningService;
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
         this.connectAddOnUserGroupsService = checkNotNull(connectAddOnUserGroupsService);
@@ -185,9 +196,12 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
         if (isAdminScoped(scopes))
         {
-            ensureGroupExistsAndIsAdmin(ATLASSIAN_CONNECT_ADD_ONS_ADMIN_GROUP_KEY);
-            ensureUserIsInGroup(user.getName(), ATLASSIAN_CONNECT_ADD_ONS_ADMIN_GROUP_KEY);
+            ensureGroupExistsAndIsAdmin(ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
+            ensureUserIsInGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
         }
+
+        // todo: what do we do with this?
+        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, scopes);
 
         return user.getName();
     }

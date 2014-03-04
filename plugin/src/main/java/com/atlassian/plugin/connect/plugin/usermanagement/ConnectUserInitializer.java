@@ -21,9 +21,9 @@ public class ConnectUserInitializer implements InitializingBean
     private final ConnectAddOnUserService connectAddOnUserService;
     private final PluginAccessor pluginAccessor;
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
-    private final ConnectAddonRegistry connectAddonRegistry;
 
     private static final Logger log = LoggerFactory.getLogger(ConnectUserInitializer.class);
+    private final ConnectAddonRegistry connectAddonRegistry;
 
     @Autowired
     public ConnectUserInitializer(ConnectAddOnUserService connectAddOnUserService,
@@ -31,10 +31,10 @@ public class ConnectUserInitializer implements InitializingBean
                                   JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
                                   ConnectAddonRegistry connectAddonRegistry)
     {
+        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
         this.connectAddOnUserService = checkNotNull(connectAddOnUserService);
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
-        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ConnectUserInitializer implements InitializingBean
 
             if (null == descriptor)
             {
-                log.error(String.format("Failed to ensure that the user exists for Connect add-on '%s' because it has no descriptor in the Connect registry. It will not be able to use the APIs. Uninstalling and reinstalling it will re-attempt this operation. Ignoring so as not to interfere with other add-ons...", connectAddOn.getKey()));
+                log.error(String.format("Failed to ensure that the user exists for Connect add-on '%s' because it has no descriptor in the Connect registry. It will not be able to use the APIs. Uninstalling and reinstalling it will re-attempt this operation.", connectAddOn.getKey()));
             }
             else
             {

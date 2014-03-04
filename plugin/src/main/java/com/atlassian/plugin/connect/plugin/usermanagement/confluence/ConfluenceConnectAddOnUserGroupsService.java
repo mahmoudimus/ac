@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.usermanagement;
+package com.atlassian.plugin.connect.plugin.usermanagement.confluence;
 
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupsService;
