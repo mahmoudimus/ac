@@ -57,7 +57,7 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
         // Assuming normalized set of scopes
         if (scopes.contains(ScopeName.PROJECT_ADMIN))
         {
-            establishProjectAdminScopePermissions(user);
+            updateProjectAdminScopePermissions(user);
         }
         else
         {
@@ -65,10 +65,10 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
         }
     }
 
-    private void establishProjectAdminScopePermissions(ApplicationUser addOnUser)
+    private void updateProjectAdminScopePermissions(ApplicationUser addOnUser)
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
-        ProjectRole projectRole = establishConnectProjectRole(errorCollection);
+        ProjectRole projectRole = updateConnectProjectRole(errorCollection);
         if (null != projectRole)
         {
             for (Project project : getAllProjects())
@@ -80,8 +80,19 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
                         UserRoleActorFactory.TYPE,
                         errorCollection);
             }
+            addUserToProjectRoleDefaults(addOnUser, projectRole, errorCollection);
         }
         // TODO: throw the error collection back to the installer
+    }
+
+    private void addUserToProjectRoleDefaults(ApplicationUser addOnUser, ProjectRole projectRole, ErrorCollection errorCollection)
+    {
+        projectRoleService.addDefaultActorsToProjectRole(
+                Collections.singleton(addOnUser.getName()),
+                projectRole,
+                UserRoleActorFactory.TYPE,
+                errorCollection
+        );
     }
 
     private void removeProjectAdminScopePermissions(ApplicationUser addOnUser)
@@ -99,18 +110,29 @@ public class JiraConnectAddOnUserProvisioningService implements ConnectAddOnUser
                         UserRoleActorFactory.TYPE,
                         errorCollection);
             }
+            removeUserFromProjectRoleDefaults(addOnUser, projectRole, errorCollection);
         }
         // TODO: throw the error collection back to the installer
     }
 
-    private ProjectRole establishConnectProjectRole(ErrorCollection errorCollection)
+    private void removeUserFromProjectRoleDefaults(ApplicationUser addOnUser, ProjectRole projectRole, ErrorCollection errorCollection)
+    {
+        projectRoleService.removeDefaultActorsFromProjectRole(
+                Collections.singleton(addOnUser.getName()),
+                projectRole,
+                UserRoleActorFactory.TYPE,
+                errorCollection
+        );
+    }
+
+    private ProjectRole updateConnectProjectRole(ErrorCollection errorCollection)
     {
         ProjectRole projectRole = projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME, errorCollection);
         if (null == projectRole)
         {
             ProjectRole newProjectRole = new ProjectRoleImpl(CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME, CONNECT_PROJECT_ADMIN_PROJECT_ROLE_DESC);
             projectRole = projectRoleService.createProjectRole(newProjectRole, errorCollection);
-            if (null != projectRole && !errorCollection.hasAnyErrors())
+            if (null != projectRole)
             {
                 associateProjectRoleWithPermissionSchemes(projectRole, errorCollection);
             }

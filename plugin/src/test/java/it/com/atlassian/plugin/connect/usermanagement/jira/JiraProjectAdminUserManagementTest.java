@@ -114,7 +114,6 @@ public class JiraProjectAdminUserManagementTest
     public void addonIsMadeAdminOfNewProject() throws Exception
     {
         Plugin plugin = null;
-        Project project = null;
         ApplicationUser admin = null;
         String projectKey = "JEDI";
         try
@@ -126,10 +125,10 @@ public class JiraProjectAdminUserManagementTest
 
             ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(admin.getDirectoryUser(),
                     "Knights of the Old Republic", projectKey, "It's a trap!", "admin", null, null);
-            project = projectService.createProject(result);
+            Project project = projectService.createProject(result);
 
             boolean addonCanAdministerNewSpace = permissionManager.hasPermission(Permissions.PROJECT_ADMIN, project, addonUser, false);
-            assertTrue("Add-on user " + addonUser.getName() + " should have administer permission for space " + projectKey, addonCanAdministerNewSpace);
+            assertTrue("Add-on user " + addonUser.getName() + " should have administer permission for project " + projectKey, addonCanAdministerNewSpace);
         }
         finally
         {
