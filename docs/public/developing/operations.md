@@ -154,20 +154,21 @@ This is one step towards becoming Atlassian Verified.</p>
 <a name="scalability"></a>
 ### Scalability
 
-There are two ways to design your add-ons to scale with a growing number of installations and users:
+Theres are mainly two ways to design your add-ons to scale with a growing number of installations and users:
 
 - Vertical scaling: you scale by adding more resources (e.g. CPU, memory) to existing nodes
 - Horizontal scaling: you scale by adding more nodes (e.g. servers) 
 
-It may be difficult to predict exactly how much resources your add-ons will need. For this reason, and because 
+It may be difficult to predict exactly how much resources your add-ons will need at first. For this reason, and because 
 your add-ons will be operating in a cloud environment targetting thousands of customers, we encourage you to design 
-your add-ons to scale horizontally. This will of course depend on your hosting strategy.
+your add-ons to scale horizontally. You will hit the upper limits of vertical scalability way before it happens for a 
+horizontally scaling model. Of course, this will depend on your hosting strategy.
 
 Existing cloud platforms can help you scale your implementations. One example of is [Heroku](www.heroku.com), 
 a cloud application platform that can host applications developed in Java, Node.js, Pyton, Ruby, Scala or Closure. 
 Heroku leverages [Amazon AWS](http://www.aws.amazon.com) (Amazon Web Services) technology, and mostly supports horizontal 
 scaling. Other examples include [Google Cloud](http://cloud.google.com) and [SalesForce1](www.salesforce.com/salesforce1). 
-These platforms are built to help you scale for the web. 
+These platforms are built to help you scale for the web.  
 <a name="perftesting"></a>
 ### Performance testing
 We recommend you run performance tests for your add-ons. This will help you define the resources required 
@@ -225,7 +226,9 @@ You should run performance tests for your add-ons:
 limited to your implementation.
 - Using a real-life deployment environment for end-to-end performance tests. For this we recommend you use a performance testing 
 environment that is as close as possible to the production environment. You should set up instances of Atlassian OnDemand products 
-for this purpose. 
+for this purpose. If you haven't already done so, you can contact Atlassian to receive access to OnDemand instances for an 
+unlimited number of users at a discounted price for testing, as described on the 
+[MarketPlace Contributor Discount for Atlassian OnDemand](https://developer.atlassian.com/display/MARKET/Marketplace+Contributor+Discount+for+Atlassian+OnDemand) page.
 
 There are a number of tools to help you design and run performance tests for your add-ons. One example of 
 Java Load Testing Framework is [The Grinder](http://grinder.sourceforge.net), that helps you run a distributed 
@@ -242,10 +245,11 @@ thresholds are met. To start with, you should at least monitor the utilization o
 ## Maintenance Windows
 
 For more information on how to upgrade your add-on, you should read the [Upgrading your Add-on](upgrades.html) section.
-Although you can decide when to upgrade your add-ons, as much as possible you should aim to align with the 
-[Atlassian OnDemand Maintenance Windows](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+maintenance+windows) 
-as it will minimize disruption for your customers. You should define your standard maintenance windows and publish them with
-your [Service Level Agreement](#sla)
+You can decide when to upgrade your add-ons, and this can be completely decoupled from the 
+[Atlassian OnDemand Maintenance Windows](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+maintenance+windows). 
+Your goal should be to minimize disruption for your customers. With a robust design, you should be able to deploy updates of your add-ons 
+transparently for end users. If this is not possible, you should at least document your standard maintenance windows and publish them 
+along with your [Service Level Agreement](#sla). 
 
 <div class="aui-message success">
 	    <p class="title">
@@ -270,7 +274,7 @@ Hope for the best, plan for the worst!
 
 Note that using an enterprise-class cloud provider can largely minimise the risk of a major outage impacting your add-ons. 
 For example, [Heroku](http://www.heroku.com) automatically restores (and withing applications deployed on the platform, and Postgres 
-databases, in case of a outage in one of their data centres, within seconds.  
+databases, in case of a outage in one of their data centres, within seconds. 
 
 <a name="support"></a>
 ## Support
@@ -278,7 +282,10 @@ databases, in case of a outage in one of their data centres, within seconds.
 First, check out the [Atlassian Support Offerings](https://confluence.atlassian.com/display/Support/Atlassian+Support+Offerings). 
 We are well known for our great support! 
 Then, have a look at the [Atlassian Verified Program](https://developer.atlassian.com/display/MARKET/The+Atlassian+Verified+program) 
-which lists some great recommendations for you to provide support to your customers for add-ons.
+which lists some great recommendations for you to provide support to your customers for add-ons. 
+
+On top of these suggestions, we recommend you document a self-service "troubleshooting" page that your clients can access when 
+facing issues with your add-ons. This page should be referenced in a standard error page. 
 
 
 
