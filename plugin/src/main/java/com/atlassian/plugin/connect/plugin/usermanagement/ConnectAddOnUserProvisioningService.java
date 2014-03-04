@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
-import java.util.Collection;
 import java.util.Set;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 
 public interface ConnectAddOnUserProvisioningService
 {
-    void provisionAddonUserForScopes(String userKey, Collection<ScopeName> scopes);
+    void provisionAddonUserForScopes(String userKey, Set<ScopeName> scopes);
 
     /**
      * The keys of product groups of which add-on users should by default be members. Don't create these groups if they

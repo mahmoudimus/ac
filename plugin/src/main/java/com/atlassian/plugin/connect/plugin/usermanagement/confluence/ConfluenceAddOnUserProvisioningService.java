@@ -52,7 +52,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     }
 
     @Override
-    public void provisionAddonUserForScopes(String addonUserKey, Collection<ScopeName> scopes)
+    public void provisionAddonUserForScopes(String addonUserKey, Set<ScopeName> scopes)
     {
         checkNotNull(scopes);
 
