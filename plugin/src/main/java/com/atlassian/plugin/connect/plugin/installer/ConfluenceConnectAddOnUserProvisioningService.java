@@ -103,7 +103,7 @@ public class ConfluenceConnectAddOnUserProvisioningService implements ConnectAdd
         final Builder<String> builder = ImmutableSet.builder();
         for (ScopeName implied : scope.getImplied())
         {
-            builder.addAll(getSpacePermissionsImpliedBy(scope));
+            builder.addAll(getSpacePermissionsImpliedBy(implied));
         }
         return builder.build();
     }
