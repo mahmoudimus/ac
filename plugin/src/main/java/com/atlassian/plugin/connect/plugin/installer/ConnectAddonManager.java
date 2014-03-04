@@ -98,9 +98,10 @@ public class ConnectAddonManager
     private final JwtApplinkFinder jwtApplinkFinder;
     private final ConnectApplinkManager connectApplinkManager;
     private final I18nResolver i18nResolver;
+    private final ConnectAddonBeanFactory connectAddonBeanFactory;
 
     @Inject
-    public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager, RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient, JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry, BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService, EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties, LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext, JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver)
+    public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager, RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient, JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry, BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService, EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties, LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext, JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -119,6 +120,7 @@ public class ConnectAddonManager
         this.jwtApplinkFinder = jwtApplinkFinder;
         this.connectApplinkManager = connectApplinkManager;
         this.i18nResolver = i18nResolver;
+        this.connectAddonBeanFactory = connectAddonBeanFactory;
     }
 
     public void enableConnectAddon(Plugin plugin) throws ConnectAddOnUserInitException
@@ -250,7 +252,10 @@ public class ConnectAddonManager
 
     private void enableAddOnUser(String addOnKey) throws ConnectAddOnUserInitException
     {
-        String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey, );
+        final String descriptor = descriptorRegistry.getDescriptor(addOnKey);
+        ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(descriptor);
+
+        String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey, addOn.getScopes());
         ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
 
         if (null != applicationLink)

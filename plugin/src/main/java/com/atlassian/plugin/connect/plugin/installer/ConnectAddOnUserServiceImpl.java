@@ -163,7 +163,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return null != user && user.isActive();
     }
 
-    private String createOrEnableAddOnUser(String userKey, Collection<AddOnScope> scopes) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException
+    private String createOrEnableAddOnUser(String userKey, Collection<ScopeName> scopes) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException
     {
         ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
         User user = ensureUserExists(userKey);
