@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.atlassian.plugin.connect.modules.beans.*;
@@ -35,6 +36,7 @@ public class PageConditionsValidator implements AddOnBeanValidator
     private static final Logger log = LoggerFactory.getLogger(PageConditionsValidator.class);
     private final I18nResolver i18nResolver;
 
+    @Inject
     public PageConditionsValidator(I18nResolver i18nResolver)
     {
         this.i18nResolver = i18nResolver;

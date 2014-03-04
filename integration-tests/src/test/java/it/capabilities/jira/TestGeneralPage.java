@@ -9,20 +9,23 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import it.servlet.condition.ParameterCapturingConditionServlet;
+
+import org.junit.*;
 import org.junit.rules.TestRule;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -31,9 +34,14 @@ import static org.junit.Assert.assertThat;
 public class TestGeneralPage extends JiraWebDriverTestBase
 {
     private static final String PLUGIN_KEY = "my-plugin";
+    private static final String KEY_MY_CONTEXT_PAGE = "my-context-page";
     private static final String KEY_MY_AWESOME_PAGE = "my-awesome-page";
     private static final String PAGE_NAME = "My Awesome Page";
+    private static final String CONTEXT_PAGE_NAME = "My Context Param Page";
 
+    private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
+    private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
+    
     private static ConnectRunner remotePlugin;
 
     @Rule
@@ -44,16 +52,25 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
-                .addModule(
+                .addModules(
                         "generalPages",
                         newPageBean()
-                                .withName(new I18nProperty("My Awesome Page", null))
+                                .withName(new I18nProperty(PAGE_NAME, null))
                                 .withKey(KEY_MY_AWESOME_PAGE)
                                 .withUrl("/pg?project_id={project.id}&project_key={project.key}")
                                 .withConditions(toggleableConditionBean())
                                 .withWeight(1234)
-                                .build())
+                                .build()
+                        , newPageBean()
+                        .withName(new I18nProperty(CONTEXT_PAGE_NAME, null))
+                        .withKey(KEY_MY_CONTEXT_PAGE)
+                        .withUrl("/pg?project_id={project.id}&project_key={project.key}")
+                        .withConditions(newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
+                                "?project_id={project.id}&project_key={project.key}").build())
+                        .withWeight(1234)
+                        .build())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
+                .addRoute(PARAMETER_CAPTURE_CONDITION_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
 
@@ -104,5 +121,31 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(PAGE_NAME));
     }
 
+    @Ignore("figure out why the context is being set")
+    @Test
+    public void remoteConditionWithParamsIsCorrect() throws Exception
+    {
+        loginAsAdmin();
 
+        remotePlugin.setToggleableConditionShouldDisplay(false);
+        
+        product.visit(JiraViewProjectPage.class, project.getKey());
+
+        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_CONTEXT_PAGE, CONTEXT_PAGE_NAME);
+
+        assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
+
+        URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
+        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/" + KEY_MY_CONTEXT_PAGE));
+
+        PARAMETER_CAPTURING_SERVLET.clearParams();
+
+        PARAMETER_CAPTURING_SERVLET.setConditionReturnValue("false");
+        
+        viewProjectPage.clickRemotePluginLinkWithoutBinding();
+
+        Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
+
+        assertThat(conditionParams, hasEntry(equalTo("project_key"), equalTo(project.getKey())));
+    }
 }
