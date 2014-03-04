@@ -10,9 +10,9 @@ import org.junit.runner.RunWith;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class JiraSpaceAdminScopeTest extends JiraAdminScopeTestBase
+public class JiraProjectAdminScopeTest extends JiraAdminScopeTestBase
 {
-    public JiraSpaceAdminScopeTest(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder, GlobalPermissionManager jiraPermissionManager)
+    public JiraProjectAdminScopeTest(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder, GlobalPermissionManager jiraPermissionManager)
     {
         super(testPluginInstaller, jwtApplinkFinder, jiraPermissionManager);
     }
