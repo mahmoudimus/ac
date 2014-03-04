@@ -34,7 +34,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
     private static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     private static final String ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY = "atlassian-addons"; // in order to not occupy a license this has to match constant in user-provisioning-plugin/src/main/java/com/atlassian/crowd/plugin/usermanagement/userprovisioning/Constants.java
-    private static final String ATLASSIAN_CONNECT_ADD_ONS_ADMIN_GROUP_KEY = "atlassian-admin-addons";
+    private static final String ATLASSIAN_CONNECT_ADD_ONS_ADMIN_GROUP_KEY = "atlassian-addons-admin";
     private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
     // Use a "no reply" email address for add-on users so that
