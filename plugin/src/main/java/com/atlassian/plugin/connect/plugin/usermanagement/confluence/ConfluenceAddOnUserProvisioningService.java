@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @SuppressWarnings ("unused")
@@ -59,16 +60,12 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
         if (scopes.contains(ScopeName.ADMIN))
         {
-            // set global admin permission
+            grantAddonUserGlobalAdmin(confluenceAddonUser);
         }
         else if (scopes.contains(ScopeName.SPACE_ADMIN))
         {
             // add space admin to all spaces
-            final List<Space> spaces = spaceManager.getAllSpaces();
-            for (Space space : spaces)
-            {
-                grantAddonUserSpaceAdmin(space, confluenceAddonUser);
-            }
+            grantAddonUserSpaceAdmin(confluenceAddonUser);
         }
     }
 
@@ -107,7 +104,24 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         return userAccessor.getExistingUserByKey(userProfile.getUserKey());
     }
 
-    private void grantAddonUserSpaceAdmin(Space space, ConfluenceUser confluenceAddonUser)
+    private void grantAddonUserGlobalAdmin(ConfluenceUser confluenceAddonUser)
+    {
+        if (spacePermissionManager.hasPermission(CONFLUENCE_ADMINISTRATOR_PERMISSION, null, confluenceAddonUser))
+        {
+            throw new UnsupportedOperationException("How do you even set this permission");
+        }
+    }
+
+    private void grantAddonUserSpaceAdmin(ConfluenceUser confluenceAddonUser)
+    {
+        final List<Space> spaces = spaceManager.getAllSpaces();
+        for (Space space : spaces)
+        {
+            grantAddonUserAdminToSpace(space, confluenceAddonUser);
+        }
+    }
+
+    private void grantAddonUserAdminToSpace(Space space, ConfluenceUser confluenceAddonUser)
     {
         if (!spacePermissionManager.hasPermission(ADMINISTER_SPACE_PERMISSION, space, confluenceAddonUser))
         {

@@ -197,7 +197,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             ensureUserIsInGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
         }
 
-        // todo: what do we do with this?
         connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, scopes);
 
         return user.getName();
