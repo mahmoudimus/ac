@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Application("jira")
+@Application("confluence")
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ConfluenceWebItemModuleProviderTest
 {
