@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+
 import java.util.Set;
 
 /**
@@ -14,4 +17,8 @@ public interface ConnectAddOnUserGroupsService
      * @return {@link Set} of group keys (for example ["confluence-users"]).
      */
     public Set<String> getDefaultProductGroups();
+
+    public void establishScopePermissions(User addOnUser, ScopeName scope);
+
+    public void removeScopePermissions(User addOnUser, ScopeName scope);
 }
