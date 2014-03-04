@@ -1,10 +1,11 @@
-package it.com.atlassian.plugin.connect.installer;
+package it.com.atlassian.plugin.connect.usermanagement.jira;
 
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUsers;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import it.com.atlassian.plugin.connect.usermanagement.AdminScopeTestBase;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
