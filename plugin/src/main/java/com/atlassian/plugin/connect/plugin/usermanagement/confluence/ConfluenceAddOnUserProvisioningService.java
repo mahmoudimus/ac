@@ -80,7 +80,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     {
         if (!groupHasProductAdminPermission(groupKey))
         {
-            throw new UnsupportedOperationException("NIH");
+//            throw new UnsupportedOperationException("NIH");
         }
     }
 
@@ -108,7 +108,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     {
         if (spacePermissionManager.hasPermission(CONFLUENCE_ADMINISTRATOR_PERMISSION, null, confluenceAddonUser))
         {
-            throw new UnsupportedOperationException("How do you even set this permission");
+//            throw new UnsupportedOperationException("How do you even set this permission");
         }
     }
 
