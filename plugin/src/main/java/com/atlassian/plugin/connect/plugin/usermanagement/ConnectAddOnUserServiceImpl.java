@@ -20,17 +20,16 @@ import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.any;
 
 @ExportAsDevService
 @Component
@@ -205,27 +204,27 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             }
         }
 
-        if (isAdminScoped(scopes))
+        Set<ScopeName> normalizedScopes = normalizeScopes(scopes);
+
+        if (normalizedScopes.contains(ScopeName.ADMIN))
         {
             ensureGroupExistsAndIsAdmin(ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
             ensureUserIsInGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
         }
 
-        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, scopes);
+        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, normalizedScopes);
 
         return user.getName();
     }
 
-    private static boolean isAdminScoped(Set<ScopeName> scopes)
+    private Set<ScopeName> normalizeScopes(Set<ScopeName> scopes)
     {
-        return null != scopes && !scopes.isEmpty() && any(scopes, new Predicate<ScopeName>()
+        HashSet<ScopeName> normalizedScopes = Sets.newHashSet();
+        for (ScopeName scopeName : scopes)
         {
-            @Override
-            public boolean apply(@Nullable ScopeName scope)
-            {
-                return null != scope && (ScopeName.ADMIN.equals(scope) || scope.getImplied().contains(ScopeName.ADMIN));
-            }
-        });
+            normalizedScopes.addAll(scopeName.getImplied());
+        }
+        return normalizedScopes;
     }
 
     private void ensureUserIsInGroup(String userKey, String groupKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException, ApplicationNotFoundException
