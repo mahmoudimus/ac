@@ -103,6 +103,20 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     }
 
     @Override
+    public User getUserByAddOnKey(String addOnKey)
+    {
+        String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;
+        try
+        {
+            return findUserByKey(userKey);
+        }
+        catch (ApplicationNotFoundException e)
+        {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
     public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException
     {
         String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;

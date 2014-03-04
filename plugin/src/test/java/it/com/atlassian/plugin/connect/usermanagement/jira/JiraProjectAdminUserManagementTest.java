@@ -1,12 +1,12 @@
 package it.com.atlassian.plugin.connect.usermanagement.jira;
 
+import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -31,8 +31,8 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newCon
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static org.junit.Assert.assertTrue;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
 public class JiraProjectAdminUserManagementTest
 {
     private static final String ADMIN = "admin";
@@ -46,11 +46,11 @@ public class JiraProjectAdminUserManagementTest
     private final TestPluginInstaller testPluginInstaller;
     private static Set<ScopeName> NO_SCOPES = ImmutableSet.of();
 
-    private ConnectAddonBean spaceAdminAddon;
+    private ConnectAddonBean projectAdminAddOn;
 
     public JiraProjectAdminUserManagementTest(ConnectAddOnUserService connectAddOnUserService,
-            PermissionManager permissionManager, ProjectService projectService, UserManager userManager,
-            TestPluginInstaller testPluginInstaller)
+                                              PermissionManager permissionManager, ProjectService projectService, UserManager userManager,
+                                              TestPluginInstaller testPluginInstaller)
     {
         this.connectAddOnUserService = connectAddOnUserService;
         this.permissionManager = permissionManager;
@@ -62,7 +62,7 @@ public class JiraProjectAdminUserManagementTest
     @Before
     public void setUp()
     {
-        this.spaceAdminAddon = newConnectAddonBean()
+        this.projectAdminAddOn = newConnectAddonBean()
                 .withName("JIRA Project Admin Add-on")
                 .withKey(ADDON_KEY)
                 .withAuthentication(newAuthenticationBean().withType(AuthenticationType.JWT).build())
@@ -71,36 +71,35 @@ public class JiraProjectAdminUserManagementTest
                                 .withInstalled(INSTALLED)
                                 .build()
                 )
-                .withScopes(Sets.newHashSet(ScopeName.SPACE_ADMIN))
+                .withScopes(Sets.newHashSet(ScopeName.PROJECT_ADMIN))
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(ADDON_KEY))
                 .build();
     }
 
     @Test
-    public void addonIsMadeAdminOfExistingSpace() throws Exception
+    public void addonIsMadeAdminOfExistingProject() throws Exception
     {
         Plugin plugin = null;
         try
         {
-            plugin = testPluginInstaller.installPlugin(spaceAdminAddon);
+            plugin = testPluginInstaller.installPlugin(projectAdminAddOn);
 
-            String addonUserKey = connectAddOnUserService.getOrCreateUserKey(ADDON_KEY, NO_SCOPES);
-            ApplicationUser addonUser = userManager.getUserByKey(addonUserKey);
+            User addonUser = connectAddOnUserService.getUserByAddOnKey(ADDON_KEY);
 
             List<Project> allProjects = projectService.getAllProjects(addonUser).getReturnedValue();
 
-            List<String> spaceAdminErrors = Lists.newArrayList();
+            List<String> projectAdminErrors = Lists.newArrayList();
 
             for (Project project : allProjects)
             {
                 boolean canAdminister = permissionManager.hasPermission(Permissions.PROJECT_ADMIN, project, addonUser, false);
                 if (!canAdminister)
                 {
-                    spaceAdminErrors.add("Add-on user " + addonUserKey + " should have administer permission for project " + project.getKey());
+                    projectAdminErrors.add("Add-on user " + addonUser.getName() + " should have administer permission for project " + project.getKey());
                 }
             }
 
-            assertTrue(StringUtils.join(spaceAdminErrors, '\n'), spaceAdminErrors.isEmpty());
+            assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
         }
         finally
         {
@@ -112,26 +111,25 @@ public class JiraProjectAdminUserManagementTest
     }
 
     @Test
-    public void addonIsMadeAdminOfNewSpace() throws Exception
+    public void addonIsMadeAdminOfNewProject() throws Exception
     {
         Plugin plugin = null;
         Project project = null;
+        ApplicationUser admin = null;
         String projectKey = "JEDI";
         try
         {
-            plugin = testPluginInstaller.installPlugin(spaceAdminAddon);
+            plugin = testPluginInstaller.installPlugin(projectAdminAddOn);
 
-            String addonUserKey = connectAddOnUserService.getOrCreateUserKey(ADDON_KEY, NO_SCOPES);
-            ApplicationUser addonUser = userManager.getUserByKey(addonUserKey);
+            User addonUser = connectAddOnUserService.getUserByAddOnKey(ADDON_KEY);
+            admin = userManager.getUserByKey(ADMIN);
 
-            ApplicationUser admin = userManager.getUserByKey(ADMIN);
+            ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(admin.getDirectoryUser(),
+                    "Knights of the Old Republic", projectKey, "It's a trap!", "admin", null, null);
+            project = projectService.createProject(result);
 
-//            ProjectService.CreateProjectValidationResult result = new ProjectService.CreateProjectValidationResult(new SimpleErrorCollection(), "Knights of the Old Republic", "JEDI", "It's a trap!", ADMIN, "", 0L, 0L, admin);
-//            project = jiraOps.createProject();
-
-//            boolean addonCanAdministerNewSpace = permissionManager.hasPermission(Permissions.PROJECT_ADMIN, project, addonUser, false);
-            boolean addonCanAdministerNewSpace = false;
-            assertTrue("Add-on user " + addonUserKey + " should have administer permission for space " + projectKey, addonCanAdministerNewSpace);
+            boolean addonCanAdministerNewSpace = permissionManager.hasPermission(Permissions.PROJECT_ADMIN, project, addonUser, false);
+            assertTrue("Add-on user " + addonUser.getName() + " should have administer permission for space " + projectKey, addonCanAdministerNewSpace);
         }
         finally
         {
@@ -139,7 +137,8 @@ public class JiraProjectAdminUserManagementTest
             {
                 testPluginInstaller.uninstallPlugin(plugin);
             }
-//            jiraOps.deleteProject(project);
+            ProjectService.DeleteProjectValidationResult result = projectService.validateDeleteProject(admin.getDirectoryUser(), projectKey);
+            projectService.deleteProject(admin, result);
         }
     }
 }
