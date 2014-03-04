@@ -21,6 +21,7 @@ import org.junit.Test;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -40,7 +41,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestJiraWebItem extends JiraWebDriverTestBase
 {
-    private static final String ADDON_WEBITEM = "ac-general-web-item";
+    private static final String GENERAL_PAGE = "ac-general-page";
+    private static final String PAGE_CONTEXT_WEBITEM = "ac-general-web-item";
     private static final String ADDON_DIRECT_WEBITEM = "ac-direct-to-addon-web-item";
     private static final String PRODUCT_WEBITEM = "quick-project-link";
     private static final String ABSOLUTE_WEBITEM = "google-link";
@@ -57,14 +59,21 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                 .addScope(ScopeName.READ)
                 .addInstallLifecycle()
                 .addRoute(ConnectRunner.INSTALLED_PATH, ConnectAppServlets.helloWorldServlet())
+                .addModule("generalPages",
+                        newPageBean()
+                            .withName(new I18nProperty("A General Page", null))
+                            .withKey(GENERAL_PAGE)
+                            .withLocation("not a real location so no web item is displayed")
+                            .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
+                            .build())
                 .addModules("webItems",
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.page)
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))
-                                .withKey(ADDON_WEBITEM)
+                                .withKey(PAGE_CONTEXT_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(5)
-                                .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
+                                .withUrl(GENERAL_PAGE)
                                 .build(),
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.addon)
@@ -175,11 +184,11 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM, Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(PAGE_CONTEXT_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
-        assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
-        assertEquals(project.getId(), webItem.getFromQueryString("pid"));
+        assertEquals(project.getKey(), webItem.getFromQueryString("project.key"));
+        assertEquals(project.getId(), webItem.getFromQueryString("project.id"));
         assertThat(webItem.getPath(), startsWith(product.getProductInstance().getBaseUrl()));
     }
 
