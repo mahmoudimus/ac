@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.installer;
+package it.com.atlassian.plugin.connect.usermanagement;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;

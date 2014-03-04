@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.installer;
+package it.com.atlassian.plugin.connect.usermanagement.confluence;
 
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
