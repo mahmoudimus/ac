@@ -190,7 +190,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user.getName();
     }
 
-    private User ensureUserExists(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException
+    private User ensureUserExists(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
         User user = findUserByKey(userKey);
 
@@ -217,7 +217,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private User createUser(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException
+    private User createUser(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
         User user;
         try
@@ -227,6 +227,15 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             userTemplate.setEmailAddress(NO_REPLY_EMAIL_ADDRESS); // so that "reset password" emails go nowhere
             userTemplate.setActive(true); //if you don't set this, it defaults to inactive!!!
             user = applicationService.addUser(getApplication(), userTemplate, PasswordCredential.NONE);
+
+            if (null == user)
+            {
+                throw new ConnectAddOnUserInitException(String.format("Tried to create user '%s' but the %s returned a null user!", userKey, applicationService.getClass().getSimpleName()));
+            }
+            else
+            {
+                log.info("Created user '{}'", user.getName());
+            }
         }
         catch (InvalidUserException iue)
         {
