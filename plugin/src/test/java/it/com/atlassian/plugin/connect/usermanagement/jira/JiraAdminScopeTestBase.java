@@ -28,18 +28,13 @@ public abstract class JiraAdminScopeTestBase extends AdminScopeTestBase
     }
 
     @Override
-    protected boolean isUserKeyAdmin(String userKey)
+    protected boolean isUserAdmin(String username)
     {
-        return jiraPermissionManager.hasPermission(Permissions.Permission.ADMINISTER.getId(), getUserByKey(userKey));
+        return jiraPermissionManager.hasPermission(Permissions.Permission.ADMINISTER.getId(), getUser(username));
     }
 
-    protected ApplicationUser getAddonUser()
+    private ApplicationUser getUser(String username)
     {
-        return getUserByKey(getAddonUserKey());
-    }
-
-    private ApplicationUser getUserByKey(String key)
-    {
-        return userManager.getUserByKey(key);
+        return userManager.getUserByName(username);
     }
 }

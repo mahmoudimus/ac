@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.plugin.usermanagement.confluence;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermission;
 import com.atlassian.confluence.security.SpacePermissionManager;
+import com.atlassian.confluence.security.administrators.EditPermissionsAdministrator;
+import com.atlassian.confluence.security.administrators.PermissionsAdministratorBuilder;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
@@ -11,6 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableSet;
@@ -18,10 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
+import static java.util.Arrays.asList;
 
 @SuppressWarnings ("unused")
 @ConfluenceComponent
@@ -42,8 +47,10 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     @Autowired
     public ConfluenceAddOnUserProvisioningService(PermissionManager confluencePermissionManager,
-            SpacePermissionManager spacePermissionManager, SpaceManager spaceManager,
-            UserAccessor userAccessor, UserManager userManager)
+                                                  SpacePermissionManager spacePermissionManager,
+                                                  SpaceManager spaceManager,
+                                                  UserAccessor userAccessor,
+                                                  UserManager userManager)
     {
         this.confluencePermissionManager = confluencePermissionManager;
         this.spacePermissionManager = spacePermissionManager;
@@ -88,11 +95,30 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         return userAccessor.getExistingUserByKey(userProfile.getUserKey());
     }
 
-    private void grantAddonUserGlobalAdmin(ConfluenceUser confluenceAddonUser)
+    private void grantAddonUserGlobalAdmin(final ConfluenceUser confluenceAddonUser)
     {
-        if (confluencePermissionManager.isConfluenceAdministrator(confluenceAddonUser))
+        if (!confluencePermissionManager.isConfluenceAdministrator(confluenceAddonUser))
         {
-//            throw new UnsupportedOperationException("How do you even set this permission");
+            // injecting as a dependency results in an instance with null data members - perhaps there are multiple instances or perhaps it is initialized after us
+            final PermissionsAdministratorBuilder confluencePermissionsAdministratorBuilder = ComponentLocator.getComponent(PermissionsAdministratorBuilder.class, "permissionsAdministratorBuilder");
+
+            // we need to run this without permissions checking otherwise our attempt to modify permissions will be permissions-checked,
+            // and will be accordingly rejected unless we tell Confluence that it's being performed by an arbitrarily selected admin user
+            confluencePermissionManager.withExemption(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    EditPermissionsAdministrator confluenceEditPermissionsAdministrator = confluencePermissionsAdministratorBuilder.buildEditGlobalPermissionAdministrator(null, asList(confluenceAddonUser.getName()), Collections.<String>emptyList());
+                    confluenceEditPermissionsAdministrator.addPermission(SpacePermission.createUserSpacePermission(SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION, null, confluenceAddonUser));
+                }
+            });
+            // Confluence's CachingSpacePermissionManager caches permissions in ThreadLocalCache and doesn't realise when the permissions have changed.
+            // This is Less Than Ideal.
+            // Due to this bug all threads now have an outdated copy of this user's admin permission.
+            // On a new request from the add-on or page-view by a user a new thread will be used, so they will be OK.
+            // We could call ThreadLocalCache.flush() to fix up this thread but that may have unintended side-effects.
+            // The test code in ConfluenceAdminScopeTestBase flushes the thread-local cache before checking results.
         }
     }
 

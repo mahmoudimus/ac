@@ -41,14 +41,14 @@ public abstract class AdminScopeTestBase
     @Test
     public void hasCorrectAdminStatus()
     {
-        assertEquals(shouldBeAdmin(), isUserKeyAdmin(getAddonUserKey()));
+        assertEquals(shouldBeAdmin(), isUserAdmin(getAddonUsername()));
     }
 
     protected abstract ScopeName getScope();
     protected abstract boolean shouldBeAdmin();
-    protected abstract boolean isUserKeyAdmin(String userKey);
+    protected abstract boolean isUserAdmin(String username);
 
-    protected String getAddonUserKey()
+    protected String getAddonUsername()
     {
         ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
         return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);

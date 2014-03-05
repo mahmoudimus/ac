@@ -63,7 +63,7 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
             boolean canAdminister = confluencePermissionManager.hasPermission(getAddonUser(), Permission.ADMINISTER, space);
             if (!canAdminister)
             {
-                spaceAdminErrors.add("Add-on user " + getAddonUserKey() + " should have administer permission for space " + space.getKey());
+                spaceAdminErrors.add("Add-on user " + getAddonUsername() + " should have administer permission for space " + space.getKey());
             }
         }
 
@@ -78,6 +78,6 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
         Space jediSpace = spaceManager.createSpace("JEDI", "Knights of the Old Republic", "It's a trap!", admin);
 
         boolean addonCanAdministerNewSpace = confluencePermissionManager.hasPermission(getAddonUser(), Permission.ADMINISTER, jediSpace);
-        assertTrue("Add-on user " + getAddonUserKey() + " should have administer permission for space " + jediSpace.getKey(), addonCanAdministerNewSpace);
+        assertTrue("Add-on user " + getAddonUsername() + " should have administer permission for space " + jediSpace.getKey(), addonCanAdministerNewSpace);
     }
 }
