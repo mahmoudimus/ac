@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectMirrorPluginEventHandler;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
-import com.atlassian.plugin.connect.plugin.scopes.NormalizedScopeSet;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
@@ -177,12 +176,12 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor) throws ConnectAddOnUserInitException
     {
         Set<ScopeName> previousScopes = Sets.newHashSet();
-        Set<ScopeName> newScopes = new NormalizedScopeSet(addOn.getScopes());
+        Set<ScopeName> newScopes = addOn.getScopes();
 
         if (StringUtils.isNotBlank(previousDescriptor))
         {
             ConnectAddonBean previousAddOn = connectAddonBeanFactory.fromJson(previousDescriptor);
-            previousScopes = new NormalizedScopeSet(previousAddOn.getScopes());
+            previousScopes = previousAddOn.getScopes();
         }
 
         return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(), previousScopes, newScopes);

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.usermanagement.jira;
 
 import com.atlassian.crowd.embedded.api.Group;
+import com.atlassian.crowd.exception.*;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.permission.PermissionSchemeManager;
@@ -17,6 +18,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -45,6 +47,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
 {
     private static final String CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME = "Connect Project Admin Add-Ons";
     private static final String CONNECT_PROJECT_ADMIN_PROJECT_ROLE_DESC = "A project role that represents service users of Connect add-ons declaring Project Admin scope";
+    private static final String ATLASSIAN_ADDONS_ADMIN_GROUP_KEY = "atlassian-addons-admin";
 
     private static final ImmutableSet<String> GROUPS = ImmutableSet.of("jira-users");
     private static final int ADMIN_PERMISSION = Permissions.ADMINISTER;
@@ -56,16 +59,22 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final ProjectManager projectManager;
     private final ProjectRoleService projectRoleService;
     private final UserManager userManager;
+    private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
 
     @Inject
-    public JiraAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager, ProjectManager projectManager,
-            UserManager userManager, PermissionSchemeManager permissionSchemeManager, ProjectRoleService projectRoleService)
+    public JiraAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager,
+                                            ProjectManager projectManager,
+                                            UserManager userManager,
+                                            PermissionSchemeManager permissionSchemeManager,
+                                            ProjectRoleService projectRoleService,
+                                            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
     {
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
-        this.projectManager = projectManager;
-        this.userManager = userManager;
-        this.permissionSchemeManager = permissionSchemeManager;
-        this.projectRoleService = projectRoleService;
+        this.projectManager = checkNotNull(projectManager);
+        this.userManager = checkNotNull(userManager);
+        this.permissionSchemeManager = checkNotNull(permissionSchemeManager);
+        this.projectRoleService = checkNotNull(projectRoleService);
+        this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
     }
 
     @Override
@@ -75,8 +84,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         return GROUPS;
     }
 
-    @Override
-    public void ensureGroupHasProductAdminPermission(String groupKey)
+    private void ensureGroupHasProductAdminPermission(String groupKey)
     {
         if (!groupHasProductAdminPermission(groupKey))
         {
@@ -84,8 +92,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
     }
 
-    @Override
-    public boolean groupHasProductAdminPermission(final String groupKey)
+    private boolean groupHasProductAdminPermission(final String groupKey)
     {
         checkNotNull(groupKey);
         return any(jiraPermissionManager.getGroupsWithPermission(ADMIN_PERMISSION), new Predicate<Group>()
@@ -101,24 +108,83 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     @Override
     public void provisionAddonUserForScopes(final String userKey, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
+        Set<ScopeName> normalizedPreviousScopes = ScopeName.normalize(previousScopes);
+        Set<ScopeName> normalizedNewScopes = ScopeName.normalize(newScopes);
+
         ApplicationUser user = userManager.getUserByKey(userKey);
-        if (newScopes.contains(ScopeName.PROJECT_ADMIN) && !previousScopes.contains(ScopeName.PROJECT_ADMIN))
+
+        if (null == user)
         {
-            if (!newScopes.contains(ScopeName.ADMIN))
-            {
-                updateProjectAdminScopePermissions(user);
-            }
+            throw new IllegalArgumentException(String.format("Cannot provision non-existent user '%s': please create it first!", userKey));
         }
-        else if (!newScopes.contains(ScopeName.PROJECT_ADMIN) && previousScopes.contains(ScopeName.PROJECT_ADMIN))
+
+        if (normalizedNewScopes.contains(ScopeName.ADMIN))
         {
-            if (!previousScopes.contains(ScopeName.ADMIN))
-            {
-                removeProjectAdminScopePermissions(user);
-            }
+            makeUserGlobalAdmin(user);
+        }
+        else if (normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN) && !normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN))
+        {
+            updateProjectAdminScopePermissions(user);
+        }
+
+        if (!normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN) && normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN))
+        {
+            removeProjectAdminScopePermissions(user);
         }
     }
 
-    private void updateProjectAdminScopePermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException
+    private void makeUserGlobalAdmin(ApplicationUser user) throws ConnectAddOnUserInitException
+    {
+        try
+        {
+            ensureGroupExistsAndIsAdmin(ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
+            connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
+        }
+        catch (GroupNotFoundException e)
+        {
+            // this should never happen because we've just "successfully" ensured that the group exists,
+            // so if it does then it's programmer error and not part of this interface method's signature
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (UserNotFoundException e)
+        {
+            // this should never happen because we've just "successfully" ensured that the user exists,
+            // so if it does then it's programmer error and not part of this interface method's signature
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (ApplicationPermissionException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (OperationFailedException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (ApplicationNotFoundException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+    }
+
+    private void ensureGroupExistsAndIsAdmin(String groupKey) throws ConnectAddOnUserInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException
+    {
+        final boolean created = connectAddOnUserGroupProvisioningService.ensureGroupExists(groupKey);
+
+        if (created)
+        {
+            ensureGroupHasProductAdminPermission(groupKey);
+        }
+        else if (!groupHasProductAdminPermission(groupKey))
+        {
+            throw new ConnectAddOnUserInitException(String.format("Group '%s' already exists and is NOT an administrators group. " +
+                    "Cannot make it an administrators group because that would elevate the privileges of existing users in this group. " +
+                    "Consequently, add-on users that need to be admins cannot be made admins by adding them to this group and making it an administrators group. " +
+                    "Aborting user setup.",
+                    groupKey));
+        }
+    }
+
+    private void updateProjectAdminScopePermissions(ApplicationUser addOnUser)
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
         ProjectRole projectRole = updateConnectProjectRole(errorCollection);
@@ -148,7 +214,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         );
     }
 
-    private void removeProjectAdminScopePermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException
+    private void removeProjectAdminScopePermissions(ApplicationUser addOnUser)
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
         ProjectRole projectRole = projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME, errorCollection);

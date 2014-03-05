@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @SuppressWarnings ("unused")
 @ConfluenceComponent
@@ -57,12 +55,11 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     @Override
     public void provisionAddonUserForScopes(String addonUserKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        checkNotNull(previousScopes);
-        checkNotNull(newScopes);
-
         final ConfluenceUser confluenceAddonUser = getConfluenceUser(addonUserKey);
+        Set<ScopeName> previousScopesNormalized = ScopeName.normalize(previousScopes);
+        Set<ScopeName> newScopesNormalized = ScopeName.normalize(newScopes);
 
-        if (newScopes.contains(ScopeName.ADMIN) && !previousScopes.contains(ScopeName.ADMIN))
+        if (newScopes.contains(ScopeName.ADMIN))
         {
             grantAddonUserGlobalAdmin(confluenceAddonUser);
         }
@@ -78,23 +75,6 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     {
         return GROUPS;
     }
-
-    @Override
-    public void ensureGroupHasProductAdminPermission(String groupKey)
-    {
-        if (!groupHasProductAdminPermission(groupKey))
-        {
-//            throw new UnsupportedOperationException("NIH");
-        }
-    }
-
-    @Override
-    public boolean groupHasProductAdminPermission(String groupKey)
-    {
-        checkNotNull(groupKey);
-        return false;//confluencePermissionManager.
-    }
-
 
     private ConfluenceUser getConfluenceUser(String userKeyString)
     {

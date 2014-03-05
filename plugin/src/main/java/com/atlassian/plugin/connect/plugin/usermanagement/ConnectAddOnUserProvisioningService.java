@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
-import java.util.Set;
-
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+
+import java.util.Set;
 
 public interface ConnectAddOnUserProvisioningService
 {
@@ -15,19 +15,4 @@ public interface ConnectAddOnUserProvisioningService
      * @return {@link java.util.Set} of group keys (for example ["confluence-users"]).
      */
     public Set<String> getDefaultProductGroups();
-
-    /**
-     * Make this group an administrators group if it is not already.
-     *
-     * @param groupKey the key identifying the group
-     */
-    void ensureGroupHasProductAdminPermission(String groupKey);
-
-    /**
-     * Determine whether or not this group is an administrators group.
-     *
-     * @param groupKey the key identifying the group
-     * @return {@code true} if the group itself has administrator privileges, otherwise {@code false}
-     */
-    boolean groupHasProductAdminPermission(String groupKey);
 }
