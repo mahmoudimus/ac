@@ -14,6 +14,11 @@ import com.google.common.collect.Maps;
 
 public class ParameterCapturingConditionServlet extends HttpServlet
 {
+    /**
+     * The suggested (though not mandatory) route for this servlet.
+     */
+    public static final String PARAMETER_CAPTURE_URL = "/parameterCapture";
+
     private static final Function<String[],String> HEAD_ARRAY = new Function<String[], String>()
     {
         @Override
@@ -24,6 +29,13 @@ public class ParameterCapturingConditionServlet extends HttpServlet
     };
 
     private volatile Map<String, String[]> paramsFromLastRequest;
+    
+    private volatile String conditionReturnValue;
+
+    public ParameterCapturingConditionServlet()
+    {
+        this.conditionReturnValue = "true";
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
@@ -31,7 +43,7 @@ public class ParameterCapturingConditionServlet extends HttpServlet
         paramsFromLastRequest = req.getParameterMap();
 
         resp.setContentType("application/json");
-        resp.getWriter().write("{\"shouldDisplay\" : true}");
+        resp.getWriter().write("{\"shouldDisplay\" : " + conditionReturnValue + "}");
         resp.getWriter().close();
     }
 
@@ -48,5 +60,10 @@ public class ParameterCapturingConditionServlet extends HttpServlet
     public void clearParams()
     {
         paramsFromLastRequest = null;
+    }
+
+    public void setConditionReturnValue(String conditionReturnValue)
+    {
+        this.conditionReturnValue = conditionReturnValue;
     }
 }

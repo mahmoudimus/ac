@@ -1,29 +1,60 @@
-<img class="index-logo" src="./assets/images/ac_logo.png" width="720">
+<h1 class="index-heading">Introducing Atlassian Connect</h1>
 
-<h1 class="index-heading">Build, install and sell add-ons in Atlassian OnDemand</h1>
+<h2 class="index-heading">Build, install and sell add-ons for JIRA and Confluence OnDemand</h1>
 
-<div class="aui-group">
-    <div class="aui-item">
-        <div class="index-box">
-            [<img src="./assets/images/gears.png" width="100">](./guides/introduction.html)
-            [<h2>Customize your product</h2>](./guides/introduction.html)
-            <p>Build an add-on to enhance, extend or integrate your Atlassian product.</p>
+<div class="index-video-container">
+    <a href="//fast.wistia.net/embed/iframe/3e1auia2xi?popover=true" class="wistia-popover[height=540,playerColor=205081,width=960,helpers.overlay.css.backgroundColor=#000,helpers.overlay.opacity=1,padding=20]">
+        <div class="inner video-thumbnail">
+            <div class="playButton"></div>
         </div>
-    </div>
-    <div class="aui-item">
-        <div class="index-box">
-            [<img src="./assets/images/CharlieGears.png" width="100">](./developing/selling-on-marketplace.html)
-            [<h2>Share it with the world</h2>](./developing/selling-on-marketplace.html)
-            <p>Share your add-on with millions of developers on the Atlassian Marketplace.</p>
-        </div>
-    </div>
+    </a>
+<script charset="ISO-8859-1" src="//fast.wistia.com/assets/external/popover-v1.js"></script>
 </div>
 
-## Get Started
 
-Start with our [Introduction to Atlassian Connect](./guides/introduction.html) and learn about the powerful ways you can
-enhance your Atlassian application.
+## What is Atlassian Connect?
+An Atlassian Connect add-on is any web application that extends an Atlassian application, like JIRA or Confluence. It may be an existing app that you integrate with the Atlassian app or a new service that you create to add features to an Atlassian app. Atlassian Connect add-ons operate remotely over HTTP and can be written with any programming
+language and web framework.
 
-## Need help?
+Fundamentally, Atlassian Connect add-ons have three major capabilities. Add-ons can:
 
-We're always happy to help out with any questions you might have. Check out the ways you can [Get Help](./resources/getting-help.html).
+1. Insert content in [certain defined places](./modules/jira/index.html) in the Atlassian application's UI.
+2. Make calls to the Atlassian application's [REST API](./rest-apis/product-api-browser.html).
+3. Listen and respond to [WebHooks](./modules/jira/webhooks.html) fired by the Atlassian application.
+
+<div class="index-button">
+<a href="./guides/getting-started.html"><button class="primary-cta aui-button aui-button-primary">Build Hello World in 10 minutes</button></a>
+</div>
+
+
+## Interacting with Atlassian OnDemand
+While Atlassian Connect add-ons run seaparately from the Atlassian application, to an
+end user, the add-on appears as a fully integrated part of the Atlassian application. 
+After subscribing to the add-on, the features are delivered from within the UI and workflows of the host application.
+
+Most Atlassian Connect add-ons will be implemented as multi-tenanted services. 
+This means that a single Atlassian Connect application must take into account multiple subscribing organizations. 
+For example, each add-on will maintain subscriber-specific data and configuration. 
+For more about multi-tenancy design considerations, see [Understand OnDemand](./concepts/understanding-ondemand.html).
+
+<div id="architecture-graphic">
+</div>
+
+Security is a important concern in a distributed component model such as Atlassian Connect. 
+Atlassian Connect relies on HTTPS and JWT authentication to secure communication between the add-on, 
+the Atlassian product instance and the end-user's browser.
+
+Read our [security overview](./concepts/security.html) for more details.
+
+<div class="closing-cta">
+    <a href="./guides/getting-started.html">
+        <button class="primary-cta aui-button aui-button-primary">
+            Try the Hello World example
+        </button>
+    </a>
+    <p><a href="./guides/introduction.html">or read the detailed introduction</a></p>
+</div>
+
+
+
+

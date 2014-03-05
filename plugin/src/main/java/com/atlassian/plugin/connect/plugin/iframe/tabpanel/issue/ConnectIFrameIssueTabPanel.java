@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.tabpanel.issue;
 
+import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueTabPanel3;
 import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
 import com.atlassian.jira.plugin.issuetabpanel.IssueAction;
@@ -21,6 +22,7 @@ import java.util.Map;
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_HELPER;
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_USER;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
+import static com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
 
 /**
  *
@@ -48,8 +50,7 @@ public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3
     public List<IssueAction> getActions(final GetActionsRequest request)
     {
         // parse and filter module context
-        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
-        unfilteredContext.addIssue(request.issue());
+        JiraModuleContextParameters unfilteredContext = createUnfilteredContext(request.issue());
         ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
 
         // render tab HTML
@@ -67,6 +68,14 @@ public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3
         {
             conditionContext.put(CONTEXT_KEY_USER, request.remoteUser());
         }
+        conditionContext.put(MODULE_CONTEXT_KEY, createUnfilteredContext(request.issue()));
+    }
+
+    private JiraModuleContextParameters createUnfilteredContext(final Issue issue)
+    {
+        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
+        unfilteredContext.addIssue(issue);
+        return unfilteredContext;
     }
 
 }

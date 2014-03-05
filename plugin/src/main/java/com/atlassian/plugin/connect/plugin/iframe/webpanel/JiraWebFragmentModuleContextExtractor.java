@@ -31,8 +31,13 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
     }
 
     @Override
-    public ModuleContextParameters extractParameters(final Map<String, Object> webFragmentContext)
+    public ModuleContextParameters extractParameters(final Map<String, ? extends Object> webFragmentContext)
     {
+        if(ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
+        {
+            return (ModuleContextParameters) webFragmentContext;
+        }
+        
         JiraModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
 
         for (ParameterExtractor extractor : parameterExtractors)
@@ -134,6 +139,26 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
                             throw new IllegalStateException("Couldn't resolve profile for user in web panel context!");
                         }
                         moduleContext.addProfileUser(profile);
+                    }
+                },
+                new ParameterExtractor<Map<String, String>>()
+                {
+                    @Override
+                    public String getContextKey()
+                    {
+                        return WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
+                    }
+
+                    @Override
+                    public Class getExpectedType()
+                    {
+                        return Map.class;
+                    }
+
+                    @Override
+                    public void addToContext(final JiraModuleContextParameters moduleContext, final Map<String, String> value)
+                    {
+                        moduleContext.putAll(value);
                     }
                 }
         );
