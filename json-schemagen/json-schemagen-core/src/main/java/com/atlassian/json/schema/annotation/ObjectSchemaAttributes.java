@@ -17,4 +17,5 @@ public @interface ObjectSchemaAttributes
     boolean additionalProperties() default false;
     String[] patternProperties() default {};
     SchemaDependency[] dependencies() default {};
+    FieldDocOverride[] docOverrides() default {};
 }

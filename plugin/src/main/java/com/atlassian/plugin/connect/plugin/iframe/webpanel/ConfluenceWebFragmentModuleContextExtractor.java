@@ -31,8 +31,13 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
     }
 
     @Override
-    public ModuleContextParameters extractParameters(final Map<String, Object> webFragmentContext)
+    public ModuleContextParameters extractParameters(final Map<String, ? extends Object> webFragmentContext)
     {
+        if(ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
+        {
+            return (ModuleContextParameters) webFragmentContext;
+        }
+        
         ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl();
 
         @SuppressWarnings("unchecked") // it is what it is
@@ -70,6 +75,12 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
         {
             UserProfile profile = userManager.getUserProfile(profileUser.getKey());
             moduleContext.addProfileUser(profile);
+        }
+
+        ModuleContextParameters nestedContext = (ModuleContextParameters) webFragmentContext.get(MODULE_CONTEXT_KEY);
+        if (nestedContext != null)
+        {
+            moduleContext.putAll(nestedContext);
         }
 
         return moduleContext;

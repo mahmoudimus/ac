@@ -1,7 +1,10 @@
 package it.com.atlassian.plugin.connect.usermanagement.confluence;
 
-import com.atlassian.confluence.security.Permission;
+import java.util.List;
+
 import com.atlassian.confluence.security.PermissionManager;
+import com.atlassian.confluence.security.SpacePermission;
+import com.atlassian.confluence.security.SpacePermissionManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
@@ -15,10 +18,9 @@ import com.atlassian.user.UserManager;
 import com.google.common.collect.Lists;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -26,17 +28,22 @@ import static org.junit.Assert.assertTrue;
 @RunWith (AtlassianPluginsTestRunner.class)
 public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
 {
+    private static final String JEDI_SPACE_KEY = "JEDI" + System.currentTimeMillis();
     private final SpaceManager spaceManager;
+    private final SpacePermissionManager spacePermissionManager;
+    private Space jediSpace;
 
     public ConfluenceSpaceAdminScopeTest(TestPluginInstaller testPluginInstaller,
                                          JwtApplinkFinder jwtApplinkFinder,
                                          PermissionManager confluencePermissionManager,
                                          UserManager userManager,
                                          SpaceManager spaceManager,
-                                         TestAuthenticator testAuthenticator)
+                                         TestAuthenticator testAuthenticator,
+                                         SpacePermissionManager spacePermissionManager)
     {
         super(testPluginInstaller, jwtApplinkFinder, confluencePermissionManager, userManager, testAuthenticator);
         this.spaceManager = spaceManager;
+        this.spacePermissionManager = spacePermissionManager;
     }
 
     @Override
@@ -51,6 +58,14 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
         return false;
     }
 
+    @After
+    public void cleanup() {
+        if (jediSpace != null)
+        {
+            spaceManager.removeSpace(jediSpace);
+        }
+    }
+
     @Test
     public void addonIsMadeAdminOfExistingSpace() throws Exception
     {
@@ -60,7 +75,8 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
 
         for (Space space : allSpaces)
         {
-            boolean canAdminister = confluencePermissionManager.hasPermission(getAddonUser(), Permission.ADMINISTER, space);
+            final ConfluenceUser addonUser = getAddonUser();
+            boolean canAdminister = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, space, addonUser);
             if (!canAdminister)
             {
                 spaceAdminErrors.add("Add-on user " + getAddonUsername() + " should have administer permission for space " + space.getKey());
@@ -75,9 +91,11 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
     {
         ConfluenceUser admin = FindUserHelper.getUserByUsername("admin");
 
-        Space jediSpace = spaceManager.createSpace("JEDI", "Knights of the Old Republic", "It's a trap!", admin);
+        jediSpace = spaceManager.createSpace(JEDI_SPACE_KEY, "Knights of the Old Republic", "It's a trap!", admin);
 
-        boolean addonCanAdministerNewSpace = confluencePermissionManager.hasPermission(getAddonUser(), Permission.ADMINISTER, jediSpace);
+        final ConfluenceUser addonUser = getAddonUser();
+
+        boolean addonCanAdministerNewSpace = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, jediSpace, addonUser);
         assertTrue("Add-on user " + getAddonUsername() + " should have administer permission for space " + jediSpace.getKey(), addonCanAdministerNewSpace);
     }
 }
