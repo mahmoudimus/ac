@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.usermanagement.confluence;
 
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermission;
 import com.atlassian.confluence.security.SpacePermissionManager;
 import com.atlassian.confluence.spaces.Space;
@@ -35,15 +36,18 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     // even get the page summary of a page that is open to anonymous access.
     private static final ImmutableSet<String> GROUPS = ImmutableSet.of("confluence-users");
 
+    private final PermissionManager confluencePermissionManager;
     private final SpacePermissionManager spacePermissionManager;
     private final SpaceManager spaceManager;
     private final UserAccessor userAccessor;
     private final UserManager userManager;
 
     @Autowired
-    public ConfluenceAddOnUserProvisioningService(SpacePermissionManager spacePermissionManager, SpaceManager spaceManager,
+    public ConfluenceAddOnUserProvisioningService(PermissionManager confluencePermissionManager,
+            SpacePermissionManager spacePermissionManager, SpaceManager spaceManager,
             UserAccessor userAccessor, UserManager userManager)
     {
+        this.confluencePermissionManager = confluencePermissionManager;
         this.spacePermissionManager = spacePermissionManager;
         this.spaceManager = spaceManager;
         this.userAccessor = userAccessor;
@@ -106,7 +110,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     private void grantAddonUserGlobalAdmin(ConfluenceUser confluenceAddonUser)
     {
-        if (spacePermissionManager.hasPermission(CONFLUENCE_ADMINISTRATOR_PERMISSION, null, confluenceAddonUser))
+        if (confluencePermissionManager.isConfluenceAdministrator(confluenceAddonUser))
         {
 //            throw new UnsupportedOperationException("How do you even set this permission");
         }

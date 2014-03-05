@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.google.common.collect.ImmutableSet;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,14 +25,17 @@ public abstract class AdminScopeTestBase
 {
     protected final TestPluginInstaller testPluginInstaller;
     private final JwtApplinkFinder jwtApplinkFinder;
+    private final TestAuthenticator testAuthenticator;
 
     private Plugin plugin;
 
     public AdminScopeTestBase(TestPluginInstaller testPluginInstaller,
-                              JwtApplinkFinder jwtApplinkFinder)
+                              JwtApplinkFinder jwtApplinkFinder,
+                              TestAuthenticator testAuthenticator)
     {
         this.testPluginInstaller = checkNotNull(testPluginInstaller);
         this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder);
+        this.testAuthenticator = checkNotNull(testAuthenticator);
     }
 
     @Test
@@ -53,6 +57,7 @@ public abstract class AdminScopeTestBase
     @BeforeClass
     public void setUp() throws IOException
     {
+        testAuthenticator.authenticateUser("admin");
         plugin = installPlugin();
     }
 
