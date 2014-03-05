@@ -5,7 +5,8 @@ from malicious or accidental changes, and encourages them to install more Connec
 install add-ons without compromising their data.
 
 Connect's security goals are to
-* identifies add-ons,
+
+* identify add-ons,
 * work out what each add-on can do,
 * accept allowed actions with minimal friction,
 * clearly reject disallowed actions,
