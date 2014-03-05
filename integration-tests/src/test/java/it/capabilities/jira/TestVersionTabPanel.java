@@ -9,14 +9,19 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanel
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
+import it.servlet.condition.ParameterCapturingConditionServlet;
 import org.junit.*;
 import org.junit.rules.TestRule;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -31,11 +36,14 @@ public class TestVersionTabPanel extends TestBase
 
     private static ConnectRunner remotePlugin;
 
+    private long projectId;
     private String versionId;
     private static final String VERSION_NAME = "2.7.1";
 
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
+
+    private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -47,9 +55,14 @@ public class TestVersionTabPanel extends TestBase
                         .withKey(MODULE_KEY)
                         .withUrl("/ipp?version_id={version.id}&project_id={project.id}&project_key={project.key}")
                         .withWeight(1234)
-                        .withConditions(toggleableConditionBean())
+                        .withConditions(
+                            toggleableConditionBean(),
+                            newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
+                                    "?version_id={version.id}&project_id={project.id}&project_key={project.key}").build()
+                        )
                         .build())
                 .addRoute("/ipp", ConnectAppServlets.apRequestServlet())
+                .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
 
@@ -65,7 +78,7 @@ public class TestVersionTabPanel extends TestBase
     @Before
     public void setUpTest() throws Exception
     {
-        backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
+        projectId = backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
         final VersionClient versionClient = new VersionClient(jira().environmentData());
         versionId = Long.toString(versionClient.create(new Version().name(VERSION_NAME + System.currentTimeMillis()).project(PROJECT_KEY)).id);
     }
@@ -87,6 +100,11 @@ public class TestVersionTabPanel extends TestBase
 
         assertThat(versionTabPage.getVersionId(), equalTo(versionId));
         assertThat(versionTabPage.getProjectKey(), equalTo(PROJECT_KEY));
+
+        Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
+        assertThat(conditionRequestParams, hasEntry("version_id", versionId));
+        assertThat(conditionRequestParams, hasEntry("project_id", String.valueOf(projectId)));
+        assertThat(conditionRequestParams, hasEntry("project_key", PROJECT_KEY));
     }
 
     @Test

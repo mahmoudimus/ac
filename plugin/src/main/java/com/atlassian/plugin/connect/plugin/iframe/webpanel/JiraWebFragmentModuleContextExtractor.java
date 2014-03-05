@@ -140,6 +140,26 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
                         }
                         moduleContext.addProfileUser(profile);
                     }
+                },
+                new ParameterExtractor<Map<String, String>>()
+                {
+                    @Override
+                    public String getContextKey()
+                    {
+                        return WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
+                    }
+
+                    @Override
+                    public Class getExpectedType()
+                    {
+                        return Map.class;
+                    }
+
+                    @Override
+                    public void addToContext(final JiraModuleContextParameters moduleContext, final Map<String, String> value)
+                    {
+                        moduleContext.putAll(value);
+                    }
                 }
         );
     }
