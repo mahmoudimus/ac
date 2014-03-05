@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import it.com.atlassian.plugin.connect.TestAuthenticator;
+
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
@@ -52,6 +54,7 @@ public class JiraProjectAdminScopeTest
     private final ProjectRoleService projectRoleService;
     private final UserManager userManager;
     private final TestPluginInstaller testPluginInstaller;
+    private final TestAuthenticator testAuthenticator;
 
     private ConnectAddonBean projectAdminAddOn;
     private ConnectAddonBean writeAddOn;
@@ -60,7 +63,7 @@ public class JiraProjectAdminScopeTest
     public JiraProjectAdminScopeTest(ConnectAddOnUserService connectAddOnUserService,
                                      PermissionManager permissionManager, ProjectService projectService,
                                      ProjectRoleService projectRoleService, UserManager userManager,
-                                     TestPluginInstaller testPluginInstaller)
+                                     TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
         this.connectAddOnUserService = connectAddOnUserService;
         this.permissionManager = permissionManager;
@@ -68,6 +71,7 @@ public class JiraProjectAdminScopeTest
         this.projectRoleService = projectRoleService;
         this.userManager = userManager;
         this.testPluginInstaller = testPluginInstaller;
+        this.testAuthenticator = testAuthenticator;
     }
 
     @Before
@@ -96,6 +100,9 @@ public class JiraProjectAdminScopeTest
         this.adminAddOn = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.ADMIN))
                 .build();
+        
+        //you MUST login as admin before you can use the testPluginInstaler
+        testAuthenticator.authenticateUser("admin");
     }
 
     @Test
