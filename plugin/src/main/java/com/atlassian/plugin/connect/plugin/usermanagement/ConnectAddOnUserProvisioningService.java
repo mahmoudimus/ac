@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 
 public interface ConnectAddOnUserProvisioningService
 {
-    void provisionAddonUserForScopes(String userKey, Set<ScopeName> scopes);
+    void provisionAddonUserForScopes(String userKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
 
     /**
      * The keys of product groups of which add-on users should by default be members. Don't create these groups if they

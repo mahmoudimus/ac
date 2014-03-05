@@ -265,7 +265,7 @@ public class ConnectAddonManager
         else
         {
             ConnectAddonBean addonBean = ConnectModulesGsonFactory.getGson().fromJson(descriptor, ConnectAddonBean.class);
-            String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey, addonBean.getScopes());
+            String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey);
             ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
 
             if (null != applicationLink)

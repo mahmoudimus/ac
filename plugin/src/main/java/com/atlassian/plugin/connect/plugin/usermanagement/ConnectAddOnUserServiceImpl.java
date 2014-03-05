@@ -20,13 +20,11 @@ import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -65,12 +63,12 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     }
 
     @Override
-    public String getOrCreateUserKey(String addOnKey, Set<ScopeName> scopes) throws ConnectAddOnUserInitException
+    public String getOrCreateUserKey(String addOnKey) throws ConnectAddOnUserInitException
     {
         // Oh how I long for Java 7's conciser catch semantics.
         try
         {
-            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey, scopes);
+            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey);
         }
         catch (InvalidCredentialException e)
         {
@@ -107,20 +105,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         catch (ApplicationNotFoundException e)
         {
             throw new ConnectAddOnUserInitException(e);
-        }
-    }
-
-    @Override
-    public User getUserByAddOnKey(String addOnKey)
-    {
-        String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;
-        try
-        {
-            return findUserByKey(userKey);
-        }
-        catch (ApplicationNotFoundException e)
-        {
-            throw new IllegalStateException(e);
         }
     }
 
@@ -184,7 +168,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return null != user && user.isActive();
     }
 
-    private String createOrEnableAddOnUser(String userKey, Set<ScopeName> scopes) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
         ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
         User user = ensureUserExists(userKey);
@@ -204,28 +188,49 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             }
         }
 
-        Set<ScopeName> normalizedScopes = normalizeScopes(scopes);
-
-        if (normalizedScopes.contains(ScopeName.ADMIN))
-        {
-            ensureGroupExistsAndIsAdmin(ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
-            ensureUserIsInGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
-        }
-
-        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, normalizedScopes);
-
         return user.getName();
     }
 
-    private Set<ScopeName> normalizeScopes(Set<ScopeName> scopes)
+    @Override
+    public String provisionAddonUserForScopes(String addOnKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        HashSet<ScopeName> normalizedScopes = Sets.newHashSet();
-        for (ScopeName scopeName : scopes)
+        String userKey = getOrCreateUserKey(addOnKey);
+
+        if (newScopes.contains(ScopeName.ADMIN) && !previousScopes.contains(ScopeName.ADMIN))
         {
-            normalizedScopes.add(scopeName);
-            normalizedScopes.addAll(scopeName.getImplied());
+            try
+            {
+                //TODO: Should this be shared between JIRA and Confluence?
+                ensureGroupExistsAndIsAdmin(ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
+                ensureUserIsInGroup(userKey, ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
+            }
+            catch (OperationFailedException e)
+            {
+                throw new ConnectAddOnUserInitException(e);
+            }
+            catch (ApplicationNotFoundException e)
+            {
+                throw new ConnectAddOnUserInitException(e);
+            }
+            catch (ApplicationPermissionException e)
+            {
+                throw new ConnectAddOnUserInitException(e);
+            }
+            catch (UserNotFoundException e)
+            {
+                throw new ConnectAddOnUserInitException(e);
+            }
+            catch (MembershipAlreadyExistsException e)
+            {
+                throw new ConnectAddOnUserInitException(e);
+            }
+            catch (GroupNotFoundException e)
+            {
+                throw new ConnectAddOnUserInitException(e);
+            }
         }
-        return normalizedScopes;
+        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, previousScopes, newScopes);
+        return userKey;
     }
 
     private void ensureUserIsInGroup(String userKey, String groupKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException, ApplicationNotFoundException

@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -52,17 +51,18 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     }
 
     @Override
-    public void provisionAddonUserForScopes(String addonUserKey, Set<ScopeName> scopes)
+    public void provisionAddonUserForScopes(String addonUserKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        checkNotNull(scopes);
+        checkNotNull(previousScopes);
+        checkNotNull(newScopes);
 
         final ConfluenceUser confluenceAddonUser = getConfluenceUser(addonUserKey);
 
-        if (scopes.contains(ScopeName.ADMIN))
+        if (newScopes.contains(ScopeName.ADMIN) && !previousScopes.contains(ScopeName.ADMIN))
         {
             grantAddonUserGlobalAdmin(confluenceAddonUser);
         }
-        else if (scopes.contains(ScopeName.SPACE_ADMIN))
+        else if (newScopes.contains(ScopeName.SPACE_ADMIN) && !previousScopes.contains(ScopeName.SPACE_ADMIN))
         {
             // add space admin to all spaces
             grantAddonUserSpaceAdmin(confluenceAddonUser);

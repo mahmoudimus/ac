@@ -17,6 +17,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -98,23 +99,26 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     }
 
     @Override
-    public void provisionAddonUserForScopes(final String userKey, final Set<ScopeName> scopes)
+    public void provisionAddonUserForScopes(final String userKey, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
         ApplicationUser user = userManager.getUserByKey(userKey);
-        if (scopes.contains(ScopeName.PROJECT_ADMIN))
+        if (newScopes.contains(ScopeName.PROJECT_ADMIN) && !previousScopes.contains(ScopeName.PROJECT_ADMIN))
         {
-            if (!scopes.contains(ScopeName.ADMIN))
+            if (!newScopes.contains(ScopeName.ADMIN))
             {
                 updateProjectAdminScopePermissions(user);
             }
         }
-        else
+        else if (!newScopes.contains(ScopeName.PROJECT_ADMIN) && previousScopes.contains(ScopeName.PROJECT_ADMIN))
         {
-            removeProjectAdminScopePermissions(user);
+            if (!previousScopes.contains(ScopeName.ADMIN))
+            {
+                removeProjectAdminScopePermissions(user);
+            }
         }
     }
 
-    private void updateProjectAdminScopePermissions(ApplicationUser addOnUser)
+    private void updateProjectAdminScopePermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
         ProjectRole projectRole = updateConnectProjectRole(errorCollection);
@@ -144,7 +148,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         );
     }
 
-    private void removeProjectAdminScopePermissions(ApplicationUser addOnUser)
+    private void removeProjectAdminScopePermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
         ProjectRole projectRole = projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME, errorCollection);
