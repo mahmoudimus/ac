@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePlugi
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.servlet.condition.ParameterCapturingConditionServlet;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -15,10 +16,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -36,6 +41,8 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
+    private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
+
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
@@ -46,9 +53,15 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
                         .withKey(MODULE_KEY)
                         .withUrl("/ptp")
                         .withWeight(1234)
-                        .withConditions(toggleableConditionBean())
-                        .build())
+                        .withConditions(
+                            toggleableConditionBean(),
+                            newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
+                                    "?issueId={issue.id}&projectKey={project.key}&projectId={project.id}").build()
+                        )
+                        .build()
+                )
                 .addRoute("/ptp", ConnectAppServlets.apRequestServlet())
+                .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
 
@@ -73,6 +86,11 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
                                                            .openTab(AppProjectTabPage.class)
                                                            .getEmbeddedPage();
                 assertEquals("Success", page.getMessage());
+
+                Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
+                assertThat(conditionRequestParams, hasEntry("projectKey", project.getKey()));
+                assertThat(conditionRequestParams, hasEntry("projectId", project.getId()));
+
                 return null;
             }
         });

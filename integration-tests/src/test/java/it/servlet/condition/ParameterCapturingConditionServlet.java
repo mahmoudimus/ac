@@ -14,6 +14,11 @@ import com.google.common.collect.Maps;
 
 public class ParameterCapturingConditionServlet extends HttpServlet
 {
+    /**
+     * The suggested (though not mandatory) route for this servlet.
+     */
+    public static final String PARAMETER_CAPTURE_URL = "/parameterCapture";
+
     private static final Function<String[],String> HEAD_ARRAY = new Function<String[], String>()
     {
         @Override
