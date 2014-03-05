@@ -13,8 +13,8 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
-import java.util.Map;
 import javax.inject.Inject;
+import java.util.Map;
 
 /**
  *

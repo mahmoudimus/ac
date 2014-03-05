@@ -1,16 +1,11 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
-import java.io.IOException;
-import java.io.Serializable;
-
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.impl.PageConditionsValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.sal.api.message.I18nResolver;
-
 import com.opensymphony.util.FileUtils;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,8 +13,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.DefaultResourceLoader;
 
+import java.io.IOException;
+
 import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 

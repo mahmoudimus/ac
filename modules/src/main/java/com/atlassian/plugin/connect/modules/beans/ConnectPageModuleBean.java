@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.List;
-
 import com.atlassian.json.schema.annotation.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;

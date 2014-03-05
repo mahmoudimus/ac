@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.usermanagement.confluence;
 
-import java.util.List;
-
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermission;
 import com.atlassian.confluence.security.SpacePermissionManager;
@@ -21,6 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 

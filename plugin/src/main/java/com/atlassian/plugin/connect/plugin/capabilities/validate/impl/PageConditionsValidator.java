@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.validate.impl;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
@@ -15,12 +7,15 @@ import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.sal.api.message.I18nResolver;
-
-import com.google.common.collect.ImmutableList;
-import com.nimbusds.jwt.JWT;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 

@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
@@ -20,6 +15,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

@@ -1,16 +1,15 @@
 package it.servlet.condition;
 
-import java.io.IOException;
-import java.util.Map;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
+import java.io.IOException;
+import java.util.Map;
 
 public class ParameterCapturingConditionServlet extends HttpServlet
 {

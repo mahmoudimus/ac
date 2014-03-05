@@ -1,5 +1,19 @@
 package com.atlassian.json.schema.doclet;
 
+import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
+import com.atlassian.json.schema.annotation.SchemaIgnore;
+import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
+import com.atlassian.json.schema.doclet.model.SchemaClassDoc;
+import com.atlassian.json.schema.doclet.model.SchemaFieldDoc;
+import com.atlassian.json.schema.util.StringUtil;
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
+import com.google.common.io.Files;
+import com.google.gson.Gson;
+import com.sun.javadoc.*;
+import com.sun.tools.javadoc.DocImpl;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -8,21 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
-import com.atlassian.json.schema.annotation.SchemaIgnore;
-import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
-import com.atlassian.json.schema.doclet.model.SchemaClassDoc;
-import com.atlassian.json.schema.doclet.model.SchemaFieldDoc;
-import com.atlassian.json.schema.util.StringUtil;
-
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Charsets;
-import com.google.common.base.Strings;
-import com.google.common.io.Files;
-import com.google.gson.Gson;
-import com.sun.javadoc.*;
-import com.sun.tools.javadoc.DocImpl;
 
 public class JsonSchemaDoclet
 {
