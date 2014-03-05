@@ -66,6 +66,7 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
             try
             {
                 spaceManager.removeSpace(jediSpace);
+                jediSpace = null;
             }
             catch (Exception e)
             {
