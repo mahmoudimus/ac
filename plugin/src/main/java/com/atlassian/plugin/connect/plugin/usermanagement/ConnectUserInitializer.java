@@ -2,8 +2,6 @@ package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.predicate.PluginPredicate;
@@ -58,8 +56,7 @@ public class ConnectUserInitializer implements InitializingBean
             }
             else
             {
-                ConnectAddonBean addonBean = ConnectModulesGsonFactory.getGson().fromJson(descriptor, ConnectAddonBean.class);
-                connectAddOnUserService.getOrCreateUserKey(connectAddOn.getKey(), addonBean.getScopes());
+                connectAddOnUserService.getOrCreateUserKey(connectAddOn.getKey());
             }
         }
         catch (ConnectAddOnUserInitException e)

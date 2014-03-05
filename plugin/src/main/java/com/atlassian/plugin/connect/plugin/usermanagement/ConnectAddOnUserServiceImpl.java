@@ -54,12 +54,12 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     }
 
     @Override
-    public String getOrCreateUserKey(String addOnKey, Set<ScopeName> scopes) throws ConnectAddOnUserInitException
+    public String getOrCreateUserKey(String addOnKey) throws ConnectAddOnUserInitException
     {
         // Oh how I long for Java 7's conciser catch semantics.
         try
         {
-            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey, scopes);
+            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey);
         }
         catch (InvalidCredentialException e)
         {
@@ -96,20 +96,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         catch (ApplicationNotFoundException e)
         {
             throw new ConnectAddOnUserInitException(e);
-        }
-    }
-
-    @Override
-    public User getUserByAddOnKey(String addOnKey)
-    {
-        String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;
-        try
-        {
-            return findUserByKey(userKey);
-        }
-        catch (ApplicationNotFoundException e)
-        {
-            throw new IllegalStateException(e);
         }
     }
 
@@ -173,7 +159,15 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return null != user && user.isActive();
     }
 
-    private String createOrEnableAddOnUser(String userKey, Set<ScopeName> scopes) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    @Override
+    public String provisionAddonUserForScopes(String addOnKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    {
+        String userKey = getOrCreateUserKey(addOnKey);
+        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, previousScopes, newScopes);
+        return userKey;
+    }
+
+    private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
         User user = ensureUserExists(userKey);
@@ -193,7 +187,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             }
         }
 
-        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, scopes);
         return user.getName();
     }
 

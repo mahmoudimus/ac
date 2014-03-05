@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION;
 
 @SuppressWarnings ("unused")
 @ConfluenceComponent
@@ -54,16 +53,17 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     }
 
     @Override
-    public void provisionAddonUserForScopes(String addonUserKey, Set<ScopeName> scopes)
+    public void provisionAddonUserForScopes(String addonUserKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
         final ConfluenceUser confluenceAddonUser = getConfluenceUser(addonUserKey);
-        Set<ScopeName> normalizedScopes = ScopeName.normalize(scopes);
+        Set<ScopeName> previousScopesNormalized = ScopeName.normalize(previousScopes);
+        Set<ScopeName> newScopesNormalized = ScopeName.normalize(newScopes);
 
-        if (normalizedScopes.contains(ScopeName.ADMIN))
+        if (newScopes.contains(ScopeName.ADMIN))
         {
             grantAddonUserGlobalAdmin(confluenceAddonUser);
         }
-        else if (normalizedScopes.contains(ScopeName.SPACE_ADMIN))
+        else if (newScopes.contains(ScopeName.SPACE_ADMIN) && !previousScopes.contains(ScopeName.SPACE_ADMIN))
         {
             // add space admin to all spaces
             grantAddonUserSpaceAdmin(confluenceAddonUser);

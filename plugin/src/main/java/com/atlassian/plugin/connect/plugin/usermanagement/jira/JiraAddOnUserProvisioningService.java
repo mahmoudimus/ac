@@ -106,9 +106,11 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     }
 
     @Override
-    public void provisionAddonUserForScopes(final String userKey, final Set<ScopeName> scopes) throws ApplicationPermissionException, ApplicationNotFoundException, OperationFailedException, ConnectAddOnUserInitException
+    public void provisionAddonUserForScopes(final String userKey, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        Set<ScopeName> normalizedScopes = ScopeName.normalize(scopes);
+        Set<ScopeName> normalizedPreviousScopes = ScopeName.normalize(previousScopes);
+        Set<ScopeName> normalizedNewScopes = ScopeName.normalize(newScopes);
+
         ApplicationUser user = userManager.getUserByName(userKey);
 
         if (null == user)
@@ -116,26 +118,26 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             throw new IllegalArgumentException(String.format("Cannot provision non-existent user '%s': please create it first!", userKey));
         }
 
-        if (normalizedScopes.contains(ScopeName.ADMIN))
+        if (normalizedNewScopes.contains(ScopeName.ADMIN))
         {
             makeUserGlobalAdmin(user);
         }
-        else if (normalizedScopes.contains(ScopeName.PROJECT_ADMIN))
+        else if (normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN) && !normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN))
         {
             updateProjectAdminScopePermissions(user);
         }
-        else
+
+        if (!normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN) && normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN))
         {
             removeProjectAdminScopePermissions(user);
         }
     }
 
-    private void makeUserGlobalAdmin(ApplicationUser user) throws ConnectAddOnUserInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException
+    private void makeUserGlobalAdmin(ApplicationUser user) throws ConnectAddOnUserInitException
     {
-        ensureGroupExistsAndIsAdmin(ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
-
         try
         {
+            ensureGroupExistsAndIsAdmin(ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
             connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
         }
         catch (GroupNotFoundException e)
@@ -148,6 +150,18 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         {
             // this should never happen because we've just "successfully" ensured that the user exists,
             // so if it does then it's programmer error and not part of this interface method's signature
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (ApplicationPermissionException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (OperationFailedException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (ApplicationNotFoundException e)
+        {
             throw new ConnectAddOnUserInitException(e);
         }
     }
