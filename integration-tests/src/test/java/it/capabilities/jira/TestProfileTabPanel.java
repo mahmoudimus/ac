@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.InsufficientPermission
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.servlet.condition.ParameterCapturingConditionServlet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -16,11 +17,17 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static it.matcher.IsNotBlank.isNotBlank;
+import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -33,6 +40,8 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
+    private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
+
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
@@ -44,9 +53,13 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
                                 .withKey("profile-tab-panel")
                                 .withUrl("/myProfileAddon")
                                 .withWeight(1234)
-                                .withConditions(toggleableConditionBean())
+                                .withConditions(
+                                        toggleableConditionBean(),
+                                        newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
+                                                "?pUserKey={profileUser.key}&pUserName={profileUser.name}").build())
                                 .build())
                 .addRoute("/myProfileAddon", ConnectAppServlets.apRequestServlet())
+                .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
 
@@ -69,6 +82,10 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
         RemotePluginEmbeddedTestPage remotePage = tabPanel.click();
         assertThat(remotePage.isLoaded(), equalTo(true));
         assertThat(remotePage.getMessage(), equalTo("Success"));
+
+        Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
+        assertThat(conditionRequestParams, hasEntry("pUserName", "admin"));
+        assertThat(conditionRequestParams, hasEntry(is("pUserKey"), isNotBlank()));
     }
 
     @Test

@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public interface IFrameRenderStrategy
 {
-    boolean shouldShow(Map<String, Object> conditionContext);
+    boolean shouldShow(Map<String, ? extends Object> conditionContext);
 
     void shouldShowOrThrow(Map<String, Object> conditionContext);
 
