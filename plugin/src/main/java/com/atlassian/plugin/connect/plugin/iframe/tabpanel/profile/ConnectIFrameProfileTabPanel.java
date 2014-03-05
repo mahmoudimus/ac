@@ -10,11 +10,13 @@ import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContext
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.collect.ImmutableMap;
 
-import java.util.Collections;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderAccessDeniedToString;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
+import static com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
 
 /**
  *
@@ -42,22 +44,25 @@ public class ConnectIFrameProfileTabPanel implements ViewProfilePanel
     @Override
     public String getHtml(final User profileUser)
     {
-        if (iFrameRenderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
+        ModuleContextParameters unfilteredContext = createUnfilteredContext(profileUser);
+        Map<String, ModuleContextParameters> conditionContext = ImmutableMap.of(MODULE_CONTEXT_KEY, unfilteredContext);
+
+        if (iFrameRenderStrategy.shouldShow(conditionContext))
         {
-            UserProfile userProfile = userManager.getUserProfile(profileUser.getName());
-            // parse and filter module context
-            JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
-            unfilteredContext.addProfileUser(userProfile);
-
-            ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
-
-            // render tab HTML
-            return renderToString(filteredContext, iFrameRenderStrategy);
+            return renderToString(moduleContextFilter.filter(unfilteredContext), iFrameRenderStrategy);
         }
         else
         {
             return renderAccessDeniedToString(iFrameRenderStrategy);
         }
+    }
+
+    private ModuleContextParameters createUnfilteredContext(final User profileUser)
+    {
+        UserProfile userProfile = userManager.getUserProfile(profileUser.getName());
+        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
+        unfilteredContext.addProfileUser(userProfile);
+        return unfilteredContext;
     }
 
 }

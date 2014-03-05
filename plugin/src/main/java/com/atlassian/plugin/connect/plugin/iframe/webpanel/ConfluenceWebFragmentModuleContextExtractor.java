@@ -77,6 +77,12 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
             moduleContext.addProfileUser(profile);
         }
 
+        ModuleContextParameters nestedContext = (ModuleContextParameters) webFragmentContext.get(MODULE_CONTEXT_KEY);
+        if (nestedContext != null)
+        {
+            moduleContext.putAll(nestedContext);
+        }
+
         return moduleContext;
     }
 
