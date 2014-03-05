@@ -16,6 +16,13 @@ public interface ConnectAddOnUserGroupProvisioningService
     void ensureUserIsInGroup(String userKey, String groupKey) throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException;
 
     /**
+     * Remove the user from the nominated group. It is not an error condition if the user is not a member of the group.
+     * @param userKey
+     * @param groupKey
+     */
+    void removeUserFromGroup(String userKey, String groupKey) throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException;
+
+    /**
      * Ensure that the nominated group exists. Create it if it doesn't already exist.
      * @param groupKey the unique group identifier
      * @return {@code true} if the group was created, otherwise {@code false}

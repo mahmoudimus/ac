@@ -87,51 +87,38 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         return GROUPS;
     }
 
-    private void ensureGroupHasProductAdminPermission(String groupKey)
-    {
-        if (!groupHasProductAdminPermission(groupKey))
-        {
-            jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
-        }
-    }
-
-    private boolean groupHasProductAdminPermission(final String groupKey)
-    {
-        checkNotNull(groupKey);
-        return any(jiraPermissionManager.getGroupsWithPermission(ADMIN_PERMISSION), new Predicate<Group>()
-        {
-            @Override
-            public boolean apply(@Nullable Group group)
-            {
-                return null != group && groupKey.equals(group.getName());
-            }
-        });
-    }
-
     @Override
     public void provisionAddonUserForScopes(final String userKey, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
         Set<ScopeName> normalizedPreviousScopes = ScopeName.normalize(previousScopes);
         Set<ScopeName> normalizedNewScopes = ScopeName.normalize(newScopes);
 
-        ApplicationUser user = userManager.getUserByName(userKey);
+        ApplicationUser user = userManager.getUserByKey(userKey);
 
         if (null == user)
         {
             throw new IllegalArgumentException(String.format("Cannot provision non-existent user '%s': please create it first!", userKey));
         }
 
+        // x to ADMIN scope transition
         if (normalizedNewScopes.contains(ScopeName.ADMIN))
         {
             makeUserGlobalAdmin(user);
         }
+        // x to PROJECT_ADMIN scope transition
         else if (normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN)
                 && (!normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN) || normalizedPreviousScopes.contains(ScopeName.ADMIN)))
         {
             updateProjectAdminScopePermissions(user);
         }
 
-        if (normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN)
+        // ADMIN to x scope transition
+        if (normalizedPreviousScopes.contains(ScopeName.ADMIN) && !normalizedNewScopes.contains(ScopeName.ADMIN))
+        {
+            removeUserFromGlobalAdmins(user);
+        }
+        // PROJECT_ADMIN to x scope transition
+        else if (normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN)
                 && (!normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN) || normalizedNewScopes.contains(ScopeName.ADMIN)))
         {
             removeProjectAdminScopePermissions(user);
@@ -171,6 +158,36 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
     }
 
+    private void removeUserFromGlobalAdmins(ApplicationUser user) throws ConnectAddOnUserInitException
+    {
+        try
+        {
+            connectAddOnUserGroupProvisioningService.removeUserFromGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
+        }
+        catch (OperationFailedException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (ApplicationNotFoundException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (ApplicationPermissionException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (UserNotFoundException e)
+        {
+            // shouldn't happen
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (GroupNotFoundException e)
+        {
+            // someone removed the group, so we can't guarantee that the user is no longer admin
+            throw new ConnectAddOnUserInitException(e);
+        }
+    }
+
     private void ensureGroupExistsAndIsAdmin(String groupKey) throws ConnectAddOnUserInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException
     {
         final boolean created = connectAddOnUserGroupProvisioningService.ensureGroupExists(groupKey);
@@ -187,6 +204,27 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                     "Aborting user setup.",
                     groupKey));
         }
+    }
+
+    private void ensureGroupHasProductAdminPermission(String groupKey)
+    {
+        if (!groupHasProductAdminPermission(groupKey))
+        {
+            jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
+        }
+    }
+
+    private boolean groupHasProductAdminPermission(final String groupKey)
+    {
+        checkNotNull(groupKey);
+        return any(jiraPermissionManager.getGroupsWithPermission(ADMIN_PERMISSION), new Predicate<Group>()
+        {
+            @Override
+            public boolean apply(@Nullable Group group)
+            {
+                return null != group && groupKey.equals(group.getName());
+            }
+        });
     }
 
     private void updateProjectAdminScopePermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException

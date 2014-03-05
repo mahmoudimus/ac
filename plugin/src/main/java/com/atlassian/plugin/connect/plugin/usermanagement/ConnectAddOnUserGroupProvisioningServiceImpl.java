@@ -47,6 +47,19 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
     }
 
     @Override
+    public void removeUserFromGroup(String userKey, String groupKey) throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException
+    {
+        try
+        {
+            applicationService.removeUserFromGroup(getApplication(), userKey, groupKey);
+        }
+        catch (MembershipNotFoundException e)
+        {
+            // ignore, we wanted to remove the member anyway
+        }
+    }
+
+    @Override
     public boolean ensureGroupExists(String groupKey) throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException
     {
         boolean created = false;

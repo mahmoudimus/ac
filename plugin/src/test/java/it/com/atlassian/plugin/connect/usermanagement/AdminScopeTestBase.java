@@ -28,6 +28,7 @@ public abstract class AdminScopeTestBase
     private final TestAuthenticator testAuthenticator;
 
     private Plugin plugin;
+    private ConnectAddonBean addonBaseBean;
 
     public AdminScopeTestBase(TestPluginInstaller testPluginInstaller,
                               JwtApplinkFinder jwtApplinkFinder,
@@ -42,6 +43,16 @@ public abstract class AdminScopeTestBase
     public void hasCorrectAdminStatus()
     {
         assertEquals(shouldBeAdmin(), isUserAdmin(getAddonUsername()));
+    }
+
+    @Test
+    public void isNotAdminAfterDowngrade() throws Exception
+    {
+        ConnectAddonBean writeScopeBean = ConnectAddonBean.newConnectAddonBean(addonBaseBean)
+                .withScopes(ImmutableSet.of(ScopeName.WRITE))
+                .build();
+        plugin = testPluginInstaller.installPlugin(writeScopeBean);
+        assertEquals(false, isUserAdmin(getAddonUsername()));
     }
 
     protected abstract ScopeName getScope();
@@ -73,11 +84,14 @@ public abstract class AdminScopeTestBase
     private Plugin installPlugin() throws IOException
     {
         String key = "ac-test-" + System.currentTimeMillis();
-        ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()
+        addonBaseBean = ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
                 .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+                .build();
+
+        ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean(addonBaseBean)
                 .withScopes(ImmutableSet.of(getScope()))
                 .build();
 
