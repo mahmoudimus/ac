@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrat
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.servlet.condition.ParameterCapturingConditionServlet;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsCollectionContaining;
@@ -18,11 +19,15 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -36,6 +41,8 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     private static final String PROJECT_CONFIG_TAB_NAME = "My Connect Project Config";
 
     private static ConnectRunner remotePlugin;
+
+    private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
@@ -51,9 +58,14 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                         .withUrl("/pct")
                         .withWeight(10)
                         .withLocation("projectgroup4")
-                        .withConditions(toggleableConditionBean())
+                        .withConditions(
+                            toggleableConditionBean(),
+                            newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
+                                    "?projectKey={project.key}&projectId={project.id}").build()
+                        )
                         .build())
                 .addRoute("/pct", ConnectAppServlets.apRequestServlet())
+                .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
 
@@ -79,9 +91,14 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 
         // Test of workaround for JRA-26407.
         assertNotNull(remoteProjectAdministrationTab.getProjectHeader());
+
         assertEquals(PROJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
         assertEquals(project.getKey(), remoteProjectAdministrationTab.getProjectKey());
         assertEquals("Success", remoteProjectAdministrationTab.getMessage());
+
+        Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
+        assertThat(conditionRequestParams, hasEntry("projectKey", project.getKey()));
+        assertThat(conditionRequestParams, hasEntry("projectId", project.getId()));
     }
 
     @Test

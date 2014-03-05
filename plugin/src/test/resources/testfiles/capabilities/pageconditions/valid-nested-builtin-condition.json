@@ -1,0 +1,28 @@
+{
+    "key": "my-add-on",
+    "name": "My Add-On",
+    "version": "2.0",
+    "vendor": {
+        "name": "Atlassian",
+        "url": "http://www.atlassian.com"
+    },
+    "baseUrl": "http://www.example.com",
+    "authentication": {
+        "type": "none"
+    },
+    "modules": {
+        "generalPages": [{
+            "url": "/my-page",
+            "key":"my-page",
+            "name": {
+                "value": "Some page",
+                "i18n": "some.page.name"
+            },
+            "conditions":[{
+                "and":[{
+                    "condition":"user_is_logged_in"
+                }]
+            }]
+        }]
+    }
+}

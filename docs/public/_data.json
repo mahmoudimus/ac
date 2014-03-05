@@ -30,6 +30,9 @@
         "authentication.html": {
             "title": "Authentication"
         },
+		"understanding-jwt.html": {
+	    	"title": "Understanding JWT"
+		},
         "conditions.html": {
             "title": "Conditions"
         },

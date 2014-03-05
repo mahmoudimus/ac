@@ -30,6 +30,8 @@ requirejs.config({
     'iframe/_events': '../src/main/resources/js/iframe/_events',
     'iframe/_xdm': '../src/main/resources/js/iframe/_xdm',
     'iframe/_uri': '../src/main/resources/js/iframe/_uri',
+    'iframe/_base64': '../src/main/resources/js/iframe/_base64',
+    'iframe/_ui-params': '../src/main/resources/js/iframe/_ui-params',
     'iframe/host/main': '../src/main/resources/js/iframe/host/main'
   },
 
@@ -53,14 +55,22 @@ requirejs.config({
         deps: [
         'jquery',
         'aui-atlassian',
-        'iframe/_amd'
+        'iframe/_amd',
+        'iframe/_ui-params'
         ]
+    },
+    'iframe/_base64': {
+      deps: [
+        'iframe/host/_dollar',
+        'iframe/_amd',
+      ]
     },
     'inline-dialog/simple': {
       deps: [
         'iframe/host/_dollar',
         'iframe/host/content',
-        'iframe/host/_status_helper'
+        'iframe/host/_status_helper',
+        'iframe/_ui-params'
       ]
     },
     'iframe/host/_status_helper': {
@@ -78,6 +88,7 @@ requirejs.config({
     'dialog/main': {
       deps: [
         'iframe/host/_dollar',
+        'iframe/_ui-params',
         'iframe/host/content'
       ]
     },
@@ -107,6 +118,13 @@ requirejs.config({
     'iframe/_uri': {
       deps: [
       'iframe/_amd'
+      ]
+    },
+    'iframe/_ui-params': {
+      deps: [
+        'iframe/host/_dollar',
+        'iframe/_uri',
+        'iframe/_base64'
       ]
     },
     'iframe/_xdm': {

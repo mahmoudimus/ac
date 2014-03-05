@@ -11,13 +11,11 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.RAW_CLASSIFIER;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -85,7 +83,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                 WebItemModuleBean webItemBean = newWebItemBean()
                         .withName(bean.getName())
                         .withKey(bean.getKey())
-                        .withContext(product)
+                        .withContext(page)
                         .withUrl(ConnectIFrameServlet.iFrameServletPath(plugin.getKey(), bean.getKey()))
                         .withLocation(location)
                         .withWeight(weight)
