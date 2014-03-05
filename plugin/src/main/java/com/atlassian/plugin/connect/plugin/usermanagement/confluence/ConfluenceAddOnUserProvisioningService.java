@@ -60,9 +60,9 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     }
 
     @Override
-    public void provisionAddonUserForScopes(String addonUserKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
+    public void provisionAddonUserForScopes(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        final ConfluenceUser confluenceAddonUser = getConfluenceUser(addonUserKey);
+        final ConfluenceUser confluenceAddonUser = getConfluenceUser(username);
         Set<ScopeName> previousScopesNormalized = ScopeName.normalize(previousScopes);
         Set<ScopeName> newScopesNormalized = ScopeName.normalize(newScopes);
 
@@ -83,13 +83,13 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         return GROUPS;
     }
 
-    private ConfluenceUser getConfluenceUser(String userKeyString)
+    private ConfluenceUser getConfluenceUser(String username)
     {
-        UserProfile userProfile = userManager.getUserProfile(userKeyString);
+        UserProfile userProfile = userManager.getUserProfile(username);
 
         if (userProfile == null)
         {
-            throw new IllegalStateException("User for user key " + userKeyString + " does not exist");
+            throw new IllegalStateException("User for user key " + username + " does not exist");
         }
 
         return userAccessor.getExistingUserByKey(userProfile.getUserKey());

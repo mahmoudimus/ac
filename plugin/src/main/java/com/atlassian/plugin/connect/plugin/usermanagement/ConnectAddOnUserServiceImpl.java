@@ -162,9 +162,9 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Override
     public String provisionAddonUserForScopes(String addOnKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        String userKey = getOrCreateUserKey(addOnKey);
-        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, previousScopes, newScopes);
-        return userKey;
+        String username = getOrCreateUserKey(addOnKey);
+        connectAddOnUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
+        return username;
     }
 
     private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException

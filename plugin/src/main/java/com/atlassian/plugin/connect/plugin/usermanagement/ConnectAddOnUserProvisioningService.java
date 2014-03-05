@@ -6,7 +6,7 @@ import java.util.Set;
 
 public interface ConnectAddOnUserProvisioningService
 {
-    void provisionAddonUserForScopes(String userKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
+    void provisionAddonUserForScopes(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
 
     /**
      * The keys of product groups of which add-on users should by default be members. Don't create these groups if they
