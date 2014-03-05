@@ -411,6 +411,7 @@
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
+                    <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
                     <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
                     <testBundleExcludes>
                         <testBundleExclude>
@@ -1090,7 +1091,7 @@
         <devmode>true</devmode>
         <fastdev.version>2.2</fastdev.version>
         <toolbox.version>2.0.6</toolbox.version>
-        <plugin.testrunner.version>1.1.4</plugin.testrunner.version>
+        <plugin.testrunner.version>1.1.5</plugin.testrunner.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
