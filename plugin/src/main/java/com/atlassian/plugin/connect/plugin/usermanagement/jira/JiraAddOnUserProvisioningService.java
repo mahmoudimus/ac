@@ -109,7 +109,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     public void provisionAddonUserForScopes(final String userKey, final Set<ScopeName> scopes) throws ApplicationPermissionException, ApplicationNotFoundException, OperationFailedException, ConnectAddOnUserInitException
     {
         Set<ScopeName> normalizedScopes = ScopeName.normalize(scopes);
-        ApplicationUser user = userManager.getUserByKey(userKey);
+        ApplicationUser user = userManager.getUserByName(userKey);
 
         if (null == user)
         {
