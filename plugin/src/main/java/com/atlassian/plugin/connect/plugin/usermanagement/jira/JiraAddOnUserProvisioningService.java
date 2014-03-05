@@ -88,16 +88,16 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     }
 
     @Override
-    public void provisionAddonUserForScopes(final String userKey, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    public void provisionAddonUserForScopes(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
         Set<ScopeName> normalizedPreviousScopes = ScopeName.normalize(previousScopes);
         Set<ScopeName> normalizedNewScopes = ScopeName.normalize(newScopes);
 
-        ApplicationUser user = userManager.getUserByKey(userKey);
+        ApplicationUser user = userManager.getUserByName(username);
 
         if (null == user)
         {
-            throw new IllegalArgumentException(String.format("Cannot provision non-existent user '%s': please create it first!", userKey));
+            throw new IllegalArgumentException(String.format("Cannot provision non-existent user '%s': please create it first!", username));
         }
 
         // x to ADMIN scope transition
