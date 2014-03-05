@@ -1,5 +1,6 @@
 package it.com.atlassian.plugin.connect.usermanagement.confluence;
 
+import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermission;
 import com.atlassian.confluence.security.SpacePermissionManager;
@@ -76,6 +77,12 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
         for (Space space : allSpaces)
         {
             final ConfluenceUser addonUser = getAddonUser();
+
+            /*
+             * Confluence caches some security stuff on thread local and due to a bug we need to blast it away before checking permission
+             */
+            ThreadLocalCache.flush();
+
             boolean canAdminister = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, space, addonUser);
             if (!canAdminister)
             {
@@ -94,6 +101,11 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
         jediSpace = spaceManager.createSpace(JEDI_SPACE_KEY, "Knights of the Old Republic", "It's a trap!", admin);
 
         final ConfluenceUser addonUser = getAddonUser();
+
+        /*
+         * Confluence caches some security stuff on thread local and due to a bug we need to blast it away before checking permission
+         */
+        ThreadLocalCache.flush();
 
         boolean addonCanAdministerNewSpace = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, jediSpace, addonUser);
         assertTrue("Add-on user " + getAddonUsername() + " should have administer permission for space " + jediSpace.getKey(), addonCanAdministerNewSpace);
