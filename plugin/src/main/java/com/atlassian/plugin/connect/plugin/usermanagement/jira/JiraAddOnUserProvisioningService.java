@@ -125,12 +125,14 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         {
             makeUserGlobalAdmin(user);
         }
-        else if (normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN) && !normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN))
+        else if (normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN)
+                && (!normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN) || normalizedPreviousScopes.contains(ScopeName.ADMIN)))
         {
             updateProjectAdminScopePermissions(user);
         }
 
-        if (!normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN) && normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN))
+        if (normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN)
+                && (!normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN) || normalizedNewScopes.contains(ScopeName.ADMIN)))
         {
             removeProjectAdminScopePermissions(user);
         }
