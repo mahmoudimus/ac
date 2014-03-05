@@ -48,7 +48,7 @@ import static com.google.common.collect.Iterables.any;
 @ExportAsDevService
 public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
 {
-    private static final String CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME = "Atlassian Connect Add-Ons - Project Admin";
+    private static final String CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME = "atlassian-addons-project-admin";
     private static final String CONNECT_PROJECT_ADMIN_PROJECT_ROLE_DESC = "A project role that represents Connect add-ons declaring Project Admin scope";
     private static final String ATLASSIAN_ADDONS_ADMIN_GROUP_KEY = "atlassian-addons-admin";
 
