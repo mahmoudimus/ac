@@ -49,7 +49,7 @@ From the Atlassian application instance's perspective, the add-ons are software-
 end user, the add-on appears as a fully integrated part of the Atlassian application. After subscribing to the add-on,
 the features are delivered from within the UI and workflows of the host application.
 
-Most Atlassian Connect developers will choose to implement their add-ons as multi-tenant services. This means that a
+Most Atlassian Connect add-ons will be implemented as multi-tenanted services. This means that a
 single Atlassian Connect application must take into account multiple subscribing organizations. For example, each add-on
 will maintain subscriber-specific data and configuration. For more about multi-tenancy design considerations, see
 [Add-on Design Considerations](https://developer.atlassian.com/display/AC/Add-on+Design+Considerations).
