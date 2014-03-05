@@ -114,7 +114,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         Set<ScopeName> normalizedPreviousScopes = ScopeName.normalize(previousScopes);
         Set<ScopeName> normalizedNewScopes = ScopeName.normalize(newScopes);
 
-        ApplicationUser user = userManager.getUserByKey(userKey);
+        ApplicationUser user = userManager.getUserByName(userKey);
 
         if (null == user)
         {
