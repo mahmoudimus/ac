@@ -17,13 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @SuppressWarnings ("unused")
 @ConfluenceComponent
@@ -54,15 +52,14 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     @Override
     public void provisionAddonUserForScopes(String addonUserKey, Set<ScopeName> scopes)
     {
-        checkNotNull(scopes);
-
         final ConfluenceUser confluenceAddonUser = getConfluenceUser(addonUserKey);
+        Set<ScopeName> normalizedScopes = ScopeName.normalize(scopes);
 
-        if (scopes.contains(ScopeName.ADMIN))
+        if (normalizedScopes.contains(ScopeName.ADMIN))
         {
             grantAddonUserGlobalAdmin(confluenceAddonUser);
         }
-        else if (scopes.contains(ScopeName.SPACE_ADMIN))
+        else if (normalizedScopes.contains(ScopeName.SPACE_ADMIN))
         {
             // add space admin to all spaces
             grantAddonUserSpaceAdmin(confluenceAddonUser);
@@ -74,23 +71,6 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     {
         return GROUPS;
     }
-
-    @Override
-    public void ensureGroupHasProductAdminPermission(String groupKey)
-    {
-        if (!groupHasProductAdminPermission(groupKey))
-        {
-//            throw new UnsupportedOperationException("NIH");
-        }
-    }
-
-    @Override
-    public boolean groupHasProductAdminPermission(String groupKey)
-    {
-        checkNotNull(groupKey);
-        return false;//confluencePermissionManager.
-    }
-
 
     private ConfluenceUser getConfluenceUser(String userKeyString)
     {

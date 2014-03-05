@@ -2,31 +2,19 @@ package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.crowd.exception.ApplicationNotFoundException;
-import com.atlassian.crowd.exception.ApplicationPermissionException;
-import com.atlassian.crowd.exception.GroupNotFoundException;
-import com.atlassian.crowd.exception.InvalidCredentialException;
-import com.atlassian.crowd.exception.InvalidGroupException;
-import com.atlassian.crowd.exception.InvalidUserException;
-import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
-import com.atlassian.crowd.exception.OperationFailedException;
-import com.atlassian.crowd.exception.UserNotFoundException;
+import com.atlassian.crowd.exception.*;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
-import com.atlassian.crowd.model.group.Group;
-import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -38,11 +26,10 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
+    private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
 
     private static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     private static final String ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY = "atlassian-addons"; // in order to not occupy a license this has to match constant in user-provisioning-plugin/src/main/java/com/atlassian/crowd/plugin/usermanagement/userprovisioning/Constants.java
-    private static final String ATLASSIAN_ADDONS_ADMIN_GROUP_KEY = "atlassian-addons-admin";
-    private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
     // Use a "no reply" email address for add-on users so that
     //   * reset password attempts are not received by anyone, and
@@ -57,11 +44,13 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Autowired
     public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
                                        ApplicationManager applicationManager,
-                                       ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService)
+                                       ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
+                                       ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
     {
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
-        this.connectAddOnUserProvisioningService = connectAddOnUserProvisioningService;
+        this.connectAddOnUserProvisioningService = checkNotNull(connectAddOnUserProvisioningService);
+        this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
     }
 
     @Override
@@ -170,7 +159,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     public boolean isAddOnUserActive(String addOnKey)
     {
         String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;
-        User user = null;
+        User user;
 
         try
         {
@@ -186,15 +175,15 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
     private String createOrEnableAddOnUser(String userKey, Set<ScopeName> scopes) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
-        ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+        connectAddOnUserGroupProvisioningService.ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
         User user = ensureUserExists(userKey);
-        ensureUserIsInGroup(user.getName(), ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+        connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
 
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroups())
         {
             try
             {
-                ensureUserIsInGroup(user.getName(), group);
+                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
             }
             catch (GroupNotFoundException e)
             {
@@ -204,43 +193,8 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             }
         }
 
-        Set<ScopeName> normalizedScopes = normalizeScopes(scopes);
-
-        if (normalizedScopes.contains(ScopeName.ADMIN))
-        {
-            ensureGroupExistsAndIsAdmin(ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
-            ensureUserIsInGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
-        }
-
-        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, normalizedScopes);
-
+        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, scopes);
         return user.getName();
-    }
-
-    private Set<ScopeName> normalizeScopes(Set<ScopeName> scopes)
-    {
-        HashSet<ScopeName> normalizedScopes = Sets.newHashSet();
-        for (ScopeName scopeName : scopes)
-        {
-            normalizedScopes.add(scopeName);
-            normalizedScopes.addAll(scopeName.getImplied());
-        }
-        return normalizedScopes;
-    }
-
-    private void ensureUserIsInGroup(String userKey, String groupKey) throws OperationFailedException, UserNotFoundException, GroupNotFoundException, ApplicationPermissionException, MembershipAlreadyExistsException, ApplicationNotFoundException
-    {
-        if (!applicationService.isUserDirectGroupMember(getApplication(), userKey, groupKey))
-        {
-            try
-            {
-                applicationService.addUserToGroup(getApplication(), userKey, groupKey);
-            }
-            catch (MembershipAlreadyExistsException e)
-            {
-                // ignore, because the membership that we're trying to create exists
-            }
-        }
     }
 
     private User ensureUserExists(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException
@@ -299,56 +253,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    /**
-     * Create the group if it does not exist. Do nothing if it previously existed.
-     * @return {@code true} if the group previously existed, otherwise {@code false}
-     */
-    private boolean ensureGroupExists(String groupKey) throws OperationFailedException, ApplicationPermissionException, ApplicationNotFoundException
-    {
-        boolean created = false;
-
-        if (null == findGroupByKey(groupKey))
-        {
-            try
-            {
-                applicationService.addGroup(getApplication(), new GroupTemplate(groupKey));
-                created = true;
-            }
-            catch (InvalidGroupException ige)
-            {
-                // according to its javadoc addGroup() throws InvalidGroupException if the group already exists
-                // --> handle the race condition of something else creating this group at around the same time
-
-                if (null == findGroupByKey(groupKey))
-                {
-                    // the ApplicationService is messing us around by saying that the group exists and then that it does not
-                    throw new RuntimeException(String.format("The %s %s said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
-                            ApplicationService.class.getSimpleName(), applicationService, Group.class.getSimpleName(), groupKey));
-                }
-            }
-        }
-
-        return created;
-    }
-
-    private void ensureGroupExistsAndIsAdmin(String groupKey) throws ConnectAddOnUserInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException
-    {
-        final boolean created = ensureGroupExists(groupKey);
-
-        if (created)
-        {
-            connectAddOnUserProvisioningService.ensureGroupHasProductAdminPermission(groupKey);
-        }
-        else if (!connectAddOnUserProvisioningService.groupHasProductAdminPermission(groupKey))
-        {
-            throw new ConnectAddOnUserInitException(String.format("Group '%s' already exists and is NOT an administrators group. " +
-                    "Cannot make it an administrators group because that would elevate the privileges of existing users in this group. " +
-                    "Consequently, add-on users that need to be admins cannot be made admins by adding them to this group and making it an administrators group. " +
-                    "Aborting user setup.",
-                    groupKey));
-        }
-    }
-
     private User findUserByKey(String userKey) throws ApplicationNotFoundException
     {
         User user;
@@ -363,24 +267,10 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private Group findGroupByKey(String groupKey) throws ApplicationNotFoundException
-    {
-        Group group;
-        try
-        {
-            group = applicationService.findGroupByName(getApplication(), groupKey);
-        }
-        catch (GroupNotFoundException gnf)
-        {
-            group = null;
-        }
-        return group;
-    }
-
     // Richard Atkins says that the Application is immutable and therefore the instance replaced every time changes occur,
     // and that therefore we should never cache it
     private Application getApplication() throws ApplicationNotFoundException
     {
-        return applicationManager.findByName(CROWD_APPLICATION_NAME);
+        return applicationManager.findByName(connectAddOnUserGroupProvisioningService.getCrowdApplicationName());
     }
 }

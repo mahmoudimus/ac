@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
 
 import javax.annotation.Nullable;
 
@@ -34,5 +35,26 @@ public enum ScopeName implements Comparable<ScopeName>
                 return null != scopeName && implies(scopeName);
             }
         }));
+    }
+
+    /**
+     * Turn a {@link Set} of {@link ScopeName}s into itself plus every implied {@link ScopeName}.
+     * @param scopes arbitrary {@link ScopeName}s
+     * @return new {@link Set} containing the original {@link ScopeName}s plus their implied {@link ScopeName}s
+     */
+    public static Set<ScopeName> normalize(Set<ScopeName> scopes)
+    {
+        HashSet<ScopeName> normalizedScopes = Sets.newHashSet();
+
+        if (null != scopes)
+        {
+            for (ScopeName scopeName : scopes)
+            {
+                normalizedScopes.add(scopeName);
+                normalizedScopes.addAll(scopeName.getImplied());
+            }
+        }
+
+        return normalizedScopes;
     }
 }

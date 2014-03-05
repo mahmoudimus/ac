@@ -15,10 +15,7 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserServiceImpl;
+import com.atlassian.plugin.connect.plugin.usermanagement.*;
 import com.google.common.collect.ImmutableSet;
 import org.hamcrest.Description;
 import org.junit.Before;
@@ -192,6 +189,7 @@ public class ConnectAddOnUserServiceImplTest
         when(applicationService.addUser(eq(application), eq(new UserTemplate(USER_KEY)), eq(PasswordCredential.NONE))).thenReturn(user);
         when(user.getName()).thenReturn(USER_KEY);
         when(connectAddOnUserProvisioningService.getDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
-        connectAddOnUserService = new ConnectAddOnUserServiceImpl(applicationService, applicationManager, connectAddOnUserProvisioningService);
+        ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService = new ConnectAddOnUserGroupProvisioningServiceImpl(applicationService, applicationManager);
+        connectAddOnUserService = new ConnectAddOnUserServiceImpl(applicationService, applicationManager, connectAddOnUserProvisioningService, connectAddOnUserGroupProvisioningService);
     }
 }
