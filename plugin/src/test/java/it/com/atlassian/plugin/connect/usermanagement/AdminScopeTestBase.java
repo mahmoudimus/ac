@@ -1,5 +1,7 @@
 package it.com.atlassian.plugin.connect.usermanagement;
 
+import java.io.IOException;
+
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
@@ -8,15 +10,14 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.google.common.collect.ImmutableSet;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
@@ -40,25 +41,42 @@ public abstract class AdminScopeTestBase
     }
 
     @Test
-    public void hasCorrectAdminStatus()
+    public void hasCorrectTopLevelAdminStatus()
     {
-        assertEquals(shouldBeAdmin(), isUserAdmin(getAddonUsername()));
+        assertEquals(shouldBeAdmin(), isUserTopLevelAdmin(getAddonUsername()));
     }
 
     @Test
-    public void isNotAdminAfterDowngrade() throws Exception
+    public void isNotTopLevelAdminAfterDowngrade() throws Exception
     {
-        ConnectAddonBean lowerScopeBean = ConnectAddonBean.newConnectAddonBean(addonBaseBean)
-                .withScopes(ImmutableSet.of(getScopeOneDown())) // because "one lower than admin" is product specific
-                .build();
-        plugin = testPluginInstaller.installPlugin(lowerScopeBean);
-        assertEquals(false, isUserAdmin(getAddonUsername()));
+        installLowerScopeAddon();
+        assertEquals(false, isUserTopLevelAdmin(getAddonUsername()));
     }
 
     protected abstract ScopeName getScope();
     protected abstract ScopeName getScopeOneDown();
     protected abstract boolean shouldBeAdmin();
-    protected abstract boolean isUserAdmin(String username);
+    protected abstract boolean isUserTopLevelAdmin(String username);
+
+    protected void installLowerScopeAddon() throws IOException
+    {
+        ConnectAddonBean lowerScopeBean = deriveNewAddon()
+                .withScopes(ImmutableSet.of(getScopeOneDown())) // because "one lower than admin" is product specific
+                .build();
+        installAddon(lowerScopeBean);
+    }
+
+    protected ConnectAddonBeanBuilder deriveNewAddon()
+    {
+        return ConnectAddonBean.newConnectAddonBean(addonBaseBean);
+    }
+
+    protected void installAddon(ConnectAddonBean addon) throws IOException
+    {
+        plugin = testPluginInstaller.installPlugin(addon);
+    }
+
+
 
     protected String getAddonUsername()
     {
@@ -66,14 +84,14 @@ public abstract class AdminScopeTestBase
         return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
     }
 
-    @BeforeClass
+    @Before
     public void setUp() throws IOException
     {
         testAuthenticator.authenticateUser("admin");
         plugin = installPlugin();
     }
 
-    @AfterClass
+    @After
     public void tearDown() throws IOException
     {
         if (null != plugin)

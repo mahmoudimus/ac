@@ -1,5 +1,10 @@
 package com.atlassian.plugin.connect.plugin.usermanagement.confluence;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import com.atlassian.confluence.event.events.space.SpaceCreateEvent;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SetSpacePermissionChecker;
@@ -28,11 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.google.common.collect.Iterables.filter;
@@ -103,7 +103,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         // SPACE_ADMIN to x scope transition
         else if (ScopeName.isTransitionDownFromSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes))
         {
-            // TODO anders: removeSpaceAdminPermissions(confluenceAddonUser);
+            removeSpaceAdminPermissions(confluenceAddonUser);
         }
     }
 
@@ -214,6 +214,26 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
             log.info("Add-on user {} already has admin permission on space {}", confluenceAddonUser.getName(), space.getKey());
         }
     }
+
+    private void removeSpaceAdminPermissions(ConfluenceUser confluenceAddonUser)
+    {
+        final List<Space> spaces = spaceManager.getAllSpaces();
+        for (Space space : spaces)
+        {
+            removeAddonUserAdminFromSpace(space, confluenceAddonUser);
+        }
+
+    }
+
+    private void removeAddonUserAdminFromSpace(Space space, ConfluenceUser confluenceAddonUser)
+    {
+        if (spacePermissionManager.hasPermission(ADMINISTER_SPACE_PERMISSION, space, confluenceAddonUser))
+        {
+            SpacePermission permission = new SpacePermission(ADMINISTER_SPACE_PERMISSION, space, null, confluenceAddonUser);
+            spacePermissionManager.removePermission(permission);
+        }
+    }
+
 
     @EventListener
     public void spaceCreated(SpaceCreateEvent spaceCreateEvent)

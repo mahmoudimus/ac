@@ -7,6 +7,8 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -18,6 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddOnUserGroupProvisioningService
 {
     private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
+    private static final Logger LOG = LoggerFactory.getLogger(ConnectAddOnUserGroupProvisioningServiceImpl.class);
 
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
@@ -38,6 +41,7 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
             try
             {
                 applicationService.addUserToGroup(getApplication(), userKey, groupKey);
+                LOG.info("Added user '{}' to group '{}',", userKey, groupKey);
             }
             catch (MembershipAlreadyExistsException e)
             {
@@ -52,6 +56,7 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
         try
         {
             applicationService.removeUserFromGroup(getApplication(), userKey, groupKey);
+            LOG.info("Removed user '{}' from group '{}'.", userKey, groupKey);
         }
         catch (MembershipNotFoundException e)
         {
@@ -70,6 +75,7 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
             {
                 applicationService.addGroup(getApplication(), new GroupTemplate(groupKey));
                 created = true;
+                LOG.info("Created group '{}'.", groupKey);
             }
             catch (InvalidGroupException ige)
             {
