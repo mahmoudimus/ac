@@ -29,7 +29,7 @@ public class TestDescriptorValidation
         String json = readAddonTestFile("validGenericDescriptor.json");
         DescriptorValidationResult result = validator.validate(json, schemaLocator.getSchemaForCurrentProduct());
 
-        assertTrue(result.isSuccess());
+        assertTrue(result.isValid());
     }
 
     @Test
@@ -38,6 +38,6 @@ public class TestDescriptorValidation
         String json = readAddonTestFile("invalidGenericDescriptor.json");
         DescriptorValidationResult result = validator.validate(json, schemaLocator.getSchemaForCurrentProduct());
 
-        assertFalse(result.isSuccess());
+        assertFalse(result.isValid());
     }
 }

@@ -56,7 +56,11 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
         }
 
         DescriptorValidationResult result = jsonDescriptorValidator.validate(jsonDescriptor, schema);
-        if (!result.isSuccess())
+        if (!result.isWellformed())
+        {
+            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getMessageReport(), "connect.invalid.descriptor.malformed.json");
+        }
+        if (!result.isValid())
         {
             String exceptionMessage = "Invalid connect descriptor: " + result.getMessageReport();
             log.error(exceptionMessage);
