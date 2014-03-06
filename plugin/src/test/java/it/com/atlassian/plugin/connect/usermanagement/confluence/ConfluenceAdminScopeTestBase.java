@@ -28,26 +28,12 @@ public abstract class ConfluenceAdminScopeTestBase extends AdminScopeTestBase
         this.userManager = checkNotNull(userManager);
     }
 
-    @Override
-    protected boolean isUserAdmin(String username)
-    {
-        // now flush the permissions cache so that it rebuilds to reflect new permission sets
-        //
-        // this is needed because Confluence's CachingSpacePermissionManager caches permissions in ThreadLocalCache
-        // and doesn't realise when the permissions have changed
-        //
-        // the alternative is to flush the cache in the prod code, which may have unintended side-effects
-        ThreadLocalCache.flush();
-
-        return confluencePermissionManager.isConfluenceAdministrator(getUser(username));
-    }
-
     protected ConfluenceUser getAddonUser()
     {
         return getUser(getAddonUsername());
     }
 
-    private ConfluenceUser getUser(String username)
+    protected ConfluenceUser getUser(String username)
     {
         return FindUserHelper.getUserByUsername(username);
     }
