@@ -88,38 +88,36 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     }
 
     @Override
-    public void provisionAddonUserForScopes(final String userKey, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    public void provisionAddonUserForScopes(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
         Set<ScopeName> normalizedPreviousScopes = ScopeName.normalize(previousScopes);
         Set<ScopeName> normalizedNewScopes = ScopeName.normalize(newScopes);
 
-        ApplicationUser user = userManager.getUserByKey(userKey);
+        ApplicationUser user = userManager.getUserByName(username);
 
         if (null == user)
         {
-            throw new IllegalArgumentException(String.format("Cannot provision non-existent user '%s': please create it first!", userKey));
+            throw new IllegalArgumentException(String.format("Cannot provision non-existent user '%s': please create it first!", username));
         }
 
         // x to ADMIN scope transition
-        if (normalizedNewScopes.contains(ScopeName.ADMIN))
+        if (ScopeName.containsAdmin(normalizedNewScopes))
         {
             makeUserGlobalAdmin(user);
         }
         // x to PROJECT_ADMIN scope transition
-        else if (normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN)
-                && (!normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN) || normalizedPreviousScopes.contains(ScopeName.ADMIN)))
+        else if (ScopeName.isTransitionUpToProjectAdmin(normalizedPreviousScopes, normalizedNewScopes))
         {
             updateProjectAdminScopePermissions(user);
         }
 
         // ADMIN to x scope transition
-        if (normalizedPreviousScopes.contains(ScopeName.ADMIN) && !normalizedNewScopes.contains(ScopeName.ADMIN))
+        if (ScopeName.isTransitionDownFromAdmin(normalizedPreviousScopes, normalizedNewScopes))
         {
             removeUserFromGlobalAdmins(user);
         }
         // PROJECT_ADMIN to x scope transition
-        else if (normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN)
-                && (!normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN) || normalizedNewScopes.contains(ScopeName.ADMIN)))
+        else if (ScopeName.isTransitionDownFromProjectAdmin(normalizedPreviousScopes, normalizedNewScopes))
         {
             removeProjectAdminScopePermissions(user);
         }

@@ -54,6 +54,12 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
     }
 
     @Override
+    protected ScopeName getScopeOneDown()
+    {
+        return ScopeName.DELETE;
+    }
+
+    @Override
     protected boolean shouldBeAdmin()
     {
         return false;
@@ -66,6 +72,7 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
             try
             {
                 spaceManager.removeSpace(jediSpace);
+                jediSpace = null;
             }
             catch (Exception e)
             {

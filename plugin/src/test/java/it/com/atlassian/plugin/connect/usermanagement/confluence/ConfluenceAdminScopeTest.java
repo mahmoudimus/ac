@@ -30,6 +30,12 @@ public class ConfluenceAdminScopeTest extends ConfluenceAdminScopeTestBase
     }
 
     @Override
+    protected ScopeName getScopeOneDown()
+    {
+        return ScopeName.SPACE_ADMIN;
+    }
+
+    @Override
     protected boolean shouldBeAdmin()
     {
         return true;

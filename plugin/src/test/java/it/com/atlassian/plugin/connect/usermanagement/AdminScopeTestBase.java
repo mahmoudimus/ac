@@ -48,14 +48,15 @@ public abstract class AdminScopeTestBase
     @Test
     public void isNotAdminAfterDowngrade() throws Exception
     {
-        ConnectAddonBean writeScopeBean = ConnectAddonBean.newConnectAddonBean(addonBaseBean)
-                .withScopes(ImmutableSet.of(ScopeName.WRITE))
+        ConnectAddonBean lowerScopeBean = ConnectAddonBean.newConnectAddonBean(addonBaseBean)
+                .withScopes(ImmutableSet.of(getScopeOneDown())) // because "one lower than admin" is product specific
                 .build();
-        plugin = testPluginInstaller.installPlugin(writeScopeBean);
+        plugin = testPluginInstaller.installPlugin(lowerScopeBean);
         assertEquals(false, isUserAdmin(getAddonUsername()));
     }
 
     protected abstract ScopeName getScope();
+    protected abstract ScopeName getScopeOneDown();
     protected abstract boolean shouldBeAdmin();
     protected abstract boolean isUserAdmin(String username);
 

@@ -30,6 +30,12 @@ public class JiraAdminScopeTest extends JiraAdminScopeTestBase
     }
 
     @Override
+    protected ScopeName getScopeOneDown()
+    {
+        return ScopeName.PROJECT_ADMIN;
+    }
+
+    @Override
     protected boolean shouldBeAdmin()
     {
         return true;
