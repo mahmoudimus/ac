@@ -15,15 +15,20 @@ import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AdminScopeTestBase
 {
-    protected final TestPluginInstaller testPluginInstaller;
+    private final static Logger LOG = LoggerFactory.getLogger(AdminScopeTestBase.class);
+
+    private final TestPluginInstaller testPluginInstaller;
     private final JwtApplinkFinder jwtApplinkFinder;
     private final TestAuthenticator testAuthenticator;
 
@@ -40,27 +45,34 @@ public abstract class AdminScopeTestBase
     }
 
     @Test
-    public void hasCorrectAdminStatus()
+    public void hasCorrectTopLevelAdminStatus() throws IOException
     {
-        assertEquals(shouldBeAdmin(), isUserAdmin(getAddonUsername()));
+        plugin = installPlugin(getScope());
+        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername(plugin)));
     }
 
     @Test
-    public void isNotAdminAfterDowngrade() throws Exception
+    public void isNotTopLevelAdminAfterDowngrade() throws Exception
     {
-        ConnectAddonBean lowerScopeBean = ConnectAddonBean.newConnectAddonBean(addonBaseBean)
-                .withScopes(ImmutableSet.of(getScopeOneDown())) // because "one lower than admin" is product specific
-                .build();
-        plugin = testPluginInstaller.installPlugin(lowerScopeBean);
-        assertEquals(false, isUserAdmin(getAddonUsername()));
+        plugin = installPlugin(getScope());
+        plugin = installPlugin(getScopeOneDown());
+        assertEquals(false, isUserTopLevelAdmin(getAddonUsername(plugin)));
+    }
+
+    @Test
+    public void hasCorrectTopLevelAdminStatusAfterUpgrade() throws IOException
+    {
+        plugin = installPlugin(getScopeOneDown());
+        plugin = installPlugin(getScope());
+        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername(plugin)));
     }
 
     protected abstract ScopeName getScope();
     protected abstract ScopeName getScopeOneDown();
-    protected abstract boolean shouldBeAdmin();
-    protected abstract boolean isUserAdmin(String username);
+    protected abstract boolean shouldBeTopLevelAdmin();
+    protected abstract boolean isUserTopLevelAdmin(String username);
 
-    protected String getAddonUsername()
+    protected String getAddonUsername(Plugin plugin) throws IOException
     {
         ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
         return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
@@ -70,7 +82,13 @@ public abstract class AdminScopeTestBase
     public void setUp() throws IOException
     {
         testAuthenticator.authenticateUser("admin");
-        plugin = installPlugin();
+        String key = "ac-test-" + System.currentTimeMillis();
+        addonBaseBean = ConnectAddonBean.newConnectAddonBean()
+                .withKey(key)
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
+                .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
+                .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+                .build();
     }
 
     @After
@@ -82,20 +100,15 @@ public abstract class AdminScopeTestBase
         }
     }
 
-    private Plugin installPlugin() throws IOException
+    private Plugin installPlugin(ScopeName scope) throws IOException
     {
-        String key = "ac-test-" + System.currentTimeMillis();
-        addonBaseBean = ConnectAddonBean.newConnectAddonBean()
-                .withKey(key)
-                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
-                .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
-                .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
-                .build();
-
         ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean(addonBaseBean)
-                .withScopes(ImmutableSet.of(getScope()))
+                .withScopes(ImmutableSet.of(scope))
                 .build();
 
-        return testPluginInstaller.installPlugin(addonBean);
+        LOG.warn("Installing test plugin '{}'", addonBean.getKey());
+        Plugin installedPlugin = testPluginInstaller.installPlugin(addonBean);
+        checkArgument(null != installedPlugin, "'installedPlugin' should not be null after installation: check the logs for installation messages");
+        return installedPlugin;
     }
 }

@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
+import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -173,7 +174,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
     }
 
-    private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor) throws ConnectAddOnUserInitException
+    private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor) throws PluginInstallException
     {
         Set<ScopeName> previousScopes = Sets.newHashSet();
         Set<ScopeName> newScopes = addOn.getScopes();
@@ -184,7 +185,14 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             previousScopes = previousAddOn.getScopes();
         }
 
-        return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(), previousScopes, newScopes);
+        try
+        {
+            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(), previousScopes, newScopes);
+        }
+        catch (ConnectAddOnUserInitException e)
+        {
+            throw new PluginInstallException(e.getMessage(), Option.some("connect.install.error.user.provisioning"), e, true);
+        }
     }
 
     private boolean addOnUsesSymmetricSharedSecret(AuthenticationType authType)

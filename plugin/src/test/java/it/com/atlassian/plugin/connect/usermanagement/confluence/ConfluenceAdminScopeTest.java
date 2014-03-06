@@ -1,6 +1,5 @@
 package it.com.atlassian.plugin.connect.usermanagement.confluence;
 
-import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -37,22 +36,8 @@ public class ConfluenceAdminScopeTest extends ConfluenceAdminScopeTestBase
     }
 
     @Override
-    protected boolean shouldBeAdmin()
+    protected boolean shouldBeTopLevelAdmin()
     {
         return true;
-    }
-
-    @Override
-    protected boolean isUserAdmin(String username)
-    {
-        // now flush the permissions cache so that it rebuilds to reflect new permission sets
-        //
-        // this is needed because Confluence's CachingSpacePermissionManager caches permissions in ThreadLocalCache
-        // and doesn't realise when the permissions have changed
-        //
-        // the alternative is to flush the cache in the prod code, which may have unintended side-effects
-        ThreadLocalCache.flush();
-
-        return confluencePermissionManager.isConfluenceAdministrator(getUser(username));
     }
 }

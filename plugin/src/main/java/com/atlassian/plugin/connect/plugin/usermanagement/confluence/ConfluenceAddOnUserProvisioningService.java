@@ -22,8 +22,11 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -103,7 +106,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         // SPACE_ADMIN to x scope transition
         else if (ScopeName.isTransitionDownFromSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes))
         {
-            // TODO anders: removeSpaceAdminPermissions(confluenceAddonUser);
+            removeSpaceAdminPermissions(confluenceAddonUser);
         }
     }
 
@@ -214,6 +217,36 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
             log.info("Add-on user {} already has admin permission on space {}", confluenceAddonUser.getName(), space.getKey());
         }
     }
+
+    private void removeSpaceAdminPermissions(ConfluenceUser confluenceAddonUser)
+    {
+        final List<Space> spaces = spaceManager.getAllSpaces();
+        for (Space space : spaces)
+        {
+            removeAddonUserAdminFromSpace(space, confluenceAddonUser);
+        }
+
+    }
+
+    private void removeAddonUserAdminFromSpace(Space space, ConfluenceUser confluenceAddonUser)
+    {
+        Set<SpacePermission> allSpacePermissionsAssignedToAddonUser = Sets.newHashSet();
+        for (SpacePermission spacePermission : space.getPermissions())
+        {
+            if (spacePermission.isUserPermission() &&
+                    Objects.equal(spacePermission.getUserSubject(), confluenceAddonUser) &&
+                    StringUtils.equals(spacePermission.getType(), SpacePermission.ADMINISTER_SPACE_PERMISSION))
+            {
+                allSpacePermissionsAssignedToAddonUser.add(spacePermission);
+            }
+        }
+
+        for (SpacePermission spacePermission : allSpacePermissionsAssignedToAddonUser)
+        {
+            spacePermissionManager.removePermission(spacePermission);
+        }
+    }
+
 
     @EventListener
     public void spaceCreated(SpaceCreateEvent spaceCreateEvent)
