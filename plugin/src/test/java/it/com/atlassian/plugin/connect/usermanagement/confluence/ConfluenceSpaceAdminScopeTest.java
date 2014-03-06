@@ -1,7 +1,12 @@
 package it.com.atlassian.plugin.connect.usermanagement.confluence;
 
 import com.atlassian.applinks.api.ApplicationLink;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.List;
+
 import com.atlassian.confluence.cache.ThreadLocalCache;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermission;
 import com.atlassian.confluence.security.SpacePermissionManager;
 import com.atlassian.confluence.spaces.Space;
@@ -19,6 +24,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.user.UserManager;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -39,6 +45,8 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.fail;
 
 @Application ("confluence")
 @RunWith (AtlassianPluginsTestRunner.class)
@@ -100,6 +108,12 @@ public class ConfluenceSpaceAdminScopeTest
     @Test
     public void addonIsMadeAdminOfExistingSpace() throws Exception
     {
+        assertIsSpaceAdminOnAllSpaces(spaceManager, spacePermissionManager, getAddonUser());
+    }
+
+    // Not pretty but don't want to repeat the logic
+    public static void assertIsSpaceAdminOnAllSpaces(SpaceManager spaceManager, SpacePermissionManager spacePermissionManager, ConfluenceUser addonUser)
+    {
         List<Space> allSpaces = spaceManager.getAllSpaces();
 
         List<String> spaceAdminErrors = Lists.newArrayList();
@@ -116,7 +130,7 @@ public class ConfluenceSpaceAdminScopeTest
             boolean canAdminister = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, space, addonUser);
             if (!canAdminister)
             {
-                spaceAdminErrors.add("Add-on user " + getAddonUsername(plugin) + " should have administer permission for space " + space.getKey());
+                spaceAdminErrors.add("Add-on user " + addonUser.getName() + " should have administer permission for space " + space.getKey());
             }
         }
 
@@ -148,6 +162,22 @@ public class ConfluenceSpaceAdminScopeTest
         assertEquals(false, isUserSpaceAdminOfAnySpace(getAddonUsername(plugin)));
     }
 
+    @Test
+    public void isNotSpaceAdminAfterUpgrade() throws Exception
+    {
+        installHigherScopeAddon();
+        assertEquals(false, isUserSpaceAdminOfAnySpace(getAddonUsername()));
+    }
+
+    @Test
+    public void isTopLevelAdminAfterUpgrade() throws Exception
+    {
+        installHigherScopeAddon();
+        assertEquals(true, isUserTopLevelAdmin(getAddonUsername()));
+    }
+
+
+
 
     private boolean isUserSpaceAdminOfAnySpace(String username)
     {
@@ -170,11 +200,8 @@ public class ConfluenceSpaceAdminScopeTest
             @Override
             public boolean apply(@Nullable Space space)
             {
+                ThreadLocalCache.flush(); // !!!!!!!!!!!!!!!!!!
                 final boolean hasPermission = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, space, addonUser);
-                if (hasPermission)
-                {
-                    log.debug("***** user {} has space admin permission on space {}", new Object[] {addonUser, space});
-                }
                 return hasPermission;
             }
         });

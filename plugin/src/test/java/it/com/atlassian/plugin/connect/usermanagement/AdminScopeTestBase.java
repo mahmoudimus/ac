@@ -74,7 +74,26 @@ public abstract class AdminScopeTestBase
 
     protected String getAddonUsername(Plugin plugin)
     {
-        checkArgument(null != plugin, "'plugin' must not be null!");
+        ConnectAddonBean lowerScopeBean = deriveNewAddon()
+                .withScopes(ImmutableSet.of(getScopeOneDown())) // because "one lower than admin" is product specific
+                .build();
+        installAddon(lowerScopeBean);
+    }
+
+    protected ConnectAddonBeanBuilder deriveNewAddon()
+    {
+        return ConnectAddonBean.newConnectAddonBean(addonBaseBean);
+    }
+
+    protected void installAddon(ConnectAddonBean addon) throws IOException
+    {
+        plugin = testPluginInstaller.installPlugin(addon);
+    }
+
+
+
+    protected String getAddonUsername()
+    {
         ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
         return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
     }
