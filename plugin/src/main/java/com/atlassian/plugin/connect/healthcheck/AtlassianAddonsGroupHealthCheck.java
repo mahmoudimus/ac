@@ -52,16 +52,37 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
             List<User> users = applicationService.searchDirectGroupRelationships(application, query);
 
             Set<User> usersWithIncorrectEmails = Sets.newHashSet();
+            Set<User> usersWithIncorrectPrefix = Sets.newHashSet();
             for (User user : users)
             {
                 if (!"noreply@mailer.atlassian.com".equals(user.getEmailAddress()))
                 {
                     usersWithIncorrectEmails.add(user);
                 }
+                if (!user.getName().startsWith("addon_"))
+                {
+                    usersWithIncorrectPrefix.add(user);
+                }
             }
 
-            boolean isHealthy = usersWithIncorrectEmails.isEmpty();
-            String reason = isHealthy ? "" : "Add-on group has users with incorrect email addresses. This may indicate a customer license workaround.";
+            boolean isHealthy = usersWithIncorrectEmails.isEmpty() && usersWithIncorrectPrefix.isEmpty();
+
+            String reason = "";
+
+            if (!isHealthy)
+            {
+                reason = "Add-on group has invalid membership: ";
+                if (!usersWithIncorrectEmails.isEmpty())
+                {
+                    reason += usersWithIncorrectEmails.size() + " members have unexpected email values. ";
+                }
+                if (!usersWithIncorrectPrefix.isEmpty())
+                {
+                    reason += usersWithIncorrectPrefix.size() + " members have unexpected username values. ";
+                }
+                reason += "This may indicate a customer license workaround.";
+            }
+
             return new DefaultHealthStatus(isHealthy, reason, healthCheckTime, com.atlassian.healthcheck.core.Application.Plugin,
                     HealthStatusExtended.Severity.CRITICAL, documentationUrl);
         }
