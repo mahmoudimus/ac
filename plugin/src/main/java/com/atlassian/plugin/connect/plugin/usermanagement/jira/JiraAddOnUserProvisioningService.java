@@ -209,6 +209,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         if (!groupHasProductAdminPermission(groupKey))
         {
             jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
+            log.info("Granted admin permission to group '{}'.", groupKey);
         }
     }
 
