@@ -60,7 +60,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             try
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                canInstall = jsonDescriptorValidator.isConnectJson(json, true);
+                canInstall = jsonDescriptorValidator.isConnectJson(json, isJsonContentType(descriptorFile, contentType));
 
                 if (!canInstall)
                 {
@@ -77,6 +77,27 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         //TODO: if we have a json validation error and we can determine an error lifecycle url, we need to post the error message to the remote
 
         return canInstall;
+    }
+
+    private static boolean isJsonContentType(File descriptorFile, Option<String> contentType)
+    {
+        return matchesContentType(contentType, "application/json", "text/json")
+                || descriptorFile.getName().toLowerCase().endsWith(".json");
+    }
+
+    private static boolean matchesContentType(Option<String> actualContentType, String... desiredContentType)
+    {
+        for (String contentType : actualContentType)
+        {
+            for (String desired : desiredContentType)
+            {
+                if (contentType.equals(desired) || contentType.startsWith(desired + ";"))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
