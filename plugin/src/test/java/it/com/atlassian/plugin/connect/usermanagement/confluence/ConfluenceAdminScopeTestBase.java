@@ -28,11 +28,6 @@ public abstract class ConfluenceAdminScopeTestBase extends AdminScopeTestBase
         this.userManager = checkNotNull(userManager);
     }
 
-    protected ConfluenceUser getAddonUser()
-    {
-        return getUser(getAddonUsername());
-    }
-
     protected ConfluenceUser getUser(String username)
     {
         return FindUserHelper.getUserByUsername(username);
