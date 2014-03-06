@@ -12,12 +12,14 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.ConfluenceUserImpl;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.user.UserManager;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -25,15 +27,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @Application ("confluence")
 @RunWith (AtlassianPluginsTestRunner.class)
 public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
 {
+    private static final Logger log = LoggerFactory.getLogger(ConfluenceSpaceAdminScopeTest.class);
+
     private static final String JEDI_SPACE_KEY = "JEDI" + System.currentTimeMillis();
     private final SpaceManager spaceManager;
     private final SpacePermissionManager spacePermissionManager;
@@ -93,10 +100,10 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
 
         List<String> spaceAdminErrors = Lists.newArrayList();
 
+        final ConfluenceUser addonUser = getAddonUser();
+
         for (Space space : allSpaces)
         {
-            final ConfluenceUser addonUser = getAddonUser();
-
             /*
              * Confluence caches some security stuff on thread local and due to a bug we need to blast it away before checking permission
              */
@@ -130,8 +137,15 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
         assertTrue("Add-on user " + getAddonUsername() + " should have administer permission for space " + jediSpace.getKey(), addonCanAdministerNewSpace);
     }
 
-    @Override
-    protected boolean isUserAdmin(String username)
+    @Test
+    public void isNotSpaceAdminAfterDowngrade() throws Exception
+    {
+        installLowerScopeAddon();
+        assertEquals(false, isUserSpaceAdmin(getAddonUsername()));
+    }
+
+
+    private boolean isUserSpaceAdmin(String username)
     {
         // now flush the permissions cache so that it rebuilds to reflect new permission sets
         //
@@ -154,7 +168,12 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
             @Override
             public boolean apply(@Nullable Space space)
             {
-                return spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, space, addonUser);
+                final boolean hasPermission = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, space, addonUser);
+                if (hasPermission)
+                {
+                    log.debug("***** user {} has space admin permission on space {}", new Object[] {addonUser, space});
+                }
+                return hasPermission;
             }
         });
     }

@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.google.common.collect.ImmutableSet;
@@ -48,10 +49,7 @@ public abstract class AdminScopeTestBase
     @Test
     public void isNotAdminAfterDowngrade() throws Exception
     {
-        ConnectAddonBean lowerScopeBean = ConnectAddonBean.newConnectAddonBean(addonBaseBean)
-                .withScopes(ImmutableSet.of(getScopeOneDown())) // because "one lower than admin" is product specific
-                .build();
-        plugin = testPluginInstaller.installPlugin(lowerScopeBean);
+        installLowerScopeAddon();
         assertEquals(false, isUserAdmin(getAddonUsername()));
     }
 
@@ -59,6 +57,26 @@ public abstract class AdminScopeTestBase
     protected abstract ScopeName getScopeOneDown();
     protected abstract boolean shouldBeAdmin();
     protected abstract boolean isUserAdmin(String username);
+
+    protected void installLowerScopeAddon() throws IOException
+    {
+        ConnectAddonBean lowerScopeBean = deriveNewAddon()
+                .withScopes(ImmutableSet.of(getScopeOneDown())) // because "one lower than admin" is product specific
+                .build();
+        installAddon(lowerScopeBean);
+    }
+
+    protected ConnectAddonBeanBuilder deriveNewAddon()
+    {
+        return ConnectAddonBean.newConnectAddonBean(addonBaseBean);
+    }
+
+    protected void installAddon(ConnectAddonBean addon) throws IOException
+    {
+        plugin = testPluginInstaller.installPlugin(addon);
+    }
+
+
 
     protected String getAddonUsername()
     {
