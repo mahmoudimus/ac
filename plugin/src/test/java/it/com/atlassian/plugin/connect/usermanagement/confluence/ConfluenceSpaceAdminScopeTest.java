@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.usermanagement.confluence;
 
-import javax.annotation.Nullable;
-
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermission;
@@ -9,7 +7,6 @@ import com.atlassian.confluence.security.SpacePermissionManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
-import com.atlassian.confluence.user.ConfluenceUserImpl;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -26,6 +23,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -130,8 +128,7 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
         assertTrue("Add-on user " + getAddonUsername() + " should have administer permission for space " + jediSpace.getKey(), addonCanAdministerNewSpace);
     }
 
-    @Override
-    protected boolean isUserAdmin(String username)
+    private boolean isUserSpaceAdminOfAnySpace(String username)
     {
         // now flush the permissions cache so that it rebuilds to reflect new permission sets
         //
@@ -140,8 +137,6 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
         //
         // the alternative is to flush the cache in the prod code, which may have unintended side-effects
         ThreadLocalCache.flush();
-
-        // TODO: this is to fit in with test in base class but won't give great amount of info in the event of failure
 
         final ConfluenceUser addonUser = getUser(username);
 
