@@ -4,8 +4,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
 import javax.annotation.Nullable;
-
-import java.lang.Comparable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,5 +54,41 @@ public enum ScopeName implements Comparable<ScopeName>
         }
 
         return normalizedScopes;
+    }
+
+    public static boolean containsAdmin(Set<ScopeName> normalizedNewScopes)
+    {
+        return normalizedNewScopes.contains(ADMIN);
+    }
+
+    public static boolean isTransitionDownFromAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes)
+    {
+        return containsAdmin(normalizedPreviousScopes) && !containsAdmin(normalizedNewScopes);
+    }
+
+    public static boolean isTransitionUpToProjectAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes)
+    {
+        return isTransitionUpToProjectOrSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes, PROJECT_ADMIN);
+    }
+
+    public static boolean isTransitionUpToSpaceAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes)
+    {
+        return isTransitionUpToProjectOrSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes, SPACE_ADMIN);
+    }
+
+    private static boolean isTransitionUpToProjectOrSpaceAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes, ScopeName scopeName)
+    {
+        return normalizedNewScopes.contains(scopeName) &&
+               (!normalizedPreviousScopes.contains(scopeName) || containsAdmin(normalizedPreviousScopes));
+    }
+
+    public static boolean isTransitionDownFromProjectAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes)
+    {
+        return isTransitionUpToProjectAdmin(normalizedNewScopes, normalizedPreviousScopes); // down is the reverse of up: see the arg order
+    }
+
+    public static boolean isTransitionDownFromSpaceAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes)
+    {
+        return isTransitionUpToSpaceAdmin(normalizedNewScopes, normalizedPreviousScopes); // down is the reverse of up: see the arg order
     }
 }
