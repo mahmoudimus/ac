@@ -160,16 +160,23 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     {
         SetSpacePermissionChecker setSpacePermissionChecker = ComponentLocator.getComponent(SetSpacePermissionChecker.class, "setSpacePermissionChecker");
         List<SpacePermission> permissions = spacePermissionManager.getGlobalPermissions(permissionType);
+        boolean found = false;
 
         for (SpacePermission permission : permissions)
         {
             if (null != permission && null != permission.getUserSubject() && null != permission.getUserSubject().getKey() &&
                 permission.getUserSubject().getKey().getStringValue().equals(confluenceAddonUser.getKey().getStringValue()))
             {
-                log.info("Removing Confluence admin permission from user '{}'.", confluenceAddonUser.getName());
+                log.info("Removing Confluence permission '{}' from user '{}'.", permissionType, confluenceAddonUser.getName());
                 confluenceEditPermissionsAdministrator.removePermission(permission);
+                found = true;
                 break;
             }
+        }
+
+        if (!found)
+        {
+            log.warn("Did not remove Confluence permission '{}' from user '{}' because it did not exist.", permissionType, confluenceAddonUser.getName());
         }
     }
 
