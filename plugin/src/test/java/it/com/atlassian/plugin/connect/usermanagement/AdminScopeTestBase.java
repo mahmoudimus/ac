@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.usermanagement;
 
-import java.io.IOException;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
@@ -18,12 +16,19 @@ import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AdminScopeTestBase
 {
+    private final static Logger LOG = LoggerFactory.getLogger(AdminScopeTestBase.class);
+
     protected final TestPluginInstaller testPluginInstaller;
     private final JwtApplinkFinder jwtApplinkFinder;
     private final TestAuthenticator testAuthenticator;
@@ -43,7 +48,7 @@ public abstract class AdminScopeTestBase
     @Test
     public void hasCorrectTopLevelAdminStatus()
     {
-        assertEquals(shouldBeAdmin(), isUserTopLevelAdmin(getAddonUsername()));
+        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername()));
     }
 
     @Test
@@ -53,9 +58,17 @@ public abstract class AdminScopeTestBase
         assertEquals(false, isUserTopLevelAdmin(getAddonUsername()));
     }
 
+    @Test
+    public void hasCorrectTopLevelAdminStatusAfterUpgrade() throws IOException
+    {
+        installLowerScopeAddon();
+        installPlugin();
+        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername()));
+    }
+
     protected abstract ScopeName getScope();
     protected abstract ScopeName getScopeOneDown();
-    protected abstract boolean shouldBeAdmin();
+    protected abstract boolean shouldBeTopLevelAdmin();
     protected abstract boolean isUserTopLevelAdmin(String username);
 
     protected void installLowerScopeAddon() throws IOException
@@ -76,11 +89,15 @@ public abstract class AdminScopeTestBase
         plugin = testPluginInstaller.installPlugin(addon);
     }
 
-
-
     protected String getAddonUsername()
     {
-        ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
+        return getAddonUsername(plugin);
+    }
+
+    protected String getAddonUsername(Plugin aPlugin)
+    {
+        checkArgument(null != plugin, "'plugin' must not be null!");
+        ApplicationLink appLink = jwtApplinkFinder.find(aPlugin.getKey());
         return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
     }
 
@@ -89,6 +106,7 @@ public abstract class AdminScopeTestBase
     {
         testAuthenticator.authenticateUser("admin");
         plugin = installPlugin();
+        checkArgument(null != plugin, "'plugin' data member should not be null after installation: check the logs for installation messages");
     }
 
     @After
@@ -114,6 +132,7 @@ public abstract class AdminScopeTestBase
                 .withScopes(ImmutableSet.of(getScope()))
                 .build();
 
+        LOG.info("Installing test plugin '{}'", addonBean.getKey());
         return testPluginInstaller.installPlugin(addonBean);
     }
 }

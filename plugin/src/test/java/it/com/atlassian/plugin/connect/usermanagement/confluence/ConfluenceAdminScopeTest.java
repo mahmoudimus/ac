@@ -36,7 +36,7 @@ public class ConfluenceAdminScopeTest extends ConfluenceAdminScopeTestBase
     }
 
     @Override
-    protected boolean shouldBeAdmin()
+    protected boolean shouldBeTopLevelAdmin()
     {
         return true;
     }

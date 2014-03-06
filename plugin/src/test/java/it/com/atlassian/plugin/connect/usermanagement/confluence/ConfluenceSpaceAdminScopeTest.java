@@ -1,8 +1,5 @@
 package it.com.atlassian.plugin.connect.usermanagement.confluence;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermission;
@@ -27,6 +24,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -68,7 +68,7 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
     }
 
     @Override
-    protected boolean shouldBeAdmin()
+    protected boolean shouldBeTopLevelAdmin()
     {
         return false;
     }

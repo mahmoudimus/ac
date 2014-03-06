@@ -36,7 +36,7 @@ public class JiraAdminScopeTest extends JiraAdminScopeTestBase
     }
 
     @Override
-    protected boolean shouldBeAdmin()
+    protected boolean shouldBeTopLevelAdmin()
     {
         return true;
     }
