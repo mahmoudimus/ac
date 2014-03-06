@@ -103,6 +103,14 @@ public class DetailedConfluenceSpaceAdminScopeTest
         assertIsSpaceAdminOnAllSpaces(spaceManager, spacePermissionManager, getAddonUser());
     }
 
+    @Test
+    public void addonIsMadeAdminOfExistingSpaceAfterDowngradeFromTopAdmin() throws Exception
+    {
+        plugin = installPlugin(ScopeName.ADMIN);
+        plugin = installPlugin(ScopeName.SPACE_ADMIN);
+        assertIsSpaceAdminOnAllSpaces(spaceManager, spacePermissionManager, getAddonUser());
+    }
+
     // Not pretty but don't want to repeat the logic
     public static void assertIsSpaceAdminOnAllSpaces(SpaceManager spaceManager, SpacePermissionManager spacePermissionManager, ConfluenceUser addonUser)
     {
@@ -129,6 +137,19 @@ public class DetailedConfluenceSpaceAdminScopeTest
 
     @Test
     public void addonIsMadeAdminOfNewSpace() throws Exception
+    {
+        assertIsSpaceAdminOfNewSpace();
+    }
+
+    @Test
+    public void addonIsMadeAdminOfNewSpaceAfterDowngradeFromTopAdmin() throws Exception
+    {
+        plugin = installPlugin(ScopeName.ADMIN);
+        plugin = installPlugin(ScopeName.SPACE_ADMIN);
+        assertIsSpaceAdminOfNewSpace();
+    }
+
+    private void assertIsSpaceAdminOfNewSpace()
     {
         ConfluenceUser admin = FindUserHelper.getUserByUsername("admin");
 
