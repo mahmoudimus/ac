@@ -12,7 +12,6 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.ConfluenceUserImpl;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
@@ -32,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -141,11 +141,11 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
     public void isNotSpaceAdminAfterDowngrade() throws Exception
     {
         installLowerScopeAddon();
-        assertEquals(false, isUserSpaceAdmin(getAddonUsername()));
+        assertEquals(false, isUserSpaceAdminOfAnySpace(getAddonUsername()));
     }
 
 
-    private boolean isUserSpaceAdmin(String username)
+    private boolean isUserSpaceAdminOfAnySpace(String username)
     {
         // now flush the permissions cache so that it rebuilds to reflect new permission sets
         //
@@ -154,8 +154,6 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
         //
         // the alternative is to flush the cache in the prod code, which may have unintended side-effects
         ThreadLocalCache.flush();
-
-        // TODO: this is to fit in with test in base class but won't give great amount of info in the event of failure
 
         final ConfluenceUser addonUser = getUser(username);
 

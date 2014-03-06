@@ -41,22 +41,22 @@ public abstract class AdminScopeTestBase
     }
 
     @Test
-    public void hasCorrectAdminStatus()
+    public void hasCorrectTopLevelAdminStatus()
     {
-        assertEquals(shouldBeAdmin(), isUserAdmin(getAddonUsername()));
+        assertEquals(shouldBeAdmin(), isUserTopLevelAdmin(getAddonUsername()));
     }
 
     @Test
-    public void isNotAdminAfterDowngrade() throws Exception
+    public void isNotTopLevelAdminAfterDowngrade() throws Exception
     {
         installLowerScopeAddon();
-        assertEquals(false, isUserAdmin(getAddonUsername()));
+        assertEquals(false, isUserTopLevelAdmin(getAddonUsername()));
     }
 
     protected abstract ScopeName getScope();
     protected abstract ScopeName getScopeOneDown();
     protected abstract boolean shouldBeAdmin();
-    protected abstract boolean isUserAdmin(String username);
+    protected abstract boolean isUserTopLevelAdmin(String username);
 
     protected void installLowerScopeAddon() throws IOException
     {
