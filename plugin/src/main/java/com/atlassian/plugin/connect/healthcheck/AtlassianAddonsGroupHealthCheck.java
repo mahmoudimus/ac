@@ -14,6 +14,7 @@ import com.atlassian.healthcheck.core.HealthCheck;
 import com.atlassian.healthcheck.core.HealthStatus;
 import com.atlassian.healthcheck.core.HealthStatusExtended;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
 import com.google.common.collect.Sets;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
             MembershipQuery<User> query = QueryBuilder
                 .queryFor(User.class, EntityDescriptor.user())
                 .childrenOf(EntityDescriptor.group())
-                .withName("atlassian-addons")
+                .withName(Constants.ADDON_USER_GROUP_KEY)
                 .startingAt(0)
                 .returningAtMost(EntityQuery.ALL_RESULTS);
 
@@ -55,11 +56,12 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
             Set<User> usersWithIncorrectPrefix = Sets.newHashSet();
             for (User user : users)
             {
-                if (!"noreply@mailer.atlassian.com".equals(user.getEmailAddress()))
+                if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()))
                 {
                     usersWithIncorrectEmails.add(user);
                 }
-                if (!user.getName().startsWith("addon_"))
+                String name = user.getName();
+                if (name == null || !name.startsWith(Constants.ADDON_USER_KEY_PREFIX))
                 {
                     usersWithIncorrectPrefix.add(user);
                 }

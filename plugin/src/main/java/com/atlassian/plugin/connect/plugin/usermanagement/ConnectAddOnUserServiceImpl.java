@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
 
 @ExportAsDevService
 @Component
@@ -27,17 +28,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
-
-    private static final String ADD_ON_USER_KEY_PREFIX = "addon_";
-    private static final String ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY = "atlassian-addons"; // in order to not occupy a license this has to match constant in user-provisioning-plugin/src/main/java/com/atlassian/crowd/plugin/usermanagement/userprovisioning/Constants.java
-
-    // Use a "no reply" email address for add-on users so that
-    //   * reset password attempts are not received by anyone, and
-    //   * there are no error messages in logs about failing to email.
-    // Note that an admin can still change the email address but that non-admins can't simply click a "I lost my password" link and take control of the account.
-    // We also rely on the user-provisioning-plugin to count add-on users as consuming licenses if an admin does take control of an account and use it to log in.
-    // The rationale is that either they can't log in as these users, in which case they consume no licenses, or logging in is possible and such users do consume licenses.
-    private static final String NO_REPLY_EMAIL_ADDRESS = "noreply@mailer.atlassian.com";
 
     private static final Logger log = LoggerFactory.getLogger(ConnectAddOnUserServiceImpl.class);
 
@@ -59,7 +49,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         // Oh how I long for Java 7's conciser catch semantics.
         try
         {
-            return createOrEnableAddOnUser(ADD_ON_USER_KEY_PREFIX + addOnKey);
+            return createOrEnableAddOnUser(ConnectAddOnUserUtil.userKeyForAddon(addOnKey));
         }
         catch (InvalidCredentialException e)
         {
@@ -102,7 +92,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Override
     public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException
     {
-        String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;
+        String userKey = ConnectAddOnUserUtil.userKeyForAddon(addOnKey);
 
         try
         {
@@ -144,7 +134,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Override
     public boolean isAddOnUserActive(String addOnKey)
     {
-        String userKey = ADD_ON_USER_KEY_PREFIX + addOnKey;
+        String userKey = ConnectAddOnUserUtil.userKeyForAddon(addOnKey);
         User user;
 
         try
@@ -169,9 +159,9 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
     private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
-        connectAddOnUserGroupProvisioningService.ensureGroupExists(ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+        connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
         User user = ensureUserExists(userKey);
-        connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), ATLASSIAN_CONNECT_ADD_ONS_USER_GROUP_KEY);
+        connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
 
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroups())
         {
@@ -202,10 +192,10 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         {
             // just in case an admin changes the email address
             // (we don't rely on this to prevent an admin taking control of the account, but it would make it more difficult)
-            if (!NO_REPLY_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive())
+            if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive())
             {
                 UserTemplate userTemplate = new UserTemplate(user);
-                userTemplate.setEmailAddress(NO_REPLY_EMAIL_ADDRESS);
+                userTemplate.setEmailAddress(Constants.ADDON_USER_EMAIL_ADDRESS);
                 userTemplate.setActive(true);
                 applicationService.updateUser(getApplication(), userTemplate);
             }
@@ -224,7 +214,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         {
             // Justin Koke says that NONE password prevents logging in
             UserTemplate userTemplate = new UserTemplate(userKey);
-            userTemplate.setEmailAddress(NO_REPLY_EMAIL_ADDRESS); // so that "reset password" emails go nowhere
+            userTemplate.setEmailAddress(Constants.ADDON_USER_EMAIL_ADDRESS); // so that "reset password" emails go nowhere
             userTemplate.setActive(true); //if you don't set this, it defaults to inactive!!!
             user = applicationService.addUser(getApplication(), userTemplate, PasswordCredential.NONE);
 

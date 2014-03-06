@@ -50,7 +50,10 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
 {
     private static final String CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME = "atlassian-addons-project-admin";
     private static final String CONNECT_PROJECT_ADMIN_PROJECT_ROLE_DESC = "A project role that represents Connect add-ons declaring Project Admin scope";
-    private static final String ATLASSIAN_ADDONS_ADMIN_GROUP_KEY = "atlassian-addons-admin";
+    /**
+     * The group which is created to house all add-on users which have administrative rights.
+     */
+    private static final String ADDON_ADMIN_USER_GROUP_KEY = "atlassian-addons-admin";
 
     private static final ImmutableSet<String> GROUPS = ImmutableSet.of("jira-users");
     private static final int ADMIN_PERMISSION = Permissions.ADMINISTER;
@@ -127,8 +130,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     {
         try
         {
-            ensureGroupExistsAndIsAdmin(ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
-            connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
+            ensureGroupExistsAndIsAdmin(ADDON_ADMIN_USER_GROUP_KEY);
+            connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), ADDON_ADMIN_USER_GROUP_KEY);
         }
         catch (GroupNotFoundException e)
         {
@@ -160,7 +163,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     {
         try
         {
-            connectAddOnUserGroupProvisioningService.removeUserFromGroup(user.getName(), ATLASSIAN_ADDONS_ADMIN_GROUP_KEY);
+            connectAddOnUserGroupProvisioningService.removeUserFromGroup(user.getName(), ADDON_ADMIN_USER_GROUP_KEY);
         }
         catch (OperationFailedException e)
         {
