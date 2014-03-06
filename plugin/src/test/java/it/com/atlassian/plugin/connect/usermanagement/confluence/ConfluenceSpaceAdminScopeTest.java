@@ -162,11 +162,8 @@ public class ConfluenceSpaceAdminScopeTest extends ConfluenceAdminScopeTestBase
             @Override
             public boolean apply(@Nullable Space space)
             {
+                ThreadLocalCache.flush(); // !!!!!!!!!!!!!!!!!!
                 final boolean hasPermission = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, space, addonUser);
-                if (hasPermission)
-                {
-                    log.debug("***** user {} has space admin permission on space {}", new Object[] {addonUser, space});
-                }
                 return hasPermission;
             }
         });

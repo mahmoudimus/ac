@@ -27,8 +27,11 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -227,10 +230,20 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     private void removeAddonUserAdminFromSpace(Space space, ConfluenceUser confluenceAddonUser)
     {
-        if (spacePermissionManager.hasPermission(ADMINISTER_SPACE_PERMISSION, space, confluenceAddonUser))
+        Set<SpacePermission> allSpacePermissionsAssignedToAddonUser = Sets.newHashSet();
+        for (SpacePermission spacePermission : space.getPermissions())
         {
-            SpacePermission permission = new SpacePermission(ADMINISTER_SPACE_PERMISSION, space, null, confluenceAddonUser);
-            spacePermissionManager.removePermission(permission);
+            if (spacePermission.isUserPermission() &&
+                    Objects.equal(spacePermission.getUserSubject(), confluenceAddonUser) &&
+                    StringUtils.equals(spacePermission.getType(), SpacePermission.ADMINISTER_SPACE_PERMISSION))
+            {
+                allSpacePermissionsAssignedToAddonUser.add(spacePermission);
+            }
+        }
+
+        for (SpacePermission spacePermission : allSpacePermissionsAssignedToAddonUser)
+        {
+            spacePermissionManager.removePermission(spacePermission);
         }
     }
 
