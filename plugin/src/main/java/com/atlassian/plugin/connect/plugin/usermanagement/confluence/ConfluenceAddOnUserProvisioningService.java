@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.usermanagement.confluence;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import com.atlassian.confluence.event.events.space.SpaceCreateEvent;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SetSpacePermissionChecker;
@@ -33,6 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.google.common.collect.Iterables.filter;
@@ -137,38 +137,35 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     private void setGlobalAdmin(final ConfluenceUser confluenceAddonUser, final boolean shouldBeAdmin)
     {
-        if (confluencePermissionManager.isConfluenceAdministrator(confluenceAddonUser) != shouldBeAdmin)
+        // injecting as a dependency results in an instance with null data members - perhaps there are multiple instances or perhaps it is initialized after us
+        final PermissionsAdministratorBuilder confluencePermissionsAdministratorBuilder = ComponentLocator.getComponent(PermissionsAdministratorBuilder.class, "permissionsAdministratorBuilder");
+
+        // we need to run this without permissions checking otherwise our attempt to modify permissions will be permissions-checked,
+        // and will be accordingly rejected unless we tell Confluence that it's being performed by an arbitrarily selected admin user
+        confluencePermissionManager.withExemption(new Runnable()
         {
-            // injecting as a dependency results in an instance with null data members - perhaps there are multiple instances or perhaps it is initialized after us
-            final PermissionsAdministratorBuilder confluencePermissionsAdministratorBuilder = ComponentLocator.getComponent(PermissionsAdministratorBuilder.class, "permissionsAdministratorBuilder");
-
-            // we need to run this without permissions checking otherwise our attempt to modify permissions will be permissions-checked,
-            // and will be accordingly rejected unless we tell Confluence that it's being performed by an arbitrarily selected admin user
-            confluencePermissionManager.withExemption(new Runnable()
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
-                {
-                    EditPermissionsAdministrator confluenceEditPermissionsAdministrator = confluencePermissionsAdministratorBuilder.buildEditGlobalPermissionAdministrator(null, asList(confluenceAddonUser.getName()), Collections.<String>emptyList());
+                EditPermissionsAdministrator confluenceEditPermissionsAdministrator = confluencePermissionsAdministratorBuilder.buildEditGlobalPermissionAdministrator(null, asList(confluenceAddonUser.getName()), Collections.<String>emptyList());
 
-                    if (shouldBeAdmin)
-                    {
-                        SpacePermission permission = SpacePermission.createUserSpacePermission(SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION, null, confluenceAddonUser);
-                        confluenceEditPermissionsAdministrator.addPermission(permission);
-                    }
-                    else
-                    {
-                        removePermission(confluenceEditPermissionsAdministrator, confluenceAddonUser, SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION);
-                    }
+                if (shouldBeAdmin)
+                {
+                    SpacePermission permission = SpacePermission.createUserSpacePermission(SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION, null, confluenceAddonUser);
+                    confluenceEditPermissionsAdministrator.addPermission(permission);
                 }
-            });
-            // Confluence's CachingSpacePermissionManager caches permissions in ThreadLocalCache and doesn't realise when the permissions have changed.
-            // This is Less Than Ideal.
-            // Due to this bug all threads now have an outdated copy of this user's admin permission.
-            // On a new request from the add-on or page-view by a user a new thread will be used, so they will be OK.
-            // We could call ThreadLocalCache.flush() to fix up this thread but that may have unintended side-effects.
-            // The test code in ConfluenceAdminScopeTestBase flushes the thread-local cache before checking results.
-        }
+                else
+                {
+                    removePermission(confluenceEditPermissionsAdministrator, confluenceAddonUser, SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION);
+                }
+            }
+        });
+        // Confluence's CachingSpacePermissionManager caches permissions in ThreadLocalCache and doesn't realise when the permissions have changed.
+        // This is Less Than Ideal.
+        // Due to this bug all threads now have an outdated copy of this user's admin permission.
+        // On a new request from the add-on or page-view by a user a new thread will be used, so they will be OK.
+        // We could call ThreadLocalCache.flush() to fix up this thread but that may have unintended side-effects.
+        // The test code in ConfluenceAdminScopeTestBase flushes the thread-local cache before checking results.
     }
 
     // because in Confluence you can't "remove permission CONFLUENCE_ADMINISTRATOR_PERMISSION": you have to remove the expact permission object instance (OMGWTFBBQ)
