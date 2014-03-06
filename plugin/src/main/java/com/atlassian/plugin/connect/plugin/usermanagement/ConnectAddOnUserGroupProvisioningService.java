@@ -17,8 +17,8 @@ public interface ConnectAddOnUserGroupProvisioningService
 
     /**
      * Remove the user from the nominated group. It is not an error condition if the user is not a member of the group.
-     * @param userKey
-     * @param groupKey
+     * @param userKey the unique user identifier
+     * @param groupKey the unique group identifier
      */
     void removeUserFromGroup(String userKey, String groupKey) throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException;
 
