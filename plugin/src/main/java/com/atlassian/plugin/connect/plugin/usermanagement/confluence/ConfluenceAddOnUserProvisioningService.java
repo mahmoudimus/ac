@@ -1,5 +1,11 @@
 package com.atlassian.plugin.connect.plugin.usermanagement.confluence;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import com.atlassian.confluence.event.events.space.SpaceCreateEvent;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermission;
 import com.atlassian.confluence.security.SpacePermissionManager;
@@ -9,29 +15,32 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
+import com.atlassian.event.api.EventListener;
+import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
+import static com.google.common.collect.Iterables.filter;
 import static java.util.Arrays.asList;
 
 @SuppressWarnings ("unused")
 @ConfluenceComponent
 @ExportAsDevService
-public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
+public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService, DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceAddOnUserProvisioningService.class);
 
@@ -44,19 +53,26 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     private final SpaceManager spaceManager;
     private final UserAccessor userAccessor;
     private final UserManager userManager;
+    private final EventPublisher eventPublisher;
+    private final ConnectAddonAccessor connectAddonAccessor;
 
     @Autowired
     public ConfluenceAddOnUserProvisioningService(PermissionManager confluencePermissionManager,
                                                   SpacePermissionManager spacePermissionManager,
                                                   SpaceManager spaceManager,
                                                   UserAccessor userAccessor,
-                                                  UserManager userManager)
+                                                  UserManager userManager,
+                                                  EventPublisher eventPublisher,
+                                                  ConnectAddonAccessor connectAddonAccessor)
     {
         this.confluencePermissionManager = confluencePermissionManager;
         this.spacePermissionManager = spacePermissionManager;
         this.spaceManager = spaceManager;
         this.userAccessor = userAccessor;
         this.userManager = userManager;
+        this.eventPublisher = eventPublisher;
+        this.connectAddonAccessor = connectAddonAccessor;
+        eventPublisher.register(this);
     }
 
     @Override
@@ -143,4 +159,38 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
             log.info("Add-on user {} already has admin permission on space {}", confluenceAddonUser.getName(), space.getKey());
         }
     }
+
+    @EventListener
+    public void spaceCreated(SpaceCreateEvent spaceCreateEvent)
+    {
+        final Iterable<ConnectAddonBean> connectAddonBeans = fetchAddonsWithSpaceAdminScope();
+        for (ConnectAddonBean connectAddonBean : connectAddonBeans)
+        {
+            // TODO:*** Need to avoid duping the addon user naming scheme but don't want to create a circular dependency
+            String username =  "addon_" + connectAddonBean.getKey();
+            grantAddonUserSpaceAdmin(getConfluenceUser(username));
+        }
+
+    }
+
+    private Iterable<ConnectAddonBean> fetchAddonsWithSpaceAdminScope()
+    {
+        return filter(connectAddonAccessor.fetchConnectAddons(), new Predicate<ConnectAddonBean>()
+        {
+            @Override
+            public boolean apply(@Nullable ConnectAddonBean addon)
+            {
+                final Set<ScopeName> normalizedScopes = ScopeName.normalize(addon.getScopes());
+                return (normalizedScopes.contains(ScopeName.SPACE_ADMIN) && !normalizedScopes.contains(ScopeName.ADMIN));
+            }
+        });
+    }
+
+    @Override
+    public void destroy() throws Exception
+    {
+        eventPublisher.unregister(this);
+    }
+
+
 }
