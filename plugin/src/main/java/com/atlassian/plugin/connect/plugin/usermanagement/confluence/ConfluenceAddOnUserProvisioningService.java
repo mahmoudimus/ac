@@ -142,19 +142,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
                     }
                     else
                     {
-                        SetSpacePermissionChecker setSpacePermissionChecker = ComponentLocator.getComponent(SetSpacePermissionChecker.class, "setSpacePermissionChecker");
-                        List<SpacePermission> adminPermissions = spacePermissionManager.getGlobalPermissions(SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION);
-
-                        for (SpacePermission permission : adminPermissions)
-                        {
-                            if (null != permission && null != permission.getUserSubject() && null != permission.getUserSubject().getKey() &&
-                                permission.getUserSubject().getKey().getStringValue().equals(confluenceAddonUser.getKey().getStringValue()))
-                            {
-                                log.info("Removing Confluence admin permission from user '{}'.", confluenceAddonUser.getName());
-                                confluenceEditPermissionsAdministrator.removePermission(permission);
-                                break;
-                            }
-                        }
+                        removePermission(confluenceEditPermissionsAdministrator, confluenceAddonUser, SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION);
                     }
                 }
             });
@@ -164,6 +152,24 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
             // On a new request from the add-on or page-view by a user a new thread will be used, so they will be OK.
             // We could call ThreadLocalCache.flush() to fix up this thread but that may have unintended side-effects.
             // The test code in ConfluenceAdminScopeTestBase flushes the thread-local cache before checking results.
+        }
+    }
+
+    // because in Confluence you can't "remove permission CONFLUENCE_ADMINISTRATOR_PERMISSION": you have to remove the expact permission object instance (OMGWTFBBQ)
+    private void removePermission(EditPermissionsAdministrator confluenceEditPermissionsAdministrator, ConfluenceUser confluenceAddonUser, String permissionType)
+    {
+        SetSpacePermissionChecker setSpacePermissionChecker = ComponentLocator.getComponent(SetSpacePermissionChecker.class, "setSpacePermissionChecker");
+        List<SpacePermission> permissions = spacePermissionManager.getGlobalPermissions(permissionType);
+
+        for (SpacePermission permission : permissions)
+        {
+            if (null != permission && null != permission.getUserSubject() && null != permission.getUserSubject().getKey() &&
+                permission.getUserSubject().getKey().getStringValue().equals(confluenceAddonUser.getKey().getStringValue()))
+            {
+                log.info("Removing Confluence admin permission from user '{}'.", confluenceAddonUser.getName());
+                confluenceEditPermissionsAdministrator.removePermission(permission);
+                break;
+            }
         }
     }
 
