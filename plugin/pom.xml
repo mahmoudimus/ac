@@ -120,6 +120,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.healthcheck</groupId>
+            <artifactId>atlassian-healthcheck</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-bridge</artifactId>
             <scope>provided</scope>
@@ -440,6 +445,7 @@
                             com.atlassian.jira.security.websudo;resolution:=optional,
                             com.atlassian.oauth*;version="(1.2,2.0]",
                             com.atlassian.jwt.*;version="${atlassian.jwt.version}",
+                            com.atlassian.healthcheck.core*;version="${atlassian.healthcheck.version}",
 
                             com.atlassian.plugin;version="${atlassian.plugins.api.version}",
                             com.atlassian.plugin.descriptors;resolution:="optional",
