@@ -1,5 +1,7 @@
 package it.com.atlassian.plugin.connect.usermanagement;
 
+import java.io.IOException;
+
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
@@ -16,8 +18,6 @@ import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;

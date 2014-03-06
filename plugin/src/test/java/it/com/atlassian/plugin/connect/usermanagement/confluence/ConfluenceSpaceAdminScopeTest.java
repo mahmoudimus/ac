@@ -1,6 +1,7 @@
 package it.com.atlassian.plugin.connect.usermanagement.confluence;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.security.PermissionManager;
@@ -9,7 +10,6 @@ import com.atlassian.confluence.security.SpacePermissionManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
-import com.atlassian.confluence.user.ConfluenceUserImpl;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -18,7 +18,6 @@ import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.user.UserManager;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -29,9 +28,6 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
