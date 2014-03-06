@@ -100,7 +100,7 @@ public class JiraProjectAdminScopeTest
         this.adminAddOn = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.ADMIN))
                 .build();
-        
+
         //you MUST login as admin before you can use the testPluginInstaler
         testAuthenticator.authenticateUser("admin");
     }
@@ -112,7 +112,7 @@ public class JiraProjectAdminScopeTest
         try
         {
             plugin = testPluginInstaller.installPlugin(projectAdminAddOn);
-            List<String> projectAdminErrors = addOnUserCanAdministerAllProjects();
+            List<String> projectAdminErrors = addOnUserIsProjectAdminForAllProjects();
             assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
         }
         finally
@@ -151,7 +151,7 @@ public class JiraProjectAdminScopeTest
             plugin = testPluginInstaller.installPlugin(projectAdminAddOn);
             plugin = testPluginInstaller.installPlugin(writeAddOn);
 
-            List<String> projectAdminErrors = addOnUserCannotAdministerAnyProjects();
+            List<String> projectAdminErrors = addOnUserIsNotProjectAdminForAnyProjects();
             assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
         }
         finally
@@ -183,7 +183,7 @@ public class JiraProjectAdminScopeTest
     }
 
     @Test
-    public void addOnIsStillAdminOfExistingProjectsAfterScopeExpansion() throws Exception
+    public void addOnCanAdministerExistingProjectsAfterScopeExpansion() throws Exception
     {
         Plugin plugin = null;
         try
@@ -201,7 +201,7 @@ public class JiraProjectAdminScopeTest
     }
 
     @Test
-    public void addOnIsStillAdminOfNewProjectsAfterScopeExpansion() throws Exception
+    public void addOnCanAdministerNewProjectsAfterScopeExpansion() throws Exception
     {
         Plugin plugin = null;
         try
@@ -219,6 +219,25 @@ public class JiraProjectAdminScopeTest
         {
             uninstallPlugin(plugin);
             deleteJediProject();
+        }
+    }
+
+    @Test
+    public void projectAdminConfigurationIsRemovedAfterScopeExpansion() throws Exception
+    {
+        Plugin plugin = null;
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(projectAdminAddOn);
+            plugin = testPluginInstaller.installPlugin(adminAddOn);
+
+            // this is checking explicitly for the project_admin permission, which should have been removed
+            List<String> projectAdminErrors = addOnUserIsNotProjectAdminForAnyProjects();
+            assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
+        }
+        finally
+        {
+            uninstallPlugin(plugin);
         }
     }
 
@@ -286,7 +305,7 @@ public class JiraProjectAdminScopeTest
         return projectAdminErrors;
     }
 
-    private List<String> addOnUserCanAdministerAllProjects() throws ConnectAddOnUserInitException
+    private List<String> addOnUserIsProjectAdminForAllProjects() throws ConnectAddOnUserInitException
     {
         ApplicationUser addonUser = getAddOnUser();
         List<Project> allProjects = projectService.getAllProjects(addonUser).getReturnedValue();
@@ -303,7 +322,7 @@ public class JiraProjectAdminScopeTest
         return projectAdminErrors;
     }
 
-    private List<String> addOnUserCannotAdministerAnyProjects() throws ConnectAddOnUserInitException
+    private List<String> addOnUserIsNotProjectAdminForAnyProjects() throws ConnectAddOnUserInitException
     {
         ApplicationUser addonUser = getAddOnUser();
         List<Project> allProjects = projectService.getAllProjects(addonUser).getReturnedValue();

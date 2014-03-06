@@ -101,25 +101,23 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
 
         // x to ADMIN scope transition
-        if (normalizedNewScopes.contains(ScopeName.ADMIN))
+        if (ScopeName.containsAdmin(normalizedNewScopes))
         {
             makeUserGlobalAdmin(user);
         }
         // x to PROJECT_ADMIN scope transition
-        else if (normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN)
-                && (!normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN) || normalizedPreviousScopes.contains(ScopeName.ADMIN)))
+        else if (ScopeName.isTransitionUpToProjectAdmin(normalizedPreviousScopes, normalizedNewScopes))
         {
             updateProjectAdminScopePermissions(user);
         }
 
         // ADMIN to x scope transition
-        if (normalizedPreviousScopes.contains(ScopeName.ADMIN) && !normalizedNewScopes.contains(ScopeName.ADMIN))
+        if (ScopeName.isTransitionDownFromAdmin(normalizedPreviousScopes, normalizedNewScopes))
         {
             removeUserFromGlobalAdmins(user);
         }
         // PROJECT_ADMIN to x scope transition
-        else if (normalizedPreviousScopes.contains(ScopeName.PROJECT_ADMIN)
-                && (!normalizedNewScopes.contains(ScopeName.PROJECT_ADMIN) || normalizedNewScopes.contains(ScopeName.ADMIN)))
+        else if (ScopeName.isTransitionDownFromProjectAdmin(normalizedPreviousScopes, normalizedNewScopes))
         {
             removeProjectAdminScopePermissions(user);
         }
