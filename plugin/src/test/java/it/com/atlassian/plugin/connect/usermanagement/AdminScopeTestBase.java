@@ -55,6 +55,7 @@ public abstract class AdminScopeTestBase
 
     protected abstract ScopeName getScope();
     protected abstract ScopeName getScopeOneDown();
+    protected abstract ScopeName getScopeOneUp();
     protected abstract boolean shouldBeAdmin();
     protected abstract boolean isUserTopLevelAdmin(String username);
 
@@ -64,6 +65,14 @@ public abstract class AdminScopeTestBase
                 .withScopes(ImmutableSet.of(getScopeOneDown())) // because "one lower than admin" is product specific
                 .build();
         installAddon(lowerScopeBean);
+    }
+
+    protected void installHigherScopeAddon() throws IOException
+    {
+        ConnectAddonBean higherScopeBean = deriveNewAddon()
+                .withScopes(ImmutableSet.of(getScopeOneUp())) // because "one higher than admin" is product specific
+                .build();
+        installAddon(higherScopeBean);
     }
 
     protected ConnectAddonBeanBuilder deriveNewAddon()
