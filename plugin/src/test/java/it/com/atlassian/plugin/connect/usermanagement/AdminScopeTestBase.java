@@ -12,8 +12,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.google.common.collect.ImmutableSet;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -66,14 +66,14 @@ public abstract class AdminScopeTestBase
         return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
     }
 
-    @BeforeClass
+    @Before
     public void setUp() throws IOException
     {
         testAuthenticator.authenticateUser("admin");
         plugin = installPlugin();
     }
 
-    @AfterClass
+    @After
     public void tearDown() throws IOException
     {
         if (null != plugin)
