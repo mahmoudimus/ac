@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
 @Component
@@ -172,7 +172,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             catch (GroupNotFoundException e)
             {
                 // carry on if the group does not exist so that an admin deleting a group will not kill all add-on installations
-                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist!", userKey, group), e);
+                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist!", userKey, group));
                 // TODO ACDEV-938: propagate this error
             }
         }

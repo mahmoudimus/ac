@@ -50,7 +50,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     // As reported by Sam Day, without the "confluence-users" group the add-on user can't
     // even get the page summary of a page that is open to anonymous access.
-    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("confluence-users");
+    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("confluence-users", "users");
 
     private final PermissionManager confluencePermissionManager;
     private final SpacePermissionManager spacePermissionManager;
