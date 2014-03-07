@@ -82,7 +82,7 @@ public abstract class AdminScopeTestBase
     public void setUp() throws IOException
     {
         testAuthenticator.authenticateUser("admin");
-        String key = "ac-test-" + System.currentTimeMillis();
+        String key = "ac-TEST-" + System.currentTimeMillis(); // Use uppercase character to detect username vs userkey issues
         addonBaseBean = ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))

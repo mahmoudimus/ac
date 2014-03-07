@@ -242,7 +242,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                 if (!roleActors.contains(addOnUser))
                 {
                     projectRoleService.addActorsToProjectRole(
-                            Collections.singleton(addOnUser.getName()),
+                            Collections.singleton(addOnUser.getKey()),
                             projectRole,
                             project,
                             UserRoleActorFactory.TYPE,
@@ -262,7 +262,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         if (!roleActors.contains(addOnUser))
         {
             projectRoleService.addDefaultActorsToProjectRole(
-                    Collections.singleton(addOnUser.getName()),
+                    Collections.singleton(addOnUser.getKey()),
                     projectRole,
                     UserRoleActorFactory.TYPE,
                     errorCollection
@@ -280,7 +280,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             for (Project project : getAllProjects())
             {
                 projectRoleService.removeActorsFromProjectRole(
-                        Collections.singleton(addOnUser.getName()),
+                        Collections.singleton(addOnUser.getKey()),
                         projectRole,
                         project,
                         UserRoleActorFactory.TYPE,
@@ -296,7 +296,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private void removeUserFromProjectRoleDefaults(ApplicationUser addOnUser, ProjectRole projectRole, ErrorCollection errorCollection)
     {
         projectRoleService.removeDefaultActorsFromProjectRole(
-                Collections.singleton(addOnUser.getName()),
+                Collections.singleton(addOnUser.getKey()),
                 projectRole,
                 UserRoleActorFactory.TYPE,
                 errorCollection

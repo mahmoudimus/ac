@@ -44,7 +44,7 @@ public class DetailedJiraProjectAdminScopeTest
 {
     private static final String ADMIN = "admin";
     private static final String PROJECT_KEY = "JEDI";
-    private static String ADDON_KEY = "project-admin-addon";
+    private static String ADDON_KEY = "project-admin-ADDON"; // Use uppercase character to detect username vs userkey issues
     private static final String INSTALLED = "/installed";
 
     private final ConnectAddOnUserService connectAddOnUserService;
@@ -276,15 +276,15 @@ public class DetailedJiraProjectAdminScopeTest
         }
     }
 
-    private String getAddOnUserKey() throws ConnectAddOnUserInitException
+    private String getAddOnUserName() throws ConnectAddOnUserInitException
     {
         return connectAddOnUserService.getOrCreateUserKey(ADDON_KEY);
     }
 
     private ApplicationUser getAddOnUser() throws ConnectAddOnUserInitException
     {
-        String addonUserKey = getAddOnUserKey();
-        return userManager.getUserByKey(addonUserKey);
+        String addonUserName = getAddOnUserName();
+        return userManager.getUserByName(addonUserName);
     }
 
     private List<String> addOnUserCanUpdateAllProjects() throws ConnectAddOnUserInitException
@@ -298,7 +298,7 @@ public class DetailedJiraProjectAdminScopeTest
             ServiceResult canUpdateProjectResult = projectService.validateUpdateProject(addonUser, project.getKey());
             if (!canUpdateProjectResult.isValid())
             {
-                projectAdminErrors.add("Add-on user " + addonUser.getName() + " should be able to update project " + project.getKey());
+                projectAdminErrors.add("Add-on user " + addonUser.getKey() + " should be able to update project " + project.getKey());
             }
         }
         return projectAdminErrors;
@@ -315,7 +315,7 @@ public class DetailedJiraProjectAdminScopeTest
             boolean canAdminister = permissionManager.hasPermission(Permissions.PROJECT_ADMIN, project, addonUser, false);
             if (!canAdminister)
             {
-                projectAdminErrors.add("Add-on user " + addonUser.getName() + " should have administer permission for project " + project.getKey());
+                projectAdminErrors.add("Add-on user " + addonUser.getKey() + " should have administer permission for project " + project.getKey());
             }
         }
         return projectAdminErrors;
@@ -332,7 +332,7 @@ public class DetailedJiraProjectAdminScopeTest
             boolean canAdminister = permissionManager.hasPermission(Permissions.PROJECT_ADMIN, project, addonUser, false);
             if (canAdminister)
             {
-                projectAdminErrors.add("Add-on user " + addonUser.getName() + " should not have administer permission for project " + project.getKey());
+                projectAdminErrors.add("Add-on user " + addonUser.getKey() + " should not have administer permission for project " + project.getKey());
             }
         }
         return projectAdminErrors;
