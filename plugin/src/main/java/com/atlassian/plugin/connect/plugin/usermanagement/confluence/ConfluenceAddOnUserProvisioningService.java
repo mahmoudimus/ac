@@ -20,6 +20,8 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvis
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.component.ComponentLocator;
+import com.atlassian.sal.api.transaction.TransactionCallback;
+import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Objects;
@@ -59,6 +61,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     private final UserManager userManager;
     private final EventPublisher eventPublisher;
     private final ConnectAddonAccessor connectAddonAccessor;
+    private final TransactionTemplate transactionTemplate;
 
     @Autowired
     public ConfluenceAddOnUserProvisioningService(PermissionManager confluencePermissionManager,
@@ -67,7 +70,8 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
                                                   UserAccessor userAccessor,
                                                   UserManager userManager,
                                                   EventPublisher eventPublisher,
-                                                  ConnectAddonAccessor connectAddonAccessor)
+                                                  ConnectAddonAccessor connectAddonAccessor,
+                                                  TransactionTemplate transactionTemplate)
     {
         this.confluencePermissionManager = confluencePermissionManager;
         this.spacePermissionManager = spacePermissionManager;
@@ -76,38 +80,48 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         this.userManager = userManager;
         this.eventPublisher = eventPublisher;
         this.connectAddonAccessor = connectAddonAccessor;
+        this.transactionTemplate = transactionTemplate;
         eventPublisher.register(this);
     }
 
     @Override
-    public void provisionAddonUserForScopes(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
+    public void provisionAddonUserForScopes(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes)
     {
-        final ConfluenceUser confluenceAddonUser = getConfluenceUser(username);
-        Set<ScopeName> normalizedPreviousScopes = ScopeName.normalize(previousScopes);
-        Set<ScopeName> normalizedNewScopes = ScopeName.normalize(newScopes);
+        transactionTemplate.execute(new TransactionCallback<Void>()
+        {
+            @Override
+            public Void doInTransaction()
+            {
+                final ConfluenceUser confluenceAddonUser = getConfluenceUser(username);
+                Set<ScopeName> normalizedPreviousScopes = ScopeName.normalize(previousScopes);
+                Set<ScopeName> normalizedNewScopes = ScopeName.normalize(newScopes);
 
-        // x to ADMIN scope transition
-        if (ScopeName.containsAdmin(normalizedNewScopes))
-        {
-            grantAddonUserGlobalAdmin(confluenceAddonUser);
-        }
-        // x to SPACE_ADMIN scope transition
-        else if (ScopeName.isTransitionUpToSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes))
-        {
-            // add space admin to all spaces
-            grantAddonUserSpaceAdmin(confluenceAddonUser);
-        }
+                // x to ADMIN scope transition
+                if (ScopeName.containsAdmin(normalizedNewScopes))
+                {
+                    grantAddonUserGlobalAdmin(confluenceAddonUser);
+                }
+                // x to SPACE_ADMIN scope transition
+                else if (ScopeName.isTransitionUpToSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes))
+                {
+                    // add space admin to all spaces
+                    grantAddonUserSpaceAdmin(confluenceAddonUser);
+                }
 
-        // ADMIN to x scope transition
-        if (ScopeName.isTransitionDownFromAdmin(normalizedPreviousScopes, normalizedNewScopes))
-        {
-            removeUserFromGlobalAdmins(confluenceAddonUser);
-        }
-        // SPACE_ADMIN to x scope transition
-        else if (ScopeName.isTransitionDownFromSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes))
-        {
-            removeSpaceAdminPermissions(confluenceAddonUser);
-        }
+                // ADMIN to x scope transition
+                if (ScopeName.isTransitionDownFromAdmin(normalizedPreviousScopes, normalizedNewScopes))
+                {
+                    removeUserFromGlobalAdmins(confluenceAddonUser);
+                }
+                // SPACE_ADMIN to x scope transition
+                else if (ScopeName.isTransitionDownFromSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes))
+                {
+                    removeSpaceAdminPermissions(confluenceAddonUser);
+                }
+
+                return null;
+            }
+        });
     }
 
     @Override
