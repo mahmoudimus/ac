@@ -55,7 +55,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
      */
     private static final String ADDON_ADMIN_USER_GROUP_KEY = "atlassian-addons-admin";
 
-    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("jira-users");
+    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("jira-users", "users");
     private static final int ADMIN_PERMISSION = Permissions.ADMINISTER;
 
     private static final Logger log = LoggerFactory.getLogger(JiraAddOnUserProvisioningService.class);
