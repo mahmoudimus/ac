@@ -92,36 +92,41 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
             @Override
             public Void doInTransaction()
             {
-                final ConfluenceUser confluenceAddonUser = getConfluenceUser(username);
-                Set<ScopeName> normalizedPreviousScopes = ScopeName.normalize(previousScopes);
-                Set<ScopeName> normalizedNewScopes = ScopeName.normalize(newScopes);
-
-                // x to ADMIN scope transition
-                if (ScopeName.containsAdmin(normalizedNewScopes))
-                {
-                    grantAddonUserGlobalAdmin(confluenceAddonUser);
-                }
-                // x to SPACE_ADMIN scope transition
-                else if (ScopeName.isTransitionUpToSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes))
-                {
-                    // add space admin to all spaces
-                    grantAddonUserSpaceAdmin(confluenceAddonUser);
-                }
-
-                // ADMIN to x scope transition
-                if (ScopeName.isTransitionDownFromAdmin(normalizedPreviousScopes, normalizedNewScopes))
-                {
-                    removeUserFromGlobalAdmins(confluenceAddonUser);
-                }
-                // SPACE_ADMIN to x scope transition
-                else if (ScopeName.isTransitionDownFromSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes))
-                {
-                    removeSpaceAdminPermissions(confluenceAddonUser);
-                }
-
+                provisionAddonUserForScopeInTransaction(username, previousScopes, newScopes);
                 return null;
             }
         });
+    }
+
+    private void provisionAddonUserForScopeInTransaction(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
+    {
+        final ConfluenceUser confluenceAddonUser = getConfluenceUser(username);
+
+        // After a manual re-install of the add-on, there are no previous known scopes, but there could still be
+        // an existing permission setup from the previous installation that needs to be removed.
+        boolean removeExistingPermissionSetup = previousScopes.isEmpty();
+
+        // ADMIN to x scope transition
+        if (removeExistingPermissionSetup || ScopeName.isTransitionDownFromAdmin(previousScopes, newScopes))
+        {
+            removeUserFromGlobalAdmins(confluenceAddonUser);
+        }
+        // SPACE_ADMIN to x scope transition
+        if (removeExistingPermissionSetup || ScopeName.isTransitionDownFromSpaceAdmin(previousScopes, newScopes))
+        {
+            removeSpaceAdminPermissions(confluenceAddonUser);
+        }
+        // x to ADMIN scope transition
+        if (ScopeName.isTransitionUpToAdmin(previousScopes, newScopes))
+        {
+            grantAddonUserGlobalAdmin(confluenceAddonUser);
+        }
+        // x to SPACE_ADMIN scope transition
+        if (ScopeName.isTransitionUpToSpaceAdmin(previousScopes, newScopes))
+        {
+            // add space admin to all spaces
+            grantAddonUserSpaceAdmin(confluenceAddonUser);
+        }
     }
 
     @Override
@@ -239,7 +244,6 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         {
             removeAddonUserAdminFromSpace(space, confluenceAddonUser);
         }
-
     }
 
     private void removeAddonUserAdminFromSpace(Space space, ConfluenceUser confluenceAddonUser)

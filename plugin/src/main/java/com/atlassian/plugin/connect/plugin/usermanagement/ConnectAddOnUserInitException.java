@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.usermanagement;
 /**
  * todo: write javadoc
  */
-public class ConnectAddOnUserInitException extends Exception
+public class ConnectAddOnUserInitException extends RuntimeException
 {
     public ConnectAddOnUserInitException(Exception cause)
     {

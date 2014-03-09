@@ -56,39 +56,65 @@ public enum ScopeName implements Comparable<ScopeName>
         return normalizedScopes;
     }
 
-    public static boolean containsAdmin(Set<ScopeName> normalizedNewScopes)
+    /**
+     * Find the topmost {@link ScopeName} in a {@link Set} of {@link ScopeName}s. The topmost
+     * scope is the one which implies all others in the set.
+     * @param scopes arbitrary {@link ScopeName}s
+     * @return the {@link ScopeName} which implies all others in the {@link Set}.
+     */
+    public static ScopeName findTopMostScope(Set<ScopeName> scopes)
     {
-        return normalizedNewScopes.contains(ADMIN);
+        ScopeName topMostScope = null;
+        for (ScopeName scope : scopes)
+        {
+            if (topMostScope == null || scope.implies(topMostScope))
+            {
+                topMostScope = scope;
+            }
+        }
+        return topMostScope;
     }
 
-    public static boolean isTransitionDownFromAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes)
+    public static boolean isTransitionUpToAdmin(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        return containsAdmin(normalizedPreviousScopes) && !containsAdmin(normalizedNewScopes);
+        return isTransitionTo(ADMIN, previousScopes, newScopes);
     }
 
-    public static boolean isTransitionUpToProjectAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes)
+    public static boolean isTransitionDownFromAdmin(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        return isTransitionUpToProjectOrSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes, PROJECT_ADMIN);
+        return isTransitionAwayFrom(ADMIN, previousScopes, newScopes);
     }
 
-    public static boolean isTransitionUpToSpaceAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes)
+    public static boolean isTransitionUpToProjectAdmin(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        return isTransitionUpToProjectOrSpaceAdmin(normalizedPreviousScopes, normalizedNewScopes, SPACE_ADMIN);
+        return isTransitionTo(PROJECT_ADMIN, previousScopes, newScopes);
     }
 
-    private static boolean isTransitionUpToProjectOrSpaceAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes, ScopeName scopeName)
+    public static boolean isTransitionDownFromProjectAdmin(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        return normalizedNewScopes.contains(scopeName) &&
-               (!normalizedPreviousScopes.contains(scopeName) || containsAdmin(normalizedPreviousScopes));
+        return isTransitionAwayFrom(PROJECT_ADMIN, previousScopes, newScopes);
     }
 
-    public static boolean isTransitionDownFromProjectAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes)
+    public static boolean isTransitionUpToSpaceAdmin(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        return isTransitionUpToProjectAdmin(normalizedNewScopes, normalizedPreviousScopes); // down is the reverse of up: see the arg order
+        return isTransitionTo(SPACE_ADMIN, previousScopes, newScopes);
     }
 
-    public static boolean isTransitionDownFromSpaceAdmin(Set<ScopeName> normalizedPreviousScopes, Set<ScopeName> normalizedNewScopes)
+    public static boolean isTransitionDownFromSpaceAdmin(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        return isTransitionUpToSpaceAdmin(normalizedNewScopes, normalizedPreviousScopes); // down is the reverse of up: see the arg order
+        return isTransitionAwayFrom(SPACE_ADMIN, previousScopes, newScopes);
+    }
+
+    private static boolean isTransitionTo(ScopeName scopeName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
+    {
+        ScopeName previousTopMost = findTopMostScope(previousScopes);
+        ScopeName newTopMost = findTopMostScope(newScopes);
+        return scopeName.equals(newTopMost) && !scopeName.equals(previousTopMost);
+    }
+
+    private static boolean isTransitionAwayFrom(ScopeName scopeName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
+    {
+        // away is the reverse of to: see the arg order
+        return isTransitionTo(scopeName, newScopes, previousScopes);
     }
 }

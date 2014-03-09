@@ -241,6 +241,25 @@ public class DetailedJiraProjectAdminScopeTest
     }
 
     @Test
+    public void projectAdminConfigurationIsRemovedAfterReinstallWithDowngradedScope() throws Exception
+    {
+        Plugin plugin = null;
+        try
+        {
+            plugin = testPluginInstaller.installPlugin(projectAdminAddOn);
+            testPluginInstaller.uninstallPlugin(plugin);
+            plugin = testPluginInstaller.installPlugin(writeAddOn);
+
+            List<String> projectAdminErrors = addOnUserIsNotProjectAdminForAnyProjects();
+            assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
+        }
+        finally
+        {
+            uninstallPlugin(plugin);
+        }
+    }
+
+    @Test
     public void addOnEnablementChangesPreserveCustomConfiguration() throws Exception
     {
         Plugin plugin = null;

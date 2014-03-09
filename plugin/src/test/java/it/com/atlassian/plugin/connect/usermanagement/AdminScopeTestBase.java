@@ -67,6 +67,15 @@ public abstract class AdminScopeTestBase
         assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername(plugin)));
     }
 
+    @Test
+    public void isNoLongerTopLevelAdminAfterReinstallWithDowngradedScope() throws IOException
+    {
+        plugin = installPlugin(getScope());
+        testPluginInstaller.uninstallPlugin(plugin);
+        plugin = installPlugin(getScopeOneDown());
+        assertEquals(false, isUserTopLevelAdmin(getAddonUsername(plugin)));
+    }
+
     protected abstract ScopeName getScope();
     protected abstract ScopeName getScopeOneDown();
     protected abstract boolean shouldBeTopLevelAdmin();

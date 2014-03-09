@@ -25,6 +25,8 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitEx
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.atlassian.sal.api.transaction.TransactionCallback;
+import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -66,6 +68,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final ProjectRoleService projectRoleService;
     private final UserManager userManager;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
+    private final TransactionTemplate transactionTemplate;
 
     @Inject
     public JiraAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager,
@@ -73,7 +76,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                                             UserManager userManager,
                                             PermissionSchemeManager permissionSchemeManager,
                                             ProjectRoleService projectRoleService,
-                                            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
+                                            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
+                                            TransactionTemplate transactionTemplate)
     {
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
         this.projectManager = checkNotNull(projectManager);
@@ -81,6 +85,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         this.permissionSchemeManager = checkNotNull(permissionSchemeManager);
         this.projectRoleService = checkNotNull(projectRoleService);
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
+        this.transactionTemplate = transactionTemplate;
     }
 
     @Override
@@ -93,9 +98,19 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     @Override
     public void provisionAddonUserForScopes(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        Set<ScopeName> normalizedPreviousScopes = ScopeName.normalize(previousScopes);
-        Set<ScopeName> normalizedNewScopes = ScopeName.normalize(newScopes);
+        transactionTemplate.execute(new TransactionCallback<Void>()
+        {
+            @Override
+            public Void doInTransaction()
+            {
+                provisionAddonUserForScopesInTransaction(username, previousScopes, newScopes);
+                return null;
+            }
+        });
+    }
 
+    private void provisionAddonUserForScopesInTransaction(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    {
         ApplicationUser user = userManager.getUserByName(username);
 
         if (null == user)
@@ -103,26 +118,47 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             throw new IllegalArgumentException(String.format("Cannot provision non-existent user '%s': please create it first!", username));
         }
 
-        // x to ADMIN scope transition
-        if (ScopeName.containsAdmin(normalizedNewScopes))
-        {
-            makeUserGlobalAdmin(user);
-        }
-        // x to PROJECT_ADMIN scope transition
-        else if (ScopeName.isTransitionUpToProjectAdmin(normalizedPreviousScopes, normalizedNewScopes))
-        {
-            updateProjectAdminScopePermissions(user);
-        }
+        // After a manual re-install of the add-on, there are no previous known scopes, but there could still be
+        // an existing permission setup from the previous installation that needs to be removed.
+        boolean removeExistingAdminPermissionSetup = previousScopes.isEmpty() && adminGroupExists();
+        boolean removeExistingProjectAdminPermissionSetup = previousScopes.isEmpty() && projectAdminRoleExists();
 
         // ADMIN to x scope transition
-        if (ScopeName.isTransitionDownFromAdmin(normalizedPreviousScopes, normalizedNewScopes))
+        if (removeExistingAdminPermissionSetup || ScopeName.isTransitionDownFromAdmin(previousScopes, newScopes))
         {
             removeUserFromGlobalAdmins(user);
         }
         // PROJECT_ADMIN to x scope transition
-        else if (ScopeName.isTransitionDownFromProjectAdmin(normalizedPreviousScopes, normalizedNewScopes))
+        if (removeExistingProjectAdminPermissionSetup || ScopeName.isTransitionDownFromProjectAdmin(previousScopes, newScopes))
         {
             removeProjectAdminScopePermissions(user);
+        }
+        // x to ADMIN scope transition
+        if (ScopeName.isTransitionUpToAdmin(previousScopes, newScopes))
+        {
+            makeUserGlobalAdmin(user);
+        }
+        // x to PROJECT_ADMIN scope transition
+        if (ScopeName.isTransitionUpToProjectAdmin(previousScopes, newScopes))
+        {
+            updateProjectAdminScopePermissions(user);
+        }
+    }
+
+    private boolean projectAdminRoleExists()
+    {
+        return null != projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME, new SimpleErrorCollection());
+    }
+
+    private boolean adminGroupExists() throws ConnectAddOnUserInitException
+    {
+        try
+        {
+            return null != connectAddOnUserGroupProvisioningService.findGroupByKey(ADDON_ADMIN_USER_GROUP_KEY);
+        }
+        catch (ApplicationNotFoundException e)
+        {
+           throw new ConnectAddOnUserInitException(e);
         }
     }
 
@@ -184,7 +220,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
         catch (GroupNotFoundException e)
         {
-            // someone removed the group, so we can't guarantee that the user is no longer admin
+            // someone removed the group, which shouldn't happen
             throw new ConnectAddOnUserInitException(e);
         }
     }
