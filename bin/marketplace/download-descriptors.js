@@ -102,7 +102,7 @@ var downloadDescriptor = function(opts, addonKey, addon, descriptorUrl) {
                     }
                 });
             } else if (opts.debug) {
-                var t = "Ignored add-on " + addonKey + " (" + type + ")");
+                var t = "Ignored add-on " + addonKey + " (" + type + ")";
                 console.log(t.grey);
             }
         }
