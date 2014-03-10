@@ -124,7 +124,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
                 String userKey = provisionAddOnUserAndScopes(addOn, previousDescriptor);
-
                 //applink, baseurl and secret MUST be created before any modules
                 connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, userKey);
                 connectAddonRegistry.storeBaseUrl(pluginKey, addOn.getBaseUrl());
@@ -161,7 +160,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             log.info("Connect add-on installed in " + (endTime - startTime) + "ms");
 
             return installedPlugin;
-
         }
         catch (PluginInstallException e)
         {

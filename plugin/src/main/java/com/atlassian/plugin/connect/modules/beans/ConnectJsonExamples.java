@@ -174,7 +174,7 @@ public class ConnectJsonExamples
     private static String createWebhookExample()
     {
         WebHookModuleBean bean = WebHookModuleBean.newWebHookBean()
-                .withEvent("jira:issuecreated")
+                .withEvent("jira:issue_created")
                 .withUrl("/issue-created")
                 .build();
 

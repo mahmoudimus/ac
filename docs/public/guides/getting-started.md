@@ -18,7 +18,7 @@ the different integration modules that it provides.
     {
         "name": "Hello World",
         "description": "Atlassian Connect add-on",
-        "key": "com.example.myaddon_helloworld",
+        "key": "com.example.myaddon",
         "baseUrl": "http://localhost:8000",
         "vendor": {
             "name": "Example, Inc.",
@@ -32,6 +32,7 @@ the different integration modules that it provides.
             "generalPages": [
                 {
                     "url": "/helloworld.html",
+                    "key": "hello-world",
                     "name": {
                         "value": "Greeting"
                     }

@@ -13,15 +13,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.inject.Named;
 import java.io.IOException;
 
 public class JsonDescriptorValidator implements ConnectDescriptorValidator
 {
-    private static final Logger log = LoggerFactory.getLogger(JsonDescriptorValidator.class);
     private static final JsonSchemaFactory factory = createSchemaFactory();
 
     private static JsonSchemaFactory createSchemaFactory()
@@ -30,7 +26,7 @@ public class JsonDescriptorValidator implements ConnectDescriptorValidator
     }
 
     @Override
-    public boolean isConnectJson(String descriptor)
+    public boolean isConnectJson(String descriptor, boolean allowMalformedJson)
     {
         Gson gson = new Gson();
         boolean valid = false;
@@ -47,34 +43,58 @@ public class JsonDescriptorValidator implements ConnectDescriptorValidator
         }
         catch (JsonSyntaxException e)
         {
-            log.trace(e.getMessage(), e);
-            valid = false;
+            // Don't fail just yet, maybe it *is* a Connect descriptor and just malformed.
+            // We can report this case only if we actually get to the install handler.
+            // This is a workaround for https://ecosystem.atlassian.net/browse/UPM-4356
+            // TODO: remove once UPM-4356 is resolved
+
+            valid = allowMalformedJson ? isMalformedConnectJson(descriptor) : false;
         }
 
         return valid;
     }
 
+    private boolean isMalformedConnectJson(String descriptor)
+    {
+        String trimmedJson = descriptor.trim();
+        return trimmedJson.startsWith("{")
+                && trimmedJson.endsWith("}")
+                && containsJsonProperty(trimmedJson, ConnectAddonBean.KEY_ATTR)
+                && containsJsonProperty(trimmedJson, ConnectAddonBean.BASE_URL_ATTR);
+    }
+
+    private boolean containsJsonProperty(String descriptor, String property)
+    {
+        return descriptor.contains("\"" + property + "\"");
+    }
+
     @Override
     public DescriptorValidationResult validate(String descriptor, String schema)
     {
-        DescriptorValidationResult result = null;
+        DescriptorValidationResult result;
         try
         {
-            JsonNode schemaNode = JsonLoader.fromString(schema);
-            JsonSchema jsonSchema = factory.getJsonSchema(schemaNode);
             JsonNode descriptorNode = JsonLoader.fromString(descriptor);
-            ListProcessingReport report = (ListProcessingReport) jsonSchema.validate(descriptorNode);
-            result = new DescriptorValidationResult(report.isSuccess(), report.asJson().toString(), report.toString());
-        }
-        catch (ProcessingException e)
-        {
-            result = new DescriptorValidationResult(false, e.getProcessingMessage().asJson().toString(), e.getProcessingMessage().toString());
+            try
+            {
+                JsonNode schemaNode = JsonLoader.fromString(schema);
+                JsonSchema jsonSchema = factory.getJsonSchema(schemaNode);
+                ListProcessingReport report = (ListProcessingReport) jsonSchema.validate(descriptorNode);
+                result = new DescriptorValidationResult(true, report.isSuccess(), report.asJson().toString(), report.toString());
+            }
+            catch (ProcessingException e)
+            {
+                result = new DescriptorValidationResult(true, false, e.getProcessingMessage().asJson().toString(), e.getProcessingMessage().toString());
+            }
+            catch (IOException e)
+            {
+                throw new IllegalStateException("Unable to load atlassian connect schema", e);
+            }
         }
         catch (IOException e)
         {
-            throw new IllegalStateException("Unable to load atlassian connect schema", e);
+            result = new DescriptorValidationResult(false, false, "{\"error\":\"JSON not well-formed\"}", e.getMessage());
         }
-
         return result;
     }
 }
