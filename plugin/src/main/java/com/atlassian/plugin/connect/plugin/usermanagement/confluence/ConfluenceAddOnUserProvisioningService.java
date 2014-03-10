@@ -173,11 +173,13 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
                 if (shouldBeAdmin)
                 {
+                    log.info("Making user '{}' a Confluence administrator.", confluenceAddonUser.getName());
                     SpacePermission permission = SpacePermission.createUserSpacePermission(SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION, null, confluenceAddonUser);
                     confluenceEditPermissionsAdministrator.addPermission(permission);
                 }
                 else
                 {
+                    log.info("Removing Confluence administrator access from user '{}'.", confluenceAddonUser.getName());
                     removePermission(confluenceEditPermissionsAdministrator, confluenceAddonUser, SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION);
                 }
             }
