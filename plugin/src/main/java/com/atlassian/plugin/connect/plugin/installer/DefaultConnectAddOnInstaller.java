@@ -114,19 +114,19 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType); // TODO ACDEV-378: also check the algorithm
                 String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
-                
+
                 //applink, baseurl and secret MUST be created before any modules
                 String userKey = connectAddOnUserService.getOrCreateUserKey(addOn.getKey());
                 connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, userKey);
                 connectAddonRegistry.storeBaseUrl(pluginKey, addOn.getBaseUrl());
                 connectAddonRegistry.storeUserKey(pluginKey, userKey);
                 connectAddonRegistry.storeAuthType(pluginKey,authType);
-                
+
                 if(!Strings.isNullOrEmpty(sharedSecret))
                 {
                     connectAddonRegistry.storeSecret(pluginKey, sharedSecret);
                 }
-                
+
                 //create the modules
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
 
@@ -135,7 +135,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
                 //make the sync callback if needed
                 connectEventHandler.pluginInstalled(installedPlugin, addOn, sharedSecret);
-                
+
                 /*
                 We need to manually fire the enabled event because the actual plugin enabled already fired and we ignored it.
                 This is so we can register webhooks during the module registration phase and they will get fired with this enabled event.
@@ -152,7 +152,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             log.info("Connect add-on installed in " + (endTime - startTime) + "ms");
 
             return installedPlugin;
-
         }
         catch (PluginInstallException e)
         {

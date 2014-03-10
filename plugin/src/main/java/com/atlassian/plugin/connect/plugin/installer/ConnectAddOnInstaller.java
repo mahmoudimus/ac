@@ -12,5 +12,5 @@ public interface ConnectAddOnInstaller
 {
     Plugin install(String username, Document document) throws PluginInstallException;
 
-    Plugin install(String username, String capabilities) throws PluginInstallException;
+    Plugin install(String username, String jsonDescriptor) throws PluginInstallException;
 }
