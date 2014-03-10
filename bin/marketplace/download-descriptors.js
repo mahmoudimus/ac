@@ -49,6 +49,10 @@ var getAddonPage = function(opts) {
                     'rel': 'descriptor'
                 }).href;
 
+                if (opts.marketplaceAddonCallback) {
+                    opts.marketplaceAddonCallback(key, name, version, addon, opts);
+                }
+
                 downloadDescriptor(opts, key, addon, descriptorUrl);
             });
 
@@ -95,7 +99,10 @@ var downloadDescriptor = function(opts, addonKey, addon, descriptorUrl) {
                     var url = opts.baseUrl + _.find(addon.links, {
                             'rel': opts.auth ? 'tiny-url' : 'alternate' // no tiny-url for unauthenticated requests?
                         }).href;
-                    console.log(addonKey, "(" + type[typeColor] + ", " + status[statusColor] + ")", opts.debug ? url.grey : "");
+
+                    if (!opts.quiet) {
+                        console.log(addonKey, "(" + type[typeColor] + ", " + status[statusColor] + ")", opts.debug ? url.grey : "");
+                    }
 
                     if (opts.descriptorDownloadedCallback) {
                         opts.descriptorDownloadedCallback(addonKey, filename, type, body, opts);
@@ -127,6 +134,11 @@ var getCliOpts = function() {
         .option('includePrivate', {
             flag: true,
             help: 'Include private add-ons'
+        })
+        .option('quiet', {
+            abbr: 'q',
+            flag: true,
+            help: 'Don\'t debug spam'
         })
         .option('type', {
             abbr: 't',
