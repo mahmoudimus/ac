@@ -13,7 +13,6 @@ import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.healthcheck.core.DefaultHealthStatus;
 import com.atlassian.healthcheck.core.HealthCheck;
 import com.atlassian.healthcheck.core.HealthStatus;
-import com.atlassian.healthcheck.core.HealthStatusExtended;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
@@ -44,6 +43,11 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
     {
         long healthCheckTime = System.currentTimeMillis();
         String documentationUrl = ""; // lol, as if.
+
+        // Used until we can upgrade to health check 2.0.7
+        String checkName = "com.atlassian.plugins.atlassian-connect-plugin:addonsGroupHealthCheck";
+        String checkDesc = "This was provided by plugin 'com.atlassian.plugins.atlassian-connect-plugin:addonsGroupHealthCheck' via class 'com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck'";
+
         try
         {
             Collection<User> users = getAddonUsers();
@@ -98,14 +102,18 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
                 reason += "This may indicate a customer license workaround.";
             }
 
-            return new DefaultHealthStatus(isHealthy, reason, healthCheckTime, com.atlassian.healthcheck.core.Application.Plugin,
-                    HealthStatusExtended.Severity.CRITICAL, documentationUrl);
+            return new DefaultHealthStatus(checkName, checkDesc, com.atlassian.healthcheck.core.Application.Plugin,
+                    isHealthy, reason, healthCheckTime);
+//            return new DefaultHealthStatus(isHealthy, reason, healthCheckTime, com.atlassian.healthcheck.core.Application.Plugin,
+//                    HealthStatusExtended.Severity.CRITICAL, documentationUrl);
         }
         catch (ApplicationNotFoundException e)
         {
-            return new DefaultHealthStatus(false, "Could not find application " + e.getApplicationName(),
-                    healthCheckTime, com.atlassian.healthcheck.core.Application.Plugin,
-                    HealthStatusExtended.Severity.CRITICAL, documentationUrl);
+            return new DefaultHealthStatus(checkName, checkDesc, com.atlassian.healthcheck.core.Application.Plugin,
+                    false, "Could not find application " + e.getApplicationName(), healthCheckTime);
+//            return new DefaultHealthStatus(false, "Could not find application " + e.getApplicationName(),
+//                    healthCheckTime, com.atlassian.healthcheck.core.Application.Plugin,
+//                    HealthStatusExtended.Severity.CRITICAL, documentationUrl);
         }
     }
 
