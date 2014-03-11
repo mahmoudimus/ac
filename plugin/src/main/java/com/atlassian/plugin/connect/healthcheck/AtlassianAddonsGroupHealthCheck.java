@@ -63,13 +63,13 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
                     usersWithIncorrectEmails.add(user);
                 }
                 String name = user.getName();
-                if (name == null || !name.startsWith(Constants.ADDON_USER_KEY_PREFIX))
+                if (name == null || !name.startsWith(Constants.ADDON_USERNAME_PREFIX))
                 {
                     usersWithIncorrectPrefix.add(user);
                 }
                 else
                 {
-                    String addonKey = StringUtils.removeStart(name, Constants.ADDON_USER_KEY_PREFIX);
+                    String addonKey = StringUtils.removeStart(name, Constants.ADDON_USERNAME_PREFIX);
                     ApplicationLink applicationLink = jwtApplinkFinder.find(addonKey);
 
                     // if there's no applink, the user should be disabled

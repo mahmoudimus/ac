@@ -4,18 +4,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ConnectAddOnUserUtil
 {
-    public static String userKeyForAddon(String addonKey)
+    public static String  usernameForAddon(String addonKey)
     {
         checkNotNull(addonKey);
-        return Constants.ADDON_USER_KEY_PREFIX + addonKey;
+        return Constants.ADDON_USERNAME_PREFIX + addonKey;
     }
 
     public static class Constants
     {
         /**
-         * All Addon users are prefixed with this string
+         * All Addon usernames are prefixed with this string
          */
-        public static final String ADDON_USER_KEY_PREFIX = "addon_";
+        public static final String ADDON_USERNAME_PREFIX = "addon_";
 
         /**
          * Use a "no reply" email address for add-on users so that
