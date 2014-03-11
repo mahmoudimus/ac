@@ -115,7 +115,7 @@ public enum ScopeName implements Comparable<ScopeName>
     private static boolean hasReadOrLess(Set<ScopeName> scopeNames)
     {
         ScopeName topMost = findTopMostScope(scopeNames);
-        return topMost == null && topMost == READ;
+        return topMost == null || topMost == READ;
     }
 
     public static boolean isTransitionUpToSpaceAdmin(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
