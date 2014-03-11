@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.usermanagement.confluence;
 
+import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.event.events.space.SpaceCreateEvent;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SetSpacePermissionChecker;
@@ -87,15 +88,52 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     @Override
     public void provisionAddonUserForScopes(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes)
     {
-        transactionTemplate.execute(new TransactionCallback<Void>()
+        // Required for temporary permissions exemptions, because unless you call init() in the current thread at least once then you
+        // can't use the thread-local cache, and we need to use it to set an exemption on "can the current user change this permission"
+        // checks. During installs from the GUI this code will be called inside a UPM worker thread on which init() has never been called
+        // (because why would UPM need to know about some obscure low-level detail of Confluence's memory management?).
+        // Richard Atkins knows more about this and is working on Confluence changes that will make these low level calls unnecessary
+        // in Connect code.
+        // The init() call is outside of the try..finally block so that we don't dispose() of the cache if we fail to initialize it.
+        // NOTE: it is safe to call init() multiple times as the second and subsequent calls do nothing.
+        ThreadLocalCache.init();
+
+        try
         {
-            @Override
-            public Void doInTransaction()
+            transactionTemplate.execute(new TransactionCallback<Void>()
             {
-                provisionAddonUserForScopeInTransaction(username, previousScopes, newScopes);
-                return null;
-            }
-        });
+                @Override
+                public Void doInTransaction()
+                {
+                    // We need to run this without permissions checking otherwise our attempt to modify permissions will be permissions-checked,
+                    // and some will be accordingly rejected.
+                    // An even less palatable alternative is that we impersonate an arbitrary admin user.
+                    confluencePermissionManager.withExemption(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            provisionAddonUserForScopeInTransaction(username, previousScopes, newScopes);
+                        }
+                    });
+
+                    return null;
+                }
+            });
+        }
+        finally
+        {
+            // Now we need to dispose of the thread-local cache to free memory and remove the thread-local exemption on checking the current back-end user's
+            // permissions. Unfortunately, we don't have a way of checking whether or not the cache was initialized by code in this method or in previous code.
+            // Ideally, we would dispose() of the cache only if it was us that caused it to init().
+            // Currently, it's always code in this method because the install is happening inside UPM worker threads on which init() has not been called.
+            ThreadLocalCache.dispose();
+
+            // NOTE: Confluence's CachingSpacePermissionManager caches permissions in the ThreadLocalCache and doesn't realise when the permissions have changed.
+            // Due to this bug all threads with initialized thread-local caches now have outdated copies of this user's permissions.
+            // On a new request from the add-on or page-view by a user a new thread will be used, so they will be OK.
+            // The test code in ConfluenceAdminScopeTestBase flushes the thread-local cache before checking results, because it runs everything in the same thread.
+        }
     }
 
     private void provisionAddonUserForScopeInTransaction(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
@@ -161,35 +199,19 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     {
         // injecting as a dependency results in an instance with null data members - perhaps there are multiple instances or perhaps it is initialized after us
         final PermissionsAdministratorBuilder confluencePermissionsAdministratorBuilder = ComponentLocator.getComponent(PermissionsAdministratorBuilder.class, "permissionsAdministratorBuilder");
+        EditPermissionsAdministrator confluenceEditPermissionsAdministrator = confluencePermissionsAdministratorBuilder.buildEditGlobalPermissionAdministrator(null, asList(confluenceAddonUser.getName()), Collections.<String>emptyList());
 
-        // we need to run this without permissions checking otherwise our attempt to modify permissions will be permissions-checked,
-        // and will be accordingly rejected unless we tell Confluence that it's being performed by an arbitrarily selected admin user
-        confluencePermissionManager.withExemption(new Runnable()
+        if (shouldBeAdmin)
         {
-            @Override
-            public void run()
-            {
-                EditPermissionsAdministrator confluenceEditPermissionsAdministrator = confluencePermissionsAdministratorBuilder.buildEditGlobalPermissionAdministrator(null, asList(confluenceAddonUser.getName()), Collections.<String>emptyList());
-
-                if (shouldBeAdmin)
-                {
-                    log.info("Making user '{}' a Confluence administrator.", confluenceAddonUser.getName());
-                    SpacePermission permission = SpacePermission.createUserSpacePermission(SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION, null, confluenceAddonUser);
-                    confluenceEditPermissionsAdministrator.addPermission(permission);
-                }
-                else
-                {
-                    log.info("Removing Confluence administrator access from user '{}'.", confluenceAddonUser.getName());
-                    removePermission(confluenceEditPermissionsAdministrator, confluenceAddonUser, SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION);
-                }
-            }
-        });
-        // Confluence's CachingSpacePermissionManager caches permissions in ThreadLocalCache and doesn't realise when the permissions have changed.
-        // This is Less Than Ideal.
-        // Due to this bug all threads now have an outdated copy of this user's admin permission.
-        // On a new request from the add-on or page-view by a user a new thread will be used, so they will be OK.
-        // We could call ThreadLocalCache.flush() to fix up this thread but that may have unintended side-effects.
-        // The test code in ConfluenceAdminScopeTestBase flushes the thread-local cache before checking results.
+            log.info("Making user '{}' a Confluence administrator.", confluenceAddonUser.getName());
+            SpacePermission permission = SpacePermission.createUserSpacePermission(SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION, null, confluenceAddonUser);
+            confluenceEditPermissionsAdministrator.addPermission(permission);
+        }
+        else
+        {
+            log.info("Removing Confluence administrator access from user '{}'.", confluenceAddonUser.getName());
+            removePermission(confluenceEditPermissionsAdministrator, confluenceAddonUser, SpacePermission.CONFLUENCE_ADMINISTRATOR_PERMISSION);
+        }
     }
 
     // because in Confluence you can't "remove permission CONFLUENCE_ADMINISTRATOR_PERMISSION": you have to remove the expact permission object instance (OMGWTFBBQ)
