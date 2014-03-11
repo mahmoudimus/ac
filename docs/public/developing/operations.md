@@ -263,8 +263,8 @@ We are well known for our great support! Here is what we recommend you focus on:
 <table class="aui">
 	<thead>
 		<tr>
-			<td>**Requirement**</td>
 			<td>**Recommendation**</td>
+			<td>**Details**</td>
 		</tr>
 	</thead>
 	<tbody>
