@@ -36,15 +36,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.CREATEEDIT_PAGE_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.CREATE_ATTACHMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.EDITBLOG_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_ATTACHMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_BLOG_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_COMMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_PAGE_PERMISSION;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -120,27 +111,12 @@ public class DetailedConfluenceSpaceAdminScopeTest
         assertIsSpaceAdminOnAllSpaces(spaceManager, spacePermissionManager, getAddonUser());
     }
 
-    private static void assertIsSpaceAdminOnAllSpaces(SpaceManager spaceManager, SpacePermissionManager spacePermissionManager, ConfluenceUser addonUser)
-    {
-        List<String> permissionErrors = Lists.newArrayList();
-        permissionErrors.addAll(checkHasPermissionOnAllSpaces(CREATEEDIT_PAGE_PERMISSION, spaceManager, spacePermissionManager, addonUser));
-        permissionErrors.addAll(checkHasPermissionOnAllSpaces(CREATE_ATTACHMENT_PERMISSION, spaceManager, spacePermissionManager, addonUser));
-        permissionErrors.addAll(checkHasPermissionOnAllSpaces(COMMENT_PERMISSION, spaceManager, spacePermissionManager, addonUser));
-        permissionErrors.addAll(checkHasPermissionOnAllSpaces(EDITBLOG_PERMISSION, spaceManager, spacePermissionManager, addonUser));
-        permissionErrors.addAll(checkHasPermissionOnAllSpaces(REMOVE_PAGE_PERMISSION, spaceManager, spacePermissionManager, addonUser));
-        permissionErrors.addAll(checkHasPermissionOnAllSpaces(REMOVE_ATTACHMENT_PERMISSION, spaceManager, spacePermissionManager, addonUser));
-        permissionErrors.addAll(checkHasPermissionOnAllSpaces(REMOVE_COMMENT_PERMISSION, spaceManager, spacePermissionManager, addonUser));
-        permissionErrors.addAll(checkHasPermissionOnAllSpaces(REMOVE_BLOG_PERMISSION, spaceManager, spacePermissionManager, addonUser));
-        permissionErrors.addAll(checkHasPermissionOnAllSpaces(ADMINISTER_SPACE_PERMISSION, spaceManager, spacePermissionManager, addonUser));
-        assertTrue(StringUtils.join(permissionErrors, '\n'), permissionErrors.isEmpty());
-    }
-
-    private static List<String> checkHasPermissionOnAllSpaces(String permission, SpaceManager spaceManager,
-                                                              SpacePermissionManager spacePermissionManager, ConfluenceUser addonUser)
+    // Not pretty but don't want to repeat the logic
+    public static void assertIsSpaceAdminOnAllSpaces(SpaceManager spaceManager, SpacePermissionManager spacePermissionManager, ConfluenceUser addonUser)
     {
         List<Space> allSpaces = spaceManager.getAllSpaces();
 
-        List<String> permissionErrors = Lists.newArrayList();
+        List<String> spaceAdminErrors = Lists.newArrayList();
 
         for (Space space : allSpaces)
         {
@@ -149,15 +125,14 @@ public class DetailedConfluenceSpaceAdminScopeTest
              */
             ThreadLocalCache.flush();
 
-            boolean canAdminister = spacePermissionManager.hasPermission(permission, space, addonUser);
+            boolean canAdminister = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, space, addonUser);
             if (!canAdminister)
             {
-                permissionErrors.add("Add-on user " + addonUser.getName() + " should have " + permission +
-                        " permission for space " + space.getKey());
+                spaceAdminErrors.add("Add-on user " + addonUser.getName() + " should have administer permission for space " + space.getKey());
             }
         }
 
-        return permissionErrors;
+        assertTrue(StringUtils.join(spaceAdminErrors, '\n'), spaceAdminErrors.isEmpty());
     }
 
     @Test
@@ -187,7 +162,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
          */
         ThreadLocalCache.flush();
 
-        boolean addonCanAdministerNewSpace = spacePermissionManager.hasPermission(ADMINISTER_SPACE_PERMISSION, jediSpace, addonUser);
+        boolean addonCanAdministerNewSpace = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, jediSpace, addonUser);
         assertTrue("Add-on user " + getAddonUsername(plugin) + " should have administer permission for space " + jediSpace.getKey(), addonCanAdministerNewSpace);
     }
 
@@ -227,7 +202,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
             public boolean apply(@Nullable Space space)
             {
                 ThreadLocalCache.flush(); // !!!!!!!!!!!!!!!!!!
-                final boolean hasPermission = spacePermissionManager.hasPermission(ADMINISTER_SPACE_PERMISSION, space, addonUser);
+                final boolean hasPermission = spacePermissionManager.hasPermission(SpacePermission.ADMINISTER_SPACE_PERMISSION, space, addonUser);
                 return hasPermission;
             }
         });
