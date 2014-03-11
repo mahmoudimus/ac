@@ -10,7 +10,9 @@ public interface TestPluginInstaller
 {
 
     Plugin installPlugin(ConnectAddonBean bean) throws IOException;
-    
+
+    Plugin installPlugin(String jsonDescriptor) throws IOException;
+
     Plugin installPlugin(File jarFile) throws IOException;
 
     void uninstallPlugin(Plugin plugin) throws IOException;
