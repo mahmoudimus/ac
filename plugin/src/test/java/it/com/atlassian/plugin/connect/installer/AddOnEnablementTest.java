@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,13 +25,15 @@ public class AddOnEnablementTest
 {
     private final TestPluginInstaller testPluginInstaller;
     private final JwtApplinkFinder jwtApplinkFinder;
+    private final TestAuthenticator testAuthenticator;
 
     private Plugin plugin;
 
-    public AddOnEnablementTest(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder)
+    public AddOnEnablementTest(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder, TestAuthenticator testAuthenticator)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.jwtApplinkFinder = jwtApplinkFinder;
+        this.testAuthenticator = testAuthenticator;
     }
 
     @Before
@@ -38,6 +41,7 @@ public class AddOnEnablementTest
     {
         plugin = installPlugin();
         testPluginInstaller.disablePlugin(plugin.getKey());
+        testAuthenticator.authenticateUser("admin");
     }
 
     @After

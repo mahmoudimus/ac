@@ -128,6 +128,11 @@ public enum ScopeName implements Comparable<ScopeName>
         return isTransitionAwayFrom(SPACE_ADMIN, previousScopes, newScopes);
     }
 
+    public static boolean isTransitionDownToRead(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
+    {
+        return isTransitionTo(READ, previousScopes, newScopes);
+    }
+
     private static boolean isTransitionTo(ScopeName scopeName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
         ScopeName previousTopMost = findTopMostScope(previousScopes);
