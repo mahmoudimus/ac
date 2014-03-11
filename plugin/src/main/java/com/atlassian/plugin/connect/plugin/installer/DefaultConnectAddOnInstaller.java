@@ -185,7 +185,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
         try
         {
-            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(), previousScopes, newScopes);
+            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(), addOn.getName(), previousScopes, newScopes);
         }
         catch (ConnectAddOnUserInitException e)
         {

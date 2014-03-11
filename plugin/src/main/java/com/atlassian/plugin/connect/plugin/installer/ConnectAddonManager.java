@@ -141,7 +141,7 @@ public class ConnectAddonManager
             if (null != addon)
             {
                 beanToModuleRegistrar.registerDescriptorsForBeans(plugin, addon);
-                enableAddOnUser(pluginKey);
+                enableAddOnUser(pluginKey, addon.getName());
                 publishEnabledEvent(pluginKey);
 
                 if (log.isDebugEnabled())
@@ -254,7 +254,7 @@ public class ConnectAddonManager
         connectAddOnUserService.disableAddonUser(addOnKey);
     }
 
-    private void enableAddOnUser(String addOnKey) throws ConnectAddOnUserInitException
+    private void enableAddOnUser(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
     {
         String descriptor = descriptorRegistry.getDescriptor(addOnKey);
 
@@ -264,7 +264,7 @@ public class ConnectAddonManager
         }
         else
         {
-            String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey);
+            String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey, addOnDisplayName);
             ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
 
             if (null != applicationLink)
