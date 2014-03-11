@@ -44,12 +44,12 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     }
 
     @Override
-    public String getOrCreateUserKey(String addOnKey) throws ConnectAddOnUserInitException
+    public String getOrCreateUserKey(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
     {
         // Oh how I long for Java 7's conciser catch semantics.
         try
         {
-            return createOrEnableAddOnUser(ConnectAddOnUserUtil.userKeyForAddon(addOnKey));
+            return createOrEnableAddOnUser(ConnectAddOnUserUtil.usernameForAddon(checkNotNull(addOnKey)), checkNotNull(addOnDisplayName));
         }
         catch (InvalidCredentialException e)
         {
@@ -92,11 +92,11 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Override
     public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException
     {
-        String userKey = ConnectAddOnUserUtil.userKeyForAddon(addOnKey);
+        String username = ConnectAddOnUserUtil.usernameForAddon(addOnKey);
 
         try
         {
-            User user = findUserByKey(userKey);
+            User user = findUserByUsername(username);
 
             if (null != user)
             {
@@ -134,12 +134,12 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Override
     public boolean isAddOnUserActive(String addOnKey)
     {
-        String userKey = ConnectAddOnUserUtil.userKeyForAddon(addOnKey);
+        String username = ConnectAddOnUserUtil.usernameForAddon(addOnKey);
         User user;
 
         try
         {
-            user = findUserByKey(userKey);
+            user = findUserByUsername(username);
         }
         catch (ApplicationNotFoundException e)
         {
@@ -150,17 +150,17 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     }
 
     @Override
-    public String provisionAddonUserForScopes(String addOnKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    public String provisionAddonUserForScopes(String addOnKey, String addOnDisplayName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        String username = getOrCreateUserKey(addOnKey);
+        String username = getOrCreateUserKey(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));
         connectAddOnUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
         return username;
     }
 
-    private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private String createOrEnableAddOnUser(String username, String addOnDisplayName) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
-        User user = ensureUserExists(userKey);
+        User user = ensureUserExists(username, addOnDisplayName);
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
 
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroups())
@@ -172,7 +172,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             catch (GroupNotFoundException e)
             {
                 // carry on if the group does not exist so that an admin deleting a group will not kill all add-on installations
-                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist!", userKey, group));
+                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist!", username, group));
                 // TODO ACDEV-938: propagate this error
             }
         }
@@ -180,23 +180,24 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user.getName();
     }
 
-    private User ensureUserExists(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private User ensureUserExists(String username, String addOnDisplayName) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
-        User user = findUserByKey(userKey);
+        User user = findUserByUsername(username);
 
         if (null == user)
         {
-            user = createUser(userKey);
+            user = createUser(username, addOnDisplayName);
         }
         else
         {
             // just in case an admin changes the email address
             // (we don't rely on this to prevent an admin taking control of the account, but it would make it more difficult)
-            if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive())
+            if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive() || !addOnDisplayName.equals(user.getDisplayName()))
             {
                 UserTemplate userTemplate = new UserTemplate(user);
                 userTemplate.setEmailAddress(Constants.ADDON_USER_EMAIL_ADDRESS);
                 userTemplate.setActive(true);
+                userTemplate.setDisplayName(addOnDisplayName);
                 applicationService.updateUser(getApplication(), userTemplate);
             }
 
@@ -207,20 +208,21 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private User createUser(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private User createUser(String username, String addOnDisplayName) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
         User user;
         try
         {
             // Justin Koke says that NONE password prevents logging in
-            UserTemplate userTemplate = new UserTemplate(userKey);
+            UserTemplate userTemplate = new UserTemplate(username);
             userTemplate.setEmailAddress(Constants.ADDON_USER_EMAIL_ADDRESS); // so that "reset password" emails go nowhere
             userTemplate.setActive(true); //if you don't set this, it defaults to inactive!!!
+            userTemplate.setDisplayName(addOnDisplayName);
             user = applicationService.addUser(getApplication(), userTemplate, PasswordCredential.NONE);
 
             if (null == user)
             {
-                throw new ConnectAddOnUserInitException(String.format("Tried to create user '%s' but the %s returned a null user!", userKey, applicationService.getClass().getSimpleName()));
+                throw new ConnectAddOnUserInitException(String.format("Tried to create user '%s' but the %s returned a null user!", username, applicationService.getClass().getSimpleName()));
             }
             else
             {
@@ -231,26 +233,38 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         {
             // the javadoc says that addUser() throws an InvalidUserException if the user already exists
             // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
-
-            user = findUserByKey(userKey);
-
-            if (null == user)
-            {
-                // the ApplicationService is messing us around by saying that the user exists and then that it does not
-                throw new RuntimeException(String.format("The %s %s said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
-                        ApplicationService.class.getSimpleName(), applicationService, User.class.getSimpleName(), userKey));
-            }
+            user = findUserWithFastFailure(username, iue);
+        }
+        catch (OperationFailedException e)
+        {
+            // during Connect 1.0 blitz testing we observed this exception emanating from the bowels of Crowd, claiming that the user already exists
+            // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
+            user = findUserWithFastFailure(username, e);
         }
 
         return user;
     }
 
-    private User findUserByKey(String userKey) throws ApplicationNotFoundException
+    private User findUserWithFastFailure(String username, Exception userAlreadyExistsException) throws ApplicationNotFoundException
+    {
+        final User user = findUserByUsername(username);
+
+        if (null == user)
+        {
+            // the ApplicationService is messing us around by saying that the user exists and then that it does not
+            throw new RuntimeException(String.format("The %s %s said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
+                    ApplicationService.class.getSimpleName(), applicationService, User.class.getSimpleName(), username), userAlreadyExistsException);
+        }
+
+        return user;
+    }
+
+    private User findUserByUsername(String username) throws ApplicationNotFoundException
     {
         User user;
         try
         {
-            user = applicationService.findUserByName(getApplication(), userKey);
+            user = applicationService.findUserByName(getApplication(), username);
         }
         catch (UserNotFoundException e)
         {

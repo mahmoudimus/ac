@@ -7,11 +7,11 @@ import java.util.Set;
 
 public interface ConnectAddOnUserService
 {
-    String getOrCreateUserKey(String addOnKey) throws ConnectAddOnUserInitException;
+    String getOrCreateUserKey(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException;
 
     void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException;
 
-    String provisionAddonUserForScopes(String addOnKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
+    String provisionAddonUserForScopes(String addOnKey, String addOnDisplayName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
 
     @VisibleForTesting
     boolean isAddOnUserActive(String addOnKey);
