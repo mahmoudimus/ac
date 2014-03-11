@@ -5,6 +5,7 @@ import com.atlassian.crowd.exception.*;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.permission.PermissionSchemeManager;
+import com.atlassian.jira.permission.SchemePermissions;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.scheme.SchemeEntity;
@@ -45,13 +46,13 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
 
-@SuppressWarnings ("unused")
+@SuppressWarnings("unused")
 @JiraComponent
 @ExportAsDevService
 public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
 {
-    private static final String CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME = "atlassian-addons-project-admin";
-    private static final String CONNECT_PROJECT_ADMIN_PROJECT_ROLE_DESC = "A project role that represents Connect add-ons declaring Project Admin scope";
+    private static final String CONNECT_PROJECT_ACCESS_PROJECT_ROLE_NAME = "atlassian-addons-project-access";
+    private static final String CONNECT_PROJECT_ACCESS_PROJECT_ROLE_DESC = "A project role that represents Connect add-ons declaring a scope that requires more than read issue permissions";
     /**
      * The group which is created to house all add-on users which have administrative rights.
      */
@@ -69,6 +70,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final UserManager userManager;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private final TransactionTemplate transactionTemplate;
+    private final SchemePermissions schemePermissions;
 
     @Inject
     public JiraAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager,
@@ -86,6 +88,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         this.projectRoleService = checkNotNull(projectRoleService);
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
         this.transactionTemplate = transactionTemplate;
+        this.schemePermissions = new SchemePermissions();
     }
 
     @Override
@@ -121,33 +124,33 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         // After a manual re-install of the add-on, there are no previous known scopes, but there could still be
         // an existing permission setup from the previous installation that needs to be removed.
         boolean removeExistingAdminPermissionSetup = previousScopes.isEmpty() && adminGroupExists();
-        boolean removeExistingProjectAdminPermissionSetup = previousScopes.isEmpty() && projectAdminRoleExists();
+        boolean removeExistingProjectPermissionSetup = previousScopes.isEmpty() && projectRoleExists();
 
         // ADMIN to x scope transition
         if (removeExistingAdminPermissionSetup || ScopeName.isTransitionDownFromAdmin(previousScopes, newScopes))
         {
             removeUserFromGlobalAdmins(user);
         }
-        // PROJECT_ADMIN to x scope transition
-        if (removeExistingProjectAdminPermissionSetup || ScopeName.isTransitionDownFromProjectAdmin(previousScopes, newScopes))
+        // x to READ scope transition
+        if (removeExistingProjectPermissionSetup || ScopeName.isTransitionDownToRead(previousScopes, newScopes))
         {
-            removeProjectAdminScopePermissions(user);
+            removeProjectPermissions(user);
         }
         // x to ADMIN scope transition
         if (ScopeName.isTransitionUpToAdmin(previousScopes, newScopes))
         {
             makeUserGlobalAdmin(user);
         }
-        // x to PROJECT_ADMIN scope transition
-        if (ScopeName.isTransitionUpToProjectAdmin(previousScopes, newScopes))
+        // READ to x scope transition
+        if (!ScopeName.isTransitionDownToRead(previousScopes, newScopes))
         {
-            updateProjectAdminScopePermissions(user);
+            updateProjectPermissions(user);
         }
     }
 
-    private boolean projectAdminRoleExists()
+    private boolean projectRoleExists()
     {
-        return null != projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME, new SimpleErrorCollection());
+        return null != projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ACCESS_PROJECT_ROLE_NAME, new SimpleErrorCollection());
     }
 
     private boolean adminGroupExists() throws ConnectAddOnUserInitException
@@ -158,7 +161,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
         catch (ApplicationNotFoundException e)
         {
-           throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddOnUserInitException(e);
         }
     }
 
@@ -231,9 +234,9 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
 
         if (created)
         {
-            ensureGroupHasProductAdminPermission(groupKey);
+            ensureGroupHasAdminPermission(groupKey);
         }
-        else if (!groupHasProductAdminPermission(groupKey))
+        else if (!groupHasAdminPermission(groupKey))
         {
             throw new ConnectAddOnUserInitException(String.format("Group '%s' already exists and is NOT an administrators group. " +
                     "Cannot make it an administrators group because that would elevate the privileges of existing users in this group. " +
@@ -243,16 +246,16 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
     }
 
-    private void ensureGroupHasProductAdminPermission(String groupKey)
+    private void ensureGroupHasAdminPermission(String groupKey)
     {
-        if (!groupHasProductAdminPermission(groupKey))
+        if (!groupHasAdminPermission(groupKey))
         {
             jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
             log.info("Granted admin permission to group '{}'.", groupKey);
         }
     }
 
-    private boolean groupHasProductAdminPermission(final String groupKey)
+    private boolean groupHasAdminPermission(final String groupKey)
     {
         checkNotNull(groupKey);
         return any(jiraPermissionManager.getGroupsWithPermission(ADMIN_PERMISSION), new Predicate<Group>()
@@ -265,10 +268,10 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         });
     }
 
-    private void updateProjectAdminScopePermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException
+    private void updateProjectPermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
-        ProjectRole projectRole = updateConnectProjectRole(errorCollection);
+        ProjectRole projectRole = getOrCreateProjectRole(errorCollection);
         if (null != projectRole)
         {
             addUserToProjectRoleDefaults(addOnUser, projectRole, errorCollection);
@@ -292,24 +295,10 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
     }
 
-    private void addUserToProjectRoleDefaults(ApplicationUser addOnUser, ProjectRole projectRole, ErrorCollection errorCollection)
-    {
-        DefaultRoleActors roleActors = projectRoleService.getDefaultRoleActors(projectRole, errorCollection);
-        if (!roleActors.contains(addOnUser))
-        {
-            projectRoleService.addDefaultActorsToProjectRole(
-                    Collections.singleton(addOnUser.getKey()),
-                    projectRole,
-                    UserRoleActorFactory.TYPE,
-                    errorCollection
-            );
-        }
-    }
-
-    private void removeProjectAdminScopePermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException
+    private void removeProjectPermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
-        ProjectRole projectRole = projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME, errorCollection);
+        ProjectRole projectRole = projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ACCESS_PROJECT_ROLE_NAME, errorCollection);
         if (null != projectRole)
         {
             removeUserFromProjectRoleDefaults(addOnUser, projectRole, errorCollection);
@@ -329,6 +318,20 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
     }
 
+    private void addUserToProjectRoleDefaults(ApplicationUser addOnUser, ProjectRole projectRole, ErrorCollection errorCollection)
+    {
+        DefaultRoleActors roleActors = projectRoleService.getDefaultRoleActors(projectRole, errorCollection);
+        if (!roleActors.contains(addOnUser))
+        {
+            projectRoleService.addDefaultActorsToProjectRole(
+                    Collections.singleton(addOnUser.getKey()),
+                    projectRole,
+                    UserRoleActorFactory.TYPE,
+                    errorCollection
+            );
+        }
+    }
+
     private void removeUserFromProjectRoleDefaults(ApplicationUser addOnUser, ProjectRole projectRole, ErrorCollection errorCollection)
     {
         projectRoleService.removeDefaultActorsFromProjectRole(
@@ -339,12 +342,12 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         );
     }
 
-    private ProjectRole updateConnectProjectRole(ErrorCollection errorCollection)
+    private ProjectRole getOrCreateProjectRole(ErrorCollection errorCollection)
     {
-        ProjectRole projectRole = projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME, errorCollection);
+        ProjectRole projectRole = projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ACCESS_PROJECT_ROLE_NAME, errorCollection);
         if (null == projectRole)
         {
-            ProjectRole newProjectRole = new ProjectRoleImpl(CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME, CONNECT_PROJECT_ADMIN_PROJECT_ROLE_DESC);
+            ProjectRole newProjectRole = new ProjectRoleImpl(CONNECT_PROJECT_ACCESS_PROJECT_ROLE_NAME, CONNECT_PROJECT_ACCESS_PROJECT_ROLE_DESC);
             projectRole = projectRoleService.createProjectRole(newProjectRole, errorCollection);
             if (null != projectRole)
             {
@@ -356,28 +359,31 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
 
     private void associateProjectRoleWithPermissionSchemes(ProjectRole projectRole, ErrorCollection errorCollection)
     {
-        final long permission = Permission.PROJECT_ADMIN.getId();
         final String permissionType = ProjectRoleService.PROJECTROLE_PERMISSION_TYPE;
         final String parameter = projectRole.getId().toString();
-
-        List<GenericValue> schemes = getSchemes(errorCollection);
-        for (GenericValue scheme : schemes)
+        try
         {
-            try
+            List<GenericValue> schemes = getSchemes(errorCollection);
+            for (GenericValue scheme : schemes)
             {
-                if (!permissionExists(scheme, permission, permissionType, parameter))
+                for (Permission permission : schemePermissions.getSchemePermissions().values())
                 {
-                    SchemeEntity schemeEntity = new SchemeEntity(permissionType, parameter, permission);
-                    permissionSchemeManager.createSchemeEntity(scheme, schemeEntity);
+                    Long permissionId = new Long(permission.getId());
+                    if (!permissionExists(scheme, permissionId, permissionType, parameter))
+                    {
+                        SchemeEntity schemeEntity = new SchemeEntity(permissionType, parameter, permissionId);
+                        permissionSchemeManager.createSchemeEntity(scheme, schemeEntity);
+                    }
                 }
             }
-            catch (GenericEntityException e)
-            {
-                String errorMessage = "Could not add project role " + CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME +
-                        " to permission scheme '" + scheme.getString("name") + "'";
-                errorCollection.addErrorMessage(errorMessage);
-                log.error(errorMessage, e);
-            }
+        }
+        catch (GenericEntityException e)
+        {
+            String errorMessage = "Could not add project role "
+                    + CONNECT_PROJECT_ACCESS_PROJECT_ROLE_NAME
+                    + " to permission schemes";
+            errorCollection.addErrorMessage(errorMessage);
+            log.error(errorMessage, e);
         }
     }
 
@@ -400,7 +406,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         catch (GenericEntityException e)
         {
             errorCollection.addErrorMessage("Schemes could not be loaded and the project role "
-                    + CONNECT_PROJECT_ADMIN_PROJECT_ROLE_NAME
+                    + CONNECT_PROJECT_ACCESS_PROJECT_ROLE_NAME
                     + " was not added to any permission schemes");
             log.error("Error while loading schemes", e);
         }
