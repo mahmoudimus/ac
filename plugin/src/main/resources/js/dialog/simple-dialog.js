@@ -22,6 +22,7 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
     function createDialogElement(options, $nexus){
         var $el = $(aui.dialog.dialog2({
             id: options.id,
+            titleText: options.header,
             titleId: options.titleId,
             size: options.size,
             extraClasses: ['ap-aui-dialog2'],
@@ -49,20 +50,6 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
         }
         return value;
     }
-
-    function setDimension(url, name, value) {
-        name = enc(name);
-        if (url.indexOf(name + "=")) {
-            url = url.replace(new RegExp(name + "=[^&]+"), function () {
-                return name + "=" + enc(value);
-            });
-        }
-        else {
-            url += "&" + name + "=" + enc(value);
-        }
-        return url;
-    }
-
 
     function closeDialog() {
         if ($nexus) {
@@ -102,16 +89,10 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
                 dialogId = options.id || "ap-dialog-" + (idSeq += 1),
                 mergedOptions = $.extend({id: dialogId}, defaultOptions, options),
                 dialogElement;
-
+                console.log(options);
             mergedOptions.w = parseDimension(mergedOptions.width, $global.width());
             mergedOptions.h = parseDimension(mergedOptions.height, $global.height());
 
-            if(options.size){
-                mergedOptions.w = "100%";
-                mergedOptions.h = "100%";
-            }
-
-            console.log("CHROME", options.chrome);
             $nexus = $("<div />").addClass("ap-servlet-placeholder ap-dialog-container");
 
             if(options.chrome){
@@ -121,7 +102,15 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
                 dialogElement = createChromelessDialogElement(mergedOptions, $nexus);
             }
 
+            if(options.size){
+                mergedOptions.w = "100%";
+                mergedOptions.h = "100%";
+            } else {
+                AJS.layer(dialogElement).changeSize(mergedOptions.w, mergedOptions.h);
+            }
+
             dialog = AJS.dialog2(dialogElement);
+
             displayDialogContent($nexus, mergedOptions);
             dialog.show();
 
