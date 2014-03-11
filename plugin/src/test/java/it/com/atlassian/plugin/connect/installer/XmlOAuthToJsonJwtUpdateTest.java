@@ -19,7 +19,6 @@ import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,7 +56,6 @@ public class XmlOAuthToJsonJwtUpdateTest
     private static final String OAUTH_VERSION_SLASHED = "/" + OAUTH_VERSION;
 
     private final TestPluginInstaller testPluginInstaller;
-    private final TestAuthenticator testAuthenticator;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final AddonTestFilterResults testFilterResults;
     private final ConnectApplinkManager connectApplinkManager;
@@ -66,13 +64,11 @@ public class XmlOAuthToJsonJwtUpdateTest
     private Plugin jwtPlugin;
 
     public XmlOAuthToJsonJwtUpdateTest(TestPluginInstaller testPluginInstaller,
-                                       TestAuthenticator testAuthenticator,
                                        ConnectAddonRegistry connectAddonRegistry,
                                        AddonTestFilterResults testFilterResults,
                                        ConnectApplinkManager connectApplinkManager)
     {
         this.testPluginInstaller = testPluginInstaller;
-        this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
         this.testFilterResults = testFilterResults;
         this.connectApplinkManager = connectApplinkManager;
@@ -81,7 +77,6 @@ public class XmlOAuthToJsonJwtUpdateTest
     @BeforeClass
     public void beforeAllTests() throws IOException, URISyntaxException
     {
-        testAuthenticator.authenticateUser("admin");
         oAuthPlugin = testPluginInstaller.installPlugin(createXmlDescriptorFile());
 
         // preconditions
