@@ -1,4 +1,4 @@
-# Add-on Operations Guide
+# Add-ons Operations Guide
 
 When you release an add-on publicly on the [Atlassian Marketplace](https://marketplace.atlassian.com), 
 any administrator of an Atlassian OnDemand application can install it in their instance, meaning they rely on your service to 
@@ -13,7 +13,7 @@ There are some important considerations to take into account:
 This section lists some of the aspects we suggest you look at when defining the operational aspects for running your add-ons.
 Some of these aspects need to be addressed very early in the design, as implementing them after the fact can be really difficult.
 
-## Defining your Service Level Agreement (SLA)
+## 1. Defining your Service Level Agreement (SLA)
 
 To start with, you should define your targets, which you can validate during [performance testing](#perftesting), use as a basis to 
 [monitor your add-ons at runtime](#monitoring), and guarantee by [scaling your deployment](#scalability).
@@ -126,7 +126,7 @@ The following table lists some examples of indicators you could track:
 </div>
 
 <a name="performance"></a>
-##Managing Performance
+##2. Managing the Performance of your Add-ons
 <a name="scalability"></a>
 ### Scalability
 
@@ -139,7 +139,7 @@ It may be difficult to predict exactly how much resources your add-ons will need
 your add-ons will be operating in a cloud environment targetting thousands of customers, we encourage you to design 
 your add-ons to scale horizontally. This will of course depend on your hosting strategy.
 
-Existing cloud providers can help you scale your implementations. One example of such providers is [Heroku](www.heroku.com), 
+Existing cloud providers can help you scale your implementations. One example of such providers is [Heroku](http://www.heroku.com), 
 a cloud application platform that can host applications developed in Java, Node.js, Pyton, Ruby, Scala or Closure. 
 Heroku leverages [Amazon AWS](http://www.aws.amazon.com) (Amazon Web Services) technology, and mostly supports horizontal 
 scaling. Other examples or world-class platforms include the [Google Cloud Platform](http://cloud.google.com) and 
@@ -212,20 +212,37 @@ distributed tests using many load injector machines.
 
 You should have tools to monitor your add-on performance at runtime, and procedures in place to scale resources once specific 
 thresholds are met. To start with, you should at least monitor the utilization of the resources allocated to your add-ons 
-(CPU, memory, disk space, etc.).
-<a name="maintenance"></a>
-## Maintenance Windows
+(CPU, memory, disk space, etc.). When using a cloud provider, you can look at strategies to automatically scale the resources 
+allocated to your add-ons based on load.
 
-For more information on how to upgrade your add-on, you should read the [Upgrading your Add-on](upgrades.html) section. 
+<a name="maintenance"></a>
+## 3. Maintaining your Add-ons
+
+### Versioning and Upgrading
+
+We automatically detect updates to add-ons with a polling service. This way, you can easily release fixes and 
+new features without having to manually create new version entries in the Marketplace. For more information on how to upgrade 
+your add-ons and manage versions, you should read the [Upgrading your Add-on](upgrades.html) section. 
+
+<div class="aui-message warning">
+	    <p class="title">
+	        <span class="aui-icon icon-warning"></span>
+	        <strong>Test, test, and in doubt... Test some more!</strong>
+	    </p>
+		<p>Make sure you not only test new features, but also run regression tests to ensure existing functionality 
+			is not broken when releasing new versions.</p>
+</div>
+
+### Maintenance Windows
 Since your add-on and Atlassian products are decoupled thanks to the architecture of Connect, you can decide when to upgrade your 
-add-on independently from the 
+add-ons independently from the 
 [Atlassian OnDemand Maintenance Windows](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+maintenance+windows).
-Ideally, your add-ons should be architected in a way that ensures maintenance is transparent to end-users. If this is not possible, 
+Ideally, your solution should be architected in a way that ensures maintenance is transparent to end-users. If this is not possible, 
 make sure you publish your maintenance windows online, and provide a meaningful error message to users trying to access your add-ons 
 at this time.
 
 <a name="bcp"></a>
-## Business Continuity Planning
+## 4. Addressing Business Continuity Planning
 You should address the following aspects when looking at potential major outages:
 
 - Data backups: you should have a data backup strategy that ensures your RPO (Recovery Point Objective) is met. For example, 
@@ -237,10 +254,9 @@ Hope for the best, plan for the worst!
 
 Note that using an world-class cloud provider minimises the risk of a major outage impacting the users of your add-ons. 
 For example when using Heroku with Heroku Postgres, the platform automatically backs up deployed applications and data, and 
-automatically brings the application back online in case of a data center outage.
-
+automatically brings the application back online in case of a data center outage, with minimum data loss.
 <a name="support"></a>
-## Support
+## 5. Providing Support
 
 First, check out the [Atlassian Support Offerings](https://confluence.atlassian.com/display/Support/Atlassian+Support+Offerings). 
 We are well known for our great support! Here is what we recommend you focus on: 
