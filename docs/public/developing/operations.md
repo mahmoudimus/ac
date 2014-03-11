@@ -140,7 +140,7 @@ your add-ons will operate in a cloud environment targeting thousands of customer
 your add-ons to scale horizontally. 
 
 Existing cloud providers can help you scale your implementations. One example of such providers is [Heroku](http://www.heroku.com), 
-a cloud application platform that can host applications developed in Java, Node.js, Pyton, Ruby, Scala or Closure. 
+a cloud application platform that can host applications developed in Java, Node.js, Pyton, Ruby, Scala or Clojure. 
 Heroku leverages [Amazon AWS](http://www.aws.amazon.com) (Amazon Web Services) technology, and mostly supports horizontal 
 scaling. Other examples or world-class platforms include the [Google Cloud Platform](http://cloud.google.com) and 
 [Salesforce One](http://www.salesforce.com/salesforce1/).
