@@ -1,20 +1,12 @@
 package com.atlassian.plugin.connect.test.plugin.usermanagement;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
-import com.atlassian.crowd.exception.ApplicationNotFoundException;
-import com.atlassian.crowd.exception.ApplicationPermissionException;
-import com.atlassian.crowd.exception.GroupNotFoundException;
-import com.atlassian.crowd.exception.InvalidCredentialException;
-import com.atlassian.crowd.exception.InvalidUserException;
-import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
-import com.atlassian.crowd.exception.OperationFailedException;
-import com.atlassian.crowd.exception.UserNotFoundException;
+import com.atlassian.crowd.exception.*;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.model.user.UserTemplate;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.usermanagement.*;
 import com.google.common.collect.ImmutableSet;
 import org.hamcrest.Description;
@@ -28,24 +20,20 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
-import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectAddOnUserServiceImplTest
 {
     private static final String GROUP_KEY = "atlassian-addons";
     private static final String ADD_ON_EMAIL_ADDRESS = "noreply@mailer.atlassian.com";
+    private static final String ADD_ON_DISPLAY_NAME = "A Cool Test Add-on";
 
     private @Mock ApplicationService applicationService;
     private @Mock ApplicationManager applicationManager;
@@ -63,13 +51,13 @@ public class ConnectAddOnUserServiceImplTest
     @Test
     public void returnsCorrectUserKeyWhenItCreatesTheUser() throws ConnectAddOnUserInitException
     {
-        assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY), is(USER_KEY));
+        assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME), is(USER_KEY));
     }
 
     @Test
     public void findsUserByKey() throws ConnectAddOnUserInitException, UserNotFoundException
     {
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).findUserByName(eq(application), eq(USER_KEY));
     }
 
@@ -77,13 +65,13 @@ public class ConnectAddOnUserServiceImplTest
     public void returnsCorrectUserKeyWhenTheUserAlreadyExists() throws ConnectAddOnUserInitException, UserNotFoundException, InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException
     {
         theUserExists();
-        assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY), is(USER_KEY));
+        assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME), is(USER_KEY));
     }
 
     @Test
     public void userIsAddedToGroupWhenItCreatesTheUser() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
     {
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUserToGroup(eq(application), eq(USER_KEY), eq(GROUP_KEY));
     }
 
@@ -91,7 +79,7 @@ public class ConnectAddOnUserServiceImplTest
     public void userIsAddedToGroupWhenTheUserAlreadyExistsButIsNotAMember() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException, InvalidCredentialException, InvalidUserException
     {
         theUserExists();
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUserToGroup(eq(application), eq(USER_KEY), eq(GROUP_KEY));
     }
 
@@ -100,14 +88,14 @@ public class ConnectAddOnUserServiceImplTest
     {
         theUserExists();
         when(applicationService.isUserDirectGroupMember(eq(application), eq(USER_KEY), eq(GROUP_KEY))).thenReturn(true);
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, never()).addUserToGroup(eq(application), eq(USER_KEY), eq(GROUP_KEY));
     }
 
     @Test
     public void userIsCreatedWithCorrectEmailAddress() throws ConnectAddOnUserInitException, InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException
     {
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
     }
 
@@ -116,7 +104,7 @@ public class ConnectAddOnUserServiceImplTest
     {
         theUserExists();
         when(user.getEmailAddress()).thenReturn("wrong");
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).updateUser(eq(application), argThat(hasExpectedEmailAddress()));
     }
 
@@ -124,7 +112,7 @@ public class ConnectAddOnUserServiceImplTest
     public void userIsCreatedWithDefaultProductGroups() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
     {
         when(connectAddOnUserProvisioningService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
     }
@@ -134,7 +122,7 @@ public class ConnectAddOnUserServiceImplTest
     {
         theUserExists();
         when(connectAddOnUserProvisioningService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
     }
@@ -145,7 +133,7 @@ public class ConnectAddOnUserServiceImplTest
         theUserExists();
         when(connectAddOnUserProvisioningService.getDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
         when(applicationService.isUserDirectGroupMember(eq(application), eq(USER_KEY), eq("product group"))).thenReturn(true);
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, never()).addUserToGroup(eq(application), eq(USER_KEY), eq("product group"));
     }
 
@@ -153,7 +141,7 @@ public class ConnectAddOnUserServiceImplTest
     public void passwordIsResetIfTheUserExists() throws ConnectAddOnUserInitException, UserNotFoundException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, InvalidUserException
     {
         theUserExists();
-        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).updateUserCredential(eq(application), eq(USER_KEY), eq(PasswordCredential.NONE));
     }
 

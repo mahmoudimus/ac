@@ -44,12 +44,12 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     }
 
     @Override
-    public String getOrCreateUserKey(String addOnKey) throws ConnectAddOnUserInitException
+    public String getOrCreateUserKey(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
     {
         // Oh how I long for Java 7's conciser catch semantics.
         try
         {
-            return createOrEnableAddOnUser(ConnectAddOnUserUtil.userKeyForAddon(addOnKey));
+            return createOrEnableAddOnUser(ConnectAddOnUserUtil.userKeyForAddon(checkNotNull(addOnKey)), checkNotNull(addOnDisplayName));
         }
         catch (InvalidCredentialException e)
         {
@@ -150,17 +150,17 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     }
 
     @Override
-    public String provisionAddonUserForScopes(String addOnKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    public String provisionAddonUserForScopes(String addOnKey, String addOnDisplayName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        String username = getOrCreateUserKey(addOnKey);
+        String username = getOrCreateUserKey(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));
         connectAddOnUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
         return username;
     }
 
-    private String createOrEnableAddOnUser(String userKey) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private String createOrEnableAddOnUser(String userKey, String addOnDisplayName) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
-        User user = ensureUserExists(userKey);
+        User user = ensureUserExists(userKey, addOnDisplayName);
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
 
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroups())
@@ -180,23 +180,24 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user.getName();
     }
 
-    private User ensureUserExists(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private User ensureUserExists(String userKey, String addOnDisplayName) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
         User user = findUserByKey(userKey);
 
         if (null == user)
         {
-            user = createUser(userKey);
+            user = createUser(userKey, addOnDisplayName);
         }
         else
         {
             // just in case an admin changes the email address
             // (we don't rely on this to prevent an admin taking control of the account, but it would make it more difficult)
-            if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive())
+            if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive() || !addOnDisplayName.equals(user.getDisplayName()))
             {
                 UserTemplate userTemplate = new UserTemplate(user);
                 userTemplate.setEmailAddress(Constants.ADDON_USER_EMAIL_ADDRESS);
                 userTemplate.setActive(true);
+                userTemplate.setDisplayName(addOnDisplayName);
                 applicationService.updateUser(getApplication(), userTemplate);
             }
 
@@ -207,7 +208,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private User createUser(String userKey) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private User createUser(String userKey, String addOnDisplayName) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException
     {
         User user;
         try
@@ -216,6 +217,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             UserTemplate userTemplate = new UserTemplate(userKey);
             userTemplate.setEmailAddress(Constants.ADDON_USER_EMAIL_ADDRESS); // so that "reset password" emails go nowhere
             userTemplate.setActive(true); //if you don't set this, it defaults to inactive!!!
+            userTemplate.setDisplayName(addOnDisplayName);
             user = applicationService.addUser(getApplication(), userTemplate, PasswordCredential.NONE);
 
             if (null == user)

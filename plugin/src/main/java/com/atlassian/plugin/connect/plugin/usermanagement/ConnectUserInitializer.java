@@ -56,7 +56,7 @@ public class ConnectUserInitializer implements InitializingBean
             }
             else
             {
-                connectAddOnUserService.getOrCreateUserKey(connectAddOn.getKey());
+                connectAddOnUserService.getOrCreateUserKey(connectAddOn.getKey(), connectAddOn.getName());
             }
         }
         catch (ConnectAddOnUserInitException e)

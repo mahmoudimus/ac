@@ -297,7 +297,7 @@ public class DetailedJiraProjectAdminScopeTest
 
     private String getAddOnUserName() throws ConnectAddOnUserInitException
     {
-        return connectAddOnUserService.getOrCreateUserKey(ADDON_KEY);
+        return connectAddOnUserService.getOrCreateUserKey(ADDON_KEY, "A Test Add-on");
     }
 
     private ApplicationUser getAddOnUser() throws ConnectAddOnUserInitException
