@@ -56,9 +56,6 @@ var getAddonPage = function(opts) {
                 downloadDescriptor(opts, key, addon, descriptorUrl);
             });
 
-            if (opts.debug) {
-                console.log("next: " + nextRequestUri);
-            }
             if (nextRequestUri) {
                 var nextOpts = extend({}, opts);
                 nextOpts.uri = nextRequestUri;
