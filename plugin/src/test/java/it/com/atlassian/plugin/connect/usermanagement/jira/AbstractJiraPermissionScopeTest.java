@@ -273,7 +273,7 @@ public abstract class AbstractJiraPermissionScopeTest
 
     private String getAddOnUserName() throws ConnectAddOnUserInitException
     {
-        return connectAddOnUserService.getOrCreateUserKey(ADDON_KEY);
+        return connectAddOnUserService.getOrCreateUserKey(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
     }
 
     protected ApplicationUser getAddOnUser() throws ConnectAddOnUserInitException
