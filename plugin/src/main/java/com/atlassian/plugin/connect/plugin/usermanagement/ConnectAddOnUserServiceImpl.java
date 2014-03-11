@@ -231,15 +231,27 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         {
             // the javadoc says that addUser() throws an InvalidUserException if the user already exists
             // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
+            user = findUserWithFastFailure(username, iue);
+        }
+        catch (OperationFailedException e)
+        {
+            // during Connect 1.0 blitz testing we observed this exception emanating from the bowels of Crowd, claiming that the user already exists
+            // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
+            user = findUserWithFastFailure(username, e);
+        }
 
-            user = findUserByUsername(username);
+        return user;
+    }
 
-            if (null == user)
-            {
-                // the ApplicationService is messing us around by saying that the user exists and then that it does not
-                throw new RuntimeException(String.format("The %s %s said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
-                        ApplicationService.class.getSimpleName(), applicationService, User.class.getSimpleName(), username));
-            }
+    private User findUserWithFastFailure(String username, Exception userAlreadyExistsException) throws ApplicationNotFoundException
+    {
+        final User user = findUserByUsername(username);
+
+        if (null == user)
+        {
+            // the ApplicationService is messing us around by saying that the user exists and then that it does not
+            throw new RuntimeException(String.format("The %s %s said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
+                    ApplicationService.class.getSimpleName(), applicationService, User.class.getSimpleName(), username), userAlreadyExistsException);
         }
 
         return user;
