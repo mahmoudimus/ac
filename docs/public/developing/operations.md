@@ -1,7 +1,7 @@
 # Add-ons Operations Guide
 
 When you release an add-on publicly on the [Atlassian Marketplace](https://marketplace.atlassian.com), 
-any administrator of an Atlassian OnDemand application can install it in their instance, meaning they rely on your service to 
+administrators of an Atlassian OnDemand application can install it in their instance, meaning they rely on your service to 
 deliver content to their users. Therefore, ensuring consistent operation of your add-on is critical. 
 You can avoid many potential service disruptions by planning carefully.
 There are some important considerations to take into account:
@@ -10,12 +10,12 @@ There are some important considerations to take into account:
 - While some instances have a handful of users, others have thousands of users depending on our products to run their business.
 - We have designed our cloud-based products to be both secure and reliable, boasting 99.9% uptime and 24x7x365 support.
 
-This section lists some of the aspects we suggest you look at when defining the operational aspects for running your add-ons.
+Below, we discuss strategies for running your Atlassian Connect add-on as scalable, reliable software as a service.
 Some of these aspects need to be addressed very early in the design, as implementing them after the fact can be really difficult.
 
 ## 1. Defining your Service Level Agreement (SLA)
 
-To start with, you should define your targets, which you can validate during [performance testing](#perftesting), use as a basis to 
+You should define your service level targets, which you can validate during [performance testing](#perftesting), use as a basis to 
 [monitor your add-ons at runtime](#monitoring), and guarantee by [scaling your deployment](#scalability).
 The following table lists some examples of indicators you could track:
 
@@ -46,7 +46,7 @@ The following table lists some examples of indicators you could track:
 	</tr>
 	<tr>
 		<td>
-			User Interface Response Times
+			User interface response times
 		</td>
 		<td>
 			e.g. average response time, mean response time, 90th or 95th percentile response time
@@ -57,7 +57,7 @@ The following table lists some examples of indicators you could track:
 	</tr>
 	<tr>
 		<td>
-			Service calls (e.g. REST) Response Times
+			Service calls (e.g. REST) response times
 		</td>
 		<td>
 			e.g. average response time, mean response time, 90th or 95th percentile response time
@@ -70,7 +70,7 @@ The following table lists some examples of indicators you could track:
 			[Business Continuity](#bcp)
 		</td>
 		<td>
-			RTO - Recovery Time Objective
+			RTO (Recovery Time Objective)
 		</td>
 		<td>
 			Duration of time within which the service must be restored after a major incident (e.g. 8h)
@@ -78,7 +78,7 @@ The following table lists some examples of indicators you could track:
 	</tr>
 	<tr>
 		<td>
-			RPO - Recovery Point Objective
+			RPO (Recovery Point Objective)
 		</td>
 		<td>
 			Maximum tolerable period in which data might be lost due to a major incident (e.g. 24h)
@@ -109,7 +109,7 @@ The following table lists some examples of indicators you could track:
 	</tr>
 	<tr>
 		<td>
-			Resolution Time
+			Resolution time
 		</td>
 		<td>
 			Time elapsed between the customer's first request and the issue being resolved. 
@@ -135,20 +135,20 @@ There are two ways to design your add-ons to scale with a growing number of inst
 - Vertical scaling: you scale by adding more resources (e.g. CPU, memory) to existing nodes
 - Horizontal scaling: you scale by adding more nodes (e.g. servers) 
 
-It may be difficult to predict exactly how much resources your add-ons will need. For this reason, and because 
-your add-ons will be operating in a cloud environment targetting thousands of customers, we encourage you to design 
-your add-ons to scale horizontally. This will of course depend on your hosting strategy.
+It may be difficult to predict exactly the resources your add-ons will need. For this reason, and because 
+your add-ons will operate in a cloud environment targeting thousands of customers, we encourage you to design 
+your add-ons to scale horizontally. 
 
 Existing cloud providers can help you scale your implementations. One example of such providers is [Heroku](http://www.heroku.com), 
 a cloud application platform that can host applications developed in Java, Node.js, Pyton, Ruby, Scala or Closure. 
 Heroku leverages [Amazon AWS](http://www.aws.amazon.com) (Amazon Web Services) technology, and mostly supports horizontal 
 scaling. Other examples or world-class platforms include the [Google Cloud Platform](http://cloud.google.com) and 
-[SalesForce One](http://www.salesforce.com/salesforce1/).
+[Salesforce One](http://www.salesforce.com/salesforce1/).
 
 <a name="perftesting"></a>
 ### Performance testing
-We recommend you run performance tests for your add-ons. This will help you define the resources required 
-by your add-ons when you first deploy them, and the impact of new versions on these resources. 
+We recommend you run performance tests for your add-ons. This will help you define the resources your add-ons require 
+when you first deploy them, and understand how new versions of your add-ons impact resource utilization. 
 The following classes of tests are particularly useful:
 <table class="aui">
 	<thead>
@@ -211,9 +211,8 @@ distributed tests using many load injector machines.
 ### Monitoring your SLA
 
 You should have tools to monitor your add-on performance at runtime, and procedures in place to scale resources once specific 
-thresholds are met. To start with, you should at least monitor the utilization of the resources allocated to your add-ons 
-(CPU, memory, disk space, etc.). When using a cloud provider, you can look at strategies to automatically scale the resources 
-allocated to your add-ons based on load.
+thresholds are met. At a minimum, you should monitor utilization of resources by your add-ons (CPU, memory, disk space, etc.). 
+When using a cloud provider, you can look at strategies to automatically scale the resources allocated to your add-ons based on load.
 
 <a name="maintenance"></a>
 ## 3. Maintaining your Add-ons
@@ -234,8 +233,7 @@ your add-ons and manage versions, you should read the [Upgrading your Add-on](up
 </div>
 
 ### Maintenance Windows
-Since your add-on and Atlassian products are decoupled thanks to the architecture of Connect, you can decide when to upgrade your 
-add-ons independently from the 
+Since your add-on and Atlassian products are decoupled, you can decide when to upgrade your add-ons independently from the 
 [Atlassian OnDemand Maintenance Windows](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+maintenance+windows).
 Ideally, your solution should be architected in a way that ensures maintenance is transparent to end-users. If this is not possible, 
 make sure you publish your maintenance windows online, and provide a meaningful error message to users trying to access your add-ons 
@@ -252,7 +250,7 @@ that is running the add-on.
 and we suggest you do a few dry runs. Ideally, you should be testing your disaster recovery procedures regularly. 
 Hope for the best, plan for the worst! 
 
-Note that using an world-class cloud provider minimises the risk of a major outage impacting the users of your add-ons. 
+Note that using an world-class cloud provider minimizes the risk of a major outage impacting the users of your add-ons. 
 For example when using Heroku with Heroku Postgres, the platform automatically backs up deployed applications and data, and 
 automatically brings the application back online in case of a data center outage, with minimum data loss.
 <a name="support"></a>
@@ -279,7 +277,7 @@ We are well known for our great support! Here is what we recommend you focus on:
 		<tr>
 			<td>Use an issue tracker like JIRA to resolve and track customer-reported bugs and feature requests, 
 				for all paid-via-Atlassian add-ons.</td>
-			<td>You don't need to use an Atlassian product to track your issues, but some kind of tracker to keep on top 
+			<td>You don't need to use an Atlassian product to track your issues, but use some kind of tracker to keep on top 
 				of customer-reported bugs and improvement requests.</td>
 		</tr>
 		<tr>
