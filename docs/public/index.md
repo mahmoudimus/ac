@@ -13,13 +13,13 @@
 
 
 ## What is Atlassian Connect?
-Atlassian Connect is a development framework for building add-ons to Atlassian's applications,
+You can use the Atlassian Connect framework to build add-ons for Atlassian applications
  like JIRA, Confluence, and HipChat. An add-on could be an integration with another existing service, 
- new features for the Atlassian application, or even a new application using the Atlassian app as a platform.
+ new features for the Atlassian application, or even a new product using the Atlassian application as a platform.
 
 ## What is an Atlassian Connect add-on?
 Simply understood, Atlassian Connect add-ons are web applications.
- Atlassian Connect add-ons operate remotely over HTTP and can be written with any programming
+Atlassian Connect add-ons operate remotely over HTTP and can be written with any programming
 language and web framework.
 
 Fundamentally, Atlassian Connect add-ons have three major capabilities:
