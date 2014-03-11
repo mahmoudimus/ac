@@ -405,7 +405,7 @@
     return self;
   }
 
-//  XdmRpc.debug = true;
+  XdmRpc.debug = true;
 
   return XdmRpc;
 

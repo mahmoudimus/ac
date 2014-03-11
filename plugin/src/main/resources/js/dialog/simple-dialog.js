@@ -89,7 +89,7 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
                 dialogId = options.id || "ap-dialog-" + (idSeq += 1),
                 mergedOptions = $.extend({id: dialogId}, defaultOptions, options),
                 dialogElement;
-                console.log(options);
+
             mergedOptions.w = parseDimension(mergedOptions.width, $global.width());
             mergedOptions.h = parseDimension(mergedOptions.height, $global.height());
 
@@ -108,7 +108,6 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
             } else {
                 AJS.layer(dialogElement).changeSize(mergedOptions.w, mergedOptions.h);
             }
-
             dialog = AJS.dialog2(dialogElement);
 
             displayDialogContent($nexus, mergedOptions);
