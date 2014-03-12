@@ -1,5 +1,10 @@
 package com.atlassian.plugin.connect.plugin.usermanagement.confluence;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.event.events.space.SpaceCreateEvent;
 import com.atlassian.confluence.security.PermissionManager;
@@ -35,12 +40,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.CREATEEDIT_PAGE_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.CREATE_ATTACHMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.EDITBLOG_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_ATTACHMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_BLOG_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_COMMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_PAGE_PERMISSION;
 import static com.google.common.collect.Iterables.filter;
 import static java.util.Arrays.asList;
 
@@ -54,6 +62,18 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     // As reported by Sam Day, without the "confluence-users" group the add-on user can't
     // even get the page summary of a page that is open to anonymous access.
     private static final ImmutableSet<String> GROUPS = ImmutableSet.of("confluence-users", "users");
+
+    private static final ImmutableSet<String> SPACE_ADMIN_PERMISSIONS = ImmutableSet.of(
+        // WRITE
+        CREATEEDIT_PAGE_PERMISSION, CREATE_ATTACHMENT_PERMISSION, COMMENT_PERMISSION, EDITBLOG_PERMISSION,
+
+        // DELETE
+        REMOVE_PAGE_PERMISSION, REMOVE_ATTACHMENT_PERMISSION, REMOVE_COMMENT_PERMISSION,
+        REMOVE_BLOG_PERMISSION,
+
+        // SPACE_ADMIN
+        ADMINISTER_SPACE_PERMISSION);
+
 
     private final PermissionManager confluencePermissionManager;
     private final SpacePermissionManager spacePermissionManager;
@@ -149,8 +169,8 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         {
             removeUserFromGlobalAdmins(confluenceAddonUser);
         }
-        // SPACE_ADMIN to x scope transition
-        if (removeExistingPermissionSetup || ScopeName.isTransitionDownFromSpaceAdmin(previousScopes, newScopes))
+        // SPACE_ADMIN to <= READ scope transition
+        if (removeExistingPermissionSetup || ScopeName.isTransitionDownFromNonTopAdminToRead(previousScopes, newScopes))
         {
             removeSpaceAdminPermissions(confluenceAddonUser);
         }
@@ -159,8 +179,8 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         {
             grantAddonUserGlobalAdmin(confluenceAddonUser);
         }
-        // x to SPACE_ADMIN scope transition
-        if (ScopeName.isTransitionUpToSpaceAdmin(previousScopes, newScopes))
+        // x to SPACE_ADMIN scope transition. Note: SPACE_ADMIN is given for all: READ > scopes < ADMIN
+        if (ScopeName.isTransitionUpFromReadToNonTopAdmin(previousScopes, newScopes))
         {
             // add space admin to all spaces
             grantAddonUserSpaceAdmin(confluenceAddonUser);
@@ -250,14 +270,23 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     private void grantAddonUserAdminToSpace(Space space, ConfluenceUser confluenceAddonUser)
     {
-        if (!spacePermissionManager.hasPermission(ADMINISTER_SPACE_PERMISSION, space, confluenceAddonUser))
+        for (String permission : SPACE_ADMIN_PERMISSIONS)
         {
-            SpacePermission permission = new SpacePermission(ADMINISTER_SPACE_PERMISSION, space, null, confluenceAddonUser);
+            grantAddonUserPermissionToSpace(permission, space, confluenceAddonUser);
+        }
+    }
+
+    private void grantAddonUserPermissionToSpace(String permissionName, Space space, ConfluenceUser confluenceAddonUser)
+    {
+        if (!spacePermissionManager.hasPermission(permissionName, space, confluenceAddonUser))
+        {
+            SpacePermission permission = new SpacePermission(permissionName, space, null, confluenceAddonUser);
             spacePermissionManager.savePermission(permission);
         }
         else
         {
-            log.info("Add-on user {} already has admin permission on space {}", confluenceAddonUser.getName(), space.getKey());
+            log.info("Add-on user {} already has {} permission on space {}", new Object[] {
+                    confluenceAddonUser.getName(), permissionName, space.getKey()});
         }
     }
 
@@ -272,12 +301,20 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     private void removeAddonUserAdminFromSpace(Space space, ConfluenceUser confluenceAddonUser)
     {
+        for (String permission : SPACE_ADMIN_PERMISSIONS)
+        {
+            removeAddonUserPermissionFromSpace(permission, space, confluenceAddonUser);
+        }
+    }
+
+    private void removeAddonUserPermissionFromSpace(String permissionName, Space space, ConfluenceUser confluenceAddonUser)
+    {
         Set<SpacePermission> allSpacePermissionsAssignedToAddonUser = Sets.newHashSet();
         for (SpacePermission spacePermission : space.getPermissions())
         {
             if (spacePermission.isUserPermission() &&
                     Objects.equal(spacePermission.getUserSubject(), confluenceAddonUser) &&
-                    StringUtils.equals(spacePermission.getType(), SpacePermission.ADMINISTER_SPACE_PERMISSION))
+                    StringUtils.equals(spacePermission.getType(), permissionName))
             {
                 allSpacePermissionsAssignedToAddonUser.add(spacePermission);
             }
@@ -288,7 +325,6 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
             spacePermissionManager.removePermission(spacePermission);
         }
     }
-
 
     @EventListener
     public void spaceCreated(SpaceCreateEvent spaceCreateEvent)
