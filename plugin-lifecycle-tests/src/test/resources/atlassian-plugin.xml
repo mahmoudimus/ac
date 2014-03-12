@@ -13,4 +13,14 @@
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
 
     <component key="testPluginInstaller" class="it.com.atlassian.plugin.connect.testlifecycle.LifecyclePluginInstaller" />
+
+    <component key="jiraTestAuthenticator"
+               class="it.com.atlassian.plugin.connect.JiraLifecycleTestAuthenticator"
+               interface="it.com.atlassian.plugin.connect.LifecycleTestAuthenticator"
+               application="jira" />
+    <component key="confluenceTestAuthenticator"
+               class="it.com.atlassian.plugin.connect.ConfluenceLifecycleTestAuthenticator"
+               interface="it.com.atlassian.plugin.connect.LifecycleTestAuthenticator"
+               application="confluence" />
+
 </atlassian-plugin>
