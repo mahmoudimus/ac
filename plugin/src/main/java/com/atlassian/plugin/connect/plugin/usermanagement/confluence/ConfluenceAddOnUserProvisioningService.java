@@ -21,6 +21,7 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -165,23 +166,23 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         boolean removeExistingPermissionSetup = previousScopes.isEmpty();
 
         // ADMIN to x scope transition
-        if (removeExistingPermissionSetup || ScopeName.isTransitionDownFromAdmin(previousScopes, newScopes))
+        if (removeExistingPermissionSetup || ScopeUtil.isTransitionDownFromAdmin(previousScopes, newScopes))
         {
             removeUserFromGlobalAdmins(confluenceAddonUser);
         }
         // SPACE_ADMIN to <= READ scope transition
-        if (removeExistingPermissionSetup || ScopeName.isTransitionDownToReadOrLess(previousScopes, newScopes))
+        if (removeExistingPermissionSetup || ScopeUtil.isTransitionDownToReadOrLess(previousScopes, newScopes))
         {
             removeSpaceAdminPermissions(confluenceAddonUser);
         }
         // x to ADMIN scope transition
-        if (ScopeName.isTransitionUpToAdmin(previousScopes, newScopes))
+        if (ScopeUtil.isTransitionUpToAdmin(previousScopes, newScopes))
         {
             grantAddonUserGlobalAdmin(confluenceAddonUser);
         }
 
         // x to SPACE_ADMIN scope transition. Note: SPACE_ADMIN is given for all: READ > scopes < ADMIN
-        if (ScopeName.isTransitionUpFromReadOrLess(previousScopes, newScopes))
+        if (ScopeUtil.isTransitionUpFromReadOrLess(previousScopes, newScopes))
         {
             // add space admin to all spaces
             grantAddonUserSpaceAdmin(confluenceAddonUser);
@@ -347,7 +348,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
             @Override
             public boolean apply(@Nullable ConnectAddonBean addon)
             {
-                final Set<ScopeName> normalizedScopes = ScopeName.normalize(addon.getScopes());
+                final Set<ScopeName> normalizedScopes = ScopeUtil.normalize(addon.getScopes());
                 return (normalizedScopes.contains(ScopeName.SPACE_ADMIN) && !normalizedScopes.contains(ScopeName.ADMIN));
             }
         });
