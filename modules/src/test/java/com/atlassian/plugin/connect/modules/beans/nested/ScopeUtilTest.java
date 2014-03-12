@@ -19,17 +19,20 @@ import org.junit.runners.Parameterized;
 import static com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil.isTransitionDownToReadOrLess;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class ScopeUtilTest
 {
-    private static Set<ScopeName> EMPTY = ImmutableSet.of();
-    private static final Set<ScopeName> ALL_SCOPES = ImmutableSet.copyOf(Arrays.asList(ScopeName.values()));
-    private static final Set<ScopeName> READ_OR_LESS = Sets.newHashSet(null, ScopeName.READ);
-    private static final Set<ScopeName> GREATER_THAN_READ = ImmutableSet.copyOf(Iterables.filter(ALL_SCOPES, new Predicate<ScopeName>()
+    private static final Object NULL_SCOPE = new Object();
+    private static final Set<ScopeName> EMPTY = ImmutableSet.of();
+    private static final Set<Object> ALL_SCOPES = Sets.union(ImmutableSet.of(NULL_SCOPE),
+            ImmutableSet.copyOf(Arrays.asList(ScopeName.values())));
+    private static final Set<Object> READ_OR_LESS = Sets.newHashSet(NULL_SCOPE, ScopeName.READ);
+    private static final Set<Object> GREATER_THAN_READ = ImmutableSet.copyOf(Iterables.filter(ALL_SCOPES, new Predicate<Object>()
     {
         @Override
-        public boolean apply(@Nullable ScopeName scope)
+        public boolean apply(@Nullable Object scope)
         {
             return !READ_OR_LESS.contains(scope);
         }
@@ -43,26 +46,25 @@ public class ScopeUtilTest
     private final Set<ScopeName> previousScopes;
     private final Set<ScopeName> newScopes;
 
-    public ScopeUtilTest(boolean expectedResult, ScopeName previousTopScope, ScopeName newTopScope)
+    public ScopeUtilTest(Object previousTopScope, Object newTopScope, boolean expectedResult)
     {
-
         this.expectedResult = expectedResult;
         this.previousScopes = set(previousTopScope);
         this.newScopes = set(newTopScope);
     }
 
-    private static Set<ScopeName> set(ScopeName scope)
+    private static Set<ScopeName> set(Object scope)
     {
-        return scope == null ? EMPTY : ImmutableSet.of(scope);
+        return scope == NULL_SCOPE ? EMPTY : ImmutableSet.of((ScopeName)scope);
     }
 
-    private static Collection<Object[]> generateTestParams(Set<ScopeName> prev, Set<ScopeName> nuevo, final boolean expected)
+    private static Collection<Object[]> generateTestParams(Set<Object> prev, Set<Object> nuevo, final boolean expected)
     {
-        final Set<List<ScopeName>> variants = Sets.cartesianProduct(prev, nuevo);
-        final Iterable<Object[]> params = Iterables.transform(variants, new Function<List<ScopeName>, Object[]>()
+        final Set<List<Object>> variants = Sets.cartesianProduct(prev, nuevo);
+        final Iterable<Object[]> params = Iterables.transform(variants, new Function<List<Object>, Object[]>()
         {
             @Override
-            public Object[] apply(@Nullable List<ScopeName> variant)
+            public Object[] apply(@Nullable List<Object> variant)
             {
                 return new Object[]{variant.get(0), variant.get(1), expected};
             }
@@ -70,7 +72,7 @@ public class ScopeUtilTest
         return ImmutableList.copyOf(params);
     }
 
-    @Parameterized.Parameters
+    @Parameters
     public static Collection<Object[]> parameters()
     {
         return PARAMS_NOT_TRANSITION_DOWN_WHEN_PREVIOUS_READ_OR_LESS;
@@ -79,6 +81,7 @@ public class ScopeUtilTest
     @Test
     public void notTransitionDownWhenPreviousReadOrLess()
     {
+        System.out.println("notTransitionDownWhenPreviousReadOrLess: " + previousScopes + "; " + newScopes + "; " + expectedResult);
         assertThat(isTransitionDownToReadOrLess(previousScopes, newScopes), is(expectedResult));
     }
 
