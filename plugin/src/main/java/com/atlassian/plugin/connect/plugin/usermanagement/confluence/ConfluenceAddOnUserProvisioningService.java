@@ -209,17 +209,11 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     private void grantAddonUserGlobalAdmin(final ConfluenceUser confluenceAddonUser)
     {
         setGlobalAdmin(confluenceAddonUser, true);
-
-        // permissions are not inherited so need to give admin all the other permissions too
-        grantAddonUserSpaceAdmin(confluenceAddonUser);
     }
 
     private void removeUserFromGlobalAdmins(ConfluenceUser confluenceAddonUser)
     {
         setGlobalAdmin(confluenceAddonUser, false);
-
-        // permissions are not inherited so need to remove from admin all the other permissions too
-        removeSpaceAdminPermissions(confluenceAddonUser);
     }
 
     private void setGlobalAdmin(final ConfluenceUser confluenceAddonUser, final boolean shouldBeAdmin)

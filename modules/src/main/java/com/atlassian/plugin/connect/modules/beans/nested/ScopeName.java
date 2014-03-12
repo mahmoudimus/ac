@@ -106,12 +106,6 @@ public enum ScopeName implements Comparable<ScopeName>
         return !hasReadOrLess(newScopes) && hasReadOrLess(previousScopes);
     }
 
-    private static boolean hasGreaterThanReadAndLessThanTopAdmin(Set<ScopeName> scopeNames)
-    {
-        ScopeName topMost = findTopMostScope(scopeNames);
-        return topMost == WRITE || topMost == DELETE || topMost == SPACE_ADMIN;
-    }
-
     private static boolean hasReadOrLess(Set<ScopeName> scopeNames)
     {
         ScopeName topMost = findTopMostScope(scopeNames);
