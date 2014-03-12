@@ -314,7 +314,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
         }
         catch (Exception e)
         {
-            log.debug("whoopsy", e);
+            log.debug("Failed to removed user from group '" + groupKey + "' . Note user may not have been in group", e);
         }
     }
 }
