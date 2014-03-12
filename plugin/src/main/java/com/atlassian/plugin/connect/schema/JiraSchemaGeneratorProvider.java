@@ -9,8 +9,8 @@ import com.atlassian.plugin.connect.modules.util.ProductFilter;
 public class JiraSchemaGeneratorProvider implements JsonSchemaGeneratorProvider
 {
     @Override
-    public JsonSchemaGenerator provide(boolean lowercaseEnums, InterfaceList interfaceList, JsonSchemaDocs schemaDocs)
+    public JsonSchemaGenerator provide(boolean lowercaseEnums, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {
-        return new ConnectSchemaGenerator(lowercaseEnums,interfaceList,schemaDocs, ProductFilter.JIRA);
+        return new ConnectSchemaGenerator(lowercaseEnums,interfaceList,schemaDocs, ignoreFilter, ProductFilter.JIRA);
     }
 }
