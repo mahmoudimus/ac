@@ -18,5 +18,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Inherited
 public @interface SchemaIgnore
 {
-
+    /**
+     * A string which we can use to filter ignores.
+     * If this is blank, the field will be ignored.
+     * If this is set and the generation was run with an "ignoreFilter" matching this string, it will be ignored.
+     * If this is set but does not match the "ignoreFilter" it will not be ignored.
+     * @return
+     */
+    String value() default "";
 }

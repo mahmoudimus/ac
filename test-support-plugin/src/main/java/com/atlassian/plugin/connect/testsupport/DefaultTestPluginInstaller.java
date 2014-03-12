@@ -46,12 +46,18 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     public Plugin installPlugin(ConnectAddonBean bean) throws IOException
     {
         String json = ConnectModulesGsonFactory.addonBeanToJson(bean);
-        File descriptor = createTempDescriptor(json);
-        
+        return installPlugin(json);
+    }
+
+    @Override
+    public Plugin installPlugin(String jsonDescriptor) throws IOException
+    {
+        File descriptor = createTempDescriptor(jsonDescriptor);
+
         PluginInstallHandler handler = getInstallHandler();
 
         checkNotNull(handler);
-        
+
         return handler.installPlugin(descriptor, Option.<String>some("application/json")).getPlugin();
     }
 
@@ -80,17 +86,17 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     {
         pluginController.enablePlugins(pluginKey);
     }
-    
+
     @Override
     public String getInternalAddonBaseUrl(String pluginKey)
     {
         String productBase = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
-        
+
         if(productBase.endsWith("/"))
         {
             productBase = StringUtils.chop(productBase);
         }
-        
+
         return productBase + AddonTestFilter.FILTER_MAPPING + "/" + pluginKey;
     }
 
@@ -98,17 +104,17 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     {
         File tmpFile = File.createTempFile(ModuleKeyGenerator.randomName(DESCRIPTOR_PREFIX), ".json");
         Files.write(json,tmpFile, Charsets.UTF_8);
-        
+
         return tmpFile;
     }
-    
+
     private PluginInstallHandler getInstallHandler()
     {
         /*
         NOTE: we have to get the handler via OSGi by it's string name because we can't depend on the connect plugin.
          */
         ServiceTracker tracker = getServiceTracker();
-        
+
         checkNotNull(tracker);
         for(ServiceReference ref : tracker.getServiceReferences())
         {
@@ -118,7 +124,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
                 return handler;
             }
         }
-        
+
         return null;
     }
 
@@ -133,7 +139,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
                 this.serviceTracker = tracker;
             }
         }
-        
+
         return serviceTracker;
     }
 
