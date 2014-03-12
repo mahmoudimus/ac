@@ -21,6 +21,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
@@ -127,22 +128,22 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         boolean removeExistingProjectPermissionSetup = previousScopes.isEmpty() && projectRoleExists();
 
         // ADMIN to x scope transition
-        if (removeExistingAdminPermissionSetup || ScopeName.isTransitionDownFromAdmin(previousScopes, newScopes))
+        if (removeExistingAdminPermissionSetup || ScopeUtil.isTransitionDownFromAdmin(previousScopes, newScopes))
         {
             removeUserFromGlobalAdmins(user);
         }
         // x to READ scope transition
-        if (removeExistingProjectPermissionSetup || ScopeName.isTransitionDownToRead(previousScopes, newScopes))
+        if (removeExistingProjectPermissionSetup || ScopeUtil.isTransitionDownToRead(previousScopes, newScopes))
         {
             removeProjectPermissions(user);
         }
         // x to ADMIN scope transition
-        if (ScopeName.isTransitionUpToAdmin(previousScopes, newScopes))
+        if (ScopeUtil.isTransitionUpToAdmin(previousScopes, newScopes))
         {
             makeUserGlobalAdmin(user);
         }
         // READ to x scope transition
-        if (!ScopeName.isTransitionDownToRead(previousScopes, newScopes))
+        if (!ScopeUtil.isTransitionDownToRead(previousScopes, newScopes))
         {
             updateProjectPermissions(user);
         }
