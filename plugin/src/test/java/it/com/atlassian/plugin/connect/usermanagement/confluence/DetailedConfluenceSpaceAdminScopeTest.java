@@ -128,6 +128,13 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     @Test
+    public void addonIsMadeAdminOfExistingSpaceAfterUpgradeToTopAdmin() throws Exception
+    {
+        plugin = installPlugin(ScopeName.ADMIN);
+        assertIsSpaceAdminOnAllSpaces(getAddonUser());
+    }
+
+    @Test
     public void addonIsMadeAdminOfExistingSpaceAfterDowngradeFromTopAdmin() throws Exception
     {
         plugin = installPlugin(ScopeName.ADMIN);
@@ -232,9 +239,10 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     @Test
-    public void isNotSpaceAdminAfterUpgrade() throws Exception
+    public void isNotSpaceAdminAfterDowngradeFromAdmin() throws Exception
     {
         plugin = installPlugin(ScopeName.ADMIN);
+        plugin = installPlugin(ScopeName.READ);
         assertNonReadPermissionsRemoved();
     }
 

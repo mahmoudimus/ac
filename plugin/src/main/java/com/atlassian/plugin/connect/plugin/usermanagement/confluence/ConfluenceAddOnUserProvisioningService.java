@@ -170,7 +170,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
             removeUserFromGlobalAdmins(confluenceAddonUser);
         }
         // SPACE_ADMIN to <= READ scope transition
-        if (removeExistingPermissionSetup || ScopeName.isTransitionDownFromNonTopAdminToRead(previousScopes, newScopes))
+        if (removeExistingPermissionSetup || ScopeName.isTransitionDownToReadOrLess(previousScopes, newScopes))
         {
             removeSpaceAdminPermissions(confluenceAddonUser);
         }
@@ -179,8 +179,9 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         {
             grantAddonUserGlobalAdmin(confluenceAddonUser);
         }
+
         // x to SPACE_ADMIN scope transition. Note: SPACE_ADMIN is given for all: READ > scopes < ADMIN
-        if (ScopeName.isTransitionUpFromReadToNonTopAdmin(previousScopes, newScopes))
+        if (ScopeName.isTransitionUpFromReadOrLess(previousScopes, newScopes))
         {
             // add space admin to all spaces
             grantAddonUserSpaceAdmin(confluenceAddonUser);
@@ -208,11 +209,17 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     private void grantAddonUserGlobalAdmin(final ConfluenceUser confluenceAddonUser)
     {
         setGlobalAdmin(confluenceAddonUser, true);
+
+        // permissions are not inherited so need to give admin all the other permissions too
+        grantAddonUserSpaceAdmin(confluenceAddonUser);
     }
 
     private void removeUserFromGlobalAdmins(ConfluenceUser confluenceAddonUser)
     {
         setGlobalAdmin(confluenceAddonUser, false);
+
+        // permissions are not inherited so need to remove from admin all the other permissions too
+        removeSpaceAdminPermissions(confluenceAddonUser);
     }
 
     private void setGlobalAdmin(final ConfluenceUser confluenceAddonUser, final boolean shouldBeAdmin)

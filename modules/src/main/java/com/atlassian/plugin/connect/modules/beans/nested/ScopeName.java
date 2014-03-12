@@ -95,15 +95,15 @@ public enum ScopeName implements Comparable<ScopeName>
         return isTransitionAwayFrom(PROJECT_ADMIN, previousScopes, newScopes);
     }
 
-    // For now we are giving addons that have at least WRITE scope (but not ADMIN) SPACE_ADMIN permissions
-    public static boolean isTransitionDownFromNonTopAdminToRead(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
+    // For now we are giving addons that have at least WRITE scope SPACE_ADMIN permissions
+    public static boolean isTransitionDownToReadOrLess(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        return hasGreaterThanReadAndLessThanTopAdmin(previousScopes) && hasReadOrLess(newScopes);
+        return !hasReadOrLess(previousScopes) && hasReadOrLess(newScopes);
     }
 
-    public static boolean isTransitionUpFromReadToNonTopAdmin(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
+    public static boolean isTransitionUpFromReadOrLess(Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        return hasGreaterThanReadAndLessThanTopAdmin(newScopes) && hasReadOrLess(previousScopes);
+        return !hasReadOrLess(newScopes) && hasReadOrLess(previousScopes);
     }
 
     private static boolean hasGreaterThanReadAndLessThanTopAdmin(Set<ScopeName> scopeNames)
