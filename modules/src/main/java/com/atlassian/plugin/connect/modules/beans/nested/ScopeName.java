@@ -14,7 +14,7 @@ public enum ScopeName implements Comparable<ScopeName>
 {
     /**
      * Note: PROJECT_ADMIN and SPACE_ADMIN are effectively synonyms that prevent
-     * the word "space" from appearing in JIRA configs and "project" in Confluence configs.
+     * the word "space" from appearing in JIRA configs and "project" in the Confluence configs.
      */
     READ, WRITE, DELETE, PROJECT_ADMIN, SPACE_ADMIN, ADMIN;
 
