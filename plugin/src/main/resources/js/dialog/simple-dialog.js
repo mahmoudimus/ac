@@ -1,4 +1,4 @@
-_AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], function($, uri, statusHelper) {
+_AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "dialog/dialog-button"], function($, uri, statusHelper, dialogButton) {
 
     var enc = encodeURIComponent;
     var $global = $(window);
@@ -6,6 +6,11 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
     var $nexus;
     var dialog;
     var dialogId;
+
+    var buttons = {
+        submit: dialogButton.submit(),
+        cancel: dialogButton.cancel()
+    };
 
     function createChromelessDialogElement(options, $nexus){
         var $el = $(aui.dialog.dialog2Chrome({
@@ -26,19 +31,21 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
             titleId: options.titleId,
             size: options.size,
             extraClasses: ['ap-aui-dialog2'],
-            removeOnHide: true
+            removeOnHide: true,
+            footerActionContent: true
         }));
-        $el.find('.aui-dialog2-header-close').click(closeDialog);
+
         $el.find('.aui-dialog2-content').append($nexus);
+        $el.find('.aui-dialog2-footer-actions').empty().append(buttons.submit.$el, buttons.cancel.$el);
+        $nexus.data('ra.dialog.buttons', buttons);
+
+//        $el.find('.aui-dialog2-footer-actions button').click(closeDialog);
         return $el;
     }
 
     function displayDialogContent($container, options){
-        $container.attr('id', 'ap-' + options.ns);
         $container.append('<div id="embedded-' + options.ns + '" class="ap-dialog-container" />');
-        options.dlg = true; //REMOVE THIS
 //          container.append(statusHelper.createStatusMessages());
-        _AP.create(options);
     }
 
 
@@ -87,13 +94,13 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
                     height: "50%"
                 },
                 dialogId = options.id || "ap-dialog-" + (idSeq += 1),
-                mergedOptions = $.extend({id: dialogId}, defaultOptions, options),
+                mergedOptions = $.extend({id: dialogId}, defaultOptions, options, {dlg: 1}),
                 dialogElement;
 
             mergedOptions.w = parseDimension(mergedOptions.width, $global.width());
             mergedOptions.h = parseDimension(mergedOptions.height, $global.height());
 
-            $nexus = $("<div />").addClass("ap-servlet-placeholder ap-dialog-container");
+            $nexus = $("<div />").addClass("ap-servlet-placeholder").attr('id', 'ap-' + options.ns);
 
             if(options.chrome){
                 dialogElement = createDialogElement(mergedOptions, $nexus);
@@ -108,9 +115,18 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper"], f
             } else {
                 AJS.layer(dialogElement).changeSize(mergedOptions.w, mergedOptions.h);
             }
+
             dialog = AJS.dialog2(dialogElement);
+            dialog.on("hide", function() {
+                closeDialog();
+            });
 
             displayDialogContent($nexus, mergedOptions);
+            //difference between a webitem and opening from js.
+            if(options.src){
+                _AP.create(options);
+            }
+
             dialog.show();
 
         },

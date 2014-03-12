@@ -156,7 +156,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         createDialog: function(dialogOptions) {
           console.log(arguments, 'args');
           _AP.require("dialog/dialog-factory", function(dialogFactory) {
-            dialogFactory(dialogOptions, productContextJson).create(dialogOptions);
+            dialogFactory(options, dialogOptions, productContextJson);
           });
         },
         closeDialog: function() {
@@ -286,7 +286,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     // wireup dialog buttons if appropriate
     var dialogButtons = getDialogButtons();
     if (dialogButtons) {
-      dialogButtons.each(function (name, button) {
+      $.each(dialogButtons, function(name, button) {
         button.click(function (e, callback) {
           if (isInited) {
             rpc.dialogMessage(name, callback);
