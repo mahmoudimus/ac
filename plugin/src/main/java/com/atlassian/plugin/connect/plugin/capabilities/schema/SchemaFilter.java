@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,17 +50,17 @@ public class SchemaFilter implements Filter
         String productPath = StringUtils.substringAfterLast(req.getRequestURI(), "/schema/");
         try
         {
-            ProductFilter requestedProduct = ProductFilter.valueOf(productPath.toUpperCase());
             String schema;
+            
             if(pretty)
             {
-                schema = schemaLocator.getPrettySchema(requestedProduct);
+                schema = schemaLocator.getPrettySchema(productPath);
             }
             else
             {
-                schema = schemaLocator.getSchema(requestedProduct);
+                schema = schemaLocator.getSchema(productPath);
             }
-
+            
             res.setContentType(JSON_SCHEMA_TYPE);
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentLength(schema.length());
