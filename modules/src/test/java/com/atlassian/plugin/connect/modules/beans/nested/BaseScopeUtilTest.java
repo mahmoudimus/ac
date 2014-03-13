@@ -68,6 +68,6 @@ public class BaseScopeUtilTest
 
     protected void logParams()
     {
-        log.trace("params: " + previousScopes + "; " + newScopes + "; " + expectedResult);
+        log.trace("params: " + previousScopes + " -> " + newScopes + " : " + expectedResult);
     }
 }
