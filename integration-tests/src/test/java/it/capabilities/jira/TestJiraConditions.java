@@ -26,6 +26,7 @@ import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
+import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
@@ -43,7 +44,6 @@ public class TestJiraConditions extends JiraWebDriverTestBase
 
     private static final String ONLY_BETTY_CONDITION_URL = "/onlyBettyCondition";
     private static final String ONLY_BARNEY_CONDITION_URL = "/onlyBarneyCondition";
-    private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
@@ -98,13 +98,13 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                         .withWeight(1)
                         .withUrl("/somewhere")
                         .withConditions(
-                            newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
+                            newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
                                     "?issueId={issue.id}&projectKey={project.key}").build()
                         )
                         .build())
                 .addRoute(ONLY_BARNEY_CONDITION_URL, new CheckUsernameConditionServlet(BARNEY_USERNAME))
                 .addRoute(ONLY_BETTY_CONDITION_URL, new CheckUsernameConditionServlet(BETTY_USERNAME))
-                .addRoute(PARAMETER_CAPTURE_CONDITION_URL, PARAMETER_CAPTURING_SERVLET)
+                .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
 

@@ -1,7 +1,7 @@
 /**
  * Utility methods for rendering connect addons in AUI components
  */
-_AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
+_AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, UiParams) {
     "use strict";
 
     function getContentUrl(pluginKey, capability){
@@ -24,12 +24,12 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
             return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
     }
 
-    function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
-        var contentUrl = getContentUrl(pluginKey, capability);
+    function getIframeHtmlForKey(pluginKey, productContextJson, capability, params) {
+        var contentUrl = this.getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
-                "dialog": true,
+                "ui-params": UiParams.encode(params),
                 "plugin-key": pluginKey,
                 "product-context": productContextJson,
                 "key": capability.key,
@@ -40,23 +40,7 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         });
     }
 
-    // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
-    // Will be removed - plugins should pass key of the <dialog-page>, NOT the url.
-    // TODO: Remove this class when support for XML Descriptors goes away
-    function getIframeHtmlForUrl(pluginKey, options) {
-        var contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
-        return $.ajax(contentUrl, {
-            dataType: "html",
-            data: {
-                "dialog": true,
-                "plugin-key": pluginKey,
-                "remote-url": options.url,
-                "width": "100%",
-                "height": "100%",
-                "raw": "true"
-            }
-        });
-    }
+
     function eventHandler(action, selector, callback) {
 
         function domEventHandler(event) {
@@ -75,6 +59,7 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         }
 
         $(window.document).on(action, selector, domEventHandler);
+
     }
 
     return {

@@ -11,6 +11,7 @@ import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,8 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runIn
 public class RemoteDialogOpeningPage
 {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private  static final int REMOTE_DIALOG_WAIT_MS = 20000;
 
     @Inject
     protected AtlassianWebDriver driver;
@@ -63,7 +66,12 @@ public class RemoteDialogOpeningPage
     public RemoteCloseDialogPage openKey(String expectedNamespace)
     {
         open("dialog-open-button-key");
-        return pageBinder.bind(RemoteCloseDialogPage.class, "ap-" + expectedNamespace);
+        String dialogId = "ap-" + expectedNamespace;
+        if (!elementFinder.find(By.id(dialogId)).timed().isVisible().by(REMOTE_DIALOG_WAIT_MS))
+        {
+            throw new NoSuchElementException("Couldn't find dialog with id " + dialogId + " in " + REMOTE_DIALOG_WAIT_MS + "ms");
+        }
+        return pageBinder.bind(RemoteCloseDialogPage.class, dialogId);
     }
 
     private void open(final String id)

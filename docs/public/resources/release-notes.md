@@ -1,7 +1,7 @@
 
 # Release Notes
 
-## [1.0.0-rc](../release-notes/1-0-rc.html)
+## [1.0.0-rc6](../release-notes/1-0-rc.html)
 * Installing an add-on into OnDemand will not work unless the base url starts with https
 * Support for context parameters on remote conditions
 * The add-on key must now be less than or equal to 80 characters. Any add-ons with larger keys will need to be shortened
@@ -9,6 +9,10 @@
 * WebPanel url and location fields are now required
 * Only add-ons with a [`baseUrl`](../modules#baseUrl) starting with ``https://`` can be installed in OnDemand servers. ``http://`` may still be used for testing locally.
 * Increased [security](../concepts/security.html): add-ons are assigned a user in each product instance in which they are installed and server-to-server requests go through authorisation checks as this user.
+* Fixes issue where `user_is_logged_in` condition caused general pages to not be viewable
+* Fixes numerous issues with context parameters not being sent through to conditions and pages
+* Removes page header from Confluence general pages
+
 
 ## [1.0-m31](../release-notes/1-0-m31.html)
 * Support for Inline Dialogs
