@@ -26,7 +26,6 @@ public class NotTransitionUpScopeUtilTest extends BaseScopeUtilTest
         return generateTestParams(GREATER_THAN_READ, ALL_SCOPES, false);
     }
 
-    // TODO: not transition up when previous was empty???
     @Test
     public void notTransitionUpWhenPreviousGreaterThanRead()
     {
