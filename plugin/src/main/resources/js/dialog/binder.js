@@ -15,7 +15,8 @@ _AP.require(["dialog/simple-dialog", "host/content", "_uri", "dialog/dialog-fact
                 var dialogPageMatch = href.match(/\/servlet\/atlassian\-connect\/([\w-]+)\/([\w-]+)/);
                 if(dialogPageMatch){
                     var dialogPageOptions = {
-                        key: dialogPageMatch[1]
+                        key: dialogPageMatch[1],
+                        chrome: true
                     };
                     options.key = dialogPageMatch[2];
                     dialogFactory(dialogPageOptions, options);
@@ -37,7 +38,6 @@ _AP.require(["dialog/simple-dialog", "host/content", "_uri", "dialog/dialog-fact
                 if(options.chrome === undefined || options.chrome === ""){
                   options.chrome = true;
                 }
-                options.chrome = true;
 
                 simpleDialog.create(options);
             };

@@ -7,7 +7,7 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
 
         dialog.create({
             ns: dialogOptions.key,
-            chrome: true,
+            chrome: options.chrome,
             header: dialogOptions.header
         });
 
@@ -33,5 +33,5 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
           });
 
         return dialog;
-    }
+    };
 });

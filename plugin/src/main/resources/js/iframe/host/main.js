@@ -154,7 +154,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           callback(button ? button.isEnabled() : void 0);
         },
         createDialog: function(dialogOptions) {
-          console.log(arguments, 'args');
           _AP.require("dialog/dialog-factory", function(dialogFactory) {
             dialogFactory(options, dialogOptions, productContextJson);
           });
