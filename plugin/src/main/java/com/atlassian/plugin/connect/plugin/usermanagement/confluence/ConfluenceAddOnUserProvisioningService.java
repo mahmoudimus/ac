@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.usermanagement.confluence;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.event.events.space.SpaceCreateEvent;
 import com.atlassian.confluence.security.PermissionManager;
@@ -41,15 +36,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.CREATEEDIT_PAGE_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.CREATE_ATTACHMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.EDITBLOG_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_ATTACHMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_BLOG_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_COMMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_PAGE_PERMISSION;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static com.atlassian.confluence.security.SpacePermission.*;
 import static com.google.common.collect.Iterables.filter;
 import static java.util.Arrays.asList;
 
@@ -62,7 +54,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     // As reported by Sam Day, without the "confluence-users" group the add-on user can't
     // even get the page summary of a page that is open to anonymous access.
-    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("confluence-users", "users");
+    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("confluence-users", "users", "_licensed-confluence");
 
     private static final ImmutableSet<String> SPACE_ADMIN_PERMISSIONS = ImmutableSet.of(
         // WRITE

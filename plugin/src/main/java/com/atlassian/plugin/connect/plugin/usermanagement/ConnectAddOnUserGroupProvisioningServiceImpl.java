@@ -36,6 +36,8 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
     @Override
     public void ensureUserIsInGroup(String userKey, String groupKey) throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException
     {
+        LOG.info("Attempting to make user '{}' a member of group '{}' (if not already a member).", userKey, groupKey);
+
         if (!applicationService.isUserDirectGroupMember(getApplication(), userKey, groupKey))
         {
             try
