@@ -22,7 +22,6 @@ import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.sun.javadoc.*;
-import com.sun.tools.javadoc.DocImpl;
 
 public class JsonSchemaDoclet
 {
@@ -99,14 +98,18 @@ public class JsonSchemaDoclet
                 String originalText = fieldDoc.commentText();
                 Tag[] originalInlineTags = fieldDoc.inlineTags();
 
+                boolean revertInlineTags = false;
+                
                 if (fieldDocOverrides.containsKey(fieldDoc.name()))
                 {
                     docForField.setRawCommentText(fieldDocOverrides.get(fieldDoc.name()));
                     
                     //this sucks, but setting the comment text does NOT clear the tag cache
-                    Field inlineTagsField = DocImpl.class.getDeclaredField("inlineTags");
+                    Class docImpl = fieldDoc.getClass().getSuperclass().getSuperclass().getSuperclass();
+                    Field inlineTagsField = docImpl.getDeclaredField("inlineTags");
                     inlineTagsField.setAccessible(true);
                     inlineTagsField.set(docForField,null);
+                    revertInlineTags = true;
                 }
                 else if (Strings.isNullOrEmpty(fieldDoc.commentText()))
                 {
@@ -121,11 +124,15 @@ public class JsonSchemaDoclet
 
                 schemaFieldDocs.add(schemaFieldDoc);
                 
-                //we need to reset back to the original state in case we overrote something
-                fieldDoc.setRawCommentText(originalText);
-                Field inlineTagsField = DocImpl.class.getDeclaredField("inlineTags");
-                inlineTagsField.setAccessible(true);
-                inlineTagsField.set(fieldDoc,originalInlineTags);
+                if(revertInlineTags)
+                {
+                    //we need to reset back to the original state in case we overwrote something
+                    fieldDoc.setRawCommentText(originalText);
+                    Class docImplClass = fieldDoc.getClass().getSuperclass().getSuperclass().getSuperclass();
+                    Field inlineTagsField = docImplClass.getDeclaredField("inlineTags");
+                    inlineTagsField.setAccessible(true);
+                    inlineTagsField.set(fieldDoc,originalInlineTags);
+                }
             }
         }
 
