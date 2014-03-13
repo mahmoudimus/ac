@@ -63,7 +63,7 @@ public class SchemaFilter implements Filter
             
             res.setContentType(JSON_SCHEMA_TYPE);
             res.setStatus(HttpServletResponse.SC_OK);
-            res.setContentLength(schema.length());
+            res.setContentLength(schema.getBytes().length);
             ServletOutputStream sos = res.getOutputStream();
             sos.write(schema.getBytes());
             sos.flush();

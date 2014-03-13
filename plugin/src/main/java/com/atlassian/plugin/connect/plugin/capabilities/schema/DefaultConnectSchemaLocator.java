@@ -1,19 +1,16 @@
 package com.atlassian.plugin.connect.plugin.capabilities.schema;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
-
 import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Named
 @ExportAsService
@@ -71,7 +68,6 @@ public class DefaultConnectSchemaLocator implements ConnectSchemaLocator
     private String getSchema(String schemaPrefix, String format) throws IOException
     {
         String path = String.format(format, schemaPrefix);
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
         InputStream in = plugin.getResourceAsStream(path);
                 
         return IOUtils.toString(in);
