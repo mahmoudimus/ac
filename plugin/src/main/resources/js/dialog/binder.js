@@ -1,4 +1,4 @@
-_AP.require(["dialog/simple-dialog", "host/content", "_uri"], function(simpleDialog, hostContentUtilities, uri) {
+_AP.require(["dialog/simple-dialog", "host/content", "_uri", "dialog/dialog-factory"], function(simpleDialog, hostContentUtilities, uri, dialogFactory) {
 
   /**
    * Binds all elements with the class "ap-dialog" to open dialogs.
@@ -11,6 +11,17 @@ _AP.require(["dialog/simple-dialog", "host/content", "_uri"], function(simpleDia
             callback = function(href, options){
 
                 var webItemOptions = hostContentUtilities.getOptionsForWebItem(options.bindTo);
+                //this is a dialog-page (xml descriptor)
+                var dialogPageMatch = href.match(/\/servlet\/atlassian\-connect\/([\w-]+)\/([\w-]+)/);
+                if(dialogPageMatch){
+                    var dialogPageOptions = {
+                        key: dialogPageMatch[1]
+                    };
+                    options.key = dialogPageMatch[2];
+                    dialogFactory(dialogPageOptions, options);
+                    return;
+                }
+
                 $.extend(options, webItemOptions);
                 options.src = href;
 
@@ -29,7 +40,6 @@ _AP.require(["dialog/simple-dialog", "host/content", "_uri"], function(simpleDia
                 options.chrome = true;
 
                 simpleDialog.create(options);
-//                simpleDialog(href, options).show();
             };
 
         hostContentUtilities.eventHandler(action, selector, callback);

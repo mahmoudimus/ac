@@ -36,10 +36,13 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "d
         }));
 
         $el.find('.aui-dialog2-content').append($nexus);
-        $el.find('.aui-dialog2-footer-actions').empty().append(buttons.submit.$el, buttons.cancel.$el);
-        $nexus.data('ra.dialog.buttons', buttons);
+        var buttonNodes = {
+            submit: buttons.submit.$el,
+            cancel: buttons.cancel.$el
+        };
 
-//        $el.find('.aui-dialog2-footer-actions button').click(closeDialog);
+        $el.find('.aui-dialog2-footer-actions').empty().append(buttons.submit.$el, buttons.cancel.$el);
+        $nexus.data('ra.dialog.buttons', buttonNodes);
         return $el;
     }
 
@@ -61,7 +64,9 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "d
     function closeDialog() {
         if ($nexus) {
             // Signal the XdmRpc for the dialog's iframe to clean up
-            $nexus.trigger("ra.iframe.destroy");
+            $nexus.trigger("ra.iframe.destroy")
+            .removeData("ra.dialog.buttons")
+            .unbind();
             // Clear the nexus handle to allow subsequent dialogs to open
             $nexus = null;
         }
@@ -100,7 +105,8 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "d
             mergedOptions.w = parseDimension(mergedOptions.width, $global.width());
             mergedOptions.h = parseDimension(mergedOptions.height, $global.height());
 
-            $nexus = $("<div />").addClass("ap-servlet-placeholder").attr('id', 'ap-' + options.ns);
+            $nexus = $("<div />").addClass("ap-servlet-placeholder").attr('id', 'ap-' + options.ns)
+            .bind("ra.dialog.close", closeDialog);
 
             if(options.chrome){
                 dialogElement = createDialogElement(mergedOptions, $nexus);

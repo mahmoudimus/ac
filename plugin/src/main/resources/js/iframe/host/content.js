@@ -25,7 +25,7 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
     }
 
     function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
-        var contentUrl = this.getContentUrl(pluginKey, capability);
+        var contentUrl = getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {

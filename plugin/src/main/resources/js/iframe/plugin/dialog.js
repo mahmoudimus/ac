@@ -196,9 +196,10 @@ AP.define("dialog", ["_dollar", "_rpc"],
               });
               return cont;
             });
+            exports.close();
             return !!result;
           }
-        }
+        };
       }
 
     };
