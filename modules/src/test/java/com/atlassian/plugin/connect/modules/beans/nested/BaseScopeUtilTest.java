@@ -12,9 +12,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BaseScopeUtilTest
 {
+    private static final Logger log = LoggerFactory.getLogger(BaseScopeUtilTest.class);
+
     private static final Object NULL_SCOPE = new Object();
     private static final Set<ScopeName> EMPTY = ImmutableSet.of();
 
@@ -64,6 +68,6 @@ public class BaseScopeUtilTest
 
     protected void logParams()
     {
-        System.out.println("params: " + previousScopes + "; " + newScopes + "; " + expectedResult);
+        log.trace("params: " + previousScopes + "; " + newScopes + "; " + expectedResult);
     }
 }
