@@ -64,6 +64,6 @@ public class BaseScopeUtilTest
 
     protected void logParams()
     {
-        System.out.println("notTransitionDownWhenPreviousReadOrLess: " + previousScopes + "; " + newScopes + "; " + expectedResult);
+        System.out.println("params: " + previousScopes + "; " + newScopes + "; " + expectedResult);
     }
 }
