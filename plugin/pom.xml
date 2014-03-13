@@ -891,6 +891,20 @@
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>shallow-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <ignoreFilter>shallow</ignoreFilter>
+                            <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

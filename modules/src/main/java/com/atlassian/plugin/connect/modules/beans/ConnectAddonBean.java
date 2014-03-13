@@ -153,11 +153,13 @@ public class ConnectAddonBean extends BaseModuleBean
     /**
      * The list of modules this add on provides
      */
+    @SchemaIgnore("shallow")
     private ModuleList modules;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
      */
+    @SchemaIgnore("shallow")
     private Set<String> scopes;
     
     public ConnectAddonBean()
