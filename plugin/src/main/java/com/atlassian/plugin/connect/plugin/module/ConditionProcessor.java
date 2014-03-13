@@ -26,7 +26,7 @@ import static org.apache.commons.lang.StringUtils.escape;
 import static org.apache.commons.lang.StringUtils.join;
 
 /**
- * Processes conditions, handling static and remote conditions via big pipe
+ * Processes conditions, handling static and remote conditions
  */
 @Component
 public class ConditionProcessor
