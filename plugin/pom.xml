@@ -38,11 +38,25 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
-            <artifactId>atlassian-spring-scanner</artifactId>
+            <artifactId>atlassian-spring-scanner-annotation</artifactId>
+            <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner-runtime</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
         <dependency>
             <groupId>com.atlassian.labs</groupId>
             <artifactId>fastdev-plugin</artifactId>
@@ -584,6 +598,13 @@
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
                                 </bundledArtifact>
+
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                         <product>
@@ -642,6 +663,13 @@
                                     <groupId>com.atlassian.labs</groupId>
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
+                                </bundledArtifact>
+                                
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>

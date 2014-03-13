@@ -560,9 +560,23 @@
             <!-- spring scanning -->
             <dependency>
                 <groupId>com.atlassian.plugin</groupId>
-                <artifactId>atlassian-spring-scanner</artifactId>
+                <artifactId>atlassian-spring-scanner-annotation</artifactId>
                 <version>${atlassian.spring.scanner.version}</version>
                 <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.plugin</groupId>
+                <artifactId>atlassian-spring-scanner-processor</artifactId>
+                <version>${atlassian.spring.scanner.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.plugin</groupId>
+                <artifactId>atlassian-spring-scanner-runtime</artifactId>
+                <version>${atlassian.spring.scanner.version}</version>
+                <scope>runtime</scope>
             </dependency>
 
             <!-- Only exists for qunit -->
@@ -666,7 +680,7 @@
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
-        <atlassian.spring.scanner.version>1.0-m9</atlassian.spring.scanner.version>
+        <atlassian.spring.scanner.version>1.2.2</atlassian.spring.scanner.version>
     </properties>
 
     <repositories>
