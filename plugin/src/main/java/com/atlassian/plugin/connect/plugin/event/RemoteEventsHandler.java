@@ -10,7 +10,6 @@ import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
@@ -42,11 +41,13 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Arrays.asList;
 
 //import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 
@@ -57,6 +58,9 @@ import static com.google.common.collect.Maps.newHashMap;
 public class RemoteEventsHandler implements InitializingBean, DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(RemoteEventsHandler.class);
+    private static final String HTTP_ERROR_I18N_KEY_PREFIX = "connect.install.error.remote.host.bad.response.";
+    private static final List<Integer> OK_INSTALL_HTTP_CODES = asList(200, 201, 204);
+
     private final EventPublisher eventPublisher;
     private final PluginEventManager pluginEventManager;
     private final ConsumerService consumerService;
@@ -138,14 +142,25 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                             requestSigner.sign(installHandler, pluginKey, request);
 
                             Response response = request.execute(Request.Method.POST).claim();
-                            if (response.getStatusCode() != 200)
+
+                            // a selection of 2xx response codes both indicate success and are semantically valid for this callback
+                            if (OK_INSTALL_HTTP_CODES.contains(response.getStatusCode()))
+                            {
+                                called = true;
+                            }
+                            // it failed: if it failed with a response code for which we have a pre-canned i18n message then send that key
+                            // so that UPM will display the message in the GUI
+                            else if (response.getStatusCode() >= 400 && response.getStatusCode() <= 404
+                                    || response.getStatusCode() >= 500 && response.getStatusCode() <= 503)
+                            {
+                                errorI18nKey = constructHttpErrorI18nPrefix(response.getStatusCode());
+                            }
+                            // no else{}: fall back to the generic i18n key initialised at the start of the message
+
+                            if (!called)
                             {
                                 log.error("Error contacting remote application [" + response.getStatusText() + "]");
                                 throw new PluginInstallException("Error contacting remote application [" + response.getStatusText() + "]", errorI18nKey);
-                            }
-                            else
-                            {
-                                called = true;
                             }
                         }
                     }
@@ -159,6 +174,11 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         }
 
         return called;
+    }
+
+    private static Option<String> constructHttpErrorI18nPrefix(final int httpCode)
+    {
+        return Option.some(HTTP_ERROR_I18N_KEY_PREFIX + httpCode);
     }
 
     private URI getURI(String url)
