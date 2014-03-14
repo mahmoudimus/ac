@@ -382,6 +382,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                     {
                         SchemeEntity schemeEntity = new SchemeEntity(permissionType, parameter, permissionId);
                         permissionSchemeManager.createSchemeEntity(scheme, schemeEntity);
+                        log.debug("Associated project role '{}' with permission scheme '{}'.", projectRole.getName(), schemeEntity.getSchemeId());
                     }
                 }
             }
