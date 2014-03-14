@@ -7,8 +7,13 @@
     height: 100%;
 }
 
-.ap-dialog-container .ap-content {
+.ap-aui-dialog2 div {
     height: 100%;
+}
+
+/* in chrome'd dialogs - fixes scrollbars added by iframes with scrollbars pushing the width out */
+.ap-aui-dialog2 .aui-dialog2-content {
+	overflow:hidden;
 }
 
 /* add new aui dialog size of maximum */
