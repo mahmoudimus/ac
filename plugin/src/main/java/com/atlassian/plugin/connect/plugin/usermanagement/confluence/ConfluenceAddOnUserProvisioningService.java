@@ -19,6 +19,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.component.ComponentLocator;
@@ -228,7 +229,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         }
     }
 
-    // because in Confluence you can't "remove permission CONFLUENCE_ADMINISTRATOR_PERMISSION": you have to remove the expact permission object instance (OMGWTFBBQ)
+    // because in Confluence you can't "remove permission CONFLUENCE_ADMINISTRATOR_PERMISSION": you have to remove the exact permission object instance (OMGWTFBBQ)
     private void removePermission(EditPermissionsAdministrator confluenceEditPermissionsAdministrator, ConfluenceUser confluenceAddonUser, String permissionType)
     {
         SetSpacePermissionChecker setSpacePermissionChecker = ComponentLocator.getComponent(SetSpacePermissionChecker.class, "setSpacePermissionChecker");
@@ -326,8 +327,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         final Iterable<ConnectAddonBean> connectAddonBeans = fetchAddonsWithSpaceAdminScope();
         for (ConnectAddonBean connectAddonBean : connectAddonBeans)
         {
-            // TODO:*** Need to avoid duping the addon user naming scheme but don't want to create a circular dependency
-            String username =  "addon_" + connectAddonBean.getKey();
+            String username =  ConnectAddOnUserUtil.usernameForAddon(connectAddonBean.getKey());
             grantAddonUserSpaceAdmin(getConfluenceUser(username));
         }
 
