@@ -80,7 +80,8 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
                     // if there's no applink, the user should be disabled
                     if (applicationLink == null && user.isActive())
                     {
-                        log.warn("Add-on user '" + user.getName() + "' is active but has no applink");
+                        log.warn("Add-on user '" + user.getName() + "' is active but has no applink. Perhaps the add-on "
+                                + "was installed into multiple products and it was removed from one, making the user inactive?");
                         usersIncorrectlyActive.add(user);
                     }
                 }
