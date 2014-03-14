@@ -306,9 +306,9 @@ public class ConnectAddonManager
             if (statusCode != 200 && statusCode != 204)
             {
                 String statusText = response.getStatusText();
-                log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]");
+                log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]:" + response.getEntity());
 
-                String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]";
+                String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]:" + response.getEntity();
                 switch (handler)
                 {
                     case INSTALLED:
