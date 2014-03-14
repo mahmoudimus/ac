@@ -72,19 +72,22 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
                     log.warn("Add-on user '" + user.getName() + "' has incorrect prefix");
                     usersWithIncorrectPrefix.add(user);
                 }
-                else
-                {
-                    String addonKey = StringUtils.removeStart(name, Constants.ADDON_USERNAME_PREFIX);
-                    ApplicationLink applicationLink = jwtApplinkFinder.find(addonKey);
 
-                    // if there's no applink, the user should be disabled
-                    if (applicationLink == null && user.isActive())
-                    {
-                        log.warn("Add-on user '" + user.getName() + "' is active but has no applink. Perhaps the add-on "
-                                + "was installed into multiple products and it was removed from one, making the user inactive?");
-                        usersIncorrectlyActive.add(user);
-                    }
-                }
+// An add-on which is installed in either JIRA or Confluence will create a _SHARED_ user. This check will
+// fail in the other product as there is no applink, but the user is (correctly) active.
+
+//                else
+//                {
+//                    String addonKey = StringUtils.removeStart(name, Constants.ADDON_USERNAME_PREFIX);
+//                    ApplicationLink applicationLink = jwtApplinkFinder.find(addonKey);
+//
+//                    // if there's no applink, the user should be disabled
+//                    if (applicationLink == null && user.isActive())
+//                    {
+//                        log.warn("Add-on user '" + user.getName() + "' is active but has no applink. Perhaps the add-on was installed");
+//                        usersIncorrectlyActive.add(user);
+//                    }
+//                }
             }
 
             boolean isHealthy = usersWithIncorrectEmails.isEmpty() && usersWithIncorrectPrefix.isEmpty() && usersIncorrectlyActive.isEmpty();
