@@ -24,7 +24,9 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
 
         promise
           .done(function(data) {
-            container.replaceWith($(data));
+            var dialogHtml = $(data);
+            dialogHtml.addClass('ap-dialog-container');
+            container.replaceWith(dialogHtml);
           })
           .fail(function(xhr, status, ex) {
             var title = "Unable to load plugin content. Please try again later.";

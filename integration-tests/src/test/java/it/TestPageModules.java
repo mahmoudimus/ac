@@ -132,7 +132,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
 
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", EXTRA_PREFIX);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog");
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
@@ -239,7 +239,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testSizeToParentDoesNotWorkInDialog()
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", EXTRA_PREFIX);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page");
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
