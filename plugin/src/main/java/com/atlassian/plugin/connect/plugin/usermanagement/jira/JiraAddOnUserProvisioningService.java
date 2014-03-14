@@ -287,6 +287,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                             project,
                             UserRoleActorFactory.TYPE,
                             errorCollection);
+                    String projectKey = null == project ? null : project.getKey();
+                    log.info("Added user '{}' to project '{}' role '{}'", new Object[]{ addOnUser.getName(), projectKey, projectRole.getName() });
                 }
             }
         }
@@ -311,6 +313,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                         project,
                         UserRoleActorFactory.TYPE,
                         errorCollection);
+                String projectKey = null == project ? null : project.getKey();
+                log.info("Removed user '{}' from project '{}' role '{}'", new Object[]{ addOnUser.getName(), projectKey, projectRole.getName() });
             }
         }
         if (errorCollection.hasAnyErrors())
