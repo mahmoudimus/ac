@@ -141,7 +141,7 @@ public class ConnectAddonManager
             if (null != addon)
             {
                 beanToModuleRegistrar.registerDescriptorsForBeans(plugin, addon);
-                enableAddOnUser(pluginKey, addon.getName());
+                enableAddOnUser(addon);
                 publishEnabledEvent(pluginKey);
 
                 if (log.isDebugEnabled())
@@ -254,27 +254,18 @@ public class ConnectAddonManager
         connectAddOnUserService.disableAddonUser(addOnKey);
     }
 
-    private void enableAddOnUser(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
+    private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
-        String descriptor = descriptorRegistry.getDescriptor(addOnKey);
+        String userKey = connectAddOnUserService.getOrCreateUserKey(addon.getKey(), addon.getName());
+        ApplicationLink applicationLink = jwtApplinkFinder.find(addon.getKey());
 
-        if (null == descriptor)
+        if (null != applicationLink)
         {
-            log.error(String.format("Failed to ensure that the user exists for Connect add-on '%s' because it has no descriptor in the Connect registry. It will not be able to use the APIs. Uninstalling and reinstalling it will re-attempt this operation. Ignoring so as not to interfere with other add-ons...", addOnKey));
+            applicationLink.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, userKey);
         }
         else
         {
-            String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey, addOnDisplayName);
-            ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
-
-            if (null != applicationLink)
-            {
-                applicationLink.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, userKey);
-            }
-            else
-            {
-                log.error("Unable to set the ApplicationLink user key property for add-on '{}' because the add-on has no ApplicationLink!", addOnKey);
-            }
+            log.error("Unable to set the ApplicationLink user key property for add-on '{}' because the add-on has no ApplicationLink!", addon.getKey());
         }
     }
 
