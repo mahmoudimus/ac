@@ -8,7 +8,7 @@ import javax.inject.Named;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.installer.ConnectPluginDependentHelper;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;

@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import it.com.atlassian.plugin.connect.TestAuthenticator;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -32,14 +34,16 @@ public class OAuthToJwtUpdateWithSaasMigrationTest
     private static final Logger LOG = LoggerFactory.getLogger(OAuthToJwtUpdateWithSaasMigrationTest.class);
 
     private final TestPluginInstaller testPluginInstaller;
+    private final TestAuthenticator testAuthenticator;
     private final ConnectAddonRegistry connectAddonRegistry;
     private Plugin oAuthPlugin;
     private Plugin jwtPlugin;
     private ConnectAddonBean oAuthAddOnBean;
 
-    public OAuthToJwtUpdateWithSaasMigrationTest(TestPluginInstaller testPluginInstaller, ConnectAddonRegistry connectAddonRegistry)
+    public OAuthToJwtUpdateWithSaasMigrationTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, ConnectAddonRegistry connectAddonRegistry)
     {
         this.testPluginInstaller = testPluginInstaller;
+        this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
     }
 
@@ -47,6 +51,10 @@ public class OAuthToJwtUpdateWithSaasMigrationTest
     public void beforeAllTests() throws IOException
     {
         oAuthAddOnBean = createOAuthAddOnBean();
+
+        //you MUST login as admin before you can use the testPluginInstaler
+        testAuthenticator.authenticateUser("admin");
+        
         oAuthPlugin = testPluginInstaller.installPlugin(oAuthAddOnBean);
         jwtPlugin = testPluginInstaller.installPlugin(createJwtAddOn(oAuthAddOnBean));
         oAuthPlugin = null; // we get to this line of code only if installing the update works

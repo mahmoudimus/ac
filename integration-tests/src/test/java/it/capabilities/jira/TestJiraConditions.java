@@ -9,9 +9,9 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import hudson.plugins.jira.soap.RemoteIssue;
+import it.jira.JiraWebDriverTestBase;
 import it.servlet.condition.CheckUsernameConditionServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.jira.JiraWebDriverTestBase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -29,9 +29,7 @@ import static it.matcher.ParamMatchers.isTimeZone;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestJiraConditions extends JiraWebDriverTestBase
 {

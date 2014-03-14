@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.plugin.web.Condition;
+
 import java.util.Map;
 import java.util.Set;
 
-import com.atlassian.plugin.web.Condition;
-
-import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newTreeMap;
 
 public class PageConditions extends ConditionsProvider

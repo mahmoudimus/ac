@@ -134,6 +134,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.healthcheck</groupId>
+            <artifactId>atlassian-healthcheck</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-bridge</artifactId>
             <scope>provided</scope>
@@ -425,6 +430,7 @@
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
+                    <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
                     <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
                     <testBundleExcludes>
                         <testBundleExclude>
@@ -453,6 +459,7 @@
                             com.atlassian.jira.security.websudo;resolution:=optional,
                             com.atlassian.oauth*;version="(1.2,2.0]",
                             com.atlassian.jwt.*;version="${atlassian.jwt.version}",
+                            com.atlassian.healthcheck.core*;version="${atlassian.healthcheck.version}",
 
                             com.atlassian.plugin;version="${atlassian.plugins.api.version}",
                             com.atlassian.plugin.descriptors;resolution:="optional",
@@ -1132,7 +1139,7 @@
         <devmode>true</devmode>
         <fastdev.version>2.2</fastdev.version>
         <toolbox.version>2.0.6</toolbox.version>
-        <plugin.testrunner.version>1.1.4</plugin.testrunner.version>
+        <plugin.testrunner.version>1.1.6</plugin.testrunner.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
