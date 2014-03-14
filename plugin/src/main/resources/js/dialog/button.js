@@ -3,7 +3,8 @@ _AP.define("dialog/dialog-button", ["_dollar"], function($) {
     function button(options){
         this.$el = $('<button />')
             .text(options.text)
-            .addClass('aui-button aui-button-' + options.type);
+            .addClass('aui-button aui-button-' + options.type)
+            .addClass(options.additionalClasses);
 
         this.isEnabled = function(){
             return this.$el.attr('aria-disabled');
@@ -24,14 +25,16 @@ _AP.define("dialog/dialog-button", ["_dollar"], function($) {
         submit: function(){
             return new button({
                 type: 'primary',
-                text: 'submit'
+                text: 'submit',
+                additionalClasses: 'ap-dialog-submit'
             });
         },
         cancel: function(){
             return new button({
                 type: 'link',
                 text: 'cancel',
-                noDisable: true
+                noDisable: true,
+                additionalClasses: 'ap-dialog-cancel'
             });
         }
     };

@@ -7,16 +7,19 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
 
         dialog.create({
             ns: dialogOptions.key,
-            chrome: options.chrome,
-            header: dialogOptions.header
+            chrome: dialogOptions.chrome || options.chrome,
+            header: dialogOptions.header,
+            width: dialogOptions.width,
+            height: dialogOptions.height,
+            size: dialogOptions.size
         });
 
         container = AJS.$('.ap-dialog-container');
 
-        if(options.url){
-            promise = hostContentUtilities.getIframeHtmlForUrl(options.key, options);
+        if(dialogOptions.url){
+            promise = hostContentUtilities.getIframeHtmlForUrl(options.key, dialogOptions, { dlg: 1 });
         } else {
-            promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, dialogOptions);
+            promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, dialogOptions, { dlg: 1 });
         }
 
         promise

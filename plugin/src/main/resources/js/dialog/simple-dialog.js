@@ -130,7 +130,7 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "d
             displayDialogContent($nexus, mergedOptions);
             //difference between a webitem and opening from js.
             if(options.src){
-                _AP.create(options);
+                _AP.create(mergedOptions);
             }
 
             dialog.show();
