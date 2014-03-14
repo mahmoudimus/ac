@@ -5,8 +5,6 @@ import com.atlassian.plugin.web.Condition;
 
 import java.util.Map;
 
-import static com.google.common.collect.Maps.newHashMap;
-
 /*
  * NOTE: this class must be under the beans package (or a sub package) so our doclet can pick it up
  */

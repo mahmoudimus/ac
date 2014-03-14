@@ -1,11 +1,5 @@
 package it.com.atlassian.plugin.connect.testlifecycle;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginController;
@@ -13,15 +7,19 @@ import com.atlassian.plugin.PluginState;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -50,6 +48,7 @@ public class ConnectPluginLifecycleTest
     );
 
     private final LifecyclePluginInstaller testPluginInstaller;
+    private final LifecycleTestAuthenticator testAuthenticator;
     private final PluginController pluginController;
     private final PluginSettingsFactory pluginSettingsFactory;
 
@@ -58,11 +57,18 @@ public class ConnectPluginLifecycleTest
     private Plugin singleModuleAddon;
     private Plugin doubleModuleAddon;
 
-    public ConnectPluginLifecycleTest(LifecyclePluginInstaller testPluginInstaller, PluginController pluginController, PluginSettingsFactory pluginSettingsFactory)
+    public ConnectPluginLifecycleTest(LifecyclePluginInstaller testPluginInstaller, LifecycleTestAuthenticator testAuthenticator, PluginController pluginController, PluginSettingsFactory pluginSettingsFactory)
     {
         this.testPluginInstaller = testPluginInstaller;
+        this.testAuthenticator = testAuthenticator;
         this.pluginController = pluginController;
         this.pluginSettingsFactory = pluginSettingsFactory;
+    }
+
+    @BeforeClass
+    public void setupBeforeAllTests()
+    {
+        testAuthenticator.authenticateUser("admin");
     }
 
     @After
@@ -93,7 +99,7 @@ public class ConnectPluginLifecycleTest
                 doubleModuleAddon = null;
             }
         }
-        
+
         if (null != theConnectPlugin)
         {
             try

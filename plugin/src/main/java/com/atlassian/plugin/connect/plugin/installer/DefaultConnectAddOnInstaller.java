@@ -3,18 +3,24 @@ package com.atlassian.plugin.connect.plugin.installer;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectMirrorPluginEventHandler;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
+import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,6 +108,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
             pluginKey = addOn.getKey();
 
+            String previousDescriptor = connectAddonRegistry.getDescriptor(pluginKey);
+
             removeOldPlugin(addOn.getKey());
             final PluginArtifact pluginArtifact = remotePluginArtifactFactory.create(addOn, username);
 
@@ -115,8 +123,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
                 String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
+                String userKey = provisionAddOnUserAndScopes(addOn, previousDescriptor);
                 //applink, baseurl and secret MUST be created before any modules
-                String userKey = connectAddOnUserService.getOrCreateUserKey(addOn.getKey());
                 connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey, userKey);
                 connectAddonRegistry.storeBaseUrl(pluginKey, addOn.getBaseUrl());
                 connectAddonRegistry.storeUserKey(pluginKey, userKey);
@@ -162,6 +170,27 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             throw new InstallationFailedException(e.getCause() != null ? e.getCause() : e);
         }
 
+    }
+
+    private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor) throws PluginInstallException
+    {
+        Set<ScopeName> previousScopes = Sets.newHashSet();
+        Set<ScopeName> newScopes = addOn.getScopes();
+
+        if (StringUtils.isNotBlank(previousDescriptor))
+        {
+            ConnectAddonBean previousAddOn = connectAddonBeanFactory.fromJson(previousDescriptor);
+            previousScopes = previousAddOn.getScopes();
+        }
+
+        try
+        {
+            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(), addOn.getName(), previousScopes, newScopes);
+        }
+        catch (ConnectAddOnUserInitException e)
+        {
+            throw new PluginInstallException(e.getMessage(), Option.some("connect.install.error.user.provisioning"), e, true);
+        }
     }
 
     private boolean addOnUsesSymmetricSharedSecret(AuthenticationType authType)
