@@ -24,6 +24,10 @@ import java.util.Set;
 
 public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 {
+    // Used until we can upgrade to health check 2.0.7
+    private static final String CHECK_NAME = "com.atlassian.plugins.atlassian-connect-plugin:addonsGroupHealthCheck";
+    private static final String CHECK_DESCRIPTION = "This was provided by plugin 'com.atlassian.plugins.atlassian-connect-plugin:addonsGroupHealthCheck' via class 'com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck'";
+
     private final ApplicationManager applicationManager;
     private final ApplicationService applicationService;
     private final ConnectAddOnUserGroupProvisioningService groupProvisioningService;
@@ -42,11 +46,6 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
     public HealthStatus check()
     {
         long healthCheckTime = System.currentTimeMillis();
-        String documentationUrl = ""; // lol, as if.
-
-        // Used until we can upgrade to health check 2.0.7
-        String checkName = "com.atlassian.plugins.atlassian-connect-plugin:addonsGroupHealthCheck";
-        String checkDesc = "This was provided by plugin 'com.atlassian.plugins.atlassian-connect-plugin:addonsGroupHealthCheck' via class 'com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck'";
 
         try
         {
@@ -102,14 +101,14 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
                 reason += "This may indicate a customer license workaround.";
             }
 
-            return new DefaultHealthStatus(checkName, checkDesc, com.atlassian.healthcheck.core.Application.Plugin,
+            return new DefaultHealthStatus(CHECK_NAME, CHECK_DESCRIPTION, com.atlassian.healthcheck.core.Application.Plugin,
                     isHealthy, reason, healthCheckTime);
 //            return new DefaultHealthStatus(isHealthy, reason, healthCheckTime, com.atlassian.healthcheck.core.Application.Plugin,
 //                    HealthStatusExtended.Severity.CRITICAL, documentationUrl);
         }
         catch (ApplicationNotFoundException e)
         {
-            return new DefaultHealthStatus(checkName, checkDesc, com.atlassian.healthcheck.core.Application.Plugin,
+            return new DefaultHealthStatus(CHECK_NAME, CHECK_DESCRIPTION, com.atlassian.healthcheck.core.Application.Plugin,
                     false, "Could not find application " + e.getApplicationName(), healthCheckTime);
 //            return new DefaultHealthStatus(false, "Could not find application " + e.getApplicationName(),
 //                    healthCheckTime, com.atlassian.healthcheck.core.Application.Plugin,
