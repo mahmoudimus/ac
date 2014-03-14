@@ -20,6 +20,7 @@ import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
@@ -73,6 +74,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
     private final RequestSigner requestSigner;
     private final HttpClient httpClient;
     private final UserManager userManager;
+    private final I18nResolver i18nResolver;
 
     @Autowired
     public RemoteEventsHandler(EventPublisher eventPublisher,
@@ -81,7 +83,13 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                                ProductAccessor productAccessor,
                                BundleContext bundleContext,
                                PluginEventManager pluginEventManager,
-                               LegacyAddOnIdentifierService connectIdentifier, PluginAccessor pluginAccessor, RemotablePluginAccessorFactory pluginAccessorFactory, RequestSigner requestSigner, HttpClient httpClient, UserManager userManager)
+                               LegacyAddOnIdentifierService connectIdentifier,
+                               PluginAccessor pluginAccessor,
+                               RemotablePluginAccessorFactory pluginAccessorFactory,
+                               RequestSigner requestSigner,
+                               HttpClient httpClient,
+                               UserManager userManager,
+                               I18nResolver i18nResolver)
     {
         this.pluginAccessor = pluginAccessor;
         this.pluginAccessorFactory = pluginAccessorFactory;
@@ -95,6 +103,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         this.productAccessor = checkNotNull(productAccessor);
         this.bundleContext = checkNotNull(bundleContext);
         this.connectIdentifier = checkNotNull(connectIdentifier);
+        this.i18nResolver = checkNotNull(i18nResolver);
     }
 
     public void pluginInstalled(String pluginKey)
@@ -150,12 +159,18 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                             }
                             // it failed: if it failed with a response code for which we have a pre-canned i18n message then send that key
                             // so that UPM will display the message in the GUI
-                            else if (response.getStatusCode() >= 400 && response.getStatusCode() <= 404
-                                    || response.getStatusCode() >= 500 && response.getStatusCode() <= 503)
+                            else
                             {
-                                errorI18nKey = constructHttpErrorI18nPrefix(response.getStatusCode());
+                                final String i18nKey = HTTP_ERROR_I18N_KEY_PREFIX + response.getStatusCode();
+                                final String i18nText = i18nResolver.getRawText(i18nKey);
+
+                                // the I18nResolver javadoc says that it will return the input key as the output raw text when the key is not found
+                                if (null != i18nText && !i18nKey.equals(i18nText))
+                                {
+                                    errorI18nKey = Option.some(i18nKey);
+                                }
+                                // no else{}: fall back to the generic i18n key initialised at the start of the message
                             }
-                            // no else{}: fall back to the generic i18n key initialised at the start of the message
 
                             if (!called)
                             {
@@ -174,11 +189,6 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         }
 
         return called;
-    }
-
-    private static Option<String> constructHttpErrorI18nPrefix(final int httpCode)
-    {
-        return Option.some(HTTP_ERROR_I18N_KEY_PREFIX + httpCode);
     }
 
     private URI getURI(String url)
