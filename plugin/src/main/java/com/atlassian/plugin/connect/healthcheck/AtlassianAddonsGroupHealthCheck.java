@@ -81,28 +81,30 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 
             boolean isHealthy = usersWithIncorrectEmails.isEmpty() && usersWithIncorrectPrefix.isEmpty() && usersIncorrectlyActive.isEmpty();
 
-            String reason = "";
+            StringBuilder reason = new StringBuilder();
 
             if (!isHealthy)
             {
-                reason = "Add-on group has invalid membership: ";
+                reason.append("Add-on group has invalid membership: ");
+
                 if (!usersWithIncorrectEmails.isEmpty())
                 {
-                    reason += failurePrefix(usersWithIncorrectEmails.size()) + " unexpected email values. ";
+                    reason.append(failurePrefix(usersWithIncorrectEmails.size()) + " unexpected email values. ");
                 }
                 if (!usersWithIncorrectPrefix.isEmpty())
                 {
-                    reason += failurePrefix(usersWithIncorrectPrefix.size()) + " unexpected username values. ";
+                    reason.append(failurePrefix(usersWithIncorrectPrefix.size()) + " unexpected username values. ");
                 }
                 if (!usersIncorrectlyActive.isEmpty())
                 {
-                    reason += failurePrefix(usersIncorrectlyActive.size()) + " no applink association. ";
+                    reason.append(failurePrefix(usersIncorrectlyActive.size()) + " no applink association. ");
                 }
-                reason += "This may indicate a customer license workaround.";
+
+                reason.append("This may indicate a customer license workaround.");
             }
 
             return new DefaultHealthStatus(CHECK_NAME, CHECK_DESCRIPTION, com.atlassian.healthcheck.core.Application.Plugin,
-                    isHealthy, reason, healthCheckTime);
+                    isHealthy, reason.toString(), healthCheckTime);
 //            return new DefaultHealthStatus(isHealthy, reason, healthCheckTime, com.atlassian.healthcheck.core.Application.Plugin,
 //                    HealthStatusExtended.Severity.CRITICAL, documentationUrl);
         }
