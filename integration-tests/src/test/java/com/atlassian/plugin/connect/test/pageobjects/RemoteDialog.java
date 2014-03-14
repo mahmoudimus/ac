@@ -33,7 +33,7 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
 
     protected String getFrameId()
     {
-        return elementFinder.find(By.cssSelector(".ap-dialog-content iframe")).getAttribute("id");
+        return elementFinder.find(By.cssSelector(".ap-dialog-container iframe")).getAttribute("id");
     }
 
     /**
@@ -59,7 +59,7 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
 
     private boolean isDialogClosed()
     {
-        final By dialogContentLocator = By.className("ap-dialog-content");
+        final By dialogContentLocator = By.className("ap-dialog-container");
         try
         {
             return !driver.elementIsVisible(dialogContentLocator);
