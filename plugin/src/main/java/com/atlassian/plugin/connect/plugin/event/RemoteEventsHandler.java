@@ -119,6 +119,8 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
     {
         boolean called = false;
         Option<String> errorI18nKey = Option.<String>some("connect.remote.upm.install.exception");
+        String exceptionMessage = "Error contacting remote application";
+
         try
         {
             Plugin addon = pluginAccessor.getPlugin(pluginKey);
@@ -170,12 +172,9 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                                     errorI18nKey = Option.some(i18nKey);
                                 }
                                 // no else{}: fall back to the generic i18n key initialised at the start of the message
-                            }
 
-                            if (!called)
-                            {
-                                log.error("Error contacting remote application [" + response.getStatusText() + "]");
-                                throw new PluginInstallException("Error contacting remote application [" + response.getStatusText() + "]", errorI18nKey);
+                                exceptionMessage = String.format("Error contacting remote application [%s]", response.getStatusText());
+                                log.error(exceptionMessage);
                             }
                         }
                     }
@@ -186,6 +185,11 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         {
             log.error("Error contacting remote application [" + e.getMessage() + "]", e);
             throw new PluginInstallException("Error contacting remote application [" + e.getMessage() + "]", errorI18nKey);
+        }
+
+        if (!called)
+        {
+            throw new PluginInstallException(exceptionMessage, errorI18nKey);
         }
 
         return called;
