@@ -334,6 +334,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                     UserRoleActorFactory.TYPE,
                     errorCollection
             );
+            String projectRoleName = null == projectRole ? null : projectRole.getName();
+            log.info("Added user '{}' to default project role '{}'.", addOnUser.getName(), projectRoleName);
         }
     }
 
@@ -345,6 +347,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                 UserRoleActorFactory.TYPE,
                 errorCollection
         );
+        String projectRoleName = null == projectRole ? null : projectRole.getName();
+        log.info("Removed user '{}' from default project role '{}'.", addOnUser.getName(), projectRoleName);
     }
 
     private ProjectRole getOrCreateProjectRole(ErrorCollection errorCollection)
