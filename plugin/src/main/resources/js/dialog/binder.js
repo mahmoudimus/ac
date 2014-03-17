@@ -16,9 +16,10 @@ _AP.require(["dialog/simple-dialog", "host/content", "_uri", "dialog/dialog-fact
                 if(dialogPageMatch){
                     var dialogPageOptions = {
                         key: dialogPageMatch[1],
+                        moduleKey: dialogPageMatch[2],
                         chrome: true
                     };
-                    options.key = dialogPageMatch[2];
+
                     dialogFactory(dialogPageOptions, options);
                     return;
                 }

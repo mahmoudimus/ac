@@ -3,23 +3,23 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
     return function(options, dialogOptions, productContextJson) {
         var promise,
         container,
-        dialogObj;
+        dialogObj,
+        module = {key: options.moduleKey};
 
         dialog.create({
-            ns: dialogOptions.key,
+            ns: options.moduleKey,
             chrome: dialogOptions.chrome || options.chrome,
             header: dialogOptions.header,
             width: dialogOptions.width,
             height: dialogOptions.height,
             size: dialogOptions.size
         });
-
         container = AJS.$('.ap-dialog-container');
 
         if(dialogOptions.url){
-            promise = hostContentUtilities.getIframeHtmlForUrl(options.key, dialogOptions, { dlg: 1 });
+            promise = hostContentUtilities.getIframeHtmlForUrl(options.key, module, { dlg: 1 });
         } else {
-            promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, dialogOptions, { dlg: 1 });
+            promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, module, { dlg: 1 });
         }
 
         promise
