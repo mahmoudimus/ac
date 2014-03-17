@@ -32,10 +32,7 @@
     {
       "key": "WRITE",
       "restPathKeys": [
-        "action",
         "content-api",
-        "content-prototype",
-        "label",
         "notification",
         "task"
       ],
@@ -43,6 +40,11 @@
     },
     {
       "key": "WRITE",
+      "restPathKeys": [
+        "action",
+        "content-prototype",
+        "label"
+      ],
       "jsonRpcPathKeys": ["confluenceservice-json-rpc-write"],
       "xmlRpcPathKeys": ["confluenceservice-xml-rpc-write"],
       "methods": ["POST"]
@@ -50,7 +52,6 @@
     {
       "key": "DELETE",
       "restPathKeys": [
-        "action",
         "content-api",
         "content-prototype",
         "label",
