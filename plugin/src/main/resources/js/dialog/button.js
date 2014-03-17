@@ -7,7 +7,7 @@ _AP.define("dialog/dialog-button", ["_dollar"], function($) {
             .addClass(options.additionalClasses);
 
         this.isEnabled = function(){
-            return (this.$el.attr('aria-disabled') === "false");
+            return !(this.$el.attr('aria-disabled') === "true");
         };
 
         this.setEnabled = function(enabled){

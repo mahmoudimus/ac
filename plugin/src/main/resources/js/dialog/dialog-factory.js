@@ -1,9 +1,15 @@
 _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/content'], function($, dialog, hostContentUtilities) {
     //might rename this, it opens a dialog by first working out the url (used for javascript opening a dialog).
+    /**
+    * opens a dialog by sending the add-on and module keys back to the server for signing.
+    * Used by dialog-pages, confluence macros and opening from javascript.
+    * @param {Object} options for passing to AP.create
+    * @param {Object} dialog options (width, height, etc)
+    * @param {String} productContextJson pass context back to the server
+    */
     return function(options, dialogOptions, productContextJson) {
         var promise,
         container,
-        dialogObj,
         module = {key: options.moduleKey};
 
         dialog.create({
