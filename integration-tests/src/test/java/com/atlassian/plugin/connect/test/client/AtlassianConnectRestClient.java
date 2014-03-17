@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Strings;
+
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -13,6 +15,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 
 import cc.plural.jsonij.JSON;
+import cc.plural.jsonij.Value;
 
 public final class AtlassianConnectRestClient
 {
@@ -46,21 +49,29 @@ public final class AtlassianConnectRestClient
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
         String response = userRequestSender.sendRequestAsUser(post, responseHandler, defaultUsername, defaultPassword);
-        JSON json = JSON.parse(response);
 
-        if (null == json.get("enabled"))
+        if(Strings.isNullOrEmpty(response) || (!response.startsWith("{") && !response.endsWith("}")))
         {
-            URI uri = new URI(baseUrl);
-            final String statusUrl = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + json.get("links").get("self").getString();
-
-            InstallStatusChecker statusChecker = new InstallStatusChecker(userRequestSender, statusUrl, 1, TimeUnit.MINUTES, 500, TimeUnit.MILLISECONDS);
-            statusChecker.run(defaultUsername, defaultPassword);
+            install(registerUrl);
+        }
+        else
+        {
+            JSON json = JSON.parse(response);
+    
+            if (null == json.get("enabled"))
+            {
+                URI uri = new URI(baseUrl);
+                final String statusUrl = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + json.get("links").get("self").getString();
+    
+                InstallStatusChecker statusChecker = new InstallStatusChecker(userRequestSender, statusUrl, 1, TimeUnit.MINUTES, 500, TimeUnit.MILLISECONDS);
+                statusChecker.run(defaultUsername, defaultPassword);
+            }
         }
     }
 
     public void uninstall(String appKey) throws Exception
     {
-        HttpDelete delete = new HttpDelete(UpmTokenRequestor.getUpmPluginResource(baseUrl,appKey));
+        HttpDelete delete = new HttpDelete(UpmTokenRequestor.getUpmPluginResource(baseUrl, appKey));
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
         userRequestSender.sendRequestAsUser(delete, responseHandler, defaultUsername, defaultPassword);
@@ -68,7 +79,7 @@ public final class AtlassianConnectRestClient
 
     public String getUpmPluginJson(String appKey) throws Exception
     {
-        HttpGet get = new HttpGet(UpmTokenRequestor.getUpmPluginResource(baseUrl,appKey));
+        HttpGet get = new HttpGet(UpmTokenRequestor.getUpmPluginResource(baseUrl, appKey));
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
         return userRequestSender.sendRequestAsUser(get, responseHandler, defaultUsername, defaultPassword);
