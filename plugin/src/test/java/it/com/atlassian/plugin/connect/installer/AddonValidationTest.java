@@ -281,7 +281,7 @@ public class AddonValidationTest
     public void a404ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
     {
         installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://atlassian.com").build(),
-                i18nResolver.getText("connect.install.error.remote.host.bad.response", 404));
+                "connect.install.error.remote.host.bad.response.404");
     }
 
     @Test
