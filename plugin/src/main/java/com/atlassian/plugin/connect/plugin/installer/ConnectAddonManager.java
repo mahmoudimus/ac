@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
@@ -41,6 +42,8 @@ import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
+
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -55,6 +58,7 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
@@ -103,15 +107,17 @@ public class ConnectAddonManager
     private final JwtApplinkFinder jwtApplinkFinder;
     private final ConnectApplinkManager connectApplinkManager;
     private final I18nResolver i18nResolver;
+    private final ConnectAddonBeanFactory connectAddonBeanFactory;
+    private final SharedSecretService sharedSecretService;
 
     @Inject
     public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient,
-            JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry,
-            BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
-            EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
-            LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-            JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver)
+                               RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient,
+                               JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry,
+                               BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
+                               EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
+                               LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
+                               JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -130,22 +136,57 @@ public class ConnectAddonManager
         this.jwtApplinkFinder = jwtApplinkFinder;
         this.connectApplinkManager = connectApplinkManager;
         this.i18nResolver = i18nResolver;
+        this.connectAddonBeanFactory = connectAddonBeanFactory;
+        this.sharedSecretService = sharedSecretService;
     }
 
-    public void enableConnectAddon(Plugin plugin) throws ConnectAddOnUserInitException
+    public ConnectAddonBean installConnectAddon(String jsonDescriptor) throws ConnectAddOnUserInitException
     {
-        String pluginKey = plugin.getKey();
+        ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
+        String pluginKey = addOn.getKey();
+
+        String previousDescriptor = descriptorRegistry.getDescriptor(pluginKey);
+
+        AuthenticationType authType = addOn.getAuthentication().getType();
+        final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType); // TODO ACDEV-378: also check the algorithm
+        String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
+        String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
+
+        String userKey = provisionAddOnUserAndScopes(addOn, previousDescriptor);
+        //applink, baseurl and secret MUST be created before any modules
+        connectApplinkManager.createAppLink(addOn, addOn.getBaseUrl(), authType, addOnSigningKey, userKey);
+
+        descriptorRegistry.storeBaseUrl(pluginKey, addOn.getBaseUrl());
+        descriptorRegistry.storeUserKey(pluginKey, userKey);
+        descriptorRegistry.storeAuthType(pluginKey,authType);
+
+        if(!Strings.isNullOrEmpty(sharedSecret))
+        {
+            descriptorRegistry.storeSecret(pluginKey, sharedSecret);
+        }
+
+        //save the descriptor so we can use it again if we ever need to re-enable the addon
+        descriptorRegistry.storeDescriptor(pluginKey, jsonDescriptor);
+
+        //make the sync callback if needed
+        publishInstalledEvent(addOn, sharedSecret);
+        
+        return addOn;
+    }
+
+    public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException
+    {
         //Instances of remotablePluginAccessor are only meant to be used for the current operation and should not be cached across operations.
         remotablePluginAccessorFactory.remove(pluginKey);
 
         //if a descriptor is not stored, it means this event was fired during install before modules were created and we need to ignore
-        if (connectIdentifier.isConnectAddOn(plugin) && descriptorRegistry.hasDescriptor(pluginKey))
+        if (descriptorRegistry.hasDescriptor(pluginKey))
         {
             ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
 
             if (null != addon)
             {
-                beanToModuleRegistrar.registerDescriptorsForBeans(plugin, addon);
+                beanToModuleRegistrar.registerDescriptorsForBeans(addon);
                 enableAddOnUser(addon);
                 publishEnabledEvent(pluginKey);
 
@@ -178,9 +219,26 @@ public class ConnectAddonManager
         }
     }
 
-    public void uninstallConnectAddon(Plugin plugin) throws ConnectAddOnUserDisableException
+    public void uninstallConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
     {
-        String pluginKey = plugin.getKey();
+        uninstallConnectAddon(pluginKey,true);
+    }
+
+    public void uninstallConnectAddonQuietly(final String pluginKey)
+    {
+        try
+        {
+            uninstallConnectAddon(pluginKey,false);
+        }
+        catch (ConnectAddOnUserDisableException e)
+        {
+            //uh, don't you know what "quietly" means?
+        }
+
+    }
+
+    private void uninstallConnectAddon(final String pluginKey, boolean sendEvent) throws ConnectAddOnUserDisableException
+    {
 
         if (descriptorRegistry.hasDescriptor(pluginKey))
         {
@@ -188,36 +246,30 @@ public class ConnectAddonManager
 
             if (null != addon)
             {
-                if (!Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
+                if (sendEvent && !Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
                 {
                     try
                     {
-                        callSyncHandler(plugin, addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey, addon), SyncHandler.UNINSTALLED);
+                        callSyncHandler(addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey, addon), SyncHandler.UNINSTALLED);
                     }
                     catch (PluginInstallException e)
                     {
                         log.warn("Failed to notify remote host that add-on was uninstalled.", e);
                     }
                 }
+
+                beanToModuleRegistrar.unregisterDescriptorsForPlugin(addon);
+                connectApplinkManager.deleteAppLink(addon);
+                remotablePluginAccessorFactory.remove(pluginKey);
             }
             else
             {
                 log.warn("Tried to publish plugin uninstalled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...");
             }
-        }
 
-        try
-        {
-            connectApplinkManager.deleteAppLink(plugin);
-            remotablePluginAccessorFactory.remove(pluginKey);
+            descriptorRegistry.removeAll(pluginKey);
+            disableAddOnUser(pluginKey);
         }
-        catch (NotConnectAddonException e)
-        {
-            // swallow error, we don't want to do anything for plugins that are not connect add-ons.
-        }
-
-        descriptorRegistry.removeAll(pluginKey);
-        disableAddOnUser(pluginKey);
 
         if (log.isDebugEnabled())
         {
@@ -225,9 +277,9 @@ public class ConnectAddonManager
         }
     }
 
-    public void publishInstalledEvent(Plugin plugin, ConnectAddonBean addon, String sharedSecret)
+    public void publishInstalledEvent(ConnectAddonBean addon, String sharedSecret)
     {
-        callSyncHandler(plugin, addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), sharedSecret, addon), ConnectAddonManager.SyncHandler.INSTALLED);
+        callSyncHandler(addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), sharedSecret, addon), ConnectAddonManager.SyncHandler.INSTALLED);
     }
 
     public void publishEnabledEvent(String pluginKey)
@@ -275,7 +327,7 @@ public class ConnectAddonManager
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation
-    private void callSyncHandler(Plugin plugin, ConnectAddonBean addon, String path, String jsonEventData, SyncHandler handler)
+    private void callSyncHandler(ConnectAddonBean addon, String path, String jsonEventData, SyncHandler handler)
     {
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
@@ -305,8 +357,7 @@ public class ConnectAddonManager
             request.setContentType(MediaType.APPLICATION_JSON);
             request.setEntity(jsonEventData);
 
-            // It's important to use the plugin in the call to remotablePluginAccessorFactory.get(plugin) as we might be calling this due to an uninstall event
-            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(plugin).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap());
+            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap());
             if (authHeader.isDefined())
             {
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());
@@ -467,5 +518,31 @@ public class ConnectAddonManager
     {
         Object bundleVersion = bundleContext.getBundle().getHeaders().get(Constants.BUNDLE_VERSION);
         return bundleVersion == null ? null : bundleVersion.toString();
+    }
+
+    private boolean addOnUsesSymmetricSharedSecret(AuthenticationType authType)
+    {
+        return AuthenticationType.JWT.equals(authType);
+    }
+
+    private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor) throws PluginInstallException
+    {
+        Set<ScopeName> previousScopes = Sets.newHashSet();
+        Set<ScopeName> newScopes = addOn.getScopes();
+
+        if (StringUtils.isNotBlank(previousDescriptor))
+        {
+            ConnectAddonBean previousAddOn = connectAddonBeanFactory.fromJson(previousDescriptor);
+            previousScopes = previousAddOn.getScopes();
+        }
+
+        try
+        {
+            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(), addOn.getName(), previousScopes, newScopes);
+        }
+        catch (ConnectAddOnUserInitException e)
+        {
+            throw new PluginInstallException(e.getMessage(), Option.some("connect.install.error.user.provisioning"), e, true);
+        }
     }
 }

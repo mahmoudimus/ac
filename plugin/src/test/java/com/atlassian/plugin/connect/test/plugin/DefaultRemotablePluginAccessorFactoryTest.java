@@ -70,7 +70,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
-        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, descriptorRegistry, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager);
+        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, descriptorRegistry, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager, connectAddonBeanFactory);
     }
 
     @Test

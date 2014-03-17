@@ -10,9 +10,11 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
@@ -56,6 +58,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     private final JwtService jwtService;
     private final ConsumerService consumerService;
     private final UserManager userManager;
+    private final ConnectAddonBeanFactory connectAddonBeanFactory;
 
     private final Map<String, RemotablePluginAccessor> accessors;
 
@@ -63,15 +66,16 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     @Autowired
     public DefaultRemotablePluginAccessorFactory(ConnectApplinkManager connectApplinkManager,
-            ConnectAddonRegistry connectAddonRegistry,
-            OAuthLinkManager oAuthLinkManager,
-            CachingHttpContentRetriever httpContentRetriever,
-            PluginAccessor pluginAccessor,
-            ApplicationProperties applicationProperties,
-            EventPublisher eventPublisher,
-            JwtService jwtService,
-            ConsumerService consumerService,
-            UserManager userManager)
+                                                 ConnectAddonRegistry connectAddonRegistry,
+                                                 OAuthLinkManager oAuthLinkManager,
+                                                 CachingHttpContentRetriever httpContentRetriever,
+                                                 PluginAccessor pluginAccessor,
+                                                 ApplicationProperties applicationProperties,
+                                                 EventPublisher eventPublisher,
+                                                 JwtService jwtService,
+                                                 ConsumerService consumerService,
+                                                 UserManager userManager, 
+                                                 ConnectAddonBeanFactory connectAddonBeanFactory)
     {
         this.connectApplinkManager = connectApplinkManager;
         this.connectAddonRegistry = connectAddonRegistry;
@@ -82,6 +86,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         this.eventPublisher = eventPublisher;
         this.consumerService = consumerService;
         this.userManager = userManager;
+        this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.eventPublisher.register(this);
         this.jwtService = jwtService;
 
@@ -121,16 +126,46 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     public RemotablePluginAccessor get(String pluginKey)
     {
+        if(connectAddonRegistry.hasDescriptor(pluginKey))
+        {
+            return get(connectAddonBeanFactory.fromJsonSkipValidation(connectAddonRegistry.getDescriptor(pluginKey)));
+        }
+        
         final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
         return get(plugin, pluginKey);
     }
 
+    public RemotablePluginAccessor get(ConnectAddonBean addon)
+    {
+        // this will potentially create multiple instances if called quickly, but we don't really
+        // care as they shouldn't be cached
+        final RemotablePluginAccessor accessor;
+        if (accessors.containsKey(addon.getKey()))
+        {
+            accessor = accessors.get(addon.getKey());
+        }
+        else
+        {
+            accessor = create(addon, getDisplayUrl(addon));
+            accessors.put(addon.getKey(), accessor);
+        }
+        return accessor;
+    }
+
+    /**
+     * @deprecated use {@code get(String pluginKey)} or {@code get(ConnectAddonBean addon)} instead
+     */
+    @Deprecated
     @Override
     public RemotablePluginAccessor get(Plugin plugin)
     {
         return get(plugin,plugin.getKey());
     }
 
+    /**
+     * @deprecated use {@code get(String pluginKey)} or {@code get(ConnectAddonBean addon)} instead
+     */
+    @Deprecated
     private RemotablePluginAccessor get(final Plugin plugin, final String pluginKey)
     {
         // this will potentially create multiple instances if called quickly, but we don't really
@@ -165,6 +200,42 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         accessors.remove(pluginKey);
     }
 
+    private Supplier<URI> getDisplayUrl(final ConnectAddonBean addon)
+    {
+        final String storedBaseUrl = addon.getBaseUrl();
+
+        if (!Strings.isNullOrEmpty(storedBaseUrl))
+        {
+            return Suppliers.compose(ToUriFunction.INSTANCE,
+                    new Supplier<String>()
+                    {
+                        @Override
+                        public String get()
+                        {
+                            return storedBaseUrl;
+                        }
+                    }
+            );
+        }
+        else
+        {
+            return Suppliers.compose(ToUriFunction.INSTANCE,
+                    new Supplier<String>()
+                    {
+                        @Override
+                        public String get()
+                        {
+                            return applicationProperties.getBaseUrl(UrlMode.CANONICAL);
+                        }
+                    }
+            );
+        }
+    }
+    
+    /**
+     * @deprecated use {@code getDisplayUrl(ConnectAddonBean addon)} instead
+     */
+    @Deprecated
     private Supplier<URI> getDisplayUrl(final String pluginKey)
     {
         final String storedBaseUrl = connectAddonRegistry.getBaseUrl(pluginKey);
@@ -203,10 +274,60 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
      * <p/>
      * This method is useful for when the display url is known but the application link has not yet been created
      *
+     * @param addon The addon bean
+     * @param displayUrl The display url
+     * @return An accessor for a remote plugin
+     *
+     * @deprecated use {@code create(ConnectAddonBean addon, Supplier<URI> displayUrl)} instead
+     */
+    @Deprecated
+    public RemotablePluginAccessor create(ConnectAddonBean addon, Supplier<URI> displayUrl)
+    {
+        ApplicationLink appLink = connectApplinkManager.getAppLink(addon.getKey());
+        AuthenticationMethod authenticationMethod = null;
+        if (null == appLink)
+        {
+            log.error("Found no app link by plugin key '{}'!", addon.getKey());
+        }
+        else
+        {
+            Object authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
+            if (authTypeProperty != null)
+            {
+                authenticationMethod = AuthenticationMethod.forName(authTypeProperty.toString());
+            }
+        }
+
+        if (AuthenticationMethod.JWT.equals(authenticationMethod))
+        {
+            return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtService, consumerService,
+                    connectApplinkManager, httpContentRetriever, userManager);
+        }
+        else if (AuthenticationMethod.NONE.equals(authenticationMethod))
+        {
+            return new NoAuthRemotablePluginAccessor(addon, displayUrl, httpContentRetriever);
+        }
+        else
+        {
+            // default to OAuth (for backwards compatibility)
+            return new OAuthSigningRemotablePluginAccessor(addon, displayUrl, getDummyServiceProvider(),
+                    httpContentRetriever, oAuthLinkManager);
+        }
+    }
+
+    /**
+     * Supplies an accessor for remote plugin operations but always creates a new one.  Instances are still only meant
+     * to be used for the current operation and should not be cached across operations.
+     * <p/>
+     * This method is useful for when the display url is known but the application link has not yet been created
+     *
      * @param pluginKey The plugin key
      * @param displayUrl The display url
      * @return An accessor for a remote plugin
+     * 
+     * @deprecated use {@code create(ConnectAddonBean addon, Supplier<URI> displayUrl)} instead
      */
+    @Deprecated
     public RemotablePluginAccessor create(Plugin plugin, String pluginKey, Supplier<URI> displayUrl)
     {
         
