@@ -48,6 +48,10 @@ var getAddonPage = function(opts) {
                         'rel': opts.auth ? 'tiny-url' : 'alternate' // no tiny-url for unauthenticated requests?
                     }).href;
 
+                if (opts.type && opts.type !== type) {
+                    return;
+                }
+
                 if (!opts.quiet) {
                     console.log(addon.pluginKey, "(" + type[typeColor] + ", " + status[statusColor] + ")", opts.debug ? url.grey : "");
                 }
