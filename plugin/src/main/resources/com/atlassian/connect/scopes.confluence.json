@@ -256,9 +256,7 @@
         "removePageWatch",
         "removeSpaceWatch",
         "renderContent",
-        "search",
-        "watchPage",
-        "watchSpace"
+        "search"
       ]
     },
     {
@@ -285,7 +283,9 @@
         "setContentPermissions",
         "storeBlogEntry",
         "storePage",
-        "updatePage"
+        "updatePage",
+        "watchPage",
+        "watchSpace"
       ]
     },
     {
@@ -316,7 +316,6 @@
         "removePageVersionByVersion",
         "removePageWatchForUser",
         "removePermissionFromSpace",
-        "removeSpace",
         "setSpaceStatus",
         "storeSpace",
         "watchPageForUser"
@@ -353,6 +352,7 @@
         "removeAnonymousUsePermission",
         "removeAnonymousViewUserProfilePermission",
         "removeGlobalPermission",
+        "removeSpace",
         "removeSpaceGroup"
       ]
     }
@@ -413,9 +413,7 @@
         "removePageWatch",
         "removeSpaceWatch",
         "renderContent",
-        "search",
-        "watchPage",
-        "watchSpace"
+        "search"
       ]
     },
     {
@@ -442,7 +440,9 @@
         "setContentPermissions",
         "storeBlogEntry",
         "storePage",
-        "updatePage"
+        "updatePage",
+        "watchPage",
+        "watchSpace"
       ]
     },
     {
@@ -473,7 +473,6 @@
         "removePageVersionByVersion",
         "removePageWatchForUser",
         "removePermissionFromSpace",
-        "removeSpace",
         "setSpaceStatus",
         "storeSpace",
         "watchPageForUser"
@@ -510,6 +509,7 @@
         "removeAnonymousUsePermission",
         "removeAnonymousViewUserProfilePermission",
         "removeGlobalPermission",
+        "removeSpace",
         "removeSpaceGroup"
       ]
     }
