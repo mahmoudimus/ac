@@ -319,9 +319,10 @@ public class ConnectAddonManager
             if (!OK_INSTALL_HTTP_CODES.contains(statusCode))
             {
                 String statusText = response.getStatusText();
-                log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]:" + response.getEntity());
+                final String responseEntity = response.getEntity(); // calling response.getEntity() multiple times results in IllegalStateException("Entity may only be accessed once")
+                log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]:" + responseEntity);
 
-                String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]:" + response.getEntity();
+                String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]:" + responseEntity;
                 switch (handler)
                 {
                     case INSTALLED:
