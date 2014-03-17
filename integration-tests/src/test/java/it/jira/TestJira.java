@@ -73,7 +73,7 @@ public class TestJira extends JiraWebDriverTestBase
                                            .navigateToAndBind(IssueDetailPage.class, issue.getKey())
                                            .details()
                                            .openFocusShifter()
-                                           .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction",EXTRA_PREFIX);
+                                           .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
 
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
 
