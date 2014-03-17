@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var downloader = require('./download-descriptors'),
     xml2js = require('xml2js'),
     _ = require('lodash'),
