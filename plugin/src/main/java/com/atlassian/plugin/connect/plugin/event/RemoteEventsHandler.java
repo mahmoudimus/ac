@@ -20,7 +20,6 @@ import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
-import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
@@ -42,13 +41,11 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Arrays.asList;
 
 //import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 
@@ -59,9 +56,6 @@ import static java.util.Arrays.asList;
 public class RemoteEventsHandler implements InitializingBean, DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(RemoteEventsHandler.class);
-    private static final String HTTP_ERROR_I18N_KEY_PREFIX = "connect.install.error.remote.host.bad.response.";
-    private static final List<Integer> OK_INSTALL_HTTP_CODES = asList(200, 201, 204);
-
     private final EventPublisher eventPublisher;
     private final PluginEventManager pluginEventManager;
     private final ConsumerService consumerService;
@@ -74,7 +68,6 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
     private final RequestSigner requestSigner;
     private final HttpClient httpClient;
     private final UserManager userManager;
-    private final I18nResolver i18nResolver;
 
     @Autowired
     public RemoteEventsHandler(EventPublisher eventPublisher,
@@ -83,13 +76,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                                ProductAccessor productAccessor,
                                BundleContext bundleContext,
                                PluginEventManager pluginEventManager,
-                               LegacyAddOnIdentifierService connectIdentifier,
-                               PluginAccessor pluginAccessor,
-                               RemotablePluginAccessorFactory pluginAccessorFactory,
-                               RequestSigner requestSigner,
-                               HttpClient httpClient,
-                               UserManager userManager,
-                               I18nResolver i18nResolver)
+                               LegacyAddOnIdentifierService connectIdentifier, PluginAccessor pluginAccessor, RemotablePluginAccessorFactory pluginAccessorFactory, RequestSigner requestSigner, HttpClient httpClient, UserManager userManager)
     {
         this.pluginAccessor = pluginAccessor;
         this.pluginAccessorFactory = pluginAccessorFactory;
@@ -103,7 +90,6 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         this.productAccessor = checkNotNull(productAccessor);
         this.bundleContext = checkNotNull(bundleContext);
         this.connectIdentifier = checkNotNull(connectIdentifier);
-        this.i18nResolver = checkNotNull(i18nResolver);
     }
 
     public void pluginInstalled(String pluginKey)
@@ -119,8 +105,6 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
     {
         boolean called = false;
         Option<String> errorI18nKey = Option.<String>some("connect.remote.upm.install.exception");
-        String exceptionMessage = "Error contacting remote application";
-
         try
         {
             Plugin addon = pluginAccessor.getPlugin(pluginKey);
@@ -153,28 +137,14 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                             requestSigner.sign(installHandler, pluginKey, request);
 
                             Response response = request.execute(Request.Method.POST).claim();
-
-                            // a selection of 2xx response codes both indicate success and are semantically valid for this callback
-                            if (OK_INSTALL_HTTP_CODES.contains(response.getStatusCode()))
+                            if (response.getStatusCode() != 200)
                             {
-                                called = true;
+                                log.error("Error contacting remote application [" + response.getStatusText() + "]");
+                                throw new PluginInstallException("Error contacting remote application [" + response.getStatusText() + "]", errorI18nKey);
                             }
-                            // it failed: if it failed with a response code for which we have a pre-canned i18n message then send that key
-                            // so that UPM will display the message in the GUI
                             else
                             {
-                                final String i18nKey = HTTP_ERROR_I18N_KEY_PREFIX + response.getStatusCode();
-                                final String i18nText = i18nResolver.getRawText(i18nKey);
-
-                                // the I18nResolver javadoc says that it will return the input key as the output raw text when the key is not found
-                                if (null != i18nText && !i18nKey.equals(i18nText))
-                                {
-                                    errorI18nKey = Option.some(i18nKey);
-                                }
-                                // no else{}: fall back to the generic i18n key initialised at the start of the message
-
-                                exceptionMessage = String.format("Error contacting remote application [%s]", response.getStatusText());
-                                log.error(exceptionMessage);
+                                called = true;
                             }
                         }
                     }
@@ -185,11 +155,6 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         {
             log.error("Error contacting remote application [" + e.getMessage() + "]", e);
             throw new PluginInstallException("Error contacting remote application [" + e.getMessage() + "]", errorI18nKey);
-        }
-
-        if (!called)
-        {
-            throw new PluginInstallException(exceptionMessage, errorI18nKey);
         }
 
         return called;

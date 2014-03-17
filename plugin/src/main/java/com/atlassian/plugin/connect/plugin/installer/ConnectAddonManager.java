@@ -41,6 +41,7 @@ import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
@@ -53,11 +54,13 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collections;
+import java.util.List;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Arrays.asList;
 
 /**
  * The ConnectAddonManager handles all the stuff that needs to happen when an addon is enabled/disabled.
@@ -73,6 +76,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class ConnectAddonManager
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectAddonManager.class);
+    private static final String HTTP_ERROR_I18N_KEY_PREFIX = "connect.install.error.remote.host.bad.response.";
+    private static final List<Integer> OK_INSTALL_HTTP_CODES = asList(200, 201, 204);
 
     public static final String USER_KEY = "user_key";
 
@@ -308,8 +313,10 @@ public class ConnectAddonManager
             }
 
             Response response = request.execute(Request.Method.POST).claim();
-            int statusCode = response.getStatusCode();
-            if (statusCode != 200 && statusCode != 204)
+            final int statusCode = response.getStatusCode();
+
+            // a selection of 2xx response codes both indicate success and are semantically valid for this callback
+            if (!OK_INSTALL_HTTP_CODES.contains(statusCode))
             {
                 String statusText = response.getStatusText();
                 log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]:" + response.getEntity());
@@ -318,8 +325,7 @@ public class ConnectAddonManager
                 switch (handler)
                 {
                     case INSTALLED:
-                        String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.response", statusCode);
-                        throw new PluginInstallException(handler.name() + ": " + message, Option.some(i18nMessage));
+                        throw new PluginInstallException(handler.name() + ": " + message, Option.some(findI18nKeyForHttpErrorCode(statusCode)));
                     case UNINSTALLED:
                         throw new PluginException(handler.name() + ": " + message);
                 }
@@ -362,6 +368,22 @@ public class ConnectAddonManager
                     throw new PluginException(handler.name() + ": " + message);
             }
         }
+    }
+
+    private String findI18nKeyForHttpErrorCode(final int responseCode)
+    {
+        String i18nKey = HTTP_ERROR_I18N_KEY_PREFIX + responseCode;
+        final String i18nText = i18nResolver.getRawText(i18nKey);
+
+        // the I18nResolver javadoc says that it will return the input key as the output raw text when the key is not found
+        // and we also check a couple of other obvious problems, just to be save
+        if (StringUtils.isEmpty(i18nText) || i18nKey.equals(i18nText))
+        {
+            // fall back to the generic i18n key if there's no i18n key for this HTTP code
+            i18nKey = "connect.remote.upm.install.exception";
+        }
+
+        return i18nKey;
     }
 
     private URI getURI(String url)
