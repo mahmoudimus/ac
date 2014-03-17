@@ -178,6 +178,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         },
         createDialog: function(dialogOptions) {
           _AP.require("dialog/dialog-factory", function(dialogFactory) {
+            options.moduleKey = dialogOptions.key;
             dialogFactory(options, dialogOptions, productContextJson);
           });
         },
