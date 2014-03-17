@@ -18,6 +18,8 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupP
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Set;
@@ -27,6 +29,8 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
     // Used until we can upgrade to health check 2.0.7
     private static final String CHECK_NAME = "com.atlassian.plugins.atlassian-connect-plugin:addonsGroupHealthCheck";
     private static final String CHECK_DESCRIPTION = "This was provided by plugin 'com.atlassian.plugins.atlassian-connect-plugin:addonsGroupHealthCheck' via class 'com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck'";
+
+    private static final Logger log = LoggerFactory.getLogger(AtlassianAddonsGroupHealthCheck.class);
 
     private final ApplicationManager applicationManager;
     private final ApplicationService applicationService;
@@ -59,24 +63,31 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
             {
                 if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()))
                 {
+                    log.warn("Add-on user '" + user.getName() + "' has incorrect email '" + user.getEmailAddress() + "'");
                     usersWithIncorrectEmails.add(user);
                 }
                 String name = user.getName();
                 if (name == null || !name.startsWith(Constants.ADDON_USERNAME_PREFIX))
                 {
+                    log.warn("Add-on user '" + user.getName() + "' has incorrect prefix");
                     usersWithIncorrectPrefix.add(user);
                 }
-                else
-                {
-                    String addonKey = StringUtils.removeStart(name, Constants.ADDON_USERNAME_PREFIX);
-                    ApplicationLink applicationLink = jwtApplinkFinder.find(addonKey);
 
-                    // if there's no applink, the user should be disabled
-                    if (applicationLink == null && user.isActive())
-                    {
-                        usersIncorrectlyActive.add(user);
-                    }
-                }
+// An add-on which is installed in either JIRA or Confluence will create a _SHARED_ user. This check will
+// fail in the other product as there is no applink, but the user is (correctly) active.
+
+//                else
+//                {
+//                    String addonKey = StringUtils.removeStart(name, Constants.ADDON_USERNAME_PREFIX);
+//                    ApplicationLink applicationLink = jwtApplinkFinder.find(addonKey);
+//
+//                    // if there's no applink, the user should be disabled
+//                    if (applicationLink == null && user.isActive())
+//                    {
+//                        log.warn("Add-on user '" + user.getName() + "' is active but has no applink. Perhaps the add-on was installed");
+//                        usersIncorrectlyActive.add(user);
+//                    }
+//                }
             }
 
             boolean isHealthy = usersWithIncorrectEmails.isEmpty() && usersWithIncorrectPrefix.isEmpty() && usersIncorrectlyActive.isEmpty();
