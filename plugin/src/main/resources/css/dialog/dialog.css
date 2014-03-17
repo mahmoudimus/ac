@@ -1,4 +1,4 @@
-.ap-dialog-container .ap-stats {
+.ap-stats {
     padding: 0px 10px;
     background-color: #f5f5f5;
 }
@@ -11,7 +11,9 @@
     height: 100%;
 }
 .ap-aui-dialog2 div.ap-stats {
-	height:auto;
+	height: auto;
+	position: relative;
+	bottom: 20px;
 }
 
 /* in chrome'd dialogs - fixes scrollbars added by iframes with scrollbars pushing the width out */

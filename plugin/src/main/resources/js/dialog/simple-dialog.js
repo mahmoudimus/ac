@@ -64,7 +64,6 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "d
 
     function displayDialogContent($container, options){
         $container.append('<div id="embedded-' + options.ns + '" class="ap-dialog-container" />');
-//          container.append(statusHelper.createStatusMessages());
     }
 
 
@@ -106,7 +105,7 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "d
         * @param {String|Number} [options.height="50%"] height of the dialog, expressed as either absolute pixels (eg 600) or percent (eg 50%)
         * @param {String} [options.id] ID attribute to assign to the dialog. Default to "ap-dialog-n" where n is an autoincrementing id.
         */
-        create: function(options) {
+        create: function(options, showLoadingIndicator) {
 
             var hasClosed = false,
                 defaultOptions = {
@@ -144,6 +143,11 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "d
             });
 
             displayDialogContent($nexus, mergedOptions);
+
+            if(showLoadingIndicator !== false){
+                $nexus.append(statusHelper.createStatusMessages());
+            }
+
             //difference between a webitem and opening from js.
             if(options.src){
                 _AP.create(mergedOptions);

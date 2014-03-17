@@ -19,7 +19,7 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
             width: dialogOptions.width,
             height: dialogOptions.height,
             size: dialogOptions.size
-        });
+        }, false);
         container = AJS.$('.ap-dialog-container');
 
         if(dialogOptions.url){
@@ -27,7 +27,6 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
         } else {
             promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, module, { dlg: 1 });
         }
-
         promise
           .done(function(data) {
             var dialogHtml = $(data);
