@@ -165,7 +165,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .simpleDialog(true)
                 .build();
 
-        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), renderStrategy);
+        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), ConnectIFrameServlet.RAW_CLASSIFIER, renderStrategy);
     }
 
     private ModuleDescriptor createEditorWebResource(Plugin plugin, T macroBean)

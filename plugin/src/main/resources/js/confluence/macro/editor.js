@@ -83,12 +83,13 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/dialog-factory"], func
             console.log(arguments);
 
 
-            var macroUrl = url.match(/\/servlet\/atlassian\-connect\/([\w-]+)\/([\w-]+)/);
+            var macroUrl = url.match(/\/servlet\/ac\/([\w-]+)\/([\w-]+)/);
             var dialogPageOptions = {
                 key: macroUrl[1],
+                moduleKey: macroUrl[2],
                 chrome: true
             };
-            dialogOpts.key = macroUrl[2];
+//            dialogOpts.key = macroUrl[2];
 
             dialogFactory(dialogPageOptions, dialogOpts);
             //macroEditorDialog = simpleDialog(url, dialogOpts);
