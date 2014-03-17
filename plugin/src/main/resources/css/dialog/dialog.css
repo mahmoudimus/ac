@@ -10,6 +10,9 @@
 .ap-aui-dialog2 div {
     height: 100%;
 }
+.ap-aui-dialog2 div.ap-stats {
+	height:auto;
+}
 
 /* in chrome'd dialogs - fixes scrollbars added by iframes with scrollbars pushing the width out */
 .ap-aui-dialog2 .aui-dialog2-content {

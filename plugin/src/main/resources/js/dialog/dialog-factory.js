@@ -23,7 +23,7 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
         container = AJS.$('.ap-dialog-container');
 
         if(dialogOptions.url){
-            promise = hostContentUtilities.getIframeHtmlForUrl(options.key, module, { dlg: 1 });
+            promise = hostContentUtilities.getIframeHtmlForUrl(options.key, options.url, { dlg: 1 });
         } else {
             promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, module, { dlg: 1 });
         }

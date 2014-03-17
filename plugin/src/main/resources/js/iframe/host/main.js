@@ -178,7 +178,14 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         },
         createDialog: function(dialogOptions) {
           _AP.require("dialog/dialog-factory", function(dialogFactory) {
-            options.moduleKey = dialogOptions.key;
+
+            //open by key or url. This can be simplified when opening via url is removed.
+            if(dialogOptions.key) {
+              options.moduleKey = dialogOptions.key;
+            } else if(dialogOptions.url) {
+              options.url = dialogOptions.url;
+            }
+
             dialogFactory(options, dialogOptions, productContextJson);
           });
         },
