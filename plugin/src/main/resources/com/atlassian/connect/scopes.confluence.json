@@ -253,8 +253,6 @@
         "hasGroup",
         "hasUser",
         "isActiveUser",
-        "removePageWatch",
-        "removeSpaceWatch",
         "renderContent",
         "search"
       ]
@@ -280,6 +278,8 @@
         "removeLabelByName",
         "removeLabelByNameFromSpace",
         "removeLabelByObject",
+        "removePageWatch",
+        "removeSpaceWatch",
         "setContentPermissions",
         "storeBlogEntry",
         "storePage",
@@ -410,8 +410,6 @@
         "hasGroup",
         "hasUser",
         "isActiveUser",
-        "removePageWatch",
-        "removeSpaceWatch",
         "renderContent",
         "search"
       ]
@@ -437,6 +435,8 @@
         "removeLabelByName",
         "removeLabelByNameFromSpace",
         "removeLabelByObject",
+        "removePageWatch",
+        "removeSpaceWatch",
         "setContentPermissions",
         "storeBlogEntry",
         "storePage",
