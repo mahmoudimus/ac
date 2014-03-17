@@ -1,4 +1,4 @@
-_AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, simpleDialog) {
+_AP.define("confluence/macro/editor", ["_dollar", "dialog/dialog-factory"], function($, dialogFactory) {
 
     var enc = encodeURIComponent;
 
@@ -74,14 +74,25 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
             var url = opts.url;
             var additionalParams = AJS.$.extend({}, macroData.params, { body: macroData.body });
             var first = true;
+            //REWRITE THIS!
             AJS.$.each(additionalParams, function(key, value) {
                 url += first && url.indexOf("?") < 0 ? "?" : "&";
                 url += enc(key) + "=" + enc(value);
                 first = false;
             });
+            console.log(arguments);
 
-            macroEditorDialog = simpleDialog(url, dialogOpts);
-            macroEditorDialog.show();
+
+            var macroUrl = url.match(/\/servlet\/atlassian\-connect\/([\w-]+)\/([\w-]+)/);
+            var dialogPageOptions = {
+                key: macroUrl[1],
+                chrome: true
+            };
+            dialogOpts.key = macroUrl[2];
+
+            dialogFactory(dialogPageOptions, dialogOpts);
+            //macroEditorDialog = simpleDialog(url, dialogOpts);
+            //dialogFactory.create(dialogOpts);
         },
 
         /**
