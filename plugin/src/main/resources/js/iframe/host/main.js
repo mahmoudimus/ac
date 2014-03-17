@@ -84,7 +84,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     }
 
     function getDialogButton(name) {
-      return $nexus.data("ra.dialog.buttons").getButton(name);
+      return getDialogButtons()[name];
     }
 
     var rpc = new XdmRpc($, {

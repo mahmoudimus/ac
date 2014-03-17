@@ -202,7 +202,6 @@ AP.define("dialog", ["_dollar", "_rpc", "_ui-params", "_uri"],
               });
               return cont;
             });
-            exports.close();
             return !!result;
           }
         };

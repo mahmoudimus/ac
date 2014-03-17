@@ -8,8 +8,12 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "d
     var dialogId;
 
     var buttons = {
-        submit: dialogButton.submit(),
-        cancel: dialogButton.cancel()
+        submit: dialogButton.submit({
+            done: closeDialog
+        }),
+        cancel: dialogButton.cancel({
+            done: closeDialog
+        })
     };
 
     function createChromelessDialogElement(options, $nexus){
@@ -35,14 +39,26 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "d
             footerActionContent: true
         }));
 
-        $el.find('.aui-dialog2-content').append($nexus);
-        var buttonNodes = {
-            submit: buttons.submit.$el,
-            cancel: buttons.cancel.$el
-        };
-
+        //soy templates don't support sending objects, so make the template and bind them.
         $el.find('.aui-dialog2-footer-actions').empty().append(buttons.submit.$el, buttons.cancel.$el);
-        $nexus.data('ra.dialog.buttons', buttonNodes);
+
+        $el.find('.aui-dialog2-content').append($nexus);
+        $nexus.data('ra.dialog.buttons', buttons);
+
+        function handler(button) {
+            // ignore clicks on disabled links
+            if(button.isEnabled()){
+                button.$el.trigger("ra.dialog.click", button.dispatch);
+            }
+        }
+
+        // binder clicker
+        $.each(buttons, function(i, button) {
+            button.$el.click(function(){
+                handler(button);
+            });
+        });
+
         return $el;
     }
 

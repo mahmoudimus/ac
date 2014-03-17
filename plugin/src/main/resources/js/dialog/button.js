@@ -7,7 +7,7 @@ _AP.define("dialog/dialog-button", ["_dollar"], function($) {
             .addClass(options.additionalClasses);
 
         this.isEnabled = function(){
-            return this.$el.attr('aria-disabled');
+            return (this.$el.attr('aria-disabled') === "false");
         };
 
         this.setEnabled = function(enabled){
@@ -17,24 +17,39 @@ _AP.define("dialog/dialog-button", ["_dollar"], function($) {
             }
             this.$el.attr('aria-disabled', !enabled);
         };
-
         this.setEnabled(true);
+
+        this.click = function(listener){
+            if (listener) {
+                this.$el.bind("ra.dialog.click", listener);
+            } else {
+                this.dispatch(true);
+            }
+        };
+
+        this.dispatch = function (result) {
+            var name = result ? "done" : "fail";
+            options.actions && options.actions[name] && options.actions[name]();
+        };
+
     }
 
     return {
-        submit: function(){
+        submit: function(actions){
             return new button({
                 type: 'primary',
                 text: 'submit',
-                additionalClasses: 'ap-dialog-submit'
+                additionalClasses: 'ap-dialog-submit',
+                actions: actions
             });
         },
-        cancel: function(){
+        cancel: function(actions){
             return new button({
                 type: 'link',
                 text: 'cancel',
                 noDisable: true,
-                additionalClasses: 'ap-dialog-cancel'
+                additionalClasses: 'ap-dialog-cancel',
+                actions: actions
             });
         }
     };
