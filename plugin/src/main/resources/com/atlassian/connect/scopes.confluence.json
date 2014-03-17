@@ -317,7 +317,6 @@
         "removePageWatchForUser",
         "removePermissionFromSpace",
         "setSpaceStatus",
-        "storeSpace",
         "watchPageForUser"
       ]
     },
@@ -353,7 +352,8 @@
         "removeAnonymousViewUserProfilePermission",
         "removeGlobalPermission",
         "removeSpace",
-        "removeSpaceGroup"
+        "removeSpaceGroup",
+        "storeSpace"
       ]
     }
   ],
@@ -474,7 +474,6 @@
         "removePageWatchForUser",
         "removePermissionFromSpace",
         "setSpaceStatus",
-        "storeSpace",
         "watchPageForUser"
       ]
     },
@@ -510,7 +509,8 @@
         "removeAnonymousViewUserProfilePermission",
         "removeGlobalPermission",
         "removeSpace",
-        "removeSpaceGroup"
+        "removeSpaceGroup",
+        "storeSpace"
       ]
     }
   ],
