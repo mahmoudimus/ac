@@ -247,44 +247,44 @@
     {
       "key": "jirasoapservice-v2-read",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["getIssuesFromJqlSearch", "getIssue", "getVersions", "getIssuesFromTextSearchWithProject", "getSecurityLevels", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getGroup", "getAttachmentsFromIssue", "getProjectAvatar", "getFieldsForEdit", "getUser", "getIssueById", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getFieldsForCreate", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
+      "rpcMethods": ["getIssuesFromJqlSearch", "getIssue", "getVersions", "getIssuesFromTextSearchWithProject", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getGroup", "getAttachmentsFromIssue", "getProjectAvatar", "getUser", "getIssueById", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
     },
     {
       "key": "jirasoapservice-v2-write",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
+      "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue", "getFieldsForEdit", "getFieldsForCreate", "getSecurityLevels"]
     },
     {
       "key": "jirasoapservice-v2-project-admin",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createProjectRole", "deleteProjectAvatar", "deleteProjectRole", "setNewProjectAvatar", "setProjectAvatar", "updateProject", "updateProjectRole"]
+      "rpcMethods": ["deleteProjectAvatar", "setNewProjectAvatar", "setProjectAvatar", "updateProject"]
     },
     {
       "key": "jirasoapservice-v2-admin",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createProject", "createProjectFromObject", "deleteProject"]
+      "rpcMethods": ["createProject", "createProjectFromObject", "deleteProject", "createProjectRole", "updateProjectRole", "deleteProjectRole"]
     }
   ],
   "jsonRpcPaths": [
     {
       "key": "jira-json-service-v2-read",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["getIssue", "getIssuesFromJqlSearch", "getVersions", "getIssuesFromTextSearchWithProject", "getSecurityLevels", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getAttachmentsFromIssue", "getGroup", "getProjectAvatar", "getFieldsForEdit", "getIssueById", "getUser", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getFieldsForCreate", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
+      "rpcMethods": ["getIssue", "getIssuesFromJqlSearch", "getVersions", "getIssuesFromTextSearchWithProject", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getAttachmentsFromIssue", "getGroup", "getProjectAvatar", "getIssueById", "getUser", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
     },
     {
       "key": "jira-json-service-v2-write",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
+      "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue", "getFieldsForEdit", "getFieldsForCreate", "getSecurityLevels"]
     },
     {
       "key": "jira-json-service-v2-project-admin",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createProjectRole", "deleteProjectAvatar", "deleteProjectRole", "setNewProjectAvatar", "setProjectAvatar", "updateProject", "updateProjectRole"]
+      "rpcMethods": ["deleteProjectAvatar", "setNewProjectAvatar", "setProjectAvatar", "updateProject"]
     },
     {
       "key": "jira-json-service-v2-admin",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createProject", "createProjectFromObject", "deleteProject"]
+      "rpcMethods": ["createProject", "createProjectFromObject", "deleteProject", "createProjectRole", "updateProjectRole", "deleteProjectRole"]
     }
   ],
   "paths": [
