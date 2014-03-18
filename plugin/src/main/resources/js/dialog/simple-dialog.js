@@ -39,6 +39,9 @@ _AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "d
             footerActionContent: true
         }));
 
+        buttons.submit.setText(options.submitText);
+        buttons.cancel.setText(options.cancelText);
+
         //soy templates don't support sending objects, so make the template and bind them.
         $el.find('.aui-dialog2-footer-actions').empty().append(buttons.submit.$el, buttons.cancel.$el);
 

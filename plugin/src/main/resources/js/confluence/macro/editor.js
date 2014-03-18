@@ -72,20 +72,15 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/dialog-factory"], func
             }
 
             var url = opts.url;
-            var additionalParams = AJS.$.extend({}, macroData.params, { body: macroData.body });
-            var first = true;
-            //REWRITE THIS!
-            AJS.$.each(additionalParams, function(key, value) {
-                url += first && url.indexOf("?") < 0 ? "?" : "&";
-                url += enc(key) + "=" + enc(value);
-                first = false;
-            });
+
             var macroUrl = url.match(/\/servlet\/(ac|atlassian\-connect)\/([\w-]+)\/([\w-]+)/);
             var dialogPageOptions = {
                 key: macroUrl[2],
                 moduleKey: macroUrl[3],
-                chrome: true
+                chrome: true,
+                uiParams: $.extend({}, macroData.params, { body: macroData.body })
             };
+
             dialogFactory(dialogPageOptions, dialogOpts);
         },
 

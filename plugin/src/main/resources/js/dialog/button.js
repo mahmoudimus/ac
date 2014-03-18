@@ -32,6 +32,12 @@ _AP.define("dialog/button", ["_dollar"], function($) {
             options.actions && options.actions[name] && options.actions[name]();
         };
 
+        this.setText = function(text){
+            if(text){
+                this.$el.text(text);
+            }
+        };
+
     }
 
     return {

@@ -18,14 +18,19 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
             header: dialogOptions.header,
             width: dialogOptions.width,
             height: dialogOptions.height,
-            size: dialogOptions.size
+            size: dialogOptions.size,
+            submitText: dialogOptions.submitText,
+            cancelText: dialogOptions.cancelText
         }, false);
+
         container = AJS.$('.ap-dialog-container');
 
+        var uiParams = $.extend({dlg: 1}, options.uiParams);
+
         if(dialogOptions.url){
-            promise = hostContentUtilities.getIframeHtmlForUrl(options.key, options.url, { dlg: 1 });
+            promise = hostContentUtilities.getIframeHtmlForUrl(options.key, options.url, uiParams);
         } else {
-            promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, module, { dlg: 1 });
+            promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, module, uiParams);
         }
         promise
           .done(function(data) {
