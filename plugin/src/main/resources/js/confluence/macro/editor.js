@@ -80,20 +80,13 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/dialog-factory"], func
                 url += enc(key) + "=" + enc(value);
                 first = false;
             });
-            console.log(arguments);
-
-
-            var macroUrl = url.match(/\/servlet\/ac\/([\w-]+)\/([\w-]+)/);
+            var macroUrl = url.match(/\/servlet\/(ac|atlassian\-connect)\/([\w-]+)\/([\w-]+)/);
             var dialogPageOptions = {
-                key: macroUrl[1],
-                moduleKey: macroUrl[2],
+                key: macroUrl[2],
+                moduleKey: macroUrl[3],
                 chrome: true
             };
-//            dialogOpts.key = macroUrl[2];
-
             dialogFactory(dialogPageOptions, dialogOpts);
-            //macroEditorDialog = simpleDialog(url, dialogOpts);
-            //dialogFactory.create(dialogOpts);
         },
 
         /**
