@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,19 +24,22 @@ import static org.junit.Assert.assertEquals;
 public class AddOnEnablementTest
 {
     private final TestPluginInstaller testPluginInstaller;
+    private final TestAuthenticator testAuthenticator;
     private final JwtApplinkFinder jwtApplinkFinder;
 
     private Plugin plugin;
 
-    public AddOnEnablementTest(TestPluginInstaller testPluginInstaller, JwtApplinkFinder jwtApplinkFinder)
+    public AddOnEnablementTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, JwtApplinkFinder jwtApplinkFinder)
     {
         this.testPluginInstaller = testPluginInstaller;
+        this.testAuthenticator = testAuthenticator;
         this.jwtApplinkFinder = jwtApplinkFinder;
     }
 
     @Before
     public void setUp() throws IOException
     {
+        testAuthenticator.authenticateUser("admin");
         plugin = installPlugin();
         testPluginInstaller.disablePlugin(plugin.getKey());
     }

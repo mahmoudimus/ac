@@ -135,6 +135,7 @@ Most modern languages have JWT libraries available. We recommend you use one of 
 	<tr><td>Ruby</td><td>[ruby-jwt](https://github.com/progrium/ruby-jwt)</td></tr>
 	<tr><td>PHP</td><td>[firebase php-jwt](https://github.com/firebase/php-jwt) and [luciferous jwt](https://github.com/luciferous/jwt)</td></tr>
 	<tr><td>.NET</td><td>[jwt](https://github.com/johnsheehan/jwt)</td></tr>
+    <tr><td>Haskell</td><td>[haskell-jwt](http://hackage.haskell.org/package/jwt)</td></tr>
 </table>
 
 The [JWT decoder from Heroku](http://jwt-decoder.herokuapp.com/jwt/decode) is a handy web based decoder of JWT tokens.

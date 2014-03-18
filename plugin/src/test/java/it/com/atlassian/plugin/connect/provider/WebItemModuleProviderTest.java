@@ -19,6 +19,8 @@ import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginF
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
+import it.com.atlassian.plugin.connect.TestAuthenticator;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,12 +48,15 @@ public class WebItemModuleProviderTest
 
     private final WebItemModuleProvider webItemModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
+    private final TestAuthenticator testAuthenticator;
     private HttpServletRequest servletRequest;
 
-    public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller)
+    public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller,
+                                     TestAuthenticator testAuthenticator)
     {
         this.webItemModuleProvider = webItemModuleProvider;
         this.testPluginInstaller = testPluginInstaller;
+        this.testAuthenticator = testAuthenticator;
     }
 
     @BeforeClass
@@ -59,6 +64,12 @@ public class WebItemModuleProviderTest
     {
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
+    }
+
+    @Before
+    public void authenticate()
+    {
+        testAuthenticator.authenticateUser("admin");
     }
 
     @Test

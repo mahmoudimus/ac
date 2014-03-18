@@ -8,14 +8,13 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.atlassian.plugin.connect.plugin.module.page.dialog.DialogPageModuleDescriptor.DIALOG_CLASSIFIER;
 import static com.atlassian.plugin.connect.plugin.module.page.dialog.DialogPageModuleDescriptor.SIMPLE_DIALOG_CLASSIFIER;

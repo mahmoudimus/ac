@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;

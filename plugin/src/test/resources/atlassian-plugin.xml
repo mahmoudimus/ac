@@ -15,19 +15,20 @@
     </plugin-info>
 
     <!-- NOTE, this plugin has to be transformed because there's some magic that makes wired tests work -->
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+    <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry"/>
+    <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService" />
+    <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService"/>
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager" />
     <component-import key="connectDescriptorValidator" interface="com.atlassian.plugin.connect.modules.schema.ConnectDescriptorValidator" />
     <component-import key="connectSchemaLocator" interface="com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator" />
-    <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
-    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
-    <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry"/>
-    <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService"/>
-    <component-import key="salUserManager" interface="com.atlassian.sal.api.user.UserManager" />
+    <component-import key="crowdApplicationManager" interface="com.atlassian.crowd.manager.application.ApplicationManager" />
+    <component-import key="crowdApplicationService" interface="com.atlassian.crowd.manager.application.ApplicationService" />
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry" />
-    <component-import key="crowdApplicationService" interface="com.atlassian.crowd.manager.application.ApplicationService" />
-    <component-import key="crowdApplicationManager" interface="com.atlassian.crowd.manager.application.ApplicationManager" />
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
+    <component-import key="salUserManager" interface="com.atlassian.sal.api.user.UserManager" />
+    <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
 
     <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller" />
     <component-import key="testFilterResults" interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults" />

@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-
 import org.junit.*;
 import org.junit.rules.TestRule;
 
@@ -23,9 +22,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.capabilities.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.0-rc6-RC-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -38,11 +38,25 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
-            <artifactId>atlassian-spring-scanner</artifactId>
+            <artifactId>atlassian-spring-scanner-annotation</artifactId>
+            <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner-runtime</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
         <dependency>
             <groupId>com.atlassian.labs</groupId>
             <artifactId>fastdev-plugin</artifactId>
@@ -117,6 +131,11 @@
         <dependency>
             <groupId>com.atlassian.applinks</groupId>
             <artifactId>applinks-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.healthcheck</groupId>
+            <artifactId>atlassian-healthcheck</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -411,6 +430,7 @@
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
+                    <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
                     <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
                     <testBundleExcludes>
                         <testBundleExclude>
@@ -439,6 +459,7 @@
                             com.atlassian.jira.security.websudo;resolution:=optional,
                             com.atlassian.oauth*;version="(1.2,2.0]",
                             com.atlassian.jwt.*;version="${atlassian.jwt.version}",
+                            com.atlassian.healthcheck.core*;version="${atlassian.healthcheck.version}",
 
                             com.atlassian.plugin;version="${atlassian.plugins.api.version}",
                             com.atlassian.plugin.descriptors;resolution:="optional",
@@ -577,6 +598,13 @@
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
                                 </bundledArtifact>
+
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                         <product>
@@ -635,6 +663,13 @@
                                     <groupId>com.atlassian.labs</groupId>
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
+                                </bundledArtifact>
+                                
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
@@ -891,6 +926,20 @@
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>shallow-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <ignoreFilter>shallow</ignoreFilter>
+                            <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
@@ -1090,7 +1139,7 @@
         <devmode>true</devmode>
         <fastdev.version>2.2</fastdev.version>
         <toolbox.version>2.0.6</toolbox.version>
-        <plugin.testrunner.version>1.1.4</plugin.testrunner.version>
+        <plugin.testrunner.version>1.1.6</plugin.testrunner.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>

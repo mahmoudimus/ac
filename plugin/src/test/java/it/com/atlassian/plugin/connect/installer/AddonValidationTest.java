@@ -4,6 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -93,11 +94,29 @@ public class AddonValidationTest
         installedPlugin.set(testPluginInstaller.installPlugin(addonBean));
     }
 
+    private void install(String jsonDescriptor) throws Exception
+    {
+        installedPlugin.set(testPluginInstaller.installPlugin(jsonDescriptor));
+    }
+
     private void installExpectingUpmErrorCode(ConnectAddonBean addonBean, String errorCode) throws Exception
     {
         try
         {
             install(addonBean);
+            fail("Expected " + PluginInstallException.class.getSimpleName() + " with code " + errorCode);
+        }
+        catch (PluginInstallException e)
+        {
+            assertEquals(errorCode, e.getCode().get());
+        }
+    }
+
+    private void installExpectingUpmErrorCode(String jsonDescriptor, String errorCode) throws Exception
+    {
+        try
+        {
+            install(jsonDescriptor);
             fail("Expected " + PluginInstallException.class.getSimpleName() + " with code " + errorCode);
         }
         catch (PluginInstallException e)
@@ -262,7 +281,7 @@ public class AddonValidationTest
     public void a404ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
     {
         installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://atlassian.com").build(),
-                i18nResolver.getText("connect.install.error.remote.host.bad.response", 404));
+                "connect.install.error.remote.host.bad.response.404");
     }
 
     @Test
@@ -277,6 +296,12 @@ public class AddonValidationTest
     {
         installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://example.com").build(),
                 i18nResolver.getText("connect.install.error.remote.host.timeout", "https://example.com/installed"));
+    }
+
+    @Test
+    public void installedMalformedJSONDescriptorResultsInCorrespondingErrorCode() throws Exception
+    {
+        installExpectingUpmErrorCode(TestFileReader.readAddonTestFile("malformedDescriptor.json"), "connect.invalid.descriptor.malformed.json");
     }
 
     private ConnectAddonBeanBuilder testBeanBuilderWithJwtAndInstalledCallback()

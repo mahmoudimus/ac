@@ -27,17 +27,6 @@ public class ConfluenceMacroPage implements Page
         this.title = title;
     }
 
-    @WaitUntil
-    public void waitForBigPipe()
-    {
-//        if(driver.elementExists(By.className("bp-loading")))
-//        {
-//            driver.waitUntilElementIsNotLocated(By.className("bp-loading"));
-//        }
-
-        driver.waitUntilElementIsNotLocated(By.className("bp-loading"));
-    }
-
     @Override
     public String getUrl()
     {

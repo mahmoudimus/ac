@@ -24,9 +24,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 import static it.matcher.IsNotBlank.isNotBlank;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 

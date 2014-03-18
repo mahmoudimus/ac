@@ -52,7 +52,6 @@ import static com.google.common.collect.Maps.newHashMap;
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_EXAMPLE}
- * @exampleJson Kitchen Sink: <p class="expandNextPre"></p>{@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_COMPLETE_EXAMPLE}
  * @schemaTitle Addon Descriptor
  * @since 1.0
  */
@@ -153,11 +152,13 @@ public class ConnectAddonBean extends BaseModuleBean
     /**
      * The list of modules this add on provides
      */
+    @SchemaIgnore("shallow")
     private ModuleList modules;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
      */
+    @SchemaIgnore("shallow")
     private Set<String> scopes;
     
     public ConnectAddonBean()
