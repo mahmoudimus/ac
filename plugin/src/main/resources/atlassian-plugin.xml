@@ -101,7 +101,7 @@
     <web-resource key="dialog">
         <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
         <resource type="download" name="dialog-button.js" location="js/dialog/button.js" />
-        <resource type="download" name="simple-dialog.js" location="js/dialog/simple-dialog.js" />
+        <resource type="download" name="dialog-main.js" location="js/dialog/main.js" />
         <resource type="download" name="aui-dialog.js" location="js/dialog/aui-dialog.js" />
         <resource type="download" name="dialog-factory.js" location="js/dialog/dialog-factory.js" />
         <resource type="download" name="binder.js" location="js/dialog/binder.js" />

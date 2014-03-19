@@ -15,12 +15,15 @@ requirejs.config({
     // dependencies
     'jquery': '../target/qunit/dependencies/js/external/jquery/jquery',
     'aui-atlassian': '../target/qunit/dependencies/js/atlassian/atlassian',
+    'aui-soy': 'http://cdnjs.cloudflare.com/ajax/libs/aui/5.4.3/aui-next/js/aui-soy',
     // host side
     'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
     'iframe/host/_status_helper': '../src/main/resources/js/iframe/host/_status_helper',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'iframe/host/content': '../src/main/resources/js/iframe/host/content',
     'dialog/main': '../src/main/resources/js/dialog/main',
+    'dialog/button': '../src/main/resources/js/dialog/button',
+    'dialog/dialog-factory': '../src/main/resources/js/dialog/dialog-factory',
     'inline-dialog/main': '../src/main/resources/js/inline-dialog/main',
     'inline-dialog/simple': '../src/main/resources/js/inline-dialog/simple',
     'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
@@ -89,12 +92,26 @@ requirejs.config({
       deps: [
         'iframe/host/_dollar',
         'iframe/_ui-params',
-        'iframe/host/content'
+        'iframe/host/_status_helper',
+        'dialog/button',
+        'aui-soy'
+      ]
+    },
+    'dialog/button': {
+      deps: [
+      'iframe/host/_dollar'
+      ]
+    },
+    'dialog/dialog-factory': {
+      deps: [
+      'iframe/host/_dollar',
+      'dialog/main'
       ]
     },
     'confluence/macro/editor': {
         deps: [
-        'iframe/host/_dollar'
+        'iframe/host/_dollar',
+        'dialog/dialog-factory'
         ]
     },
     'messages/main': {

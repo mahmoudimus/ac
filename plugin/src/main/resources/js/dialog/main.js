@@ -1,4 +1,4 @@
-_AP.define("dialog/simple-dialog", ["_dollar", "_uri", "host/_status_helper", "dialog/button"], function($, uri, statusHelper, dialogButton) {
+_AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/button"], function($, uri, statusHelper, dialogButton) {
 
     var enc = encodeURIComponent;
     var $global = $(window);

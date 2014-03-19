@@ -1,4 +1,4 @@
-_AP.define("confluence/macro/editor", ["_dollar", "dialog/dialog-factory"], function($, dialogFactory) {
+_AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], function($, simpleDialog, uiParams) {
 
     var enc = encodeURIComponent;
 
@@ -42,8 +42,20 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/dialog-factory"], func
          */
         openCustomEditor: function(macroData, opts) {
             AJS.Rte.BookmarkManager.storeBookmark();
-
             openEditorMacroData = macroData.params;
+
+            function getIframeHtmlForMacro(url) {
+                return $.ajax(url, {
+                    data: {
+                        "data": JSON.stringify(openEditorMacroData), //XML DESCRIPTORS
+                        "width": "100%",
+                        "height": "100%",
+                        "raw": "true",
+                        "ui-params": uiParams.encode({dlg: 1})
+                    }
+                });
+            }
+
             saveMacro = function(updatedParameters) {
                 // Render the macro
                 var macroRenderRequest = {
@@ -61,27 +73,21 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/dialog-factory"], func
 
             var dialogOpts = {
                 header: macroData.params ? opts.editTitle : opts.insertTitle,
-                submitText: macroData.params ? "Save" : "Insert"
-            };
-
-            if (opts.width) {
-                dialogOpts.width = opts.width;
-            }
-            if (opts.height) {
-                dialogOpts.height = opts.height;
-            }
-
-            var url = opts.url;
-
-            var macroUrl = url.match(/\/servlet\/(ac|atlassian\-connect)\/([\w-]+)\/([\w-]+)/);
-            var dialogPageOptions = {
-                key: macroUrl[2],
-                moduleKey: macroUrl[3],
+                submitText: macroData.params ? "Save" : "Insert",
                 chrome: true,
-                uiParams: $.extend({}, macroData.params, { body: macroData.body })
+                ns: macroData.name,
+                width: opts.width || null,
+                height: opts.height || null
             };
 
-            dialogFactory(dialogPageOptions, dialogOpts);
+            simpleDialog.create(dialogOpts, false);
+
+            getIframeHtmlForMacro(opts.url).done(function(data){
+                var dialogHtml = $(data);
+                dialogHtml.addClass('ap-dialog-container');
+                $('.ap-dialog-container').replaceWith(dialogHtml);
+            });
+
         },
 
         /**

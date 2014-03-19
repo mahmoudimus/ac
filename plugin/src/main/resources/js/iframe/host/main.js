@@ -190,7 +190,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           });
         },
         closeDialog: function() {
-          _AP.require(["dialog/simple-dialog"], function(dialog) {
+          _AP.require(["dialog/main"], function(dialog) {
             // TODO: only allow closing from same plugin key?
             dialog.close();
           });

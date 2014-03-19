@@ -1,4 +1,4 @@
-_AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/content'], function($, dialog, hostContentUtilities) {
+_AP.define("dialog/dialog-factory", ["_dollar", "dialog/main", 'host/content'], function($, dialog, hostContentUtilities) {
     //might rename this, it opens a dialog by first working out the url (used for javascript opening a dialog).
     /**
     * opens a dialog by sending the add-on and module keys back to the server for signing.
@@ -13,6 +13,7 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
         module = {key: options.moduleKey};
 
         dialog.create({
+            id: options.id,
             ns: options.moduleKey,
             chrome: dialogOptions.chrome || options.chrome,
             header: dialogOptions.header,
@@ -27,7 +28,7 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/simple-dialog", 'host/co
 
         var uiParams = $.extend({dlg: 1}, options.uiParams);
 
-        if(dialogOptions.url){
+        if(options.url){
             promise = hostContentUtilities.getIframeHtmlForUrl(options.key, options.url, uiParams);
         } else {
             promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, module, uiParams);

@@ -1,4 +1,4 @@
-_AP.require(["dialog/simple-dialog", "host/content", "_uri", "dialog/dialog-factory"], function(simpleDialog, hostContentUtilities, uri, dialogFactory) {
+_AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], function(simpleDialog, hostContentUtilities, uri, dialogFactory) {
 
   /**
    * Binds all elements with the class "ap-dialog" to open dialogs.

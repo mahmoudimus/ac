@@ -12,7 +12,7 @@ _AP.define("dialog/button", ["_dollar"], function($) {
 
         this.setEnabled = function(enabled){
             //cannot disable a noDisable button
-            if(options.noDisable === true && this.isEnabled() === false){
+            if(options.noDisable === true){
                 return false;
             }
             this.$el.attr('aria-disabled', !enabled);
