@@ -8,6 +8,7 @@ import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
@@ -40,7 +41,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     protected abstract ModuleFactory createModuleFactory(Plugin plugin, DOMElement element, B bean);
 
     @Override
-    public XhtmlMacroModuleDescriptor createModuleDescriptor(Plugin plugin, B bean)
+    public XhtmlMacroModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, B bean)
     {
         DOMElement element = createDOMElement(plugin, bean);
         ModuleFactory moduleFactory = createModuleFactory(plugin, element, bean);

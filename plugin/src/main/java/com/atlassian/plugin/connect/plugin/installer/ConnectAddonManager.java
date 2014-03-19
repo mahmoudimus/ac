@@ -10,7 +10,6 @@ import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -19,7 +18,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataB
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
@@ -140,6 +138,16 @@ public class ConnectAddonManager
         this.sharedSecretService = sharedSecretService;
     }
 
+    public boolean hasDescriptor(String pluginKey)
+    {
+        return descriptorRegistry.hasDescriptor(pluginKey);    
+    }
+    
+    public Set<String> getAllAddonKeys()
+    {
+        return descriptorRegistry.getAllAddonKeys();
+    }
+    
     public ConnectAddonBean installConnectAddon(String jsonDescriptor) throws ConnectAddOnUserInitException
     {
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
@@ -202,21 +210,25 @@ public class ConnectAddonManager
         }
     }
 
-    public void disableConnectAddon(Plugin plugin) throws ConnectAddOnUserDisableException
+    public void disableConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
     {
-        String pluginKey = plugin.getKey();
         remotablePluginAccessorFactory.remove(pluginKey);
 
-        if (connectIdentifier.isConnectAddOn(plugin))
+        if (descriptorRegistry.hasDescriptor(pluginKey))
         {
             disableAddOnUser(pluginKey);
-            beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
+            beanToModuleRegistrar.unregisterDescriptorsForAddon(pluginKey);
 
             if (log.isDebugEnabled())
             {
                 log.debug("Disabled connect addon '" + pluginKey + "'");
             }
         }
+    }
+    
+    public boolean isAddonEnabled(String pluginKey)
+    {
+        return beanToModuleRegistrar.descriptorsAreRegistered(pluginKey);
     }
 
     public void uninstallConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
@@ -237,6 +249,17 @@ public class ConnectAddonManager
 
     }
 
+    public ConnectAddonBean getExistingAddon(String pluginKey)
+    {
+        if(!descriptorRegistry.hasDescriptor(pluginKey))
+        {
+            return null;
+        }
+        
+        String descriptor = descriptorRegistry.getDescriptor(pluginKey);
+        return connectAddonBeanFactory.fromJsonSkipValidation(descriptor);
+    }
+    
     private void uninstallConnectAddon(final String pluginKey, boolean sendEvent) throws ConnectAddOnUserDisableException
     {
 
@@ -258,7 +281,7 @@ public class ConnectAddonManager
                     }
                 }
 
-                beanToModuleRegistrar.unregisterDescriptorsForPlugin(addon);
+                beanToModuleRegistrar.unregisterDescriptorsForAddon(pluginKey);
                 connectApplinkManager.deleteAppLink(addon);
                 remotablePluginAccessorFactory.remove(pluginKey);
             }

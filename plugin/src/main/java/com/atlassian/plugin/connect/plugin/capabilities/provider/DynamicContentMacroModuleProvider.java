@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
@@ -37,7 +38,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     }
 
     @Override
-    protected ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, DynamicContentMacroModuleBean macroBean)
+    protected ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon,Plugin plugin, DynamicContentMacroModuleBean macroBean)
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(plugin.getKey())
@@ -50,6 +51,6 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
 
         iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), CONTENT_CLASSIFIER, renderStrategy);
 
-        return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(plugin, macroBean);
+        return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(addon, plugin, macroBean);
     }
 }

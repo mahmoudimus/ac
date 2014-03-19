@@ -68,8 +68,6 @@ public class DynamicDescriptorRegistration
      */
     public Registration registerDescriptors(final Plugin plugin, Iterable<DescriptorToRegister> descriptors)
     {
-        Bundle bundle = BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey());
-        BundleContext targetBundleContext = bundle.getBundleContext();
         final List<ServiceRegistration> registrations = newArrayList();
         for (DescriptorToRegister reg : descriptors)
         {
@@ -81,7 +79,7 @@ public class DynamicDescriptorRegistration
                 ((StateAware)existingDescriptor).disabled();
             }
             log.debug("Registering descriptor {}", descriptor.getClass().getName());
-            registrations.add(targetBundleContext.registerService(ModuleDescriptor.class.getName(),
+            registrations.add(bundleContext.registerService(ModuleDescriptor.class.getName(),
                     descriptor, null));
 
             if (reg.getI18nProperties() != null)

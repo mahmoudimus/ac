@@ -67,7 +67,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin plugin, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
     {
         List<ModuleDescriptor> modules = newArrayList();
         for (SpaceToolsTabModuleBean bean : beans)
@@ -87,7 +87,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
             for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
             {
-                modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemModuleBean));
+                modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, plugin, webItemModuleBean));
             }
         }
         return modules;

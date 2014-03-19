@@ -51,6 +51,7 @@ public class JiraWebitemModuleProviderTest
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private HttpServletRequest servletRequest;
+    private ConnectAddonBean addon;
 
     public JiraWebitemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
@@ -62,6 +63,7 @@ public class JiraWebitemModuleProviderTest
     @BeforeClass
     public void setup()
     {
+        this.addon = newConnectAddonBean().withKey("my-plugin").build();
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
         
@@ -93,7 +95,7 @@ public class JiraWebitemModuleProviderTest
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
             assertEquals(1, descriptors.size());
 

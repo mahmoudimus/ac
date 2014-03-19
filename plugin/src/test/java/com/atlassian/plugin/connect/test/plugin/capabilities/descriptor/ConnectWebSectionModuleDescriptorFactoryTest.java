@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
 import static org.hamcrest.CoreMatchers.is;
@@ -70,7 +71,7 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
                 .withConditions(new SingleConditionBeanBuilder().withCondition("unconditional").build())
                 .build();
 
-        descriptor = webSectionFactory.createModuleDescriptor(plugin, bean);
+        descriptor = webSectionFactory.createModuleDescriptor(newConnectAddonBean().withKey("my-awesome-plugin").build(), plugin, bean);
         descriptor.enabled();
     }
 

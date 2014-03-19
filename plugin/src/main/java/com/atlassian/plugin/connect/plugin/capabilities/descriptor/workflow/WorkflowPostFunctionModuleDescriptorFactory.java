@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow;
 
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
@@ -32,7 +33,7 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
     }
 
     @Override
-    public WorkflowFunctionModuleDescriptor createModuleDescriptor(Plugin plugin, WorkflowPostFunctionModuleBean bean)
+    public WorkflowFunctionModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, WorkflowPostFunctionModuleBean bean)
     {
         Element element = createDOMElement(bean);
         ConnectWorkflowFunctionModuleDescriptor moduleDescriptor = connectContainerUtil.createBean(ConnectWorkflowFunctionModuleDescriptor.class);

@@ -69,7 +69,7 @@ public class BeanToModuleRegistrarTest
     public void canRegisterAddOnWithNoWebHooks()
     {
         when(connectAddonBean.getModules()).thenReturn(new ModuleList());
-        beanToModuleRegistrar.registerDescriptorsForBeans(plugin, connectAddonBean);
+        beanToModuleRegistrar.registerDescriptorsForBeans(connectAddonBean);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class BeanToModuleRegistrarTest
         WebHookModuleBean webHookModuleBean = new WebHookModuleBeanBuilder().withEvent(EVENT_IN_SCOPES).build();
         when(moduleList.getWebhooks()).thenReturn(Arrays.asList(webHookModuleBean));
         when(connectAddonBean.getScopes()).thenReturn(new HashSet<ScopeName>(Arrays.asList(ScopeName.ADMIN)));
-        beanToModuleRegistrar.registerDescriptorsForBeans(plugin, connectAddonBean);
+        beanToModuleRegistrar.registerDescriptorsForBeans(connectAddonBean);
     }
 
 }

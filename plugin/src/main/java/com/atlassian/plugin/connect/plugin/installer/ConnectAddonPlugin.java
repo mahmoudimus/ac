@@ -3,10 +3,17 @@ package com.atlassian.plugin.connect.plugin.installer;
 import java.io.InputStream;
 import java.net.URL;
 
+import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.impl.AbstractPlugin;
 
 public class ConnectAddonPlugin extends AbstractPlugin
 {
+    private PluginState pluginState;
+
+    public ConnectAddonPlugin()
+    {
+        this.pluginState = PluginState.DISABLED;
+    }
 
     @Override
     public boolean isUninstallable()
@@ -20,6 +27,12 @@ public class ConnectAddonPlugin extends AbstractPlugin
         return false;
     }
 
+    @Override
+    public boolean isEnabledByDefault()
+    {
+        return true;
+    }
+    
     @Override
     public boolean isDynamicallyLoaded()
     {
@@ -48,5 +61,17 @@ public class ConnectAddonPlugin extends AbstractPlugin
     public InputStream getResourceAsStream(String name)
     {
         return null;
+    }
+
+    @Override
+    public void setPluginState(PluginState state)
+    {
+        this.pluginState = state;
+    }
+
+    @Override
+    public PluginState getPluginState()
+    {
+        return pluginState;
     }
 }

@@ -5,6 +5,7 @@ import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
@@ -17,6 +18,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -32,6 +34,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
 {
     protected Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     protected XhtmlMacroModuleDescriptor descriptor;
+    protected ConnectAddonBean addon = newConnectAddonBean().withKey("my-plugin").build();
 
     protected abstract XhtmlMacroModuleDescriptor createModuleDescriptorForTest();
 

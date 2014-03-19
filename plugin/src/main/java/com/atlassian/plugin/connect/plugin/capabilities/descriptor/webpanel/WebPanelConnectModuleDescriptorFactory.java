@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
@@ -30,7 +31,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     }
 
     @Override
-    public WebPanelModuleDescriptor createModuleDescriptor(Plugin plugin, WebPanelModuleBean bean)
+    public WebPanelModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, WebPanelModuleBean bean)
     {
         Element domElement = createDomElement(bean, bean.getKey(), plugin);
         final WebPanelModuleDescriptor descriptor = connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class);

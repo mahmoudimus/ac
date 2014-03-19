@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.testobjects;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorBase;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -79,5 +80,11 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
     public RemotablePluginAccessor get(Plugin plugin)
     {
         return get(plugin.getKey());
+    }
+
+    @Override
+    public RemotablePluginAccessor get(ConnectAddonBean addon)
+    {
+        return get(addon.getKey());
     }
 }

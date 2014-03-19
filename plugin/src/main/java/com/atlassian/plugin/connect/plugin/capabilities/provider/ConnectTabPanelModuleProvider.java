@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.*;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -58,7 +59,7 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName,
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin plugin, String jsonFieldName,
                                                  List<ConnectTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();

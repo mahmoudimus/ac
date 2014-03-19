@@ -4,6 +4,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -50,16 +51,16 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
     }
 
-    protected abstract ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, T macroBean);
+    protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon, Plugin plugin, T macroBean);
 
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<T> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin plugin, String jsonFieldName, List<T> beans)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
         MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(plugin.getKey());
 
         for (T bean : beans)
         {
-            moduleDescriptors.addAll(createModuleDescriptors(plugin, bean));
+            moduleDescriptors.addAll(createModuleDescriptors(addon, plugin, bean));
             i18nBuilder.add(bean);
         }
 
@@ -68,18 +69,18 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         return moduleDescriptors;
     }
 
-    protected List<ModuleDescriptor> createModuleDescriptors(Plugin plugin, T macroBean)
+    protected List<ModuleDescriptor> createModuleDescriptors(ConnectAddonBean addon, Plugin plugin, T macroBean)
     {
         List<ModuleDescriptor> descriptors = newArrayList();
 
         // The actual Macro module descriptor
-        descriptors.add(createMacroModuleDescriptor(plugin, macroBean));
+        descriptors.add(createMacroModuleDescriptor(addon, plugin, macroBean));
 
         // Add a web item if the Macro is featured
         if (macroBean.isFeatured())
         {
             WebItemModuleBean featuredWebItem = createFeaturedWebItem(plugin, macroBean);
-            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, featuredWebItem));
+            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, plugin, featuredWebItem));
 
             // Add a featured icon web resource
             if (macroBean.hasIcon())

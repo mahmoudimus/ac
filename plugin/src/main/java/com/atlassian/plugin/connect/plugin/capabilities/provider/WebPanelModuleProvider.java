@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -32,7 +33,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<WebPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin plugin, String jsonFieldName, List<WebPanelModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
@@ -50,17 +51,17 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
             iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
 
             // construct a module descriptor that will supply a web panel to the product
-            descriptors.addAll(beanToDescriptors(plugin, bean));
+            descriptors.addAll(beanToDescriptors(addon, plugin, bean));
         }
 
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, WebPanelModuleBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectAddonBean addon,Plugin plugin, WebPanelModuleBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        descriptors.add(webPanelFactory.createModuleDescriptor(plugin, bean));
+        descriptors.add(webPanelFactory.createModuleDescriptor(addon, plugin, bean));
 
         return descriptors;
     }

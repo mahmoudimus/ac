@@ -5,6 +5,7 @@ import java.util.List;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -48,7 +49,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin plugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
@@ -65,8 +66,8 @@ public class ConnectProjectAdminTabPanelModuleProvider
                     .withConditions(bean.getConditions())
                     .build();
 
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemModuleBean,
-                    IsProjectAdminCondition.class));
+            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, plugin,
+                    webItemModuleBean, IsProjectAdminCondition.class));
 
             // register a render strategy for the servlet backing our iframe tab
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()

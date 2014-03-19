@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
@@ -25,7 +26,7 @@ public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescr
     }
 
     @Override
-    public WebHookModuleDescriptor createModuleDescriptor(Plugin plugin, WebHookModuleBean bean)
+    public WebHookModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, WebHookModuleBean bean)
     {
         Element webhookElement = new DOMElement("webhook");
 

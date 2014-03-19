@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptor;
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptorImpl;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
@@ -26,7 +27,7 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
     }
 
     @Override
-    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(Plugin plugin, EntityPropertyModuleBean bean)
+    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, EntityPropertyModuleBean bean)
     {
         Element indexDocumentConfiguration = new DOMElement(DESCRIPTOR_NAME);
 

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -41,8 +42,8 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName,
-            List<ConnectPageModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin plugin, String jsonFieldName,
+                                                 List<ConnectPageModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
@@ -91,7 +92,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                         .withConditions(bean.getConditions())
                         .build();
 
-                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemBean, getConditionClasses()));
+                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, plugin, webItemBean, getConditionClasses()));
             }
         }
 

@@ -174,7 +174,7 @@ public class ConnectAddonBean extends BaseModuleBean
         this.scopes = new HashSet<String>();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
-        this.enableLicensing = null;
+        this.enableLicensing = new Boolean(false);
     }
 
     public ConnectAddonBean(ConnectAddonBeanBuilder builder)
@@ -232,6 +232,11 @@ public class ConnectAddonBean extends BaseModuleBean
         if (null == authentication)
         {
             this.authentication = newAuthenticationBean().build();
+        }
+        
+        if(null == enableLicensing)
+        {
+            enableLicensing = new Boolean(false);
         }
     }
 

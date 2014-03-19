@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.plugin.module.websection.ProductSpecificWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;
@@ -31,7 +32,7 @@ public class ConnectWebSectionModuleDescriptorFactory implements ConnectModuleDe
     }
 
     @Override
-    public WebSectionModuleDescriptor createModuleDescriptor(Plugin plugin, WebSectionModuleBean bean)
+    public WebSectionModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, WebSectionModuleBean bean)
     {
         Element webSectionElement = new DOMElement("web-section");
 

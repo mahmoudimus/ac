@@ -76,7 +76,7 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     {
         if (!Strings.isNullOrEmpty(addon.getLifecycle().getInstalled()))
         {
-            connectAddonManager.publishInstalledEvent(plugin, addon, sharedSecret);
+            //connectAddonManager.publishInstalledEvent(plugin, addon, sharedSecret);
         }
     }
 
@@ -91,88 +91,88 @@ public class ConnectMirrorPluginEventHandler implements InitializingBean, Dispos
     @SuppressWarnings("unused")
     public void pluginEnabled(PluginEnabledEvent pluginEnabledEvent) throws ConnectAddOnUserInitException, IOException
     {
-        final Plugin plugin = pluginEnabledEvent.getPlugin();
-
-        if (isTheConnectPlugin(plugin))
-        {
-            
-            this.connectPluginFullyEnabled.set(true);
-            return;
-        }
-
-        /*
-         Workaround for PLUGDEV-38. At this point the addon is marked as enabled, but we need it's state to be disabled so we
-         get the enabled event again for the addon after connect is fully enabled
-         */
-        if (connectIdentifier.isConnectAddOn(plugin) && !connectPluginFullyEnabled.get() && PluginState.ENABLED.equals(plugin.getPluginState()))
-        {
-            setPluginState(plugin, PluginState.DISABLED);
-            return;
-        }
-
-        if (!connectPluginFullyEnabled.get())
-        {
-            return;
-        }
-
-        connectAddonManager.enableConnectAddon(plugin);
+//        final Plugin plugin = pluginEnabledEvent.getPlugin();
+//
+//        if (isTheConnectPlugin(plugin))
+//        {
+//            
+//            this.connectPluginFullyEnabled.set(true);
+//            return;
+//        }
+//
+//        /*
+//         Workaround for PLUGDEV-38. At this point the addon is marked as enabled, but we need it's state to be disabled so we
+//         get the enabled event again for the addon after connect is fully enabled
+//         */
+//        if (connectIdentifier.isConnectAddOn(plugin) && !connectPluginFullyEnabled.get() && PluginState.ENABLED.equals(plugin.getPluginState()))
+//        {
+//            setPluginState(plugin, PluginState.DISABLED);
+//            return;
+//        }
+//
+//        if (!connectPluginFullyEnabled.get())
+//        {
+//            return;
+//        }
+//
+//        connectAddonManager.enableConnectAddon(plugin);
     }
 
     @PluginEventListener
     @SuppressWarnings("unused")
     public void onPluginModuleEnabled(PluginModuleEnabledEvent event) throws IOException
     {
-        if (!connectPluginFullyEnabled.get())
-        {
-            return;
-        }
-
-        //Instances of remotablePluginAccessor are only meant to be used for the current operation and should not be cached across operations.
-        remotablePluginAccessorFactory.remove(event.getModule().getPluginKey());
+//        if (!connectPluginFullyEnabled.get())
+//        {
+//            return;
+//        }
+//
+//        //Instances of remotablePluginAccessor are only meant to be used for the current operation and should not be cached across operations.
+//        remotablePluginAccessorFactory.remove(event.getModule().getPluginKey());
     }
 
     @PluginEventListener
     @SuppressWarnings("unused")
     public void beforePluginDisabled(BeforePluginDisabledEvent beforePluginDisabledEvent)
     {
-        final Plugin plugin = beforePluginDisabledEvent.getPlugin();
-
-        if (isTheConnectPlugin(plugin))
-        {
-            this.connectPluginFullyEnabled.set(false);
-        }
-
-        if (connectIdentifier.isConnectAddOn(plugin))
-        {
-            //we need to publish the disabled event to the remote addon BEFORE we actually do the disable
-            // so that the webhook modules that actually make the call are still available
-            connectAddonManager.publishDisabledEvent(plugin.getKey());
-        }
+//        final Plugin plugin = beforePluginDisabledEvent.getPlugin();
+//
+//        if (isTheConnectPlugin(plugin))
+//        {
+//            this.connectPluginFullyEnabled.set(false);
+//        }
+//
+//        if (connectIdentifier.isConnectAddOn(plugin))
+//        {
+//            //we need to publish the disabled event to the remote addon BEFORE we actually do the disable
+//            // so that the webhook modules that actually make the call are still available
+//            connectAddonManager.publishDisabledEvent(plugin.getKey());
+//        }
     }
 
     @PluginEventListener
     @SuppressWarnings("unused")
     public void pluginDisabled(PluginDisabledEvent pluginDisabledEvent) throws ConnectAddOnUserDisableException, IOException
     {
-        final Plugin plugin = pluginDisabledEvent.getPlugin();
-
-        if (connectIdentifier.isConnectAddOn(plugin))
-        {
-            connectAddonManager.disableConnectAddon(plugin);
-        }
-
-        // TODO remove this once we remove support for XML desciptors
-        // ACDEV-886 -- unregister for ALL addons, as some XML descriptors register strategies
-        iFrameRenderStrategyRegistry.unregisterAll(plugin.getKey());
+//        final Plugin plugin = pluginDisabledEvent.getPlugin();
+//
+//        if (connectIdentifier.isConnectAddOn(plugin))
+//        {
+//            connectAddonManager.disableConnectAddon(plugin);
+//        }
+//
+//        // TODO remove this once we remove support for XML desciptors
+//        // ACDEV-886 -- unregister for ALL addons, as some XML descriptors register strategies
+//        iFrameRenderStrategyRegistry.unregisterAll(plugin.getKey());
     }
 
     @PluginEventListener
     @SuppressWarnings("unused")
     public void pluginUninstalled(PluginUninstalledEvent pluginUninstalledEvent) throws ConnectAddOnUserDisableException, IOException
     {
-        final Plugin plugin = pluginUninstalledEvent.getPlugin();
-
-        connectAddonManager.uninstallConnectAddon(plugin);
+//        final Plugin plugin = pluginUninstalledEvent.getPlugin();
+//
+//        connectAddonManager.uninstallConnectAddon(plugin);
     }
 
     private void setPluginState(Plugin plugin, PluginState state)

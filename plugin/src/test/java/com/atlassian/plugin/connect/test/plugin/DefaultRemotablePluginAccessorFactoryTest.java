@@ -13,6 +13,7 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.*;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
@@ -58,6 +59,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     @Mock private JwtService jwtService;
     @Mock private ConsumerService consumerService;
     @Mock private UserManager userManager;
+    @Mock private ConnectAddonBeanFactory connectAddonBeanFactory;
 
     private DefaultRemotablePluginAccessorFactory factory;
 

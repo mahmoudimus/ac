@@ -8,6 +8,7 @@ import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFact
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -29,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -64,9 +66,12 @@ public class SearchRequestViewModuleDescriptorFactoryTest
 
     private SearchRequestViewModuleDescriptorImpl descriptor;
 
+    private ConnectAddonBean addon;
+
     @Before
     public void beforeEachTest() throws Exception
     {
+        this.addon = newConnectAddonBean().withKey("my-plugin").build();
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.<UserLoggedInCondition>loadClass(eq("com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"), any(Class.class)))
                 .thenReturn(UserLoggedInCondition.class);
@@ -101,7 +106,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                         newSingleConditionBean().withCondition("user_is_logged_in").build())
                 .build();
 
-        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(plugin, bean);
+        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(addon, plugin, bean);
         this.descriptor.enabled();
     }
 

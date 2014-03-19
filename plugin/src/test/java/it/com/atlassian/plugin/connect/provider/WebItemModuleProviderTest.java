@@ -50,6 +50,7 @@ public class WebItemModuleProviderTest
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private HttpServletRequest servletRequest;
+    private ConnectAddonBean addon;
 
     public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller,
                                      TestAuthenticator testAuthenticator)
@@ -62,6 +63,7 @@ public class WebItemModuleProviderTest
     @BeforeClass
     public void setup()
     {
+        this.addon = newConnectAddonBean().withKey(PLUGIN_KEY).build();
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
     }
@@ -83,7 +85,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -105,7 +107,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -127,7 +129,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -149,7 +151,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -209,7 +211,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -243,7 +245,7 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
             assertEquals(1, descriptors.size());
 
@@ -293,7 +295,7 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
             assertEquals(1, descriptors.size());
 
@@ -344,7 +346,7 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean, bean2));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean, bean2));
 
             assertEquals(2, descriptors.size());
 

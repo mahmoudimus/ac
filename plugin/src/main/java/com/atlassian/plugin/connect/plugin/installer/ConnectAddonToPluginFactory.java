@@ -4,6 +4,7 @@ import javax.inject.Named;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
+import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
@@ -19,37 +20,44 @@ public class ConnectAddonToPluginFactory
 
     public Plugin create(ConnectAddonBean addon)
     {
-        Plugin plugin  = new ConnectAddonPlugin();
+        return create(addon,PluginState.DISABLED);
+    }
+
+    public Plugin create(ConnectAddonBean addon, PluginState state)
+    {
+        ConnectAddonPlugin plugin = new ConnectAddonPlugin();
         plugin.setKey(addon.getKey());
         plugin.setName(addon.getName());
         plugin.setPluginsVersion(3);
+        plugin.setPluginState(state);
         plugin.setPluginInformation(createPluginInfo(addon));
         
+
         return plugin;
     }
 
     private PluginInformation createPluginInfo(ConnectAddonBean addon)
     {
-        PluginInformation pluginInfo = createPluginInfo(addon);
+        PluginInformation pluginInfo = new PluginInformation();
         pluginInfo.setDescription(addon.getDescription());
         pluginInfo.setVendorName(addon.getVendor().getName());
         pluginInfo.setVendorUrl(addon.getVendor().getUrl());
         pluginInfo.setVersion(addon.getVersion());
-        
-        
-        pluginInfo.getParameters().put(ATLASSIAN_CONNECT_INFO_PARAM,"true");
-        
-        if(addon.getEnableLicensing())
+
+
+        pluginInfo.addParameter(ATLASSIAN_CONNECT_INFO_PARAM, "true");
+
+        if (addon.getEnableLicensing())
         {
-            pluginInfo.getParameters().put(ATLASSIAN_LICENSING_ENABLED,"true");
+            pluginInfo.addParameter(ATLASSIAN_LICENSING_ENABLED, "true");
         }
 
         ConnectPageModuleBean configurePage = addon.getModules().getConfigurePage();
-        if(null != configurePage && !Strings.isNullOrEmpty(configurePage.getUrl()))
+        if (null != configurePage && !Strings.isNullOrEmpty(configurePage.getUrl()))
         {
-            pluginInfo.getParameters().put(CONFIGURE_URL, ConnectIFrameServlet.iFrameServletPath(addon.getKey(), configurePage.getKey()));
+            pluginInfo.addParameter(CONFIGURE_URL, ConnectIFrameServlet.iFrameServletPath(addon.getKey(), configurePage.getKey()));
         }
-        
+
         return pluginInfo;
     }
 }

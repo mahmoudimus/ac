@@ -1,9 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.io.File;
-import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,6 +11,7 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
 
 @Named
 @ExportAsDevService
@@ -25,44 +23,45 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private static final String CONNECT_USER_PREFIX = "ac.user.";
     private static final String CONNECT_AUTH_PREFIX = "ac.auth.";
 
+    private static final String CONNECT_ADDONS_KEY = "ac.addons";
+
     private final PluginSettingsFactory pluginSettingsFactory;
-    private File pluginsToEnableFile;
-    private final Charset utf8;
 
     @Inject
     public DefaultConnectAddonRegistry(PluginSettingsFactory pluginSettingsFactory)
     {
         this.pluginSettingsFactory = pluginSettingsFactory;
-        this.utf8 = Charset.forName("UTF-8");
     }
 
     @Override
     public void removeAll(String pluginKey)
     {
-        PluginSettings settings = settings();
-        settings.remove(key(CONNECT_DESCRIPTOR_PREFIX, pluginKey));
-        settings.remove(key(CONNECT_BASEURL_PREFIX, pluginKey));
-        settings.remove(key(CONNECT_SECRET_PREFIX, pluginKey));
-        settings.remove(key(CONNECT_USER_PREFIX, pluginKey));
-        settings.remove(key(CONNECT_AUTH_PREFIX, pluginKey));
+        Map<String,String> addons = getAddonMap();
+        
+        if(addons.containsKey(pluginKey))
+        {
+            addons.remove(pluginKey);
+        }
+        
+        settings().put(CONNECT_ADDONS_KEY,addons);
     }
 
     @Override
     public void storeDescriptor(String pluginKey, String json)
     {
-        settings().put(key(CONNECT_DESCRIPTOR_PREFIX, pluginKey), json);
+        storeAddonSettings(pluginKey,getAddonSettings(pluginKey).setDescriptor(json));
     }
 
     @Override
     public void removeDescriptor(String pluginKey)
     {
-        settings().remove(key(CONNECT_DESCRIPTOR_PREFIX, pluginKey));
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setDescriptor(""));
     }
 
     @Override
     public String getDescriptor(String pluginKey)
     {
-        return get(key(CONNECT_DESCRIPTOR_PREFIX, pluginKey));
+        return getAddonSettings(pluginKey).getDescriptor();
     }
 
     @Override
@@ -74,19 +73,19 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void storeBaseUrl(String pluginKey, String url)
     {
-        settings().put(key(CONNECT_BASEURL_PREFIX, pluginKey), url);
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setBaseUrl(url));
     }
 
     @Override
     public void removeBaseUrl(String pluginKey)
     {
-        settings().remove(key(CONNECT_BASEURL_PREFIX, pluginKey));
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setBaseUrl(""));
     }
 
     @Override
     public String getBaseUrl(String pluginKey)
     {
-        return get(key(CONNECT_BASEURL_PREFIX, pluginKey));
+        return getAddonSettings(pluginKey).getBaseUrl();
     }
 
     @Override
@@ -98,19 +97,19 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void storeSecret(String pluginKey, String secret)
     {
-        settings().put(key(CONNECT_SECRET_PREFIX, pluginKey), secret);
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setSecret(secret));
     }
 
     @Override
     public void removeSecret(String pluginKey)
     {
-        settings().remove(key(CONNECT_SECRET_PREFIX, pluginKey));
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setSecret(""));
     }
 
     @Override
     public String getSecret(String pluginKey)
     {
-        return get(key(CONNECT_SECRET_PREFIX, pluginKey));
+        return getAddonSettings(pluginKey).getSecret();
     }
 
     @Override
@@ -122,19 +121,19 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void storeUserKey(String pluginKey, String userKey)
     {
-        settings().put(key(CONNECT_USER_PREFIX, pluginKey), userKey);
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUser(userKey));
     }
 
     @Override
     public void removeUserKey(String pluginKey)
     {
-        settings().remove(key(CONNECT_USER_PREFIX, pluginKey));
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUser(""));
     }
 
     @Override
     public String getUserKey(String pluginKey)
     {
-        return get(key(CONNECT_USER_PREFIX, pluginKey));
+        return getAddonSettings(pluginKey).getUser();
     }
 
     @Override
@@ -146,25 +145,31 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void storeAuthType(String pluginKey, AuthenticationType type)
     {
-        settings().put(key(CONNECT_AUTH_PREFIX, pluginKey), type.name());
+        storeAddonSettings(pluginKey,getAddonSettings(pluginKey).setAuth(type.name()));
     }
 
     @Override
     public void removeAuthType(String pluginKey)
     {
-        settings().remove(key(CONNECT_AUTH_PREFIX, pluginKey));
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setAuth(""));
     }
 
     @Override
     public AuthenticationType getAuthType(String pluginKey)
     {
-        return AuthenticationType.valueOf(get(key(CONNECT_AUTH_PREFIX, pluginKey)));
+        return AuthenticationType.valueOf(getAddonSettings(pluginKey).getAuth());
     }
 
     @Override
     public boolean hasAuthType(String pluginKey)
     {
-        return has(get(key(CONNECT_AUTH_PREFIX, pluginKey)));
+        return has(getAddonSettings(pluginKey).getAuth());
+    }
+
+    @Override
+    public Set<String> getAllAddonKeys()
+    {
+        return getAddonMap().keySet();
     }
 
     private boolean has(String value)
@@ -172,9 +177,41 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         return !Strings.isNullOrEmpty(value);
     }
 
-    private String get(String key)
+    private void storeAddonSettings(String pluginKey, AddonSettings addonSettings)
     {
-        return Strings.nullToEmpty((String) settings().get(key));
+        Map<String,String> addons = getAddonMap();
+        
+        String settingsToStore = new Gson().toJson(addonSettings);
+        
+        addons.put(pluginKey,settingsToStore);
+        
+        settings().put(CONNECT_ADDONS_KEY,addons);
+    }
+    
+    private AddonSettings getAddonSettings(String pluginKey)
+    {
+        AddonSettings addonsettings = new AddonSettings();
+        
+        Map<String,String> addons = (Map<String,String>) settings().get(CONNECT_ADDONS_KEY);
+        
+        if(null != addons && addons.containsKey(pluginKey))
+        {
+            addonsettings = new Gson().fromJson(addons.get(pluginKey),AddonSettings.class);
+        }
+        
+        return addonsettings;
+    }
+
+    private Map<String,String> getAddonMap()
+    {
+        Map<String,String> addons = (Map<String,String>) settings().get(CONNECT_ADDONS_KEY);
+
+        if(null == addons)
+        {
+            addons = new HashMap<String, String>();
+        }
+
+        return addons;
     }
 
     private PluginSettings settings()

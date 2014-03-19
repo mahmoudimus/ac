@@ -96,7 +96,7 @@ public class ConfluenceWebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installPlugin(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
             assertEquals(1, descriptors.size());
 
