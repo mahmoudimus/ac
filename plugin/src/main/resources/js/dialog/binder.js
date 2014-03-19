@@ -37,7 +37,7 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
 
                 //default chrome to be false for backwards compatability with webitems
                 if(options.chrome === undefined || options.chrome === ""){
-                  options.chrome = false;
+                  options.chrome = true;
                 }
 
                 simpleDialog.create(options);
