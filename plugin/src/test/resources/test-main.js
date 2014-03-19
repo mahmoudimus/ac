@@ -111,7 +111,7 @@ requirejs.config({
     'confluence/macro/editor': {
         deps: [
         'iframe/host/_dollar',
-        'dialog/dialog-factory'
+        'dialog/main'
         ]
     },
     'messages/main': {

@@ -45,14 +45,15 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
             openEditorMacroData = macroData.params;
 
             function getIframeHtmlForMacro(url) {
-                return $.ajax(url, {
-                    data: {
-                        "data": JSON.stringify(openEditorMacroData), //XML DESCRIPTORS
+                var data = {
                         "width": "100%",
                         "height": "100%",
                         "raw": "true",
                         "ui-params": uiParams.encode({dlg: 1})
-                    }
+                    };
+                $.extend(data, openEditorMacroData);
+                return $.ajax(url, {
+                    data: data
                 });
             }
 
