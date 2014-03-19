@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var downloader = require('./download-descriptors'),
     xml2js = require('xml2js'),
     _ = require('lodash'),
@@ -33,10 +35,10 @@ downloader.run({
             });
         }
 
-        conditions = _.flatten(conditions);
+        conditions = _.uniq(_.flatten(conditions));
 
         if (conditions.length) {
-            console.log(addonKey + " : " + util.inspect(conditions, { depth: 5, colors: true }));
+            console.log(addonKey + " : " + util.inspect(conditions, { colors: true }));
         }
     }
 });

@@ -385,7 +385,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       AJS.toInit(function(){
         // Load after confluence editor has finished loading content.
         if(AJS.Confluence && AJS.Confluence.EditorLoader && AJS.Confluence.EditorLoader.load){
-          AJS.Confluence.EditorLoader.load(doCreate);
+         
+          /*
+          NOTE: for some reason, the confluence EditorLoader will 404 sometimes on create page.
+          Because of this, we need to pass our create function as both the success and error callback so we always get called
+           */
+          AJS.Confluence.EditorLoader.load(doCreate,doCreate);
         } else {
           doCreate();
         }

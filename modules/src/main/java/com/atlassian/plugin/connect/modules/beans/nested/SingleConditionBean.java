@@ -5,7 +5,6 @@ import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.BeanWithParams;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
-
 import com.google.common.base.Objects;
 
 /**

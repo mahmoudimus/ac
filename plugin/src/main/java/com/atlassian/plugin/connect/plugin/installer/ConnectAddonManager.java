@@ -1,14 +1,5 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.UnknownHostException;
-import java.util.Collections;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
@@ -32,6 +23,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
@@ -45,19 +39,28 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
-
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.List;
+
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Arrays.asList;
 
 /**
  * The ConnectAddonManager handles all the stuff that needs to happen when an addon is enabled/disabled.
@@ -73,6 +76,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class ConnectAddonManager
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectAddonManager.class);
+    private static final String HTTP_ERROR_I18N_KEY_PREFIX = "connect.install.error.remote.host.bad.response.";
+    private static final List<Integer> OK_INSTALL_HTTP_CODES = asList(200, 201, 204);
 
     public static final String USER_KEY = "user_key";
 
@@ -100,7 +105,13 @@ public class ConnectAddonManager
     private final I18nResolver i18nResolver;
 
     @Inject
-    public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager, RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient, JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry, BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService, EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties, LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext, JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver)
+    public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient,
+            JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry descriptorRegistry,
+            BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
+            EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
+            LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
+            JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -135,7 +146,7 @@ public class ConnectAddonManager
             if (null != addon)
             {
                 beanToModuleRegistrar.registerDescriptorsForBeans(plugin, addon);
-                enableAddOnUser(pluginKey);
+                enableAddOnUser(addon);
                 publishEnabledEvent(pluginKey);
 
                 if (log.isDebugEnabled())
@@ -248,10 +259,10 @@ public class ConnectAddonManager
         connectAddOnUserService.disableAddonUser(addOnKey);
     }
 
-    private void enableAddOnUser(String addOnKey) throws ConnectAddOnUserInitException
+    private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
-        String userKey = connectAddOnUserService.getOrCreateUserKey(addOnKey);
-        ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
+        String userKey = connectAddOnUserService.getOrCreateUserKey(addon.getKey(), addon.getName());
+        ApplicationLink applicationLink = jwtApplinkFinder.find(addon.getKey());
 
         if (null != applicationLink)
         {
@@ -259,7 +270,7 @@ public class ConnectAddonManager
         }
         else
         {
-            log.error("Unable to set the ApplicationLink user key property for add-on '{}' because the add-on has no ApplicationLink!", addOnKey);
+            log.error("Unable to set the ApplicationLink user key property for add-on '{}' because the add-on has no ApplicationLink!", addon.getKey());
         }
     }
 
@@ -302,18 +313,20 @@ public class ConnectAddonManager
             }
 
             Response response = request.execute(Request.Method.POST).claim();
-            int statusCode = response.getStatusCode();
-            if (statusCode != 200 && statusCode != 204)
+            final int statusCode = response.getStatusCode();
+
+            // a selection of 2xx response codes both indicate success and are semantically valid for this callback
+            if (!OK_INSTALL_HTTP_CODES.contains(statusCode))
             {
                 String statusText = response.getStatusText();
-                log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]");
+                final String responseEntity = response.getEntity(); // calling response.getEntity() multiple times results in IllegalStateException("Entity may only be accessed once")
+                log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]:" + responseEntity);
 
-                String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]";
+                String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]:" + responseEntity;
                 switch (handler)
                 {
                     case INSTALLED:
-                        String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.response", statusCode);
-                        throw new PluginInstallException(handler.name() + ": " + message, Option.some(i18nMessage));
+                        throw new PluginInstallException(handler.name() + ": " + message, Option.some(findI18nKeyForHttpErrorCode(statusCode)));
                     case UNINSTALLED:
                         throw new PluginException(handler.name() + ": " + message);
                 }
@@ -356,6 +369,22 @@ public class ConnectAddonManager
                     throw new PluginException(handler.name() + ": " + message);
             }
         }
+    }
+
+    private String findI18nKeyForHttpErrorCode(final int responseCode)
+    {
+        String i18nKey = HTTP_ERROR_I18N_KEY_PREFIX + responseCode;
+        final String i18nText = i18nResolver.getRawText(i18nKey);
+
+        // the I18nResolver javadoc says that it will return the input key as the output raw text when the key is not found
+        // and we also check a couple of other obvious problems, just to be save
+        if (StringUtils.isEmpty(i18nText) || i18nKey.equals(i18nText))
+        {
+            // fall back to the generic i18n key if there's no i18n key for this HTTP code
+            i18nKey = "connect.remote.upm.install.exception";
+        }
+
+        return i18nKey;
     }
 
     private URI getURI(String url)
@@ -422,6 +451,7 @@ public class ConnectAddonManager
             UserProfile user = userManager.getRemoteUser();
             if (null != user)
             {
+                //noinspection deprecation
                 dataBuilder.withUserKey(user.getUserKey().getStringValue());
             }
 

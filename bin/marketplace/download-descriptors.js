@@ -1,71 +1,31 @@
 #!/usr/bin/env node
 
-var request = require('request'),
+var marketplace = require('./marketplace'),
+    request = require('request'),
     _ = require('lodash'),
     fs = require('fs'),
     extend = require('node.extend'),
-    nomnom = require('nomnom')
-    util = require('util');
+    colors = require('colors');
 
-var getAddonPage = function(opts) {
-    if (opts.debug) {
-        console.log("downloading: " + opts.baseUrl + opts.uri);
-        console.log(opts.user, opts.pass);
-    }
-    return request({
-        uri: opts.baseUrl + opts.uri,
-        method: "GET",
-        username: opts.user,
-        password: opts.pass,
-        json: true
-    }, function(error, response, body) {
-        if (error) {
-            console.log("Unable to retrieve marketplace add-ons", response, error);
-            return null;
-        } else {
-            var links = body.links,
-                addons = body.plugins;
-
-            var nextRequestLink = _.find(links, {
-                'rel': 'next',
-                'type': 'application/json'
-            }),
-                nextRequestUri = nextRequestLink ? nextRequestLink.href : null;
-
-            _.forEach(addons, function(addon) {
-                if (addon.isOldVersion) {
-                    return;
-                }
-
-                var name = addon.name,
-                    key = addon.pluginKey,
-                    version = addon.version;
-
-                if (version.pluginSystemVersion !== 'Three') {
-                    return;
-                }
-
-                var descriptorUrl = _.find(version.links, {
-                    'rel': 'descriptor'
-                }).href;
-
-                downloadDescriptor(opts, key, descriptorUrl);
-            });
-
-            console.log("next: " + nextRequestUri);
-            if ( !! nextRequestUri) {
-                var nextOpts = extend({}, opts);
-                nextOpts.uri = nextRequestUri;
-                getAddonPage(nextOpts);
-            }
+var downloadDestination = "descriptors/",
+    marketplaceOpts = {
+        marketplaceAddonCallback: function (addon, opts) {
+            var descriptorUrl = _.find(addon.version.links, {
+                'rel': 'descriptor'
+            }).href;
+            downloadDescriptor(opts, addon.pluginKey, addon, descriptorUrl);
         }
-    });
-};
+    };
 
-var downloadDescriptor = function(opts, addonKey, descriptorUrl) {
+if (!fs.existsSync(downloadDestination)) {
+    fs.mkdirSync(downloadDestination);
+}
+
+function downloadDescriptor(opts, addonKey, addon, descriptorUrl) {
     request({
         uri: descriptorUrl,
-        method: "GET"
+        method: "GET",
+        auth: opts.auth
     }, function(error, response, body) {
         if (error) {
             console.log("Unable to download descriptor for add-on", addonKey);
@@ -75,60 +35,32 @@ var downloadDescriptor = function(opts, addonKey, descriptorUrl) {
                 JSON.parse(body);
                 type = 'json';
             } catch (e) {}
-            var filename = "descriptors/" + addonKey + '-descriptor' + "." + type;
-            fs.writeFile(filename, body, function(err) {
-                if (err) {
-                    console.log("Unable to write descriptor for add-on " + addonKey + " to disk", err);
-                    return;
-                }
 
-                if (opts.debug) {
-                    console.log(type, '\t', filename);
-                }
+            if (!opts.type || opts.type === type) {
+                var filename = downloadDestination + addonKey + '-descriptor' + "." + type;
+                fs.writeFile(filename, body, function(err) {
+                    if (err) {
+                        console.log("Unable to write descriptor for add-on " + addonKey + " to disk", err);
+                        return;
+                    }
 
-                if (opts.descriptorDownloadedCallback) {
-                    opts.descriptorDownloadedCallback(addonKey, filename, type, body, opts);
-                }
-            });
+                    if (opts.descriptorDownloadedCallback) {
+                        opts.descriptorDownloadedCallback(addonKey, filename, type, body, opts);
+                    }
+                });
+            } else if (opts.debug) {
+                var t = "Ignored add-on " + addonKey + " (" + type + ")";
+                console.log(t.grey);
+            }
         }
     });
 }
 
-var getCliOpts = function() {
-    return nomnom
-        .option('debug', {
-            abbr: 'd',
-            flag: true,
-            help: 'Print debugging info'
-        })
-        .option('user', {
-            abbr: 'u',
-            help: 'Marketplace username'
-        })
-        .option('pass', {
-            abbr: 'p',
-            help: 'Marketplace password'
-        })
-        .parse();
-}
-
-var defaultOpts = {
-    baseUrl: "https://marketplace.atlassian.com",
-    uri: "/rest/1.0/plugins?hosting=ondemand&addOnType=three&includePrivate=true&limit=50",
-    downloadDestination: "descriptors/"
-}
-
 exports.run = function(runOpts) {
-    var opts = extend({}, defaultOpts);
+    var opts = extend({}, marketplaceOpts);
     opts = extend(opts, runOpts);
-    opts = extend(opts, getCliOpts());
-
-    if (!fs.existsSync(opts.downloadDestination)) {
-        fs.mkdirSync(opts.downloadDestination);
-    }
-
-    getAddonPage(opts);
-};
+    marketplace.run(opts);
+}
 
 if (require.main === module) {
     exports.run();

@@ -4,6 +4,7 @@ Connect security enables us to protect customer data from unauthorised access an
 thus allowing administrators to install and evaluate add-ons, and users to leverage installed add-ons in a secure manner.
 
 Connect's security goals are to
+
 * identify add-ons,
 * work out what each add-on can do,
 * accept allowed actions with minimal friction,

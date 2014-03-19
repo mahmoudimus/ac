@@ -6,8 +6,6 @@
 
     <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.plugin.connect.plugin.module.confluence.MacroVariableInjectorTransformer"/>
 
-    <web-panel key="bigPipeFooter" class="com.atlassian.plugin.connect.plugin.product.BigPipeFooter" location="atl.footer"/>
-
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

@@ -22,8 +22,19 @@ public class IconModuleFragmentFactory
 
     public DOMElement createFragment(String pluginKey, IconBean bean)
     {
-        URI url = pluginAccessorFactory.get(pluginKey).getTargetUrl(URI.create(bean.getUrl()));
-
+        URI url;
+        URI iconUri = URI.create(bean.getUrl());
+        
+        //if the url is absolute, just use it
+        if(iconUri.isAbsolute())
+        {
+            url = iconUri;
+        }
+        else
+        {
+            url = pluginAccessorFactory.get(pluginKey).getTargetUrl(iconUri);   
+        }
+        
         DOMElement element = new DOMElement("icon");
         element.addAttribute("width", Integer.toString(bean.getWidth()))
               .addAttribute("height", Integer.toString(bean.getHeight()))
