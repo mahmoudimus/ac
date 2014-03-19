@@ -1,6 +1,5 @@
 _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/button"], function($, uri, statusHelper, dialogButton) {
 
-    var enc = encodeURIComponent;
     var $global = $(window);
     var idSeq = 0;
     var $nexus;
@@ -110,8 +109,7 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
         */
         create: function(options, showLoadingIndicator) {
 
-            var hasClosed = false,
-                defaultOptions = {
+            var defaultOptions = {
                     // These options really _should_ be provided by the caller, or else the dialog is pretty pointless
                     width: "50%",
                     height: "50%"

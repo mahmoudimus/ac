@@ -17,6 +17,7 @@ _AP.define("dialog/button", ["_dollar"], function($) {
             }
             this.$el.attr('aria-disabled', !enabled);
         };
+
         this.setEnabled(true);
 
         this.click = function(listener){

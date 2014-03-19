@@ -10,7 +10,8 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/main", 'host/content'], 
     return function(options, dialogOptions, productContextJson) {
         var promise,
         container,
-        module = {key: options.moduleKey};
+        module = {key: options.moduleKey},
+        uiParams = $.extend({dlg: 1}, options.uiParams);
 
         dialog.create({
             id: options.id,
@@ -26,13 +27,12 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/main", 'host/content'], 
 
         container = AJS.$('.ap-dialog-container');
 
-        var uiParams = $.extend({dlg: 1}, options.uiParams);
-
         if(options.url){
             promise = hostContentUtilities.getIframeHtmlForUrl(options.key, options.url, uiParams);
         } else {
             promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, module, uiParams);
         }
+
         promise
           .done(function(data) {
             var dialogHtml = $(data);
