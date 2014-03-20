@@ -54,7 +54,6 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
             }
         }
 
-        // binder clicker
         $.each(buttons, function(i, button) {
             button.$el.click(function(){
                 handler(button);
@@ -98,8 +97,6 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
         * iframe. The iframe's content is retrieved from the Remotable Plugin via a redirect URl from the host Atlassian app,
         * which the request to the Remotable Plugin to be signed with outgoing OAuth credentials.
         *
-        * @param {String} contentUrl The URL (relative to the Atlassian app root) that will retrieve the content to display,
-        *           eg. "/plugins/servlet/atlassian-connect/app-key/macro".
         * @param {Object} options Options to configure the behaviour and appearance of the dialog.
         * @param {String} [options.header="Remotable Plugins Dialog Title"]  Dialog header.
         * @param {String} [options.headerClass="ap-dialog-header"] CSS class to apply to dialog header.

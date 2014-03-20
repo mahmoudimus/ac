@@ -24,24 +24,24 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
             return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
     }
 
-  // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
-  // Will be removed - plugins should pass key of the <dialog-page>, NOT the url.
-  // TODO: Remove this class when support for XML Descriptors goes away
-  function getIframeHtmlForUrl(pluginKey, remoteUrl, params) {
-    var contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
-    return $.ajax(contentUrl, {
-      dataType: "html",
-      data: {
-        "dialog": true,
-        "ui-params": UiParams.encode(params),
-        "plugin-key": pluginKey,
-        "remote-url": remoteUrl,
-        "width": "100%",
-        "height": "100%",
-        "raw": "true"
-      }
-    });
-  }
+    // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
+    // Will be removed - plugins should pass key of the <dialog-page>, NOT the url.
+    // TODO: Remove this class when support for XML Descriptors goes away
+    function getIframeHtmlForUrl(pluginKey, remoteUrl, params) {
+        var contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
+        return $.ajax(contentUrl, {
+            dataType: "html",
+            data: {
+                "dialog": true,
+                "ui-params": UiParams.encode(params),
+                "plugin-key": pluginKey,
+                "remote-url": remoteUrl,
+                "width": "100%",
+                "height": "100%",
+                "raw": "true"
+            }
+        });
+    }
 
 
     function getIframeHtmlForKey(pluginKey, productContextJson, capability, params) {
