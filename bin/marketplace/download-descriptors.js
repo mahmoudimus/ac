@@ -22,6 +22,9 @@ if (!fs.existsSync(downloadDestination)) {
 }
 
 function downloadDescriptor(opts, addonKey, addon, descriptorUrl) {
+    if (opts.preDescriptorDownloadedCallback) {
+        opts.preDescriptorDownloadedCallback(addonKey, addon, descriptorUrl, opts);
+    }
     request({
         uri: descriptorUrl,
         method: "GET",
