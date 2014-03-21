@@ -349,6 +349,14 @@
                                     <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
+
+                            <bundledArtifacts>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
+                            </bundledArtifacts>
                         </product>
                         <product>
                             <id>confluence</id>
@@ -398,6 +406,14 @@
                                     <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
+
+                            <bundledArtifacts>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
+                            </bundledArtifacts>
                         </product>
                     </products>
 
