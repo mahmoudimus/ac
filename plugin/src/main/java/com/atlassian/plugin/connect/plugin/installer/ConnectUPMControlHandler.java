@@ -101,7 +101,12 @@ public class ConnectUPMControlHandler implements PluginControlHandler
         
         for(String pluginKey : connectAddonManager.getAllAddonKeys())
         {
-            plugins.add(getPlugin(pluginKey));
+            Plugin plugin = getPlugin(pluginKey);
+            
+            if(null != plugin)
+            {
+                plugins.add(plugin);
+            }
         }
         
         return plugins;
