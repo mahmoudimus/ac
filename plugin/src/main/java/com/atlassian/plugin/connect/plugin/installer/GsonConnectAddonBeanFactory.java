@@ -75,8 +75,18 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     }
 
     @Override
-    public ConnectAddonBean fromJsonSkipValidation(final String jsonDescriptor)
+    public ConnectAddonBean fromJsonSkipValidation(final String jsonDescriptor) throws InvalidDescriptorException
     {
-        return ConnectModulesGsonFactory.getGson().fromJson(jsonDescriptor, ConnectAddonBean.class);
+        try
+        {
+            return ConnectModulesGsonFactory.getGson().fromJson(jsonDescriptor, ConnectAddonBean.class);
+        }
+        catch (Exception e)
+        {
+            String exceptionMessage = "Invalid connect descriptor: " + e.getMessage();
+            log.error(exceptionMessage);
+            String i18nMessage = i18nResolver.getText("connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
+            throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
+        }
     }
 }

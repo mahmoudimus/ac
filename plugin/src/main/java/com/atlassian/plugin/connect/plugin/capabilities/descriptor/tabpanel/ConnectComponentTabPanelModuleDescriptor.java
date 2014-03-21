@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel;
 import com.atlassian.jira.plugin.componentpanel.ComponentTabPanel;
 import com.atlassian.jira.plugin.componentpanel.ComponentTabPanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -12,10 +13,11 @@ import com.atlassian.plugin.module.ModuleFactory;
 /**
  * ModuleDescriptor for Connect component of a ComponentTabPanel
  */
-public class ConnectComponentTabPanelModuleDescriptor extends ComponentTabPanelModuleDescriptorImpl
+public class ConnectComponentTabPanelModuleDescriptor extends ComponentTabPanelModuleDescriptorImpl implements ConnectModuleDescriptor<ComponentTabPanel>
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final ModuleContextFilter moduleContextFilter;
+    private String addonKey;
 
     public ConnectComponentTabPanelModuleDescriptor(JiraAuthenticationContext authenticationContext,
             ModuleFactory moduleFactory,
@@ -30,8 +32,13 @@ public class ConnectComponentTabPanelModuleDescriptor extends ComponentTabPanelM
     @Override
     public ComponentTabPanel getModule()
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(getPluginKey(), getKey());
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, getKey());
         return new ConnectIFrameComponentTabPanel(renderStrategy, moduleContextFilter);
     }
 
+    @Override
+    public void setAddonKey(String addonKey)
+    {
+        this.addonKey = addonKey;
+    }
 }

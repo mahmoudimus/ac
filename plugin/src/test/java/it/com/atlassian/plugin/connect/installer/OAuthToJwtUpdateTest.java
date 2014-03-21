@@ -59,8 +59,8 @@ public class OAuthToJwtUpdateTest
         //you MUST login as admin before you can use the testPluginInstaler
         testAuthenticator.authenticateUser("admin");
         
-        oAuthPlugin = testPluginInstaller.installPlugin(oAuthAddOnBean);
-        jwtPlugin = testPluginInstaller.installPlugin(createJwtAddOn(oAuthAddOnBean));
+        oAuthPlugin = testPluginInstaller.installAddon(oAuthAddOnBean);
+        jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthAddOnBean));
         oAuthPlugin = null; // we get to this line of code only if installing the update works
     }
 
@@ -77,7 +77,7 @@ public class OAuthToJwtUpdateTest
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
             catch (IOException e)
             {

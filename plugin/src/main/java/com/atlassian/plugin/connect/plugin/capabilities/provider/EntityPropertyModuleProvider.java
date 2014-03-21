@@ -25,14 +25,14 @@ public class EntityPropertyModuleProvider implements ConnectModuleProvider<Entit
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectAddonBean addon, final Plugin plugin, final String jsonFieldName, final List<EntityPropertyModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectAddonBean addon, final Plugin theConnectPlugin, final String jsonFieldName, final List<EntityPropertyModuleBean> beans)
     {
         return Lists.transform(beans, new Function<EntityPropertyModuleBean, ModuleDescriptor>()
         {
             @Override
             public ModuleDescriptor apply(final EntityPropertyModuleBean bean)
             {
-                return descriptorFactory.createModuleDescriptor(addon, plugin, bean);
+                return descriptorFactory.createModuleDescriptor(addon, theConnectPlugin, bean);
             }
         });
     }

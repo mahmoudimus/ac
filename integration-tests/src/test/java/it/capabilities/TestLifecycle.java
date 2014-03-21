@@ -1,6 +1,5 @@
 package it.capabilities;
 
-import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectMirrorPluginEventHandler;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;

@@ -49,7 +49,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin plugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
@@ -59,19 +59,19 @@ public class ConnectProjectAdminTabPanelModuleProvider
             WebItemModuleBean webItemModuleBean = newWebItemBean()
                     .withName(bean.getName())
                     .withKey(bean.getKey())
-                    .withUrl(iFrameServletPath(plugin.getKey(), bean.getKey()))
+                    .withUrl(iFrameServletPath(addon.getKey(), bean.getKey()))
                     .withContext(AddOnUrlContext.page)
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())
                     .withConditions(bean.getConditions())
                     .build();
 
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, plugin,
+            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin,
                     webItemModuleBean, IsProjectAdminCondition.class));
 
             // register a render strategy for the servlet backing our iframe tab
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(plugin.getKey())
+                    .addOn(addon.getKey())
                     .module(bean.getKey())
                     .projectAdminTabTemplate()
                     .urlTemplate(bean.getUrl())
@@ -81,7 +81,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
                     .title(bean.getDisplayName())
                     .build();
 
-            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getKey(), renderStrategy);
         }
 
         return builder.build();

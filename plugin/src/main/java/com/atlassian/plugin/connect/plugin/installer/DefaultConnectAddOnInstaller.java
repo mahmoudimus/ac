@@ -79,18 +79,18 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     @Override
     public Plugin install(String username, String jsonDescriptor) throws PluginInstallException
     {
-        String pluginKey;
+        String pluginKey = null;
+        Plugin addonPluginWrapper = null;
+        ConnectAddonBean addOn = null;
+        
         long startTime = System.currentTimeMillis();
 
-        //until we ensure we no longer have xml or mirror plugins, we need to call removeOldPlugin, which is why we marshal here just to get the plugin key
-        pluginKey = connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptor).getKey();
-        removeOldPlugin(pluginKey);
-
-        Plugin addonPluginWrapper = null;
-
-        ConnectAddonBean addOn = null;
         try
         {
+            //until we ensure we no longer have xml or mirror plugins, we need to call removeOldPlugin, which is why we marshal here just to get the plugin key
+            pluginKey = connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptor).getKey();
+            removeOldPlugin(pluginKey);
+        
             addOn = connectAddonManager.installConnectAddon(jsonDescriptor);
             connectAddonManager.enableConnectAddon(addOn.getKey());
 
@@ -99,14 +99,22 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             addonPluginWrapper.enable();
 
         }
+        catch(PluginInstallException e)
+        {
+            if (null != pluginKey)
+            {
+                log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...", e);
+                connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
+            }
+            throw e;
+        }
         catch (Exception e)
         {
-            if (null != addOn)
+            if (null != pluginKey)
             {
-                log.error("An exception occurred while installing the plugin '[" + addOn.getKey() + "]. Uninstalling...", e);
-                connectAddonManager.uninstallConnectAddonQuietly(addOn.getKey());
+                log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...", e);
+                connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
             }
-
             throw new PluginInstallException(e.getMessage(), e);
         }
 
@@ -238,6 +246,10 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         if (plugin != null)
         {
             pluginController.uninstall(plugin);
+        }
+        else if(connectAddonManager.hasDescriptor(pluginKey))
+        {
+            connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
         }
         else
         {

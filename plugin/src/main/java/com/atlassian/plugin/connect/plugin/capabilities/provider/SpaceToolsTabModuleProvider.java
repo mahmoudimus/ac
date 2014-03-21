@@ -67,41 +67,41 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin plugin, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
     {
         List<ModuleDescriptor> modules = newArrayList();
         for (SpaceToolsTabModuleBean bean : beans)
         {
-            XWorkActionModuleBean actionBean = createActionBean(plugin, bean);
-            modules.add(xWorkActionDescriptorFactory.create(plugin, actionBean));
+            XWorkActionModuleBean actionBean = createActionBean(addon, bean);
+            modules.add(xWorkActionDescriptorFactory.create(addon, theConnectPlugin, actionBean));
 
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(plugin.getKey())
+                    .addOn(addon.getKey())
                     .module(bean.getKey())
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .build();
 
-            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getKey(), renderStrategy);
 
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
             for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
             {
-                modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, plugin, webItemModuleBean));
+                modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, webItemModuleBean));
             }
         }
         return modules;
     }
 
-    private XWorkActionModuleBean createActionBean(Plugin plugin, SpaceToolsTabModuleBean bean)
+    private XWorkActionModuleBean createActionBean(ConnectAddonBean addon, SpaceToolsTabModuleBean bean)
     {
         String spaceAdminLegacyKey = bean.getKey() + SPACE_ADMIN_KEY_SUFFIX;
-        SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(plugin.getKey(), bean.getKey(),
+        SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(addon.getKey(), bean.getKey(),
                 bean.getDisplayName(), spaceAdminLegacyKey);
 
         return newXWorkActionBean()
                 .withName(bean.getName())
-                .withNamespace("/plugins/atlassian-connect/" + plugin.getKey())
+                .withNamespace("/plugins/atlassian-connect/" + addon.getKey())
                 .withClazz(SpaceToolsIFrameAction.class)
                 .withParameter("context", spaceTabContext)
                 .withDefaultValidatingInterceptorStack()

@@ -37,7 +37,7 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin plugin, String jsonFieldName, List<WorkflowPostFunctionModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<WorkflowPostFunctionModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
@@ -46,29 +46,29 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
             // register render strategies for iframe workflow views
             if (bean.hasCreate())
             {
-                registerIFrameRenderStrategy(addon, plugin, bean, JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS, bean.getCreate());
+                registerIFrameRenderStrategy(addon, bean, JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS, bean.getCreate());
             }
             if (bean.hasEdit())
             {
-                registerIFrameRenderStrategy(addon, plugin, bean, JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS, bean.getEdit());
+                registerIFrameRenderStrategy(addon, bean, JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS, bean.getEdit());
             }
             if (bean.hasView())
             {
-                registerIFrameRenderStrategy(addon, plugin, bean, JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW, bean.getView());
+                registerIFrameRenderStrategy(addon, bean, JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW, bean.getView());
             }
 
-            descriptors.add(beanToDescriptor(addon, plugin, bean));
+            descriptors.add(beanToDescriptor(addon, theConnectPlugin, bean));
         }
 
         return descriptors;
     }
 
-    private ModuleDescriptor beanToDescriptor(ConnectAddonBean addon, Plugin plugin, WorkflowPostFunctionModuleBean bean)
+    private ModuleDescriptor beanToDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WorkflowPostFunctionModuleBean bean)
     {
-        return workflowPostFunctionFactory.createModuleDescriptor(addon, plugin, bean);
+        return workflowPostFunctionFactory.createModuleDescriptor(addon, theConnectPlugin, bean);
     }
 
-    private void registerIFrameRenderStrategy(ConnectAddonBean addon, Plugin plugin, WorkflowPostFunctionModuleBean bean, String classifier, UrlBean urlBean)
+    private void registerIFrameRenderStrategy(ConnectAddonBean addon, WorkflowPostFunctionModuleBean bean, String classifier, UrlBean urlBean)
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())

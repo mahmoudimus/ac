@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 import java.util.List;
 import java.util.Set;
 
+import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 
 /**
@@ -16,6 +17,8 @@ public interface ConnectAddonRegistry
 
     void removeAll(String pluginKey);
 
+    void storeAddonSettings(String pluginKey, AddonSettings settings);
+    
     void storeDescriptor(String pluginKey, String json);
 
     void removeDescriptor(String pluginKey);
@@ -56,5 +59,13 @@ public interface ConnectAddonRegistry
 
     boolean hasAuthType(String pluginKey);
     
-    Set<String> getAllAddonKeys();
+    Iterable<String> getAllAddonKeys();
+
+    void storeRestartState(String pluginKey, PluginState state);
+
+    void removeRestartState(String pluginKey);
+
+    PluginState getRestartState(String pluginKey);
+    
+    Iterable<String> getAddonKeysToEnableOnRestart();
 }

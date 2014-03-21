@@ -34,8 +34,8 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
     }
 
     @Override
-    protected ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon,Plugin plugin, StaticContentMacroModuleBean macroBean)
+    protected ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon,Plugin theConnectPlugin, StaticContentMacroModuleBean macroBean)
     {
-        return macroModuleDescriptorFactory.createModuleDescriptor(addon, plugin, macroBean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, macroBean);
     }
 }

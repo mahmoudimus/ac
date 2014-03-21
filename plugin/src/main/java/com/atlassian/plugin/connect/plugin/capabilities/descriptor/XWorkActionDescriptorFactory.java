@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.plugin.module.XWorkPackageCreator;
 import com.atlassian.plugin.connect.plugin.module.confluence.XWorkActionDescriptor;
@@ -23,11 +24,11 @@ public class XWorkActionDescriptorFactory
         this.eventPublisher = eventPublisher;
     }
 
-    public XWorkActionDescriptor create(Plugin plugin, XWorkActionModuleBean actionModuleBean)
+    public XWorkActionDescriptor create(ConnectAddonBean addon, Plugin theConnectPlugin, XWorkActionModuleBean actionModuleBean)
     {
         String moduleKey = "action-" + actionModuleBean.getKey();
-        XWorkPackageCreator packageCreator = new XWorkPackageCreator(plugin, actionModuleBean);
+        XWorkPackageCreator packageCreator = new XWorkPackageCreator(addon, theConnectPlugin, actionModuleBean);
 
-        return new XWorkActionDescriptor(eventPublisher, plugin, moduleKey, packageCreator);
+        return new XWorkActionDescriptor(eventPublisher, theConnectPlugin, moduleKey, packageCreator);
     }
 }

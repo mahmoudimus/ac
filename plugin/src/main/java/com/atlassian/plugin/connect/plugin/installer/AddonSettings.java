@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import com.atlassian.plugin.PluginState;
+
 public class AddonSettings
 {
     private String descriptor;
@@ -7,6 +9,18 @@ public class AddonSettings
     private String secret;
     private String user;
     private String auth;
+    private String restartState;
+
+    public AddonSettings()
+    {
+        this.descriptor = "";
+        this.baseUrl = "";
+        this.secret = "";
+        this.user = "";
+        this.auth = "";
+        this.restartState = PluginState.ENABLED.name();
+        
+    }
 
     public String getDescriptor()
     {
@@ -65,6 +79,17 @@ public class AddonSettings
     {
         this.auth = auth;
 
+        return this;
+    }
+
+    public String getRestartState()
+    {
+        return restartState;
+    }
+
+    public AddonSettings setRestartState(String restartState)
+    {
+        this.restartState = restartState;
         return this;
     }
 }

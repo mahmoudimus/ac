@@ -88,7 +88,7 @@ public class XmlOAuthToJsonJwtUpdateTest
         {
             assertNotNull(oAuthPlugin);
             assertEquals(OLD_PLUGIN_KEY, oAuthPlugin.getKey());
-            assertEquals(4, oAuthPlugin.getModuleDescriptors().size());
+            assertEquals(2, oAuthPlugin.getModuleDescriptors().size());
             ModuleDescriptor<?> moduleDescriptor = oAuthPlugin.getModuleDescriptor("general");
             assertEquals("Greeting", moduleDescriptor.getName());
             assertTrue(moduleDescriptor instanceof GeneralPageModuleDescriptor);
@@ -96,7 +96,7 @@ public class XmlOAuthToJsonJwtUpdateTest
             assertEquals(getOldBaseUrl(), appLink.getDisplayUrl().toString());
         }
 
-        jwtPlugin = testPluginInstaller.installPlugin(createJwtAddOn(oAuthPlugin));
+        jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthPlugin));
         assertNotNull(jwtPlugin);
         oAuthPlugin = null; // we get to this line of code only if installing the update works
     }

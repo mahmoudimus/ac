@@ -205,9 +205,9 @@ public abstract class AbstractJiraPermissionScopeTest
         {
             if (from != null)
             {
-                plugin = testPluginInstaller.installPlugin(from);
+                plugin = testPluginInstaller.installAddon(from);
             }
-            plugin = testPluginInstaller.installPlugin(to);
+            plugin = testPluginInstaller.installAddon(to);
 
             List<String> projectAdminErrors = permissionsForAllProjects(permission, permissionMustExist);
             assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
@@ -246,9 +246,9 @@ public abstract class AbstractJiraPermissionScopeTest
         {
             if (from != null)
             {
-                plugin = testPluginInstaller.installPlugin(from);
+                plugin = testPluginInstaller.installAddon(from);
             }
-            plugin = testPluginInstaller.installPlugin(to);
+            plugin = testPluginInstaller.installAddon(to);
 
             Project project = createJediProject();
             ApplicationUser addonUser = getAddOnUser();
@@ -301,22 +301,22 @@ public abstract class AbstractJiraPermissionScopeTest
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
     }
 
     protected Plugin installPlugin(ConnectAddonBean addon) throws IOException
     {
-        return testPluginInstaller.installPlugin(addon);
+        return testPluginInstaller.installAddon(addon);
     }
 
     protected void disablePlugin(Plugin plugin) throws IOException
     {
-        testPluginInstaller.disablePlugin(plugin.getKey());
+        testPluginInstaller.disableAddon(plugin.getKey());
     }
 
     protected void enablePlugin(Plugin plugin) throws IOException
     {
-        testPluginInstaller.enablePlugin(plugin.getKey());
+        testPluginInstaller.enableAddon(plugin.getKey());
     }
 }

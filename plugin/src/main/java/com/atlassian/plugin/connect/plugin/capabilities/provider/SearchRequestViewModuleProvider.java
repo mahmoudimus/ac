@@ -24,13 +24,13 @@ public class SearchRequestViewModuleProvider implements ConnectModuleProvider<Se
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin plugin, String jsonFieldName, List<SearchRequestViewModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<SearchRequestViewModuleBean> beans)
     {
         List<ModuleDescriptor> moduleDescriptors = new ArrayList<ModuleDescriptor>();
 
         for (SearchRequestViewModuleBean bean : beans)
         {
-            ModuleDescriptor descriptor = searchRequestViewModuleDescriptorFactory.createModuleDescriptor(addon, plugin, bean);
+            ModuleDescriptor descriptor = searchRequestViewModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, bean);
             moduleDescriptors.add(descriptor);
         }
 

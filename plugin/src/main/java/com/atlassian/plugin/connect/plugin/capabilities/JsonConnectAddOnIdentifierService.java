@@ -10,6 +10,7 @@ import javax.inject.Named;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 
 import org.dom4j.Document;
@@ -23,11 +24,13 @@ public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifier
     private static final Logger log = LoggerFactory.getLogger(JsonConnectAddOnIdentifierService.class);
 
     private final PluginAccessor pluginAccessor;
+    private final ConnectAddonRegistry connectAddonRegistry;
 
     @Inject
-    public JsonConnectAddOnIdentifierService(PluginAccessor pluginAccessor)
+    public JsonConnectAddOnIdentifierService(PluginAccessor pluginAccessor, ConnectAddonRegistry connectAddonRegistry)
     {
         this.pluginAccessor = pluginAccessor;
+        this.connectAddonRegistry = connectAddonRegistry;
     }
 
     @Override
@@ -75,7 +78,15 @@ public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifier
     @Override
     public boolean isConnectAddOn(final String pluginKey)
     {
-        return isConnectAddOn(pluginAccessor.getPlugin(pluginKey));
+        Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        if(null != plugin)
+        {
+            return isConnectAddOn(plugin);
+        }
+        else
+        {
+            return connectAddonRegistry.hasDescriptor(pluginKey);
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
@@ -20,6 +21,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
@@ -45,6 +47,8 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
 
     @Mock
     private ContainerManagedPlugin plugin;
+    
+    private ConnectAddonBean addon;
 
 
     private ModuleDescriptor connectTabPanelModuleDescriptor;
@@ -60,6 +64,8 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     @Before
     public void setup()
     {
+        this.addon = newConnectAddonBean().withKey(ADDON_KEY).withName(ADDON_NAME).build();
+        
         when(plugin.getKey()).thenReturn(ADDON_KEY);
         when(plugin.getName()).thenReturn(ADDON_NAME);
 
@@ -94,7 +100,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     private ConnectTabPanelModuleBean createModuleDescriptor()
     {
         ConnectTabPanelModuleBean bean = createModuleBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_MODULE_KEY, ADDON_URL, ADDON_WEIGHT);
-        connectTabPanelModuleDescriptor = tabPanelModuleDescriptorFactory.createModuleDescriptor(plugin, bean, descriptorHints);
+        connectTabPanelModuleDescriptor = tabPanelModuleDescriptorFactory.createModuleDescriptor(addon, plugin, bean, descriptorHints);
         return bean;
     }
 

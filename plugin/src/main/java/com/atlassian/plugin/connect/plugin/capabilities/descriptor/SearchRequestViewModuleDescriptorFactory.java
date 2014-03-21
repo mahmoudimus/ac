@@ -59,17 +59,17 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     }
 
     @Override
-    public SearchRequestViewModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, SearchRequestViewModuleBean bean)
+    public SearchRequestViewModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, SearchRequestViewModuleBean bean)
     {
         SearchRequestViewModuleDescriptorImpl descriptor = new SearchRequestViewModuleDescriptorImpl(authenticationContext,
-                urlHandler, createModuleFactory(bean, plugin), conditionDescriptorFactory);
-        Element element = createElement(bean, plugin);
-        descriptor.init(plugin, element);
+                urlHandler, createModuleFactory(bean, addon), conditionDescriptorFactory);
+        Element element = createElement(bean, addon);
+        descriptor.init(theConnectPlugin, element);
         return descriptor;
     }
 
 
-    private Element createElement(SearchRequestViewModuleBean bean, Plugin plugin)
+    private Element createElement(SearchRequestViewModuleBean bean, ConnectAddonBean addon)
     {
         DOMElement element = new DOMElement("search-request-view");
 
@@ -91,13 +91,13 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
 
         if (!bean.getConditions().isEmpty())
         {
-            element.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions()));
+            element.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
         }
 
         return element;
     }
 
-    private ModuleFactory createModuleFactory(final SearchRequestViewModuleBean bean, final Plugin plugin)
+    private ModuleFactory createModuleFactory(final SearchRequestViewModuleBean bean, final ConnectAddonBean addon)
     {
         return new ModuleFactory()
         {
@@ -111,7 +111,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                             searchRequestViewBodyWriterUtil,
                             templateRenderer,
                             iFrameUriBuilderFactory,
-                            plugin.getKey(),
+                            addon.getKey(),
                             bean.getKey(),
                             bean.createUri(),
                             bean.getDisplayName());

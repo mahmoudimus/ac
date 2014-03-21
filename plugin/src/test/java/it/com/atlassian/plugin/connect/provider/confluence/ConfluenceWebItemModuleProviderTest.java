@@ -94,7 +94,7 @@ public class ConfluenceWebItemModuleProviderTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
@@ -125,7 +125,7 @@ public class ConfluenceWebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }

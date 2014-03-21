@@ -71,7 +71,7 @@ public abstract class AdminScopeTestBase
     public void isNoLongerTopLevelAdminAfterReinstallWithDowngradedScope() throws IOException
     {
         plugin = installPlugin(getScope());
-        testPluginInstaller.uninstallPlugin(plugin);
+        testPluginInstaller.uninstallAddon(plugin);
         plugin = installPlugin(getScopeOneDown());
         assertEquals(false, isUserTopLevelAdmin(getAddonUsername(plugin)));
     }
@@ -105,7 +105,7 @@ public abstract class AdminScopeTestBase
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
     }
 
@@ -116,7 +116,7 @@ public abstract class AdminScopeTestBase
                 .build();
 
         LOG.warn("Installing test plugin '{}'", addonBean.getKey());
-        Plugin installedPlugin = testPluginInstaller.installPlugin(addonBean);
+        Plugin installedPlugin = testPluginInstaller.installAddon(addonBean);
         checkArgument(null != installedPlugin, "'installedPlugin' should not be null after installation: check the logs for installation messages");
         return installedPlugin;
     }

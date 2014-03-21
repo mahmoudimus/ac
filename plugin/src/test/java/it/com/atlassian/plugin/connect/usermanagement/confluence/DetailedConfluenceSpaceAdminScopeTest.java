@@ -117,7 +117,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
 
         if (null != plugin)
         {
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
     }
 
@@ -293,7 +293,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
                 .build();
 
         log.warn("Installing test plugin '{}'", addonBean.getKey());
-        Plugin installedPlugin = testPluginInstaller.installPlugin(addonBean);
+        Plugin installedPlugin = testPluginInstaller.installAddon(addonBean);
         checkArgument(null != installedPlugin, "'installedPlugin' should not be null after installation: check the logs for installation messages");
         return installedPlugin;
     }

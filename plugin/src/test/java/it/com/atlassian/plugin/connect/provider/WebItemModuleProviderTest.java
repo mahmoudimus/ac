@@ -7,12 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
@@ -49,15 +51,17 @@ public class WebItemModuleProviderTest
     private final WebItemModuleProvider webItemModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
+    private final PluginAccessor pluginAccessor;
     private HttpServletRequest servletRequest;
     private ConnectAddonBean addon;
 
     public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller,
-                                     TestAuthenticator testAuthenticator)
+                                     TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
     {
         this.webItemModuleProvider = webItemModuleProvider;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
+        this.pluginAccessor = pluginAccessor;
     }
 
     @BeforeClass
@@ -84,7 +88,7 @@ public class WebItemModuleProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
+        Plugin plugin = getConnectPlugin();
         List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
@@ -106,7 +110,7 @@ public class WebItemModuleProviderTest
                 .withContext(AddOnUrlContext.page)
                 .build();
 
-        Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
+        Plugin plugin = getConnectPlugin();
         List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
@@ -128,7 +132,7 @@ public class WebItemModuleProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
+        Plugin plugin = getConnectPlugin();
         List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
@@ -150,7 +154,7 @@ public class WebItemModuleProviderTest
                 .withContext(AddOnUrlContext.page)
                 .build();
 
-        Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
+        Plugin plugin = getConnectPlugin();
         List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
@@ -184,9 +188,9 @@ public class WebItemModuleProviderTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
-            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) plugin.getModuleDescriptor(MODULE_KEY);
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) getConnectPlugin().getModuleDescriptor(MODULE_KEY);
 
             assertEquals(MODULE_NAME,descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class),new HashMap<String, Object>()));
         }
@@ -194,7 +198,7 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -210,7 +214,7 @@ public class WebItemModuleProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        Plugin plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
+        Plugin plugin = getConnectPlugin();
         List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
@@ -243,9 +247,9 @@ public class WebItemModuleProviderTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, getConnectPlugin(), "webItems", newArrayList(bean));
 
             assertEquals(1, descriptors.size());
 
@@ -258,7 +262,7 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -293,9 +297,9 @@ public class WebItemModuleProviderTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, getConnectPlugin(), "webItems", newArrayList(bean));
 
             assertEquals(1, descriptors.size());
 
@@ -310,7 +314,7 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -344,9 +348,9 @@ public class WebItemModuleProviderTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean, bean2));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, getConnectPlugin(), "webItems", newArrayList(bean, bean2));
 
             assertEquals(2, descriptors.size());
 
@@ -363,8 +367,13 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
+    }
+    
+    private Plugin getConnectPlugin()
+    {
+        return pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
     }
 }

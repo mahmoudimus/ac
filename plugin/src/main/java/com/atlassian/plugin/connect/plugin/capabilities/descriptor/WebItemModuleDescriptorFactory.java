@@ -49,17 +49,17 @@ public class WebItemModuleDescriptorFactory
     }
 
     @Override
-    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, WebItemModuleBean bean)
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebItemModuleBean bean)
     {
-        return createModuleDescriptor(addon, plugin, bean, Collections.<Class<? extends Condition>>emptyList());
+        return createModuleDescriptor(addon, theConnectPlugin, bean, Collections.<Class<? extends Condition>>emptyList());
     }
 
-    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, WebItemModuleBean bean, Class<? extends Condition> additionalCondition)
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebItemModuleBean bean, Class<? extends Condition> additionalCondition)
     {
-        return createModuleDescriptor(addon, plugin, bean, Collections.<Class<? extends Condition>>singletonList(additionalCondition));
+        return createModuleDescriptor(addon, theConnectPlugin, bean, Collections.<Class<? extends Condition>>singletonList(additionalCondition));
     }
 
-    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, WebItemModuleBean bean, Iterable<Class<? extends Condition>> additionalConditions)
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebItemModuleBean bean, Iterable<Class<? extends Condition>> additionalConditions)
     {
         Element webItemElement = new DOMElement("web-item");
 
@@ -139,10 +139,10 @@ public class WebItemModuleDescriptorFactory
             log.debug("Created web item: " + printNode(webItemElement));
         }
 
-        return createWebItemDescriptor(addon, plugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog);
+        return createWebItemDescriptor(addon, theConnectPlugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog);
     }
 
-    private WebItemModuleDescriptor createWebItemDescriptor(ConnectAddonBean addon, Plugin plugin, Element webItemElement, String moduleKey, String url,
+    private WebItemModuleDescriptor createWebItemDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, Element webItemElement, String moduleKey, String url,
                                                             boolean absolute, AddOnUrlContext urlContext, boolean isDialog)
     {
         webItemElement.addAttribute("system", "true");
@@ -155,7 +155,7 @@ public class WebItemModuleDescriptorFactory
                 , urlContext
                 , isDialog);
 
-        descriptor.init(plugin, webItemElement);
+        descriptor.init(theConnectPlugin, webItemElement);
 
         return descriptor;
     }

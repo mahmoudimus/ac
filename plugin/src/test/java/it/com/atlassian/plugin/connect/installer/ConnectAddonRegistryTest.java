@@ -77,7 +77,7 @@ public class ConnectAddonRegistryTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             assertEquals(BASE_URL, connectAddonRegistry.getBaseUrl(plugin.getKey()));
         }
@@ -85,7 +85,7 @@ public class ConnectAddonRegistryTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -113,13 +113,13 @@ public class ConnectAddonRegistryTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             String pluginKey = plugin.getKey();
 
             assertEquals(BASE_URL, connectAddonRegistry.getBaseUrl(pluginKey));
 
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             assertEquals("", connectAddonRegistry.getBaseUrl(pluginKey));
@@ -129,7 +129,7 @@ public class ConnectAddonRegistryTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }

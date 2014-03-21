@@ -164,7 +164,7 @@ public abstract class AbstractAddonLifecycleTest
         String addonKey = null;
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
             
             addonKey = plugin.getKey();
             
@@ -177,7 +177,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -192,11 +192,11 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
             
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
@@ -209,7 +209,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -224,7 +224,7 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
             
@@ -239,7 +239,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -254,11 +254,11 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
 
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             assertFalse("addon user is active", connectAddOnUserService.isAddOnUserActive(addonKey));
@@ -272,7 +272,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -287,7 +287,7 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
 
@@ -295,10 +295,10 @@ public abstract class AbstractAddonLifecycleTest
             
             applicationService.removeUser(getApplication(),ADD_ON_USER_KEY_PREFIX + addonKey);
 
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
             UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
@@ -310,7 +310,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -325,7 +325,7 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
             final String finalKey = addonKey;
@@ -335,7 +335,7 @@ public abstract class AbstractAddonLifecycleTest
             UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
             assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
 
-            testPluginInstaller.disablePlugin(addonKey);
+            testPluginInstaller.disableAddon(addonKey);
 
             WaitUntil.invoke(new WaitUntil.WaitCondition()
             {
@@ -350,7 +350,7 @@ public abstract class AbstractAddonLifecycleTest
                 {
                     return "waiting for disable webhook post...";
                 }
-            });
+            },5);
 
             assertFalse("addon user is active", connectAddOnUserService.isAddOnUserActive(addonKey));
 
@@ -363,7 +363,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, DISABLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -378,7 +378,7 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
             final String finalKey = addonKey;
@@ -388,7 +388,7 @@ public abstract class AbstractAddonLifecycleTest
             UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
             assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
 
-            testPluginInstaller.disablePlugin(addonKey);
+            testPluginInstaller.disableAddon(addonKey);
             WaitUntil.invoke(new WaitUntil.WaitCondition()
             {
                 @Override
@@ -402,13 +402,13 @@ public abstract class AbstractAddonLifecycleTest
                 {
                     return "waiting for disable webhook post...";
                 }
-            });
+            },5);
 
             assertFalse("addon user is active", connectAddOnUserService.isAddOnUserActive(addonKey));
 
             assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
 
-            testPluginInstaller.enablePlugin(addonKey);
+            testPluginInstaller.enableAddon(addonKey);
             WaitUntil.invoke(new WaitUntil.WaitCondition()
             {
                 @Override
@@ -422,7 +422,7 @@ public abstract class AbstractAddonLifecycleTest
                 {
                     return "waiting for enable webhook post...";
                 }
-            });
+            },5);
 
             assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
 
@@ -437,7 +437,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }

@@ -2,8 +2,10 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import org.dom4j.dom.DOMElement;
@@ -34,7 +36,7 @@ public class ConnectTabPanelModuleDescriptorFactory
         this.connectContainerUtil = connectContainerUtil;
     }
 
-    public ModuleDescriptor createModuleDescriptor(Plugin plugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
+    public ModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
     {
         DOMElement element = new DOMElement(hints.getDomElementName());
 
@@ -56,11 +58,12 @@ public class ConnectTabPanelModuleDescriptorFactory
 
         if (!bean.getConditions().isEmpty())
         {
-            element.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions()));
+            element.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
         }
 
-        ModuleDescriptor descriptor = connectContainerUtil.createBean(hints.getDescriptorClass());
-        descriptor.init(plugin, element);
+        ConnectModuleDescriptor descriptor = (ConnectModuleDescriptor) connectContainerUtil.createBean(hints.getDescriptorClass());
+        descriptor.setAddonKey(addon.getKey());
+        descriptor.init(theConnectPlugin, element);
 
         return descriptor;
     }

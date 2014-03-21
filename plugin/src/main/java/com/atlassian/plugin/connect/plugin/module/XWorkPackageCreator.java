@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module;
 
 import com.atlassian.confluence.plugin.descriptor.PluginAwareActionConfig;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.XWorkInterceptorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.XWorkResultBean;
@@ -29,12 +30,14 @@ import static java.util.Collections.emptyMap;
  */
 public class XWorkPackageCreator
 {
-    private final Plugin plugin;
+    private final ConnectAddonBean addon;
+    private final Plugin theConnectPlugin;
     private final XWorkActionModuleBean actionModuleBean;
 
-    public XWorkPackageCreator(final Plugin plugin, final XWorkActionModuleBean actionModuleBean)
+    public XWorkPackageCreator(final ConnectAddonBean addon, Plugin theConnectPlugin, final XWorkActionModuleBean actionModuleBean)
     {
-        this.plugin = plugin;
+        this.addon = addon;
+        this.theConnectPlugin = theConnectPlugin;
         this.actionModuleBean = actionModuleBean;
     }
 
@@ -42,7 +45,7 @@ public class XWorkPackageCreator
     {
         String namespace = actionModuleBean.getNamespace();
 
-        String packageName = "atlassian-connect-" + plugin.getKey() + "-" + actionModuleBean.getKey();
+        String packageName = "atlassian-connect-" + addon.getKey() + "-" + actionModuleBean.getKey();
 
         PackageConfig packageConfig = new PackageConfig(packageName, namespace, false, null);
 
@@ -50,7 +53,7 @@ public class XWorkPackageCreator
         addResultTypes(packageConfig, actionModuleBean);
         addInterceptors(packageConfig, actionModuleBean);
 
-        ActionConfig actionConfig = buildActionConfig(plugin, actionModuleBean);
+        ActionConfig actionConfig = buildActionConfig(theConnectPlugin, actionModuleBean);
 
         actionConfig.addInterceptors(buildActionInterceptors(packageConfig, actionModuleBean));
         actionConfig.setResults(buildResults(packageConfig, actionModuleBean));

@@ -32,7 +32,7 @@ public class ConnectWebSectionModuleDescriptorFactory implements ConnectModuleDe
     }
 
     @Override
-    public WebSectionModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, WebSectionModuleBean bean)
+    public WebSectionModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebSectionModuleBean bean)
     {
         Element webSectionElement = new DOMElement("web-section");
 
@@ -57,7 +57,7 @@ public class ConnectWebSectionModuleDescriptorFactory implements ConnectModuleDe
 
         if (!bean.getConditions().isEmpty())
         {
-            webSectionElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions()));
+            webSectionElement.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
         }
 
         if (log.isDebugEnabled())
@@ -65,7 +65,7 @@ public class ConnectWebSectionModuleDescriptorFactory implements ConnectModuleDe
             log.debug("Created web section: " + printNode(webSectionElement));
         }
 
-        return createWebSectionDescriptor(plugin, webSectionElement);
+        return createWebSectionDescriptor(theConnectPlugin, webSectionElement);
     }
 
     private WebSectionModuleDescriptor createWebSectionDescriptor(Plugin plugin, Element webSectionElement)

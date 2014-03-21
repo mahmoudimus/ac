@@ -165,7 +165,7 @@ public class SpaceToolsTabModuleProviderTest
     private XWorkActionModuleBean captureActionBean()
     {
         ArgumentCaptor<XWorkActionModuleBean> captor = ArgumentCaptor.forClass(XWorkActionModuleBean.class);
-        verify(xWorkActionDescriptorFactory).create(eq(plugin), captor.capture());
+        verify(xWorkActionDescriptorFactory).create(addon, eq(plugin), captor.capture());
         return captor.getValue();
     }
 

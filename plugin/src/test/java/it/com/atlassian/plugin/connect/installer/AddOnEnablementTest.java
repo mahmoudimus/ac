@@ -41,7 +41,7 @@ public class AddOnEnablementTest
     {
         testAuthenticator.authenticateUser("admin");
         plugin = installPlugin();
-        testPluginInstaller.disablePlugin(plugin.getKey());
+        testPluginInstaller.disableAddon(plugin.getKey());
     }
 
     @After
@@ -49,7 +49,7 @@ public class AddOnEnablementTest
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
     }
 
@@ -63,7 +63,7 @@ public class AddOnEnablementTest
     @Test
     public void enablingPluginSetsAppLinkUsernameProperty() throws IOException
     {
-        testPluginInstaller.enablePlugin(plugin.getKey());
+        testPluginInstaller.enableAddon(plugin.getKey());
         ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
         assertEquals("addon_" + plugin.getKey(), appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
     }
@@ -78,6 +78,6 @@ public class AddOnEnablementTest
             .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
             .build();
 
-        return testPluginInstaller.installPlugin(addonBean);
+        return testPluginInstaller.installAddon(addonBean);
     }
 }

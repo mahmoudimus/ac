@@ -1,9 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleList;
-import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.WebHookModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
@@ -26,6 +23,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -39,28 +38,37 @@ public class BeanToModuleRegistrarTest
     @Mock private ApplicationProperties applicationProperties;
     @Mock private WebHookScopeService webHookScopeService;
 
-    @Mock private ConnectAddonBean connectAddonBean;
-    @Mock private LifecycleBean lifecycleBean;
+    private ConnectAddonBean connectAddonBean;
+    private LifecycleBean lifecycleBean;
+    private ModuleList moduleList;
+    
     @Mock private OsgiPlugin plugin;
     @Mock private Bundle bundle;
     @Mock private AutowireWithConnectPluginDecorator theConnectPlugin;
     @Mock private ContainerAccessor containerAccessor;
-    @Mock private ModuleList moduleList;
+    
 
     private static final String EVENT_IN_SCOPES = "event in scopes";
 
     @Before
     public void beforeEachTest()
     {
+        this.connectAddonBean = newConnectAddonBean()
+                .withLifecycle(
+                        newLifecycleBean().build()
+                )
+                .withModules("webhooks",new ModuleBean[]{})
+                .withKey("a plugin key")
+                .build();
+        
         when(plugin.getBundle()).thenReturn(bundle);
         when(plugin.getKey()).thenReturn("a plugin key");
-        when(connectAddonBean.getLifecycle()).thenReturn(lifecycleBean);
         when(applicationProperties.getDisplayName()).thenReturn("JIRA");
         when(pluginRetrievalService.getPlugin()).thenReturn(theConnectPlugin);
         when(theConnectPlugin.getContainerAccessor()).thenReturn(containerAccessor);
         when(webHookScopeService.getRequiredScope(EVENT_IN_SCOPES)).thenReturn(ScopeName.ADMIN);
-        when(connectAddonBean.getModules()).thenReturn(moduleList);
-        when(moduleList.getWebhooks()).thenReturn(Collections.<WebHookModuleBean>emptyList());
+        
+        
         beanToModuleRegistrar = new BeanToModuleRegistrar(dynamicDescriptorRegistration, pluginRetrievalService,
                 productAccessor, applicationProperties);
     }
@@ -68,7 +76,6 @@ public class BeanToModuleRegistrarTest
     @Test
     public void canRegisterAddOnWithNoWebHooks()
     {
-        when(connectAddonBean.getModules()).thenReturn(new ModuleList());
         beanToModuleRegistrar.registerDescriptorsForBeans(connectAddonBean);
     }
 
@@ -76,8 +83,12 @@ public class BeanToModuleRegistrarTest
     public void canRegisterAddOnWithWebHookInScopes()
     {
         WebHookModuleBean webHookModuleBean = new WebHookModuleBeanBuilder().withEvent(EVENT_IN_SCOPES).build();
-        when(moduleList.getWebhooks()).thenReturn(Arrays.asList(webHookModuleBean));
-        when(connectAddonBean.getScopes()).thenReturn(new HashSet<ScopeName>(Arrays.asList(ScopeName.ADMIN)));
+
+        connectAddonBean = newConnectAddonBean(connectAddonBean)
+                .withModules("webhooks",webHookModuleBean)
+                .withScopes(new HashSet<String>(Arrays.asList(ScopeName.ADMIN.name())))
+                .build();
+
         beanToModuleRegistrar.registerDescriptorsForBeans(connectAddonBean);
     }
 

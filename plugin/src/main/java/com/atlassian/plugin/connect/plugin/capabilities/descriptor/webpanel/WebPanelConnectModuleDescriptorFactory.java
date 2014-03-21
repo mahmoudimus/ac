@@ -4,6 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
@@ -31,15 +32,18 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     }
 
     @Override
-    public WebPanelModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, WebPanelModuleBean bean)
+    public WebPanelModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebPanelModuleBean bean)
     {
-        Element domElement = createDomElement(bean, bean.getKey(), plugin);
+        Element domElement = createDomElement(bean, bean.getKey(), addon);
         final WebPanelModuleDescriptor descriptor = connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class);
-        descriptor.init(plugin, domElement);
+        
+        ((ConnectModuleDescriptor) descriptor).setAddonKey(addon.getKey());
+        
+        descriptor.init(theConnectPlugin, domElement);
         return descriptor;
     }
 
-    private Element createDomElement(WebPanelModuleBean bean, String webPanelKey, Plugin plugin)
+    private Element createDomElement(WebPanelModuleBean bean, String webPanelKey, ConnectAddonBean addon)
     {
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
         Element webPanelElement = new DOMElement("remote-web-panel");
@@ -54,7 +58,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
 
         if (!bean.getConditions().isEmpty())
         {
-            DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions());
+            DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions());
             webPanelElement.add(conditionFragment);
         }
 

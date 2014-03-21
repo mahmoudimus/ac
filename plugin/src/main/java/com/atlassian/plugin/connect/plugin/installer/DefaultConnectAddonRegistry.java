@@ -2,26 +2,33 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import java.util.*;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 
 @Named
 @ExportAsDevService
 public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
 {
-    private static final String CONNECT_DESCRIPTOR_PREFIX = "ac.desc.";
-    private static final String CONNECT_BASEURL_PREFIX = "ac.baseurl.";
-    private static final String CONNECT_SECRET_PREFIX = "ac.secret.";
-    private static final String CONNECT_USER_PREFIX = "ac.user.";
-    private static final String CONNECT_AUTH_PREFIX = "ac.auth.";
+    // TODO: remove these after the initial deploy of file-less addons
+    public static final String CONNECT_DESCRIPTOR_PREFIX = "ac.desc.";
+    public static final String CONNECT_BASEURL_PREFIX = "ac.baseurl.";
+    public static final String CONNECT_SECRET_PREFIX = "ac.secret.";
+    public static final String CONNECT_USER_PREFIX = "ac.user.";
+    public static final String CONNECT_AUTH_PREFIX = "ac.auth.";
 
     private static final String CONNECT_ADDONS_KEY = "ac.addons";
 
@@ -167,9 +174,45 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     }
 
     @Override
-    public Set<String> getAllAddonKeys()
+    public Iterable<String> getAllAddonKeys()
     {
         return getAddonMap().keySet();
+    }
+
+    @Override
+    public void storeRestartState(String pluginKey, PluginState state)
+    {
+        storeAddonSettings(pluginKey,getAddonSettings(pluginKey).setRestartState(state.name()));
+    }
+
+    @Override
+    public void removeRestartState(String pluginKey)
+    {
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setRestartState(""));
+    }
+
+    @Override
+    public PluginState getRestartState(String pluginKey)
+    {
+        return PluginState.valueOf(getAddonSettings(pluginKey).getRestartState());
+    }
+
+    @Override
+    public Iterable<String> getAddonKeysToEnableOnRestart()
+    {
+        Gson gson = new Gson();
+
+        ImmutableList.Builder<String> addonsToEnable = ImmutableList.builder();
+        for(Map.Entry<String,String> entry : getAddonMap().entrySet())
+        {
+            AddonSettings settings = gson.fromJson(entry.getValue(),AddonSettings.class);
+            if(PluginState.ENABLED.name().equals(settings.getRestartState()))
+            {
+                addonsToEnable.add(entry.getKey());
+            }
+        }
+        
+        return addonsToEnable.build();
     }
 
     private boolean has(String value)
@@ -177,7 +220,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         return !Strings.isNullOrEmpty(value);
     }
 
-    private void storeAddonSettings(String pluginKey, AddonSettings addonSettings)
+    public void storeAddonSettings(String pluginKey, AddonSettings addonSettings)
     {
         Map<String,String> addons = getAddonMap();
         

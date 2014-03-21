@@ -38,10 +38,10 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     }
 
     @Override
-    protected ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon,Plugin plugin, DynamicContentMacroModuleBean macroBean)
+    protected ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon,Plugin theConnectPlugin, DynamicContentMacroModuleBean macroBean)
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(plugin.getKey())
+                .addOn(addon.getKey())
                 .module(macroBean.getKey())
                 .genericBodyTemplate(macroBean.getOutputType() == MacroOutputType.INLINE)
                 .urlTemplate(macroBean.getUrl())
@@ -49,8 +49,8 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
                 .ensureUniqueNamespace(true)
                 .build();
 
-        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), CONTENT_CLASSIFIER, renderStrategy);
+        iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getKey(), CONTENT_CLASSIFIER, renderStrategy);
 
-        return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(addon, plugin, macroBean);
+        return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, macroBean);
     }
 }

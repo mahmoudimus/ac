@@ -27,7 +27,7 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
     }
 
     @Override
-    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, EntityPropertyModuleBean bean)
+    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, EntityPropertyModuleBean bean)
     {
         Element indexDocumentConfiguration = new DOMElement(DESCRIPTOR_NAME);
 
@@ -49,7 +49,7 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
         }
 
         EntityPropertyIndexDocumentModuleDescriptorImpl descriptor = autowireUtil.createBean(EntityPropertyIndexDocumentModuleDescriptorImpl.class);
-        descriptor.init(plugin, indexDocumentConfiguration);
+        descriptor.init(theConnectPlugin, indexDocumentConfiguration);
 
         return descriptor;
     }

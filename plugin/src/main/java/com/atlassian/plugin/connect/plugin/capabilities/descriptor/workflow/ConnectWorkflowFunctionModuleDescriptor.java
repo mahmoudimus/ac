@@ -10,10 +10,12 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
+import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextFilter;
@@ -40,7 +42,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A ModuleDescriptor for Connect's version of a Jira Workflow Post Function.
  */
-public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionModuleDescriptor
+public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionModuleDescriptor implements ConnectModuleDescriptor<WorkflowPluginFunctionFactory>
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectWorkflowFunctionModuleDescriptor.class);
 
@@ -52,6 +54,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     private URI triggeredUri;
+    private String addonKey;
 
     public ConnectWorkflowFunctionModuleDescriptor(
             final JiraAuthenticationContext authenticationContext,
@@ -73,7 +76,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
             @Override
             public FunctionProvider getFunction(final String type, final Map args) throws WorkflowException
             {
-                return new RemoteWorkflowPostFunctionProvider(eventPublisher, jiraRestBeanMarshaler, plugin.getKey(), getKey());
+                return new RemoteWorkflowPostFunctionProvider(eventPublisher, jiraRestBeanMarshaler, addonKey, getKey());
             }
         };
     }
@@ -111,7 +114,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
                 plugin.getKey(),
                 triggeredUri,
-                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                new PluginModuleListenerParameters(addonKey, Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
         
         //need to wrap since the pluginTypeResolver may have already gone away
@@ -129,7 +132,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     @Override
     public void writeHtml(String resourceName, Map<String, ?> startingParams, Writer writer) throws IOException
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(getPluginKey(), getKey(), resourceName);
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, getKey(), resourceName);
 
         if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
         {
@@ -150,4 +153,9 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         }
     }
 
+    @Override
+    public void setAddonKey(String addonKey)
+    {
+        this.addonKey = addonKey;
+    }
 }
