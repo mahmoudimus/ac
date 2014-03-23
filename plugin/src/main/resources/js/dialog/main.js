@@ -93,9 +93,8 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
         id: dialogId,
 
         /**
-        * Constructs a new AUI dialog wrapper for a Remotable Plugin. The dialog has a single content panel containing a single
-        * iframe. The iframe's content is retrieved from the Remotable Plugin via a redirect URl from the host Atlassian app,
-        * which the request to the Remotable Plugin to be signed with outgoing OAuth credentials.
+        * Constructs a new AUI dialog. The dialog has a single content panel containing a single iframe.
+        * The iframe's content is either created by loading [options.src] as the iframe url. Or fetching the content from the server by add-on key + module key.
         *
         * @param {Object} options Options to configure the behaviour and appearance of the dialog.
         * @param {String} [options.header="Remotable Plugins Dialog Title"]  Dialog header.

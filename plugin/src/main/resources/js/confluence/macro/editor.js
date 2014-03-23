@@ -1,4 +1,4 @@
-_AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], function($, simpleDialog, uiParams) {
+_AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], function($, dialog, uiParams) {
 
     var enc = encodeURIComponent;
 
@@ -81,7 +81,7 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
                 height: opts.height || null
             };
 
-            simpleDialog.create(dialogOpts, false);
+            dialog.create(dialogOpts, false);
 
             getIframeHtmlForMacro(opts.url).done(function(data){
                 var dialogHtml = $(data);
