@@ -88,13 +88,13 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     @Test
     public void keyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getKey(), is("my-web-section"));
+        assertThat(descriptor.getKey(), is("my-awesome-plugin:my-web-section"));
     }
 
     @Test
     public void completeKeyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getCompleteKey(), is("my-awesome-plugin:my-web-section"));
+        assertThat(descriptor.getCompleteKey(), is("my-awesome-plugin:my-awesome-plugin:my-web-section"));
     }
 
     @Test

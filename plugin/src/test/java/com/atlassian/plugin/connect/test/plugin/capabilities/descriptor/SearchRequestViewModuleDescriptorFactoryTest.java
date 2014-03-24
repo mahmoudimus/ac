@@ -113,7 +113,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     @Test
     public void verifyCompleteKeyIsCorrect()
     {
-        assertThat(descriptor.getCompleteKey(), is("my-plugin:a-search-request-view"));
+        assertThat(descriptor.getCompleteKey(), is("my-plugin:my-plugin:a-search-request-view"));
     }
 
     @Test

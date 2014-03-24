@@ -114,7 +114,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(addon, plugin, bean);
 
-        assertEquals("my-key:my-post-function", descriptor.getCompleteKey());
+        assertEquals("my-key:my-key:my-post-function", descriptor.getCompleteKey());
     }
 
     @Test

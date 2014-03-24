@@ -107,7 +107,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     @Test
     public void createsElementWithCorrectKey()
     {
-        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementKey(ADDON_MODULE_KEY)));
+        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementKey(ADDON_KEY + ":" + ADDON_MODULE_KEY)));
     }
 
     @Test
