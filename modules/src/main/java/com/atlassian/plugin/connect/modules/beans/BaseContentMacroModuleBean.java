@@ -85,6 +85,12 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private LinkBean documentation;
 
     /**
+     * The device type. Set this to mobile to render your macro in the mobile version of Confluence.
+     */
+    private String deviceType;
+
+
+    /**
      * The categories the macro should appear in. A macro with no category will show up in the default 'All' category.
      *
      * Currently, the following categories are supported by Confluence:
@@ -207,6 +213,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         return documentation;
     }
 
+    public String getDeviceType()
+    {
+        return deviceType;
+    }
+
     public Set<String> getCategories()
     {
         return categories;
@@ -255,6 +266,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     public boolean hasIcon()
     {
         return icon != null;
+    }
+
+    public boolean hasDeviceType()
+    {
+        return deviceType != null;
     }
 
     public boolean hasDocumentation()
