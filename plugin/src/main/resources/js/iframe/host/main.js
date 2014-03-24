@@ -264,7 +264,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           AJS.Cookie.save(prefixCookie(name), value, expires);
         },
         readCookie: function(name, callback){
-          callback(AJS.Cookie.read(prefixCookie(name)));
+          var value = AJS.Cookie.read(prefixCookie(name));
+          if(typeof callback === "function"){
+            callback(value);
+          }
         },
         eraseCookie: function(name){
           AJS.Cookie.erase(prefixCookie(name));

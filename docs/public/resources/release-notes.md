@@ -1,6 +1,10 @@
 
 # Release Notes
 
+## [1.1.0](../release-notes/1-1-rc.html)
+* Support for managing cookies through javascript. Check out the [cookie api](../javascript/module-cookie.html)
+
+
 ## [1.0.0](../release-notes/1-0-rc.html)
 * Installing an add-on into OnDemand will not work unless the base url starts with https
 * Support for context parameters on remote conditions

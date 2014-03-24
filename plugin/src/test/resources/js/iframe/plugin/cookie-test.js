@@ -14,13 +14,13 @@ var xdmMockCookie;
     });
 
     xdmMockCookie = {
-        init: function() {},
+        init: function(){},
         saveCookie: sinon.spy(),
         readCookie: sinon.spy(),
         eraseCookie: sinon.spy()
     };
 
-    context(["_rpc", "cookie"], function(_rpc, cookie) {
+    context(["_rpc", "cookie"], function(_rpc, cookie){
         _rpc.init();
 
         module("Cookie plugin", {

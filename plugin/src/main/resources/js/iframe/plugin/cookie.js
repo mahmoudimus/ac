@@ -1,7 +1,7 @@
 AP.define("cookie", ["_dollar", "_rpc"],
 
 /**
-* Allows cookies to be stored / retrieved and erased. This evades the restrictions on 3rd party cookies.
+* Allows add-ons to store, retrieve and erased cookies against the host JIRA / Confluence. These cannot be seen by other add-ons.
 * @exports cookie
 */
 
