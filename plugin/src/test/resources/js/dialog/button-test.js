@@ -13,7 +13,7 @@ define(['dialog/button'], function() {
 
         test("Submit Button has text set to submit", function() {
             var button = dialogButton.submit();
-            equal(button.$el.text(), "submit");
+            equal(button.$el.text(), "Submit");
         });
 
         test("Submit Button done callback is executed on click", function() {
@@ -55,7 +55,7 @@ define(['dialog/button'], function() {
 
         test("Cancel Button has text set to cancel", function() {
             var button = dialogButton.cancel();
-            equal(button.$el.text(), "cancel");
+            equal(button.$el.text(), "Cancel");
         });
 
         test("Cancel Button done callback is executed on click", function() {
