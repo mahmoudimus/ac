@@ -40,3 +40,7 @@
 .aui-inline-dialog .ap-stats, .ap-dialog-content .ap-stats {
   display: block;
 }
+
+.ap-aui-message {
+  margin: 10px;
+}

@@ -15,7 +15,7 @@ requirejs.config({
     // dependencies
     'jquery': '../target/qunit/dependencies/js/external/jquery/jquery',
     'aui-atlassian': '../target/qunit/dependencies/js/atlassian/atlassian',
-    'aui-soy': 'http://cdnjs.cloudflare.com/ajax/libs/aui/5.4.3/aui-next/js/aui-soy',
+    'aui-soy': '//aui-cdn.atlassian.com/aui-adg/5.4.3/js/aui-soy',
     // host side
     'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
     'iframe/host/_status_helper': '../src/main/resources/js/iframe/host/_status_helper',

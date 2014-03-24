@@ -46,7 +46,7 @@ _AP.define("dialog/button", ["_dollar"], function($) {
         submit: function(actions){
             return new button({
                 type: 'primary',
-                text: 'submit',
+                text: 'Submit',
                 additionalClasses: 'ap-dialog-submit',
                 actions: actions
             });
@@ -54,7 +54,7 @@ _AP.define("dialog/button", ["_dollar"], function($) {
         cancel: function(actions){
             return new button({
                 type: 'link',
-                text: 'cancel',
+                text: 'Cancel',
                 noDisable: true,
                 additionalClasses: 'ap-dialog-cancel',
                 actions: actions
