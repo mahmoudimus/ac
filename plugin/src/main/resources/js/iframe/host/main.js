@@ -259,10 +259,21 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           _AP.require("confluence/macro/editor", function (editor) {
             editor.getMacroData(callback);
           });
+        },
+        saveCookie: function(name, value, expires){
+          AJS.Cookie.save(prefixCookie(name), value, expires);
+        },
+        readCookie: function(name, callback){
+          callback(AJS.Cookie.read(prefixCookie(name)));
+        },
+        eraseCookie: function(name){
+          AJS.Cookie.erase(prefixCookie(name));
         }
       }
     });
-
+    function prefixCookie(name){
+      return options.key + '-' + options.ns + '-' + name;
+    }
     statusHelper.showLoadingStatus($home);
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
