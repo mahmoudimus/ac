@@ -42,13 +42,13 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
             // register an iframe rendering strategy
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getKey())
+                    .module(bean.getRawKey())
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .title(bean.getDisplayName())
                     .dimensions(bean.getLayout().getWidth(), bean.getLayout().getHeight())
                     .build();
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getKey(), renderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
 
             // construct a module descriptor that will supply a web panel to the product
             descriptors.addAll(beanToDescriptors(addon, theConnectPlugin, bean));

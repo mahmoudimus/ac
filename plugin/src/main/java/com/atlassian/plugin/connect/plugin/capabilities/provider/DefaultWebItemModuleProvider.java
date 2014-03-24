@@ -72,13 +72,13 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         {
             IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getKey())
+                    .module(bean.getRawKey())
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())
                     .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .build();
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
         }
 
         return descriptors;

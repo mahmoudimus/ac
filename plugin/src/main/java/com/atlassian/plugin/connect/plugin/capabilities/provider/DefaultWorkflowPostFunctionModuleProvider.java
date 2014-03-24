@@ -72,11 +72,11 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
-                .module(bean.getKey())
+                .module(bean.getRawKey())
                 .workflowPostFunctionTemplate()
                 .urlTemplate(urlBean.getUrl())
                 .build();
 
-        iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getKey(), classifier, renderStrategy);
+        iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), classifier, renderStrategy);
     }
 }

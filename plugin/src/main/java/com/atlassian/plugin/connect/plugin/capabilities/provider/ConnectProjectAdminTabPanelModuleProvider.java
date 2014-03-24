@@ -58,8 +58,8 @@ public class ConnectProjectAdminTabPanelModuleProvider
             // render a web item for our tab
             WebItemModuleBean webItemModuleBean = newWebItemBean()
                     .withName(bean.getName())
-                    .withKey(bean.getKey())
-                    .withUrl(iFrameServletPath(addon.getKey(), bean.getKey()))
+                    .withKey(bean.getRawKey())
+                    .withUrl(iFrameServletPath(addon.getKey(), bean.getRawKey()))
                     .withContext(AddOnUrlContext.page)
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())
@@ -72,16 +72,16 @@ public class ConnectProjectAdminTabPanelModuleProvider
             // register a render strategy for the servlet backing our iframe tab
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getKey())
+                    .module(bean.getRawKey())
                     .projectAdminTabTemplate()
                     .urlTemplate(bean.getUrl())
-                    .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey())
+                    .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getRawKey())
                     .conditions(bean.getConditions())
                     .conditionClass(IsProjectAdminCondition.class)
                     .title(bean.getDisplayName())
                     .build();
 
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getKey(), renderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
         }
 
         return builder.build();

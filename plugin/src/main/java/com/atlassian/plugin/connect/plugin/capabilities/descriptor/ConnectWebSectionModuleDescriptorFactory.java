@@ -36,7 +36,7 @@ public class ConnectWebSectionModuleDescriptorFactory implements ConnectModuleDe
     {
         Element webSectionElement = new DOMElement("web-section");
 
-        String webSectionKey = bean.getKey();
+        String webSectionKey = bean.getKey(addon);
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
 
         webSectionElement.addAttribute("key", webSectionKey);

@@ -36,7 +36,7 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
     @Override
     public WorkflowFunctionModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WorkflowPostFunctionModuleBean bean)
     {
-        Element element = createDOMElement(bean);
+        Element element = createDOMElement(bean, addon);
         ConnectWorkflowFunctionModuleDescriptor moduleDescriptor = connectContainerUtil.createBean(ConnectWorkflowFunctionModuleDescriptor.class);
         
         ((ConnectModuleDescriptor) moduleDescriptor).setAddonKey(addon.getKey());
@@ -45,14 +45,14 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
         return moduleDescriptor;
     }
 
-    private Element createDOMElement(WorkflowPostFunctionModuleBean bean)
+    private Element createDOMElement(WorkflowPostFunctionModuleBean bean, ConnectAddonBean addon)
     {
         Element element = new DOMElement("remote-workflow-post-function");
 
         element.addAttribute("class", RemoteWorkflowFunctionPluginFactory.class.getName());
         element.addElement("function-class").addText(RemoteWorkflowPostFunctionProvider.class.getName());
 
-        element.addAttribute("key", bean.getKey());
+        element.addAttribute("key", bean.getKey(addon));
         element.addAttribute("name", bean.getName().getValue());
         element.addAttribute("i18n-name-key", bean.getName().getI18n());
         element.addElement("description")

@@ -41,7 +41,7 @@ public class ConnectTabPanelModuleDescriptorFactory
         DOMElement element = new DOMElement(hints.getDomElementName());
 
         element
-                .addAttribute(KEY, bean.getKey())
+                .addAttribute(KEY, bean.getKey(addon))
                 .addAttribute(NAME, bean.getName().getValue())
                 .addAttribute(URL, bean.getUrl());
 

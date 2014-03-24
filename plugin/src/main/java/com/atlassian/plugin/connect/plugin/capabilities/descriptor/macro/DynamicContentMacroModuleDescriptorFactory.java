@@ -58,7 +58,7 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
                 IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addon.getKey(),
-                        bean.getKey(), CONTENT_CLASSIFIER);
+                        bean.getRawKey(), CONTENT_CLASSIFIER);
                 DynamicContentMacro macro = new DynamicContentMacro(MacroEnumMapper.map(bean.getBodyType()),
                         MacroEnumMapper.map(bean.getOutputType()), renderStrategy, macroModuleContextExtractor);
 

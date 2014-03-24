@@ -13,6 +13,8 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.clean
  */
 public class RequiredKeyBean extends NamedBean
 {
+    public static final String ADDON_MODULE_SEPARATOR = ":";
+    
     /**
      * A key to identify this module.
      * This key must be unique relative to the add on.
@@ -55,11 +57,11 @@ public class RequiredKeyBean extends NamedBean
         }
     }
 
-    public String getKey()
+    public String getKey(ConnectAddonBean addon)
     {
         if (Strings.isNullOrEmpty(calculatedKey))
         {
-            this.calculatedKey = cleanKey(key);
+            this.calculatedKey = addon.getKey() + ADDON_MODULE_SEPARATOR + cleanKey(key);
         }
         return calculatedKey;
     }

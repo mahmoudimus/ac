@@ -63,7 +63,7 @@ public class WebItemModuleDescriptorFactory
     {
         Element webItemElement = new DOMElement("web-item");
 
-        String webItemKey = bean.getKey();
+        String webItemKey = bean.getKey(addon);
 
         webItemElement.addAttribute("key", webItemKey);
         webItemElement.addAttribute("section", bean.getLocation());

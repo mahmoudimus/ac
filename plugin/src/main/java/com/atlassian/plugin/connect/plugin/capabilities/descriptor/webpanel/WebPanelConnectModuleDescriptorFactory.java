@@ -34,7 +34,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     @Override
     public WebPanelModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebPanelModuleBean bean)
     {
-        Element domElement = createDomElement(bean, bean.getKey(), addon);
+        Element domElement = createDomElement(bean, bean.getKey(addon), addon);
         final WebPanelModuleDescriptor descriptor = connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class);
         
         ((ConnectModuleDescriptor) descriptor).setAddonKey(addon.getKey());

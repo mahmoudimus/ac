@@ -73,7 +73,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     {
         DOMElement element = new DOMElement("search-request-view");
 
-        element.setAttribute("key", bean.getKey());
+        element.setAttribute("key", bean.getKey(addon));
         element.setAttribute("name", bean.getDisplayName());
         element.setAttribute("class", RemoteSearchRequestView.class.getName());
         element.setAttribute("state", "enabled");
@@ -112,7 +112,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                             templateRenderer,
                             iFrameUriBuilderFactory,
                             addon.getKey(),
-                            bean.getKey(),
+                            bean.getKey(addon),
                             bean.createUri(),
                             bean.getDisplayName());
                 }

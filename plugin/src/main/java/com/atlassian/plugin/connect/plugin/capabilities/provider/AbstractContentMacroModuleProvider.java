@@ -103,8 +103,8 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     {
         WebItemModuleBeanBuilder webItemBean = newWebItemBean()
                 .withName(new I18nProperty(bean.getName().getValue(),
-                        MacroI18nBuilder.getMacroI18nKey(addon.getKey(), bean.getKey())))
-                .withKey(bean.getKey())
+                        MacroI18nBuilder.getMacroI18nKey(addon.getKey(), bean.getRawKey())))
+                .withKey(bean.getRawKey())
                 .withLocation("system.editor.featured.macros.default");
 
         if (bean.hasIcon())
@@ -121,7 +121,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     // No web-resource beans/builders/descriptors/providers, so falling back to XML
     private ModuleDescriptor createFeaturedIconWebResource(ConnectAddonBean addon, Plugin theConnectPlugin, T bean)
     {
-        String macroKey = bean.getKey();
+        String macroKey = bean.getKey(addon);
 
         Element webResource = new DOMElement("web-resource")
                 .addAttribute("key", macroKey + "-featured-macro-resources");
@@ -158,7 +158,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
-                .module(macroBean.getKey())
+                .module(macroBean.getRawKey())
                 .dialogTemplate()
                 .urlTemplate(editor.getUrl())
                 .title(macroBean.getDisplayName())
@@ -166,14 +166,14 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .simpleDialog(true)
                 .build();
 
-        iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getKey(), renderStrategy);
+        iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getRawKey(), renderStrategy);
     }
 
     private ModuleDescriptor createEditorWebResource(ConnectAddonBean addon, Plugin theConnectPlugin, T macroBean)
     {
         MacroEditorBean editor = macroBean.getEditor();
 
-        String macroKey = macroBean.getKey();
+        String macroKey = macroBean.getKey(addon);
         String editTitle = editor.hasEditTitle() ? editor.getEditTitle().getValue() : macroBean.getDisplayName();
         String insertTitle = editor.hasInsertTitle() ? editor.getInsertTitle().getValue() : macroBean.getDisplayName();
 
@@ -203,7 +203,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                 .addAttribute("name", "URL")
-                .addAttribute("value", ConnectIFrameServlet.iFrameServletPath(addon.getKey(), macroBean.getKey())).getParent()
+                .addAttribute("value", ConnectIFrameServlet.iFrameServletPath(addon.getKey(), macroBean.getRawKey())).getParent()
                 .addElement("var")
                 .addAttribute("name", "WIDTH")
                 .addAttribute("value", editor.getWidth()).getParent()

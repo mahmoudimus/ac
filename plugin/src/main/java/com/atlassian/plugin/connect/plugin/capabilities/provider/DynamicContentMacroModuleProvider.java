@@ -42,14 +42,14 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
-                .module(macroBean.getKey())
+                .module(macroBean.getRawKey())
                 .genericBodyTemplate(macroBean.getOutputType() == MacroOutputType.INLINE)
                 .urlTemplate(macroBean.getUrl())
                 .dimensions(macroBean.getWidth(), macroBean.getHeight())
                 .ensureUniqueNamespace(true)
                 .build();
 
-        iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getKey(), CONTENT_CLASSIFIER, renderStrategy);
+        iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getRawKey(), CONTENT_CLASSIFIER, renderStrategy);
 
         return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, macroBean);
     }

@@ -31,7 +31,7 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
     {
         Element indexDocumentConfiguration = new DOMElement(DESCRIPTOR_NAME);
 
-        indexDocumentConfiguration.addAttribute("key", bean.getKey());
+        indexDocumentConfiguration.addAttribute("key", bean.getKey(addon));
         indexDocumentConfiguration.addAttribute("entity-key", bean.getEntityType().getValue());
         indexDocumentConfiguration.addAttribute("i18n-name-key", bean.getName().getI18n());
 

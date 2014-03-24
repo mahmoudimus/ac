@@ -71,13 +71,13 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
                 // register a render strategy for tab panels
                 IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                         .addOn(addon.getKey())
-                        .module(bean.getKey())
+                        .module(bean.getRawKey())
                         .genericBodyTemplate()
                         .urlTemplate(bean.getUrl())
                         .conditions(bean.getConditions())
                         .title(bean.getDisplayName())
                         .build();
-                iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getKey(), renderStrategy);
+                iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
 
                 // construct a module descriptor that JIRA will use to retrieve tab modules from
                 builder.add(descriptorFactory.createModuleDescriptor(addon, theConnectPlugin, bean, FIELD_TO_HINTS.get(jsonFieldName)));

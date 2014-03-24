@@ -26,7 +26,7 @@ public class XWorkActionDescriptorFactory
 
     public XWorkActionDescriptor create(ConnectAddonBean addon, Plugin theConnectPlugin, XWorkActionModuleBean actionModuleBean)
     {
-        String moduleKey = "action-" + actionModuleBean.getKey();
+        String moduleKey = "action-" + actionModuleBean.getRawKey();
         XWorkPackageCreator packageCreator = new XWorkPackageCreator(addon, theConnectPlugin, actionModuleBean);
 
         return new XWorkActionDescriptor(eventPublisher, theConnectPlugin, moduleKey, packageCreator);

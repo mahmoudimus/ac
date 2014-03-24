@@ -85,7 +85,7 @@ public class SpaceToolsTabModuleProviderTest
 
         // Space Admin web item
         assertEquals("Test Module", webItems.spaceAdmin.getName().getValue());
-        assertTrue(webItems.spaceAdmin.getKey().endsWith(SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX));
+        assertTrue(webItems.spaceAdmin.getRawKey().endsWith(SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX));
         assertEquals(666, webItems.spaceAdmin.getWeight());
         // Space Admin should *always* be in the LEGACY_LOCATION, regardless of any specific location specified by the
         // Space Tab Module bean.
@@ -131,7 +131,7 @@ public class SpaceToolsTabModuleProviderTest
         XWorkActionModuleBean actionModuleBean = captureActionBean();
 
         assertEquals("/plugins/atlassian-connect/my-plugin", actionModuleBean.getNamespace());
-        assertEquals("test-module", actionModuleBean.getKey());
+        assertEquals("test-module", actionModuleBean.getRawKey());
         assertEquals(SpaceToolsIFrameAction.class, actionModuleBean.getClazz());
     }
 

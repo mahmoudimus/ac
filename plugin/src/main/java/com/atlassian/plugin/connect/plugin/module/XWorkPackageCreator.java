@@ -45,7 +45,7 @@ public class XWorkPackageCreator
     {
         String namespace = actionModuleBean.getNamespace();
 
-        String packageName = "atlassian-connect-" + addon.getKey() + "-" + actionModuleBean.getKey();
+        String packageName = "atlassian-connect-" + addon.getKey() + "-" + actionModuleBean.getRawKey();
 
         PackageConfig packageConfig = new PackageConfig(packageName, namespace, false, null);
 
@@ -58,9 +58,9 @@ public class XWorkPackageCreator
         actionConfig.addInterceptors(buildActionInterceptors(packageConfig, actionModuleBean));
         actionConfig.setResults(buildResults(packageConfig, actionModuleBean));
 
-        packageConfig.addActionConfig(actionModuleBean.getKey(), actionConfig);
+        packageConfig.addActionConfig(actionModuleBean.getRawKey(), actionConfig);
 
-        configuration.addPackageConfig(actionModuleBean.getKey(), packageConfig);
+        configuration.addPackageConfig(actionModuleBean.getRawKey(), packageConfig);
     }
 
     private void addParentPackages(PackageConfig packageConfig, Configuration configuration)

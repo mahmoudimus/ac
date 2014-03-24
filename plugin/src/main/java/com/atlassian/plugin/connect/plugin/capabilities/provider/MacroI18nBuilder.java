@@ -26,13 +26,13 @@ public class MacroI18nBuilder
 
     public void add(BaseContentMacroModuleBean bean)
     {
-        addName(bean.getKey(), bean.getName());
-        addDescription(bean.getKey(), bean.getDescription());
+        addName(bean.getRawKey(), bean.getName());
+        addDescription(bean.getRawKey(), bean.getDescription());
 
         for (MacroParameterBean parameterBean : bean.getParameters())
         {
-            addParameterLabel(bean.getKey(), parameterBean.getIdentifier(), parameterBean.getName());
-            addParameterDescription(bean.getKey(), parameterBean.getIdentifier(), parameterBean.getDescription());
+            addParameterLabel(bean.getRawKey(), parameterBean.getIdentifier(), parameterBean.getName());
+            addParameterDescription(bean.getRawKey(), parameterBean.getIdentifier(), parameterBean.getDescription());
         }
     }
 

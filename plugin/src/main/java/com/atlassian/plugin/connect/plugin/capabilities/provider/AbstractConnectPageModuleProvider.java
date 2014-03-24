@@ -52,7 +52,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
             // register a render strategy for our iframe page
             IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getKey())
+                    .module(bean.getRawKey())
                     .pageTemplate()
                     .urlTemplate(bean.getUrl())
                     .decorator(getDecorator())
@@ -61,19 +61,19 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .title(bean.getDisplayName())
                     .resizeToParent(true)
                     .build();
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getKey(), pageRenderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), pageRenderStrategy);
 
             // and an additional strategy for raw content, in case the user wants to use it as a dialog target
             IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getKey())
+                    .module(bean.getRawKey())
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())
                     .conditionClasses(getConditionClasses())
                     .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .build();
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
 
             if (hasWebItem())
             {
@@ -83,9 +83,9 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
                 WebItemModuleBean webItemBean = newWebItemBean()
                         .withName(bean.getName())
-                        .withKey(bean.getKey())
+                        .withKey(bean.getRawKey())
                         .withContext(page)
-                        .withUrl(ConnectIFrameServlet.iFrameServletPath(addon.getKey(), bean.getKey()))
+                        .withUrl(ConnectIFrameServlet.iFrameServletPath(addon.getKey(), bean.getRawKey()))
                         .withLocation(location)
                         .withWeight(weight)
                         .withIcon(bean.getIcon())

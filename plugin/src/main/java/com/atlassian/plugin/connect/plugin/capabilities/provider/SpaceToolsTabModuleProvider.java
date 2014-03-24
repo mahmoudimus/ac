@@ -77,12 +77,12 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
 
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getKey())
+                    .module(bean.getRawKey())
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .build();
 
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getKey(), renderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
 
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
             for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
@@ -95,8 +95,8 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
 
     private XWorkActionModuleBean createActionBean(ConnectAddonBean addon, SpaceToolsTabModuleBean bean)
     {
-        String spaceAdminLegacyKey = bean.getKey() + SPACE_ADMIN_KEY_SUFFIX;
-        SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(addon.getKey(), bean.getKey(),
+        String spaceAdminLegacyKey = bean.getRawKey() + SPACE_ADMIN_KEY_SUFFIX;
+        SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(addon.getKey(), bean.getRawKey(),
                 bean.getDisplayName(), spaceAdminLegacyKey);
 
         return newXWorkActionBean()
@@ -134,7 +134,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
                 .build();
 
         WebItemModuleBean spaceToolsWebItemBean = newWebItemBean(baseWebItemBean)
-                .withKey(bean.getKey())
+                .withKey(bean.getRawKey())
                 .withName(bean.getName())
                 .withContext(AddOnUrlContext.product)
                 .withLocation(SPACE_TOOLS_SECTION + "/" + location)
@@ -144,7 +144,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
                 .build();
 
         WebItemModuleBean spaceAdminWebItemBean = newWebItemBean(baseWebItemBean)
-                .withKey(bean.getKey() + SPACE_ADMIN_KEY_SUFFIX)
+                .withKey(bean.getRawKey() + SPACE_ADMIN_KEY_SUFFIX)
                 .withName(bean.getName())
                 .withContext(AddOnUrlContext.product)
                 .withLocation(SPACE_ADMIN_SECTION + "/" + LEGACY_LOCATION)
