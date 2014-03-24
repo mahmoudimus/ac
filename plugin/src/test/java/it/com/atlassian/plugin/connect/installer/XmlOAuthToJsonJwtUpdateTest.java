@@ -88,7 +88,7 @@ public class XmlOAuthToJsonJwtUpdateTest
         {
             assertNotNull(oAuthPlugin);
             assertEquals(OLD_PLUGIN_KEY, oAuthPlugin.getKey());
-            assertEquals(2, oAuthPlugin.getModuleDescriptors().size());
+            assertEquals(4, oAuthPlugin.getModuleDescriptors().size());
             ModuleDescriptor<?> moduleDescriptor = oAuthPlugin.getModuleDescriptor("general");
             assertEquals("Greeting", moduleDescriptor.getName());
             assertTrue(moduleDescriptor instanceof GeneralPageModuleDescriptor);
