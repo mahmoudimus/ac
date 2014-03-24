@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.jira.issuepanel;
 
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
@@ -25,7 +25,7 @@ public final class IssuePanelPageModuleDescriptor extends RemoteWebPanelModuleDe
     public IssuePanelPageModuleDescriptor(
             ModuleFactory moduleFactory,
             IFrameRendererImpl iFrameRenderer,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             HostContainer hostContainer,
             BundleContext bundleContext,
             ConditionProcessor conditionProcessor,

@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.plugin.module.page;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.util.concurrent.NotNull;
 
 import org.dom4j.Element;
@@ -18,15 +18,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;
     private Element descriptor;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
     private static final Logger log = LoggerFactory.getLogger(GeneralPageModuleDescriptor.class);
 
     public GeneralPageModuleDescriptor(
             ModuleFactory moduleFactory,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             RemotePageDescriptorCreator remotePageDescriptorCreator)
     {
         super(moduleFactory);

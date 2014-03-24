@@ -19,10 +19,16 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 
 /**
- * Helper component that registers dynamic module descriptors
+ * Helper component that registers dynamic module descriptors.
+ * 
+ * This class is only here to register modules for legacy xml based plugins and should be removed
+ * entirely when we remove support for xml based addons
+ * 
+ * @deprecated remove when we remove xml support
  */
+@Deprecated
 @Component
-public class DynamicDescriptorRegistration
+public class LegacyXmlDynamicDescriptorRegistration
 {
     private final BundleContext bundleContext;
     private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
@@ -34,9 +40,9 @@ public class DynamicDescriptorRegistration
     }
 
     @Autowired
-    public DynamicDescriptorRegistration(
-                                         BundleContext bundleContext,
-                                         I18nPropertiesPluginManager i18nPropertiesPluginManager
+    public LegacyXmlDynamicDescriptorRegistration(
+            BundleContext bundleContext,
+            I18nPropertiesPluginManager i18nPropertiesPluginManager
     )
     {
         this.bundleContext = bundleContext;
@@ -58,7 +64,9 @@ public class DynamicDescriptorRegistration
     }
 
     /**
-     * Registers descriptors.  
+     * Registers descriptors.  <strong>Important: make sure any osgi service references passed into
+     * these descriptors are not proxies created by the p3 plugin, as it will cause ServiceProxyDestroyed
+     * exceptions when the p3 plugin is upgraded.</strong>
      *
      * @param plugin
      * @param descriptors
@@ -66,6 +74,8 @@ public class DynamicDescriptorRegistration
      */
     public Registration registerDescriptors(final Plugin plugin, Iterable<DescriptorToRegister> descriptors)
     {
+        Bundle bundle = BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey());
+        BundleContext targetBundleContext = bundle.getBundleContext();
         final List<ServiceRegistration> registrations = newArrayList();
         for (DescriptorToRegister reg : descriptors)
         {
@@ -77,7 +87,7 @@ public class DynamicDescriptorRegistration
                 ((StateAware)existingDescriptor).disabled();
             }
             log.debug("Registering descriptor {}", descriptor.getClass().getName());
-            registrations.add(bundleContext.registerService(ModuleDescriptor.class.getName(),
+            registrations.add(targetBundleContext.registerService(ModuleDescriptor.class.getName(),
                     descriptor, null));
 
             if (reg.getI18nProperties() != null)

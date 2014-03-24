@@ -12,7 +12,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -31,7 +31,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
@@ -41,12 +41,12 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
     private final SearchRequestURLHandler urlHandler;
     private Element descriptor;
     private URI url;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public RemoteSearchRequestViewModuleDescriptor(
             JiraAuthenticationContext authenticationContext,
             ModuleFactory moduleFactory,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             ApplicationProperties applicationProperties,
             SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
             TemplateRenderer templateRenderer,

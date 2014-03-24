@@ -1,5 +1,6 @@
 package it.confluence;
 
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
@@ -29,7 +30,9 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
     @Test
     public void testSearchPerformedWebHookFired() throws Exception
     {
-        runInRunner(baseUrl, "search_performed", new WebHookTester()
+        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        
+        runInRunner(baseUrl, "search_performed", pluginKey, new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
@@ -48,7 +51,9 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
     @Test
     public void testPageCreatedWebHookFired() throws Exception
     {
-        runInRunner(baseUrl, "page_created", new WebHookTester()
+        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        
+        runInRunner(baseUrl, "page_created", pluginKey, new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
