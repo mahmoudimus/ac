@@ -2,7 +2,7 @@
 
   <div class="ap-content" id="embedded-$namespace"></div>
   <div class="ap-stats hidden">
-    <div class="ap-loading ap-status">
+    <div class="ap-loading ap-status hidden">
       <small><div class="small-spinner"></div>Loading add-on <a href="${plugin.baseUrl}" class="ap-doc-url" target="_blank">$plugin.name</a>.</small>
     </div>
     <div class="ap-load-timeout ap-status hidden">

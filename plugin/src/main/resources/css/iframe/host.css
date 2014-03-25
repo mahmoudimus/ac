@@ -22,6 +22,10 @@
   text-decoration: none;
 }
 
+.ap-container .ap-content {
+  font-size: 0px;
+}
+
 .ap-container iframe {
   border: 0;
 }
