@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "atlassian-connect-validator": "~0.0.3",
     "request": "~2.33.0",
     "nomnom": "~1.6.1",
     "lodash": "~2.4.1",

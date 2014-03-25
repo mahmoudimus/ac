@@ -48,7 +48,14 @@ function downloadDescriptor(opts, addonKey, addon, descriptorUrl) {
                     }
 
                     if (opts.descriptorDownloadedCallback) {
-                        opts.descriptorDownloadedCallback(addonKey, filename, type, body, opts);
+                        opts.descriptorDownloadedCallback({
+                            addon: {
+                                key: addonKey,
+                                listing: addon
+                            },
+                            descriptorFilename: filename,
+                            type: type,
+                        }, body, opts);
                     }
                 });
             } else if (opts.debug) {
