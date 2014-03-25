@@ -528,6 +528,7 @@
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                        <use.test.http.client>true</use.test.http.client>
                     </systemPropertyVariables>
 
                     <products>
@@ -543,6 +544,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <use.test.http.client>true</use.test.http.client>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -619,6 +621,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <use.test.http.client>true</use.test.http.client>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>

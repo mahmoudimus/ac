@@ -6,6 +6,8 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,6 +18,8 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
+import com.atlassian.httpclient.api.factory.HttpClientFactory;
+import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.oauth.Consumer;
@@ -79,6 +83,12 @@ public class ConnectAddonManager
     private static final String HTTP_ERROR_I18N_KEY_PREFIX = "connect.install.error.remote.host.bad.response.";
     private static final List<Integer> OK_INSTALL_HTTP_CODES = asList(200, 201, 204);
 
+    private int testConnectionTimeout = 5 * 1000;
+    private int testSocketTimeout = 5 * 1000;
+    private int testRequestTimeout = 5 * 3000;
+    
+    public static final String USE_TEST_HTTP_CLIENT = "use.test.http.client";
+
     public static final String USER_KEY = "user_key";
 
     public enum SyncHandler
@@ -89,7 +99,7 @@ public class ConnectAddonManager
     private final IsDevModeService isDevModeService;
     private final UserManager userManager;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final HttpClient httpClient;
+    private HttpClient httpClient;
     private final JsonConnectAddOnIdentifierService connectIdentifier;
     private final ConnectAddonRegistry addonRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
@@ -105,6 +115,9 @@ public class ConnectAddonManager
     private final I18nResolver i18nResolver;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final SharedSecretService sharedSecretService;
+    private final HttpClientFactory httpClientFactory;
+    
+    private final AtomicBoolean isTestHttpClient;
 
     @Inject
     public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
@@ -113,7 +126,7 @@ public class ConnectAddonManager
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-                               JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService)
+                               JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -134,6 +147,9 @@ public class ConnectAddonManager
         this.i18nResolver = i18nResolver;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.sharedSecretService = sharedSecretService;
+        this.httpClientFactory = httpClientFactory;
+
+        this.isTestHttpClient = new AtomicBoolean(false);
     }
 
     public boolean hasDescriptor(String pluginKey)
@@ -387,6 +403,16 @@ public class ConnectAddonManager
     // NB: the sharedSecret should be distributed synchronously and only on installation
     private void callSyncHandler(ConnectAddonBean addon, String path, String jsonEventData, SyncHandler handler)
     {
+        if(Boolean.parseBoolean(System.getProperty(USE_TEST_HTTP_CLIENT,"false")) && !isTestHttpClient.get())
+        {
+            HttpClientOptions options = new HttpClientOptions();
+            options.setConnectionTimeout(testConnectionTimeout, TimeUnit.MILLISECONDS);
+            options.setRequestTimeout(testRequestTimeout,TimeUnit.MILLISECONDS);
+            options.setSocketTimeout(testSocketTimeout,TimeUnit.MILLISECONDS);
+            
+            this.httpClient = httpClientFactory.create(options);
+        }
+        
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
 
