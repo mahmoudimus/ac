@@ -34,10 +34,7 @@ import static com.atlassian.jira.index.IndexDocumentConfiguration.ExtractConfigu
 import static com.atlassian.jira.index.IndexDocumentConfiguration.KeyConfiguration;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -84,7 +81,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     @Test
     public void completeKeyIsCorrect()
     {
-        assertThat(moduleDescriptor.getCompleteKey(), startsWith(addon.getKey() + ":" + "com.atlassian.plugin.key:attachment-indexing"));
+        assertThat(moduleDescriptor.getCompleteKey(), startsWith(addon.getKey() + ":" + "com-atlassian-plugin-key:attachment-indexing"));
     }
 
     @Test
