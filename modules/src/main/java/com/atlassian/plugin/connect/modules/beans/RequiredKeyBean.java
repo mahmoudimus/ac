@@ -6,6 +6,7 @@ import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.addonAndModuleKey;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.cleanKey;
 
 /**
@@ -13,7 +14,7 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.clean
  */
 public class RequiredKeyBean extends NamedBean
 {
-    public static final String ADDON_MODULE_SEPARATOR = ":";
+    
     
     /**
      * A key to identify this module.
@@ -61,14 +62,14 @@ public class RequiredKeyBean extends NamedBean
     {
         if (Strings.isNullOrEmpty(calculatedKey))
         {
-            this.calculatedKey = addon.getKey() + ADDON_MODULE_SEPARATOR + cleanKey(key);
+            this.calculatedKey = addonAndModuleKey(addon.getKey(),key);
         }
         return calculatedKey;
     }
 
     public String getRawKey()
     {
-        return key;
+        return cleanKey(key);
     }
 
     @Override

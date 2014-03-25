@@ -10,6 +10,8 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameVersionTabPanel;
 import com.atlassian.plugin.module.ModuleFactory;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.moduleKeyOnly;
+
 /**
  * ModuleDescriptor for Connect version of a VersionTabPanel
  */
@@ -32,7 +34,7 @@ public class ConnectVersionTabPanelModuleDescriptor extends VersionTabPanelModul
     @Override
     public VersionTabPanel getModule()
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, getKey());
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKeyOnly(getKey()));
         return new ConnectIFrameVersionTabPanel(renderStrategy, moduleContextFilter);
     }
 

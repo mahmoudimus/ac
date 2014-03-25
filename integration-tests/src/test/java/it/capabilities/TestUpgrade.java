@@ -63,7 +63,7 @@ public class TestUpgrade extends AbstractBrowserlessTest
 
         JSON pluginJson = JSON.parse(plugin1.getUpmPluginJson());
         Matcher<Iterable<? super Value>> valMatcher = hasItem(
-                hasProperty("key", KEY_PAGE_TWO));
+                hasProperty("key", PLUGIN_KEY + ":" + KEY_PAGE_TWO));
         
         assertThat(pluginJson.get("modules"), isArrayMatching(valMatcher));
 

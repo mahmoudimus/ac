@@ -12,6 +12,8 @@ import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebPanelModuleDescriptor;
 import com.atlassian.plugin.web.model.WebPanel;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.moduleKeyOnly;
+
 /**
  *
  */
@@ -35,7 +37,7 @@ public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescri
     @Override
     public WebPanel getModule()
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, getKey());
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKeyOnly(getKey()));
         return new ConnectIFrameWebPanel(renderStrategy, moduleContextFilter, webFragmentModuleContextExtractor);
     }
 

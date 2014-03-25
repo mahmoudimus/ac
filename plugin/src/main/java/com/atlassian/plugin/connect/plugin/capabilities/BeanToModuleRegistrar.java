@@ -110,6 +110,17 @@ public class BeanToModuleRegistrar
         }
     }
     
+    public Collection<ModuleDescriptor<?>> getRegisteredDescriptorsForAddon(String addonKey)
+    {
+        if (registrations.containsKey(addonKey))
+        {
+            DynamicDescriptorRegistration.Registration reg = registrations.get(addonKey);
+            return reg.getRegisteredDescriptors();
+        }
+        
+        return Collections.EMPTY_LIST;
+    }
+    
     public boolean descriptorsAreRegistered(String pluginKey)
     {
         return registrations.containsKey(pluginKey);

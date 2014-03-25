@@ -37,6 +37,7 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.moduleKeyOnly;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -132,7 +133,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     @Override
     public void writeHtml(String resourceName, Map<String, ?> startingParams, Writer writer) throws IOException
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, getKey(), resourceName);
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKeyOnly(getKey()), resourceName);
 
         if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
         {

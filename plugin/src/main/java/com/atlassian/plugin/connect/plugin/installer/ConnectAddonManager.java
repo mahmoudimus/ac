@@ -217,22 +217,35 @@ public class ConnectAddonManager
 
     public void disableConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
     {
-        disableConnectAddon(pluginKey, true);
+        disableConnectAddon(pluginKey, true, true);
+    }
+
+    public void disableConnectAddonQuietly(final String pluginKey) throws ConnectAddOnUserDisableException
+    {
+        disableConnectAddon(pluginKey, true, false);
+    }
+
+    public void disableConnectAddonQuietlyWithoutPersistingState(final String pluginKey) throws ConnectAddOnUserDisableException
+    {
+        disableConnectAddon(pluginKey, false,false);
     }
 
     public void disableConnectAddonWithoutPersistingState(final String pluginKey) throws ConnectAddOnUserDisableException
     {
-        disableConnectAddon(pluginKey, false);
+        disableConnectAddon(pluginKey, false, true);
     }
 
-    private void disableConnectAddon(final String pluginKey, boolean persistState) throws ConnectAddOnUserDisableException
+    private void disableConnectAddon(final String pluginKey, boolean persistState, boolean sendEvent) throws ConnectAddOnUserDisableException
     {
         remotablePluginAccessorFactory.remove(pluginKey);
 
         if (addonRegistry.hasDescriptor(pluginKey))
         {
-            //need to publish the event before we actually disable anything
-            publishDisabledEvent(pluginKey);
+            if(sendEvent)
+            {
+                //need to publish the event before we actually disable anything
+                publishDisabledEvent(pluginKey);
+            }
 
             disableAddOnUser(pluginKey);
             beanToModuleRegistrar.unregisterDescriptorsForAddon(pluginKey);
@@ -289,7 +302,9 @@ public class ConnectAddonManager
         if (addonRegistry.hasDescriptor(pluginKey))
         {
             ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
-
+            
+            disableConnectAddon(pluginKey,false,sendEvent);
+            
             if (null != addon)
             {
                 if (sendEvent && !Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
@@ -304,9 +319,7 @@ public class ConnectAddonManager
                     }
                 }
 
-                beanToModuleRegistrar.unregisterDescriptorsForAddon(pluginKey);
                 connectApplinkManager.deleteAppLink(addon);
-                remotablePluginAccessorFactory.remove(pluginKey);
             }
             else
             {
@@ -314,7 +327,6 @@ public class ConnectAddonManager
             }
 
             addonRegistry.removeAll(pluginKey);
-            disableAddOnUser(pluginKey);
         }
 
         if (log.isDebugEnabled())

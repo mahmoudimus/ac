@@ -75,10 +75,10 @@ public final class WebHookTestServlet extends HttpServlet
         runInJsonRunner(baseUrl, webHookId, webHookId, tester);
     }
 
-    public static void runInstallInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    public static void runInstallInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addInstallLifecycle()
                 .addRoute(ConnectRunner.INSTALLED_PATH, servlet)
                 .start();
@@ -95,10 +95,10 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stopAndUninstall();
     }
 
-    public static void runEnableInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    public static void runEnableInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .setAuthenticationToNone()
                 .addEnableLifecycle()
                 .addRoute(ConnectRunner.ENABLED_PATH, servlet)
@@ -116,10 +116,10 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stopAndUninstall();
     }
 
-    public static void runDisableInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    public static void runDisableInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addDisableLifecycle()
                 .addRoute(ConnectRunner.DISABLED_PATH, servlet)
                 .start();
@@ -136,10 +136,10 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stopAndUninstall();
     }
 
-    public static void runUninstalledInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    public static void runUninstalledInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addUninstallLifecycle()
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet)
                 .start();

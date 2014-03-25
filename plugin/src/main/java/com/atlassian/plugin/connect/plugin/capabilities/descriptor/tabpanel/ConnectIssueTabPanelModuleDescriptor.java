@@ -10,6 +10,8 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.issue.ConnectIFrameIssueTabPanel;
 import com.atlassian.plugin.module.ModuleFactory;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.moduleKeyOnly;
+
 /**
  * A ModuleDescriptor for a Connect version of a Jira Issue Tab Panel
  */
@@ -32,7 +34,7 @@ public class ConnectIssueTabPanelModuleDescriptor extends IssueTabPanelModuleDes
     @Override
     public IssueTabPanel3 getModule()
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, getKey());
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKeyOnly(getKey()));
         return new ConnectIFrameIssueTabPanel(renderStrategy, moduleContextFilter);
     }
 

@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.atlassian.plugin.Plugin;
@@ -7,6 +8,7 @@ import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 
 import com.google.common.base.Strings;
@@ -17,6 +19,14 @@ public class ConnectAddonToPluginFactory
     public static final String ATLASSIAN_CONNECT_INFO_PARAM = "atlassian-connect-addon";
     public static final String ATLASSIAN_LICENSING_ENABLED = "atlassian-licensing-enabled";
     public static final String CONFIGURE_URL = "configure.url";
+    
+    private final BeanToModuleRegistrar beanToModuleRegistrar;
+
+    @Inject
+    public ConnectAddonToPluginFactory(BeanToModuleRegistrar beanToModuleRegistrar)
+    {
+        this.beanToModuleRegistrar = beanToModuleRegistrar;
+    }
 
     public Plugin create(ConnectAddonBean addon)
     {
@@ -25,14 +35,13 @@ public class ConnectAddonToPluginFactory
 
     public Plugin create(ConnectAddonBean addon, PluginState state)
     {
-        ConnectAddonPlugin plugin = new ConnectAddonPlugin();
+        ConnectAddonPlugin plugin = new ConnectAddonPlugin(beanToModuleRegistrar.getRegisteredDescriptorsForAddon(addon.getKey()));
         plugin.setKey(addon.getKey());
         plugin.setName(addon.getName());
         plugin.setPluginsVersion(3);
         plugin.setPluginState(state);
         plugin.setPluginInformation(createPluginInfo(addon));
         
-
         return plugin;
     }
 

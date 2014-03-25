@@ -11,6 +11,7 @@ import java.security.SecureRandom;
  */
 public class ModuleKeyGenerator
 {
+    public static final String ADDON_MODULE_SEPARATOR = ":";
     private static final SecureRandom random = new SecureRandom();
 
     /**
@@ -41,6 +42,16 @@ public class ModuleKeyGenerator
         return trimmed.toLowerCase();
     }
 
+    public static String addonAndModuleKey(String addonKey, String moduleKey)
+    {
+        return cleanKey(addonKey) + ADDON_MODULE_SEPARATOR + cleanKey(moduleKey);
+    }
+
+    public static String moduleKeyOnly(String moduleKey)
+    {
+        return StringUtils.substringAfterLast(moduleKey,ADDON_MODULE_SEPARATOR);
+    }
+    
     public static String randomName(String base)
     {
         long n = random.nextLong();

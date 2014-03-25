@@ -2,17 +2,28 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.impl.AbstractPlugin;
 
 public class ConnectAddonPlugin extends AbstractPlugin
 {
     private PluginState pluginState;
+    private Collection<ModuleDescriptor<?>> moduleDescriptors;
 
     public ConnectAddonPlugin()
     {
         this.pluginState = PluginState.DISABLED;
+        this.moduleDescriptors = Collections.EMPTY_LIST;
+    }
+
+    public ConnectAddonPlugin(Collection<ModuleDescriptor<?>> moduleDescriptors)
+    {
+        this.pluginState = PluginState.DISABLED;
+        this.moduleDescriptors = moduleDescriptors;
     }
 
     @Override
@@ -74,4 +85,11 @@ public class ConnectAddonPlugin extends AbstractPlugin
     {
         return pluginState;
     }
+
+    @Override
+    public Collection<ModuleDescriptor<?>> getModuleDescriptors()
+    {
+        return moduleDescriptors;
+    }
+
 }

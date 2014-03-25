@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.integration.plugins;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.atlassian.plugin.ModuleDescriptor;
@@ -7,9 +8,12 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.StateAware;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 
+import com.google.common.collect.ImmutableList;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +35,7 @@ public class DynamicDescriptorRegistration
     public static interface Registration
     {
         void unregister();
+        Collection<ModuleDescriptor<?>> getRegisteredDescriptors();
     }
 
     @Autowired
@@ -94,6 +99,24 @@ public class DynamicDescriptorRegistration
                 {
                     reg.unregister();
                 }
+            }
+
+            @Override
+            public Collection<ModuleDescriptor<?>> getRegisteredDescriptors()
+            {
+                ImmutableList.Builder<ModuleDescriptor<?>> listBuilder = ImmutableList.builder();
+                
+                for (ServiceRegistration reg : registrations)
+                {
+                    ModuleDescriptor descriptor = (ModuleDescriptor) bundleContext.getService(reg.getReference());
+                    
+                    if(null != descriptor)
+                    {
+                        listBuilder.add(descriptor);
+                    }
+                }
+                
+                return listBuilder.build();
             }
         };
     }
