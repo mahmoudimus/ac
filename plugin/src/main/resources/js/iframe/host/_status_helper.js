@@ -44,12 +44,12 @@ _AP.define("host/_status_helper", ["_dollar"], function ($) {
         hideStatuses($home);
     }
 
-    function showLoadingStatus($home, noDelay){
-        if (noDelay) {
+    function showLoadingStatus($home, delay){
+        if (!delay) {
             showStatus($home, 'loading');
         } else {
             // Wait a second before showing loading status.
-            var timer = setTimeout(showStatus.bind(null, $home, 'loading'), 1000);
+            var timer = setTimeout(showStatus.bind(null, $home, 'loading'), delay);
             $home.data('loadingStatusTimer', timer);
         }
     }
