@@ -64,7 +64,8 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
 
-        if(bean.hasDeviceType()){
+        if(bean.hasDeviceType())
+        {
             element.addElement("device-type").addText(bean.getDeviceType());
         }
 
