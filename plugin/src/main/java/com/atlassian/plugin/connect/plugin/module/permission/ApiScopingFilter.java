@@ -12,13 +12,13 @@ import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENABLED;
 
@@ -131,13 +131,13 @@ public class ApiScopingFilter implements Filter
         UserKey user = userManager.getRemoteUserKey(req);
         if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, user))
         {
-            log.warn("Request not in an authorized API scope from app '{}' as user '{}' on URL '{}'",
-                    new Object[]{clientKey, user, req.getRequestURI()});
+            log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
+                    new Object[]{clientKey, user, req.getMethod(), req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
             return;
         }
-        log.info("Authorized app '{}' to access API at URL '{}' for user '{}'",
-                new Object[]{clientKey, req.getRequestURI(), user});
+        log.info("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
+                new Object[]{clientKey, req.getMethod(), req.getRequestURI(), user});
         chain.doFilter(inputConsumingRequest, res);
     }
 

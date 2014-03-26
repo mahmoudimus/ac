@@ -126,10 +126,10 @@ You can start JIRA or Confluence with Atlassian Connect as follows:
 
 
 #### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.2-OD-10-004-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0-rc6,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.2-OD-10-004-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.4-OD-20-005 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.4-OD-20-006 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Note:
 We recommend you start the host application using the SDK command shown here. Atlassian Connect is
