@@ -803,6 +803,22 @@
                             </aggregations>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>host-min-js</id>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                        <configuration>
+                            <gzip>false</gzip>
+                            <jswarn>false</jswarn>
+                            <excludeResources>true</excludeResources>
+                            <sourceDirectory>${project.build.outputDirectory}/js</sourceDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/js</outputDirectory>
+                            <excludes>
+                                <exclude>${project.build.outputDirectory}/js/iframe</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
