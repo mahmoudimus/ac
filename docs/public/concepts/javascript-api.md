@@ -13,6 +13,13 @@ However, Atlassian Connect makes use of a technique called [cross-domain messagi
 
 Atlassian Connect transparently enables cross-domain messaging in its page modules. One benefit you'll see from this is that your add-on's page modules are automatically resized based on its content when loaded on the page.
 
+To enable your iframe to resize depending on the height of your content. Your content must be within an element with a class of `ac-content`.
+```
+<div class="ac-content">
+<p>Hello World</p>
+</div>
+```
+
 ## Sharing data between iframes
 A single add-on can generate multiple iframes in a particular page in the target application. Depending on the use case for the add-on, the iframes may need to share information between each other.
 
