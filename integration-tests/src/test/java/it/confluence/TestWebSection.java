@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertTrue;
 
@@ -82,13 +83,14 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     {
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(admin), "ds", "Page with web section", "some page content");
         final String pageId = pageData.getId();
-        product.visit(LoginPage.class).login(ADMIN_USERNAME, ADMIN_USERNAME, HomePage.class);
+        
+        loginAsAdmin();
 
         ViewPage viewPage = product.visit(ViewPage.class, pageId);
 
         ToolsMenu toolsMenu = viewPage.openToolsMenu();
 
-        ConfluenceMenuItem webItem = toolsMenu.getMenuItem(By.id(CONTENT_WEB_ITEM_ID));
+        ConfluenceMenuItem webItem = toolsMenu.getMenuItem(By.id(addonAndModuleKey(PLUGIN_KEY, CONTENT_WEB_ITEM_ID)));
         assertTrue("Web item within web section should be found", webItem.isVisible());
     }
 }

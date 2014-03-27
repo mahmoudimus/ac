@@ -3,9 +3,12 @@ package it.capabilities.jira;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.InsufficientPermissionsViewProfileTab;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -33,6 +36,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestProfileTabPanel extends ConnectWebDriverTestBase
 {
+    public static final String RAW_MODULE_KEY = "profile-tab-panel";
     private static ConnectRunner remotePlugin;
 
     @Rule
@@ -43,12 +47,12 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
                 .setAuthenticationToNone()
                 .addModule("jiraProfileTabPanels",
                         newTabPanelBean()
                                 .withName(new I18nProperty("Profile Tab Panel", null))
-                                .withKey("profile-tab-panel")
+                                .withKey(RAW_MODULE_KEY)
                                 .withUrl("/myProfileAddon")
                                 .withWeight(1234)
                                 .withConditions(
@@ -73,10 +77,11 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
     @Test
     public void testProfileTabPanel() throws RemoteException
     {
+        String moduleKey = remotePlugin.getAddon().getKey() + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + RAW_MODULE_KEY;
         loginAsAdmin();
         product.visit(ViewProfilePage.class);
-        LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_profile-tab-panel_a",
-                Option.<String>none(), "profile-tab-panel");
+        LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
+                Option.<String>none(),moduleKey);
         RemotePluginEmbeddedTestPage remotePage = tabPanel.click();
         assertThat(remotePage.isLoaded(), equalTo(true));
         assertThat(remotePage.getMessage(), equalTo("Success"));
@@ -92,10 +97,9 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
         loginAsAdmin();
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
-        ViewProfilePage profilePage = product.visit(ViewProfilePage.class);
+        JiraViewProfilePage profilePage = product.visit(JiraViewProfilePage.class);
 
-        InsufficientPermissionsViewProfileTab profileTab =
-                profilePage.openTab(InsufficientPermissionsViewProfileTab.class);
+        InsufficientPermissionsViewProfileTab profileTab = profilePage.openTab(InsufficientPermissionsViewProfileTab.class,remotePlugin.getAddon().getKey(),RAW_MODULE_KEY);
         assertThat(profileTab.getErrorMessage(),
                 containsString("You do not have the correct permissions to view the page Profile Tab Panel."));
     }

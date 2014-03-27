@@ -22,6 +22,7 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -96,7 +97,7 @@ public class TestIssueTabPanel extends TestBase
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "issue-tab-panel", issue.getKey(), ConnectPluginInfo.getPluginKey());
+                JiraViewIssuePageWithRemotePluginIssueTab.class, addonAndModuleKey(PLUGIN_KEY,"issue-tab-panel"), issue.getKey(), PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
         assertThat(page.getMessage(), is("Success"));
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();

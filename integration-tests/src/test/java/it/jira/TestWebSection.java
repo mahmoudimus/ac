@@ -14,6 +14,7 @@ import org.openqa.selenium.By;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -32,7 +33,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     // The web section that makes the dropdown
     private static final String WEB_SECTION_ID = "dropdown-section";
     private static final String WEB_SECTION_NAME = "D-D-Drop";
-    private static final String DROPDOWN_LOCATION = HEADER_WEB_ITEM_ID + "/" + WEB_SECTION_ID;
+    private static final String DROPDOWN_LOCATION = addonAndModuleKey(PLUGIN_KEY,HEADER_WEB_ITEM_ID) + "/" + addonAndModuleKey(PLUGIN_KEY,WEB_SECTION_ID);
     private static final String DROPDOWN_CONTENT_ID = HEADER_WEB_ITEM_ID + "-content";
 
     // The web item within the dropdown
@@ -66,7 +67,7 @@ public class TestWebSection extends JiraWebDriverTestBase
                         "webSections",
                         newWebSectionBean()
                             .withName(new I18nProperty(WEB_SECTION_NAME, null))
-                            .withLocation(HEADER_WEB_ITEM_ID)
+                            .withLocation(addonAndModuleKey(PLUGIN_KEY,HEADER_WEB_ITEM_ID))
                             .withKey(WEB_SECTION_ID)
                             .build()
                 )
@@ -88,13 +89,13 @@ public class TestWebSection extends JiraWebDriverTestBase
     {
         product.visit(JiraViewProjectPage.class, project.getKey());
 
-        AddonDropdownMenu dropdown = connectPageOperations.getPageBinder().bind(AddonDropdownMenu.class, By.id(HEADER_WEB_ITEM_ID), By.id(DROPDOWN_CONTENT_ID));
+        AddonDropdownMenu dropdown = connectPageOperations.getPageBinder().bind(AddonDropdownMenu.class, By.id(addonAndModuleKey(PLUGIN_KEY, HEADER_WEB_ITEM_ID)), By.id(addonAndModuleKey(PLUGIN_KEY, DROPDOWN_CONTENT_ID)));
 
         assertNotNull("Dropdown should be found", dropdown);
 
         dropdown.open();
 
-        PageElement item = dropdown.getItem(By.id(CONTENT_WEB_ITEM_ID));
+        PageElement item = dropdown.getItem(By.id(addonAndModuleKey(PLUGIN_KEY, CONTENT_WEB_ITEM_ID)));
 
         assertNotNull("Web item within web section should be found", item);
         assertTrue("Web item url within web section should be correct", item.getAttribute("href").contains(CONTENT_WEB_ITEM_URL));
