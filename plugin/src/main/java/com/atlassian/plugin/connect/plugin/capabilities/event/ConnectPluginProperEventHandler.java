@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
@@ -14,8 +13,8 @@ import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.installer.LegacyConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.registry.LegacyConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.event.PluginEventListener;

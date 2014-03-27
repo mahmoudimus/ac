@@ -4,7 +4,6 @@ import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
@@ -38,8 +37,6 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
     {
         Element element = createDOMElement(bean, addon);
         ConnectWorkflowFunctionModuleDescriptor moduleDescriptor = connectContainerUtil.createBean(ConnectWorkflowFunctionModuleDescriptor.class);
-        
-        ((ConnectModuleDescriptor) moduleDescriptor).setAddonKey(addon.getKey());
         
         moduleDescriptor.init(theConnectPlugin, element);
         return moduleDescriptor;

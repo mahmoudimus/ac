@@ -107,6 +107,10 @@ public class ConnectUPMControlHandler implements PluginControlHandler
             {
                 plugins.add(plugin);
             }
+            else
+            {
+                log.debug("found addon key: " + pluginKey + " in registry, but descriptor does not exist!!");
+            }
         }
         
         return plugins;

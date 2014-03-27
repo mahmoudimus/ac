@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
@@ -113,7 +114,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     @Test
     public void verifyCompleteKeyIsCorrect()
     {
-        assertThat(descriptor.getCompleteKey(), is("my-plugin:my-plugin:a-search-request-view"));
+        assertThat(descriptor.getCompleteKey(), is("my-plugin:my-plugin" + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "a-search-request-view"));
     }
 
     @Test

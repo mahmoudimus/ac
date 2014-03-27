@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.imports;
 
+import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.activeobjects.external.TransactionalAnnotationProcessor;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
@@ -16,6 +18,7 @@ import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
+import com.atlassian.plugin.spring.scanner.annotation.component.ClasspathComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.webresource.WebResourceManager;
@@ -76,7 +79,8 @@ public class CommonImports
             @ComponentImport ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry,
             @ComponentImport RemotePluginLicenseService remotePluginLicenseService,
             @ComponentImport JwtService jwtService,
-            @ComponentImport JwtApplinkFinder jwtApplinkFinder)
+            @ComponentImport JwtApplinkFinder jwtApplinkFinder,
+            @ComponentImport ActiveObjects ao)
     {
     }
 }

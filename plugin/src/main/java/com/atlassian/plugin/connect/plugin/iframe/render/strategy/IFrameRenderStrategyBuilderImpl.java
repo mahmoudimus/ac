@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionFactory;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
@@ -329,7 +329,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
         private String generateNamespace()
         {
-            return uniqueNamespace ? ModuleKeyGenerator.randomName(moduleKey) : moduleKey;
+            return uniqueNamespace ? ModuleKeyUtils.randomName(moduleKey) : moduleKey;
         }
 
         @VisibleForTesting
@@ -365,7 +365,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         @Override
         public boolean shouldShow(Map<String, ? extends Object> conditionContext)
         {
-            return condition == null || condition.shouldDisplay((Map<String,Object>)conditionContext);
+            boolean show = condition == null || condition.shouldDisplay((Map<String,Object>)conditionContext);
+            
+            return show;
         }
 
         @Override

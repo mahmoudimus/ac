@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 
 public class JiraViewIssuePageWithRemotePluginIssueTab extends RemotePluginEmbeddedTestPage implements Page
@@ -24,7 +25,7 @@ public class JiraViewIssuePageWithRemotePluginIssueTab extends RemotePluginEmbed
     @Override
     public String getUrl()
     {
-        return "/browse/" + issueKey + "?page=" + pluginKey + ":" + key;
+        return "/browse/" + issueKey + "?page=" + pluginKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + key;
     }
 
 

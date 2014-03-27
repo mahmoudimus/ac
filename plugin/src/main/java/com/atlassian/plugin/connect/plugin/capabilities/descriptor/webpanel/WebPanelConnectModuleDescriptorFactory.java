@@ -4,7 +4,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
@@ -36,8 +35,6 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     {
         Element domElement = createDomElement(bean, bean.getKey(addon), addon);
         final WebPanelModuleDescriptor descriptor = connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class);
-        
-        ((ConnectModuleDescriptor) descriptor).setAddonKey(addon.getKey());
         
         descriptor.init(theConnectPlugin, domElement);
         return descriptor;

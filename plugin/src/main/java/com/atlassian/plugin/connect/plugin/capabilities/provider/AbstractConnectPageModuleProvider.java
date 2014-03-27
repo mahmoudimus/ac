@@ -52,7 +52,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
             // register a render strategy for our iframe page
             IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getRawKey())
+                    .module(bean.getKey(addon))
                     .pageTemplate()
                     .urlTemplate(bean.getUrl())
                     .decorator(getDecorator())
@@ -66,7 +66,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
             // and an additional strategy for raw content, in case the user wants to use it as a dialog target
             IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getRawKey())
+                    .module(bean.getKey(addon))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())

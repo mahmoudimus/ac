@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -154,7 +154,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
 
     private File createTempDescriptor(String json) throws IOException
     {
-        File tmpFile = File.createTempFile(ModuleKeyGenerator.randomName(DESCRIPTOR_PREFIX), ".json");
+        File tmpFile = File.createTempFile(ModuleKeyUtils.randomName(DESCRIPTOR_PREFIX), ".json");
         Files.write(json,tmpFile, Charsets.UTF_8);
 
         return tmpFile;

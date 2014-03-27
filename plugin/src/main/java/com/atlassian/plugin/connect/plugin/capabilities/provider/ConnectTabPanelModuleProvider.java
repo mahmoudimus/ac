@@ -71,7 +71,7 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
                 // register a render strategy for tab panels
                 IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                         .addOn(addon.getKey())
-                        .module(bean.getRawKey())
+                        .module(bean.getKey(addon))
                         .genericBodyTemplate()
                         .urlTemplate(bean.getUrl())
                         .conditions(bean.getConditions())

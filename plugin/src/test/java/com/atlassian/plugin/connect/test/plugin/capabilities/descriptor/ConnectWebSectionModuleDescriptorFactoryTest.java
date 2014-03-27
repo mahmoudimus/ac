@@ -4,6 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
@@ -88,13 +89,13 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     @Test
     public void keyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getKey(), is("my-awesome-plugin:my-web-section"));
+        assertThat(descriptor.getKey(), is("my-awesome-plugin" + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-web-section"));
     }
 
     @Test
     public void completeKeyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getCompleteKey(), is("my-awesome-plugin:my-awesome-plugin:my-web-section"));
+        assertThat(descriptor.getCompleteKey(), is("my-awesome-plugin:my-awesome-plugin" + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-web-section"));
     }
 
     @Test

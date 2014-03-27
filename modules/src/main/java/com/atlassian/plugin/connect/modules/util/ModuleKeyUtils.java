@@ -9,9 +9,9 @@ import java.security.SecureRandom;
  * Utility class to help with module key generation and conversion.
  * None of our module beans should expose a key and instead we should be using this utlity everywhere we need a module key.
  */
-public class ModuleKeyGenerator
+public class ModuleKeyUtils
 {
-    public static final String ADDON_MODULE_SEPARATOR = ":";
+    public static final String ADDON_MODULE_SEPARATOR = "__";
     private static final SecureRandom random = new SecureRandom();
 
     /**
@@ -50,6 +50,11 @@ public class ModuleKeyGenerator
     public static String moduleKeyOnly(String moduleKey)
     {
         return StringUtils.substringAfterLast(moduleKey,ADDON_MODULE_SEPARATOR);
+    }
+
+    public static String addonKeyOnly(String moduleKey)
+    {
+        return StringUtils.substringBeforeLast(moduleKey,ADDON_MODULE_SEPARATOR);
     }
     
     public static String randomName(String base)

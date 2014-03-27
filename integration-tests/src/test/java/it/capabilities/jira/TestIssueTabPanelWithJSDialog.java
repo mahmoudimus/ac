@@ -6,6 +6,7 @@ import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestIssueTabPanelWithJSDialog extends TestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
     private static final String ISSUE_TAB_PANEL_W_DIALOG = "issue-tab-panel-w-dialog";
     private static JiraOps jiraOps = new JiraOps(jira().getProductInstance());
 

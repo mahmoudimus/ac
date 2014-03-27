@@ -72,10 +72,10 @@ public class ConnectProjectAdminTabPanelModuleProvider
             // register a render strategy for the servlet backing our iframe tab
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getRawKey())
+                    .module(bean.getKey(addon))
                     .projectAdminTabTemplate()
                     .urlTemplate(bean.getUrl())
-                    .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getRawKey())
+                    .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey(addon))
                     .conditions(bean.getConditions())
                     .conditionClass(IsProjectAdminCondition.class)
                     .title(bean.getDisplayName())

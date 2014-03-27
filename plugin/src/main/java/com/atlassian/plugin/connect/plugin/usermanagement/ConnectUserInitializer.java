@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.usermanagement;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.predicate.PluginPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

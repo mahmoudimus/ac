@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyC
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
@@ -81,7 +82,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     @Test
     public void completeKeyIsCorrect()
     {
-        assertThat(moduleDescriptor.getCompleteKey(), startsWith(addon.getKey() + ":" + "com-atlassian-plugin-key:attachment-indexing"));
+        assertThat(moduleDescriptor.getCompleteKey(), startsWith(addon.getKey() + ":" + "com-atlassian-plugin-key" + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "attachment-indexing"));
     }
 
     @Test

@@ -3,23 +3,22 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameProjectTabPanel;
 import com.atlassian.plugin.module.ModuleFactory;
 
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.moduleKeyOnly;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 
 /**
  * ModuleDescriptor for Connect project of a ProjectTabPanel
  */
-public class ConnectProjectTabPanelModuleDescriptor extends ProjectTabPanelModuleDescriptorImpl implements ConnectModuleDescriptor<ProjectTabPanel>
+public class ConnectProjectTabPanelModuleDescriptor extends ProjectTabPanelModuleDescriptorImpl
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final ModuleContextFilter moduleContextFilter;
-    private String addonKey;
 
     public ConnectProjectTabPanelModuleDescriptor(JiraAuthenticationContext jiraAuthenticationContext,
             ModuleFactory moduleFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -33,13 +32,7 @@ public class ConnectProjectTabPanelModuleDescriptor extends ProjectTabPanelModul
     @Override
     public ProjectTabPanel getModule()
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKeyOnly(getKey()));
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameProjectTabPanel(renderStrategy, moduleContextFilter);
-    }
-
-    @Override
-    public void setAddonKey(String addonKey)
-    {
-        this.addonKey = addonKey;
     }
 }

@@ -10,7 +10,7 @@ import javax.inject.Named;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 
 import org.dom4j.Document;

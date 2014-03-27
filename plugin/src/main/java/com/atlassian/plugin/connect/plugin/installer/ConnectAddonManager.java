@@ -37,6 +37,7 @@ import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
@@ -317,32 +318,37 @@ public class ConnectAddonManager
 
         if (addonRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
-            
-            disableConnectAddon(pluginKey,false,sendEvent);
-            
-            if (null != addon)
+            try
             {
-                if (sendEvent && !Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
+                ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
+
+                disableConnectAddon(pluginKey,false,sendEvent);
+
+                if (null != addon)
                 {
-                    try
+                    if (sendEvent && !Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
                     {
-                        callSyncHandler(addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey, addon), SyncHandler.UNINSTALLED);
+                        try
+                        {
+                            callSyncHandler(addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey, addon), SyncHandler.UNINSTALLED);
+                        }
+                        catch (PluginInstallException e)
+                        {
+                            log.warn("Failed to notify remote host that add-on was uninstalled.", e);
+                        }
                     }
-                    catch (PluginInstallException e)
-                    {
-                        log.warn("Failed to notify remote host that add-on was uninstalled.", e);
-                    }
+
+                    connectApplinkManager.deleteAppLink(addon);
                 }
-
-                connectApplinkManager.deleteAppLink(addon);
+                else
+                {
+                    log.warn("Tried to publish plugin uninstalled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...");
+                }
             }
-            else
+            finally
             {
-                log.warn("Tried to publish plugin uninstalled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...");
+                addonRegistry.removeAll(pluginKey);
             }
-
-            addonRegistry.removeAll(pluginKey);
         }
 
         if (log.isDebugEnabled())

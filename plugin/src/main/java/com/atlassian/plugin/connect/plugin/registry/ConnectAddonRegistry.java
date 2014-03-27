@@ -1,10 +1,11 @@
-package com.atlassian.plugin.connect.plugin.installer;
+package com.atlassian.plugin.connect.plugin.registry;
 
 import java.util.List;
 import java.util.Set;
 
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
 
 /**
  * The ConnectAddonRegistry is used to store information about connect addons so they can be retrieved at runtime without having to inspect the plugin jar or constantly marshall the json descriptor

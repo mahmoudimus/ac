@@ -3,6 +3,8 @@ package it.capabilities;
 import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.collect.Lists;
 import it.AbstractBrowserlessTest;
@@ -19,7 +21,7 @@ import static org.junit.Assert.assertThat;
 
 public class TestUpgrade extends AbstractBrowserlessTest
 {
-    private static final String PLUGIN_KEY = "my-upgraded-plugin";
+    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
     public static final String KEY_PAGE_ONE = "page-one";
     public static final String KEY_PAGE_TWO = "page-two";
 
@@ -63,7 +65,7 @@ public class TestUpgrade extends AbstractBrowserlessTest
 
         JSON pluginJson = JSON.parse(plugin1.getUpmPluginJson());
         Matcher<Iterable<? super Value>> valMatcher = hasItem(
-                hasProperty("key", PLUGIN_KEY + ":" + KEY_PAGE_TWO));
+                hasProperty("key", PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + KEY_PAGE_TWO));
         
         assertThat(pluginJson.get("modules"), isArrayMatching(valMatcher));
 

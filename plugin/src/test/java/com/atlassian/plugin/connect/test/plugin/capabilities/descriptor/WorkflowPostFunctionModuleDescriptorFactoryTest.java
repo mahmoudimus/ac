@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow.WorkflowPostFunctionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.ConnectContainerUtilForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
@@ -114,7 +115,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(addon, plugin, bean);
 
-        assertEquals("my-key:my-key:my-post-function", descriptor.getCompleteKey());
+        assertEquals("my-key:my-key"+ ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-post-function", descriptor.getCompleteKey());
     }
 
     @Test

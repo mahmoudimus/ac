@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.installer;
+package com.atlassian.plugin.connect.plugin.registry;
 
 import javax.inject.Inject;
 import javax.inject.Named;

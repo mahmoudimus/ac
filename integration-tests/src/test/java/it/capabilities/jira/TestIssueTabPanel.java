@@ -3,8 +3,10 @@ package it.capabilities.jira;
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
@@ -31,7 +33,7 @@ import static org.hamcrest.core.Is.is;
  */
 public class TestIssueTabPanel extends TestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
     private static final String MODULE_KEY = "issue-tab-panel";
     private static JiraOps jiraOps = new JiraOps(jira().getProductInstance());
     private static ConnectRunner remotePlugin;
@@ -94,7 +96,7 @@ public class TestIssueTabPanel extends TestBase
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, PLUGIN_KEY + ":issue-tab-panel", issue.getKey(), ConnectPluginInfo.getPluginKey());
+                JiraViewIssuePageWithRemotePluginIssueTab.class, PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "issue-tab-panel", issue.getKey(), ConnectPluginInfo.getPluginKey());
         assertThat(page.getMessage(), is("Success"));
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
@@ -107,7 +109,7 @@ public class TestIssueTabPanel extends TestBase
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
-        String completeKey = PLUGIN_KEY + ":" + MODULE_KEY;
+        String completeKey = PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + MODULE_KEY;
         
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
 

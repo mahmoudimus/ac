@@ -3,6 +3,7 @@ package it.jira;
 import com.atlassian.jira.pageobjects.components.menu.JiraAuiDropdownMenu;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
@@ -19,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestWebSection extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = "websection-test";
+    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
 
     private static final String JIRA_HEADER_LOCATION = "system.top.navigation.bar";
 

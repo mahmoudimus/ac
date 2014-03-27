@@ -2,6 +2,7 @@ package it.capabilities.confluence;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGeneralPage;
@@ -33,7 +34,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestGeneralPage extends ConfluenceWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
     private static final String SPACE = "ds";
     private static final String ADMIN = "admin";
     private static final String PAGE_KEY = "my-awesome-page";

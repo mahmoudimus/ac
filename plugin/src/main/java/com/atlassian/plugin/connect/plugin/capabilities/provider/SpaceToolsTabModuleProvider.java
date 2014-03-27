@@ -77,7 +77,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
 
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getRawKey())
+                    .module(bean.getKey(addon))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .build();

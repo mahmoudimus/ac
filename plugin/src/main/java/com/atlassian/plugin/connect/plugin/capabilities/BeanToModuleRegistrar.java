@@ -175,7 +175,8 @@ public class BeanToModuleRegistrar
                         beanList = moduleBean == null ? ImmutableList.<ModuleBean>of() : newArrayList(moduleBean);
                     }
 
-                    descriptorsToRegister.addAll(getDescriptors(addon, ctx, field.getName(), anno, beanList));
+                    List<DescriptorToRegister> registerMe = getDescriptors(addon, ctx, field.getName(), anno, beanList);
+                    descriptorsToRegister.addAll(registerMe);
                 }
                 catch (IllegalAccessException e)
                 {
@@ -208,7 +209,10 @@ public class BeanToModuleRegistrar
             if (!providers.isEmpty())
             {
                 ConnectModuleProvider provider = providers.iterator().next();
-                return Lists.transform(provider.provideModules(addon, ctx.getTheConnectPlugin(), jsonFieldName, beans), new Function<ModuleDescriptor, DescriptorToRegister>()
+
+                List<ModuleDescriptor> descriptors = provider.provideModules(addon, ctx.getTheConnectPlugin(), jsonFieldName, beans);
+                
+                return Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
                 {
                     @Override
                     public DescriptorToRegister apply(@Nullable ModuleDescriptor input)

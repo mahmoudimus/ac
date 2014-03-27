@@ -5,7 +5,10 @@ import com.atlassian.jira.testkit.client.restclient.Component;
 import com.atlassian.jira.testkit.client.restclient.ComponentClient;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
@@ -29,7 +32,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestComponentTabPanel extends TestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
     private static final String MODULE_KEY = "component-tab-panel";
 
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
@@ -94,7 +97,7 @@ public class TestComponentTabPanel extends TestBase
     public void testComponentTabPanel() throws Exception
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, PLUGIN_KEY, MODULE_KEY);
+        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, ConnectPluginInfo.getPluginKey(), PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + MODULE_KEY);
 
         assertThat("The addon tab should be present", componentTabPage.isAddOnTabPresent(), is(true));
 
@@ -115,7 +118,7 @@ public class TestComponentTabPanel extends TestBase
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, PLUGIN_KEY, MODULE_KEY);
+        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, ConnectPluginInfo.getPluginKey(), PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + MODULE_KEY);
 
         assertThat("The addon tab SHOULD NOT be present", componentTabPage.isAddOnTabPresent(), is(false));
     }

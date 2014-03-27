@@ -6,8 +6,8 @@ import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.addonAndModuleKey;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.cleanKey;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.cleanKey;
 
 /**
  * @since 1.0

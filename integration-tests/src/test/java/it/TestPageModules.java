@@ -184,10 +184,10 @@ public class TestPageModules extends ConnectWebDriverTestBase
                                                             .path("/page")
                                                             .resource(ConnectAppServlets.helloWorldServlet());
 
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "configurePage");
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "configurePage");
 
-                runner.add(configPage);
-                runner.start();
+        remotePlugin.add(configPage);
+        remotePlugin.start();
 
         // fixme: jira page objects don't redirect properly to next page
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
@@ -196,7 +196,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
         final RemotePluginTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", RemotePluginTestPage.class, EXTRA_PREFIX);
         assertTrue(remotePluginTestPage.isLoaded());
 
-        runner.stopAndUninstall();
+        remotePlugin.stopAndUninstall();
     }
 
     @Test

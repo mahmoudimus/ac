@@ -7,7 +7,7 @@ import org.junit.Test;
 /**
  * Tests the conversion of passed in strings to valid module keys that the plugin system needs.
  */
-public class ModuleKeyGeneratorTest
+public class ModuleKeyUtilsTest
 {
     @Test
     public void cleanKey() throws Exception
@@ -15,7 +15,7 @@ public class ModuleKeyGeneratorTest
         String expected = "web-item-some-feature";
         String test = "webItem some Feature";
 
-        Assert.assertEquals(expected, ModuleKeyGenerator.cleanKey(test));
+        Assert.assertEquals(expected, ModuleKeyUtils.cleanKey(test));
     }
 
     @Test
@@ -24,7 +24,7 @@ public class ModuleKeyGeneratorTest
         String expected = "web-item-";
         String prefix = "web Item";
 
-        String key = ModuleKeyGenerator.generateKey(prefix);
+        String key = ModuleKeyUtils.generateKey(prefix);
         Assert.assertTrue(key.startsWith(expected));
         Assert.assertTrue(StringUtils.isNumeric(StringUtils.substringAfter(key, expected)));
     }
@@ -35,7 +35,7 @@ public class ModuleKeyGeneratorTest
         String expected = "some-feature";
         String test = "someFeature";
 
-        Assert.assertEquals(expected, ModuleKeyGenerator.camelCaseOrSpaceToDashed(test));
+        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
 
     }
 
@@ -45,7 +45,7 @@ public class ModuleKeyGeneratorTest
         String expected = "some-feature";
         String test = "SomeFeature";
 
-        Assert.assertEquals(expected, ModuleKeyGenerator.camelCaseOrSpaceToDashed(test));
+        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
 
     }
 
@@ -55,7 +55,7 @@ public class ModuleKeyGeneratorTest
         String expected = "some-feature";
         String test = "Some Feature";
 
-        Assert.assertEquals(expected, ModuleKeyGenerator.camelCaseOrSpaceToDashed(test));
+        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
 
     }
 
@@ -65,7 +65,7 @@ public class ModuleKeyGeneratorTest
         String expected = "some-feature";
         String test = "some Feature";
 
-        Assert.assertEquals(expected, ModuleKeyGenerator.camelCaseOrSpaceToDashed(test));
+        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
 
     }
 
@@ -75,7 +75,7 @@ public class ModuleKeyGeneratorTest
         String expected = "some-feature";
         String test = "SOMEFeature";
 
-        Assert.assertEquals(expected, ModuleKeyGenerator.camelCaseOrSpaceToDashed(test));
+        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
 
     }
 
@@ -85,7 +85,7 @@ public class ModuleKeyGeneratorTest
         String expected = "acdev-1286-some-feature";
         String test = "ACDEV-1286-some-feature";
 
-        Assert.assertEquals(expected, ModuleKeyGenerator.camelCaseOrSpaceToDashed(test));
+        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
 
     }
 
@@ -95,7 +95,7 @@ public class ModuleKeyGeneratorTest
         String expected = "google-link";
         String test = "google link";
 
-        Assert.assertEquals(expected, ModuleKeyGenerator.cleanKey(test));
+        Assert.assertEquals(expected, ModuleKeyUtils.cleanKey(test));
     }
 
     @Test
@@ -104,8 +104,8 @@ public class ModuleKeyGeneratorTest
         String expected = "hayao-miyazaki------";
         String test = "Hayao Miyazaki (宮崎駿)";
 
-        Assert.assertEquals(expected, ModuleKeyGenerator.cleanKey(test));
+        Assert.assertEquals(expected, ModuleKeyUtils.cleanKey(test));
 
-        Assert.assertEquals(expected, ModuleKeyGenerator.cleanKey(test));
+        Assert.assertEquals(expected, ModuleKeyUtils.cleanKey(test));
     }
 }

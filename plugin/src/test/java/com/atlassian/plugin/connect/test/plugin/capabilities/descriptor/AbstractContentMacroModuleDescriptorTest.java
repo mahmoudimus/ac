@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 
 import org.junit.Before;
@@ -56,13 +57,13 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     @Test
     public void verifyKeyIsCorrect()
     {
-        assertThat(descriptor.getKey(), is("macro-" + addon.getKey() + ":the-macro-name"));
+        assertThat(descriptor.getKey(), is("macro-" + addon.getKey() + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "the-macro-name"));
     }
 
     @Test
     public void verifyCompleteKeyIsCorrect()
     {
-        assertThat(descriptor.getCompleteKey(), is("my-plugin:" + "macro-" + addon.getKey() + ":the-macro-name"));
+        assertThat(descriptor.getCompleteKey(), is("my-plugin:" + "macro-" + addon.getKey() + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "the-macro-name"));
     }
 
     @Test

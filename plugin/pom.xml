@@ -419,6 +419,13 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-plugin</artifactId>
+            <version>${ao.version}</version>
+            <scope>provided</scope>
+        </dependency>
         
     </dependencies>
 
@@ -1147,5 +1154,6 @@
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
         <debugSchemaGen>false</debugSchemaGen>
+        <ao.version>0.23.2</ao.version>
     </properties>
 </project>

@@ -72,7 +72,7 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         {
             IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getRawKey())
+                    .module(bean.getKey(addon))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())

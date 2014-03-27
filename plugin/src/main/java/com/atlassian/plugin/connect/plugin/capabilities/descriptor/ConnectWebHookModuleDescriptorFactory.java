@@ -1,13 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonToPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.webhook.RemotablePluginsPluginUriResolver;
@@ -44,7 +40,7 @@ public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescr
     {
         Element webhookElement = new DOMElement("webhook");
 
-        webhookElement.addAttribute("key", ModuleKeyGenerator.generateKey("webhook"));
+        webhookElement.addAttribute("key", ModuleKeyUtils.generateKey("webhook"));
         webhookElement.addAttribute("event", bean.getEvent());
         
 //        //IMPORTANT! We need to resolve the url here becaue once the webhook fires, we no longer have the addon's key

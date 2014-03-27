@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel;
 
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -12,17 +11,17 @@ import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebPanelModuleDescriptor;
 import com.atlassian.plugin.web.model.WebPanel;
 
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.moduleKeyOnly;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 
 /**
  *
  */
-public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescriptor implements ConnectModuleDescriptor<WebPanel>
+public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescriptor
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final ModuleContextFilter moduleContextFilter;
     private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
-    private String addonKey;
 
     public WebPanelConnectModuleDescriptor(HostContainer hostContainer, WebInterfaceManager webInterfaceManager,
             ModuleFactory moduleFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -37,13 +36,7 @@ public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescri
     @Override
     public WebPanel getModule()
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKeyOnly(getKey()));
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameWebPanel(renderStrategy, moduleContextFilter, webFragmentModuleContextExtractor);
-    }
-
-    @Override
-    public void setAddonKey(String addonKey)
-    {
-        this.addonKey = addonKey;
     }
 }

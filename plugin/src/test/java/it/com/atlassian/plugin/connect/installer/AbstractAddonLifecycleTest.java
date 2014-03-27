@@ -7,7 +7,7 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -82,7 +82,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withAuthentication(authBean)
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.installOnlyBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -93,7 +93,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.installAndEnabledBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -105,7 +105,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.installAndDisabledBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -117,7 +117,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.uninstallOnlyBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -128,7 +128,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.installAndUninstallBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -140,7 +140,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.fullLifecycleBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(

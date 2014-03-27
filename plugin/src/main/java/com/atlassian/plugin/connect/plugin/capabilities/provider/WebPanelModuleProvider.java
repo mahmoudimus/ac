@@ -42,7 +42,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
             // register an iframe rendering strategy
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(addon.getKey())
-                    .module(bean.getRawKey())
+                    .module(bean.getKey(addon))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .title(bean.getDisplayName())
