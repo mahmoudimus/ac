@@ -44,6 +44,9 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 
     private String configModuleKey;
 
+    @Rule
+    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
+    
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {

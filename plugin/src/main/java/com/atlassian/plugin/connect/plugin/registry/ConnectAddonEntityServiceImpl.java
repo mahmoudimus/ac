@@ -81,6 +81,7 @@ public class ConnectAddonEntityServiceImpl implements ConnectAddonEntityService
         if (null != addon)
         {
             ao.delete(addon);
+            ao.flush(addon);
         }
     }
 
