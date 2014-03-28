@@ -21,7 +21,7 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
         var pluginKey = getWebItemPluginKey(target),
             moduleKey = getWebItemModuleKey(target),
             type = target.hasClass('ap-inline-dialog') ? 'inlineDialog' : 'dialog';
-            return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
+            return window._AP[type + 'Options'][moduleKey] || {};
     }
 
     function getIframeHtmlForKey(pluginKey, productContextJson, capability, params) {

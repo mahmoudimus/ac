@@ -57,6 +57,11 @@ public class ModuleKeyUtils
         return StringUtils.substringBeforeLast(moduleKey,ADDON_MODULE_SEPARATOR);
     }
     
+    public static String toCompleteKey(String moduleKey)
+    {
+        return addonKeyOnly(moduleKey) + ":" + moduleKeyOnly(moduleKey);    
+    }
+    
     public static String randomName(String base)
     {
         long n = random.nextLong();
