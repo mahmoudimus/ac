@@ -39,7 +39,7 @@ Add-on vendors cannot possibly know about the myriad product instances into whic
 need a way of statically specifying the maximum set of actions that their add-on may perform. This is expressed in the
 scopes in the add-on descriptor and is presented to the administrator during installation.
 
-Read more details in our [scopes documentation](../scopes/scopes/html).
+Read more details in our [scopes documentation](../scopes/scopes.html).
 
 ### Run-time Authorisation: Add-on Users
 
@@ -72,7 +72,7 @@ appropriate message to the user.
 
 ### Road Map
 
-Currently, the actions that an add-on is capable of performing is limited to the intersection of its scopes and the
+Currently, the set of actions that an add-on is capable of performing is limited to the intersection of its scopes and the
 add-on user's permissions (for server-to-server) or to the intersection of its scopes and the in-browser user's
 permissions (for in-browser requests).
 

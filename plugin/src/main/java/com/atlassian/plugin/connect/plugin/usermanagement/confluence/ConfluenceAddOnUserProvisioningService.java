@@ -120,7 +120,8 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
                 public Void doInTransaction()
                 {
                     // We need to run this without permissions checking otherwise our attempt to modify permissions will be permissions-checked,
-                    // and some will be accordingly rejected.
+                    // and some will be accordingly rejected (particularly if this is running anonymously on a task thread, as is the case
+                    // when the UPM auto-updates Connect add-ons).
                     // An even less palatable alternative is that we impersonate an arbitrary admin user.
                     confluencePermissionManager.withExemption(new Runnable()
                     {
