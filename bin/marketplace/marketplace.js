@@ -34,7 +34,8 @@ var getAddonPage = function(opts) {
 
             _.forEach(addons, function(addon) {
                 var version = addon.version,
-                    deployment = version.deployment;
+                    deployment = version.deployment,
+                    releaseDate = version.releaseDate || "(unknown date)";
                 if (!deployment || !deployment.remote) {
                     console.log("No deployment info for " + addon.pluginKey.red);
                     return false;
@@ -53,7 +54,15 @@ var getAddonPage = function(opts) {
                 }
 
                 if (!opts.quiet) {
-                    console.log(addon.pluginKey, "(" + type[typeColor] + ", " + status[statusColor] + ")", opts.debug ? url.grey : "");
+                    try {
+                        console.log(addon.pluginKey, "(" + type[typeColor] + ", " + status[statusColor] + ")", opts.debug ? (releaseDate + " " + url.grey) : "");
+                    } catch (e) {
+                        if (opts.debug) {
+                            console.log(("" + e).red);
+                            console.log(JSON.stringify(addon));
+                        }
+                        process.exit();
+                    }
                 }
 
                 if (opts.marketplaceAddonCallback) {
