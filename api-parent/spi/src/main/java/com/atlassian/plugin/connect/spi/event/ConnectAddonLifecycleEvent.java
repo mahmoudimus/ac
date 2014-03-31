@@ -13,29 +13,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * NOTE: these events are only used internally. The actualy subscribing to these events from the remote application's
  * perspective is done via a lifecycle entry in the json descriptor
  */
-public abstract class ConnectAddonEvent
+public abstract class ConnectAddonLifecycleEvent
 {
+    @PrivacyPolicySafe
     private final String pluginKey;
 
-    @PrivacyPolicySafe (false) // contains shared secret and more
-    private final String data;
-
-    protected ConnectAddonEvent(String pluginKey, String data)
+    protected ConnectAddonLifecycleEvent(String pluginKey)
     {
         this.pluginKey = checkNotNull(pluginKey);
-        this.data = checkNotNull(data);
     }
 
     public final String getPluginKey()
     {
         return pluginKey;
-    }
-
-    /**
-     * @return The json data to be sent to the remote add on
-     */
-    public final String getData()
-    {
-        return data;
     }
 }

@@ -1,15 +1,17 @@
 package com.atlassian.plugin.connect.spi.event;
 
 import com.atlassian.analytics.api.annotations.EventName;
+import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
 /**
  * Fired when the remote application's mirror plugin is uninstalled
  */
 @EventName ("connect.addon.uninstalled")
-public class ConnectAddonUninstalledEvent extends ConnectAddonEvent
+@PrivacyPolicySafe
+public class ConnectAddonUninstalledEvent extends ConnectAddonLifecycleEvent
 {
-    public ConnectAddonUninstalledEvent(String pluginKey, String data)
+    public ConnectAddonUninstalledEvent(String pluginKey)
     {
-        super(pluginKey, data);
+        super(pluginKey);
     }
 }
