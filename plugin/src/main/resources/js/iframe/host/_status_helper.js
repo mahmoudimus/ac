@@ -22,6 +22,7 @@ _AP.define("host/_status_helper", ["_dollar"], function ($) {
         // If there's a pending timer to show the loading status, kill it.
         if ($home.data('loadingStatusTimer')) {
             clearTimeout($home.data('loadingStatusTimer'));
+            $home.removeData('loadingStatusTimer');
         }
         $home.find(".ap-status").addClass("hidden");
     }
