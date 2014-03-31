@@ -213,7 +213,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           }
           var headers = {};
           $.each(args.headers || {}, function (k, v) { headers[k.toLowerCase()] = v; });
-          // Disable system ajax settings (because they break)
+          // Disable system ajax settings. This stops confluence mobile from injecting callbacks and then throwing exceptions.
           $.ajaxSettings = {};
 
           // execute the request with our restricted set of inputs

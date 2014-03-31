@@ -85,9 +85,9 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private LinkBean documentation;
 
     /**
-     * The device type. Set this to mobile to render your macro in the mobile version of Confluence.
+     * A list of alternative renderModes.
      */
-    private String deviceType;
+    private List<MacroRenderModeBean> renderModes;
 
 
     /**
@@ -213,9 +213,9 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         return documentation;
     }
 
-    public String getDeviceType()
+    public List<MacroRenderModeBean> getRenderModes()
     {
-        return deviceType;
+        return renderModes;
     }
 
     public Set<String> getCategories()
@@ -268,9 +268,9 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         return icon != null;
     }
 
-    public boolean hasDeviceType()
+    public boolean hasRenderModes()
     {
-        return deviceType != null;
+        return renderModes != null;
     }
 
     public boolean hasDocumentation()

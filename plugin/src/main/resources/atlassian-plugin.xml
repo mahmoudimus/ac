@@ -164,14 +164,9 @@
         <context>preview</context>
         <dependency>com.atlassian.auiplugin:jquery-lib</dependency>
         <dependency>com.atlassian.auiplugin:aui-experimental-spinner</dependency>
-<!--         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog-page-resource</dependency> -->
-<!--        <dependency>com.atlassian.plugins.atlassian-connect-plugin:remote-condition</dependency> -->
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
-<!--        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency> -->
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
-<!--        <dependency>com.atlassian.plugins.atlassian-connect-plugin:inline-dialog</dependency> -->
-<!--        <dependency>com.atlassian.plugins.atlassian-connect-plugin:messages</dependency> -->
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
