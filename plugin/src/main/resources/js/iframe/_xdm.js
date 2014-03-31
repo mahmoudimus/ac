@@ -205,7 +205,7 @@
 
             //analytics
             if(self.isHost){
-              analytics.trackBridgeMethod(name);
+              analytics.trackBridgeMethod(name, addonKey, channel);
             }
 
             // The local method is considered async if it accepts more arguments than the message has sent;

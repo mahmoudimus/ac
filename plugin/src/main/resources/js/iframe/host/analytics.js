@@ -6,13 +6,18 @@ _AP.define("analytics", ["_dollar"], function($){
         "init"
     ];
 
+
     return {
-        trackBridgeMethod: function(name){
-            if($.inArray(name, bridgeMethodBlackList)){
+        trackBridgeMethod: function(name, addonKey, channel){
+            if($.inArray(name, bridgeMethodBlackList) !== -1){
                 return false;
             }
+
+            var moduleKey = channel.replace('channel-', '');
             this.track('bridge.invokemethod', {
-                name: name
+                name: name,
+                addonKey: addonKey,
+                moduleKey: moduleKey
             });
         },
         track: function(name, data) {
