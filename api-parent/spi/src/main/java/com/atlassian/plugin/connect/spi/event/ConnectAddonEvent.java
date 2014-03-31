@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
+import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,6 +16,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public abstract class ConnectAddonEvent
 {
     private final String pluginKey;
+
+    @PrivacyPolicySafe (false) // contains shared secret and more
     private final String data;
 
     protected ConnectAddonEvent(String pluginKey, String data)

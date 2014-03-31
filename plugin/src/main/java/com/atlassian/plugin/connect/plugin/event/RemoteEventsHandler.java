@@ -12,6 +12,8 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonInstalledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginInstalledEvent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -139,11 +141,14 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                             Response response = request.execute(Request.Method.POST).claim();
                             if (response.getStatusCode() != 200)
                             {
-                                log.error("Error contacting remote application [" + response.getStatusText() + "]");
-                                throw new PluginInstallException("Error contacting remote application [" + response.getStatusText() + "]", errorI18nKey);
+                                String message = "Error contacting remote application [" + response.getStatusText() + "]";
+                                log.error(message);
+                                eventPublisher.publish(new ConnectAddonInstallFailedEvent(addon.getKey(), response.getStatusCode(), response.getStatusText()));
+                                throw new PluginInstallException(message, errorI18nKey);
                             }
                             else
                             {
+                                eventPublisher.publish(new ConnectAddonInstalledEvent(addon.getKey()));
                                 called = true;
                             }
                         }
@@ -199,7 +204,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
     {
         final Consumer consumer = consumerService.getConsumer();
 
-        ImmutableMap.Builder builder = ImmutableMap.<String, Object>builder()
+        ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()
                                                    .put("links", ImmutableMap.of(
                                                            "oauth", applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/latest/oauth"))
                                                    .put("clientKey", nullToEmpty(consumer.getKey()))
