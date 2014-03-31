@@ -81,7 +81,7 @@ public class TestAppPermissions extends ConnectWebDriverTestBase
 
     private RemotePluginTestPage visitLicenseResponsePage()
     {
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "pluginLicensePage", "Plugin License Page", EXTRA_PREFIX);
         return page.clickRemotePluginLink();
     }

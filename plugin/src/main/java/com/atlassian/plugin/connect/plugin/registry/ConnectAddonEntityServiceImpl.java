@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.sal.api.transaction.TransactionCallback;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -26,28 +27,41 @@ public class ConnectAddonEntityServiceImpl implements ConnectAddonEntityService
     }
 
     @Override
-    public ConnectAddonEntity create(String addonKey, String settings)
+    public ConnectAddonEntity create(final String addonKey, final String settings)
     {
-        return ao.create(ConnectAddonEntity.class, new DBParam(DBPARAM_ADDON_KEY, addonKey), new DBParam(DBPARAM_SETTINGS, settings));
+        return ao.executeInTransaction(new TransactionCallback<ConnectAddonEntity>() {
+            @Override
+            public ConnectAddonEntity doInTransaction()
+            {
+                return ao.create(ConnectAddonEntity.class, new DBParam(DBPARAM_ADDON_KEY, addonKey), new DBParam(DBPARAM_SETTINGS, settings));
+            }
+        });
     }
 
     @Override
     public ConnectAddonEntity createOrUpdate(String addonKey, String settings)
     {
-        ConnectAddonEntity addon = update(addonKey,settings);
+        ConnectAddonEntity addon = update(addonKey, settings);
 
         if (null == addon)
         {
-            addon = create(addonKey,settings);
+            addon = create(addonKey, settings);
         }
 
         return addon;
     }
 
     @Override
-    public ConnectAddonEntity get(String addonKey)
+    public ConnectAddonEntity get(final String addonKey)
     {
-        ConnectAddonEntity[] addons = ao.find(ConnectAddonEntity.class, Query.select().where("addon_key = ?", addonKey).limit(1));
+        ConnectAddonEntity[] addons = ao.executeInTransaction(new TransactionCallback<ConnectAddonEntity[]>()
+        {
+            @Override
+            public ConnectAddonEntity[] doInTransaction()
+            {
+                return ao.find(ConnectAddonEntity.class, Query.select().where("addon_key = ?", addonKey).limit(1));
+            }
+        });
 
         if (null != addons && addons.length > 0)
         {
@@ -60,12 +74,23 @@ public class ConnectAddonEntityServiceImpl implements ConnectAddonEntityService
     @Override
     public ConnectAddonEntity update(String addonKey, String settings)
     {
-        ConnectAddonEntity addon = get(addonKey);
+        final ConnectAddonEntity addon = get(addonKey);
 
         if (null != addon)
         {
             addon.setSettings(settings);
-            addon.save();
+
+            ao.executeInTransaction(new TransactionCallback<Object>()
+            {
+                @Override
+                public Object doInTransaction()
+                {
+                    addon.save();
+
+                    return null;
+                }
+            });
+
 
             return addon;
         }
@@ -76,12 +101,21 @@ public class ConnectAddonEntityServiceImpl implements ConnectAddonEntityService
     @Override
     public void delete(String addonKey)
     {
-        ConnectAddonEntity addon = get(addonKey);
+        final ConnectAddonEntity addon = get(addonKey);
 
         if (null != addon)
         {
-            ao.delete(addon);
-            ao.flush(addon);
+            ao.executeInTransaction(new TransactionCallback<Object>()
+            {
+                @Override
+                public Object doInTransaction()
+                {
+                    ao.delete(addon);
+                    ao.flush(addon);
+
+                    return null;
+                }
+            });
         }
     }
 
@@ -89,15 +123,26 @@ public class ConnectAddonEntityServiceImpl implements ConnectAddonEntityService
     public Set<String> getAddonKeys()
     {
         final Set<String> keys = new HashSet<String>();
-        
-        ao.stream(ConnectAddonEntity.class,new EntityStreamCallback<ConnectAddonEntity, Integer>() {
-            @Override
-            public void onRowRead(ConnectAddonEntity addon)
-            {
-                keys.add(addon.getAddonKey());
-            }
-        });
 
+        ao.executeInTransaction(
+                new TransactionCallback<Object>()
+                {
+                    @Override
+                    public Object doInTransaction()
+                    {
+                        ao.stream(ConnectAddonEntity.class, new EntityStreamCallback<ConnectAddonEntity, Integer>()
+                        {
+                            @Override
+                            public void onRowRead(ConnectAddonEntity addon)
+                            {
+                                keys.add(addon.getAddonKey());
+                            }
+                        });
+
+                        return null;
+                    }
+                }
+        );
         return ImmutableSet.copyOf(keys);
 
     }
@@ -107,13 +152,25 @@ public class ConnectAddonEntityServiceImpl implements ConnectAddonEntityService
     {
         final Set<ConnectAddonEntity> addons = new HashSet<ConnectAddonEntity>();
 
-        ao.stream(ConnectAddonEntity.class,new EntityStreamCallback<ConnectAddonEntity, Integer>() {
-            @Override
-            public void onRowRead(ConnectAddonEntity addon)
-            {
-                addons.add(addon);
-            }
-        });
+        ao.executeInTransaction(
+                new TransactionCallback<Object>()
+                {
+                    @Override
+                    public Object doInTransaction()
+                    {
+                        ao.stream(ConnectAddonEntity.class, new EntityStreamCallback<ConnectAddonEntity, Integer>()
+                        {
+                            @Override
+                            public void onRowRead(ConnectAddonEntity addon)
+                            {
+                                addons.add(addon);
+                            }
+                        });
+                        
+                        return null;
+                    }
+                }
+        );
 
         return ImmutableSet.copyOf(addons);
     }

@@ -73,7 +73,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                 .start();
 
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         Map<String, String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.getTitle())
                                             .visitGeneralLink()
                                             .getIframeQueryParams();
@@ -100,7 +100,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                                               ContextParameter.name("user_id").header())
                                       .resource(macroServlet))
                 .start();
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         product.visit(ConfluenceMacroPage.class, pageData.getTitle());
         assertEquals(pageData.getId(), macroServlet.getQueryParams().get("page_id"));
         assertFalse(macroServlet.getQueryParams().containsKey("user_id"));

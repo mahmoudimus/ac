@@ -169,7 +169,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testAbsoluteWebItem()
     {
-        loginAs(BETTY_USERNAME, BETTY_USERNAME);
+        loginAsBetty();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM), Optional.<String>absent());
@@ -228,7 +228,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void bettyCanSeeWebItem()
     {
-        loginAs(BETTY_USERNAME, BETTY_USERNAME);
+        loginAsBetty();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM), Optional.<String>absent());

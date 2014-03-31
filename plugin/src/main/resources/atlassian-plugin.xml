@@ -12,9 +12,6 @@
         <entity>com.atlassian.plugin.connect.plugin.registry.ConnectAddonEntity</entity>
     </ao>
     
-    <!-- note, this has to be in plugin.xml -->
-    <component key="txProcessor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor"/>
-    
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"

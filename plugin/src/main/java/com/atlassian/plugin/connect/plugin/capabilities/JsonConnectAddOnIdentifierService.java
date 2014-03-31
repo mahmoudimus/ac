@@ -61,10 +61,6 @@ public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifier
                     Manifest mf = new Manifest(resourceAsStream);
                     return mf.getMainAttributes().containsKey(new Attributes.Name(CONNECT_ADDON_HEADER));
                 }
-                else
-                {
-                    log.debug("Plugin '{}' has no MANIFEST.MF file. Defaulting to isConnectAddon=false.", plugin.getKey());
-                }
             }
             catch (Exception e)
             {

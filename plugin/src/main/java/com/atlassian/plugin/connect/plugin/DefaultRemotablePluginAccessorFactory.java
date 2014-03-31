@@ -8,18 +8,21 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
+import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
+import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
@@ -35,6 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.rmi.Remote;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -232,7 +237,31 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     @Deprecated
     private Supplier<URI> getDisplayUrl(final String pluginKey)
     {
-        final String storedBaseUrl = connectAddonRegistry.getBaseUrl(pluginKey);
+        String addonBaseUrl = "";
+        
+        if(connectAddonRegistry.hasBaseUrl(pluginKey))
+        {
+            addonBaseUrl = connectAddonRegistry.getBaseUrl(pluginKey);
+        }
+        
+        //TODO: remove this once xml addons are gone
+        else
+        {
+            Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+            
+            if(null != plugin)
+            {
+                for(ModuleDescriptor descriptor : plugin.getModuleDescriptors())
+                {
+                    if(RemotePluginContainerModuleDescriptor.class.isAssignableFrom(descriptor.getClass()))
+                    {
+                        addonBaseUrl = ((RemotePluginContainerModuleDescriptor) descriptor).getAddonBaseUrl();
+                    }
+                }
+            }
+        }
+        
+        final String storedBaseUrl = addonBaseUrl;
 
         if (!Strings.isNullOrEmpty(storedBaseUrl))
         {

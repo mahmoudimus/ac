@@ -163,6 +163,11 @@ public class ConnectAddonManager
         return addonRegistry.getAllAddonKeys();
     }
 
+    public Iterable<ConnectAddonBean> getAllAddonBeans()
+    {
+        return addonRegistry.getAllAddonBeans();
+    }
+
     public ConnectAddonBean installConnectAddon(String jsonDescriptor)
     {
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);

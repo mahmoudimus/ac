@@ -126,7 +126,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void bettyCanSeeBettyWebItem()
     {
-        loginAs(BETTY_USERNAME, BETTY_USERNAME);
+        loginAsBetty();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ONLY_BETTY_WEBITEM), Optional.<String>absent());
@@ -136,7 +136,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void barneyCannotSeeBettyWebItem()
     {
-        loginAs(BARNEY_USERNAME, BARNEY_USERNAME);
+        loginAsBarney();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ONLY_BETTY_WEBITEM)));
@@ -154,7 +154,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void bettyCanSeeBettyAndBarneyWebItem()
     {
-        loginAs(BETTY_USERNAME, BETTY_USERNAME);
+        loginAsBetty();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.<String>absent());
@@ -164,7 +164,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void barneyCanSeeBettyAndBarneyWebItem()
     {
-        loginAs(BARNEY_USERNAME, BARNEY_USERNAME);
+        loginAsBarney();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.<String>absent());
@@ -183,7 +183,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void bettyCanSeeAdminRightsWebItem()
     {
-        loginAs(BETTY_USERNAME, BETTY_USERNAME);
+        loginAsBetty();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent());
@@ -193,7 +193,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void barneyCannotSeeAdminRightsWebItem()
     {
-        loginAs(BARNEY_USERNAME, BARNEY_USERNAME);
+        loginAsBarney();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ADMIN_RIGHTS_WEBITEM)));

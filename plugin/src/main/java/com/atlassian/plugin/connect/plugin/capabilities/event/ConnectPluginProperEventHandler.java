@@ -77,6 +77,7 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
         {
             if(addOnIdentifierService.isConnectAddOn(plugin))
             {
+                log.debug("Converting old P2 addon to new file-less addon: " + plugin.getKey());
                 String pluginKey = plugin.getKey();
                 String restartState = (PluginState.ENABLED.equals(plugin.getPluginState())) ? PluginState.ENABLED.name() : PluginState.DISABLED.name();
                 

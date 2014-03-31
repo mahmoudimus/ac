@@ -118,7 +118,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testAbsoluteWebItem() throws Exception
     {
-        loginAs(BETTY_USERNAME, BETTY_USERNAME);
+        loginAsBetty();
 
         RemoteWebItem webItem = findViewPageWebItem(ABSOLUTE_WEBITEM).right();
         assertNotNull("Web item should be found", webItem);
@@ -180,7 +180,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void bettyCanSeeWebItem() throws Exception
     {
-        loginAs(BETTY_USERNAME, BETTY_USERNAME);
+        loginAsBetty();
 
         RemoteWebItem webItem = findViewPageWebItem(ABSOLUTE_WEBITEM).right();
 

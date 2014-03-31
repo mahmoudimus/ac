@@ -5,7 +5,9 @@ import javax.inject.Named;
 
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 
 import com.google.common.base.Strings;
@@ -17,11 +19,13 @@ import com.google.gson.Gson;
 public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
 {
     private final ConnectAddonEntityService addonEntityService;
+    private final ConnectAddonBeanFactory connectAddonBeanFactory;
 
     @Inject
-    public DefaultConnectAddonRegistry(ConnectAddonEntityService addonEntityService)
+    public DefaultConnectAddonRegistry(ConnectAddonEntityService addonEntityService, ConnectAddonBeanFactory connectAddonBeanFactory)
     {
         this.addonEntityService = addonEntityService;
+        this.connectAddonBeanFactory = connectAddonBeanFactory;
     }
 
     @Override
@@ -154,6 +158,24 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     public Iterable<String> getAllAddonKeys()
     {
         return addonEntityService.getAddonKeys();
+    }
+
+    @Override
+    public Iterable<ConnectAddonBean> getAllAddonBeans()
+    {
+        Gson gson = new Gson();
+
+        ImmutableList.Builder<ConnectAddonBean> addons = ImmutableList.builder();
+        for (ConnectAddonEntity entity : addonEntityService.getAllAddons())
+        {
+            AddonSettings settings = gson.fromJson(entity.getSettings(), AddonSettings.class);
+            if (has(settings.getDescriptor()))
+            {
+                addons.add(connectAddonBeanFactory.fromJsonSkipValidation(settings.getDescriptor()));
+            }
+        }
+
+        return addons.build();
     }
 
     @Override
