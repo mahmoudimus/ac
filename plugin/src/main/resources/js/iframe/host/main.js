@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params", "analytics"], function ($, XdmRpc, addons, statusHelper, messages, uiParams, analytics) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params", "host/analytics"], function ($, XdmRpc, addons, statusHelper, messages, uiParams, analytics) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],

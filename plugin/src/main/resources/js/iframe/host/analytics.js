@@ -1,4 +1,4 @@
-_AP.define("analytics", ["_dollar"], function($){
+_AP.define("host/analytics", ["_dollar"], function($){
     "use strict";
 
     var bridgeMethodBlackList = [
@@ -19,6 +19,9 @@ _AP.define("analytics", ["_dollar"], function($){
     }
 
     function track (name, data) {
+        if(!AJS.trigger){
+            return false;
+        }
         AJS.trigger('analyticsEvent', {
             name: "connect.addon." + name,
             data: data
@@ -28,12 +31,13 @@ _AP.define("analytics", ["_dollar"], function($){
     }
 
     return {
+        getKey: getKey,
         iframePerformance: {
             start: function(addonKey, moduleKey){
-                metrics[getKey()] = time();
+                metrics[getKey(addonKey, moduleKey)] = time();
             },
             end: function(addonKey, moduleKey){
-                var key = getKey(),
+                var key = getKey(addonKey, moduleKey),
                 value = time() - metrics[key];
 
                 metrics[key] = null;
@@ -45,6 +49,7 @@ _AP.define("analytics", ["_dollar"], function($){
                 });
             },
             timeout: function(addonKey, moduleKey){
+                var key = getKey(addonKey, moduleKey);
                 track('iframe.performance.timeout', {
                     addonKey: addonKey,
                     moduleKey: moduleKey

@@ -1,4 +1,4 @@
-(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri", "analytics"], function (events, base64, uri, analytics) {
+(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri", "host/analytics"], function (events, base64, uri, analytics) {
 
   "use strict";
 
