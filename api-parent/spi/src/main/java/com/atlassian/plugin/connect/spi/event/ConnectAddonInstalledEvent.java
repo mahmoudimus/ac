@@ -10,7 +10,7 @@ import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 @PrivacyPolicySafe
 public class ConnectAddonInstalledEvent extends ConnectAddonLifecycleEvent
 {
-    public ConnectAddonInstalledEvent(String pluginKey)
+    public  ConnectAddonInstalledEvent(String pluginKey)
     {
         super(pluginKey);
     }
