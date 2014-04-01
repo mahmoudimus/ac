@@ -274,10 +274,14 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         }
       }
     });
+
     function prefixCookie(name){
       return options.key + '-' + options.ns + '-' + name;
     }
-    statusHelper.showLoadingStatus($home);
+
+    // Do not delay showing the loading indicator if this is a dialog.
+    var noDelay = (isDialog || isSimpleDialog || isInlineDialog);
+    statusHelper.showLoadingStatus($home, noDelay ? 0 : 1000);
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
