@@ -69,6 +69,14 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
                 if(renderMode.getRenderModeType() == MacroRenderModeType.mobile)
                 {
                     element.addElement("device-type").addText("mobile");
+                } else {
+                    // help vendors find errors in their descriptors
+                    throw new PluginInstallException("Unsupported render type '"
+                            + renderMode.getRenderModeType()
+                            + "' - "
+                            + plugin.getName()
+                            + "' (" + plugin.getKey() + ")");
+
                 }
             }
         }
