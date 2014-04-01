@@ -213,6 +213,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           }
           var headers = {};
           $.each(args.headers || {}, function (k, v) { headers[k.toLowerCase()] = v; });
+          // Disable system ajax settings. This stops confluence mobile from injecting callbacks and then throwing exceptions.
+          $.ajaxSettings = {};
+
           // execute the request with our restricted set of inputs
           $.ajax({
             url: url,
@@ -385,7 +388,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       // create the new iframe
       create(options);
     }
-    if ($.isReady) {
+    if(typeof ConfluenceMobile !== "undefined"){
+      doCreate();
+    } else if ($.isReady) {
       // if the dom is ready then this is being run during an ajax update;
       // in that case, defer creation until the next event loop tick to ensure
       // that updates to the desired container node's parents have completed
@@ -415,5 +420,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
 if (!_AP.create) {
   _AP.require(["host/main"], function(main) {
     _AP.create = main;
+  });
+}
+
+if(typeof ConfluenceMobile !== "undefined"){
+  //confluence will not run scripts loaded in the body of mobile pages by default.
+  ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
+    window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
   });
 }
