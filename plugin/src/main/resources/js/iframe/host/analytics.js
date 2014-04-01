@@ -7,6 +7,7 @@ _AP.define("host/analytics", ["_dollar"], function($){
     ];
 
     var THRESHOLD = 12000; // Timings above this millisecond threshold will be clipped to an 'x' value.
+    var TRIMPPRECISION = 100; // Trim extra zeros from the load time.
 
     var metrics = {};
 
@@ -51,7 +52,7 @@ _AP.define("host/analytics", ["_dollar"], function($){
                 track('iframe.performance.load', {
                     addonKey: addonKey,
                     moduleKey: moduleKey,
-                    value: value > THRESHOLD ? 'x' : Math.ceil((value) / 100)
+                    value: value > THRESHOLD ? 'x' : Math.ceil((value) / TRIMPPRECISION)
                 });
             },
             timeout: function(addonKey, moduleKey){
