@@ -15,17 +15,23 @@ _AP.define("host/analytics", ["_dollar"], function($){
     }
 
     function getKey (addonKey, moduleKey) {
-        return addonKey + '$$' + moduleKey;
+        return addonKey + ':' + moduleKey;
     }
 
     function track (name, data) {
-        if(!AJS.trigger){
+        var prefixedName = "connect.addon." + name;
+
+        if(AJS.Analytics){
+            AJS.Analytics.triggerPrivacyPolicySafeEvent(prefixedName, data);
+        } else if(AJS.trigger) {
+            // BTF fallback
+            AJS.trigger('analyticsEvent', {
+                name: prefixedName,
+                data: data
+            });
+        } else {
             return false;
         }
-        AJS.trigger('analyticsEvent', {
-            name: "connect.addon." + name,
-            data: data
-        });
 
         return true;
     }
