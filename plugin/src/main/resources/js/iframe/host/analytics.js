@@ -6,7 +6,7 @@ _AP.define("host/analytics", ["_dollar"], function($){
         "init"
     ];
 
-    var THRESHOLD = 12000; // Timings above this threshold will be clipped to an 'x' value.
+    var THRESHOLD = 12000; // Timings above this millisecond threshold will be clipped to an 'x' value.
 
     var metrics = {};
 
