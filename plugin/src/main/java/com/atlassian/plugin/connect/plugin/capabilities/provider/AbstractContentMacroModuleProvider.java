@@ -158,7 +158,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
-                .module(macroBean.getRawKey())
+                .module(macroBean.getKey(addon))
                 .dialogTemplate()
                 .urlTemplate(editor.getUrl())
                 .title(macroBean.getDisplayName())

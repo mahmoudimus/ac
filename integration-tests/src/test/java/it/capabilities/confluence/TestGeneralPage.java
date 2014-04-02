@@ -2,6 +2,7 @@ package it.capabilities.confluence;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
@@ -23,6 +24,7 @@ import java.util.Map;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 import static it.capabilities.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.*;
@@ -37,7 +39,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
     private static final String SPACE = "ds";
     private static final String ADMIN = "admin";
-    private static final String PAGE_KEY = "my-awesome-page";
+    private static final String KEY_MY_AWESOME_PAGE = "my-awesome-page";
     private static final String KEY_MY_CONTEXT_PAGE = "my-context-page";
     private static final String CONTEXT_PAGE_NAME = "My Context Param Page";
 
@@ -45,6 +47,9 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
 
     private static ConnectRunner remotePlugin;
+    private String addonKey;
+    private String awesomePageModuleKey;
+    private String contextPageModuleKey;
 
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
@@ -58,7 +63,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
                         "generalPages",
                         newPageBean()
                                 .withName(new I18nProperty("My Awesome Page", null))
-                                .withKey(PAGE_KEY)
+                                .withKey(KEY_MY_AWESOME_PAGE)
                                 .withUrl("/pg?page_id={page.id}&page_version={page.version}&page_type={page.type}")
                                 .withWeight(1234)
                                 .withConditions(toggleableConditionBean())
@@ -85,19 +90,27 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         }
     }
 
+    @Before
+    public void beforeEachTest()
+    {
+        this.addonKey = remotePlugin.getAddon().getKey();
+        this.awesomePageModuleKey = addonKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + KEY_MY_AWESOME_PAGE;
+        this.contextPageModuleKey = addonKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + KEY_MY_CONTEXT_PAGE;
+    }
+
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws Exception
     {
         loginAsAdmin();
 
         ConfluenceViewPage createdPage = createAndVisitViewPage();
-        ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, PAGE_KEY,
+        ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, awesomePageModuleKey,
                 "My Awesome Page", true);
 
         assertThat(generalPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(generalPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/my-awesome-page"));
+        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));
 
         RemotePluginTestPage addonContentsPage = generalPage.clickRemotePluginLink();
 
@@ -120,10 +133,10 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 
         // web item should not be displayed
         createAndVisitViewPage();
-        assertThat("Expected web-item for page to NOT be present", connectPageOperations.existsWebItem(PAGE_KEY), is(false));
+        assertThat("Expected web-item for page to NOT be present", connectPageOperations.existsWebItem(awesomePageModuleKey), is(false));
 
         // directly retrieving page should result in access denied
-        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, "my-plugin", PAGE_KEY);
+        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, addonKey, moduleKeyOnly(awesomePageModuleKey));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("My Awesome Page"));
     }

@@ -128,7 +128,7 @@ public class ConnectAppServlets
 
     public static HttpServlet echoQueryParametersServlet()
     {
-        return wrapContextAwareServlet(new EchoQueryParametersServlet());
+        return wrapContextAwareServlet(new EchoQueryParametersServlet("echo-query.mu"));
     }
 
     public static HttpServlet resourceServlet(String resourcePath, String contentType)

@@ -7,6 +7,8 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
@@ -31,6 +33,21 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
     private static ConnectRunner remotePlugin;
 
+    public static void main(String[] args)
+    {
+        try
+        {
+            startConnectAddOn();
+            while (true)
+            {
+                //do nothing
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
@@ -52,7 +69,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .withHeight("30px")
                 .build();
 
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
                 .setAuthenticationToNone()
                 .addModules("dynamicContentMacros",
                         simpleMacro,
@@ -205,7 +222,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+        RemotePluginDialog dialog = connectPageOperations.findDialog(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(),EDITOR_MACRO_KEY));
         dialog.submit();
 
         savedPage = editorPage.save();

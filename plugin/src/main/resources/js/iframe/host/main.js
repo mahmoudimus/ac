@@ -37,7 +37,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
   function create(options) {
 
     $.extend(options, uiParams.fromUrl(options.src));
-
+    console.log("namespace: " + options.ns);
     var ns = options.ns,
         homeId = "ap-" + ns,
         $home = $("#" + homeId),
@@ -101,9 +101,13 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       ],
       local: {
         init: function () {
+            console.log("local init running....");
           if (!isInited) {
             isInited = true;
             preventTimeout();
+            console.log("initing iframe class...");
+              console.log("contentId: " + contentId);
+            console.log("content: " + $content);
             $content.addClass("iframe-init");
             var elapsed = new Date().getTime() - start;
             statusHelper.showLoadedStatus($home);
@@ -113,6 +117,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           }
         },
         resize: debounce(function (width, height) {
+            console.log("resizing with height: " + height);
           // debounce resizes to avoid excessive page reflow
           if (!isDialog) {
             // dialog content plugins do not honor resize requests, since their content size is fixed
@@ -130,6 +135,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             // This adds border between the iframe and the page footer as the connect addon has scrolling content and can't do this
             $iframe.addClass("full-size-general-page");
             function resizeHandler() {
+                console.log("resizingToParent with height: " + height);
               var height = $(document).height() - AJS.$("#header > nav").outerHeight() - AJS.$("#footer").outerHeight() - 20;
               $("iframe", $content).css({width: "100%", height: height + "px"});
             }
@@ -206,9 +212,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             return json;
           }
           function done(data, textStatus, xhr) {
+              console.log("rpc load success!")
             success([data, textStatus, toJSON(xhr)]);
           }
           function fail(xhr, textStatus, errorThrown) {
+              console.log("rpc fail!")
             error([toJSON(xhr), textStatus, errorThrown]);
           }
           var headers = {};
@@ -267,10 +275,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
-
+    console.log("iframe = " + $content.attr("id"));
     $iframe.data("ap-rpc", rpc);
 
     function layoutIfNeeded() {
+        console.log("laying out iframe...");
       var $stats = $(".ap-stats", $home);
       $stats.removeClass("hidden");
       if (isSimpleDialog) {
@@ -351,6 +360,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
   return function (options) {
     var attemptCounter = 0;
     function doCreate() {
+        console.log("running DoCreate....");
         //If the element we are going to append the iframe to doesn't exist in the dom (yet). Wait for it to appear.
         if(contentDiv(options.ns).length === 0 && attemptCounter < 10){
             setTimeout(function(){

@@ -8,25 +8,55 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
-public class EchoQueryParametersServlet extends ContextServlet
+import com.google.common.collect.ImmutableMap;
+
+import it.servlet.iframe.MustacheServlet;
+
+public class EchoQueryParametersServlet extends MustacheServlet
 {
     private volatile BlockingDeque<NameValuePairs> queryParameters = new LinkedBlockingDeque<NameValuePairs>();
+
+    public EchoQueryParametersServlet()
+    {
+        this("echo-query.mu");
+    }
+    
+    public EchoQueryParametersServlet(String templatePath)
+    {
+        super(templatePath);
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
     {
         NameValuePairs parameters = new NameValuePairs(req.getParameterMap());
         queryParameters.push(parameters);
+        
+        List<Map<String,String>> nvps = new ArrayList<Map<String, String>>();
+        
+        for (NameValuePair pair : parameters.getNameValuePairs())
+        {
+            HashMap<String,String> nvp = new HashMap<String, String>();
+            
+            nvp.put("name",pair.getName());
+            nvp.put("value",pair.getValue());
+            nvps.add(nvp);
+        }
+        
+        Map<String,Object> newContext = new HashMap<String, Object>();
+        newContext.putAll(context);
 
-        resp.setContentType("text/html");
-        render(resp.getWriter(), parameters.getNameValuePairs());
-        resp.getWriter().close();
+        newContext.put("nvp",nvps);
+        
+        super.doGet(req,resp, ImmutableMap.copyOf(newContext));
     }
 
     @Override

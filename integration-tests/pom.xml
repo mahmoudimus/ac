@@ -298,6 +298,8 @@
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <use.test.http.client>true</use.test.http.client>
+                                <activeobjects.servicefactory.config.long.timeout>${ao.long.timeout}</activeobjects.servicefactory.config.long.timeout>
+                                <activeobjects.servicefactory.config.short.timeout>${ao.short.timeout}</activeobjects.servicefactory.config.short.timeout>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -371,6 +373,8 @@
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <use.test.http.client>true</use.test.http.client>
+                                <activeobjects.servicefactory.config.long.timeout>${ao.long.timeout}</activeobjects.servicefactory.config.long.timeout>
+                                <activeobjects.servicefactory.config.short.timeout>${ao.short.timeout}</activeobjects.servicefactory.config.short.timeout>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
