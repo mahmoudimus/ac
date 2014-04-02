@@ -63,6 +63,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       $timeout.find("a.ap-btn-cancel").click(function () {
         statusHelper.showLoadErrorStatus($home);
         $nexus.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
+        analytics.iframePerformance.cancel(options.key, ns);
       });
       layoutIfNeeded();
       analytics.iframePerformance.timeout(options.key, ns);

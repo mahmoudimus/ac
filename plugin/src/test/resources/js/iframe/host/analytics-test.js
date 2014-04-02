@@ -98,11 +98,6 @@
                 equal(this.triggerSpy.args[0][1].addonKey, addonKey);
                 equal(this.triggerSpy.args[0][1].moduleKey, moduleKey);
             });
-            
-
-
-
-
 
         });
 

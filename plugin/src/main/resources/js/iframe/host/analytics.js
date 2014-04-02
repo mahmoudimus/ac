@@ -6,7 +6,7 @@ _AP.define("host/analytics", ["_dollar"], function($){
         "init"
     ];
 
-    var THRESHOLD = 12000; // Timings above this millisecond threshold will be clipped to an 'x' value.
+    var THRESHOLD = 20000; // Timings beyond 20 seconds (connect's load timeout) will be clipped to an X.
     var TRIMPPRECISION = 100; // Trim extra zeros from the load time.
 
     var metrics = {};
@@ -61,7 +61,16 @@ _AP.define("host/analytics", ["_dollar"], function($){
                     addonKey: addonKey,
                     moduleKey: moduleKey
                 });
+                //track an end event during a timeout so we always have complete start / end data.
+                this.end(addonKey, moduleKey);
                 metrics[key] = null;
+            },
+            // User clicked cancel button during loading
+            cancel: function(addonKey, moduleKey){
+                track('iframe.performance.cancel', {
+                    addonKey: addonKey,
+                    moduleKey: moduleKey
+                });
             }
         },
         trackBridgeMethod: function(name, addonKey, channel){
