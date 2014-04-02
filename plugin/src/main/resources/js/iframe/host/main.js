@@ -274,6 +274,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         },
         eraseCookie: function(name){
           AJS.Cookie.erase(prefixCookie(name));
+        },
+        triggerJiraEvent: function(e){
+          _AP.require(['jira/event'], function(jiraEvent){
+            jiraEvent[e]();
+          });
         }
       }
     });
