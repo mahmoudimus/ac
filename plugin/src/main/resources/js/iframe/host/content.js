@@ -53,7 +53,8 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
                 header: $el.text(),
                 width:  url.getQueryParamValue('width'),
                 height: url.getQueryParamValue('height'),
-                cp:     url.getQueryParamValue('cp')
+                cp:     url.getQueryParamValue('cp'),
+                key: getWebItemPluginKey($el)
             };
             callback(href, options, event.type);
         }
