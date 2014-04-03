@@ -61,7 +61,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         for (T bean : beans)
         {
             moduleDescriptors.addAll(createModuleDescriptors(addon, theConnectPlugin, bean));
-            i18nBuilder.add(bean);
+            i18nBuilder.add(bean, addon);
         }
 
         i18nPropertiesPluginManager.add(addon.getKey(), i18nBuilder.getI18nProperties());

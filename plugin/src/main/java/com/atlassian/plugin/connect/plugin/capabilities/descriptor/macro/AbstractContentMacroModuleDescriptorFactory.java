@@ -56,12 +56,13 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     protected DOMElement createDOMElement(ConnectAddonBean addon, B bean)
     {
         DOMElement element = new DOMElement("macro");
+        // For macros, the name has to be a key and can't contain spaces etc.
+        String macroName = bean.getKey(addon);
         // If 'featured' is true, the web item needs the macro name as it's key...
         // So chose a different prefix for the macro itself
-        element.setAttribute("key", "macro-" + bean.getKey(addon));
-        // For macros, the name has to be a key and can't contain spaces etc.
-        element.setAttribute("name", bean.getRawKey());
-        element.setAttribute("i18n-name-key", MacroI18nBuilder.getMacroI18nKey(addon.getKey(), bean.getRawKey()));
+        element.setAttribute("key", "macro-" + macroName);
+        element.setAttribute("name", macroName);
+        element.setAttribute("i18n-name-key", MacroI18nBuilder.getMacroI18nKey(addon.getKey(), macroName));
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
 
