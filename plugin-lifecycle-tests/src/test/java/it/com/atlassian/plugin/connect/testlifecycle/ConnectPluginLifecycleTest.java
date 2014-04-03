@@ -158,7 +158,7 @@ public class ConnectPluginLifecycleTest
 
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
 
-        pluginController.disablePlugin(singleModuleAddon.getKey());
+        testPluginInstaller.disableAddon(singleModuleAddon.getKey());
 
         assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
 
@@ -172,11 +172,11 @@ public class ConnectPluginLifecycleTest
 
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
 
-        pluginController.disablePlugin(singleModuleAddon.getKey());
+        testPluginInstaller.disableAddon(singleModuleAddon.getKey());
 
         assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
 
-        pluginController.enablePlugins(singleModuleAddon.getKey());
+        testPluginInstaller.enableAddon(singleModuleAddon.getKey());
 
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "third check");
 
@@ -215,20 +215,6 @@ public class ConnectPluginLifecycleTest
     }
 
     @Test
-    public void uninstallingConnectDisablesAddon() throws Exception
-    {
-        theConnectPlugin = installConnectPlugin();
-        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
-
-        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
-
-        pluginController.uninstall(theConnectPlugin);
-        theConnectPlugin = null;
-
-        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
-    }
-
-    @Test
     public void uninstallingAndThenInstallingConnectDisablesAndEnablesAddon() throws Exception
     {
         theConnectPlugin = installConnectPlugin();
@@ -238,8 +224,6 @@ public class ConnectPluginLifecycleTest
 
         pluginController.uninstall(theConnectPlugin);
         theConnectPlugin = null;
-
-        assertStateAndModuleCount(singleModuleAddon, PluginState.DISABLED, 0, "second check");
 
         theConnectPlugin = installConnectPlugin();
 
@@ -357,27 +341,6 @@ public class ConnectPluginLifecycleTest
         assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "second check");
 
     }
-
-    @Test
-    public void upgradingFromPre1_0ConnectEnablesAddon() throws Exception
-    {
-        theOLDConnectPlugin = installOLDConnectPlugin();
-        singleModuleAddon = installAddon(SINGLE_MODULE_ADDON);
-
-        assertEquals(PluginState.ENABLED, theOLDConnectPlugin.getPluginState());
-        assertEquals(PluginState.ENABLED, singleModuleAddon.getPluginState());
-
-        theConnectPlugin = installConnectPlugin();
-
-        assertEquals(PluginState.ENABLED, theConnectPlugin.getPluginState());
-        
-        //TODO: figure out why module count is wrong only in confluence only for this specific check
-        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "second check");
-
-        assertEquals(PluginState.ENABLED, singleModuleAddon.getPluginState());
-
-    }
-
     private Plugin installConnectPlugin() throws IOException
     {
         return testPluginInstaller.installPlugin(getConnectPluginJar());
@@ -437,7 +400,7 @@ public class ConnectPluginLifecycleTest
         assertStateAndModuleCount(singleModuleAddon, state, moduleCount, "");
     }
 
-    private void assertStateAndModuleCount(Plugin singleModuleAddon, PluginState state, int moduleCount, String prefix)
+    private void assertStateAndModuleCount(Plugin originalAddonPlugin, PluginState state, int moduleCount, String prefix)
     {
         StringBuilder sb = new StringBuilder();
 
@@ -446,10 +409,12 @@ public class ConnectPluginLifecycleTest
             sb.append(prefix).append(" - ");
         }
 
-        sb.append(singleModuleAddon.getKey()).append(": ");
+        sb.append(originalAddonPlugin.getKey()).append(": ");
 
-        PluginState addonState = singleModuleAddon.getPluginState();
-        Collection<ModuleDescriptor<?>> addonModules = singleModuleAddon.getModuleDescriptors();
+        Plugin pluginToCheck = testPluginInstaller.getAddonPlugin(originalAddonPlugin.getKey());
+        
+        PluginState addonState = pluginToCheck.getPluginState();
+        Collection<ModuleDescriptor<?>> addonModules = pluginToCheck.getModuleDescriptors();
         int addonModuleCount = addonModules.size();
 
         boolean failed = false;

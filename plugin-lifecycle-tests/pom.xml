@@ -193,6 +193,13 @@
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
                                 </bundledArtifact>
+
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                         <product>
@@ -246,6 +253,13 @@
                                     <groupId>com.atlassian.labs</groupId>
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
+                                </bundledArtifact>
+
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
