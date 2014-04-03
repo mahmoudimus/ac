@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.integration.plugins;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -87,7 +88,14 @@ public class DynamicDescriptorRegistration
 
             if (reg.getI18nProperties() != null)
             {
-                i18nPropertiesPluginManager.add(plugin.getKey(), reg.getI18nProperties());
+                try
+                {
+                    i18nPropertiesPluginManager.add(plugin.getKey(), reg.getI18nProperties());
+                }
+                catch (IOException e)
+                {
+                    log.error("Unable to register I18n properties for descriptor: " + descriptor.getCompleteKey(), e);
+                }
             }
         }
         return new Registration()

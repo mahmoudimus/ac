@@ -23,7 +23,10 @@ import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -33,6 +36,7 @@ import static com.google.common.collect.Lists.newArrayList;
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
         implements ConnectModuleProvider<T>
 {
+    private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleProvider.class);
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
     private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
@@ -64,7 +68,14 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             i18nBuilder.add(bean, addon);
         }
 
-        i18nPropertiesPluginManager.add(addon.getKey(), i18nBuilder.getI18nProperties());
+        try
+        {
+            i18nPropertiesPluginManager.add(addon.getKey(), i18nBuilder.getI18nProperties());
+        }
+        catch (IOException e)
+        {
+            log.error("Unable to register I18n properties for addon: " + addon.getKey(), e);
+        }
 
         return moduleDescriptors;
     }

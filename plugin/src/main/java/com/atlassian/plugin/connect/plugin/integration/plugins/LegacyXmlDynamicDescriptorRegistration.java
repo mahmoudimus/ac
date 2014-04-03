@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.integration.plugins;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.atlassian.plugin.ModuleDescriptor;
@@ -92,7 +93,14 @@ public class LegacyXmlDynamicDescriptorRegistration
 
             if (reg.getI18nProperties() != null)
             {
-                i18nPropertiesPluginManager.add(plugin.getKey(), reg.getI18nProperties());
+                try
+                {
+                    i18nPropertiesPluginManager.add(plugin.getKey(), reg.getI18nProperties());
+                }
+                catch (IOException e)
+                {
+                    log.error("Unable to register I18n properties for descriptor: " + descriptor.getCompleteKey(), e);
+                }
             }
         }
         return new Registration()

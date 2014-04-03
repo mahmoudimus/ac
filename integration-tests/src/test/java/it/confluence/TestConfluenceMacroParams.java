@@ -43,6 +43,8 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
     @Test
     public void testContextParam() throws Exception
     {
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
+
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
                 .addPermission("read_content")
@@ -72,7 +74,6 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                 .addRoute("/page/*", ConnectAppServlets.helloWorldServlet())
                 .start();
 
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
         loginAsBetty();
         Map<String, String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.getTitle())
                                             .visitGeneralLink()
