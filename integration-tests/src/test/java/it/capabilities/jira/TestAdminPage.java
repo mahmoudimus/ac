@@ -59,7 +59,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())
-                .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .start();
     }
 
