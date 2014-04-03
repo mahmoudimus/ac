@@ -38,7 +38,7 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     private static final String CONTENT_WEB_ITEM_ID = "dropdown-item";
     private static final String CONTENT_WEB_ITEM_NAME = "Much Bass";
     private static final String CONTENT_WEB_ITEM_URL = "/da.bass";
-    private static final String CONTENT_LOCATION = TOOLS_LOCATION + "/" + WEB_SECTION_ID;
+    private static final String CONTENT_LOCATION = TOOLS_LOCATION + "/" + addonAndModuleKey(PLUGIN_KEY,WEB_SECTION_ID);
 
     private static ConnectRunner addon;
     private static ConfluenceOps.ConfluenceUser admin;

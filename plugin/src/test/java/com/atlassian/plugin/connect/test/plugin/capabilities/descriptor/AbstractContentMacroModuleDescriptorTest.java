@@ -33,10 +33,12 @@ import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 
 public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseContentMacroModuleBean, T extends BaseContentMacroModuleBeanBuilder<T, B>>
 {
+    public static final String THE_MACRO_NAME = "the-macro-name";
     protected Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     protected XhtmlMacroModuleDescriptor descriptor;
     protected ConnectAddonBean addon = newConnectAddonBean().withKey("my-plugin").build();
 
+    protected final String FULL_MACRO_KEY = ModuleKeyUtils.addonAndModuleKey(addon.getKey(), THE_MACRO_NAME);
     protected abstract XhtmlMacroModuleDescriptor createModuleDescriptorForTest();
 
     protected abstract T newContentMacroModuleBeanBuilder();
@@ -57,37 +59,37 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     @Test
     public void verifyKeyIsCorrect()
     {
-        assertThat(descriptor.getKey(), is("macro-" + addon.getKey() + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "the-macro-name"));
+        assertThat(descriptor.getKey(), is("macro-" + FULL_MACRO_KEY));
     }
 
     @Test
     public void verifyCompleteKeyIsCorrect()
     {
-        assertThat(descriptor.getCompleteKey(), is("my-plugin:" + "macro-" + addon.getKey() + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "the-macro-name"));
+        assertThat(descriptor.getCompleteKey(), is("my-plugin:" + "macro-" + FULL_MACRO_KEY));
     }
 
     @Test
     public void verifyNameIsSet() throws Exception
     {
-        assertThat(descriptor.getName(), is("the-macro-name"));
+        assertThat(descriptor.getName(), is(FULL_MACRO_KEY));
     }
 
     @Test
     public void verifyMacroNameIsSet() throws Exception
     {
-        assertThat(descriptor.getMacroMetadata().getMacroName(), is("the-macro-name"));
+        assertThat(descriptor.getMacroMetadata().getMacroName(), is(FULL_MACRO_KEY));
     }
 
     @Test
     public void verifyMacroTitleIsSet() throws Exception
     {
-        assertThat(descriptor.getMacroMetadata().getTitle().getKey(), is("my-plugin.the-macro-name.label"));
+        assertThat(descriptor.getMacroMetadata().getTitle().getKey(), is("my-plugin." + FULL_MACRO_KEY + ".label"));
     }
 
     @Test
     public void verifyMacroDescriptionIsSet() throws Exception
     {
-        assertThat(descriptor.getMacroMetadata().getDescription().getKey(), is("my-plugin.the-macro-name.desc"));
+        assertThat(descriptor.getMacroMetadata().getDescription().getKey(), is("my-plugin." + FULL_MACRO_KEY + ".desc"));
     }
 
     @Test
@@ -178,7 +180,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     {
         return newContentMacroModuleBeanBuilder()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
-                .withKey("the-macro-name")
+                .withKey(THE_MACRO_NAME)
                 .withUrl("/my-macro")
                 .withAliases("alias1", "alias2")
                 .withBodyType(MacroBodyType.PLAIN_TEXT)

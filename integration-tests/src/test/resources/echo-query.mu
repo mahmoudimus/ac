@@ -10,7 +10,7 @@
     <ul>
         {{#nvp}}
          <li id="{{name}}">
-            {{name}}:{{value}}
+            {{name}}: {{value}}
          </li>
         {{/nvp}}
     </ul>

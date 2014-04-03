@@ -104,6 +104,9 @@ public class TestDialog extends ConnectWebDriverTestBase
         // check the dimensions are the same as those in the js (moustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
+
+        closeDialogPage.close();
+        closeDialogPage.waitUntilClosed();
     }
 
 
@@ -121,6 +124,9 @@ public class TestDialog extends ConnectWebDriverTestBase
         // check the dimensions are the same as those in the js (moustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(654));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(918));
+
+        closeDialogPage.close();
+        closeDialogPage.waitUntilClosed();
     }
 
 }
