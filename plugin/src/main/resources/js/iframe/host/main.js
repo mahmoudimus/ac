@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params"], function ($, XdmRpc, addons, statusHelper, messages, uiParams) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params", 'host/history'], function ($, XdmRpc, addons, statusHelper, messages, uiParams, connectHistory) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -96,6 +96,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     }, {
       remote: [
         "dialogMessage",
+        "historyMessage",
         // !!! JIRA specific !!!
         "setWorkflowConfigurationMessage"
       ],
@@ -279,9 +280,26 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           _AP.require(['jira/event'], function(jiraEvent){
             jiraEvent[e]();
           });
+        },
+        historyPushState: function(data, title, url){
+          return connectHistory.pushState(data, title, url);
+        },
+        historyReplaceState: function(data, title, url){
+          return connectHistory.replaceState(data, title, url);
+        },
+        historyGo: function(delta){
+          return connectHistory.go(delta);
         }
       }
     });
+
+    if(isGeneral){
+      // history register for invoking popstate callbacks.
+      window.onhashchange = function(e){
+        connectHistory.hashChange(e, rpc.historyMessage);
+//        rpc.historyMessage(connectHistory.sanitizeHashChangeEvent(e));
+      };
+    }
 
     function prefixCookie(name){
       return options.key + '-' + options.ns + '-' + name;
