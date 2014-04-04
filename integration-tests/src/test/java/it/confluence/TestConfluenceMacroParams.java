@@ -74,6 +74,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                 .addRoute("/parampage/*", ConnectAppServlets.helloWorldServlet())
                 .start();
 
+        loginAsAdmin();
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "paramTest", loadResourceAsString("confluence/test-page.xhtml"));
 
 
@@ -90,6 +91,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroWithHeaderParams() throws Exception
     {
+        loginAsAdmin();
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "headerParamTest",
                 "<div class=\"header-macro\">\n" +
                         "   <ac:macro ac:name=\"header\" />\n" +
