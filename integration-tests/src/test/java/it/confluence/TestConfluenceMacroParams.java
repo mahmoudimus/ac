@@ -63,18 +63,18 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                                       .contextParameters(ContextParameter.name("page.id").query())
                                       .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(ConnectAppServlets.macroEditor()))
                                       .resource(macroExtended()))
-                .add(GeneralPageModule.key("remotePluginGeneral")
-                                      .name("Remotable Plugin app1 General")
-                        .path("/page?page_id=${page.id}") // TODO: this is not working wo the $. As it is deprecated I didn't chance down why
-                        .linkName("Remotable Plugin app1 General Link")
+                .add(GeneralPageModule.key("macroParamGeneralPage")
+                                      .name("Macro Params General Page")
+                        .path("/parampage?page_id=${page.id}") // TODO: this is not working wo the $. As it is deprecated I didn't chance down why
+                        .linkName("Macro Params General  Link")
                         .iconUrl("/public/sandcastles.jpg")
                         .height("600")
                         .width("700")
                         .resource(ConnectAppServlets.helloWorldServlet()))
-                .addRoute("/page/*", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/parampage/*", ConnectAppServlets.helloWorldServlet())
                 .start();
 
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "paramTest", loadResourceAsString("confluence/test-page.xhtml"));
 
 
         loginAsBetty();
@@ -90,7 +90,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroWithHeaderParams() throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test",
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "headerParamTest",
                 "<div class=\"header-macro\">\n" +
                         "   <ac:macro ac:name=\"header\" />\n" +
                         "</div>"
