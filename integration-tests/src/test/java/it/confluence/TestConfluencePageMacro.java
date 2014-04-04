@@ -63,7 +63,7 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testPageMacro() throws XmlRpcFault, IOException
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "test", loadResourceAsString("confluence/test-page-macro.xhtml"));
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "testPageMacro", loadResourceAsString("confluence/test-page-macro.xhtml"));
         loginAsBetty();
         ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-0");
 
@@ -75,7 +75,7 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testPageMacroMultipleImplementations() throws XmlRpcFault, IOException
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "test", loadResourceAsString("confluence/test-page-macro-multiple.xhtml"));
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "testMultiMacro", loadResourceAsString("confluence/test-page-macro-multiple.xhtml"));
         loginAsBetty();
 
         ConfluencePageMacroPage iframe1 = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-0");
