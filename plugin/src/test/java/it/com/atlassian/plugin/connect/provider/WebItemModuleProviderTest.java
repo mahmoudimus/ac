@@ -43,7 +43,6 @@ import static org.mockito.Mockito.when;
 @RunWith (AtlassianPluginsTestRunner.class)
 public class WebItemModuleProviderTest
 {
-    public static final String PLUGIN_KEY = randomPluginKey();
     public static final String PLUGIN_NAME = "My Plugin";
     public static final String MODULE_NAME = "My Web Item";
     public static final String MODULE_KEY = "my-web-item";
@@ -58,6 +57,8 @@ public class WebItemModuleProviderTest
     private final PluginAccessor pluginAccessor;
     private HttpServletRequest servletRequest;
     private ConnectAddonBean addon;
+    
+    private String pluginKey;
 
     public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller,
                                      TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
@@ -77,7 +78,8 @@ public class WebItemModuleProviderTest
     @Before
     public void setup()
     {
-        this.addon = newConnectAddonBean().withKey(PLUGIN_KEY).build();
+        this.pluginKey = randomPluginKey();
+        this.addon = newConnectAddonBean().withKey(pluginKey).build();
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
     }
@@ -182,7 +184,7 @@ public class WebItemModuleProviderTest
 
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
-                .withKey(PLUGIN_KEY)
+                .withKey(pluginKey)
                 .withBaseurl(BASE_URL)
                 .withAuthentication(AuthenticationBean.none())
                 .withModules("webItems", bean)
@@ -195,7 +197,7 @@ public class WebItemModuleProviderTest
             plugin = testPluginInstaller.installAddon(addon);
 
             final Plugin connectPlugin = getConnectPlugin();
-            final String moduleKey = addonAndModuleKey(PLUGIN_KEY,MODULE_KEY);
+            final String moduleKey = addonAndModuleKey(pluginKey,MODULE_KEY);
 
             WaitUntil.invoke(new WaitUntil.WaitCondition() {
                 @Override
@@ -258,7 +260,7 @@ public class WebItemModuleProviderTest
 
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
-                .withKey(PLUGIN_KEY)
+                .withKey(pluginKey)
                 .withBaseurl(BASE_URL)
                 .withAuthentication(AuthenticationBean.none())
                 .withModules("webItems", bean)
@@ -308,7 +310,7 @@ public class WebItemModuleProviderTest
 
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
-                .withKey(PLUGIN_KEY)
+                .withKey(pluginKey)
                 .withAuthentication(AuthenticationBean.none())
                 .withBaseurl(BASE_URL)
                 .withModules("webItems", bean)
@@ -359,7 +361,7 @@ public class WebItemModuleProviderTest
 
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
-                .withKey(PLUGIN_KEY)
+                .withKey(pluginKey)
                 .withBaseurl(BASE_URL)
                 .withAuthentication(AuthenticationBean.none())
                 .withModules("webItems", bean, bean2)
