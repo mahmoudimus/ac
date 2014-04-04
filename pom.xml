@@ -635,7 +635,7 @@
     <properties>
         <!-- VERSIONS -->
         <amps.version>4.2.18</amps.version>
-        <atlassian.analytics.version>3.12</atlassian.analytics.version>
+        <atlassian.analytics.version>3.13</atlassian.analytics.version>
         <atlassian.applinks.version>4.0.2</atlassian.applinks.version>
         <atlassian.confluence.version>5.4-OD-5</atlassian.confluence.version>
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
