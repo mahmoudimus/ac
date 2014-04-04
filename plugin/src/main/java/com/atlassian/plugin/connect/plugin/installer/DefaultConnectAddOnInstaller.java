@@ -2,12 +2,15 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import java.util.Set;
 
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
+import com.atlassian.plugin.connect.spi.event.RemotePluginInstallFailedEvent;
 import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
@@ -25,6 +28,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final RemotePluginArtifactFactory remotePluginArtifactFactory;
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
+    private final EventPublisher eventPublisher;
     private final OAuthLinkManager oAuthLinkManager;
     private final RemoteEventsHandler remoteEventsHandler;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
@@ -37,6 +41,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory,
                                         PluginController pluginController,
                                         PluginAccessor pluginAccessor,
+                                        EventPublisher eventPublisher,
                                         OAuthLinkManager oAuthLinkManager,
                                         RemoteEventsHandler remoteEventsHandler,
                                         ConnectAddonBeanFactory connectAddonBeanFactory,
@@ -45,6 +50,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
+        this.eventPublisher = eventPublisher;
         this.oAuthLinkManager = oAuthLinkManager;
         this.remoteEventsHandler = remoteEventsHandler;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
@@ -53,14 +59,15 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     }
 
     @Override
+    @Deprecated
     public Plugin install(final String username, final Document document) throws PluginInstallException
     {
-        String pluginKey = getPluginKey(document);
+        String pluginKey = document.getRootElement().attributeValue("key");
         removeOldPlugin(pluginKey);
 
         final PluginArtifact pluginArtifact = getPluginArtifact(username, document);
 
-        Plugin installedPlugin = installPlugin(pluginArtifact, pluginKey, username);
+        Plugin installedPlugin = installXmlPlugin(pluginArtifact, pluginKey, username);
 
         try
         {
@@ -92,12 +99,14 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             removeOldPlugin(pluginKey);
         
             addOn = connectAddonManager.installConnectAddon(jsonDescriptor);
+
+            // todo @seb @jd - enableConnectAddon may fail (it publishes the EnableFailedEvent) - should we throw an exception here too?
+            // todo should this be done "quietly" - ie not publish addonEnabledEvent ?
             connectAddonManager.enableConnectAddon(addOn.getKey());
 
             addonPluginWrapper = addonToPluginFactory.create(addOn);
 
             addonPluginWrapper.enable();
-
         }
         catch(PluginInstallException e)
         {
@@ -105,6 +114,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             {
                 log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...", e);
                 connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
+                eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage()));
             }
             throw e;
         }
@@ -114,6 +124,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             {
                 log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...", e);
                 connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
+                eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage()));
             }
             throw new PluginInstallException(e.getMessage(), e);
         }
@@ -125,7 +136,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         return addonPluginWrapper;
     }
 
-    private Plugin installPlugin(PluginArtifact pluginArtifact, String pluginKey, String username)
+    @Deprecated
+    private Plugin installXmlPlugin(PluginArtifact pluginArtifact, String pluginKey, String username)
     {
         Plugin installedPlugin;
         try
@@ -197,6 +209,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             log.warn("Unable to install remote plugin '{}' by user '{}' due to permission issues: {}",
                     new Object[]{pluginKey, username, ex.getMessage()});
             log.debug("Installation failed due to permission issue", ex);
+            eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, "Installation failed due to permission issue " + ex.getMessage()));
             throw ex;
         }
         catch (InstallationFailedException ex)
@@ -204,20 +217,24 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             log.warn("Unable to install remote plugin '{}' by user '{}' due to installation issue: {}",
                     new Object[]{pluginKey, username, ex.getMessage()});
             log.debug("Installation failed due to installation issue", ex);
+            eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, ex.getMessage()));
             throw ex;
         }
         catch (PluginInstallException e)
         {
+            eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, e.getMessage()));
             throw e;
         }
         catch (Exception e)
         {
             log.warn("Unable to install remote plugin '{}' by user '{}'", pluginKey, username);
             log.debug("Installation failed due to unknown issue", e);
+            eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, e.getMessage()));
             throw new InstallationFailedException(e.getCause() != null ? e.getCause() : e);
         }
     }
 
+    @Deprecated
     private PluginArtifact getPluginArtifact(String username, Document document)
     {
         if (document.getRootElement().attribute("plugins-version") != null)
@@ -228,11 +245,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         {
             throw new InstallationFailedException("Missing plugins-version");
         }
-    }
-
-    private String getPluginKey(Document document)
-    {
-        return document.getRootElement().attributeValue("key");
     }
 
     private void removeOldPlugin(String pluginKey)

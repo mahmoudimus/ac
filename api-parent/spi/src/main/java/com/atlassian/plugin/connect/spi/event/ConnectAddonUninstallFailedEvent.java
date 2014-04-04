@@ -7,8 +7,13 @@ import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 @PrivacyPolicySafe
 public class ConnectAddonUninstallFailedEvent extends ConnectAddonLifecycleFailedEvent
 {
-    public ConnectAddonUninstallFailedEvent(final String pluginKey, int statusCode, String statusText)
+    public ConnectAddonUninstallFailedEvent(String pluginKey, String message)
     {
-        super(pluginKey, statusCode, statusText);
+        super(pluginKey, message);
+    }
+
+    public ConnectAddonUninstallFailedEvent(String pluginKey, int statusCode, String message)
+    {
+        super(pluginKey, statusCode, message);
     }
 }

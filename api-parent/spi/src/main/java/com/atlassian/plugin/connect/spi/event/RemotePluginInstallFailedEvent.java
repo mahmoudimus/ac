@@ -17,7 +17,7 @@ public class RemotePluginInstallFailedEvent
      * The HTTP status code of the failed HTTP lifecycle request
      */
     @PrivacyPolicySafe
-    private final int statusCode;
+    private final Integer statusCode;
 
     /**
      * The status text of the failed HTTP lifecycle request
@@ -25,7 +25,12 @@ public class RemotePluginInstallFailedEvent
     @PrivacyPolicySafe
     private final String statusText;
 
-    public RemotePluginInstallFailedEvent(String pluginKey, int statusCode, String statusText)
+    public RemotePluginInstallFailedEvent(String pluginKey, String message)
+    {
+        this(pluginKey, null, message);
+    }
+
+    public RemotePluginInstallFailedEvent(String pluginKey, Integer statusCode, String statusText)
     {
         this.pluginKey = pluginKey;
         this.statusCode = statusCode;
@@ -37,7 +42,7 @@ public class RemotePluginInstallFailedEvent
         return pluginKey;
     }
 
-    public int getStatusCode()
+    public Integer getStatusCode()
     {
         return statusCode;
     }
