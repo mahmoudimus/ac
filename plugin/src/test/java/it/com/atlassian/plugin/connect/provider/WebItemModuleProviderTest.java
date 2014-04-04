@@ -164,7 +164,7 @@ public class WebItemModuleProviderTest
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals(CONTEXT_PATH + "/plugins/servlet/ac/my-plugin/some-page-key", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals(CONTEXT_PATH + "/plugins/servlet/ac/" + addon.getKey() + "/some-page-key", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
     }
 
     @Test
