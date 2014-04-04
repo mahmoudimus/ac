@@ -30,6 +30,8 @@ import org.junit.runner.RunWith;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomPluginKey;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -39,14 +41,14 @@ import static org.mockito.Mockito.when;
 @RunWith (AtlassianPluginsTestRunner.class)
 public class WebItemModuleProviderTest
 {
-    public static final String PLUGIN_KEY = "my-plugin";
+    public static final String PLUGIN_KEY = randomPluginKey();
     public static final String PLUGIN_NAME = "My Plugin";
     public static final String MODULE_NAME = "My Web Item";
     public static final String MODULE_KEY = "my-web-item";
     public static final String OTHER_MODULE_NAME = "My Other Web Item";
     public static final String OTHER_MODULE_KEY = "my-other-web-item";
     public static final String CONTEXT_PATH = "http://ondemand.com/someProduct";
-    public static final String BASE_URL = "http://my.connect.addon.com";
+    public static final String BASE_URL = "https://my.connect.addon.com";
 
     private final WebItemModuleProvider webItemModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
@@ -65,17 +67,17 @@ public class WebItemModuleProviderTest
     }
 
     @BeforeClass
+    public void authenticate()
+    {
+        testAuthenticator.authenticateUser("admin");
+    }
+
+    @Before
     public void setup()
     {
         this.addon = newConnectAddonBean().withKey(PLUGIN_KEY).build();
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
-    }
-
-    @Before
-    public void authenticate()
-    {
-        testAuthenticator.authenticateUser("admin");
     }
 
     @Test
@@ -190,7 +192,10 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) getConnectPlugin().getModuleDescriptor(PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + MODULE_KEY);
+            Plugin connectPlugin = getConnectPlugin();
+            String moduleKey = addonAndModuleKey(PLUGIN_KEY,MODULE_KEY);
+
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) connectPlugin.getModuleDescriptor(moduleKey);
 
             assertEquals(MODULE_NAME,descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class),new HashMap<String, Object>()));
         }
