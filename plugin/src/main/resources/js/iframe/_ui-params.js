@@ -21,6 +21,15 @@
             params = url.getQueryParamValue('ui-params');
             return this.decode(params);
         },
+        fromWindowName: function(w, param){
+            w = w || window;
+            var decoded = this.decode(w.name);
+
+            if(!param){
+                return decoded;
+            }
+            return decoded[param];
+        },
         /**
         * Decode a base64 encoded json string containing ui params
         */

@@ -19,7 +19,11 @@ _AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
         },
         last: function(){
             return this.historyStack[this.historyStack.length - 1];
+        },
+        pop: function(){
+            return this.historyStack.pop();
         }
+
     };
 
     var anchorPrefix = "!";
@@ -83,11 +87,18 @@ _AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
         };
     }
 
+    function getInitialIframeState(){
+        var hostWindowUrl = new Uri.init(window.location.href),
+        anchor = stripPrefix(hostWindowUrl.anchor());
+        return anchor;
+    }
+
     return {
         pushState: pushState,
         replaceState: replaceState,
         go: go,
-        hashChange: hashChange
+        hashChange: hashChange,
+        getInitialIframeState: getInitialIframeState
     };
 
 });

@@ -87,12 +87,25 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       return $nexus.data("ra.dialog.buttons").getButton(name);
     }
 
+    if(isGeneral){
+      options.uiParams = {
+        historyState: connectHistory.getInitialIframeState()
+      };
+
+
+      // history register for invoking popstate callbacks.
+      window.onhashchange = function(e){
+        connectHistory.hashChange(e, rpc.historyMessage);
+      };
+    }
+
     var rpc = new XdmRpc($, {
       remote: options.src,
       remoteKey: options.key,
       container: contentId,
       channel: channelId,
-      props: {width: initWidth, height: initHeight}
+      props: {width: initWidth, height: initHeight},
+      uiParams: options.uiParams
     }, {
       remote: [
         "dialogMessage",
@@ -292,14 +305,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         }
       }
     });
-
-    if(isGeneral){
-      // history register for invoking popstate callbacks.
-      window.onhashchange = function(e){
-        connectHistory.hashChange(e, rpc.historyMessage);
-//        rpc.historyMessage(connectHistory.sanitizeHashChangeEvent(e));
-      };
-    }
 
     function prefixCookie(name){
       return options.key + '-' + options.ns + '-' + name;
