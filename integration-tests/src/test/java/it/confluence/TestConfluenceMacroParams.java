@@ -80,7 +80,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
 
         loginAsBetty();
         Map<String, String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.getTitle())
-                                            .visitGeneralLink()
+                                            .visitGeneralLink("macroParamGeneralPage")
                                             .getIframeQueryParams();
 
         assertEquals(pageData.getId(), params.get("page_id"));
