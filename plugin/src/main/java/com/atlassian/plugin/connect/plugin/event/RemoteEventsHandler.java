@@ -12,9 +12,8 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonInstalledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
+import com.atlassian.plugin.connect.spi.event.RemotePluginInstallFailedEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginInstalledEvent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
@@ -48,8 +47,6 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
-
-//import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 
 /**
  * For handling legacy xml-descriptor add-ons. See {@link com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager} for JSON-descriptor add-ons.
@@ -143,12 +140,12 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                             {
                                 String message = "Error contacting remote application [" + response.getStatusText() + "]";
                                 log.error(message);
-                                eventPublisher.publish(new ConnectAddonInstallFailedEvent(addon.getKey(), response.getStatusCode(), response.getStatusText()));
+                                eventPublisher.publish(new RemotePluginInstallFailedEvent(addon.getKey(), response.getStatusCode(), response.getStatusText()));
                                 throw new PluginInstallException(message, errorI18nKey);
                             }
                             else
                             {
-                                eventPublisher.publish(new ConnectAddonInstalledEvent(addon.getKey()));
+                                eventPublisher.publish(new RemotePluginInstalledEvent(addon.getKey(), data));
                                 called = true;
                             }
                         }
@@ -159,6 +156,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         catch (Exception e)
         {
             log.error("Error contacting remote application [" + e.getMessage() + "]", e);
+            eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, 400, e.getMessage()));
             throw new PluginInstallException("Error contacting remote application [" + e.getMessage() + "]", errorI18nKey);
         }
 
