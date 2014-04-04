@@ -2,6 +2,7 @@ package it.com.atlassian.plugin.connect.provider;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,6 +19,7 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
@@ -192,9 +194,23 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            Plugin connectPlugin = getConnectPlugin();
-            String moduleKey = addonAndModuleKey(PLUGIN_KEY,MODULE_KEY);
+            final Plugin connectPlugin = getConnectPlugin();
+            final String moduleKey = addonAndModuleKey(PLUGIN_KEY,MODULE_KEY);
 
+            WaitUntil.invoke(new WaitUntil.WaitCondition() {
+                @Override
+                public boolean isFinished()
+                {
+                    return null != connectPlugin.getModuleDescriptor(moduleKey);
+                }
+
+                @Override
+                public String getWaitMessage()
+                {
+                    return "waiting for addon module to be registered...";
+                }
+            });
+            
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) connectPlugin.getModuleDescriptor(moduleKey);
 
             assertEquals(MODULE_NAME,descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class),new HashMap<String, Object>()));
