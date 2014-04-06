@@ -36,7 +36,8 @@ _AP.define("messages/main", ["_dollar"], function($) {
             var msgBar = getMessageBar();
 
             options = filterMessageOptions(options);
-            $.extend(options, {title: title, body: body });
+            body = $('<div />').text(body).html(); // encode html entities
+            $.extend(options, {title: title, body: body});
 
             if($.inArray(name, MESSAGE_TYPES) < 0){
                 throw "Invalid message type. Must be: " + MESSAGE_TYPES.join(", ");
