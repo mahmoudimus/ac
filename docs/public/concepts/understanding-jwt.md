@@ -278,6 +278,7 @@ To create a query string hash, follow the detailed instructions below:
 2. Append the character `'&'`<br><br>
 3. Compute canonical URI
   *  Discard the protocol, server, port, context path and query parameters from the full URL.
+     *  For requests targeting add-ons discard the base path in the add-on descriptor.
   *  Removing the context path allows a reverse proxy to redirect incoming requests for `"jira.example.com/getsomething"`
    to `"example.com/jira/getsomething"` without breaking authentication. The requester cannot know that the reverse proxy
    will prepend the context path `"/jira"` to the originally requested path `"/getsomething"`
