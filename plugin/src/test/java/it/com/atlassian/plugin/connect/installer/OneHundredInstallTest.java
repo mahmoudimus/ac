@@ -13,6 +13,7 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -49,6 +50,7 @@ public class OneHundredInstallTest
         testAuthenticator.authenticateUser("admin");
     }
     
+    @Test
     public void lifecycleForOneHundredAddons() throws IOException
     {
         Map<String,Long> opTimes = new HashMap<String, Long>();
