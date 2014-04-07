@@ -17,10 +17,18 @@ import org.dom4j.Element;
  */
 public class FixedXhtmlMacroModuleDescriptor extends XhtmlMacroModuleDescriptor
 {
-    public FixedXhtmlMacroModuleDescriptor(ModuleFactory moduleFactory,
-            MacroMetadataParser metadataParser)
+    private final String completeKey;
+
+    public FixedXhtmlMacroModuleDescriptor(ModuleFactory moduleFactory, MacroMetadataParser metadataParser)
     {
         super(moduleFactory, metadataParser);
+        this.completeKey = null;
+    }
+    
+    public FixedXhtmlMacroModuleDescriptor(ModuleFactory moduleFactory, MacroMetadataParser metadataParser, String completeKey)
+    {
+        super(moduleFactory, metadataParser);
+        this.completeKey = completeKey;
     }
 
     @Override
@@ -34,5 +42,11 @@ public class FixedXhtmlMacroModuleDescriptor extends XhtmlMacroModuleDescriptor
     public MacroMetadata getMacroMetadata()
     {
         return new FixedMacroMetadata(super.getMacroMetadata());
+    }
+
+    @Override
+    public String getCompleteKey()
+    {
+        return (null != completeKey) ? completeKey : super.getCompleteKey();
     }
 }

@@ -47,7 +47,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         ModuleFactory moduleFactory = createModuleFactory(addon, element, bean);
         MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(addon, bean);
 
-        FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
+        FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser, addon.getKey() + ":" + bean.getRawKey());
         descriptor.init(theConnectPlugin, element);
 
         return descriptor;
