@@ -91,7 +91,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       options.uiParams = {
         historyState: connectHistory.getState()
       };
-      // history register for invoking popstate callbacks.
+      // register for url hash changes to invoking history.popstate callbacks.
       window.onhashchange = function(e){
         connectHistory.hashChange(e, rpc.historyMessage);
       };
