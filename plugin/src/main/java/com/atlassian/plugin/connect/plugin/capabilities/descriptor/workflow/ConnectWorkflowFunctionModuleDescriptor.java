@@ -52,6 +52,8 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private final OSWorkflowConfigurator workflowConfigurator;
     private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private String addonKey;
+    private String moduleKey;
 
     private URI triggeredUri;
 
@@ -150,5 +152,39 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         {
             renderStrategy.renderAccessDenied(writer);
         }
+    }
+
+    @Override
+    public String getPluginKey()
+    {
+        checkNotNull(addonKey);
+        
+        return addonKey;
+    }
+
+    @Override
+    public String getCompleteKey()
+    {
+        checkNotNull(addonKey);
+        checkNotNull(moduleKey);
+        
+        return addonKey + ":" + moduleKey;
+    }
+
+    @Override
+    public String getKey()
+    {
+        checkNotNull(moduleKey);
+        return moduleKey;
+    }
+
+    public void setAddonKey(String addonKey)
+    {
+        this.addonKey = addonKey;
+    }
+
+    public void setModuleKey(String moduleKey)
+    {
+        this.moduleKey = moduleKey;
     }
 }

@@ -38,6 +38,9 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
         Element element = createDOMElement(bean, addon);
         ConnectWorkflowFunctionModuleDescriptor moduleDescriptor = connectContainerUtil.createBean(ConnectWorkflowFunctionModuleDescriptor.class);
         
+        moduleDescriptor.setAddonKey(addon.getKey());
+        moduleDescriptor.setModuleKey(bean.getRawKey());
+        
         moduleDescriptor.init(theConnectPlugin, element);
         return moduleDescriptor;
     }

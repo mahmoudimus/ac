@@ -33,7 +33,7 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends ConnectWorkflowF
             final DelegatingComponentAccessor componentAccessor)
     {
         super(authenticationContext, moduleFactory, iFrameRenderStrategyRegistry, jiraRestBeanMarshaler,
-                webHookConsumerRegistry, eventPublisher, componentAccessor);
+                webHookConsumerRegistry, eventPublisher, componentAccessor, addonKey, moduleKey);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
     }
