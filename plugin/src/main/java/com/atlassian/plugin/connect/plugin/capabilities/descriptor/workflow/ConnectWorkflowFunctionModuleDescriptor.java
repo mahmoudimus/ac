@@ -153,32 +153,4 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
             renderStrategy.renderAccessDenied(writer);
         }
     }
-
-    @Override
-    public String getPluginKey()
-    {
-        return (null != addonKey) ? addonKey : super.getPluginKey();
-    }
-
-    @Override
-    public String getCompleteKey()
-    {
-        return (null != addonKey && null != moduleKey) ? addonKey + ":" + moduleKey : super.getCompleteKey();
-    }
-
-    @Override
-    public String getKey()
-    {
-        return (null != moduleKey) ? moduleKey : super.getKey();
-    }
-
-    public void setAddonKey(String addonKey)
-    {
-        this.addonKey = addonKey;
-    }
-
-    public void setModuleKey(String moduleKey)
-    {
-        this.moduleKey = moduleKey;
-    }
 }
