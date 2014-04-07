@@ -7,6 +7,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.PermissionManagerImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPathBuilder;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
@@ -53,6 +55,8 @@ public class PermissionManagerImplTest
     @Mock private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     @Mock private PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker;
     @Mock private ScopeService scopeService;
+    @Mock private ConnectAddonRegistry connectAddonRegistry;
+    @Mock private ConnectAddonBeanFactory connectAddonBeanFactory;
 
     @Mock private HttpServletRequest request;
     @Mock private Plugin plugin;
@@ -69,7 +73,7 @@ public class PermissionManagerImplTest
         Permission permission = createPermission();
         when(pluginModuleTracker.getModules()).thenReturn(asList(permission));
         when(scopeService.build()).thenReturn(buildTestScopes());
-        permissionManager = new PermissionManagerImpl(pluginAccessor, permissionsReader, jsonConnectAddOnIdentifierService, pluginModuleTracker, scopeService);
+        permissionManager = new PermissionManagerImpl(pluginAccessor, permissionsReader, jsonConnectAddOnIdentifierService, pluginModuleTracker, scopeService, connectAddonRegistry, connectAddonBeanFactory);
     }
 
     @Test

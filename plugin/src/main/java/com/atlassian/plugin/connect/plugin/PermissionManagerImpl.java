@@ -1,10 +1,11 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.fugue.Suppliers;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
@@ -37,12 +38,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
-import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterables.*;
 import static java.lang.String.format;
 
 /**
@@ -56,6 +54,8 @@ public final class PermissionManagerImpl implements PermissionManager
     private final PermissionsReader permissionsReader;
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
     private final Collection<AddOnScope> allScopes;
+    private final ConnectAddonRegistry connectAddonRegistry;
+    private final ConnectAddonBeanFactory connectAddonBeanFactory;
 
     @Deprecated
     private static final Set<ApiScope> DEFAULT_OLD_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
@@ -66,12 +66,16 @@ public final class PermissionManagerImpl implements PermissionManager
             PluginEventManager pluginEventManager,
             PermissionsReader permissionsReader,
             JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
-            ScopeService scopeService) throws IOException
+            ScopeService scopeService,
+            ConnectAddonRegistry connectAddonRegistry,
+            ConnectAddonBeanFactory connectAddonBeanFactory) throws IOException
     {
         this(pluginAccessor, permissionsReader, jsonConnectAddOnIdentifierService,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class),
-                scopeService);
+                scopeService,
+                connectAddonRegistry, connectAddonBeanFactory
+        );
     }
 
     @VisibleForTesting
@@ -80,13 +84,16 @@ public final class PermissionManagerImpl implements PermissionManager
             PermissionsReader permissionsReader,
             JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker,
-            ScopeService scopeService) throws IOException
+            ScopeService scopeService,
+            ConnectAddonRegistry connectAddonRegistry, ConnectAddonBeanFactory connectAddonBeanFactory) throws IOException
     {
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.permissionsReader = checkNotNull(permissionsReader);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
         this.allScopes = scopeService.build();
+        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
+        this.connectAddonBeanFactory = checkNotNull(connectAddonBeanFactory);
     }
 
     @Override
@@ -141,16 +148,7 @@ public final class PermissionManagerImpl implements PermissionManager
 
     private Set<ScopeName> getScopeReferences(String pluginKey)
     {
-        return option(pluginAccessor.getPlugin(pluginKey)).fold(
-                Suppliers.ofInstance(ImmutableSet.<ScopeName>of()),
-                new Function<Plugin, Set<ScopeName>>()
-                {
-                    @Override
-                    public Set<ScopeName> apply(Plugin plugin)
-                    {
-                        return permissionsReader.readScopesForAddOn(plugin);
-                    }
-                });
+        return connectAddonBeanFactory.fromJsonSkipValidation(connectAddonRegistry.getDescriptor(pluginKey)).getScopes();
     }
 
     @Deprecated
