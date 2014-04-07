@@ -89,7 +89,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
 
     if(isGeneral){
       options.uiParams = {
-        historyState: connectHistory.getInitialIframeState()
+        historyState: connectHistory.getState()
       };
       // history register for invoking popstate callbacks.
       window.onhashchange = function(e){

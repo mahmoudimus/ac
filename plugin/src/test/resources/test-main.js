@@ -20,6 +20,7 @@ requirejs.config({
     'iframe/host/_status_helper': '../src/main/resources/js/iframe/host/_status_helper',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'iframe/host/content': '../src/main/resources/js/iframe/host/content',
+    'iframe/host/history': '../src/main/resources/js/iframe/host/history',
     'dialog/main': '../src/main/resources/js/dialog/main',
     'inline-dialog/main': '../src/main/resources/js/inline-dialog/main',
     'inline-dialog/simple': '../src/main/resources/js/inline-dialog/simple',
@@ -58,6 +59,12 @@ requirejs.config({
         'aui-atlassian',
         'iframe/_amd',
         'iframe/_ui-params'
+        ]
+    },
+    'iframe/host/history': {
+        deps: [
+        'iframe/host/_dollar',
+        'iframe/_uri'
         ]
     },
     'iframe/_base64': {

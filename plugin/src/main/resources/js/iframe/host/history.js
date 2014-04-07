@@ -65,7 +65,7 @@ _AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
         };
     }
 
-    function getInitialIframeState () {
+    function getState () {
         var hostWindowUrl = new Uri.init(window.location.href),
         anchor = stripPrefix(hostWindowUrl.anchor());
         return anchor;
@@ -76,7 +76,7 @@ _AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
         replaceState: replaceState,
         go: go,
         hashChange: hashChange,
-        getInitialIframeState: getInitialIframeState
+        getState: getState
     };
 
 });
