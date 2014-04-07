@@ -1,6 +1,11 @@
 
 # Release Notes
 
+## 1.0.2
+* API clarification: when targeting HTTP requests to an add-on the `baseUrl` of an add-on is included in the canonical query for query hash computation.
+
+## 1.0.1
+
 ## [1.0.0](../release-notes/1-0-rc.html)
 * Installing an add-on into OnDemand will not work unless the base url starts with https
 * Support for context parameters on remote conditions
