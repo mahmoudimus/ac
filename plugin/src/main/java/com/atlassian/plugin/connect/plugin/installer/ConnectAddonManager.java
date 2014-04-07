@@ -187,7 +187,7 @@ public class ConnectAddonManager
                 .setBaseUrl(addOn.getBaseUrl())
                 .setDescriptor(jsonDescriptor)
                 .setRestartState(PluginState.ENABLED.name())
-                .setUser(userKey);
+                .setUserKey(userKey);
 
         if (!Strings.isNullOrEmpty(sharedSecret))
         {

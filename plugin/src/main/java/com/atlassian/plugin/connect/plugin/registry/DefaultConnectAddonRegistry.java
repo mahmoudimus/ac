@@ -109,19 +109,19 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void storeUserKey(String pluginKey, String userKey)
     {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUser(userKey));
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUserKey(userKey));
     }
 
     @Override
     public void removeUserKey(String pluginKey)
     {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUser(""));
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUserKey(""));
     }
 
     @Override
     public String getUserKey(String pluginKey)
     {
-        return getAddonSettings(pluginKey).getUser();
+        return getAddonSettings(pluginKey).getUserKey();
     }
 
     @Override

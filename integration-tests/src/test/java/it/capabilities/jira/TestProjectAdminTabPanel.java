@@ -22,6 +22,7 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static junit.framework.Assert.assertNotNull;
@@ -72,7 +73,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @Before
     public void beforeEachTest()
     {
-        this.configModuleKey = remotePlugin.getAddon().getKey() + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + PROJECT_CONFIG_MODULE_KEY;    
+        this.configModuleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),PROJECT_CONFIG_MODULE_KEY);    
     }
     
     @AfterClass

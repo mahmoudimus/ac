@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.IFrameContextMatchers.hasIFramePath;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -115,7 +116,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(addon, plugin, bean);
 
-        assertEquals("my-key:my-key"+ ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-post-function", descriptor.getCompleteKey());
+        assertEquals("my-key:" + addonAndModuleKey("my-key","my-post-function"), descriptor.getCompleteKey());
     }
 
     @Test

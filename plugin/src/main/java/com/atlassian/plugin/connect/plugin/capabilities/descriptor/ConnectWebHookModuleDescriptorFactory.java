@@ -42,20 +42,6 @@ public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescr
 
         webhookElement.addAttribute("key", ModuleKeyUtils.generateKey("webhook"));
         webhookElement.addAttribute("event", bean.getEvent());
-        
-//        //IMPORTANT! We need to resolve the url here becaue once the webhook fires, we no longer have the addon's key
-//        URI uri;
-//        try
-//        {
-//            uri = uriResolver.getUri(addon.getKey(),new URI(bean.getUrl())).get();
-//        }
-//        catch (URISyntaxException e)
-//        {
-//            //this should never happen
-//            throw new RuntimeException("unable to parse webhook url as a uri: " + addon.getKey() + ":" + bean.getUrl(),e);
-//        }
-//        
-//        log.debug("setting webhook descriptor url to: " + uri.toString());
         webhookElement.addAttribute("url", bean.getUrl());
         paramsModuleFragmentFactory.addParamsToElement(webhookElement, bean.getParams());
 

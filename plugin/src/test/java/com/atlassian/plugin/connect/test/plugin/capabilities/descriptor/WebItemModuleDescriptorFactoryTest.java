@@ -37,6 +37,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newCon
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -105,7 +106,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
         descriptor.enabled();
 
-        assertThat(descriptor.getCompleteKey(), is("my-key:my-key"+ ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-web-item"));
+        assertThat(descriptor.getCompleteKey(), is("my-key:" + addonAndModuleKey("my-key","my-web-item")));
     }
 
     @Test
@@ -115,7 +116,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
         descriptor.enabled();
 
-        assertThat(descriptor.getLink().getId(), is("my-key-my-key"+ ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-web-item"));
+        assertThat(descriptor.getLink().getId(), is(addonAndModuleKey("my-key-my-key","my-web-item")));
     }
 
     @Test

@@ -84,7 +84,7 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
                 AddonSettings settings = new AddonSettings()
                         .setDescriptor(legacyRegistry.getDescriptor(pluginKey))
                         .setRestartState(restartState)
-                        .setUser(legacyRegistry.getUserKey(pluginKey))
+                        .setUserKey(legacyRegistry.getUserKey(pluginKey))
                         .setAuth(legacyRegistry.getAuthType(pluginKey).name())
                         .setBaseUrl(legacyRegistry.getBaseUrl(pluginKey))
                         .setSecret(legacyRegistry.getSecret(pluginKey));
