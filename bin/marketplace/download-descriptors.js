@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var marketplace = require('./marketplace'),
+    async = require('async'),
     request = require('request'),
     _ = require('lodash'),
     fs = require('fs'),
@@ -13,15 +14,26 @@ var downloadDestination = "descriptors/",
             var descriptorUrl = _.find(addon.version.links, {
                 'rel': 'descriptor'
             }).href;
-            downloadDescriptor(opts, addon.pluginKey, addon, descriptorUrl);
+
+            downloadQueue.push({
+                opts: opts,
+                addon: addon,
+                descriptorUrl: descriptorUrl
+            });
         }
     };
+
+
+var downloadQueue = async.queue(function (task, callback) {
+    downloadDescriptor(task.opts, task.addon.pluginKey, task.addon, task.descriptorUrl, callback);
+}, 3);
+
 
 if (!fs.existsSync(downloadDestination)) {
     fs.mkdirSync(downloadDestination);
 }
 
-function downloadDescriptor(opts, addonKey, addon, descriptorUrl) {
+function downloadDescriptor(opts, addonKey, addon, descriptorUrl, callback) {
     if (opts.preDescriptorDownloadedCallback) {
         opts.preDescriptorDownloadedCallback(addonKey, addon, descriptorUrl, opts);
     }
@@ -32,6 +44,7 @@ function downloadDescriptor(opts, addonKey, addon, descriptorUrl) {
     }, function(error, response, body) {
         if (error) {
             console.log("Unable to download descriptor for add-on", addonKey);
+            callback(error);
         } else {
             var type = 'xml';
             try {
@@ -44,6 +57,7 @@ function downloadDescriptor(opts, addonKey, addon, descriptorUrl) {
                 fs.writeFile(filename, body, function(err) {
                     if (err) {
                         console.log("Unable to write descriptor for add-on " + addonKey + " to disk", err);
+                        callback(err);
                         return;
                     }
 
@@ -57,6 +71,8 @@ function downloadDescriptor(opts, addonKey, addon, descriptorUrl) {
                             type: type,
                         }, body, opts);
                     }
+
+                    callback();
                 });
             } else if (opts.debug) {
                 var t = "Ignored add-on " + addonKey + " (" + type + ")";
