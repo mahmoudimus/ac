@@ -65,7 +65,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     @Test
     public void verifyCompleteKeyIsCorrect()
     {
-        assertThat(descriptor.getCompleteKey(), is("my-plugin:" + "macro-" + FULL_MACRO_KEY));
+        assertThat(descriptor.getCompleteKey(), is(addon.getKey() + ":macro-" + THE_MACRO_NAME));
     }
 
     @Test

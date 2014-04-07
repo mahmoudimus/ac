@@ -157,25 +157,19 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     @Override
     public String getPluginKey()
     {
-        checkNotNull(addonKey);
-        
-        return addonKey;
+        return (null != addonKey) ? addonKey : super.getPluginKey();
     }
 
     @Override
     public String getCompleteKey()
     {
-        checkNotNull(addonKey);
-        checkNotNull(moduleKey);
-        
-        return addonKey + ":" + moduleKey;
+        return (null != addonKey && null != moduleKey) ? addonKey + ":" + moduleKey : super.getCompleteKey();
     }
 
     @Override
     public String getKey()
     {
-        checkNotNull(moduleKey);
-        return moduleKey;
+        return (null != moduleKey) ? moduleKey : super.getKey();
     }
 
     public void setAddonKey(String addonKey)
