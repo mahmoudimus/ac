@@ -131,7 +131,7 @@ public class OneHundredInstallTest
         long deleteEnd = System.currentTimeMillis();
 
         opTimes.put(UNINSTALL_TOTAL,(deleteEnd - deleteStart));
-        opTimes.put(UNINSTALL_TOTAL,calculateAverage(uninstallTimes));
+        opTimes.put(UNINSTALL_AVG,calculateAverage(uninstallTimes));
         
         for(Map.Entry<String,Long> entry : opTimes.entrySet())
         {
