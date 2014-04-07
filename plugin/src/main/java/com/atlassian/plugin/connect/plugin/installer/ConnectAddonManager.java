@@ -421,6 +421,7 @@ public class ConnectAddonManager
             options.setSocketTimeout(testSocketTimeout,TimeUnit.MILLISECONDS);
             
             this.httpClient = httpClientFactory.create(options);
+            this.isTestHttpClient.set(true);
         }
         
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
