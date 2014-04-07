@@ -67,6 +67,18 @@ public abstract class AdminScopeTestBase
         assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername(plugin)));
     }
 
+    /**
+     * The UPM executes upgrades on a task scheduler thread that has no principal in the authentication context.
+     */
+    @Test
+    public void canUpgradeAnonymously() throws Exception
+    {
+        testAuthenticator.unauthenticate();
+        plugin = installPlugin(getScopeOneDown());
+        plugin = installPlugin(getScope());
+        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername(plugin)));
+    }
+
     @Test
     public void isNoLongerTopLevelAdminAfterReinstallWithDowngradedScope() throws IOException
     {
@@ -107,6 +119,7 @@ public abstract class AdminScopeTestBase
         {
             testPluginInstaller.uninstallAddon(plugin);
         }
+        testAuthenticator.unauthenticate();
     }
 
     private Plugin installPlugin(ScopeName scope) throws IOException

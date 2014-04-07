@@ -75,6 +75,13 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 */
                 getWorkflowConfiguration: function (callback) {
                     remote.getWorkflowConfiguration(this.getUuid(), callback);
+                },
+                /**
+                * Refresh an issue page without reloading the browser.
+                * This is helpful when your add-on updates information about an issue in the background.
+                */
+                refreshIssuePage: function () {
+                    remote.triggerJiraEvent('refreshIssuePage');
                 }
             },
 
@@ -84,7 +91,8 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     return WorkflowConfiguration.trigger();
                 }
 
-            }
+            },
+            stubs: ["triggerJiraEvent"]
 
         };
 
