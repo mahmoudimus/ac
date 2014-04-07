@@ -21,7 +21,6 @@ import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
@@ -111,7 +110,6 @@ public class ConnectAddonManager
     private final LicenseRetriever licenseRetriever;
     private final ProductAccessor productAccessor;
     private final BundleContext bundleContext;
-    private final JwtApplinkFinder jwtApplinkFinder;
     private final ConnectApplinkManager connectApplinkManager;
     private final I18nResolver i18nResolver;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
@@ -127,7 +125,7 @@ public class ConnectAddonManager
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-                               JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory)
+                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -143,7 +141,6 @@ public class ConnectAddonManager
         this.licenseRetriever = licenseRetriever;
         this.productAccessor = productAccessor;
         this.bundleContext = bundleContext;
-        this.jwtApplinkFinder = jwtApplinkFinder;
         this.connectApplinkManager = connectApplinkManager;
         this.i18nResolver = i18nResolver;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
@@ -382,7 +379,7 @@ public class ConnectAddonManager
     // (but don't remove the user as we need to preserve the history of their actions (e.g. audit trail, issue edited by <user>)
     private void disableAddOnUser(String addOnKey) throws ConnectAddOnUserDisableException
     {
-        ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
+        ApplicationLink applicationLink = connectApplinkManager.getAppLink(addOnKey);
 
         if (null != applicationLink)
         {
@@ -399,7 +396,8 @@ public class ConnectAddonManager
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
         String userKey = connectAddOnUserService.getOrCreateUserKey(addon.getKey(), addon.getName());
-        ApplicationLink applicationLink = jwtApplinkFinder.find(addon.getKey());
+        connectApplinkManager.getAppLink(addon.getKey());
+        ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());
 
         if (null != applicationLink)
         {
