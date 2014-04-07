@@ -4,6 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
@@ -29,13 +30,16 @@ public class RemotePluginRequestSigner implements RequestSigner
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final ConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final ConnectAddOnIdentifierService legacyAddOnIdentifierService;
+    private final ConnectAddonRegistry connectAddonRegistry;
 
     @Inject
-    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, LegacyAddOnIdentifierService legacyAddOnIdentifierService)
+    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, LegacyAddOnIdentifierService legacyAddOnIdentifierService,
+                                     ConnectAddonRegistry connectAddonRegistry)
     {
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
         this.legacyAddOnIdentifierService = checkNotNull(legacyAddOnIdentifierService);
+        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
     }
 
     @Override
@@ -53,7 +57,7 @@ public class RemotePluginRequestSigner implements RequestSigner
 
     private Option<String> getAuthHeader(URI uri, String pluginKey)
     {
-        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, Collections.<String, String[]>emptyMap());
+        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, getAddOnBaseUrl(pluginKey), Collections.<String, String[]>emptyMap());
     }
 
     private AuthorizationGenerator getAuthorizationGenerator(String pluginKey)
@@ -65,5 +69,14 @@ public class RemotePluginRequestSigner implements RequestSigner
     private boolean canSign(final String pluginKey)
     {
         return jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey) || legacyAddOnIdentifierService.isConnectAddOn(pluginKey);
+    }
+
+    private URI getAddOnBaseUrl(String addOnKey)
+    {
+        // legacy xml add-ons don't need the baseUrl value for signing, and ignore it
+        // (because they're deprecated and we're not changing their implementation)
+        return URI.create(jsonConnectAddOnIdentifierService.isConnectAddOn(addOnKey)
+                          ? connectAddonRegistry.getBaseUrl(addOnKey)
+                          : "");
     }
 }

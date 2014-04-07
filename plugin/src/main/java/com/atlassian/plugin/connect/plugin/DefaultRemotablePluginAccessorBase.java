@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.plugin.util.PathBuilder;
+import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -65,7 +65,8 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
                 getTargetUrl(targetPath),
                 params,
                 headers,
-                getKey());
+                getKey(),
+                getBaseUrl());
     }
 
     @Override

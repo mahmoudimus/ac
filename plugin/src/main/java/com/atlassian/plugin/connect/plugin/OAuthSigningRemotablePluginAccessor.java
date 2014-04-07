@@ -115,7 +115,16 @@ public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginA
             this.oAuthLinkManager = oAuthLinkManager;
         }
 
-        public Option<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters)
+        /**
+         *
+         * @param method     the {@link HttpMethod HTTP method} used
+         * @param url        the url of the HTTP request
+         * @param addOnBaseUrl    ignored
+         * @param parameters the parameters of the HTTP request
+         * @return some authorisation header, none if not generated.
+         * @since 1.0.2
+         */
+        public Option<String> generate(HttpMethod method, URI url, URI addOnBaseUrl, Map<String, String[]> parameters)
         {
             return option(oAuthLinkManager.generateAuthorizationHeader(method, serviceProvider, url, UriBuilderUtils.toListFormat(parameters)));
         }

@@ -14,9 +14,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
@@ -63,7 +61,7 @@ public class NoAuthRemotablePluginAccessorTest extends BaseSigningRemotablePlugi
     public void testGetAuthorizationGenerator() throws Exception
     {
         Map<String, String[]> params = Collections.singletonMap("param", new String[]{"param value"});
-        Option<String> auth = createRemotePluginAccessor().getAuthorizationGenerator().generate(HttpMethod.POST, PATH_URI, params);
+        Option<String> auth = createRemotePluginAccessor().getAuthorizationGenerator().generate(HttpMethod.POST, PATH_URI, URI.create(""), params);
         assertThat(auth, is(Option.none(String.class)));
     }
 

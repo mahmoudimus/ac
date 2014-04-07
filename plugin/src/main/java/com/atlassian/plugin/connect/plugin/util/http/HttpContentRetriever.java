@@ -26,15 +26,17 @@ public interface HttpContentRetriever
      * @param url                    the url to hit
      * @param parameters             the parameters to use.
      * @param headers                the headers
-     * @param pluginKey              the key of the plugin to retrieve the content as
+     * @param addOnKey               the key of the add-on from which to retrieve the content
+     * @param addOnBaseUrl           the baseUrl in this add-on's descriptor
      * @return a promise of the retrieved content
-     * @since 0.10
+     * @since 1.0.2
      */
     public Promise<String> async(AuthorizationGenerator authorizationGenerator,
                                  HttpMethod method,
                                  URI url,
                                  Map<String, String[]> parameters,
                                  Map<String, String> headers,
-                                 String pluginKey);
+                                 String addOnKey,
+                                 URI addOnBaseUrl);
 
 }

@@ -70,7 +70,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
 
         UserKey userKey = userManager.getRemoteUserKey();
         String userKeyValue = userKey == null ? "" : userKey.getStringValue();
-        String encodedJwt = JwtAuthorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, params, userKeyValue, consumerService.getConsumer().getKey(), jwtService, getAppLink());
+        String encodedJwt = JwtAuthorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, getBaseUrl(), params, userKeyValue, consumerService.getConsumer().getKey(), jwtService, getAppLink());
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(createGetUrl(targetPath, params))));
         uriBuilder.addQueryParameter(JwtConstants.JWT_PARAM_NAME, encodedJwt);
 
