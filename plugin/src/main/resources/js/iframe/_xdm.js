@@ -352,8 +352,13 @@
     //  - channel:    deprecated
     function createIframe(config) {
       var iframe = document.createElement("iframe"),
-        id = "easyXDM_" + config.container + "_provider";
-      $.extend(iframe, {id: id, name: uiParams.encode(config.uiParams), frameBorder: "0"}, config.props);
+        id = "easyXDM_" + config.container + "_provider",
+        windowName = "";
+
+      if(config.uiParams){
+        windowName = uiParams.encode(config.uiParams);
+      }
+      $.extend(iframe, {id: id, name: windowName, frameBorder: "0"}, config.props);
       //$.extend will not add the attribute rel.
       iframe.setAttribute('rel', 'nofollow');
       $("#" + config.container).append(iframe);

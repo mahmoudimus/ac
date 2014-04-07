@@ -2,8 +2,8 @@ AP.define("history", ["_dollar", "_rpc", "_ui-params"],
 
 /**
 * History API
-* Mimmic the HTML5 history API by changing the URL of the host product instead of the iframe.
-* Note: This is only enabled for page modules (Admin page, General page, Configure page, User profile page)
+* Changing the URL of the host product, allowing manipulation of the browser history.
+* Note: This is only enabled for page modules (Admin page, General page, Configure page, User profile page).
 * ### Example ###
 * ```
 * AP.require(["history"], function(bridgeHistory){
@@ -15,14 +15,14 @@ AP.define("history", ["_dollar", "_rpc", "_ui-params"],
     });
 
     // Adds a new entry to the history and changes the url in the browser.
-    bridgeHistory.pushState({foo: "bar"}, "page 2", "page2");
+    bridgeHistory.pushState("page2");
 
     // Changes the URL back and invokes any registered popState callbacks.
     bridgeHistory.back();
 
 });
 * ```
-* @exports messages
+* @exports history
 */
 
 function ($, rpc, uiParams) {
@@ -33,7 +33,13 @@ function ($, rpc, uiParams) {
     return rpc.extend(function (remote) {
         var exports = {
             /**
-            * The state when the add-on loads
+            * The current url anchor.
+            * @return String
+            * @example
+            * AP.require(["history"], function(bridgeHistory){
+            *    bridgeHistory.pushState("page5");
+            *    bridgeHistory.getState(); // returns "page5";
+            * });
             */
             getState: function(){
                 return state;
@@ -45,6 +51,10 @@ function ($, rpc, uiParams) {
             * If the delta is out of range, does nothing.
             * Will invoke the popstate callback
             * @param int delta
+            * @example
+            * AP.require(["history"], function(bridgeHistory){
+            *    bridgeHistory.go(-2); // go back by 2 entries in the browser history.
+            * });
             */
             go: function(delta){
                 remote.historyGo(delta);
@@ -52,6 +62,10 @@ function ($, rpc, uiParams) {
             /**
             * Goes back one step in the joint session history.
             * Will invoke the popstate callback
+            * @example
+            * AP.require(["history"], function(bridgeHistory){
+            *    bridgeHistory.back(); // go back by 1 entry in the browser history.
+            * });
             */
             back: function(){
                 return this.go(-1);
@@ -59,6 +73,10 @@ function ($, rpc, uiParams) {
             /**
             * Goes back one step in the joint session history.
             * Will invoke the popstate callback
+            * @example
+            * AP.require(["history"], function(bridgeHistory){
+            *    bridgeHistory.forward(); // go forward by 1 entry in the browser history.
+            * });
             */
             forward: function(){
                 return this.go(1);
@@ -66,23 +84,20 @@ function ($, rpc, uiParams) {
             /**
             * Pushes the given data onto the session history.
             * Does NOT invoke popState callback
-            * @param String data
-            * @param String title
-            * @param String url optional
+            * @param String url to add to history
             */
-            pushState: function(data, title, url){
+            pushState: function(url){
                 state = url;
-                remote.historyPushState(data, title, url);
+                remote.historyPushState(url);
             },
             /**
             * Updates the current entry in the session history.
             * Does NOT invoke popState callback
-            * @param String data
-            * @param String title
-            * @param String url optional
+            * @param String url to add to history
             */
-            replaceState: function(data, title, url){
-                remote.historyReplaceState(data, title, url);
+            replaceState: function(url){
+                state = url;
+                remote.historyReplaceState(url);
             },
             /**
             * Register a function to be executed on state change

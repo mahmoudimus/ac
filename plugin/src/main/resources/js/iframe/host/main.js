@@ -91,8 +91,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       options.uiParams = {
         historyState: connectHistory.getInitialIframeState()
       };
-
-
       // history register for invoking popstate callbacks.
       window.onhashchange = function(e){
         connectHistory.hashChange(e, rpc.historyMessage);
@@ -294,14 +292,26 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             jiraEvent[e]();
           });
         },
-        historyPushState: function(data, title, url){
-          return connectHistory.pushState(data, title, url);
+        historyPushState: function(url){
+          if(isGeneral){
+            return connectHistory.pushState(url);
+          } else {
+            log("History is only available to page modules");
+          }
         },
-        historyReplaceState: function(data, title, url){
-          return connectHistory.replaceState(data, title, url);
+        historyReplaceState: function(url){
+          if(isGeneral){
+            return connectHistory.replaceState(url);
+          } else {
+            log("History is only available to page modules");
+          }
         },
         historyGo: function(delta){
-          return connectHistory.go(delta);
+          if(isGeneral){
+            return connectHistory.go(delta);
+          } else {
+            log("History is only available to page modules");
+          }
         }
       }
     });

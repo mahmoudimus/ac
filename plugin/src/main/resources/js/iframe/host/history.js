@@ -5,28 +5,8 @@
 _AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
     "use strict";
 
-    var stateStorage = {
-        historyStack: [],
-        add: function(key, data, dontstrip){
-            if(dontstrip !== true){
-                key = stripPrefix(key);
-            }
-
-            this.historyStack.push({
-                page: key,
-                data: data
-            });
-        },
-        last: function(){
-            return this.historyStack[this.historyStack.length - 1];
-        },
-        pop: function(){
-            return this.historyStack.pop();
-        }
-
-    };
-
-    var anchorPrefix = "!";
+    var lastAdded,
+        anchorPrefix = "!";
 
     function stripPrefix (text) {
         return text.toString().replace(new RegExp("^" + anchorPrefix), "");
@@ -36,58 +16,56 @@ _AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
         return anchorPrefix + stripPrefix(text);
     }
 
+    function changeState (anchor, replace) {
+        var currentUrlObj = new Uri.init(window.location.href),
+        newUrlObj = new Uri.init(window.location.href);
 
-    function changeState (data, anchor, replace) {
-        var newUrlObj = new Uri.init(window.location.href);
         newUrlObj.anchor(addPrefix(anchor));
-        // newUrlObj.anchor
-        var currentUrlObj = new Uri.init(window.location.href);
+
         // If the url has changed.
         if(newUrlObj.anchor() !== currentUrlObj.anchor()){
-            stateStorage.add(newUrlObj.anchor(), data);
+            lastAdded = newUrlObj.anchor();
             // If it was replaceState or pushState?
             if(replace){
                 window.location.replace("#" + newUrlObj.anchor());
             } else {
                 window.location.assign("#" + newUrlObj.anchor());
             }
+            return newUrlObj.anchor();
         }
     }
 
-    function pushState (data, title, url) {
-        // TODO add title support
-        changeState(data, url);
+    function pushState (url) {
+        changeState(url);
     }
 
-    function replaceState (data, title, url) {
-        // TODO add title support.
-        changeState(data, url, true);
+    function replaceState (url) {
+        changeState(url, true);
     }
 
     function go (delta) {
         history.go(delta);
     }
 
-    function hashChange(event, rpcCallback){
+    function hashChange (event, rpcCallback) {
         var newUrlObj = new Uri.init(event.newURL);
         var oldUrlObj = new Uri.init(event.oldURL);
-        if(
-            ( newUrlObj.anchor() !== oldUrlObj.anchor() ) && // if the url has changed
-            ( stateStorage.last().page !== undefined ) && // and the url has changed before
-            ( stateStorage.last().page !== stripPrefix(newUrlObj.anchor()) ) //  and it's not the page we just pushed.
+        if( ( newUrlObj.anchor() !== oldUrlObj.anchor() ) && // if the url has changed
+            ( lastAdded !== newUrlObj.anchor() ) //  and it's not the page we just pushed.
          ){
             rpcCallback(sanitizeHashChangeEvent(event));
         }
+        lastAdded = null;
     }
 
-    function sanitizeHashChangeEvent(e){
+    function sanitizeHashChangeEvent (e) {
         return {
             newURL: stripPrefix(new Uri.init(e.newURL).anchor()),
             oldURL: stripPrefix(new Uri.init(e.oldURL).anchor())
         };
     }
 
-    function getInitialIframeState(){
+    function getInitialIframeState () {
         var hostWindowUrl = new Uri.init(window.location.href),
         anchor = stripPrefix(hostWindowUrl.anchor());
         return anchor;
