@@ -168,6 +168,7 @@ public class ConnectAddonManager
     public ConnectAddonBean installConnectAddon(String jsonDescriptor)
     {
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
+        
         String pluginKey = addOn.getKey();
 
         String previousDescriptor = addonRegistry.getDescriptor(pluginKey);
@@ -396,7 +397,7 @@ public class ConnectAddonManager
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
         String userKey = connectAddOnUserService.getOrCreateUserKey(addon.getKey(), addon.getName());
-        connectApplinkManager.getAppLink(addon.getKey());
+
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());
 
         if (null != applicationLink)
