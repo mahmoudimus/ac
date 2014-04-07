@@ -50,7 +50,7 @@ public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
             uninstallPlugin(plugin);
             plugin = installPlugin(getReadAddOn());
 
-            List<String> projectAdminErrors = permissionsForAllProjects(Permission.PROJECT_ADMIN, false);
+            List<String> projectAdminErrors = permissionsForAllProjects(Permission.PROJECT_ADMIN, false, plugin);
             assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
         }
         finally

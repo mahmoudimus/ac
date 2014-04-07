@@ -95,8 +95,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             
             if(nonValidatedAddon.getModules().isEmpty())
             {
-                throw new PluginInstallException("Unable to install connect add on because it has no modules defined",
-                        Option.some("connect.install.error.no.modules"));
+                Option<String> errorI18nKey = Option.<String>some("connect.install.error.no.modules");
+                throw new PluginInstallException("Unable to install connect add on because it has no modules defined",errorI18nKey);
             }
             
             removeOldPlugin(pluginKey);

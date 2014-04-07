@@ -3,8 +3,10 @@ package it.com.atlassian.plugin.connect.installer;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader;
+import com.atlassian.plugin.connect.test.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -20,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -80,6 +84,7 @@ public class AddonValidationTest
     {
         return new ConnectAddonBeanBuilder()
                 .withKey("ac-test-" + System.currentTimeMillis())
+                .withModule("webItems", randomWebItemBean())
                 .withBaseurl("https://example.com/");
     }
 

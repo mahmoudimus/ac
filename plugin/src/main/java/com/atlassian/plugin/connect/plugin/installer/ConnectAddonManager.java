@@ -471,7 +471,7 @@ public class ConnectAddonManager
                 switch (handler)
                 {
                     case INSTALLED:
-                        throw new PluginInstallException(handler.name() + ": " + message, Option.some(findI18nKeyForHttpErrorCode(statusCode)));
+                        throw new PluginInstallException(handler.name() + ": " + message, findI18nKeyForHttpErrorCode(statusCode));
                     case UNINSTALLED:
                         throw new PluginException(handler.name() + ": " + message);
                 }
@@ -516,7 +516,7 @@ public class ConnectAddonManager
         }
     }
 
-    private String findI18nKeyForHttpErrorCode(final int responseCode)
+    private Option<String> findI18nKeyForHttpErrorCode(final int responseCode)
     {
         String i18nKey = HTTP_ERROR_I18N_KEY_PREFIX + responseCode;
         final String i18nText = i18nResolver.getRawText(i18nKey);
@@ -529,7 +529,7 @@ public class ConnectAddonManager
             i18nKey = "connect.remote.upm.install.exception";
         }
 
-        return i18nKey;
+        return Option.some(i18nKey);
     }
 
     private URI getURI(String url)
