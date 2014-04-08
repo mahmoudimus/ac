@@ -158,7 +158,7 @@ public class ConnectAddonBean extends BaseModuleBean
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
      */
-    private Set<String> scopes;
+    private Set<ScopeName> scopes;
     
     public ConnectAddonBean()
     {
@@ -170,7 +170,7 @@ public class ConnectAddonBean extends BaseModuleBean
         this.links = newHashMap();
         this.lifecycle = LifecycleBean.newLifecycleBean().build();
         this.modules = new ModuleList();
-        this.scopes = new HashSet<String>();
+        this.scopes = new HashSet<ScopeName>();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
         this.enableLicensing = null;
@@ -217,7 +217,7 @@ public class ConnectAddonBean extends BaseModuleBean
 
         if (null == scopes)
         {
-            this.scopes = new HashSet<String>();
+            this.scopes = new HashSet<ScopeName>();
         }
         
         if (null == lifecycle)
@@ -276,27 +276,7 @@ public class ConnectAddonBean extends BaseModuleBean
 
     public Set<ScopeName> getScopes()
     {
-        // I would make the data member a Set of ScopeNames but gson sets bad scope names to null.
-        return new HashSet<ScopeName>(transform(scopes, new Function<String, ScopeName>(){
-
-            @Override
-            public ScopeName apply(@Nullable String input)
-            {
-                if (null == input)
-                {
-                    throw new IllegalArgumentException("Scope names must not be null");
-                }
-
-                try
-                {
-                    return ScopeName.valueOf(input.toUpperCase());
-                }
-                catch (IllegalArgumentException e)
-                {
-                    throw new IllegalArgumentException(String.format("Unknown scope name '%s'", input), e);
-                }
-            }
-        }));
+        return scopes;
     }
 
     public LifecycleBean getLifecycle()

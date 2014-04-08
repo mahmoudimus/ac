@@ -28,6 +28,7 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapter(mapStringType, new IgnoredEmptyMapSerializer())
                 .registerTypeAdapter(String.class, new EmptyStringIgnoringTypeAdapter().nullSafe())
                 .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
+                .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .disableHtmlEscaping()
                 ;
     }

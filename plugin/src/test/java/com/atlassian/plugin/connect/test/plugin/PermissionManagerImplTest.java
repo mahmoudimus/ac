@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.plugin;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
@@ -32,6 +33,7 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,12 +57,12 @@ public class PermissionManagerImplTest
     @Mock private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     @Mock private PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker;
     @Mock private ScopeService scopeService;
+    @Mock private ConnectAddonRegistry connectAddonRegistry;
+    @Mock private ConnectAddonBeanFactory connectAddonBeanFactory;
 
     @Mock private HttpServletRequest request;
     @Mock private Plugin plugin;
-    @Mock private ConnectAddonRegistry connectAddonRegistry;
-    @Mock private ConnectAddonBeanFactory connectAddonBeanFactory;
-    
+
     private UserKey userKey = new UserKey("a_user_key");
 
     @Before
@@ -190,9 +192,24 @@ public class PermissionManagerImplTest
 
     private class Setup
     {
+        private boolean isJson = false;
+
         Setup withJson(boolean isJson)
         {
             when(jsonConnectAddOnIdentifierService.isConnectAddOn(PLUGIN_KEY)).thenReturn(isJson);
+
+            if (isJson)
+            {
+                final String mockDescriptor = buildMockDescriptor();
+                when(connectAddonRegistry.getDescriptor(PLUGIN_KEY)).thenReturn(mockDescriptor);
+                when(connectAddonBeanFactory.fromJsonSkipValidation(mockDescriptor)).thenReturn(buildAddOnBean(Collections.<ScopeName>emptySet()));
+            }
+            else
+            {
+                when(connectAddonRegistry.getDescriptor(PLUGIN_KEY)).thenReturn(null);
+            }
+
+            this.isJson = isJson;
             return this;
         }
 
@@ -204,8 +221,28 @@ public class PermissionManagerImplTest
 
         Setup withScope(ScopeName scopeName)
         {
-            when(permissionsReader.readScopesForAddOn(plugin)).thenReturn(new HashSet<ScopeName>(asList(scopeName)));
+            if (!this.isJson)
+            {
+                throw new IllegalStateException("Cannot give a scope to a non-JSON mock add-on!");
+            }
+
+            when(connectAddonBeanFactory.fromJsonSkipValidation(buildMockDescriptor())).thenReturn(buildAddOnBean(new HashSet<ScopeName>(asList(scopeName))));
             return this;
+        }
+
+        private String buildMockDescriptor()
+        {
+            return String.format("~~ mock descriptor for add-on %s ~~", PLUGIN_KEY);
+        }
+
+        private ConnectAddonBean buildAddOnBean(Set<ScopeName> scopeNames)
+        {
+            return ConnectAddonBean.newConnectAddonBean()
+                                   .withKey(PLUGIN_KEY)
+                                   .withName("Mock add-on " + PLUGIN_KEY)
+                                   .withBaseurl("https://example.com/" + PLUGIN_KEY)
+                                   .withScopes(scopeNames)
+                                   .build();
         }
     }
 
