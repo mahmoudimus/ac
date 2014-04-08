@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import java.util.Properties;
 
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 
@@ -24,15 +25,15 @@ public class MacroI18nBuilder
         this.pluginKey = pluginKey;
     }
 
-    public void add(BaseContentMacroModuleBean bean)
+    public void add(BaseContentMacroModuleBean bean, final ConnectAddonBean addon)
     {
-        addName(bean.getKey(), bean.getName());
-        addDescription(bean.getKey(), bean.getDescription());
+        addName(bean.getKey(addon), bean.getName());
+        addDescription(bean.getRawKey(), bean.getDescription());
 
         for (MacroParameterBean parameterBean : bean.getParameters())
         {
-            addParameterLabel(bean.getKey(), parameterBean.getIdentifier(), parameterBean.getName());
-            addParameterDescription(bean.getKey(), parameterBean.getIdentifier(), parameterBean.getDescription());
+            addParameterLabel(bean.getRawKey(), parameterBean.getIdentifier(), parameterBean.getName());
+            addParameterDescription(bean.getRawKey(), parameterBean.getIdentifier(), parameterBean.getDescription());
         }
     }
 

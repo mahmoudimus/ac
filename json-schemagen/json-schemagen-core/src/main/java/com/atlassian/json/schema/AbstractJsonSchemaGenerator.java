@@ -20,12 +20,22 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
     protected final boolean lowercaseEnums;
     protected final InterfaceList interfaceList;
     protected final JsonSchemaDocs schemaDocs;
+    protected final String ignoreFilter;
 
-    protected AbstractJsonSchemaGenerator(boolean lowercaseEnums, InterfaceList interfaceList, JsonSchemaDocs schemaDocs)
+    protected AbstractJsonSchemaGenerator(boolean lowercaseEnums, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {
         this.lowercaseEnums = lowercaseEnums;
         this.interfaceList = interfaceList;
         this.schemaDocs = schemaDocs;
+        
+        if(null == ignoreFilter)
+        {
+            this.ignoreFilter = "";
+        }
+        else
+        {
+            this.ignoreFilter = ignoreFilter;
+        }
     }
 
     @Override
@@ -83,7 +93,12 @@ public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
         {
             if(propField.isAnnotationPresent(SchemaIgnore.class))
             {
-                continue;
+                String fieldIgnoreFilter = propField.getAnnotation(SchemaIgnore.class).value();
+                
+                if(StringUtil.isBlank(fieldIgnoreFilter) || ignoreFilter.equals(fieldIgnoreFilter))
+                {
+                    continue;
+                }
             }
             
             String defaultArrayTitle = getFieldTitle(clazz,propField);

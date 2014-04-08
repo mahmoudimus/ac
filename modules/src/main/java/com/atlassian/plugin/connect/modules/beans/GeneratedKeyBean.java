@@ -5,8 +5,8 @@ import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.cleanKey;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.randomName;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.cleanKey;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 
 /**
  * @since 1.0
@@ -14,18 +14,26 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator.rando
 public class GeneratedKeyBean extends NamedBean
 {
     /**
-     * An OPTIONAL key to identify this module.
+     * A key to identify this module.
      * This key must be unique relative to the add on.
-     * 
-     * For most modules a key does not have to be specified as a random key will be assigned for each module.
-     * A key only needs to be specified when it needs to be known for use in other modules or content.
-     * 
-     * For example, if you need to create a page and have the content of the page link to iteself or another page module
-     * you'll need to specify the key(s) for the page(s) so that you can determine the url to link to.
      * 
      * All specified keys will have all special characters and spaces replaced with dashes and will be lower cased.
      * 
      * example: "My Addon Key" will become "my-addon-key"
+     *
+     * The key is used to generate the url to your add-on's module. The url is generated as a combination of your add-on
+     * key and module key. For example, an add-on which looks like:
+     *
+     *    {
+     *        "key": "my-addon",
+     *        "modules": {
+     *            "configurePage": {
+     *                "key": "configure-me",
+     *            }
+     *        }
+     *    }
+     *
+     * Will have a configuration page module with a URL of `/plugins/servlet/ac/my-addon/configure-me`.
      */
     private String key;
 

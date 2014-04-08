@@ -120,7 +120,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         }
 
         @Override
-        public InitializedBuilder productContext(final Map<String, Object> productContext)
+        public <T extends Map<String, String>> InitializedBuilder productContext(T productContext)
         {
             String json = new JSONObject(productContext).toString();
             StringWriter writer = new StringWriter();

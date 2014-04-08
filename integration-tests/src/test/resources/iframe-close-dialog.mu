@@ -6,7 +6,7 @@
     <script src="{{baseurl}}/atlassian-connect/all-debug.js" type="text/javascript"></script>
   </head>
   <body>
-    <div>
+    <div style="height:9000px; width: 100%">
       <form class="aui">
         <input class="text long-field" type="text" id="dialog-close-data" name="dialog-close-data" title="Message" value="test dialog close data">
       </form>

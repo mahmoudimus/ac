@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -22,6 +23,7 @@ import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.WebItemModuleBeanMatchers.hasUrlValue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
@@ -44,6 +46,7 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     private T moduleProvider;
 
     protected Plugin plugin = new PluginForTests(PLUGIN_KEY, "pluginName");
+    protected ConnectAddonBean addon = newConnectAddonBean().withKey(PLUGIN_KEY).build();
 
     private List<ConnectPageModuleBean> beans = ImmutableList.of(
             ConnectPageModuleBean.newPageBean().build()
@@ -53,8 +56,8 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     public void init()
     {
         moduleProvider = createPageModuleProvider();
-        when(webItemModuleDescriptorFactory.createModuleDescriptor(any(Plugin.class),
-                any(WebItemModuleBean.class))).thenReturn(mock(WebItemModuleDescriptor.class));
+        when(webItemModuleDescriptorFactory.createModuleDescriptor(addon,
+                any(Plugin.class), any(WebItemModuleBean.class))).thenReturn(mock(WebItemModuleDescriptor.class));
     }
 
     protected abstract T createPageModuleProvider();
@@ -62,23 +65,23 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     @Test
     public void callsWebItemModuleDescriptorFactoryWithProvidedPlugin()
     {
-        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(eq(plugin),
-                any(WebItemModuleBean.class));
+        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(addon,
+                eq(plugin), any(WebItemModuleBean.class));
     }
 
     @Test
     public void callsWebItemModuleDescriptorFactoryWithProvidedBundleContext()
     {
-        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(any(Plugin.class),
-                any(WebItemModuleBean.class));
+        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(addon,
+                any(Plugin.class), any(WebItemModuleBean.class));
     }
 
     // establishes that the key of the plugin was used in the construction of the url
     @Test
     public void callsWebItemModuleDescriptorFactoryWithWebItemUrlThatContainsPluginKey()
     {
-        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(any(Plugin.class),
-                argThat(hasUrlValue("/plugins/servlet/ac/pluginKey/")));
+        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(addon,
+                any(Plugin.class), argThat(hasUrlValue("/plugins/servlet/ac/pluginKey/")));
     }
 
     private WebItemModuleDescriptorFactory webItemModuleDescriptorFactory()
@@ -89,6 +92,6 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
 
     private void provideModules()
     {
-        moduleProvider.provideModules(plugin, "thePageField", beans);
+        moduleProvider.provideModules(addon, plugin, "thePageField", beans);
     }
 }

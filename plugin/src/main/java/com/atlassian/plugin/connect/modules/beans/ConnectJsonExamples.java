@@ -95,7 +95,12 @@ public class ConnectJsonExamples
                 .withLicensing(true)
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
                 .withScopes(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE))
-                .withModules("webItems", WebItemModuleBean.newWebItemBean().withName(i18nProperty("Web Item")).withUrl("/my-web-item").withLocation("system.preset.filters").build())
+                .withModules("webItems",                        WebItemModuleBean.newWebItemBean()
+                                .withName(i18nProperty("Web Item"))
+                                .withUrl("/my-web-item")
+                                .withKey("my-web-item")
+                                .withLocation("system.preset.filters").build()
+                )
                 .build();
 
         return gson.toJson(addonBean);
@@ -146,6 +151,7 @@ public class ConnectJsonExamples
     {
         ConnectPageModuleBean pageModuleBean = ConnectPageModuleBean.newPageBean()
                 .withName(new I18nProperty("General Page", ""))
+                .withKey("page-key")
                 .withUrl("/hello-world")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .build();
@@ -157,6 +163,7 @@ public class ConnectJsonExamples
     {
         ConnectProjectAdminTabPanelModuleBean pageModuleBean = ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean()
                 .withName(new I18nProperty("Admin Panel", ""))
+                .withKey("admin-panel")
                 .withUrl("/my-admin-panel")
                 .withLocation("projectgroup4")
                 .build();
@@ -167,7 +174,7 @@ public class ConnectJsonExamples
     private static String createWebhookExample()
     {
         WebHookModuleBean bean = WebHookModuleBean.newWebHookBean()
-                .withEvent("jira:issuecreated")
+                .withEvent("jira:issue_created")
                 .withUrl("/issue-created")
                 .build();
 
@@ -210,6 +217,7 @@ public class ConnectJsonExamples
         WebPanelModuleBean webPanelModuleBean = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", ""))
                 .withUrl("http://www.example.com/web-panel")
+                .withKey("my-web-panel")
                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                 .withLayout(new WebPanelLayout("10px", "100%"))
                 .withWeight(50)
@@ -222,6 +230,7 @@ public class ConnectJsonExamples
     {
         WebSectionModuleBean webSectionModuleBean = WebSectionModuleBean.newWebSectionBean()
                 .withName(new I18nProperty("My Web Section", ""))
+                .withKey("my-web-section")
                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                 .withWeight(50)
                 .build();
@@ -233,6 +242,7 @@ public class ConnectJsonExamples
     {
         ConnectTabPanelModuleBean bean = ConnectTabPanelModuleBean.newTabPanelBean()
                 .withName(new I18nProperty("My Component Tab Page", ""))
+                .withKey("my-component-tab")
                 .withUrl("/my-component-tab")
                 .withWeight(100)
                 .build();
@@ -244,6 +254,7 @@ public class ConnectJsonExamples
     {
         SearchRequestViewModuleBean bean = SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
                 .withName(new I18nProperty("My Search View", "my.search.view"))
+                .withKey("my-search-view")
                 .withUrl("/search-request.csv")
                 .withWeight(100)
                 .build();
@@ -351,6 +362,7 @@ public class ConnectJsonExamples
     {
         SpaceToolsTabModuleBean spaceToolsTabModuleBean = SpaceToolsTabModuleBean.newSpaceToolsTabBean()
                 .withName(new I18nProperty("Space Tools Tab", ""))
+                .withKey("my-space-tools-tab")
                 .withUrl("/space-tools-tab?space_key={space.key}")
                 .withLocation("contenttools")
                 .build();

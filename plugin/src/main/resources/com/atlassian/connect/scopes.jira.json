@@ -2,35 +2,37 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "group", "user", "filter", "workflow", "myself", "screens"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "user", "filter", "myself", "groupsPicker"],
       "pathKeys": ["download attachments"],
       "methods": ["GET"]
     },
     {
       "key": "READ",
+      "restPathKeys": ["search"],
       "soapRpcPathKeys": ["jirasoapservice-v2-read"],
       "jsonRpcPathKeys": ["jira-json-service-v2-read"],
       "methods": ["POST"]
     },
     {
       "key": "WRITE",
-      "restPathKeys": ["issue", "attachment", "search", "comment", "worklog"],
+      "restPathKeys": ["issue", "comment", "worklog", "filter"],
       "methods": ["POST", "PUT"]
     },
     {
       "key": "WRITE",
+      "restPathKeys": ["issueLink"],
       "soapRpcPathKeys": ["jirasoapservice-v2-write"],
       "jsonRpcPathKeys": ["jira-json-service-v2-write"],
       "methods": ["POST"]
     },
     {
       "key": "DELETE",
-      "restPathKeys": ["issue", "attachment", "comment", "worklog"],
+      "restPathKeys": ["issue", "issueLink", "attachment", "comment", "worklog", "filter"],
       "methods": ["DELETE"]
     },
     {
       "key": "PROJECT_ADMIN",
-      "restPathKeys": ["component", "priority", "project", "version"],
+      "restPathKeys": ["component", "project", "version"],
       "methods": ["PUT", "POST", "DELETE"]
     },
     {
@@ -41,19 +43,20 @@
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["field", "workflowscheme"],
-      "methods": ["GET", "POST", "PUT", "DELETE"]
-    },
-    {
-      "key": "ADMIN",
-      "restPathKeys": ["issueLinkType", "screens"],
+      "restPathKeys": ["issueLinkType"],
       "methods": ["POST", "PUT", "DELETE"]
     },
     {
       "key": "ADMIN",
-        "soapRpcPathKeys": ["jirasoapservice-v2-admin"],
-        "jsonRpcPathKeys": ["jira-json-service-v2-admin"],
+      "restPathKeys": ["field", "screens"],
+      "soapRpcPathKeys": ["jirasoapservice-v2-admin"],
+      "jsonRpcPathKeys": ["jira-json-service-v2-admin"],
       "methods": ["POST"]
+    },
+    {
+      "key": "ADMIN",
+      "restPathKeys": ["group", "screens", "workflow"],
+      "methods": ["GET"]
     }
   ],
   "restPaths": [
@@ -61,201 +64,234 @@
       "key": "screens",
       "name": "api",
       "basePaths": ["/screens/.*"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "user",
       "name": "api",
       "basePaths": ["/user($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "group",
       "name": "api",
-      "basePaths": ["/group($|/.*)", "/groups/picker"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "basePaths": ["/group($|/.*)"],
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
+    },
+    {
+      "key": "groupsPicker",
+      "name": "api",
+      "basePaths": ["/groups/picker"],
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "mypermissions",
       "name": "api",
       "basePaths": ["/mypermissions($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "project",
       "name": "api",
       "basePaths": ["/project($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "issue",
       "name": "api",
       "basePaths": ["/issue($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "filter",
       "name": "api",
       "basePaths": ["/filter($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "search",
       "name": "api",
       "basePaths": ["/search($|/.*)"],
-      "versions": ["2", "latest", "2.0.alpha1"]
+      "versions": ["2", "latest", "2.0.alpha1"],
+      "public": true
     },
     {
       "key": "component",
       "name": "api",
       "basePaths": ["/component($|/.*)"],
-      "versions": ["2", "latest", "2.0.alpha1"]
+      "versions": ["2", "latest", "2.0.alpha1"],
+      "public": true
     },
     {
       "key": "priority",
       "name": "api",
       "basePaths": ["/priority($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "resolution",
       "name": "api",
       "basePaths": ["/resolution($|/.*)"],
-      "versions": ["2", "latest", "2.0.alpha1"]
+      "versions": ["2", "latest", "2.0.alpha1"],
+      "public": true
     },
     {
       "key": "version",
       "name": "api",
       "basePaths": ["/version($|/.*)"],
-      "versions": ["2", "latest", "2.0.alpha1"]
+      "versions": ["2", "latest", "2.0.alpha1"],
+      "public": true
     },
     {
       "key": "status",
       "name": "api",
       "basePaths": ["/status($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "statuscategory",
       "name": "api",
       "basePaths": ["/statuscategory($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "worklog",
       "name": "api",
       "basePaths": ["/issue/.+/worklog($|/.*)"],
-      "versions": ["2", "latest", "2.0.alpha1"]
+      "versions": ["2", "latest", "2.0.alpha1"],
+      "public": true
     },
     {
       "key": "customFieldOption",
       "name": "api",
       "basePaths": ["/customFieldOption($|/.*)"],
-      "versions": ["2", "latest", "2.0.alpha1"]
+      "versions": ["2", "latest", "2.0.alpha1"],
+      "public": true
     },
     {
       "key": "attachment",
       "name": "api",
       "basePaths": ["/attachment($|/.*)"],
-      "versions": ["2", "latest", "2.0.alpha1"]
+      "versions": ["2", "latest", "2.0.alpha1"],
+      "public": true
     },
     {
       "key": "comment",
       "name": "api",
-      "basePaths": ["/comment($|/.*)"],
-      "versions": ["2", "latest", "2.0.alpha1"]
+      "basePaths": ["/issue/.+/comment($|/.*)"],
+      "versions": ["2", "latest", "2.0.alpha1"],
+      "public": true
     },
     {
       "key": "field",
       "name": "api",
       "basePaths": ["/field($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
+    },
+    {
+      "key": "issueLink",
+      "name": "api",
+      "basePaths": ["/issueLink($|/.*)"],
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "issueLinkType",
       "name": "api",
       "basePaths": ["/issueLinkType($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "issuetype",
       "name": "api",
       "basePaths": ["/issuetype($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "serverInfo",
       "name": "api",
       "basePaths": ["/serverInfo($|/.*)"],
-      "versions": ["2", "2.0.alpha1", "latest"]
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
     },
     {
       "key": "workflow",
       "name": "api",
       "basePaths": ["/workflow($|/.*)"],
-      "versions": ["2", "latest"]
-    },
-    {
-      "key": "workflowscheme",
-      "name": "api",
-      "basePaths": ["/workflowscheme($|/.*)"],
-      "versions": ["2", "latest"]
+      "versions": ["2", "latest"],
+      "public": true
     },
     {
       "key": "myself",
       "name": "api",
       "basePaths": ["/myself"],
-      "versions": ["2", "latest"]
+      "versions": ["2", "latest"],
+      "public": true
     }
   ],
   "soapRpcPaths": [
     {
       "key": "jirasoapservice-v2-read",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["getIssuesFromJqlSearch", "getIssue", "getVersions", "getIssuesFromTextSearchWithProject", "getSecurityLevels", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getGroup", "getAttachmentsFromIssue", "getProjectAvatar", "getFieldsForEdit", "getUser", "getIssueById", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getFieldsForCreate", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
+      "rpcMethods": ["getIssuesFromJqlSearch", "getIssue", "getVersions", "getIssuesFromTextSearchWithProject", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getGroup", "getAttachmentsFromIssue", "getProjectAvatar", "getUser", "getIssueById", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
     },
     {
       "key": "jirasoapservice-v2-write",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
+      "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue", "getFieldsForEdit", "getFieldsForCreate", "getSecurityLevels"]
     },
     {
       "key": "jirasoapservice-v2-project-admin",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createProjectRole", "deleteProjectAvatar", "deleteProjectRole", "setNewProjectAvatar", "setProjectAvatar", "updateProject", "updateProjectRole"]
+      "rpcMethods": ["deleteProjectAvatar", "setNewProjectAvatar", "setProjectAvatar", "updateProject"]
     },
     {
       "key": "jirasoapservice-v2-admin",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createProject", "createProjectFromObject", "deleteProject"]
+      "rpcMethods": ["createProject", "createProjectFromObject", "deleteProject", "createProjectRole", "updateProjectRole", "deleteProjectRole"]
     }
   ],
   "jsonRpcPaths": [
     {
       "key": "jira-json-service-v2-read",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["getIssue", "getIssuesFromJqlSearch", "getVersions", "getIssuesFromTextSearchWithProject", "getSecurityLevels", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getAttachmentsFromIssue", "getGroup", "getProjectAvatar", "getFieldsForEdit", "getIssueById", "getUser", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getFieldsForCreate", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
+      "rpcMethods": ["getIssue", "getIssuesFromJqlSearch", "getVersions", "getIssuesFromTextSearchWithProject", "getPriorities", "getProjectAvatars", "getComponents", "getComment", "getProjectById", "getAttachmentsFromIssue", "getGroup", "getProjectAvatar", "getIssueById", "getUser", "getSecurityLevel", "getComments", "getIssueTypesForProject", "getSubTaskIssueTypesForProject", "getResolutionDateByKey", "getProjectsNoSchemes", "getFieldsForAction", "getStatuses", "getResolutionDateById", "getProjectByKey", "getIssuesFromTextSearchWithLimit", "getResolutions"]
     },
     {
       "key": "jira-json-service-v2-write",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue"]
+      "rpcMethods": ["createIssueWithParentWithSecurityLevel", "createIssueWithParent", "createIssueWithSecurityLevel", "progressWorkflowAction", "updateIssue", "createIssue", "getFieldsForEdit", "getFieldsForCreate", "getSecurityLevels"]
     },
     {
       "key": "jira-json-service-v2-project-admin",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createProjectRole", "deleteProjectAvatar", "deleteProjectRole", "setNewProjectAvatar", "setProjectAvatar", "updateProject", "updateProjectRole"]
+      "rpcMethods": ["deleteProjectAvatar", "setNewProjectAvatar", "setProjectAvatar", "updateProject"]
     },
     {
       "key": "jira-json-service-v2-admin",
       "paths": ["/jirasoapservice-v2"],
-      "rpcMethods": ["createProject", "createProjectFromObject", "deleteProject"]
+      "rpcMethods": ["createProject", "createProjectFromObject", "deleteProject", "createProjectRole", "updateProjectRole", "deleteProjectRole"]
     }
   ],
   "paths": [
       {
         "key": "download attachments",
-        "paths": ["/secure/attachment($|/.*)"]
+        "paths": ["/secure/attachment($|/.*)"],
+        "public": true
       }
   ]
 }

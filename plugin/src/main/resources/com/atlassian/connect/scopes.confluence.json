@@ -8,6 +8,7 @@
         "buildInfo",
         "content-api",
         "content-prototype",
+        "create-dialog-spaces",
         "label",
         "notification",
         "search",
@@ -31,10 +32,7 @@
     {
       "key": "WRITE",
       "restPathKeys": [
-        "action",
         "content-api",
-        "content-prototype",
-        "label",
         "notification",
         "task"
       ],
@@ -42,6 +40,11 @@
     },
     {
       "key": "WRITE",
+      "restPathKeys": [
+        "action",
+        "content-prototype",
+        "label"
+      ],
       "jsonRpcPathKeys": ["confluenceservice-json-rpc-write"],
       "xmlRpcPathKeys": ["confluenceservice-xml-rpc-write"],
       "methods": ["POST"]
@@ -49,7 +52,6 @@
     {
       "key": "DELETE",
       "restPathKeys": [
-        "action",
         "content-api",
         "content-prototype",
         "label",
@@ -82,97 +84,120 @@
       "key": "content-api",
       "name": "api",
       "basePaths": ["/content($|/.*)"],
-      "versions": []
+      "versions": [],
+      "public": true
     },
     {
       "key": "contentbody",
       "name": "api",
       "basePaths": ["/contentbody($|/.*)"],
-      "versions": []
+      "versions": [],
+      "public": true
     },
     {
       "key": "space-api",
       "name": "api",
       "basePaths": ["/space($|/.*)"],
-      "versions": []
+      "versions": [],
+      "public": true
+    },
+    {
+      "key": "create-dialog-spaces",
+      "name": "create-dialog",
+      "basePaths": ["/spaces"],
+      "versions": ["1.0", "latest"],
+      "public": false
     },
     {
       "key": "action",
       "name": "mywork",
       "basePaths": ["/action($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "notification",
       "name": "mywork",
       "basePaths": ["/notification($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "status",
       "name": "mywork",
       "basePaths": ["/status($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "task",
       "name": "mywork",
       "basePaths": ["/task($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "attachment",
       "name": "prototype",
       "basePaths": ["/attachment($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "breadcrumb",
       "name": "prototype",
       "basePaths": ["/breadcrumb($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "buildInfo",
       "name": "prototype",
       "basePaths": ["/buildInfo($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "content-prototype",
       "name": "prototype",
       "basePaths": ["/content($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "search",
       "name": "prototype",
       "basePaths": ["/search($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "space",
       "name": "prototype",
       "basePaths": ["/space($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "user",
       "name": "prototype",
       "basePaths": ["/user($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "label",
       "name": "prototype",
       "basePaths": ["/label($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": false
     },
     {
       "key": "searchv3",
       "name": "searchv3",
       "basePaths": ["/search($|/.*)"],
-      "versions": ["1", "1.0", "latest"]
+      "versions": ["1", "1.0", "latest"],
+      "public": false
     }
   ],
   "jsonRpcPaths": [
@@ -214,8 +239,6 @@
         "getRelatedLabelsInSpace",
         "getServerInfo",
         "getSpace",
-        "getSpaceGroup",
-        "getSpaceGroups",
         "getSpaceLevelPermissions",
         "getSpaceStatus",
         "getSpaces",
@@ -223,12 +246,13 @@
         "getSpacesInGroup",
         "getSpacesWithLabel",
         "getTopLevelPages",
-        "getTrashContents",
-        "getWatchersForPage",
-        "getWatchersForSpace",
-        "isWatchingPage",
-        "isWatchingSpace",
-        "isWatchingSpaceForType",
+        "getUser",
+        "getUserByKey",
+        "getUserByName",
+        "getUserInformation",
+        "hasGroup",
+        "hasUser",
+        "isActiveUser",
         "renderContent",
         "search"
       ]
@@ -245,16 +269,22 @@
         "addLabelByObject",
         "addProfilePicture",
         "editComment",
-        "moveAttachment",
+        "getUserPreferenceBoolean",
+        "getUserPreferenceLong",
+        "getUserPreferenceString",
         "movePage",
         "movePageToTopLevel",
+        "removeLabelById",
+        "removeLabelByName",
+        "removeLabelByNameFromSpace",
+        "removeLabelByObject",
+        "removePageWatch",
+        "removeSpaceWatch",
         "setContentPermissions",
-        "setEnableWysiwyg",
         "storeBlogEntry",
         "storePage",
         "updatePage",
         "watchPage",
-        "watchPageForUser",
         "watchSpace"
       ]
     },
@@ -262,39 +292,42 @@
       "key": "confluenceservice-json-rpc-delete",
       "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
       "rpcMethods": [
-        "emptyTrash",
-        "purgeFromTrash",
+        "moveAttachment",
         "removeAttachment",
         "removeComment",
-        "removeLabelById",
-        "removeLabelByName",
-        "removeLabelByNameFromSpace",
-        "removeLabelByObject",
-        "removePage",
-        "removePageVersionById",
-        "removePageVersionByVersion",
-        "removePageWatch",
-        "removePageWatchForUser",
-        "removeSpaceWatch"
+        "removePage"
       ]
     },
     {
       "key": "confluenceservice-json-rpc-space-admin",
       "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
       "rpcMethods": [
-        "addAnonymousPermissionToSpace",
-        "addAnonymousPermissionsToSpace",
         "addPermissionToSpace",
         "addPermissionsToSpace",
-        "removeAnonymousPermissionFromSpace",
+        "emptyTrash",
+        "getPermissionsForUser",
+        "getWatchersForPage",
+        "getWatchersForSpace",
+        "getSpacePermissionSet",
+        "getSpacePermissionSets",
+        "isWatchingPage",
+        "isWatchingSpace",
+        "isWatchingSpaceForType",
+        "purgeFromTrash",
+        "removePageVersionById",
+        "removePageVersionByVersion",
+        "removePageWatchForUser",
         "removePermissionFromSpace",
-        "setSpaceStatus"
+        "setSpaceStatus",
+        "watchPageForUser"
       ]
     },
     {
       "key": "confluenceservice-json-rpc-admin",
       "paths": ["/confluenceservice-v1", "/confluenceservice-v2"],
       "rpcMethods": [
+        "addAnonymousPermissionToSpace",
+        "addAnonymousPermissionsToSpace",
         "addAnonymousUsePermission",
         "addAnonymousViewUserProfilePermission",
         "addGlobalPermission",
@@ -310,20 +343,13 @@
         "getClusterInformation",
         "getClusterNodeStatuses",
         "getGroups",
-        "getPermissionsForUser",
-        "getUser",
-        "getUserByKey",
-        "getUserByName",
+        "getSpaceGroup",
+        "getSpaceGroups",
+        "getTrashContents",
         "getUserGroups",
-        "getUserInformation",
-        "getUserPreferenceBoolean",
-        "getUserPreferenceLong",
-        "getUserPreferenceString",
-        "hasGroup",
-        "hasUser",
         "importSpace",
-        "isActiveUser",
         "removeAllPermissionsForGroup",
+        "removeAnonymousPermissionFromSpace",
         "removeAnonymousUsePermission",
         "removeAnonymousViewUserProfilePermission",
         "removeGlobalPermission",
@@ -372,8 +398,6 @@
         "getRelatedLabelsInSpace",
         "getServerInfo",
         "getSpace",
-        "getSpaceGroup",
-        "getSpaceGroups",
         "getSpaceLevelPermissions",
         "getSpaceStatus",
         "getSpaces",
@@ -381,12 +405,13 @@
         "getSpacesInGroup",
         "getSpacesWithLabel",
         "getTopLevelPages",
-        "getTrashContents",
-        "getWatchersForPage",
-        "getWatchersForSpace",
-        "isWatchingPage",
-        "isWatchingSpace",
-        "isWatchingSpaceForType",
+        "getUser",
+        "getUserByKey",
+        "getUserByName",
+        "getUserInformation",
+        "hasGroup",
+        "hasUser",
+        "isActiveUser",
         "renderContent",
         "search"
       ]
@@ -401,19 +426,24 @@
         "addLabelByName",
         "addLabelByNameToSpace",
         "addLabelByObject",
-        "addPersonalSpace",
-        "addPersonalSpaceWithDefaultPermissions",
         "addProfilePicture",
         "editComment",
-        "moveAttachment",
+        "getUserPreferenceBoolean",
+        "getUserPreferenceLong",
+        "getUserPreferenceString",
         "movePage",
         "movePageToTopLevel",
+        "removeLabelById",
+        "removeLabelByName",
+        "removeLabelByNameFromSpace",
+        "removeLabelByObject",
+        "removePageWatch",
+        "removeSpaceWatch",
         "setContentPermissions",
         "storeBlogEntry",
         "storePage",
         "updatePage",
         "watchPage",
-        "watchPageForUser",
         "watchSpace"
       ]
     },
@@ -421,80 +451,79 @@
       "key": "confluenceservice-xml-rpc-delete",
       "prefixes": ["confluence1", "confluence2"],
       "rpcMethods": [
-        "emptyTrash",
-        "purgeFromTrash",
+        "moveAttachment",
         "removeAttachment",
         "removeComment",
-        "removeLabelById",
-        "removeLabelByName",
-        "removeLabelByNameFromSpace",
-        "removeLabelByObject",
-        "removePage",
-        "removePageVersionById",
-        "removePageVersionByVersion",
-        "removePageWatch",
-        "removePageWatchForUser",
-        "removeSpaceWatch"
+        "removePage"
       ]
     },
     {
       "key": "confluenceservice-xml-rpc-space-admin",
       "prefixes": ["confluence1", "confluence2"],
       "rpcMethods": [
-        "addAnonymousPermissionToSpace",
-        "addAnonymousPermissionsToSpace",
         "addPermissionToSpace",
         "addPermissionsToSpace",
-        "addSpace",
-        "addSpaceGroup",
-        "addSpaceWithDefaultPermissions",
-        "removeAnonymousPermissionFromSpace",
+        "emptyTrash",
+        "getPermissionsForUser",
+        "getWatchersForPage",
+        "getWatchersForSpace",
+        "getSpacePermissionSet",
+        "getSpacePermissionSets",
+        "isWatchingPage",
+        "isWatchingSpace",
+        "isWatchingSpaceForType",
+        "purgeFromTrash",
+        "removePageVersionById",
+        "removePageVersionByVersion",
+        "removePageWatchForUser",
         "removePermissionFromSpace",
-        "removeSpace",
-        "removeSpaceGroup",
         "setSpaceStatus",
-        "storeSpace"
+        "watchPageForUser"
       ]
     },
     {
       "key": "confluenceservice-xml-rpc-admin",
       "prefixes": ["confluence1", "confluence2"],
       "rpcMethods": [
+        "addAnonymousPermissionToSpace",
+        "addAnonymousPermissionsToSpace",
         "addAnonymousUsePermission",
         "addAnonymousViewUserProfilePermission",
         "addGlobalPermission",
         "addGlobalPermissions",
+        "addPersonalSpace",
+        "addPersonalSpaceWithDefaultPermissions",
+        "addSpace",
+        "addSpaceGroup",
+        "addSpaceWithDefaultPermissions",
         "exportSite",
         "exportSpace",
         "getActiveUsers",
         "getClusterInformation",
         "getClusterNodeStatuses",
         "getGroups",
-        "getPermissionsForUser",
-        "getUser",
-        "getUserByKey",
-        "getUserByName",
+        "getSpaceGroup",
+        "getSpaceGroups",
+        "getTrashContents",
         "getUserGroups",
-        "getUserInformation",
-        "getUserPreferenceBoolean",
-        "getUserPreferenceLong",
-        "getUserPreferenceString",
-        "hasGroup",
-        "hasUser",
         "importSpace",
-        "isActiveUser",
         "removeAllPermissionsForGroup",
+        "removeAnonymousPermissionFromSpace",
         "removeAnonymousUsePermission",
         "removeAnonymousViewUserProfilePermission",
-        "removeGlobalPermission"
+        "removeGlobalPermission",
+        "removeSpace",
+        "removeSpaceGroup",
+        "storeSpace"
       ]
     }
   ],
   "paths": [
-      {
-        "key": "download",
-        "paths": ["/download/temp/.*", "/download/attachments/.*"]
-      }
+    {
+      "key": "download",
+      "paths": ["/download/temp/.*", "/download/attachments/.*"],
+      "public": true
+    }
   ]
 }
 

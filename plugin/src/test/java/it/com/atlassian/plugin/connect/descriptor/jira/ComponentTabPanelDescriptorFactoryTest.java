@@ -2,6 +2,7 @@ package it.com.atlassian.plugin.connect.descriptor.jira;
 
 import java.io.IOException;
 
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectComponentTabPanelModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
@@ -21,9 +22,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ComponentTabPanelDescriptorFactoryTest extends AbstractTabPanelDescriptorFactoryTest
 {
-    public ComponentTabPanelDescriptorFactoryTest(ConnectTabPanelModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
+    public ComponentTabPanelDescriptorFactoryTest(ConnectTabPanelModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
     {
-        super(descriptorFactory, testPluginInstaller, testAuthenticator);
+        super(descriptorFactory, testPluginInstaller, testAuthenticator, pluginAccessor);
     }
 
     @Override

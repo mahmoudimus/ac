@@ -16,7 +16,7 @@
 }
 
 /* add new aui dialog size of maximum */
-.ap-aui-dialog2-maximum.ap-aui-dialog2.ap-aui-layer {
+.aui-dialog2-maximum.ap-aui-dialog2.aui-layer {
     top: 0;
     height: 100%;
 }

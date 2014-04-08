@@ -354,6 +354,8 @@
       var iframe = document.createElement("iframe"),
         id = "easyXDM_" + config.container + "_provider";
       $.extend(iframe, {id: id, name: id, frameBorder: "0"}, config.props);
+      //$.extend will not add the attribute rel.
+      iframe.setAttribute('rel', 'nofollow');
       $("#" + config.container).append(iframe);
       iframe.src = config.remote;
       return iframe;

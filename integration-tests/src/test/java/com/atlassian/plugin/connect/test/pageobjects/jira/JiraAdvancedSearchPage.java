@@ -20,7 +20,7 @@ public class JiraAdvancedSearchPage extends AdvancedSearch
     @Override
     public TimedCondition isAt()
     {
-        Poller.waitUntilTrue(submitButton.timed().isVisible()); // make sure the page is in it's final state (ACDEV-684)
+        Poller.waitUntilTrue(searchButton.timed().isVisible()); // make sure the page is in it's final state (ACDEV-684)
         return super.isAt();
     }
 

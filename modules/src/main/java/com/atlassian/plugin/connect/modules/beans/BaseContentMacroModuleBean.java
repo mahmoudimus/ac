@@ -54,7 +54,7 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * * `page.id`: The page ID, e.g. `1376295`
      * * `page.title`: The page title, e.g. `My Page`
      * * `page.type`: The page type, e.g. `page`
-     * * `page.version.id`: The page version, e.g. `6`
+     * * `page.version`: The page version, e.g. `6`
      * * `space.id`: The space ID, e.g. `65537`
      * * `space.key`: The space key, e.g. `AC`
      * * `user.id`: The user ID, e.g. `admin`
@@ -83,6 +83,12 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * A link to the documentation for the macro.
      */
     private LinkBean documentation;
+
+    /**
+     * A list of alternative renderModes.
+     */
+    private List<MacroRenderModeBean> renderModes;
+
 
     /**
      * The categories the macro should appear in. A macro with no category will show up in the default 'All' category.
@@ -207,6 +213,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         return documentation;
     }
 
+    public List<MacroRenderModeBean> getRenderModes()
+    {
+        return renderModes;
+    }
+
     public Set<String> getCategories()
     {
         return categories;
@@ -255,6 +266,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     public boolean hasIcon()
     {
         return icon != null;
+    }
+
+    public boolean hasRenderModes()
+    {
+        return renderModes != null;
     }
 
     public boolean hasDocumentation()

@@ -28,6 +28,9 @@ import java.util.List;
  * Web items are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
  * application and don't know where to start, a web item may be all you need.
  * <p/>
+ * Your add-on can receive [additional context](../../concepts/context-parameters.html) from the application by
+ * using variable tokens in the `url` attribute.
+ * <p/>
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_EXAMPLE}
@@ -38,7 +41,10 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
      * Specifies the URL targeted by the web item. The URL can be absolute or relative to either the
-     * product URL or the add-on's base URL, depending on the _context_ parameter.
+     * product URL or the add-on's base URL, depending on the _context_ attribute.
+     * <p/>
+     * Your add-on can receive [additional context](../../concepts/context-parameters.html) from the application by
+     * using variable tokens in the URL attribute.
      */
     @Required
     @StringSchemaAttributes(format = "uri-template")
@@ -65,7 +71,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.
      * <p/>
      * This context can be either `addon`, which renders the URL relative to the add-on's base URL,
-     * `page` which targets a page module by specifying the page's modue key as the url
+     * `page` which targets a page module by specifying the page's module key as the url
      * or `product`, which renders the URL relative to the product's base URL.
      */
     @CommonSchemaAttributes(defaultValue = "addon")
@@ -211,7 +217,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     public String toString()
     {
         return Objects.toStringHelper(this)
-                      .add("key", getKey())
+                      .add("key", getRawKey())
                       .add("name", getName())
                       .add("url", getUrl())
                       .add("location", getLocation())

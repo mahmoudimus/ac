@@ -5,6 +5,7 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <bundle-instructions>
             <Import-Package>
+                com.atlassian.plugin.connect*,
                 com.atlassian.plugin.connect.*,
                 com.atlassian.plugin.connect.modules.beans*,
                 com.atlassian.plugin.connect.modules.beans.*,
@@ -29,7 +30,8 @@
     <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry"/>
     <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.plugin.installer.ConnectAddOnUserService"/>
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry" />
-    
+    <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
+
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
     <component-import key="workflowPostFunctionModuleProvider" application="jira" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider" />
@@ -41,7 +43,7 @@
     <!-- CONNECT TEST SUPPORT -->
     <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller" />
     <component-import key="testFilterResults" interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults" />
-    
+
     <!-- OUR OWN LOCAL COMPONENTS -->
     <component key="jiraTestAuthenticator" 
                class="it.com.atlassian.plugin.connect.JiraTestAuthenticator" 

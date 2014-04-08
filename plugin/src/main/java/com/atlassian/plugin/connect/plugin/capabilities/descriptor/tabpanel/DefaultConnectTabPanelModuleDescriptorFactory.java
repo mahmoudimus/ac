@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
@@ -38,12 +39,12 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
     }
 
     @Override
-    public ModuleDescriptor createModuleDescriptor(Plugin plugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
+    public ModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
     {
         DOMElement element = new DOMElement(hints.getDomElementName());
 
         element
-                .addAttribute(KEY, bean.getKey())
+                .addAttribute(KEY, bean.getKey(addon))
                 .addAttribute(NAME, bean.getName().getValue())
                 .addAttribute(URL, bean.getUrl());
 
@@ -60,11 +61,11 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
 
         if (!bean.getConditions().isEmpty())
         {
-            element.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions()));
+            element.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
         }
 
         ModuleDescriptor descriptor = connectContainerUtil.createBean(hints.getDescriptorClass());
-        descriptor.init(plugin, element);
+        descriptor.init(theConnectPlugin, element);
 
         return descriptor;
     }

@@ -24,12 +24,15 @@ requirejs.config({
     'inline-dialog/main': '../src/main/resources/js/inline-dialog/main',
     'inline-dialog/simple': '../src/main/resources/js/inline-dialog/simple',
     'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
+    'jira/event': '../src/main/resources/js/jira/event',
     'messages/main': '../src/main/resources/js/messages/main',
     // shared
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
     'iframe/_events': '../src/main/resources/js/iframe/_events',
     'iframe/_xdm': '../src/main/resources/js/iframe/_xdm',
     'iframe/_uri': '../src/main/resources/js/iframe/_uri',
+    'iframe/_base64': '../src/main/resources/js/iframe/_base64',
+    'iframe/_ui-params': '../src/main/resources/js/iframe/_ui-params',
     'iframe/host/main': '../src/main/resources/js/iframe/host/main'
   },
 
@@ -53,14 +56,22 @@ requirejs.config({
         deps: [
         'jquery',
         'aui-atlassian',
-        'iframe/_amd'
+        'iframe/_amd',
+        'iframe/_ui-params'
         ]
+    },
+    'iframe/_base64': {
+      deps: [
+        'iframe/host/_dollar',
+        'iframe/_amd',
+      ]
     },
     'inline-dialog/simple': {
       deps: [
         'iframe/host/_dollar',
         'iframe/host/content',
-        'iframe/host/_status_helper'
+        'iframe/host/_status_helper',
+        'iframe/_ui-params'
       ]
     },
     'iframe/host/_status_helper': {
@@ -78,10 +89,16 @@ requirejs.config({
     'dialog/main': {
       deps: [
         'iframe/host/_dollar',
+        'iframe/_ui-params',
         'iframe/host/content'
       ]
     },
     'confluence/macro/editor': {
+        deps: [
+        'iframe/host/_dollar'
+        ]
+    },
+    'jira/event': {
         deps: [
         'iframe/host/_dollar'
         ]
@@ -107,6 +124,13 @@ requirejs.config({
     'iframe/_uri': {
       deps: [
       'iframe/_amd'
+      ]
+    },
+    'iframe/_ui-params': {
+      deps: [
+        'iframe/host/_dollar',
+        'iframe/_uri',
+        'iframe/_base64'
       ]
     },
     'iframe/_xdm': {

@@ -1,19 +1,16 @@
 package com.atlassian.plugin.connect.plugin.capabilities.schema;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
-
 import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Named
 @ExportAsService
@@ -35,31 +32,42 @@ public class DefaultConnectSchemaLocator implements ConnectSchemaLocator
     @Override
     public String getPrettySchemaForCurrentProduct() throws IOException
     {
-        return getSchema(getFilterForCurrentProduct(),PRETTY);
+        return getSchema(getFilterForCurrentProduct().name().toLowerCase(),PRETTY);
     }
 
     @Override
     public String getPrettySchema(ProductFilter productFilter) throws IOException
     {
-        return getSchema(productFilter,PRETTY);
+        return getSchema(productFilter.name().toLowerCase(),PRETTY);
     }
 
     @Override
     public String getSchemaForCurrentProduct() throws IOException
     {
-        return getSchema(getFilterForCurrentProduct(),RAW);
+        return getSchema(getFilterForCurrentProduct().name().toLowerCase(),RAW);
     }
     
     @Override
     public String getSchema(ProductFilter productFilter) throws IOException
     {
-        return getSchema(productFilter,RAW);
+        return getSchema(productFilter.name().toLowerCase(),RAW);
     }
 
-    private String getSchema(ProductFilter productFilter, String format) throws IOException
+    @Override
+    public String getSchema(String schemaPrefix) throws IOException
     {
-        String path = String.format(format, productFilter.name().toLowerCase());
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        return getSchema(schemaPrefix,RAW);
+    }
+
+    @Override
+    public String getPrettySchema(String schemaPrefix) throws IOException
+    {
+        return getSchema(schemaPrefix,PRETTY);
+    }
+
+    private String getSchema(String schemaPrefix, String format) throws IOException
+    {
+        String path = String.format(format, schemaPrefix);
         InputStream in = plugin.getResourceAsStream(path);
                 
         return IOUtils.toString(in);

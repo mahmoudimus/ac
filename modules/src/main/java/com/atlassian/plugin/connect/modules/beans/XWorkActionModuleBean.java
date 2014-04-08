@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * Note that this bean is not publicly exposed, and thus does not contain user-facing javadocs.
  */
-public class XWorkActionModuleBean extends GeneratedKeyBean
+public class XWorkActionModuleBean extends RequiredKeyBean
 {
     private String namespace;
     private Class<?> clazz;
@@ -68,7 +68,7 @@ public class XWorkActionModuleBean extends GeneratedKeyBean
      */
     public String getUrl()
     {
-        return namespace + "/" + getKey() + ".action";
+        return namespace + "/" + getRawKey() + ".action";
     }
 
     public static XWorkActionModuleBeanBuilder newXWorkActionBean()

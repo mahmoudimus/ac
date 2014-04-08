@@ -6,10 +6,13 @@
     </plugin-info>
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
-    <servlet-filter key="big-pipe-request-id" class="com.atlassian.plugin.connect.spi.http.bigpipe.BigPipeRequestIdFilter"
-                    location="after-encoding">
-        <url-pattern>/*</url-pattern>
-    </servlet-filter>
+
+    <ao key="ao-module" namespace="atlassianconnect">
+        <description>The AO module for storing connect addon data.</description>
+        <entity>com.atlassian.plugin.connect.plugin.registry.ConnectAddonEntity</entity>
+    </ao>
+    
+    <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
                     location="after-encoding">
@@ -34,11 +37,6 @@
     <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOFilter"
             location="after-encoding" weight="2000">
         <url-pattern>/*</url-pattern>
-    </servlet-filter>
-
-    <servlet-filter key="big-pipe-content" class="com.atlassian.plugin.connect.spi.http.bigpipe.BigPipeContentFilter"
-                    location="before-dispatch">
-        <url-pattern>/bigpipe/request/*</url-pattern>
     </servlet-filter>
 
     <servlet-filter key="servlet-context-thread-local-filter" name="Servlet Context Thread Local Filter"
@@ -92,6 +90,8 @@
         <resource type="download" name="_uri.js" location="/js/iframe/_uri.js" />
         <resource type="download" name="_addons.js" location="/js/iframe/host/_addons.js" />
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
+        <resource type="download" name="_base64.js" location="js/iframe/_base64.js" />
+        <resource type="download" name="_ui-params.js" location="/js/iframe/_ui-params.js" />
         <resource type="download" name="content.js" location="/js/iframe/host/content.js" />
         <resource type="download" name="_status_helper.js" location="/js/iframe/host/_status_helper.js" />
     </web-resource>
@@ -133,7 +133,6 @@
     <web-resource key="remote-condition">
         <resource type="download" name="remote.js" location="js/condition/remote.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:big-pipe</dependency>
     </web-resource>
 
     <web-resource key="images">
@@ -146,15 +145,15 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog</dependency>
     </web-resource>
 
-    <web-resource key="schema-xsl">
-        <resource type="download" content-type="application/xml" name="xs3p.xsl" location="/xsd/xs3p.xsl"/>
-    </web-resource>
 
-    <!-- big pipe stuff -->
-    <web-resource key="big-pipe">
-        <resource type="download" name="bigpipe.js" location="js/bigpipes/bigpipe.js" />
+    <web-resource key="jira">
+        <resource type="download" name="jira-event.js" location="/js/jira/event.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+    </web-resource>
+
+    <web-resource key="schema-xsl">
+        <resource type="download" content-type="application/xml" name="xs3p.xsl" location="/xsd/xs3p.xsl"/>
     </web-resource>
 
     <web-resource key="atlassian-connect-resources" name="Connect resources for inclusion on every page.">
@@ -162,7 +161,6 @@
         <context>atl.general</context>
         <!-- workaround for AC-703, the 'preview' view does not include atl.general resources (CONF-30617) -->
         <context>preview</context>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:big-pipe</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog-page-resource</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:remote-condition</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
@@ -171,6 +169,17 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:inline-dialog</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:messages</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira</dependency>
+    </web-resource>
+
+    <web-resource key="atlassian-connect-mobile-resources" name="Connect resources for inclusion on every mobile page.">
+        <context>atl.mobile.confluence.view.content</context>
+        <context>preview</context>
+        <dependency>com.atlassian.auiplugin:jquery-lib</dependency>
+        <dependency>com.atlassian.auiplugin:aui-experimental-spinner</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"

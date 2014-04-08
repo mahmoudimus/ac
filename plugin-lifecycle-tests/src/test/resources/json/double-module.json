@@ -24,7 +24,8 @@
                 "name": {
                     "value": "My Web Item",
                     "i18n": "my.webitem"
-                }
+                },
+                "key":"my-double-item-one"
             },
             {
                 "url": "/other-webitem",
@@ -38,7 +39,8 @@
                 "name": {
                     "value": "My Other Web Item",
                     "i18n": "my.other.webitem"
-                }
+                },
+                "key":"my-double-item-two"
             }
         ]
     },

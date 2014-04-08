@@ -88,7 +88,14 @@ public class ConnectAppServlets
      */
     public static HttpServlet openDialogServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-open-dialog.mu"));
+        return openDialogServlet("my-dialog");
+    }
+
+    public static HttpServlet openDialogServlet(String dialogKey)
+    {
+        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("iframe-open-dialog.mu"));
+        contextServlet.getBaseContext().put("dialogKey", dialogKey);
+        return contextServlet;
     }
 
     /**
@@ -121,7 +128,7 @@ public class ConnectAppServlets
 
     public static HttpServlet echoQueryParametersServlet()
     {
-        return wrapContextAwareServlet(new EchoQueryParametersServlet());
+        return wrapContextAwareServlet(new EchoQueryParametersServlet("echo-query.mu"));
     }
 
     public static HttpServlet resourceServlet(String resourcePath, String contentType)

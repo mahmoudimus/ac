@@ -1,20 +1,18 @@
 package it.com.atlassian.plugin.connect.provider.jira;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParametersImpl;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
@@ -32,7 +30,9 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newCon
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl.IFrameRenderStrategyImpl;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
@@ -80,7 +80,7 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withModules("jiraWorkflowPostFunctions", bean)
                 .build();
 
-        plugin = testPluginInstaller.installPlugin(addon);
+        plugin = testPluginInstaller.installAddon(addon);
     }
 
     @AfterClass
@@ -88,7 +88,7 @@ public class WorkflowPostFunctionModuleProviderTest
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
 
     }
@@ -107,12 +107,32 @@ public class WorkflowPostFunctionModuleProviderTest
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_VIEW, "/view");
     }
 
+    @Test
+    public void uiParamsNotInUrlWhenNotProvided() throws URISyntaxException
+    {
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
+        IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
+        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>none());
+        final URI iframeUrl = new URI(iframeUrlStr);
+        assertThat(iframeUrl.getQuery(), not(containsString("ui-params")));
+    }
+
+    @Test
+    public void uiParamsInUrlWhenProvided() throws URISyntaxException
+    {
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
+        IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
+        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>some("blah"));
+        final URI iframeUrl = new URI(iframeUrlStr);
+        assertThat(iframeUrl.getQuery(), containsString("ui-params=blah"));
+    }
+
     private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
     {
-        ModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
 
-        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters);
+        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>none());
         final URI iframeUrl = new URI(iframeUrlStr);
         final String baseUrl = iframeUrl.getScheme() + "://" + iframeUrl.getAuthority();
 

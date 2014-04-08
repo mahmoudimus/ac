@@ -9,6 +9,9 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameComponentTabPanel;
 import com.atlassian.plugin.module.ModuleFactory;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
+
 /**
  * ModuleDescriptor for Connect component of a ComponentTabPanel
  */
@@ -30,7 +33,7 @@ public class ConnectComponentTabPanelModuleDescriptor extends ComponentTabPanelM
     @Override
     public ComponentTabPanel getModule()
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(getPluginKey(), getKey());
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameComponentTabPanel(renderStrategy, moduleContextFilter);
     }
 

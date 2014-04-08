@@ -12,29 +12,21 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.context.AbstractModuleContextFilter;
+import com.atlassian.plugin.connect.plugin.iframe.context.PermissionCheck;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class JiraModuleContextFilter implements ModuleContextFilter
+public class JiraModuleContextFilter extends AbstractModuleContextFilter<ApplicationUser>
 {
-    private static final Logger log = LoggerFactory.getLogger(JiraModuleContextFilter.class);
-
     public static final String ISSUE_ID             = "issue.id";
     public static final String ISSUE_KEY            = "issue.key";
     public static final String PROJECT_ID           = "project.id";
     public static final String PROJECT_KEY          = "project.key";
     public static final String VERSION_ID           = "version.id";
     public static final String COMPONENT_ID         = "component.id";
-    public static final String PROFILE_NAME         = "profileUser.name";
-    public static final String PROFILE_KEY          = "profileUser.key";
     public static final String POSTFUNCTION_ID      = "postFunction.id";
     public static final String POSTFUNCTION_CONFIG  = "postFunction.config";
 
@@ -44,7 +36,7 @@ public class JiraModuleContextFilter implements ModuleContextFilter
     private final VersionManager versionManager;
     private final ProjectComponentManager projectComponentManager;
     private final JiraAuthenticationContext authenticationContext;
-    private final Iterable<PermissionCheck> permissionChecks;
+    private final Iterable<PermissionCheck<ApplicationUser>> permissionChecks;
 
     @Autowired
     public JiraModuleContextFilter(final PermissionManager permissionManager, final ProjectService projectService,
@@ -62,203 +54,123 @@ public class JiraModuleContextFilter implements ModuleContextFilter
     }
 
     @Override
-    public ModuleContextParameters filter(final ModuleContextParameters unfiltered)
+    protected ApplicationUser getCurrentUser()
     {
-        final ModuleContextParameters filtered = new HashMapModuleContextParameters();
-        ApplicationUser currentUser = authenticationContext.getUser();
-        for (PermissionCheck permissionCheck : permissionChecks)
-        {
-            String value = unfiltered.get(permissionCheck.getParameterName());
-            if (!Strings.isNullOrEmpty(value) && permissionCheck.hasPermission(value, currentUser))
-            {
-                filtered.put(permissionCheck.getParameterName(), value);
-            }
-        }
-        return filtered;
+        return authenticationContext.getUser();
     }
 
-    private static interface PermissionCheck
+    @Override
+    protected Iterable<PermissionCheck<ApplicationUser>> getPermissionChecks()
     {
-        String getParameterName();
-        boolean hasPermission(String value, ApplicationUser user);
+        return permissionChecks;
     }
 
-    private static abstract class LongValuePermissionCheck implements PermissionCheck
-    {
-        @Override
-        public boolean hasPermission(final String value, final ApplicationUser user)
-        {
-            long longValue;
-            try
-            {
-                longValue = Long.parseLong(value);
-            }
-            catch (NumberFormatException e)
-            {
-                log.debug("Failed to parse " + getParameterName(), e);
-                return false;
-            }
-            return hasPermission(longValue, user);
-        }
-
-        abstract boolean hasPermission(long value, ApplicationUser user);
-    }
-
-    private static class AlwaysAllowedPermissionCheck implements PermissionCheck
-    {
-        private final String parameterName;
-
-        private AlwaysAllowedPermissionCheck(String parameterName)
-        {
-            this.parameterName = parameterName;
-        }
-
-        @Override
-        public String getParameterName()
-        {
-            return parameterName;
-        }
-
-        @Override
-        public boolean hasPermission(final String value, final ApplicationUser user)
-        {
-            return true;
-        }
-    }
-
-    private Iterable<PermissionCheck> constructPermissionChecks()
+    private Iterable<PermissionCheck<ApplicationUser>> constructPermissionChecks()
     {
         return ImmutableList.of(
-                new LongValuePermissionCheck()
+            new PermissionCheck.LongValue<ApplicationUser>()
+            {
+                @Override
+                public String getParameterName()
                 {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return ISSUE_ID;
-                    }
+                    return ISSUE_ID;
+                }
 
-                    @Override
-                    public boolean hasPermission(final long id, final ApplicationUser user)
-                    {
-                        Issue issue = issueManager.getIssueObject(id);
-                        return issue != null && permissionManager.hasPermission(Permissions.BROWSE, issue, user);
-                    }
-                },
-                new PermissionCheck()
+                @Override
+                public boolean hasPermission(final long id, final ApplicationUser user)
                 {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return ISSUE_KEY;
-                    }
-
-                    @Override
-                    public boolean hasPermission(final String value, final ApplicationUser user)
-                    {
-                        Issue issue = issueManager.getIssueObject(value);
-                        return issue != null && permissionManager.hasPermission(Permissions.BROWSE, issue, user);
-                    }
-                },
-                new LongValuePermissionCheck()
+                    Issue issue = issueManager.getIssueObject(id);
+                    return issue != null && permissionManager.hasPermission(Permissions.BROWSE, issue, user);
+                }
+            },
+            new PermissionCheck<ApplicationUser>()
+            {
+                @Override
+                public String getParameterName()
                 {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return PROJECT_ID;
-                    }
+                    return ISSUE_KEY;
+                }
 
-                    @Override
-                    public boolean hasPermission(final long id, final ApplicationUser user)
-                    {
-                        return projectService.getProjectById(user, id).isValid();
-                    }
-                },
-                new PermissionCheck()
+                @Override
+                public boolean hasPermission(final String value, final ApplicationUser user)
                 {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return PROJECT_KEY;
-                    }
-
-                    @Override
-                    public boolean hasPermission(final String value, final ApplicationUser user)
-                    {
-                        return projectService.getProjectByKey(user, value).isValid();
-                    }
-                },
-                new LongValuePermissionCheck()
+                    Issue issue = issueManager.getIssueObject(value);
+                    return issue != null && permissionManager.hasPermission(Permissions.BROWSE, issue, user);
+                }
+            },
+            new PermissionCheck.LongValue<ApplicationUser>()
+            {
+                @Override
+                public String getParameterName()
                 {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return VERSION_ID;
-                    }
+                    return PROJECT_ID;
+                }
 
-                    @Override
-                    public boolean hasPermission(final long id, final ApplicationUser user)
-                    {
-                        Version version = versionManager.getVersion(id);
-                        return version != null && permissionManager.hasPermission(Permissions.BROWSE,
-                                version.getProjectObject(), user);
-                    }
-                },
-                new LongValuePermissionCheck()
+                @Override
+                public boolean hasPermission(final long id, final ApplicationUser user)
                 {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return COMPONENT_ID;
-                    }
-
-                    @Override
-                    public boolean hasPermission(final long id, final ApplicationUser user)
-                    {
-                        ProjectComponent component;
-                        try
-                        {
-                            component = projectComponentManager.find(id);
-                        }
-                        catch (EntityNotFoundException e)
-                        {
-                            return false;
-                        }
-                        return component != null && projectService.getProjectById(user, component.getProjectId()).isValid();
-                    }
-                },
-                new PermissionCheck()
+                    return projectService.getProjectById(user, id).isValid();
+                }
+            },
+            new PermissionCheck<ApplicationUser>()
+            {
+                @Override
+                public String getParameterName()
                 {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return PROFILE_NAME;
-                    }
+                    return PROJECT_KEY;
+                }
 
-                    @Override
-                    public boolean hasPermission(final String value, final ApplicationUser user)
-                    {
-                        // TODO determine what permissions are needed to view a user's profile
-                        return true;
-                    }
-                },
-                new PermissionCheck()
+                @Override
+                public boolean hasPermission(final String value, final ApplicationUser user)
                 {
-                    @Override
-                    public String getParameterName()
-                    {
-                        return PROFILE_KEY;
-                    }
+                    return projectService.getProjectByKey(user, value).isValid();
+                }
+            },
+            new PermissionCheck.LongValue<ApplicationUser>()
+            {
+                @Override
+                public String getParameterName()
+                {
+                    return VERSION_ID;
+                }
 
-                    @Override
-                    public boolean hasPermission(final String value, final ApplicationUser user)
+                @Override
+                public boolean hasPermission(final long id, final ApplicationUser user)
+                {
+                    Version version = versionManager.getVersion(id);
+                    return version != null && permissionManager.hasPermission(Permissions.BROWSE,
+                            version.getProjectObject(), user);
+                }
+            },
+            new PermissionCheck.LongValue<ApplicationUser>()
+            {
+                @Override
+                public String getParameterName()
+                {
+                    return COMPONENT_ID;
+                }
+
+                @Override
+                public boolean hasPermission(final long id, final ApplicationUser user)
+                {
+                    ProjectComponent component;
+                    try
                     {
-                        // TODO determine what permissions are needed to view a user's profile
-                        return true;
+                        component = projectComponentManager.find(id);
                     }
-                },
-                // post-functions are not explicitly protected, the context user will have project admin privileges
-                new AlwaysAllowedPermissionCheck(POSTFUNCTION_ID),
-                new AlwaysAllowedPermissionCheck(POSTFUNCTION_CONFIG)
+                    catch (EntityNotFoundException e)
+                    {
+                        return false;
+                    }
+                    return component != null && projectService.getProjectById(user, component.getProjectId()).isValid();
+                }
+            },
+            // users must be logged in to see another user's profile
+            new PermissionCheck.MustBeLoggedIn<ApplicationUser>(PROFILE_NAME),
+            new PermissionCheck.MustBeLoggedIn<ApplicationUser>(PROFILE_KEY),
+            // post-functions are not explicitly protected, the context user will have project admin privileges
+            new PermissionCheck.AlwaysAllowed<ApplicationUser>(POSTFUNCTION_ID),
+            new PermissionCheck.AlwaysAllowed<ApplicationUser>(POSTFUNCTION_CONFIG)
         );
     }
 

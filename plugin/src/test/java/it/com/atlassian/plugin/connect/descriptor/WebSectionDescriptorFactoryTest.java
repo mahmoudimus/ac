@@ -4,14 +4,17 @@ import java.io.IOException;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.test.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.conditions.AndCompositeCondition;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;
@@ -27,6 +30,7 @@ import it.com.atlassian.plugin.connect.TestAuthenticator;
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContainingSimpleName;
 import static org.hamcrest.CoreMatchers.is;
@@ -35,38 +39,42 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class WebSectionDescriptorFactoryTest
 {
-    public static final String PLUGIN_KEY = "my-awesome-plugin";
     public static final String PLUGIN_NAME = "My Plugin™";
     public static final String MODULE_NAME = "My Web Section";
     public static final String MODULE_NAME_KEY = "my.websection";
     public static final String MODULE_KEY = "my-web-section";
-    public static final String MODULE_COMPLETE_KEY = PLUGIN_KEY + ":" + MODULE_KEY;
     public static final String LOCATION = "com.atlassian.jira.plugin.headernav.left.context";
     public static final int WEIGHT = 50;
     
     private final ConnectWebSectionModuleDescriptorFactory descriptorFactory;
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
+    private final PluginAccessor pluginAccessor;
     
-    private Plugin plugin;
     private Plugin installedPlugin;
     private WebSectionModuleBean bean;
     private WebSectionModuleDescriptor descriptor;
 
-    public WebSectionDescriptorFactoryTest(ConnectWebSectionModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
+    private String pluginKey;
+    private ConnectAddonBean addonBean;
+
+    public WebSectionDescriptorFactoryTest(ConnectWebSectionModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
     {
         this.descriptorFactory = descriptorFactory;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
+        this.pluginAccessor = pluginAccessor;
     }
 
     @Before
     public void setup()
     {
-        this.plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
+        this.pluginKey = AddonUtil.randomPluginKey();
+        
+        addonBean = createAddonBean();
         this.bean = createBean();
 
-        this.descriptor = descriptorFactory.createModuleDescriptor(plugin, bean);
+        this.descriptor = descriptorFactory.createModuleDescriptor(addonBean,getConnectPlugin(), bean);
     }
 
     @After
@@ -76,7 +84,7 @@ public class WebSectionDescriptorFactoryTest
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(installedPlugin);
+                testPluginInstaller.uninstallAddon(installedPlugin);
                 installedPlugin = null;
             }
             catch (IOException e)
@@ -85,6 +93,8 @@ public class WebSectionDescriptorFactoryTest
             }
 
         }
+
+        addonBean = null;
     }
 
     private WebSectionModuleBean createBean()
@@ -102,17 +112,22 @@ public class WebSectionDescriptorFactoryTest
     {
         testAuthenticator.authenticateUser("admin");
 
-        ConnectAddonBean addonBean = newConnectAddonBean()
-                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(PLUGIN_KEY))
-                .withKey(PLUGIN_KEY)
+        ConnectAddonBean addonBean = createAddonBean();
+
+        installedPlugin = testPluginInstaller.installAddon(addonBean);
+
+        return (WebSectionModuleDescriptor) installedPlugin.getModuleDescriptor(MODULE_KEY);
+    }
+
+    protected ConnectAddonBean createAddonBean()
+    {
+        return newConnectAddonBean()
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(pluginKey))
+                .withKey(pluginKey)
                 .withName(PLUGIN_NAME)
                 .withAuthentication(newAuthenticationBean().withType(AuthenticationType.NONE).build())
                 .withModule("webSections",bean)
                 .build();
-
-        installedPlugin = testPluginInstaller.installPlugin(addonBean);
-
-        return (WebSectionModuleDescriptor) installedPlugin.getModuleDescriptor(MODULE_KEY);
     }
 
     @Test
@@ -124,7 +139,7 @@ public class WebSectionDescriptorFactoryTest
     @Test
     public void completeKeyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getCompleteKey(), is(MODULE_COMPLETE_KEY));
+        assertThat(descriptor.getCompleteKey(), is(ConnectPluginInfo.getPluginKey() + ":" + addonAndModuleKey(pluginKey,MODULE_KEY)));
     }
 
     @Test
@@ -159,5 +174,10 @@ public class WebSectionDescriptorFactoryTest
         //note, we need to use an actual installed plugin so conditions are loaded properly
         WebSectionModuleDescriptor liveDescriptor = getDescriptorFromInstalledPlugin();
         assertThat(liveDescriptor.getCondition(), isCompositeConditionContainingSimpleName(AndCompositeCondition.class, "UserLoggedInCondition"));
+    }
+
+    protected Plugin getConnectPlugin()
+    {
+        return pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
     }
 }

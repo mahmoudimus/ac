@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.jira.index.IndexDocumentConfiguration;
 import com.atlassian.jira.index.IndexDocumentConfigurationFactory;
@@ -8,13 +8,14 @@ import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescript
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectEntityPropertyModuleDescriptorFactory;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
@@ -32,11 +33,10 @@ import java.util.List;
 
 import static com.atlassian.jira.index.IndexDocumentConfiguration.ExtractConfiguration;
 import static com.atlassian.jira.index.IndexDocumentConfiguration.KeyConfiguration;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -60,16 +60,18 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     @AvailableInContainer private final IndexDocumentConfigurationFactory indexDocumentConfigurationFactory = new IndexDocumentConfigurationFactory();
 
     private EntityPropertyIndexDocumentModuleDescriptor moduleDescriptor;
-
+    private ConnectAddonBean addon;
+    
     @Before
     public void setUp()
     {
+        this.addon = newConnectAddonBean().withKey("com.atlassian.plugin.key").build();
         when(plugin.getKey()).thenReturn("com.atlassian.plugin.key");
         ConnectEntityPropertyModuleDescriptorFactory factory = new ConnectEntityPropertyModuleDescriptorFactory(autowireUtil);
         when(autowireUtil.createBean(eq(EntityPropertyIndexDocumentModuleDescriptorImpl.class)))
                 .thenReturn(new EntityPropertyIndexDocumentModuleDescriptorImpl(authContext, moduleFactory));
         EntityPropertyModuleBean bean = createBean();
-        this.moduleDescriptor = factory.createModuleDescriptor(plugin, bean);
+        this.moduleDescriptor = factory.createModuleDescriptor(addon, plugin, bean);
     }
 
     @Test
@@ -81,7 +83,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     @Test
     public void completeKeyIsCorrect()
     {
-        assertThat(moduleDescriptor.getCompleteKey(), startsWith("com.atlassian.plugin.key:attachment-indexing"));
+        assertThat(moduleDescriptor.getCompleteKey(), startsWith(addon.getKey() + ":" + addonAndModuleKey("com-atlassian-plugin-key","attachment-indexing")));
     }
 
     @Test

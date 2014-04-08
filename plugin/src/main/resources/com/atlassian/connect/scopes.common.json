@@ -16,37 +16,43 @@
       "key": "entities",
       "name": "applinks",
       "basePaths": ["/entities($|/.*)"],
-      "versions": ["1.0", "2.0", "latest"]
+      "versions": ["1.0", "2.0", "latest"],
+      "public": false
     },
     {
       "key": "entitylink",
       "name": "applinks",
       "basePaths": ["/entitylink($|/.*)"],
-      "versions": ["1.0", "2.0", "latest"]
+      "versions": ["1.0", "2.0", "latest"],
+      "public": false
     },
     {
       "key": "manifest",
       "name": "applinks",
       "basePaths": ["/manifest($|/.*)"],
-      "versions": ["1.0", "2.0", "latest"]
+      "versions": ["1.0", "2.0", "latest"],
+      "public": false
     },
     {
       "key": "type_entity",
       "name": "applinks",
       "basePaths": ["/type/entity($|/.*)"],
-      "versions": ["1.0", "2.0", "latest"]
+      "versions": ["1.0", "2.0", "latest"],
+      "public": false
     },
     {
       "key": "entitylink_primary",
       "name": "applinks",
       "basePaths": ["/entitylink/primary($|/.*)"],
-      "versions": ["1.0", "2.0", "latest"]
+      "versions": ["1.0", "2.0", "latest"],
+      "public": false
     },
     {
       "key": "license",
       "name": "atlassian-connect",
       "basePaths": ["/license($|/.*)"],
-      "versions": ["1", "latest"]
+      "versions": ["1", "latest"],
+      "public": true
     }
   ]
 }

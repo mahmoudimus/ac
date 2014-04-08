@@ -18,7 +18,7 @@ the different integration modules that it provides.
     {
         "name": "Hello World",
         "description": "Atlassian Connect add-on",
-        "key": "com.example.myaddon_helloworld",
+        "key": "com.example.myaddon",
         "baseUrl": "http://localhost:8000",
         "vendor": {
             "name": "Example, Inc.",
@@ -32,6 +32,7 @@ the different integration modules that it provides.
             "generalPages": [
                 {
                     "url": "/helloworld.html",
+                    "key": "hello-world",
                     "name": {
                         "value": "Greeting"
                     }
@@ -125,10 +126,10 @@ You can start JIRA or Confluence with Atlassian Connect as follows:
 
 
 #### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.2-OD-08-034 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0-rc2,com.atlassian.jwt:jwt-plugin:1.0-m8,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.2-OD-10-004-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.4-OD-5 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0-rc2,com.atlassian.jwt:jwt-plugin:1.0-m8,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.4-OD-20-006 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Note:
 We recommend you start the host application using the SDK command shown here. Atlassian Connect is
@@ -206,7 +207,7 @@ Browser->User:Requested page\nrendered
 For most Atlassian Connect add-ons, the next step for the developer would be to add code that relies
 on the Atlassian application REST APIs. This requires implementing the
 [authentication](../concepts/authentication.html) used between Atlassian applications and Atlassian
-Connect add-ons.
+Connect add-ons. For an overview of authentication and authorisation you may wish to read about [security](../concepts/security.html).
 
 You can do this using any language or framework that you wish, and many languages already provide
 libraries to help you with implement JWT authentication.

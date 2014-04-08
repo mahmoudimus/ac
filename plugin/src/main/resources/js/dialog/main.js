@@ -1,9 +1,14 @@
-_AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtilities) {
+_AP.define("dialog", ["_dollar", "host/content", "_ui-params"], function($, hostContentUtilities, UiParams) {
 
     // Should be ok to reference the nexus at this level since there should only be one dialog open at a time
   var $nexus;
 
   var $dialog; // active dialog element
+
+
+  var uiOptions = {
+    dlg: 1
+  };
 
   // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
   // Will be removed - plugins should pass key of the <dialog-page>, NOT the url.
@@ -14,6 +19,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
       dataType: "html",
       data: {
         "dialog": true,
+        "ui-params": UiParams.encode(uiOptions),
         "plugin-key": pluginKey,
         "remote-url": options.url,
         "width": "100%",
@@ -26,7 +32,8 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
   function createDialog(pluginKey, productContextJson, options) {
 
     if ($nexus) throw new Error("Only one dialog can be open at once");
-    var promise = options.url ? getIframeHtmlForUrl(pluginKey, options) : hostContentUtilities.getIframeHtmlForKey(pluginKey, productContextJson, options);
+
+    var promise = options.url ? getIframeHtmlForUrl(pluginKey, options) : hostContentUtilities.getIframeHtmlForKey(pluginKey, productContextJson, options, uiOptions);
 
     promise
       .done(function(data) {
@@ -62,6 +69,7 @@ _AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtiliti
     var $el = AJS.$("<section></section>")
       .addClass("aui-layer aui-layer-hidden aui-layer-modal")
       .addClass("aui-dialog2 aui-dialog2-" + (size || "medium"))
+      .addClass("ap-aui-dialog2")
       .attr("role", "dialog")
       .attr("data-aui-blanketed", "true")
       .attr("data-aui-focus-selector", ".aui-dialog2-content :input:visible:enabled");

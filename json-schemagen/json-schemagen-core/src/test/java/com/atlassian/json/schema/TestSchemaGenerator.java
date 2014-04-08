@@ -29,6 +29,7 @@ public class TestSchemaGenerator
                 .withImplementation(ComplexSmell.class)
                 .build()
                 , getDocs()
+                ,""
         );
 
         Gson gson = new GsonBuilder()
@@ -48,6 +49,7 @@ public class TestSchemaGenerator
                 true
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
+                ,""
         );
 
         Gson gson = new GsonBuilder()
@@ -67,6 +69,7 @@ public class TestSchemaGenerator
                 true
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
+                ,""
         );
 
         Gson gson = new GsonBuilder()
@@ -88,6 +91,7 @@ public class TestSchemaGenerator
                 true
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
+                ,""
         );
 
         Gson gson = new GsonBuilder()
@@ -107,6 +111,7 @@ public class TestSchemaGenerator
                 true
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
+                ,""
         );
 
         Gson gson = new GsonBuilder()
@@ -126,6 +131,7 @@ public class TestSchemaGenerator
                 true
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
+                ,""
         );
 
         Gson gson = new GsonBuilder()
@@ -145,6 +151,7 @@ public class TestSchemaGenerator
                 true
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
+                ,""
         );
 
         Gson gson = new GsonBuilder()

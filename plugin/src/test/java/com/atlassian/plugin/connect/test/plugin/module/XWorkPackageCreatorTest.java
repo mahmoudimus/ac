@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.module;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.module.XWorkPackageCreator;
@@ -23,6 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean.newXWorkActionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.XWorkInterceptorBean.newXWorkInterceptorBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.XWorkResultBean.newXWorkResultBean;
@@ -45,10 +47,14 @@ public class XWorkPackageCreatorTest
 
     private PackageConfig packageConfig;
     private ActionConfig actionConfig;
+    
+    private ConnectAddonBean addon;
 
     @Before
     public void setup()
     {
+        this.addon = newConnectAddonBean().withKey("test-plugin").build();
+        
         when(plugin.getKey()).thenReturn("test-plugin");
         when(configuration.getPackageConfig("default")).thenReturn(defaultParentPackage);
 
@@ -79,7 +85,7 @@ public class XWorkPackageCreatorTest
                         .build())
                 .build();
 
-        packageCreator = new XWorkPackageCreator(plugin, actionModuleBean);
+        packageCreator = new XWorkPackageCreator(addon, plugin, actionModuleBean);
 
         packageCreator.createAndRegister(configuration);
 

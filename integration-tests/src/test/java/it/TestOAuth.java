@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import static com.atlassian.plugin.connect.test.RemotePluginUtils.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 
 public class TestOAuth extends AbstractBrowserlessTest
@@ -39,6 +40,7 @@ public class TestOAuth extends AbstractBrowserlessTest
         {
             runner = new ConnectRunner(baseUrl, "my-plugin")
                     .addOAuth()
+                    .addModule("webItems",randomWebItemBean())
                     .start();
             assertCanRequestOAuthToken(runner.getSignedRequestHandler());
         }

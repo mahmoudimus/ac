@@ -5,14 +5,17 @@ import java.io.IOException;
 import com.atlassian.jira.plugin.AbstractTabPanelModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.test.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 
 import org.junit.After;
@@ -29,7 +32,6 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractTabPanelDescriptorFactoryTest
 {
-    public static final String PLUGIN_KEY = "tab-panel-plugin";
     public static final String PLUGIN_NAME = "Tab Panel Plugin";
 
     public static final String MODULE_KEY = "my-tab-panel";
@@ -41,28 +43,31 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
+    private final PluginAccessor pluginAccessor;
 
-    private Plugin plugin;
     private TabPanelDescriptorHints descriptorHints;
     private ConnectTabPanelModuleBean bean;
     private ModuleDescriptor descriptor;
     private Plugin installedPlugin;
+    
+    private String pluginKey;
 
-    public AbstractTabPanelDescriptorFactoryTest(ConnectTabPanelModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
+    public AbstractTabPanelDescriptorFactoryTest(ConnectTabPanelModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
     {
         this.descriptorFactory = descriptorFactory;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
+        this.pluginAccessor = pluginAccessor;
     }
 
     @Before
     public void setup()
     {
-        this.plugin = new PluginForTests(PLUGIN_KEY, PLUGIN_NAME);
+        this.pluginKey = AddonUtil.randomPluginKey();
         this.descriptorHints = getDescriptorHints();
         this.bean = createBean();
 
-        this.descriptor = descriptorFactory.createModuleDescriptor(plugin, bean, descriptorHints);
+        this.descriptor = descriptorFactory.createModuleDescriptor(createAddonBean(),getConnectPlugin(), bean, descriptorHints);
     }
     
     @After
@@ -72,7 +77,7 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(installedPlugin);
+                testPluginInstaller.uninstallAddon(installedPlugin);
                 installedPlugin = null;
             }
             catch (IOException e)
@@ -104,18 +109,23 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
     {
         testAuthenticator.authenticateUser("admin");
 
-        ConnectAddonBean addonBean = newConnectAddonBean()
-                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(PLUGIN_KEY))
-                .withKey(PLUGIN_KEY)
+        ConnectAddonBean addonBean = createAddonBean();
+        
+        installedPlugin = testPluginInstaller.installAddon(addonBean);
+        
+        return installedPlugin.getModuleDescriptor(MODULE_KEY);
+    }
+
+    protected ConnectAddonBean createAddonBean()
+    {
+        return newConnectAddonBean()
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(pluginKey))
+                .withKey(pluginKey)
                 .withName(PLUGIN_NAME)
                 .withAuthentication(newAuthenticationBean().withType(AuthenticationType.NONE).build())
                 .withModule(ConnectTabPanelModuleProvider.DESCRIPTOR_TO_FIELD.get(getDescriptorHints().getDescriptorClass()),
                         bean
-                        ).build();
-        
-        installedPlugin = testPluginInstaller.installPlugin(addonBean);
-        
-        return installedPlugin.getModuleDescriptor(MODULE_KEY);
+                ).build();
     }
 
     //tests the children need to run due to knowledge of which jira descriptor they inherit from
@@ -142,5 +152,10 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
     {
         //assertEquals(MODULE_URL,((TabPanelModuleDescriptor)descriptor)..get());
         //verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementUrl(ADDON_URL)));
+    }
+
+    protected Plugin getConnectPlugin()
+    {
+        return pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
     }
 }

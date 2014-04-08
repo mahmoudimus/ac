@@ -26,7 +26,7 @@ public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
     @Test
     public void testChangedKey() throws Exception
     {
-        product.visit(LoginPage.class).login("admin", "admin", HomePage.class);
+        loginAsAdmin();
         AtlassianConnectAddOnRunner pluginFirst = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "pluginFirst")
                 .add(GeneralPageModule.key("changedPage")
                                       .name("Changed Page")

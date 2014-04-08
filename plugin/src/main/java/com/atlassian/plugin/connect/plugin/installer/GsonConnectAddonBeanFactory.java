@@ -63,7 +63,11 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
         }
 
         DescriptorValidationResult result = jsonDescriptorValidator.validate(jsonDescriptor, schema);
-        if (!result.isSuccess())
+        if (!result.isWellformed())
+        {
+            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getMessageReport(), "connect.invalid.descriptor.malformed.json");
+        }
+        if (!result.isValid())
         {
             String exceptionMessage = "Invalid connect descriptor: " + result.getMessageReport();
             log.error(exceptionMessage);
@@ -86,6 +90,16 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     @Override
     public ConnectAddonBean fromJsonSkipValidation(String jsonDescriptor, Map<String, String> i18nCollector)
     {
-        return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector);
+        try
+        {
+            return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector);
+        }
+        catch (Exception e)
+        {
+            String exceptionMessage = "Invalid connect descriptor: " + e.getMessage();
+            log.error(exceptionMessage);
+            String i18nMessage = i18nResolver.getText("connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
+            throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
+        }    
     }
 }

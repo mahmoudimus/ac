@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.plugin.module.websection.ProductSpecificWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -19,7 +20,7 @@ import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 @Component
 public class DefaultConnectWebSectionModuleDescriptorFactory implements ConnectWebSectionModuleDescriptorFactory
 {
-    private static final Logger log = LoggerFactory.getLogger(DefaultConnectWebSectionModuleDescriptorFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(ConnectWebSectionModuleDescriptorFactory.class);
 
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     private final ProductSpecificWebSectionModuleDescriptorFactory webSectionModuleDescriptorFactory;
@@ -32,33 +33,32 @@ public class DefaultConnectWebSectionModuleDescriptorFactory implements ConnectW
     }
 
     @Override
-    public WebSectionModuleDescriptor createModuleDescriptor(Plugin plugin, WebSectionModuleBean bean)
+    public WebSectionModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebSectionModuleBean bean)
     {
         Element webSectionElement = new DOMElement("web-section");
 
-        String webSectionKey = bean.getKey();
+        String webSectionKey = bean.getKey(addon);
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
 
         webSectionElement.addAttribute("key", webSectionKey);
         webSectionElement.addAttribute("location", bean.getLocation());
         webSectionElement.addAttribute("weight", Integer.toString(bean.getWeight()));
-        webSectionElement.addAttribute("name",bean.getName().getValue());
         webSectionElement.addAttribute("i18n-name-key", i18nKeyOrName);
 
         webSectionElement.addElement("label")
-                .addAttribute("key", bean.getName().getI18n())
-                .setText(bean.getName().getValue());
+                         .addAttribute("key", bean.getName().getI18n())
+                         .setText(bean.getName().getValue());
 
         if (null != bean.getTooltip())
         {
             webSectionElement.addElement("tooltip")
-                    .addAttribute("key", bean.getTooltip().getI18n())
-                    .setText(bean.getTooltip().getValue());
+                             .addAttribute("key", bean.getTooltip().getI18n())
+                             .setText(bean.getTooltip().getValue());
         }
 
         if (!bean.getConditions().isEmpty())
         {
-            webSectionElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions()));
+            webSectionElement.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
         }
 
         if (log.isDebugEnabled())
@@ -66,7 +66,7 @@ public class DefaultConnectWebSectionModuleDescriptorFactory implements ConnectW
             log.debug("Created web section: " + printNode(webSectionElement));
         }
 
-        return createWebSectionDescriptor(plugin, webSectionElement);
+        return createWebSectionDescriptor(theConnectPlugin, webSectionElement);
     }
 
     private WebSectionModuleDescriptor createWebSectionDescriptor(Plugin plugin, Element webSectionElement)

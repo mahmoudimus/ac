@@ -1,6 +1,7 @@
 package it;
 
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.WebhookModule;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
@@ -27,14 +28,16 @@ public final class TestWebHooks extends AbstractBrowserlessTest
     @Test
     public void testPluginEnabledWebHookFired() throws Exception
     {
-        WebHookTestServlet.runInRunner(baseUrl, WEB_HOOK_PLUGIN_ENABLED, new WebHookTester()
+        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        
+        WebHookTestServlet.runInRunner(baseUrl, WEB_HOOK_PLUGIN_ENABLED, pluginKey, new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
-                Assert.assertEquals(WEB_HOOK_PLUGIN_ENABLED, body.find("key"));
+                Assert.assertEquals(pluginKey, body.find("key"));
             }
         });
     }
@@ -76,7 +79,7 @@ public final class TestWebHooks extends AbstractBrowserlessTest
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
         final String listenerPath = "/webhook";
-        final AtlassianConnectAddOnRunner plugin1 = new AtlassianConnectAddOnRunner(baseUrl, PluginsWebHookProvider.REMOTE_PLUGIN_DISABLED)
+        final AtlassianConnectAddOnRunner plugin1 = new AtlassianConnectAddOnRunner(baseUrl)
                 .add(WebhookModule.key(PluginsWebHookProvider.REMOTE_PLUGIN_DISABLED + listenerPath.hashCode())
                         .path(listenerPath)
                         .event(PluginsWebHookProvider.REMOTE_PLUGIN_DISABLED)
@@ -89,7 +92,7 @@ public final class TestWebHooks extends AbstractBrowserlessTest
             plugin1.uninstall();
 
             WebHookBody body = servlet.waitForHook();
-            assertWebHookBody(body, PluginsWebHookProvider.REMOTE_PLUGIN_DISABLED);
+            assertWebHookBody(body, PluginsWebHookProvider.REMOTE_PLUGIN_DISABLED, plugin1.getPluginKey());
 
             plugin2.uninstall();
             assertNull(servlet.waitForHook());
@@ -106,12 +109,12 @@ public final class TestWebHooks extends AbstractBrowserlessTest
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
 
-        final AtlassianConnectAddOnRunner plugin1 = new AtlassianConnectAddOnRunner(baseUrl, webHookId)
+        final AtlassianConnectAddOnRunner plugin1 = new AtlassianConnectAddOnRunner(baseUrl)
                 .add(WebhookModule.key(webHookId + path.hashCode())
                                   .path(path)
                                   .event(webHookId)
                                   .resource(servlet));
-        final AtlassianConnectAddOnRunner plugin2 = new AtlassianConnectAddOnRunner(baseUrl, "plugin2");
+        final AtlassianConnectAddOnRunner plugin2 = new AtlassianConnectAddOnRunner(baseUrl);
         try
         {
             plugin1.start();
@@ -119,7 +122,7 @@ public final class TestWebHooks extends AbstractBrowserlessTest
 
             WebHookBody body = servlet.waitForHook();
             assertNotNull(body);
-            Assert.assertEquals(webHookId, body.find("key"));
+            Assert.assertEquals(plugin1.getPluginKey(), body.find("key"));
             assertNull(servlet.waitForHook()); // we only can listen for our own plugin, not just any plugin
         }
         finally
@@ -131,26 +134,30 @@ public final class TestWebHooks extends AbstractBrowserlessTest
 
     private void testRemotePluginWebHookFired(final String webHookId) throws Exception
     {
-        WebHookTestServlet.runInRunner(baseUrl, webHookId, new WebHookTester()
+        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        
+        WebHookTestServlet.runInRunner(baseUrl, webHookId, pluginKey, new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
                 final WebHookBody body = waiter.waitForHook();
-                assertWebHookBody(body, webHookId);
+                assertWebHookBody(body, webHookId, pluginKey);
             }
         });
     }
 
     private void testRemotePluginSyncCallFired(final String eventId) throws Exception
     {
-        WebHookTestServlet.runSyncInRunner(baseUrl, eventId, new WebHookTester()
+        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        
+        WebHookTestServlet.runSyncInRunner(baseUrl, eventId, pluginKey, new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
                 final WebHookBody body = waiter.waitForHook();
-                assertWebHookBody(body, eventId);
+                assertWebHookBody(body, eventId, pluginKey);
                 assertUserInUrlParams(body);
                 assertUserInBody(body);
             }
@@ -200,10 +207,10 @@ public final class TestWebHooks extends AbstractBrowserlessTest
 
     
 
-    private void assertWebHookBody(final WebHookBody body, final String webHookId) throws Exception
+    private void assertWebHookBody(final WebHookBody body, final String webHookId, final String pluginKey) throws Exception
     {
         assertNotNull(body);
-        Assert.assertEquals(webHookId, body.find("key"));
+        Assert.assertEquals(pluginKey, body.find("key"));
         assertNotNull(body.find("clientKey"));
         assertNotNull(body.find("publicKey"));
         assertNotNull(body.find("serverVersion"));

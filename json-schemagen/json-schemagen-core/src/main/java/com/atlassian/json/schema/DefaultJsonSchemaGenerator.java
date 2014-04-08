@@ -17,12 +17,12 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
 
     public DefaultJsonSchemaGenerator()
     {
-        this(false, new InterfaceList(), new JsonSchemaDocs());
+        this(false, new InterfaceList(), new JsonSchemaDocs(), null);
     }
 
-    public DefaultJsonSchemaGenerator(boolean lowercaseEnums, InterfaceList interfaceList, JsonSchemaDocs schemaDocs)
+    public DefaultJsonSchemaGenerator(boolean lowercaseEnums, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {
-        super(lowercaseEnums,interfaceList, schemaDocs);
+        super(lowercaseEnums,interfaceList, schemaDocs, ignoreFilter);
     }
 
     @Override

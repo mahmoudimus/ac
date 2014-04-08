@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.module.webitem;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
@@ -68,7 +68,8 @@ public abstract class RemoteWebItemModuleDescriptorTestBase
     }
 
     @Mock ModuleFactory moduleFactory;
-    @Mock DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    @Mock
+    LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     @Mock ConditionProcessor conditionProcessor;
     @Mock BundleContext bundleContext;
     @Mock UserManager userManager;

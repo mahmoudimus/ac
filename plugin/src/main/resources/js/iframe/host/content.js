@@ -1,7 +1,7 @@
 /**
  * Utility methods for rendering connect addons in AUI components
  */
-_AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
+_AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, UiParams) {
     "use strict";
 
     function getContentUrl(pluginKey, capability){
@@ -21,15 +21,15 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         var pluginKey = getWebItemPluginKey(target),
             moduleKey = getWebItemModuleKey(target),
             type = target.hasClass('ap-inline-dialog') ? 'inlineDialog' : 'dialog';
-            return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
+            return window._AP[type + 'Options'][moduleKey] || {};
     }
 
-    function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
+    function getIframeHtmlForKey(pluginKey, productContextJson, capability, params) {
         var contentUrl = this.getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
-                "dialog": true,
+                "ui-params": UiParams.encode(params),
                 "plugin-key": pluginKey,
                 "product-context": productContextJson,
                 "key": capability.key,
@@ -66,8 +66,7 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         getContentUrl: getContentUrl,
         getIframeHtmlForKey: getIframeHtmlForKey,
         eventHandler: eventHandler,
-        getOptionsForWebItem: getOptionsForWebItem,
-
+        getOptionsForWebItem: getOptionsForWebItem
     };
 
 

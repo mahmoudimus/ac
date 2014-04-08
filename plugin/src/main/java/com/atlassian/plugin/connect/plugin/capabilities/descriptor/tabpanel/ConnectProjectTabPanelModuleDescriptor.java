@@ -9,6 +9,9 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameProjectTabPanel;
 import com.atlassian.plugin.module.ModuleFactory;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
+
 /**
  * ModuleDescriptor for Connect project of a ProjectTabPanel
  */
@@ -29,7 +32,7 @@ public class ConnectProjectTabPanelModuleDescriptor extends ProjectTabPanelModul
     @Override
     public ProjectTabPanel getModule()
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(getPluginKey(), getKey());
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameProjectTabPanel(renderStrategy, moduleContextFilter);
     }
 

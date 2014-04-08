@@ -63,6 +63,10 @@ public class ConfluenceRestScopesTest extends AbstractScopesTest
                 {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/prototype/1/label/44/watches", true},
                 {ScopeName.DELETE, HttpMethod.DELETE, "/confluence/rest/prototype/1/label/44/watches", true},
                 {ScopeName.WRITE, HttpMethod.DELETE, "/confluence/rest/prototype/1/label/44/watches", false},
+
+                {null, HttpMethod.GET, "/confluence/rest/create-dialog/1.0/spaces", false},
+                {ScopeName.READ, HttpMethod.GET, "/confluence/rest/create-dialog/1.0/spaces", true},
+                {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/create-dialog/1.0/spaces/skip-space-welcome-dialog", false},
         });
     }
 

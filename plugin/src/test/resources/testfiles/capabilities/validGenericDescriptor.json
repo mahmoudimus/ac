@@ -18,11 +18,13 @@
     "modules": {
         "webItems": [
             {
+                "key": "web-item-1",
                 "name": {"value": "a web item", "i18n":"name.key"},
                 "location": "system.top.navigation.bar",
                 "url": "/webitem1"
             },
             {
+                "key": "web-item-2",
                 "name": {"value": "another web item", "i18n":"another.name.key"},
                 "location": "system.top.navigation.bar",
                 "url": "/webitem2"

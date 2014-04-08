@@ -5,7 +5,7 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 
 /**
- *
+ * @since 1.0
  */
 public interface ConfluenceModuleContextParameters extends ModuleContextParameters
 {

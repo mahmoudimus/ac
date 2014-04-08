@@ -45,7 +45,7 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
         StaticContentMacroModuleBean bean = createBeanBuilder()
                 .build();
 
-        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, bean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(addon, plugin, bean);
     }
 
     @Override

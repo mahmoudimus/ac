@@ -8,9 +8,11 @@ import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
@@ -37,32 +39,52 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         this.urlConverter = urlConverter;
     }
 
-    protected abstract ModuleFactory createModuleFactory(Plugin plugin, DOMElement element, B bean);
+    protected abstract ModuleFactory createModuleFactory(ConnectAddonBean addon, DOMElement element, B bean);
 
     @Override
-    public XhtmlMacroModuleDescriptor createModuleDescriptor(Plugin plugin, B bean)
+    public XhtmlMacroModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, B bean)
     {
-        DOMElement element = createDOMElement(plugin, bean);
-        ModuleFactory moduleFactory = createModuleFactory(plugin, element, bean);
-        MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(plugin, bean);
+        DOMElement element = createDOMElement(addon, bean);
+        ModuleFactory moduleFactory = createModuleFactory(addon, element, bean);
+        MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(addon, bean);
 
         FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
-        descriptor.init(plugin, element);
+        descriptor.init(theConnectPlugin, element);
 
         return descriptor;
     }
 
-    protected DOMElement createDOMElement(Plugin plugin, B bean)
+    protected DOMElement createDOMElement(ConnectAddonBean addon, B bean)
     {
         DOMElement element = new DOMElement("macro");
+        // For macros, the name has to be a key and can't contain spaces etc.
+        String macroName = bean.getKey(addon);
         // If 'featured' is true, the web item needs the macro name as it's key...
         // So chose a different prefix for the macro itself
-        element.setAttribute("key", "macro-" + bean.getKey());
-        // For macros, the name has to be a key and can't contain spaces etc.
-        element.setAttribute("name", bean.getKey());
-        element.setAttribute("i18n-name-key", MacroI18nBuilder.getMacroI18nKey(plugin.getKey(), bean.getKey()));
+        element.setAttribute("key", "macro-" + macroName);
+        element.setAttribute("name", macroName);
+        element.setAttribute("i18n-name-key", MacroI18nBuilder.getMacroI18nKey(addon.getKey(), macroName));
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
+
+        if(bean.hasRenderModes())
+        {
+            for(MacroRenderModeBean renderMode : bean.getRenderModes())
+            {
+                if(renderMode.getRenderModeType() == MacroRenderModeType.mobile)
+                {
+                    element.addElement("device-type").addText("mobile");
+                } else {
+                    // help vendors find errors in their descriptors
+                    throw new PluginInstallException("Unsupported render type '"
+                            + renderMode.getRenderModeType()
+                            + "' - "
+                            + addon.getName()
+                            + "' (" + addon.getKey() + ")");
+
+                }
+            }
+        }
 
         if (bean.hasDocumentation())
         {
@@ -70,7 +92,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         }
         if (bean.hasIcon())
         {
-            element.setAttribute("icon", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
+            element.setAttribute("icon", getAbsoluteUrl(addon, bean.getIcon().getUrl()));
         }
 
         handleParameters(bean, element);
@@ -128,15 +150,15 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         }
     }
 
-    private MacroMetadataParser createMacroMetaDataParser(Plugin plugin, B bean)
+    private MacroMetadataParser createMacroMetaDataParser(ConnectAddonBean addon, B bean)
     {
-        ConnectDocumentationBeanFactory docBeanFactory = new ConnectDocumentationBeanFactory(makeAbsolute(plugin, bean.getDocumentation()));
+        ConnectDocumentationBeanFactory docBeanFactory = new ConnectDocumentationBeanFactory(makeAbsolute(addon, bean.getDocumentation()));
         return new MacroMetadataParser(docBeanFactory);
     }
 
-    protected ImagePlaceholderMacro decorateWithImagePlaceHolder(Plugin plugin, Macro macro, ImagePlaceholderBean bean)
+    protected ImagePlaceholderMacro decorateWithImagePlaceHolder(ConnectAddonBean addon, Macro macro, ImagePlaceholderBean bean)
     {
-        String absoluteUrl = getAbsoluteUrl(plugin, bean.getUrl());
+        String absoluteUrl = getAbsoluteUrl(addon, bean.getUrl());
         Dimensions dimensions = null;
         if (null != bean.getHeight() && null != bean.getWidth())
         {
@@ -145,28 +167,28 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         return new ImagePlaceholderMacro(macro, Uri.parse(absoluteUrl), dimensions, bean.applyChrome());
     }
 
-    private LinkBean makeAbsolute(Plugin plugin, LinkBean documentation)
+    private LinkBean makeAbsolute(ConnectAddonBean addon, LinkBean documentation)
     {
         if (null != documentation)
         {
-            String absoluteUrl = getAbsoluteUrl(plugin, documentation.getUrl());
+            String absoluteUrl = getAbsoluteUrl(addon, documentation.getUrl());
             return newLinkBean(documentation).withUrl(absoluteUrl).build();
         }
         return null;
     }
 
-    private String getAbsoluteUrl(Plugin plugin, String url)
+    private String getAbsoluteUrl(ConnectAddonBean addon, String url)
     {
         try
         {
-            return urlConverter.getAbsoluteUrl(plugin.getKey(), url);
+            return urlConverter.getAbsoluteUrl(addon.getKey(), url);
         }
         catch (URISyntaxException e)
         {
             // help vendors find errors in their descriptors
             throw new PluginInstallException("Malformed url declared by '"
-                    + plugin.getName()
-                    + "' (" + plugin.getKey() + "): "
+                    + addon.getName()
+                    + "' (" + addon.getKey() + "): "
                     + url, e);
         }
     }

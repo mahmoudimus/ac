@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
-import com.atlassian.plugin.connect.modules.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider;
 
 import com.google.common.base.Objects;
@@ -40,24 +39,24 @@ public class GeneralPageModuleProviderTest extends AbstractPageModuleProviderTes
     }
 
     // handling explicitly as only one test on it
-    private ArgumentMatcher<IFrameServletBean> hasGeneralParamSet()
-    {
-        return new ArgumentMatcher<IFrameServletBean>()
-        {
-            @Override
-            public boolean matches(Object item)
-            {
-                assertThat(item, is(instanceOf(IFrameServletBean.class)));
-                IFrameServletBean iFrameServletBean = (IFrameServletBean) item;
-                return Objects.equal(iFrameServletBean.getiFrameParams().getAsMap().get("general"), "1");
-            }
-
-            @Override
-            public void describeTo(Description description)
-            {
-                description.appendText("IFrameServletBean with iframe param param general = 1");
-            }
-        };
-    }
+//    private ArgumentMatcher<IFrameServletBean> hasGeneralParamSet()
+//    {
+//        return new ArgumentMatcher<IFrameServletBean>()
+//        {
+//            @Override
+//            public boolean matches(Object item)
+//            {
+//                assertThat(item, is(instanceOf(IFrameServletBean.class)));
+//                IFrameServletBean iFrameServletBean = (IFrameServletBean) item;
+//                return Objects.equal(iFrameServletBean.getiFrameParams().getAsMap().get("general"), "1");
+//            }
+//
+//            @Override
+//            public void describeTo(Description description)
+//            {
+//                description.appendText("IFrameServletBean with iframe param param general = 1");
+//            }
+//        };
+//    }
 
 }

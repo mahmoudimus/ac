@@ -7,8 +7,13 @@ import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
@@ -546,5 +551,46 @@ public class ModuleList extends BaseModuleBean
                 .append(webPanels)
                 .append(webSections)
                 .build();
+    }
+    
+    public boolean isEmpty()
+    {
+        for (Field field : getClass().getDeclaredFields())
+        {
+            if (field.isAnnotationPresent(ConnectModule.class))
+            {
+                try
+                {
+                    ConnectModule anno = field.getAnnotation(ConnectModule.class);
+                    field.setAccessible(true);
+
+                    Type fieldType = field.getGenericType();
+
+                    List<? extends ModuleBean> beanList;
+
+                    if (isParameterizedListWithType(fieldType, ModuleBean.class))
+                    {
+                        beanList = (List<? extends ModuleBean>) field.get(this);
+                    }
+                    else
+                    {
+                        ModuleBean moduleBean = (ModuleBean) field.get(this);
+                        beanList = moduleBean == null ? ImmutableList.<ModuleBean>of() : newArrayList(moduleBean);
+                    }
+                    
+                    if(!beanList.isEmpty())
+                    {
+                        return false;
+                    }
+                    
+                }
+                catch (IllegalAccessException e)
+                {
+                    //ignore. this should never happen
+                }
+            }
+        }
+        
+        return true;
     }
 }

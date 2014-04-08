@@ -1,60 +1,65 @@
 # Upgrading and Versioning your Add-on
 
-As explained in [Private Listings](../guides/private-listings.html), you must list your add-on on the [Atlassian
-Marketplace](https://marketplace.atlassian.com) (either publicly or privately) in order to install it on a production
-Atlassian OnDemand instance. You may list __private__ add-ons without triggering any kind of approval process from the
-Marketplace, but any __public__ add-on must go through an [initial approval](../guides/selling-on-marketplace.html) by
-the Atlassian Marketplace team.
+You can upgrade your add-on any time once it's listed in the [Marketplace](https://marketplace.atlassian.com/) as either
+an [approved public add-on](./selling-on-marketplace.html) or a [private listing](./installing-in-ondemand.html).
 
-Once your add-on is listed and approved (if necessary), your add-on may be installed on OnDemand instances.
+Almost all changes you make to your add-on will be to code inside your add-on's web app. For example, tweaking the look
+of a web panel, adding a configuration option or catching a previously unhandled exception can all be done by writing
+and deploying new code to your servers. Users see these changes as soon as you update your web app. In many cases (e.g.
+catching an exception or adding a configuration option) there isn't an immediate reason why end users should be aware of
+the change. When you change your [descriptor file](../modules/), we automatically update your version and build number
+in the Marketplace.
 
-## Upgrading your add-on
+##Automatic add-on polling & versioning  
 
-At that point, your add-on can be changed independently at any time. Almost all changes you make to your add-on will be
-to code inside your add-on's web app. For example, tweaking the look of a web panel, adding a configuration option or
-catching a previously unhandled exception can all be done by writing and deploying new code to your servers. Users will
-see these changes as soon as you update your web app. In many cases (e.g. catching an exception or adding a
-configuration option) there is no immediate reason why end users should be aware that you made the change.
+We automatically detect updates to Atlassian Connect add-ons with a polling service. This way, you can easily release
+fixes and new features without having to manually create new version entries in the Marketplace. We want to ensure that
+customers get the latest version of your add-on with as little delay as possible – Connect add-ons should seem like web
+services, not versioned software.
 
-You may version these kinds of changes to your add-on in any way you want, including not at all. Some services version with
-dates, others with commit hashes, and others use named versions.
+We poll the add-on descriptor URL that you included when you submitted your listing. When we detect a change, we
+automatically update your add-on in the Atlassian Marketplace with a new version. The way we increment your version
+number depends on the changes made to your descriptor.
 
-Regardless of how you version and release your add-on, the Marketplace must keep up with the latest version of your
-[descriptor file](../modules/). Whenever you change your add-on descriptor file (`atlassian-connect.json`), that file
-must be updated on the Marketplace and installed on all client instances before that change will take effect.
+##Major, minor, and micro version update definitions  
 
-## Changing your add-on's descriptor file
+Updates are published to the Marketplace within a few minutes of detecting changes from your [descriptor file](../modules/). 
 
-In the near future, the Marketplace will periodically poll your add-on's descriptor, notice when it changes,
-automatically update the version, and automatically update it in all installations within 24 hours.  For now, however, you
-must manually upload a new version of your descriptor to the Marketplace when you have a change. This change will still
-get pushed to all clients within 24 hours. Not every client will be updated simultaneously, so your add-on may need to
-handle the old and new version of your descriptor simultaneously during the upgrade window.
+We automatically build a version identifier for your add-on. How we increment your version number depends on the changes
+detected in your descriptor file. For example:
 
-In most cases updating these clients should be automatic and fast. However, there are a few circumstances where
-updating will not be automatic:
+*  __Major version__ (`1.2.3` to `2.0.0`): [API version updates](../modules/#apiVersion) increment your major version. The
+major version matches the API version listed in your descriptor.
+* __Minor version__ (`1.2.3` to `1.3.0`): Increase or changes in scope, _and/or_ a transition from a free to paid model.
+Customers must manually approve updates for minor version updates.
+* __Micro version__ (`1.2.3` to `1.2.4`): Any descriptor changes not included above that do _not_ require manual approval.
 
-1. You change your add-on listing from private to public. In this case, your change will trigger a manual Marketplace
-approval, which usually takes 3-5 business days.
+## Changes that require manual customer approval  
 
-2. You change your add-on listing from free to paid. In this case, your change will also trigger a Marketplace approval,
-but in addition any existing clients will have to approve the change to start paying for your add-on. They must choose
-either to approve or to uninstall the add-on.
+Even though your add-on is automatically updated in the Marketplace, certain scenarios require customers to manually
+approve your add-on's update in the [UPM](https://confluence.atlassian.com/x/_AJTE). We automatically send emails to the
+product administrator so they can approve and update the add-on.
 
-3. You change your add-on to require additional [scopes](../scopes/scopes.html) (a "scope" is a group of permissions). In this
-case, the marketplace update will happen automatically, but your clients must be given the opportunity to approve the
-new scopes. They must choose either to approve or to uninstall the add-on. 
+These scenarios require manual customer approval:  
 
-In case two and three, until an admin in each installation accepts the new scopes or the new pricing the old descriptor
-will remain in effect. Your add-on will have to handle both old and new behavior. You have only one add-on web app but
-many installations; for a period of time some installations will be using the old descriptor and some the new
-descriptor.
+* Your listing changes from __free to paid__: Your change triggers a Marketplace approval. Existing customers need to
+approve the change to start paying for your add-on, otherwise they will need to uninstall it.
+* Your listing involves __additional [scopes](../scopes/scopes.html)__: Marketplace updates happen automatically (no
+approval necessary), but customers need to approve the changes to continue using your add-on.
 
-Fortunately, there is a simple trick that will enable you to gracefully handle this transition: version your URLs.
-Every request from the host product or the user's browser to your add-on hits a URL that you define in your add-on
-descriptor. Let's imagine the scenario in which your original descriptor requests read and write scopes, but not delete,
-and all of its URLs contain the string "v1". Later, you want to add a feature that deletes some data, and this will
-require the delete scope. When you update your descriptor to also request the delete scope you change "v1" to "v2" in all
-affected URLs. Now when your add-on receives a "v1" request you know that the users and host product do not allow
-deleting, and when your add-on receives a "v2" request then deleting is possible.
+
+## Viewing automatically added versions  
+
+You can view add-ons in the Marketplace the same way you manage other add-on versions:  
+
+1. Log in with your vendor credentials.
+2. Click __Manage add-ons__ from the header.
+3. Click your add-on's name from the list.
+4. Click __Versions__ in the horizontal navigation bar.
+
+You'll see updates from _Marketplace Hub [Atlassian]:_  
+
+<img src="../assets/images/hubVersions.png" width="90%" alt="Marketplace Hub example">  
+
+
 

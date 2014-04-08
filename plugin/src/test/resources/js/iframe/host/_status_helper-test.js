@@ -27,7 +27,17 @@
                 equal(dom.find('.ap-load-error').length, 1);
             });
 
-            test("showLoadingStatus shows the loading status", function() {
+            asyncTest("showLoadingStatus shows the loading status after specified delay", function() {
+                var dom = statusHelper.createStatusMessages();
+                statusHelper.showLoadingStatus(dom, 100);
+                ok(dom.find('.ap-loading').hasClass('hidden'));
+                setTimeout(function() {
+                    ok(!dom.find('.ap-loading').hasClass('hidden'));
+                    start();
+                }, 150);
+            });
+
+            test("showLoadingStatus shows the loading status immediately when required", function() {
                 var dom = statusHelper.createStatusMessages();
                 statusHelper.showLoadingStatus(dom);
                 ok(!dom.find('.ap-loading').hasClass('hidden'));

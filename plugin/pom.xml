@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.0-rc3-SNAPSHOT</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -24,7 +24,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>json-schemagen-core</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
@@ -38,11 +38,25 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
-            <artifactId>atlassian-spring-scanner</artifactId>
+            <artifactId>atlassian-spring-scanner-annotation</artifactId>
+            <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner-runtime</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
         <dependency>
             <groupId>com.atlassian.labs</groupId>
             <artifactId>fastdev-plugin</artifactId>
@@ -117,6 +131,11 @@
         <dependency>
             <groupId>com.atlassian.applinks</groupId>
             <artifactId>applinks-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.healthcheck</groupId>
+            <artifactId>atlassian-healthcheck</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -400,6 +419,13 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-plugin</artifactId>
+            <version>${ao.version}</version>
+            <scope>provided</scope>
+        </dependency>
         
     </dependencies>
 
@@ -411,8 +437,8 @@
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
-                    <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
+                    <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>com.atlassian.plugin</groupId>
@@ -450,6 +476,7 @@
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                        <use.test.http.client>true</use.test.http.client>
                     </systemPropertyVariables>
 
                     <products>
@@ -465,6 +492,9 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <use.test.http.client>true</use.test.http.client>
+                                <activeobjects.servicefactory.config.long.timeout>${ao.long.timeout}</activeobjects.servicefactory.config.long.timeout>
+                                <activeobjects.servicefactory.config.short.timeout>${ao.short.timeout}</activeobjects.servicefactory.config.short.timeout>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -520,6 +550,13 @@
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
                                 </bundledArtifact>
+
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                         <product>
@@ -534,6 +571,9 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <use.test.http.client>true</use.test.http.client>
+                                <activeobjects.servicefactory.config.long.timeout>${ao.long.timeout}</activeobjects.servicefactory.config.long.timeout>
+                                <activeobjects.servicefactory.config.short.timeout>${ao.short.timeout}</activeobjects.servicefactory.config.short.timeout>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -578,6 +618,13 @@
                                     <groupId>com.atlassian.labs</groupId>
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
+                                </bundledArtifact>
+                                
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
@@ -691,6 +738,7 @@
                                         <include>js/iframe-min/_events-min.js</include>
                                         <include>js/iframe-min/_base64-min.js</include>
                                         <include>js/iframe-min/_uri-min.js</include>
+                                        <include>js/iframe-min/_ui-params-min.js</include>
                                         <include>js/iframe-min/_xdm-min.js</include>
                                         <include>js/iframe-min/plugin/_rpc-min.js</include>
                                         <include>js/iframe-min/plugin/events-min.js</include>
@@ -699,6 +747,7 @@
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
                                         <include>js/iframe-min/plugin/inline-dialog-min.js</include>
                                         <include>js/iframe-min/plugin/messages-min.js</include>
+                                        <include>js/iframe-min/plugin/cookie-min.js</include>
                                         <include>js/iframe-min/plugin/_resize_listener-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>
@@ -743,7 +792,7 @@
                     </transformationSets>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.twdata.maven</groupId>
                 <artifactId>maven-cli-plugin</artifactId>
@@ -804,6 +853,7 @@
                         <configuration>
                             <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
                             <sourcepath>src/main/java:../modules/src/main/java</sourcepath>
+                            <debug>${debugSchemaGen}</debug>
                         </configuration>
                     </execution>
                     <execution>
@@ -830,6 +880,20 @@
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>shallow-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <ignoreFilter>shallow</ignoreFilter>
+                            <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
                         </configuration>
                     </execution>
                 </executions>
@@ -1031,9 +1095,11 @@
         <devmode>true</devmode>
         <fastdev.version>2.2</fastdev.version>
         <toolbox.version>2.0.6</toolbox.version>
-        <plugin.testrunner.version>1.1.4-SNAPSHOT</plugin.testrunner.version>
+        <plugin.testrunner.version>1.1.7</plugin.testrunner.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
+        <debugSchemaGen>false</debugSchemaGen>
+        <ao.version>0.23.2</ao.version>
     </properties>
 </project>

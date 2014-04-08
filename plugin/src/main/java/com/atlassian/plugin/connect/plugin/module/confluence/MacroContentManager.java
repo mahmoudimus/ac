@@ -113,7 +113,7 @@ public class MacroContentManager implements DisposableBean
 
         try
         {
-            // AC-795: synchronous until bigpipe- and confluence-related infinite rendering loop is fixed.
+            // AC-795: synchronous until confluence-related infinite rendering loop is fixed.
             // we are now rendering in the same thread as any sub-rendering macro which "fixes the glitch".
             String remoteXhtml = promise.claim();
             remoteXhtml = macroContentLinkParser.parse(accessor, remoteXhtml, urlParameters);

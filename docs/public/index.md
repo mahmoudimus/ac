@@ -1,29 +1,42 @@
-<img class="index-logo" src="./assets/images/ac_logo.png" width="720">
+<h1 class="index-heading">Introducing Atlassian Connect</h1>
 
-<h1 class="index-heading">Build, install and sell add-ons in Atlassian OnDemand</h1>
+<h2 class="index-heading">Build, install and sell add-ons for JIRA and Confluence OnDemand</h1>
 
-<div class="aui-group">
-    <div class="aui-item">
-        <div class="index-box">
-            [<img src="./assets/images/gears.png" width="100">](./guides/introduction.html)
-            [<h2>Customize your product</h2>](./guides/introduction.html)
-            <p>Build an add-on to enhance, extend or integrate your Atlassian product.</p>
+<div class="index-video-container">
+    <a href="//fast.wistia.net/embed/iframe/3e1auia2xi?popover=true" class="wistia-popover[height=540,playerColor=205081,width=960,helpers.overlay.css.backgroundColor=#000,helpers.overlay.opacity=1,padding=20]">
+        <div class="inner video-thumbnail">
+            <div class="playButton"></div>
         </div>
-    </div>
-    <div class="aui-item">
-        <div class="index-box">
-            [<img src="./assets/images/CharlieGears.png" width="100">](./developing/selling-on-marketplace.html)
-            [<h2>Share it with the world</h2>](./developing/selling-on-marketplace.html)
-            <p>Share your add-on with millions of developers on the Atlassian Marketplace.</p>
-        </div>
-    </div>
+    </a>
+<script charset="ISO-8859-1" src="//fast.wistia.com/assets/external/popover-v1.js"></script>
 </div>
 
-## Get Started
 
-Start with our [Introduction to Atlassian Connect](./guides/introduction.html) and learn about the powerful ways you can
-enhance your Atlassian application.
+## What is Atlassian Connect?
+You can use the Atlassian Connect framework to build add-ons for Atlassian applications
+ like JIRA, Confluence, and HipChat. An add-on could be an integration with another existing service, 
+ new features for the Atlassian application, or even a new product that runs within the Atlassian application.
 
-## Need help?
+## What is an Atlassian Connect add-on?
+Simply understood, Atlassian Connect add-ons are web applications.
+Atlassian Connect add-ons operate remotely over HTTP and can be written with any programming
+language and web framework.
 
-We're always happy to help out with any questions you might have. Check out the ways you can [Get Help](./resources/getting-help.html).
+Fundamentally, Atlassian Connect add-ons have three major capabilities:
+
+1. Insert content in [certain defined places](./modules/jira/index.html) in the Atlassian application's UI.
+2. Make calls to the Atlassian application's [REST API](./rest-apis/product-api-browser.html).
+3. Listen and respond to [WebHooks](./modules/jira/webhooks.html) fired by the Atlassian application.
+
+<div class="closing-cta">
+    <a href="./guides/getting-started.html">
+        <button class="primary-cta aui-button aui-button-primary">
+            Try the Hello World example
+        </button>
+    </a>
+    <p><a href="./guides/introduction.html">or read the detailed introduction</a></p>
+</div>
+
+
+
+

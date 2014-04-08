@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main"], function ($, XdmRpc, addons, statusHelper, messages) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params"], function ($, XdmRpc, addons, statusHelper, messages, uiParams) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -13,8 +13,31 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     return $("#embedded-" + ns);
   }
 
+  /**
+  * @name Options
+  * @class
+  * @property {String}  ns            module key
+  * @property {String}  src           url of the iframe
+  * @property {String}  w             width of the iframe
+  * @property {String}  h             height of the iframe
+  * @property {String}  dlg           is a dialog (disables the resizer)
+  * @property {String}  simpleDlg     deprecated, looks to be set when a confluence macro editor is being rendered as a dialog
+  * @property {Boolean} general       is a page that can be resized
+  * @property {String}  productCtx    context to pass back to the server (project id, space id, etc)
+  * @property {String}  key           addon key from the descriptor
+  * @property {String}  uid           id of the current user
+  * @property {String}  ukey          user key
+  * @property {String}  data.timeZone timezone of the current user
+  * @property {String}  cp            context path
+  */
+
+  /**
+  * @param {Options} options These values come from the velocity template and can be overridden using uiParams
+  */
   function create(options) {
 
+    $.extend(options, uiParams.fromUrl(options.src));
+    console.log("namespace: " + options.ns);
     var ns = options.ns,
         homeId = "ap-" + ns,
         $home = $("#" + homeId),
@@ -78,9 +101,13 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       ],
       local: {
         init: function () {
+            console.log("local init running....");
           if (!isInited) {
             isInited = true;
             preventTimeout();
+            console.log("initing iframe class...");
+              console.log("contentId: " + contentId);
+            console.log("content: " + $content);
             $content.addClass("iframe-init");
             var elapsed = new Date().getTime() - start;
             statusHelper.showLoadedStatus($home);
@@ -90,6 +117,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           }
         },
         resize: debounce(function (width, height) {
+            console.log("resizing with height: " + height);
           // debounce resizes to avoid excessive page reflow
           if (!isDialog) {
             // dialog content plugins do not honor resize requests, since their content size is fixed
@@ -107,6 +135,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             // This adds border between the iframe and the page footer as the connect addon has scrolling content and can't do this
             $iframe.addClass("full-size-general-page");
             function resizeHandler() {
+                console.log("resizingToParent with height: " + height);
               var height = $(document).height() - AJS.$("#header > nav").outerHeight() - AJS.$("#footer").outerHeight() - 20;
               $("iframe", $content).css({width: "100%", height: height + "px"});
             }
@@ -183,13 +212,18 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             return json;
           }
           function done(data, textStatus, xhr) {
+              console.log("rpc load success!")
             success([data, textStatus, toJSON(xhr)]);
           }
           function fail(xhr, textStatus, errorThrown) {
+              console.log("rpc fail!")
             error([toJSON(xhr), textStatus, errorThrown]);
           }
           var headers = {};
           $.each(args.headers || {}, function (k, v) { headers[k.toLowerCase()] = v; });
+          // Disable system ajax settings. This stops confluence mobile from injecting callbacks and then throwing exceptions.
+          $.ajaxSettings = {};
+
           // execute the request with our restricted set of inputs
           $.ajax({
             url: url,
@@ -236,18 +270,42 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           _AP.require("confluence/macro/editor", function (editor) {
             editor.getMacroData(callback);
           });
+        },
+        saveCookie: function(name, value, expires){
+          AJS.Cookie.save(prefixCookie(name), value, expires);
+        },
+        readCookie: function(name, callback){
+          var value = AJS.Cookie.read(prefixCookie(name));
+          if(typeof callback === "function"){
+            callback(value);
+          }
+        },
+        eraseCookie: function(name){
+          AJS.Cookie.erase(prefixCookie(name));
+        },
+        triggerJiraEvent: function(e){
+          _AP.require(['jira/event'], function(jiraEvent){
+            jiraEvent[e]();
+          });
         }
       }
     });
 
-    statusHelper.showLoadingStatus($home);
+    function prefixCookie(name){
+      return options.key + '-' + options.ns + '-' + name;
+    }
+
+    // Do not delay showing the loading indicator if this is a dialog.
+    var noDelay = (isDialog || isSimpleDialog || isInlineDialog);
+    statusHelper.showLoadingStatus($home, noDelay ? 0 : 1000);
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
-
+    console.log("iframe = " + $content.attr("id"));
     $iframe.data("ap-rpc", rpc);
 
     function layoutIfNeeded() {
+        console.log("laying out iframe...");
       var $stats = $(".ap-stats", $home);
       $stats.removeClass("hidden");
       if (isSimpleDialog) {
@@ -328,6 +386,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
   return function (options) {
     var attemptCounter = 0;
     function doCreate() {
+        console.log("running DoCreate....");
         //If the element we are going to append the iframe to doesn't exist in the dom (yet). Wait for it to appear.
         if(contentDiv(options.ns).length === 0 && attemptCounter < 10){
             setTimeout(function(){
@@ -344,7 +403,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       // create the new iframe
       create(options);
     }
-    if ($.isReady) {
+    if(typeof ConfluenceMobile !== "undefined"){
+      doCreate();
+    } else if ($.isReady) {
       // if the dom is ready then this is being run during an ajax update;
       // in that case, defer creation until the next event loop tick to ensure
       // that updates to the desired container node's parents have completed
@@ -354,7 +415,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       AJS.toInit(function(){
         // Load after confluence editor has finished loading content.
         if(AJS.Confluence && AJS.Confluence.EditorLoader && AJS.Confluence.EditorLoader.load){
-          AJS.Confluence.EditorLoader.load(doCreate);
+         
+          /*
+          NOTE: for some reason, the confluence EditorLoader will 404 sometimes on create page.
+          Because of this, we need to pass our create function as both the success and error callback so we always get called
+           */
+          AJS.Confluence.EditorLoader.load(doCreate,doCreate);
         } else {
           doCreate();
         }
@@ -369,5 +435,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
 if (!_AP.create) {
   _AP.require(["host/main"], function(main) {
     _AP.create = main;
+  });
+}
+
+if(typeof ConfluenceMobile !== "undefined"){
+  //confluence will not run scripts loaded in the body of mobile pages by default.
+  ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
+    window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
   });
 }

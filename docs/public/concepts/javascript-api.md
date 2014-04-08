@@ -13,6 +13,13 @@ However, Atlassian Connect makes use of a technique called [cross-domain messagi
 
 Atlassian Connect transparently enables cross-domain messaging in its page modules. One benefit you'll see from this is that your add-on's page modules are automatically resized based on its content when loaded on the page.
 
+Only content within an element with the class `ac-content` will be resized automatically.
+```
+<div class="ac-content">
+    <p>Hello World</p>
+</div>
+```
+
 ## Sharing data between iframes
 A single add-on can generate multiple iframes in a particular page in the target application. Depending on the use case for the add-on, the iframes may need to share information between each other.
 
@@ -62,3 +69,14 @@ A non-compressed version of the all.js javascript can be viewed by replacing `al
 ```
 
 This can be helpful when trying to trace errors or debug the add-on javascript.
+
+## Note on URL Encoding
+URL query parameters are encoded as `application/x-www-form-urlencoded`. 
+This converts spaces to `+` which can cause issues when using JavaScript functions such as `decodeURIComponent`. 
+A simple way to handle this is to convert `+` to `%20` before decoding. A utility function `decodeQueryComponent` is provided for this purpose. e.g
+
+```
+AP.require("_util", function(util){
+  alert(util.decodeQueryComponent(window.location.href));
+});
+``` 

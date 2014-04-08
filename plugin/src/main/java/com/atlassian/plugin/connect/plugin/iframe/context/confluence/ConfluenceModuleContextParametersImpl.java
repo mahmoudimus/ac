@@ -15,6 +15,8 @@ public class ConfluenceModuleContextParametersImpl extends HashMapModuleContextP
         if (page != null)
         {
             put(ConfluenceModuleContextFilter.PAGE_ID, Long.toString(page.getId()));
+            put(ConfluenceModuleContextFilter.PAGE_VERSION, Long.toString(page.getVersion()));
+            put(ConfluenceModuleContextFilter.PAGE_TYPE, page.getType());
             addSpace(page.getSpace());
         }
     }

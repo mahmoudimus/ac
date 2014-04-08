@@ -44,6 +44,9 @@ public class GenerateSchemaMojo extends AbstractSchemaGenMojo
     @Parameter(defaultValue = "true")
     private Boolean lowercaseEnums = true;
 
+    @Parameter
+    private String ignoreFilter = "";
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException
     {
@@ -85,7 +88,7 @@ public class GenerateSchemaMojo extends AbstractSchemaGenMojo
                 interfaceList = gson.fromJson(ifaceJson,InterfaceList.class);
             }
 
-            JsonSchemaGenerator generator = provider.provide(lowercaseEnums,interfaceList,schemaDocs);
+            JsonSchemaGenerator generator = provider.provide(lowercaseEnums,interfaceList,schemaDocs,ignoreFilter);
             JsonSchema schema = generator.generateSchema(getRootClass());
             
             File rawFile = new File(rawOutput);

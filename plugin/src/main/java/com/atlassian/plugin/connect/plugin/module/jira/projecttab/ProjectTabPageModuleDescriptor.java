@@ -5,7 +5,7 @@ import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptorImp
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
@@ -31,7 +31,7 @@ public final class ProjectTabPageModuleDescriptor extends AbstractJiraTabPageMod
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final ProjectSerializer projectSerializer;
 
-    public ProjectTabPageModuleDescriptor(ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
+    public ProjectTabPageModuleDescriptor(ModuleFactory moduleFactory, LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
             IFrameRendererImpl iFrameRenderer, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator, UrlVariableSubstitutor urlVariableSubstitutor,
             ProjectSerializer projectSerializer)
     {

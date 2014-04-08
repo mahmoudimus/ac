@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
-import com.atlassian.json.schema.annotation.Required;
-import com.atlassian.json.schema.annotation.StringSchemaAttributes;
+import com.atlassian.json.schema.annotation.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.google.common.base.Objects;
@@ -41,6 +39,16 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PAGE_EXAMPLE}
  * @since 1.0
  */
+@ObjectSchemaAttributes(maxProperties = 10000, docOverrides = {@FieldDocOverride
+            (
+                fieldName = "conditions",
+                description = 
+                        "Conditions can be added to display only when all the given conditions are true." +
+                        "\n\nThe only supported conditions for pages are:" +
+                        "\n{@see com.atlassian.plugin.connect.modules.beans.PageConditions#CONDITION_LIST_MD}"
+            )
+    }
+)
 public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
@@ -146,7 +154,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         toStringHelper
                 .add("name", getName())
-                .add("key", getKey())
+                .add("key", getRawKey())
                 .add("url", getUrl())
                 .add("weight", getWeight())
                 .add("icon", getIcon())

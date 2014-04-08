@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.GeneratedKeyBean;
 import com.atlassian.plugin.connect.modules.beans.NamedBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
@@ -15,7 +14,7 @@ public class NamedBeanBuilder<T extends NamedBeanBuilder, B extends NamedBean> e
     {
     }
 
-    public NamedBeanBuilder(GeneratedKeyBean defaultBean)
+    public NamedBeanBuilder(NamedBean defaultBean)
     {
         this.name = defaultBean.getName();
     }

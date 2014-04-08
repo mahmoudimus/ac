@@ -53,7 +53,7 @@ system, or to integrate Confluence OnDemand with another SaaS service's API.
 Note that add-ons in OnDemand must be installed through the Atlassian Marketplace. Thus, to
 install an add-on for internal use, you must create a listing for it on the Marketplace. The
 Marketplace provides a new type of listing for such cases - private listings. A private listing is
-not publicly visible on the Marketplace, and can be installed on a maximum of ten OnDemand
+not publicly visible on the Marketplace, and can be installed on a maximum of fifty OnDemand
 instances.
 
 ### How does Atlassian Connect work?

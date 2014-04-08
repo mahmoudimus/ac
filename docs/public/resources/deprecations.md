@@ -2,7 +2,9 @@
 
 ### XML descriptor
 
-The `atlassian-plugin.xml` descriptor format is deprecated in favour of the new JSON descriptor format.
+The `atlassian-plugin.xml` descriptor format is deprecated in favour of the new JSON descriptor format. XML descriptor
+add-ons will still function and be supported until the deprecation date, however no new XML based add-ons will be
+approved after Atlassian Connect 1.0.0 is released.
 
 <div class="ac-deprecations">
 <div class="aui-group">
@@ -18,7 +20,7 @@ The `atlassian-plugin.xml` descriptor format is deprecated in favour of the new 
         <h5>OnDemand removal</h5>
     </div>
     <div class="aui-item">
-        __28th February, 2014__
+        __May, 2014__
     </div>
 </div>
 <div class="aui-group">

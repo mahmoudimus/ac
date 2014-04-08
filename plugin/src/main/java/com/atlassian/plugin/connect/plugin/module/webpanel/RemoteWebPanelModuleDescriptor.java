@@ -3,11 +3,11 @@ package com.atlassian.plugin.connect.plugin.module.webpanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
@@ -39,7 +39,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
 {
     public static final String REMOTE_WEB_PANEL_MODULE_PREFIX = "remote-web-panel-";
     private final IFrameRendererImpl iFrameRenderer;
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final HostContainer hostContainer;
     private final BundleContext bundleContext;
     private final ConditionProcessor conditionProcessor;
@@ -53,12 +53,12 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     private String location;
 
     private Element descriptor;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public RemoteWebPanelModuleDescriptor(
             ModuleFactory moduleFactory,
             IFrameRendererImpl iFrameRenderer,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             HostContainer hostContainer,
             BundleContext bundleContext,
             ConditionProcessor conditionProcessor,

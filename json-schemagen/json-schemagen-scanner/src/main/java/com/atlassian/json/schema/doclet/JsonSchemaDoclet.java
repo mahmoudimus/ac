@@ -1,5 +1,6 @@
 package com.atlassian.json.schema.doclet;
 
+import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.json.schema.annotation.SchemaIgnore;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.doclet.model.SchemaClassDoc;
@@ -16,13 +17,15 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class JsonSchemaDoclet
 {
     private static final Logger log = Logger.getLogger(JsonSchemaDoclet.class.getName());
-    
+
     private static final String LS = System.getProperty("line.separator");
     private static final String P = LS + LS;
     private static final String OPTION_OUTPUT = "-output";
@@ -31,7 +34,7 @@ public class JsonSchemaDoclet
     private static final String SEE_TAG = "@see";
     private static final String TEXT_TAG = "Text";
 
-    public static boolean start(RootDoc rootDoc)
+    public static boolean start(RootDoc rootDoc) throws Exception
     {
         final String output = getOptionArg(rootDoc.options(), OPTION_OUTPUT);
 
@@ -46,9 +49,9 @@ public class JsonSchemaDoclet
             schemaClassDoc.setClassTitle(getTitle(classDoc));
 
             List<SchemaFieldDoc> schemaFieldDocs = new ArrayList<SchemaFieldDoc>();
-            
-            addFieldDocs(classDoc,schemaFieldDocs);
-            
+
+            addFieldDocs(classDoc, schemaFieldDocs, new HashMap<String, String>());
+
 
             schemaClassDoc.setFieldDocs(schemaFieldDocs);
 
@@ -72,13 +75,15 @@ public class JsonSchemaDoclet
         return true;
     }
 
-    private static void addFieldDocs(ClassDoc classDoc, List<SchemaFieldDoc> schemaFieldDocs)
+    private static void addFieldDocs(ClassDoc classDoc, List<SchemaFieldDoc> schemaFieldDocs, Map<String, String> fieldDocOverrides) throws NoSuchFieldException, IllegalAccessException
     {
-        if(null == classDoc || Object.class.getName().equals(classDoc.qualifiedName()))
+        if (null == classDoc || Object.class.getName().equals(classDoc.qualifiedName()))
         {
             return;
         }
-        
+
+        fieldDocOverrides.putAll(getFieldDocOverrides(classDoc));
+
         for (FieldDoc fieldDoc : classDoc.fields())
         {
             if (!fieldDoc.isTransient() && !fieldDoc.isStatic() && !hasAnnotation(fieldDoc, SchemaIgnore.class))
@@ -86,10 +91,26 @@ public class JsonSchemaDoclet
                 SchemaFieldDoc schemaFieldDoc = new SchemaFieldDoc();
                 schemaFieldDoc.setFieldName(fieldDoc.name());
                 schemaFieldDoc.setFieldTitle(getTitle(fieldDoc));
-                
+
                 Doc docForField = fieldDoc;
                 
-                if (Strings.isNullOrEmpty(fieldDoc.commentText()))
+                String originalText = fieldDoc.commentText();
+                Tag[] originalInlineTags = fieldDoc.inlineTags();
+
+                boolean revertInlineTags = false;
+                
+                if (fieldDocOverrides.containsKey(fieldDoc.name()))
+                {
+                    docForField.setRawCommentText(fieldDocOverrides.get(fieldDoc.name()));
+                    
+                    //this sucks, but setting the comment text does NOT clear the tag cache
+                    Class docImpl = fieldDoc.getClass().getSuperclass().getSuperclass().getSuperclass();
+                    Field inlineTagsField = docImpl.getDeclaredField("inlineTags");
+                    inlineTagsField.setAccessible(true);
+                    inlineTagsField.set(docForField,null);
+                    revertInlineTags = true;
+                }
+                else if (Strings.isNullOrEmpty(fieldDoc.commentText()))
                 {
                     MethodDoc accessor = findFieldAccessor(classDoc, fieldDoc);
                     if (null != accessor && !Strings.isNullOrEmpty(accessor.commentText()))
@@ -101,41 +122,96 @@ public class JsonSchemaDoclet
                 schemaFieldDoc.setFieldDocs(getDocWithIncludes(docForField));
 
                 schemaFieldDocs.add(schemaFieldDoc);
+                
+                if(revertInlineTags)
+                {
+                    //we need to reset back to the original state in case we overwrote something
+                    fieldDoc.setRawCommentText(originalText);
+                    Class docImplClass = fieldDoc.getClass().getSuperclass().getSuperclass().getSuperclass();
+                    Field inlineTagsField = docImplClass.getDeclaredField("inlineTags");
+                    inlineTagsField.setAccessible(true);
+                    inlineTagsField.set(fieldDoc,originalInlineTags);
+                }
             }
         }
-        
-        addFieldDocs(classDoc.superclass(),schemaFieldDocs);
+
+        addFieldDocs(classDoc.superclass(), schemaFieldDocs, fieldDocOverrides);
     }
 
-    private static boolean hasAnnotation(FieldDoc fieldDoc, Class<?> annoClass)
+    private static Map<String, String> getFieldDocOverrides(ClassDoc classDoc)
+    {
+        Map<String, String> overrides = new HashMap<String, String>();
+
+        AnnotationDesc annoDesc = getAnnotation(classDoc, ObjectSchemaAttributes.class);
+
+        if (null != annoDesc)
+        {
+            for (AnnotationDesc.ElementValuePair pair : annoDesc.elementValues())
+            {
+                if (pair.element().name().equals("docOverrides"))
+                {
+                    AnnotationValue[] annoValues = (AnnotationValue[]) pair.value().value();
+
+                    for (AnnotationValue annoValue : annoValues)
+                    {
+                        AnnotationDesc fieldOverrideAnno = (AnnotationDesc) annoValue.value();
+
+                        String fieldName = (String) fieldOverrideAnno.elementValues()[0].value().value();
+                        String desc = (String) fieldOverrideAnno.elementValues()[1].value().value();
+
+                        overrides.put(fieldName, desc);
+                    }
+                }
+            }
+        }
+
+        return overrides;
+    }
+
+    private static boolean hasAnnotation(ProgramElementDoc elementDoc, Class<?> annoClass)
     {
         boolean foundAnnotation = false;
-        
-        for(AnnotationDesc annoDesc : fieldDoc.annotations())
+
+        for (AnnotationDesc annoDesc : elementDoc.annotations())
         {
-            if(annoDesc.toString().equals("@" + annoClass.getName()) || annoDesc.toString().equals("@" + annoClass.getSimpleName()))
+            if (annoDesc.toString().equals("@" + annoClass.getName()) || annoDesc.toString().equals("@" + annoClass.getSimpleName()))
             {
                 foundAnnotation = true;
                 break;
             }
         }
-        
+
         return foundAnnotation;
     }
+
+    private static AnnotationDesc getAnnotation(ProgramElementDoc elementDoc, Class<?> annoClass)
+    {
+        for (AnnotationDesc annoDesc : elementDoc.annotations())
+        {
+            AnnotationTypeDoc typeDoc = annoDesc.annotationType();
+            if (typeDoc.typeName().equals(annoClass.getName()) || typeDoc.simpleTypeName().equals(annoClass.getSimpleName()))
+            {
+                return annoDesc;
+            }
+        }
+
+        return null;
+    }
+
 
     private static String getDocWithIncludes(Doc doc)
     {
         StringBuilder sb = new StringBuilder();
-        
+
         if (!Strings.isNullOrEmpty(doc.commentText()))
         {
-            for(Tag tag : doc.inlineTags())
+            for (Tag tag : doc.inlineTags())
             {
-                if(tag.kind().equals(TEXT_TAG))
+                if (tag.kind().equals(TEXT_TAG))
                 {
                     sb.append(P).append(tag.text());
                 }
-                else if(tag.kind().equals(SEE_TAG))
+                else if (tag.kind().equals(SEE_TAG))
                 {
                     sb.append(getIncludeFromLink((SeeTag) tag));
                 }
@@ -156,10 +232,10 @@ public class JsonSchemaDoclet
     {
         Tag[] exampleTags = getTagsOrNull(doc, EXAMPLE_TAG);
         StringBuilder sb = new StringBuilder(P);
-        
+
         if (null != exampleTags)
         {
-            for(Tag exampleTag : exampleTags)
+            for (Tag exampleTag : exampleTags)
             {
                 final Tag[] inlineTags = exampleTag.inlineTags();
 
@@ -219,7 +295,7 @@ public class JsonSchemaDoclet
             return "";
         }
     }
-    
+
     private static String getExampleFromLink(SeeTag linkTag)
     {
         String example = getIncludeFromLink(linkTag);
@@ -245,7 +321,7 @@ public class JsonSchemaDoclet
         if (fieldDoc.type().simpleTypeName().equals("boolean") || fieldDoc.type().simpleTypeName().equals("Boolean"))
         {
             accessorName = "is" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
-            
+
             //try to find method starting with "is". If not found, we'll fall through to finding the getter
             for (MethodDoc methodDoc : classDoc.methods())
             {
@@ -255,9 +331,9 @@ public class JsonSchemaDoclet
                 }
             }
         }
-        
+
         accessorName = "get" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, fieldDoc.name());
-        
+
         for (MethodDoc methodDoc : classDoc.methods())
         {
             if (methodDoc.name().equals(accessorName))

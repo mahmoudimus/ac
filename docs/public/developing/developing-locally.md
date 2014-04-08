@@ -22,16 +22,15 @@ We recommend you start the host application using the SDK command shown here. At
 Atlassian OnDemand and not yet included with Download distributions of our software. Therefore certain components, including
 the Atlassian Connect Framework itself, are included here in the startup command. Without these components present,
 Connect add-ons cannot be installed. If you are not using the commands below, you must ensure all of the components
-listed in the '--bundled-plugins' argument are present in your Atlassian application.
+listed in the `--bundled-plugins` argument are present in your Atlassian application.
 
 You can start JIRA or Confluence with Atlassian Connect as follows:
 
 #### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.2-OD-08-034 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0-rc2,com.atlassian.jwt:jwt-plugin:1.0-m8,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.2-OD-10-004-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.4-OD-5 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0-rc2,com.atlassian.jwt:jwt-plugin:1.0-m8,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
-
+<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.4-OD-20-006 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This
 includes the version of Atlassian Connect framework. Those component versions will change as Atlassian Connect

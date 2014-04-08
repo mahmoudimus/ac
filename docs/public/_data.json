@@ -17,15 +17,26 @@
         "selling-on-marketplace.html": {
             "title": "Selling on Marketplace"
         },
+        "operations.html": {
+            "title": "Operations Guide",
+            "new": true
+        },
         "upgrades.html": {
             "title": "Upgrading your Add-on",
             "new": true
         }
     },
     "concepts": {
+        "security.html": {
+            "title": "Security",
+            "new": true
+        },
         "authentication.html": {
             "title": "Authentication"
         },
+		"understanding-jwt.html": {
+	    	"title": "Understanding JWT"
+		},
         "conditions.html": {
             "title": "Conditions"
         },

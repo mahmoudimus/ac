@@ -32,7 +32,7 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
                 macroModuleContextExtractor);
 
         DynamicContentMacroModuleBean bean = createBeanBuilder().build();
-        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, bean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(addon, plugin, bean);
     }
 
     @Override
