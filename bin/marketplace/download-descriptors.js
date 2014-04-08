@@ -35,15 +35,20 @@ if (!fs.existsSync(downloadDestination)) {
 
 function downloadDescriptor(opts, addonKey, addon, descriptorUrl, callback) {
     if (opts.preDescriptorDownloadedCallback) {
-        opts.preDescriptorDownloadedCallback(addonKey, addon, descriptorUrl, opts);
+        opts.preDescriptorDownloadedCallback({
+            addon: {
+                key: addonKey,
+                listing: addon
+            }
+        }, opts);
     }
     request({
         uri: descriptorUrl,
         method: "GET",
         auth: opts.auth
     }, function(error, response, body) {
-        if (error) {
-            console.log("Unable to download descriptor for add-on", addonKey);
+        if (error || response.statusCode < 200 || response.statusCode >= 300) {
+            console.log(("" + response.statusCode).red, "Unable to download descriptor for add-on", addonKey);
             callback(error);
         } else {
             var type = 'xml';
