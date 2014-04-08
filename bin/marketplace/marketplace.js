@@ -2,7 +2,7 @@
 
 var request = require('request'),
     _ = require('lodash'),
-    fs = require('fs'),
+    async = require('async'),
     extend = require('node.extend'),
     nomnom = require('nomnom'),
     colors = require('colors'),
@@ -10,20 +10,28 @@ var request = require('request'),
 
 var selfExecute = require.main === module;
 
-var getAddonPage = function(opts) {
+var downloadQueue = async.queue(function (task, callback) {
+    var args = task.args;
+    args.push(callback);
+    task.executor.apply(task.self || this, args);
+}, 3);
+
+downloadQueue.drain = function () { console.log("all done"); }
+
+var getAddonPage = function(opts, uri, callback) {
     if (opts.debug) {
-        console.log("downloading: ".grey + opts.baseUrl + opts.uri);
+        console.log("downloading: ".grey + opts.baseUrl + uri);
     }
     
     return request({
-        uri: opts.baseUrl + opts.uri,
+        uri: opts.baseUrl + uri,
         method: "GET",
         auth: opts.auth,
         json: true
     }, function(error, response, body) {
         if (error) {
             console.log("ERROR".red + ": Unable to retrieve marketplace add-ons", response, error);
-            return null;
+            callback(error);
         } else {
             var links = body.links,
                 addons = body.plugins;
@@ -65,7 +73,7 @@ var getAddonPage = function(opts) {
                             console.log(("" + e).red);
                             console.log(JSON.stringify(addon));
                         }
-                        process.exit();
+                        callback(e);
                     }
                 }
 
@@ -76,17 +84,20 @@ var getAddonPage = function(opts) {
 
             if (nextRequestUri) {
                 var nextOpts = extend({}, opts);
-                nextOpts.uri = nextRequestUri;
-                getAddonPage(nextOpts);
+                downloadQueue.push({
+                    self: this,
+                    executor: getAddonPage,
+                    args: [nextOpts, nextRequestUri]
+                }, function () { });
             }
+
+            callback();
         }
     });
 };
 
-
-
-var getCliOpts = function() {
-    return nomnom
+var getCliOpts = function(callback) {
+    var nn = nomnom
         .option('debug', {
             abbr: 'd',
             flag: true,
@@ -114,6 +125,11 @@ var getCliOpts = function() {
             help: 'Add-on type to filter by. Valid options: [json, xml]',
             choices: ['json', 'xml']
         });
+
+    if (callback) {
+        nn = callback(nn);
+    }
+    return nn;
 }
 
 var defaultOpts = {
@@ -122,14 +138,17 @@ var defaultOpts = {
 }
 
 exports.run = function(runOpts) {
-    var nomnom = getCliOpts();
+    var nomnom = getCliOpts(runOpts ? runOpts.cliOptsCallback : false);
 
     var opts = extend({}, defaultOpts);
     opts = extend(opts, runOpts);
     opts = extend(opts, nomnom.parse());
 
+    var uri = opts.uri;
+    delete opts["uri"];
+
     if (opts.includePrivate) {
-        opts.uri = opts.uri + "&includePrivate=true";
+        uri = uri + "&includePrivate=true";
     }
 
     if (opts.user && opts.pass) {
@@ -145,8 +164,20 @@ exports.run = function(runOpts) {
         return;
     }
 
-    getAddonPage(opts);
+    if (opts.before) {
+        opts.before(opts);
+    }
+
+    downloadQueue.push({
+        self: this,
+        executor: getAddonPage,
+        args: [opts, uri]
+    }, function () { });
 };
+
+exports.requestQueue = function () {
+    return downloadQueue;
+}
 
 if (selfExecute) {
     exports.run();

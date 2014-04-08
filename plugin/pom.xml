@@ -1038,6 +1038,7 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
+                                    <skipTests>false</skipTests>
                                     <configFile>karma.iframe.conf.js</configFile>
                                 </configuration>
                             </execution>
@@ -1048,7 +1049,45 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
+                                    <skipTests>false</skipTests>
                                     <configFile>karma.conf.js</configFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <browsers>Chrome</browsers>
+                            <karmaExecutable>node_modules/karma/bin/karma</karmaExecutable>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>descriptor-validation-tests</id>
+            <activation>
+                <property>
+                    <name>descriptorValidation</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- karma testrunner plugin for iframe code -->
+                    <plugin>
+                        <groupId>com.kelveden</groupId>
+                        <artifactId>maven-karma-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <!-- test add-on validation results -->
+                            <execution>
+                                <id>descriptor-validator-results-tests</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <skipTests>false</skipTests>
+                                    <configFile>karma.descriptor-validator.conf.js</configFile>
                                 </configuration>
                             </execution>
                         </executions>
