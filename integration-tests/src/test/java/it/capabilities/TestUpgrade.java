@@ -3,7 +3,6 @@ package it.capabilities;
 import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.collect.Lists;

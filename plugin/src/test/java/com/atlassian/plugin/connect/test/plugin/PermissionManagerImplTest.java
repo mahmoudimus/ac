@@ -62,9 +62,7 @@ public class PermissionManagerImplTest
 
     @Mock private HttpServletRequest request;
     @Mock private Plugin plugin;
-    @Mock private ConnectAddonRegistry connectAddonRegistry;
-    @Mock private ConnectAddonBeanFactory connectAddonBeanFactory;
-    
+
     private UserKey userKey = new UserKey("a_user_key");
 
     @Before

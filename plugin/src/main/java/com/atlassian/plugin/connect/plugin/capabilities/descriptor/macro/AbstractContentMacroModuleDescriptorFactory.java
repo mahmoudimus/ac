@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro;
 
-import java.net.URISyntaxException;
-
 import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
@@ -9,9 +7,6 @@ import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
-import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
@@ -23,9 +18,10 @@ import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.Uri;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
+
+import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
 

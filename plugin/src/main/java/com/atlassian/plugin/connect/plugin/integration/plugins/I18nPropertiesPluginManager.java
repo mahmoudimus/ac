@@ -1,46 +1,24 @@
 package com.atlassian.plugin.connect.plugin.integration.plugins;
 
-import java.io.*;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import com.atlassian.config.HomeLocator;
-import com.atlassian.plugin.*;
-import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.osgi.factory.OsgiPlugin;
 import com.atlassian.plugin.util.resource.AlternativeDirectoryResourceLoader;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.dom4j.DocumentHelper;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.atlassian.plugin.connect.plugin.util.BundleUtil.findBundleWithName;
-import static com.atlassian.plugin.connect.plugin.util.BundleUtil.toBundleNames;
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static com.google.common.collect.Lists.newArrayList;
-import static java.lang.Math.abs;
 
 /**
  * This class loads a plugin called "atlassian-connect.i18n", which solely exists to store and expose generated i18n files

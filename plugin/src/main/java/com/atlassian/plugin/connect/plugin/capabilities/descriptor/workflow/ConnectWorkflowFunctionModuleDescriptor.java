@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.ComponentClassManager;
@@ -34,6 +28,12 @@ import com.opensymphony.workflow.WorkflowException;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
