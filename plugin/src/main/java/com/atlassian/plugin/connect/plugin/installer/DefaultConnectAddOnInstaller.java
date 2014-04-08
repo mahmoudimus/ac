@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
+import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 
 import org.dom4j.Document;
@@ -88,7 +89,16 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         try
         {
             //until we ensure we no longer have xml or mirror plugins, we need to call removeOldPlugin, which is why we marshal here just to get the plugin key
-            pluginKey = connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptor).getKey();
+            ConnectAddonBean nonValidatedAddon = connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptor);
+            
+            pluginKey = nonValidatedAddon.getKey();
+            
+            if(nonValidatedAddon.getModules().isEmpty())
+            {
+                Option<String> errorI18nKey = Option.<String>some("connect.install.error.no.modules");
+                throw new PluginInstallException("Unable to install connect add on because it has no modules defined",errorI18nKey);
+            }
+            
             removeOldPlugin(pluginKey);
         
             addOn = connectAddonManager.installConnectAddon(jsonDescriptor);

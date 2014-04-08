@@ -20,6 +20,7 @@ import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.hasEntry;
@@ -117,7 +118,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
 
         public AppProjectTabPage(final String projectKey)
         {
-            super(projectKey, ConnectPluginInfo.getPluginKey(), PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + MODULE_KEY); // my-plugin:ac-play-project-tab-panel
+            super(projectKey, ConnectPluginInfo.getPluginKey(), addonAndModuleKey(PLUGIN_KEY,MODULE_KEY)); // my-plugin:ac-play-project-tab-panel
         }
     }
 

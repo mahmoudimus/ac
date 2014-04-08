@@ -20,6 +20,7 @@ public interface RemotablePluginAccessorFactory
      *
      * @param plugin The plugin key
      * @return An accessor for either local or remote plugin operations
+     * @deprecated use {@code get(String pluginKey)} or {@code get(ConnectAddonBean addon)} instead
      */
     RemotablePluginAccessor get(Plugin plugin);
 

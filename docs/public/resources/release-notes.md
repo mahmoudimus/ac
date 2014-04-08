@@ -9,7 +9,7 @@
 * Allow POST method for "screens/addToDefault/{fieldId}"
 * UPM auto-update fails to upgrade add-on
 
-## [1.0.0](../release-notes/1-0-rc.html)
+## [1.0.0](../release-notes/1-0.html)
 * Installing an add-on into OnDemand will not work unless the base url starts with https
 * Support for context parameters on remote conditions
 * The add-on key must now be less than or equal to 80 characters. Any add-ons with larger keys will need to be shortened

@@ -8,6 +8,8 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -18,6 +20,8 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
@@ -76,6 +80,7 @@ public class AddOnEnablementTest
             .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
             .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
             .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+            .withModule("webItems",randomWebItemBean())
             .build();
 
         return testPluginInstaller.installAddon(addonBean);

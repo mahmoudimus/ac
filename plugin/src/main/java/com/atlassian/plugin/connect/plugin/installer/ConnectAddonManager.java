@@ -8,7 +8,6 @@ import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
@@ -108,7 +107,6 @@ public class ConnectAddonManager
     private final LicenseRetriever licenseRetriever;
     private final ProductAccessor productAccessor;
     private final BundleContext bundleContext;
-    private final JwtApplinkFinder jwtApplinkFinder;
     private final ConnectApplinkManager connectApplinkManager;
     private final I18nResolver i18nResolver;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
@@ -124,7 +122,7 @@ public class ConnectAddonManager
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-                               JwtApplinkFinder jwtApplinkFinder, ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory)
+                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -140,7 +138,6 @@ public class ConnectAddonManager
         this.licenseRetriever = licenseRetriever;
         this.productAccessor = productAccessor;
         this.bundleContext = bundleContext;
-        this.jwtApplinkFinder = jwtApplinkFinder;
         this.connectApplinkManager = connectApplinkManager;
         this.i18nResolver = i18nResolver;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
@@ -168,6 +165,7 @@ public class ConnectAddonManager
     public ConnectAddonBean installConnectAddon(String jsonDescriptor)
     {
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
+        
         String pluginKey = addOn.getKey();
 
         String previousDescriptor = addonRegistry.getDescriptor(pluginKey);
@@ -184,7 +182,7 @@ public class ConnectAddonManager
                 .setBaseUrl(addOn.getBaseUrl())
                 .setDescriptor(jsonDescriptor)
                 .setRestartState(PluginState.ENABLED.name())
-                .setUser(userKey);
+                .setUserKey(userKey);
 
         if (!Strings.isNullOrEmpty(sharedSecret))
         {
@@ -379,7 +377,7 @@ public class ConnectAddonManager
     // (but don't remove the user as we need to preserve the history of their actions (e.g. audit trail, issue edited by <user>)
     private void disableAddOnUser(String addOnKey) throws ConnectAddOnUserDisableException
     {
-        ApplicationLink applicationLink = jwtApplinkFinder.find(addOnKey);
+        ApplicationLink applicationLink = connectApplinkManager.getAppLink(addOnKey);
 
         if (null != applicationLink)
         {
@@ -396,7 +394,8 @@ public class ConnectAddonManager
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
         String userKey = connectAddOnUserService.getOrCreateUserKey(addon.getKey(), addon.getName());
-        ApplicationLink applicationLink = jwtApplinkFinder.find(addon.getKey());
+
+        ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());
 
         if (null != applicationLink)
         {
@@ -419,6 +418,7 @@ public class ConnectAddonManager
             options.setSocketTimeout(testSocketTimeout,TimeUnit.MILLISECONDS);
             
             this.httpClient = httpClientFactory.create(options);
+            this.isTestHttpClient.set(true);
         }
         
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
@@ -469,7 +469,7 @@ public class ConnectAddonManager
                 switch (handler)
                 {
                     case INSTALLED:
-                        throw new PluginInstallException(handler.name() + ": " + message, Option.some(findI18nKeyForHttpErrorCode(statusCode)));
+                        throw new PluginInstallException(handler.name() + ": " + message, findI18nKeyForHttpErrorCode(statusCode));
                     case UNINSTALLED:
                         throw new PluginException(handler.name() + ": " + message);
                 }
@@ -514,7 +514,7 @@ public class ConnectAddonManager
         }
     }
 
-    private String findI18nKeyForHttpErrorCode(final int responseCode)
+    private Option<String> findI18nKeyForHttpErrorCode(final int responseCode)
     {
         String i18nKey = HTTP_ERROR_I18N_KEY_PREFIX + responseCode;
         final String i18nText = i18nResolver.getRawText(i18nKey);
@@ -527,7 +527,7 @@ public class ConnectAddonManager
             i18nKey = "connect.remote.upm.install.exception";
         }
 
-        return i18nKey;
+        return Option.some(i18nKey);
     }
 
     private URI getURI(String url)

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.equalTo;
@@ -96,7 +97,7 @@ public class TestVersionTabPanel extends TestBase
     public void testVersionTabPanel() throws RemoteException
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, ConnectPluginInfo.getPluginKey(), PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + MODULE_KEY);
+        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, ConnectPluginInfo.getPluginKey(), addonAndModuleKey(PLUGIN_KEY,MODULE_KEY));
 
         assertThat("The addon tab should be present", versionTabPage.isAddOnTabPresent(), is(true));
         versionTabPage.clickTab();
@@ -116,7 +117,7 @@ public class TestVersionTabPanel extends TestBase
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, ConnectPluginInfo.getPluginKey(), PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + MODULE_KEY);
+        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, ConnectPluginInfo.getPluginKey(), addonAndModuleKey(PLUGIN_KEY,MODULE_KEY));
 
         assertThat("The addon tab SHOULD NOT be present", versionTabPage.isAddOnTabPresent(), is(false));
     }

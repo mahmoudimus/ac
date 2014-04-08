@@ -50,6 +50,7 @@ import static com.atlassian.confluence.security.SpacePermission.REMOVE_ATTACHMEN
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_BLOG_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_COMMENT_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_PAGE_PERMISSION;
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -289,6 +290,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
                 .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+                .withModule("webItems",randomWebItemBean())
                 .withScopes(ImmutableSet.of(scope))
                 .build();
 

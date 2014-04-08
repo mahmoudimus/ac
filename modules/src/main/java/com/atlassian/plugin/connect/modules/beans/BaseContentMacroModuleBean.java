@@ -85,6 +85,12 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private LinkBean documentation;
 
     /**
+     * A list of alternative renderModes.
+     */
+    private List<MacroRenderModeBean> renderModes;
+
+
+    /**
      * The categories the macro should appear in. A macro with no category will show up in the default 'All' category.
      *
      * Currently, the following categories are supported by Confluence:
@@ -207,6 +213,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         return documentation;
     }
 
+    public List<MacroRenderModeBean> getRenderModes()
+    {
+        return renderModes;
+    }
+
     public Set<String> getCategories()
     {
         return categories;
@@ -255,6 +266,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     public boolean hasIcon()
     {
         return icon != null;
+    }
+
+    public boolean hasRenderModes()
+    {
+        return renderModes != null;
     }
 
     public boolean hasDocumentation()

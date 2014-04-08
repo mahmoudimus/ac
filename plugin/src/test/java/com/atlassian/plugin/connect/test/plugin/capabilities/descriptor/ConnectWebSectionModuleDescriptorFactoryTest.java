@@ -27,6 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -89,13 +90,13 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     @Test
     public void keyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getKey(), is("my-awesome-plugin" + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-web-section"));
+        assertThat(descriptor.getKey(), is(addonAndModuleKey("my-awesome-plugin","my-web-section")));
     }
 
     @Test
     public void completeKeyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getCompleteKey(), is("my-awesome-plugin:my-awesome-plugin" + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-web-section"));
+        assertThat(descriptor.getCompleteKey(), is("my-awesome-plugin:" + addonAndModuleKey("my-awesome-plugin","my-web-section")));
     }
 
     @Test

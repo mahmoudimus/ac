@@ -134,8 +134,8 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             // pretty sure if we end up here Connect has done something wrong, not the add-on, so let's describe it as
             // an internal error and recommend contacting Atlassian support.
             log.error("Failed to install " + descriptorFile.getName() + ": " + e.getMessage(), e);
-            throw new PluginInstallException("Unable to install connect add on. " + e.getMessage(),
-                    Option.some("connect.remote.upm.install.internal.error"));
+            Option<String> i18nKey = Option.some("connect.remote.upm.install.internal.error");
+            throw new PluginInstallException("Unable to install connect add on. " + e.getMessage(),i18nKey);
         }
     }
 

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -806,6 +806,7 @@
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
                                         <include>js/iframe-min/plugin/inline-dialog-min.js</include>
                                         <include>js/iframe-min/plugin/messages-min.js</include>
+                                        <include>js/iframe-min/plugin/cookie-min.js</include>
                                         <include>js/iframe-min/plugin/_resize_listener-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>

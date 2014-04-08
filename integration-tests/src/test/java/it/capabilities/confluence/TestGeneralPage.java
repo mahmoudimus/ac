@@ -24,6 +24,7 @@ import java.util.Map;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 import static it.capabilities.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
@@ -94,8 +95,8 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     public void beforeEachTest()
     {
         this.addonKey = remotePlugin.getAddon().getKey();
-        this.awesomePageModuleKey = addonKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + KEY_MY_AWESOME_PAGE;
-        this.contextPageModuleKey = addonKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + KEY_MY_CONTEXT_PAGE;
+        this.awesomePageModuleKey = addonAndModuleKey(addonKey,KEY_MY_AWESOME_PAGE);
+        this.contextPageModuleKey = addonAndModuleKey(addonKey,KEY_MY_CONTEXT_PAGE);
     }
 
     @Test

@@ -24,6 +24,7 @@ import org.mockito.stubbing.Answer;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -108,7 +109,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     @Test
     public void createsElementWithCorrectKey()
     {
-        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementKey(ADDON_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + ADDON_MODULE_KEY)));
+        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementKey(addonAndModuleKey(ADDON_KEY,ADDON_MODULE_KEY))));
     }
 
     @Test

@@ -21,6 +21,8 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
+import static com.atlassian.plugin.connect.test.RemotePluginUtils.randomWebItemBean;
+
 public final class WebHookTestServlet extends HttpServlet
 {
     private volatile BlockingDeque<WebHookBody> webHooksQueue = new LinkedBlockingDeque<WebHookBody>();
@@ -80,6 +82,7 @@ public final class WebHookTestServlet extends HttpServlet
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addInstallLifecycle()
+                .addModule("webItems", randomWebItemBean())
                 .addRoute(ConnectRunner.INSTALLED_PATH, servlet)
                 .start();
 
@@ -101,6 +104,7 @@ public final class WebHookTestServlet extends HttpServlet
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .setAuthenticationToNone()
                 .addEnableLifecycle()
+                .addModule("webItems",randomWebItemBean())
                 .addRoute(ConnectRunner.ENABLED_PATH, servlet)
                 .start();
 
@@ -121,6 +125,7 @@ public final class WebHookTestServlet extends HttpServlet
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addDisableLifecycle()
+                .addModule("webItems",randomWebItemBean())
                 .addRoute(ConnectRunner.DISABLED_PATH, servlet)
                 .start();
 
@@ -141,6 +146,7 @@ public final class WebHookTestServlet extends HttpServlet
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addUninstallLifecycle()
+                .addModule("webItems",randomWebItemBean())
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet)
                 .start();
 
@@ -164,6 +170,7 @@ public final class WebHookTestServlet extends HttpServlet
                 .setAuthenticationToNone()
                 .addModule("webhooks", WebHookModuleBean.newWebHookBean().withEvent(eventId).withUrl(path).build())
                 .addRoute(path, servlet)
+                .addModule("webItems",randomWebItemBean())
                 .addScope(ScopeName.READ) // for receiving web hooks
                 .start();
 

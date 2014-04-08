@@ -52,6 +52,8 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private final OSWorkflowConfigurator workflowConfigurator;
     private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private String addonKey;
+    private String moduleKey;
 
     private URI triggeredUri;
 
