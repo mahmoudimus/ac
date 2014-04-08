@@ -20,19 +20,34 @@ if (!fs.existsSync(jiraSchemaPath) || !fs.existsSync(confluenceSchemaPath)) {
     confluenceSchema = JSON.parse(fs.readFileSync(confluenceSchemaPath, 'utf8'));
 }
 
+var warned = false;
 
 downloader.run({
     descriptorDownloadedCallback: function (result, body, opts) {
         if (result.type !== 'json') {
-            console.log(result.addon.key, "XML descriptor not supported");
+            if (!warned) {
+                console.log("WARN:".yellow, result.addon.key, "XML descriptors are not supported");
+                warned = true;
+            }
             return;
         }
 
         var descriptor = JSON.parse(body);
 
-        validator.validateDescriptor(descriptor, jiraSchema, function (errors) {
+        var compatibleApps = result.addon.listing.compatibleApplications;
+
+        if (!compatibleApps) {
+            console.error(result.addon.key.red, "no compatible apps", JSON.stringify(result.listing));
+            return;
+        }
+
+        var app = _.pluck(compatibleApps, "key")[0];
+
+        var schema = (app === "confluence" ? confluenceSchema : jiraSchema);
+
+        validator.validateDescriptor(descriptor, schema, function (errors) {
             if (errors) {
-                console.error(result.addon.key.red + " descriptor does not validate");
+                console.error(result.addon.key.red + " descriptor does not validate", app);
                 if (!opts.quiet) {
                     console.log(util.inspect(errors, {colors: true, depth: 5}));
                 }

@@ -8,6 +8,8 @@ var request = require('request'),
     colors = require('colors'),
     util = require('util');
 
+var selfExecute = require.main === module;
+
 var getAddonPage = function(opts) {
     if (opts.debug) {
         console.log("downloading: ".grey + opts.baseUrl + opts.uri);
@@ -55,7 +57,9 @@ var getAddonPage = function(opts) {
 
                 if (!opts.quiet) {
                     try {
-                        console.log(addon.pluginKey, "(" + type[typeColor] + ", " + status[statusColor] + ")", opts.debug ? (releaseDate + " " + url.grey) : "");
+                        if (opts.debug || selfExecute) {
+                            console.log(addon.pluginKey, "(" + type[typeColor] + ", " + status[statusColor] + ")", opts.debug ? (releaseDate + " " + url.grey) : "");
+                        }
                     } catch (e) {
                         if (opts.debug) {
                             console.log(("" + e).red);
@@ -135,19 +139,15 @@ exports.run = function(runOpts) {
         }
     }
 
-    if (!opts.auth) {
-        if (!opts.includePrivate) {
-            console.log("WARNING: No credentials provided, only public add-ons will be retrieved.");
-        } else {
-            nomnom.help();
-            console.log("ERROR: To retrieve private add-ons, credentials are required.");
-            return;
-        }
+    if (opts.includePrivate && !opts.auth) {
+        nomnom.help();
+        console.log("ERROR: To retrieve private add-ons, credentials are required.");
+        return;
     }
 
     getAddonPage(opts);
 };
 
-if (require.main === module) {
+if (selfExecute) {
     exports.run();
 }
