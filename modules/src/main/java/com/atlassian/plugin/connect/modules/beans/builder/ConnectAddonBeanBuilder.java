@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedList;
 
 /**
@@ -121,16 +123,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
 
     public T withScopes(Set<ScopeName> scopes)
     {
-        if (null == this.scopes)
-        {
-            this.scopes = new HashSet<ScopeName>(scopes.size());
-        }
-        else
-        {
-            this.scopes.clear();
-        }
-
-        this.scopes.addAll(scopes);
+        this.scopes = ImmutableSet.copyOf(scopes);
         return (T) this;
     }
 
