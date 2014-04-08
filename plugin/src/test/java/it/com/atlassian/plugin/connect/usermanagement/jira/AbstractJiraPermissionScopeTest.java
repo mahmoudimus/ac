@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.After;
 import org.junit.Before;
 
 import java.io.IOException;
@@ -105,6 +106,20 @@ public abstract class AbstractJiraPermissionScopeTest
                 .build();
 
         testAuthenticator.authenticateUser("admin");
+    }
+    
+    @After
+    public void resetBeans()
+    {
+        this.adminAddOn = null;
+
+        this.projectAdminAddOn = null;
+
+        this.deleteAddOn = null;
+
+        this.writeAddOn = null;
+
+        this.readAddOn = null;
     }
 
     public ConnectAddonBean getAdminAddOn()
