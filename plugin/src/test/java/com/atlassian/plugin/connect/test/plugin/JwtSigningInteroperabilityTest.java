@@ -6,13 +6,12 @@ import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.JwtAuthorizationGenerator;
 import com.atlassian.plugin.connect.plugin.JwtSigningRemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.uri.UriBuilder;
@@ -34,11 +33,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -137,9 +132,13 @@ public class JwtSigningInteroperabilityTest
         when(userManager.getRemoteUserKey()).thenReturn(new UserKey("123456789"));
         when(connectApplinkManager.getAppLink(anyString())).thenReturn(applicationLink);
 
-        Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
+        ConnectAddonBean addon = ConnectAddonBean.newConnectAddonBean()
+                .withKey("my-plugin")
+                .withName("My Plugin")
+                .withBaseurl("")
+                .build();
 
-        signer = new JwtSigningRemotablePluginAccessor(plugin,
+        signer = new JwtSigningRemotablePluginAccessor(addon,
                 baseUrlSupplier,
                 new TestJwtService(SHARED_SECRET),
                 consumerService,

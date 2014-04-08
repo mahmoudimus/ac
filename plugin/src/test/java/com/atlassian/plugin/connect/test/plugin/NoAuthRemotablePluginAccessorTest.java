@@ -61,7 +61,7 @@ public class NoAuthRemotablePluginAccessorTest extends BaseSigningRemotablePlugi
     public void testGetAuthorizationGenerator() throws Exception
     {
         Map<String, String[]> params = Collections.singletonMap("param", new String[]{"param value"});
-        Option<String> auth = createRemotePluginAccessor().getAuthorizationGenerator().generate(HttpMethod.POST, PATH_URI, URI.create(""), params);
+        Option<String> auth = createRemotePluginAccessor().getAuthorizationGenerator().generate(HttpMethod.POST, PATH_URI, params);
         assertThat(auth, is(Option.none(String.class)));
     }
 

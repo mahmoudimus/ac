@@ -27,16 +27,14 @@ public interface HttpContentRetriever
      * @param parameters             the parameters to use.
      * @param headers                the headers
      * @param addOnKey               the key of the add-on from which to retrieve the content
-     * @param addOnBaseUrl           the baseUrl in this add-on's descriptor
      * @return a promise of the retrieved content
-     * @since 1.0.2
+     * @since 0.10
      */
     public Promise<String> async(AuthorizationGenerator authorizationGenerator,
                                  HttpMethod method,
                                  URI url,
                                  Map<String, String[]> parameters,
                                  Map<String, String> headers,
-                                 String addOnKey,
-                                 URI addOnBaseUrl);
+                                 String addOnKey);
 
 }

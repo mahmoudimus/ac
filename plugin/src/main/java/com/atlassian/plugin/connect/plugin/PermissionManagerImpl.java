@@ -148,7 +148,14 @@ public final class PermissionManagerImpl implements PermissionManager
 
     private Set<ScopeName> getScopeReferences(String pluginKey)
     {
-        return connectAddonBeanFactory.fromJsonSkipValidation(connectAddonRegistry.getDescriptor(pluginKey)).getScopes();
+        final String descriptor = connectAddonRegistry.getDescriptor(pluginKey);
+
+        if (null == descriptor)
+        {
+            throw new NullPointerException(String.format("The Connect Add-on Registry has no descriptor for add-on '%s' and therefore we cannot compute its scopes!", pluginKey));
+        }
+
+        return connectAddonBeanFactory.fromJsonSkipValidation(descriptor).getScopes();
     }
 
     @Deprecated

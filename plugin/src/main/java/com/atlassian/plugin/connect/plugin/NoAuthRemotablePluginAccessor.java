@@ -35,7 +35,7 @@ public class NoAuthRemotablePluginAccessor extends DefaultRemotablePluginAccesso
         return new AuthorizationGenerator()
         {
             @Override
-            public Option<String> generate(final HttpMethod method, final URI url, final URI addOnBaseUrl, final Map<String, String[]> parameters)
+            public Option<String> generate(final HttpMethod method, final URI url, final Map<String, String[]> parameters)
             {
                 return Option.none(String.class);
             }

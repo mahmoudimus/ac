@@ -57,7 +57,7 @@ public class RemotePluginRequestSigner implements RequestSigner
 
     private Option<String> getAuthHeader(URI uri, String pluginKey)
     {
-        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, getAddOnBaseUrl(pluginKey), Collections.<String, String[]>emptyMap());
+        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, Collections.<String, String[]>emptyMap());
     }
 
     private AuthorizationGenerator getAuthorizationGenerator(String pluginKey)
@@ -69,14 +69,5 @@ public class RemotePluginRequestSigner implements RequestSigner
     private boolean canSign(final String pluginKey)
     {
         return jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey) || legacyAddOnIdentifierService.isConnectAddOn(pluginKey);
-    }
-
-    private URI getAddOnBaseUrl(String addOnKey)
-    {
-        // legacy xml add-ons don't need the baseUrl value for signing, and ignore it
-        // (because they're deprecated and we're not changing their implementation)
-        return URI.create(jsonConnectAddOnIdentifierService.isConnectAddOn(addOnKey)
-                          ? connectAddonRegistry.getBaseUrl(addOnKey)
-                          : "");
     }
 }

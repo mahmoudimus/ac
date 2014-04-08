@@ -53,14 +53,14 @@ public class CachingHttpContentRetrieverTest
     {
         final URI url = URI.create("https://example.com/path");
         final URI baseUrl = URI.create("https://example.com");
-        httpContentRetriever.async(authorizationGenerator, HttpMethod.GET, url, PARAMS, HEADERS, "add-on key", baseUrl);
-        verify(authorizationGenerator).generate(HttpMethod.GET, url, baseUrl, PARAMS);
+        httpContentRetriever.async(authorizationGenerator, HttpMethod.GET, url, PARAMS, HEADERS, "add-on key");
+        verify(authorizationGenerator).generate(HttpMethod.GET, url, PARAMS);
     }
 
     @Before
     public void beforeEachTest()
     {
-        when(authorizationGenerator.generate(any(HttpMethod.class), any(URI.class), any(URI.class), anyMap())).thenReturn(Option.<String>none());
+        when(authorizationGenerator.generate(any(HttpMethod.class), any(URI.class), anyMap())).thenReturn(Option.<String>none());
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
         when(plugin.getPluginInformation()).thenReturn(pluginInformation);
         when(httpClientFactory.create(any(HttpClientOptions.class))).thenReturn(httpClient);

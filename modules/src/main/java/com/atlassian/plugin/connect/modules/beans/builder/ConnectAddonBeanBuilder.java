@@ -3,7 +3,9 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import com.google.common.base.Function;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedList;
+import static com.google.common.collect.Collections2.transform;
 
 /**
  * @since 1.0
@@ -28,7 +31,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private VendorBean vendor;
     private Map<String, String> links;
     private ModuleList modules;
-    private Set<ScopeName> scopes;
+    private Set<String> scopes; // cannot be Set<ScopeName> otherwise the copy-by-reflection in ConnectReflectionHelper sets `ConnectAddonBean.scopes` and reading it produces a ClassCastException
     private LifecycleBean lifecycle;
     private String baseUrl;
     private AuthenticationBean authentication;
@@ -51,7 +54,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.lifecycle = defaultBean.getLifecycle();
         this.baseUrl = defaultBean.getBaseUrl();
         this.authentication = defaultBean.getAuthentication();
-        this.scopes = defaultBean.getScopes();
+        this.scopes = transformScopeNamesToStrings(defaultBean.getScopes());
         this.enableLicensing = defaultBean.getEnableLicensing();
     }
 
@@ -123,14 +126,14 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     {
         if (null == this.scopes)
         {
-            this.scopes = new HashSet<ScopeName>(scopes.size());
+            this.scopes = new HashSet<String>(scopes.size());
         }
         else
         {
             this.scopes.clear();
         }
 
-        this.scopes.addAll(scopes);
+        this.scopes.addAll(transformScopeNamesToStrings(scopes));
         return (T) this;
     }
 
@@ -156,6 +159,18 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     {
         this.enableLicensing = enable;
         return (T) this;
+    }
+
+    private static HashSet<String> transformScopeNamesToStrings(Set<ScopeName> scopeNames)
+    {
+        return new HashSet<String>(transform(scopeNames, new Function<ScopeName, String>()
+        {
+            @Override
+            public String apply(@Nullable ScopeName scopeName)
+            {
+                return null == scopeName ? null : scopeName.name();
+            }
+        }));
     }
 
     private void addBeanReflectivelyByType(String fieldName, ModuleList capabilities, ModuleBean bean)

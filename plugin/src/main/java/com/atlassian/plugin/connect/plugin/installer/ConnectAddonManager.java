@@ -449,7 +449,7 @@ public class ConnectAddonManager
             request.setContentType(MediaType.APPLICATION_JSON);
             request.setEntity(jsonEventData);
 
-            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, URI.create(addon.getBaseUrl()), Collections.<String, String[]>emptyMap());
+            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap());
             if (authHeader.isDefined())
             {
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());

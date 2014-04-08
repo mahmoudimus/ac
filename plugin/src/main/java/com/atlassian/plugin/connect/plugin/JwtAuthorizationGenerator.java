@@ -55,16 +55,18 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
     private final JwtService jwtService;
     private final ApplicationLink applicationLink;
     private final ConsumerService consumerService;
+    private final URI addOnBaseUrl;
 
-    public JwtAuthorizationGenerator(JwtService jwtService, ApplicationLink applicationLink, ConsumerService consumerService)
+    public JwtAuthorizationGenerator(JwtService jwtService, ApplicationLink applicationLink, ConsumerService consumerService, URI addOnBaseUrl)
     {
         this.jwtService = checkNotNull(jwtService);
         this.applicationLink = checkNotNull(applicationLink);
         this.consumerService = checkNotNull(consumerService);
+        this.addOnBaseUrl = checkNotNull(addOnBaseUrl);
     }
 
     @Override
-    public Option<String> generate(HttpMethod httpMethod, URI url, URI addOnBaseUrl, Map<String, String[]> parameters)
+    public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters)
     {
         checkArgument(null != parameters, "Parameters Map argument cannot be null");
         return Option.some(JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, null, consumerService.getConsumer().getKey(), jwtService, applicationLink));

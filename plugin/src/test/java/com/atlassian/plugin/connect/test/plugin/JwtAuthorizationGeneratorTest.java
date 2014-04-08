@@ -101,25 +101,25 @@ public class JwtAuthorizationGeneratorTest
     @Test(expected = IllegalArgumentException.class)
     public void nullHttpMethodResultsInException()
     {
-        generator.generate((HttpMethod) null, A_URI, A_URI_BASE, PARAMS);
+        generator.generate((HttpMethod) null, A_URI, PARAMS);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void nullUriResultsInException()
     {
-        generator.generate(HttpMethod.GET, null, A_URI_BASE, PARAMS);
+        generator.generate(HttpMethod.GET, null, PARAMS);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void nullParamsMapResultsInException()
     {
-        generator.generate(HttpMethod.GET, A_URI, A_URI_BASE, null);
+        generator.generate(HttpMethod.GET, A_URI, null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void nullBaseUrlResultsInException()
     {
-        generator.generate(HttpMethod.GET, A_URI, null, PARAMS);
+        new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -181,7 +181,7 @@ public class JwtAuthorizationGeneratorTest
     {
         when(jwtService.issueJwt(any(String.class), eq(applicationLink))).thenReturn(A_MOCK_JWT);
         when(consumerService.getConsumer()).thenReturn(Consumer.key("whatever").name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
-        generator = new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService);
+        generator = new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, A_URI_BASE);
         generate();
     }
 
@@ -198,12 +198,12 @@ public class JwtAuthorizationGeneratorTest
 
     private Option<String> generate()
     {
-        return generator.generate(HttpMethod.POST, A_URI, A_URI_BASE, PARAMS);
+        return generator.generate(HttpMethod.POST, A_URI, PARAMS);
     }
 
     private String generateGet(String url, String baseUrl, Map<String, String[]> params)
     {
-        return generator.generate(HttpMethod.GET, URI.create(url), URI.create(baseUrl), params).get();
+        return new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params).get();
     }
 
     private static ArgumentMatcher<String> hasClaim(final String claimName)

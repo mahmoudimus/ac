@@ -84,8 +84,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
                                  URI url,
                                  Map<String, String[]> parameters,
                                  Map<String, String> headers,
-                                 String addOnKey,
-                                 URI addOnBaseUrl)
+                                 String addOnKey)
     {
         checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
 
@@ -93,7 +92,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
 
         Request.Builder request = httpClient.newRequest(getFullUrl(method, url, parameters));
         request = request.setAttributes(getAttributes(addOnKey));
-        Option<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, addOnBaseUrl, parameters);
+        Option<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, parameters);
         Map<String, String> allHeaders = getAllHeaders(headers, authHeaderValue);
         request = request.setHeaders(allHeaders);
 
@@ -140,9 +139,9 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
         return allHeaders.build();
     }
 
-    private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, URI addOnBaseUrl, Map<String, String[]> allParameters)
+    private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters)
     {
-        return authorizationGenerator.generate(method, url, addOnBaseUrl, allParameters);
+        return authorizationGenerator.generate(method, url, allParameters);
     }
 
     private static HttpClientOptions getHttpClientOptions(PluginRetrievalService pluginRetrievalService)

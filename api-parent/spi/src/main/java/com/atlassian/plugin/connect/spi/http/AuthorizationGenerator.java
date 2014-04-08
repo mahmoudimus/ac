@@ -15,10 +15,9 @@ public interface AuthorizationGenerator
      *
      * @param method     the {@link HttpMethod HTTP method} used
      * @param url        the url of the HTTP request
-     * @param baseUrl    the prefix of all HTTP requests to this addOn, as specified in its descriptor
      * @param parameters the parameters of the HTTP request
      * @return some authorisation header, none if not generated.
-     * @since 1.0.2
+     * @since 0.10
      */
-    Option<String> generate(HttpMethod method, URI url, URI baseUrl, Map<String, String[]> parameters);
+    Option<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters);
 }

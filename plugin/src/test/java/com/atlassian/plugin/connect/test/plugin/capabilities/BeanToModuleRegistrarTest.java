@@ -20,7 +20,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.Bundle;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -86,7 +85,7 @@ public class BeanToModuleRegistrarTest
 
         connectAddonBean = newConnectAddonBean(connectAddonBean)
                 .withModules("webhooks",webHookModuleBean)
-                .withScopes(new HashSet<String>(Arrays.asList(ScopeName.ADMIN.name())))
+                .withScopes(new HashSet<ScopeName>(Arrays.asList(ScopeName.ADMIN)))
                 .build();
 
         beanToModuleRegistrar.registerDescriptorsForBeans(connectAddonBean);

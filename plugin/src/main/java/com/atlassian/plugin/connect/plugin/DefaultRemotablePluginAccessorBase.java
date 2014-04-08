@@ -65,8 +65,7 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
                 getTargetUrl(targetPath),
                 params,
                 headers,
-                getKey(),
-                getBaseUrl());
+                getKey());
     }
 
     @Override
