@@ -636,7 +636,7 @@
     </pluginRepositories>
     <properties>
         <!-- VERSIONS -->
-        <amps.version>4.2.18</amps.version>
+        <amps.version>4.2.20</amps.version>
         <atlassian.applinks.version>4.0.2</atlassian.applinks.version>
         <atlassian.confluence.version>5.4-OD-22-m1</atlassian.confluence.version>
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
@@ -687,6 +687,7 @@
         <slf4j.version>1.6.4</slf4j.version>
         <spring.version>2.5.6</spring.version>
         <webdriver.browser>chrome</webdriver.browser>
+        <plugin.testrunner.version>1.2.0</plugin.testrunner.version>
 
         <!-- BUILD STUFF -->
         <jgitflow.version>1.0-internal8</jgitflow.version>

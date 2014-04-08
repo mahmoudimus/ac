@@ -435,6 +435,8 @@
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
+                    <enableDevToolbox>true</enableDevToolbox>
+                    <enableFastdev>true</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
@@ -540,16 +542,6 @@
                             </pluginArtifacts>
 
                             <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.devrel</groupId>
-                                    <artifactId>developer-toolbox-plugin</artifactId>
-                                    <version>${toolbox.version}</version>
-                                </bundledArtifact>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.labs</groupId>
-                                    <artifactId>fastdev-plugin</artifactId>
-                                    <version>${fastdev.version}</version>
-                                </bundledArtifact>
 
                                 <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
                                 <bundledArtifact>
@@ -1093,9 +1085,8 @@
         <skipITs>true</skipITs>
         <build.test.plugin>false</build.test.plugin>
         <devmode>true</devmode>
-        <fastdev.version>2.2</fastdev.version>
-        <toolbox.version>2.0.6</toolbox.version>
-        <plugin.testrunner.version>1.1.7</plugin.testrunner.version>
+        <fastdev.version>2.4</fastdev.version>
+        <toolbox.version>2.0.12</toolbox.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
