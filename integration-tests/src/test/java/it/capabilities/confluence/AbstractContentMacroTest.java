@@ -285,7 +285,14 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
         String url = editorContent.getImagePlaceholderUrl();
 
-        editorPage.cancel();
+        try
+        {
+            editorPage.cancel();
+        }
+        catch(Exception e)
+        {
+            //do nothing;
+        }
 
         assertThat(url, is(getAddonBaseUrl() + "/images/placeholder.png"));
     }
@@ -333,7 +340,15 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
         boolean submitted = dialog.submit();
 
-        editorPage.cancel();
+        try
+        {
+            editorPage.cancel();
+        }
+        catch (Exception e)
+        {
+            //do nothing
+        }
+        
         assertThat(submitted, is(true));
     }
 
