@@ -1,15 +1,10 @@
 #set ($uuid = $contextParams.get('postFunction.id'))
 #set ($config = $contextParams.get('postFunction.config'))
 
-<input id="postFunction.config-$uuid"
+<input id="postFunction-config-$uuid"
        name="postFunction.config-$uuid"
        value="$!config" type="hidden"/>
 <input name="postFunction.id" value="$uuid"
        type="hidden" />
-
-## TODO why are these dialog scripts necessary ???
-#foreach ($scriptUrl in $dialogScriptUrls)
-    <script src="$scriptUrl"></script>
-#end
 
 #parse("velocity/iframe-body.vm")
