@@ -14,9 +14,9 @@ _AP.define("jira/workflow-post-function", ["_dollar"], function($) {
         isOnWorkflowPostFunctionPage: function(){
             return ($("input[name='postFunction.id']").length > 0);
         },
-        registerSubmissionButton: function(rpc, postFunctionId){
+        registerSubmissionButton: function(rpc, postFunctionId, repeat){
             $(document).delegate("#add_submit, #update_submit", "click", function (e) {
-                if (!done) {
+                if (!done || repeat) {
                     e.preventDefault();
                     rpc.setWorkflowConfigurationMessage(function (either) {
                         if (either.valid) {
