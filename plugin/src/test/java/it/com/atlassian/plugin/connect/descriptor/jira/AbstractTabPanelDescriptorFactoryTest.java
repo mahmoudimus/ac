@@ -28,6 +28,7 @@ import it.com.atlassian.plugin.connect.TestAuthenticator;
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractTabPanelDescriptorFactoryTest
@@ -113,7 +114,8 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
         
         installedPlugin = testPluginInstaller.installAddon(addonBean);
         
-        return installedPlugin.getModuleDescriptor(MODULE_KEY);
+        Plugin connectPlugin = getConnectPlugin();
+        return connectPlugin.getModuleDescriptor(addonAndModuleKey(pluginKey,MODULE_KEY));
     }
 
     protected ConnectAddonBean createAddonBean()
@@ -137,7 +139,7 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
     @Test
     public void createsElementWithCorrectKey()
     {
-        assertEquals(MODULE_KEY, descriptor.getKey());
+        assertEquals(addonAndModuleKey(pluginKey,MODULE_KEY), descriptor.getKey());
     }
 
     @Test

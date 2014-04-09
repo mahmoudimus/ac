@@ -6,6 +6,7 @@
     </plugin-info>
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
+    <resource type="i18n" name="addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
 
     <ao key="ao-module" namespace="atlassianconnect">
         <description>The AO module for storing connect addon data.</description>

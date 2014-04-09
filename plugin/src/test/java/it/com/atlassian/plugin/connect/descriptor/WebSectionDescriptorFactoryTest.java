@@ -116,7 +116,7 @@ public class WebSectionDescriptorFactoryTest
 
         installedPlugin = testPluginInstaller.installAddon(addonBean);
 
-        return (WebSectionModuleDescriptor) installedPlugin.getModuleDescriptor(MODULE_KEY);
+        return (WebSectionModuleDescriptor) getConnectPlugin().getModuleDescriptor(addonAndModuleKey(pluginKey,MODULE_KEY));
     }
 
     protected ConnectAddonBean createAddonBean()

@@ -1,10 +1,12 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,6 +37,7 @@ import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
@@ -69,6 +72,7 @@ import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 
 /**
@@ -115,6 +119,7 @@ public class ConnectAddonManager
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final SharedSecretService sharedSecretService;
     private final HttpClientFactory httpClientFactory;
+    private final I18nPropertiesPluginManager i18nManager;
     
     private final AtomicBoolean isTestHttpClient;
 
@@ -125,7 +130,7 @@ public class ConnectAddonManager
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory)
+                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory, I18nPropertiesPluginManager i18nManager)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -146,6 +151,7 @@ public class ConnectAddonManager
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.sharedSecretService = sharedSecretService;
         this.httpClientFactory = httpClientFactory;
+        this.i18nManager = i18nManager;
 
         this.isTestHttpClient = new AtomicBoolean(false);
     }
@@ -167,10 +173,24 @@ public class ConnectAddonManager
 
     public ConnectAddonBean installConnectAddon(String jsonDescriptor)
     {
-        ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
+        Map<String, String> i18nCollector = newHashMap();
+        ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nCollector);
         
         String pluginKey = addOn.getKey();
 
+        if(!i18nCollector.isEmpty())
+        {
+            try
+            {
+                i18nManager.add(pluginKey,i18nCollector);
+            }
+            catch (IOException e)
+            {
+                //just logging for now... do we really want to throw for this?
+                log.error("Unable to write i18n props for addon '" + pluginKey + "'",e);
+            }
+        }
+        
         String previousDescriptor = addonRegistry.getDescriptor(pluginKey);
 
         AuthenticationType authType = addOn.getAuthentication().getType();
