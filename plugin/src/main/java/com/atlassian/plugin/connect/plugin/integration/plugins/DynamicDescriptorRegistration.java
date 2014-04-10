@@ -7,14 +7,11 @@ import java.util.List;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.StateAware;
-import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 
 import com.google.common.collect.ImmutableList;
 
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +27,7 @@ import static java.util.Arrays.asList;
 public class DynamicDescriptorRegistration
 {
     private final BundleContext bundleContext;
-    private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
+    private final ConnectAddonI18nManager connectAddonI18nManager;
     private static final Logger log = LoggerFactory.getLogger(DynamicDescriptorRegistration.class);
 
     public static interface Registration
@@ -42,11 +39,11 @@ public class DynamicDescriptorRegistration
     @Autowired
     public DynamicDescriptorRegistration(
                                          BundleContext bundleContext,
-                                         I18nPropertiesPluginManager i18nPropertiesPluginManager
+                                         ConnectAddonI18nManager connectAddonI18nManager
     )
     {
         this.bundleContext = bundleContext;
-        this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
+        this.connectAddonI18nManager = connectAddonI18nManager;
     }
 
     /**
@@ -90,7 +87,7 @@ public class DynamicDescriptorRegistration
             {
                 try
                 {
-                    i18nPropertiesPluginManager.add(plugin.getKey(), reg.getI18nProperties());
+                    connectAddonI18nManager.add(plugin.getKey(), reg.getI18nProperties());
                 }
                 catch (IOException e)
                 {

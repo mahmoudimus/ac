@@ -38,7 +38,7 @@ public class ProjectTabPanelDescriptoryFactoryTest extends AbstractTabPanelDescr
     @Override
     public void createsElementWithCorrectOrder()
     {
-        assertEquals(MODULE_WEIGHT, ((AbstractTabPanelModuleDescriptor) getDescriptor()).getOrder());
+        assertEquals(MODULE_WEIGHT, ((ConnectProjectTabPanelModuleDescriptor) getDescriptor()).getOrder());
     }
 
     @Test

@@ -44,6 +44,7 @@ public class DefaultConnectWebSectionModuleDescriptorFactory implements ConnectW
         webSectionElement.addAttribute("location", bean.getLocation());
         webSectionElement.addAttribute("weight", Integer.toString(bean.getWeight()));
         webSectionElement.addAttribute("i18n-name-key", i18nKeyOrName);
+        webSectionElement.addAttribute("name", bean.getDisplayName());
 
         webSectionElement.addElement("label")
                          .addAttribute("key", bean.getName().getI18n())

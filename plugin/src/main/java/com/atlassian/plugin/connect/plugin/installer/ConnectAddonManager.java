@@ -37,7 +37,7 @@ import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
+import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
@@ -119,7 +119,7 @@ public class ConnectAddonManager
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final SharedSecretService sharedSecretService;
     private final HttpClientFactory httpClientFactory;
-    private final I18nPropertiesPluginManager i18nManager;
+    private final ConnectAddonI18nManager i18nManager;
     
     private final AtomicBoolean isTestHttpClient;
 
@@ -130,7 +130,7 @@ public class ConnectAddonManager
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory, I18nPropertiesPluginManager i18nManager)
+                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory, ConnectAddonI18nManager i18nManager)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;

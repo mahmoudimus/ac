@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
 import com.atlassian.jira.index.IndexDocumentConfiguration;
 import com.atlassian.jira.index.IndexDocumentConfigurationFactory;
@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectEntityPropertyModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;

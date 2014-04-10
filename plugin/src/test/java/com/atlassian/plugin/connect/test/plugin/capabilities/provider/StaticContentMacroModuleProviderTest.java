@@ -36,7 +36,7 @@ public class StaticContentMacroModuleProviderTest extends AbstractContentMacroMo
                 remotablePluginAccessorFactory);
 
         return new StaticContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory,
-                hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, i18nPropertiesPluginManager);
+                hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
     }
 
     @Override

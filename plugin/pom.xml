@@ -1091,6 +1091,6 @@
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
         <debugSchemaGen>false</debugSchemaGen>
-        <ao.version>0.23.2</ao.version>
+        <ao.version>0.25.2</ao.version>
     </properties>
 </project>
