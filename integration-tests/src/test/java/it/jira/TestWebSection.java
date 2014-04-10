@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
@@ -112,6 +113,16 @@ public class TestWebSection extends JiraWebDriverTestBase
         public PageElement getItem(By selector)
         {
             return getDropdown().find(selector);
+        }
+
+        @Override
+        protected PageElement trigger()
+        {
+            PageElement element = super.trigger();
+            
+            waitUntilTrue(element.timed().isVisible());
+            
+            return element;
         }
     }
 }
