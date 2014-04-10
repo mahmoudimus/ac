@@ -8,6 +8,7 @@ import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFact
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
@@ -33,12 +34,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class SearchRequestViewModuleDescriptorFactoryTest
 {
@@ -114,7 +117,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     @Test
     public void verifyCompleteKeyIsCorrect()
     {
-        assertThat(descriptor.getCompleteKey(), is("my-plugin:my-plugin" + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "a-search-request-view"));
+        assertThat(descriptor.getCompleteKey(), is("my-plugin:" + addonAndModuleKey("my-plugin","a-search-request-view")));
     }
 
     @Test

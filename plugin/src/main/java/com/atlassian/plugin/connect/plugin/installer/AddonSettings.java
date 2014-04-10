@@ -7,7 +7,7 @@ public class AddonSettings
     private String descriptor;
     private String baseUrl;
     private String secret;
-    private String user;
+    private String userKey;
     private String auth;
     private String restartState;
 
@@ -16,7 +16,7 @@ public class AddonSettings
         this.descriptor = "";
         this.baseUrl = "";
         this.secret = "";
-        this.user = "";
+        this.userKey = "";
         this.auth = "";
         this.restartState = PluginState.ENABLED.name();
         
@@ -58,14 +58,14 @@ public class AddonSettings
         return this;
     }
 
-    public String getUser()
+    public String getUserKey()
     {
-        return user;
+        return userKey;
     }
 
-    public AddonSettings setUser(String user)
+    public AddonSettings setUserKey(String user)
     {
-        this.user = user;
+        this.userKey = user;
 
         return this;
     }

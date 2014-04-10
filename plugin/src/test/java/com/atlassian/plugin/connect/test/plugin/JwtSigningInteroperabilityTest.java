@@ -7,6 +7,7 @@ import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.JwtAuthorizationGenerator;
 import com.atlassian.plugin.connect.plugin.JwtSigningRemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -53,6 +54,7 @@ import static org.mockito.Mockito.when;
  * 2/ Run this test
  * 3/ Run 'mocha test' in ACE
  */
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class JwtSigningInteroperabilityTest
 {

@@ -35,4 +35,10 @@ public class ConnectProjectTabPanelModuleDescriptor extends ProjectTabPanelModul
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameProjectTabPanel(renderStrategy, moduleContextFilter);
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

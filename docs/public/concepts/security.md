@@ -73,7 +73,7 @@ appropriate message to the user.
 
 ### Road Map
 
-Currently, the actions that an add-on is capable of performing is limited to the intersection of its scopes and the
+Currently, the set of actions that an add-on is capable of performing is limited to the intersection of its scopes and the
 add-on user's permissions (for server-to-server) or to the intersection of its scopes and the in-browser user's
 permissions (for in-browser requests).
 

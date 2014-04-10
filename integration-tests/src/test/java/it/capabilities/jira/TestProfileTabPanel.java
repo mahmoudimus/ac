@@ -24,6 +24,7 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.matcher.IsNotBlank.isNotBlank;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
@@ -77,7 +78,7 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
     @Test
     public void testProfileTabPanel() throws RemoteException
     {
-        String moduleKey = remotePlugin.getAddon().getKey() + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + RAW_MODULE_KEY;
+        String moduleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),RAW_MODULE_KEY);
         loginAsAdmin();
         product.visit(ViewProfilePage.class);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",

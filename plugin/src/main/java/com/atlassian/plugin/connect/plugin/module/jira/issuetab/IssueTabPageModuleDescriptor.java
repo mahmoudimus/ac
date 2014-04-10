@@ -74,4 +74,10 @@ public final class IssueTabPageModuleDescriptor extends AbstractJiraTabPageModul
     {
         return IFrameIssueTab.class;
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

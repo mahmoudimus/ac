@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.StaticContentMacroModuleDescriptorFactory;
@@ -18,6 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacroModuleDescriptorTest<StaticContentMacroModuleBean, StaticContentMacroModuleBeanBuilder>
 {

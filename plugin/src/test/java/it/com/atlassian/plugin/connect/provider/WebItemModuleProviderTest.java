@@ -2,6 +2,7 @@ package it.com.atlassian.plugin.connect.provider;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,6 +19,7 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
@@ -30,6 +32,8 @@ import org.junit.runner.RunWith;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomPluginKey;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -39,14 +43,13 @@ import static org.mockito.Mockito.when;
 @RunWith (AtlassianPluginsTestRunner.class)
 public class WebItemModuleProviderTest
 {
-    public static final String PLUGIN_KEY = "my-plugin";
     public static final String PLUGIN_NAME = "My Plugin";
     public static final String MODULE_NAME = "My Web Item";
     public static final String MODULE_KEY = "my-web-item";
     public static final String OTHER_MODULE_NAME = "My Other Web Item";
     public static final String OTHER_MODULE_KEY = "my-other-web-item";
     public static final String CONTEXT_PATH = "http://ondemand.com/someProduct";
-    public static final String BASE_URL = "http://my.connect.addon.com";
+    public static final String BASE_URL = "https://my.connect.addon.com";
 
     private final WebItemModuleProvider webItemModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
@@ -54,6 +57,8 @@ public class WebItemModuleProviderTest
     private final PluginAccessor pluginAccessor;
     private HttpServletRequest servletRequest;
     private ConnectAddonBean addon;
+    
+    private String pluginKey;
 
     public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller,
                                      TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
@@ -65,17 +70,18 @@ public class WebItemModuleProviderTest
     }
 
     @BeforeClass
-    public void setup()
-    {
-        this.addon = newConnectAddonBean().withKey(PLUGIN_KEY).build();
-        this.servletRequest = mock(HttpServletRequest.class);
-        when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
-    }
-
-    @Before
     public void authenticate()
     {
         testAuthenticator.authenticateUser("admin");
+    }
+
+    @Before
+    public void setup()
+    {
+        this.pluginKey = randomPluginKey();
+        this.addon = newConnectAddonBean().withKey(pluginKey).build();
+        this.servletRequest = mock(HttpServletRequest.class);
+        when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
     }
 
     @Test
@@ -162,7 +168,7 @@ public class WebItemModuleProviderTest
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals(CONTEXT_PATH + "/plugins/servlet/ac/my-plugin/some-page-key", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals(CONTEXT_PATH + "/plugins/servlet/ac/" + addon.getKey() + "/some-page-key", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
     }
 
     @Test
@@ -178,7 +184,7 @@ public class WebItemModuleProviderTest
 
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
-                .withKey(PLUGIN_KEY)
+                .withKey(pluginKey)
                 .withBaseurl(BASE_URL)
                 .withAuthentication(AuthenticationBean.none())
                 .withModules("webItems", bean)
@@ -190,7 +196,24 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) getConnectPlugin().getModuleDescriptor(PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + MODULE_KEY);
+            final Plugin connectPlugin = getConnectPlugin();
+            final String moduleKey = addonAndModuleKey(pluginKey,MODULE_KEY);
+
+            WaitUntil.invoke(new WaitUntil.WaitCondition() {
+                @Override
+                public boolean isFinished()
+                {
+                    return null != connectPlugin.getModuleDescriptor(moduleKey);
+                }
+
+                @Override
+                public String getWaitMessage()
+                {
+                    return "waiting for addon module to be registered...";
+                }
+            });
+            
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) connectPlugin.getModuleDescriptor(moduleKey);
 
             assertEquals(MODULE_NAME,descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class),new HashMap<String, Object>()));
         }
@@ -237,7 +260,7 @@ public class WebItemModuleProviderTest
 
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
-                .withKey(PLUGIN_KEY)
+                .withKey(pluginKey)
                 .withBaseurl(BASE_URL)
                 .withAuthentication(AuthenticationBean.none())
                 .withModules("webItems", bean)
@@ -287,7 +310,7 @@ public class WebItemModuleProviderTest
 
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
-                .withKey(PLUGIN_KEY)
+                .withKey(pluginKey)
                 .withAuthentication(AuthenticationBean.none())
                 .withBaseurl(BASE_URL)
                 .withModules("webItems", bean)
@@ -338,7 +361,7 @@ public class WebItemModuleProviderTest
 
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
-                .withKey(PLUGIN_KEY)
+                .withKey(pluginKey)
                 .withBaseurl(BASE_URL)
                 .withAuthentication(AuthenticationBean.none())
                 .withModules("webItems", bean, bean2)

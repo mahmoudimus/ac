@@ -157,10 +157,12 @@ public class ConnectAddonBeanMarshallingTest
         assertThat(addOn.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ, ScopeName.WRITE)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void badScopeName() throws IOException
     {
+        Set<ScopeName> emptySet = newHashSet();
         String json = readAddonTestFile("badScopeName.json");
-        ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class).getScopes();
+        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        assertThat(addOn.getScopes(), is(emptySet));
     }
 }

@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
@@ -17,6 +18,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@ConvertToWiredTest
 public class StaticAddOnScopesTest
 {
     @Test

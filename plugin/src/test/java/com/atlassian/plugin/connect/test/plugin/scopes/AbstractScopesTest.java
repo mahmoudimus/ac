@@ -2,9 +2,13 @@ package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.PermissionManagerImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeServiceImpl;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -31,13 +35,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 public abstract class AbstractScopesTest
 {
     private static final String PLUGIN_KEY = "my-plugin";
     private static final UserKey USER_KEY = null;
 
     private PermissionManagerImpl permissionManager;
-    private PermissionsReader permissionsReader;
     private HttpServletRequest request;
     private Plugin plugin = new PluginForTests(PLUGIN_KEY, "My Plugin");
 
@@ -77,11 +81,6 @@ public abstract class AbstractScopesTest
             }
         });
 
-        permissionsReader = mock(PermissionsReader.class);
-
-        Set<ScopeName> scopeSet = (null == scope) ? Sets.<ScopeName>newHashSet() : Sets.newHashSet(scope);
-        when(permissionsReader.readScopesForAddOn(plugin)).thenReturn(scopeSet);
-
         PluginAccessor pluginAccessor = mock(PluginAccessor.class);
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
@@ -94,8 +93,24 @@ public abstract class AbstractScopesTest
         PluginEventManager pluginEventManager = mock(PluginEventManager.class);
         ScopeService scopeService = new ScopeServiceImpl(applicationProperties);
 
+        Set<ScopeName> scopeSet = (null == scope) ? Sets.<ScopeName>newHashSet() : Sets.newHashSet(scope);
+        ConnectAddonBean addon = ConnectAddonBean.newConnectAddonBean()
+                                                 .withKey(PLUGIN_KEY)
+                                                 .withName("Test add-on " + PLUGIN_KEY)
+                                                 .withBaseurl("https://example.com")
+                                                 .withScopes(scopeSet)
+                                                 .build();
+        final String mockDescriptor = String.format("~~ mock descriptor for add-on %s ~~", PLUGIN_KEY);
+
+        final ConnectAddonRegistry connectAddonRegistry = mock(ConnectAddonRegistry.class);
+        when(connectAddonRegistry.getDescriptor(PLUGIN_KEY)).thenReturn(mockDescriptor);
+
+        final ConnectAddonBeanFactory addonBeanFactory = mock(ConnectAddonBeanFactory.class);
+        when(addonBeanFactory.fromJsonSkipValidation(mockDescriptor)).thenReturn(addon);
+
         permissionManager = new PermissionManagerImpl(pluginAccessor, pluginEventManager,
-                permissionsReader, jsonConnectAddOnIdentifierService, scopeService);
+                mock(PermissionsReader.class), jsonConnectAddOnIdentifierService, scopeService,
+                connectAddonRegistry, addonBeanFactory);
     }
 
     @Test

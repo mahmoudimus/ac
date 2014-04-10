@@ -110,7 +110,7 @@ public class TestIssueTabPanel extends TestBase
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
-        String completeKey = PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + MODULE_KEY;
+        String completeKey = addonAndModuleKey(PLUGIN_KEY,MODULE_KEY);
         
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
 

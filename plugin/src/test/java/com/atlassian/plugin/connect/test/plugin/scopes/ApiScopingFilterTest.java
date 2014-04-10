@@ -4,6 +4,7 @@ import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class ApiScopingFilterTest
 {

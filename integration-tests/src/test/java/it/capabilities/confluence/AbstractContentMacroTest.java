@@ -334,6 +334,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         boolean submitted = dialog.submit();
 
         editorPage.cancel();
+        
         assertThat(submitted, is(true));
     }
 

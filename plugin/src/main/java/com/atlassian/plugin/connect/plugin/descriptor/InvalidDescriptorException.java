@@ -18,7 +18,7 @@ public class InvalidDescriptorException extends PluginInstallException
 
     public InvalidDescriptorException(String message, String upmMessageI18nKey)
     {
-        super(message, Option.some(upmMessageI18nKey));
+        super(message, Option.<String>some(upmMessageI18nKey));
     }
 
     public InvalidDescriptorException(String message, Throwable cause)
@@ -28,6 +28,6 @@ public class InvalidDescriptorException extends PluginInstallException
 
     public InvalidDescriptorException(String message, String upmMessageI18nKey, Throwable cause)
     {
-        super(message, Option.some(upmMessageI18nKey), cause, true);
+        super(message, Option.<String>some(upmMessageI18nKey), cause, true);
     }
 }

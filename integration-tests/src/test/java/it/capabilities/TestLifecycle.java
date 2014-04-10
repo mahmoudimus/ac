@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static com.atlassian.plugin.connect.test.RemotePluginUtils.randomWebItemBean;
 import static org.junit.Assert.*;
 
 public class TestLifecycle extends AbstractBrowserlessTest
@@ -59,6 +60,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner plugin1 = new ConnectRunner(baseUrl,pluginKey)
                 .addDisableLifecycle()
+                .addModule("webItems", randomWebItemBean())
                 .setAuthenticationToNone()
                 .addRoute(ConnectRunner.DISABLED_PATH, servlet);
         try
@@ -82,6 +84,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
         ConnectRunner plugin1 = new ConnectRunner(baseUrl, pluginKey)
                 .addUninstallLifecycle()
                 .setAuthenticationToNone()
+                .addModule("webItems", randomWebItemBean())
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet);
         try
         {

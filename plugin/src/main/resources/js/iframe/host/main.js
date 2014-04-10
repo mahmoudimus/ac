@@ -218,6 +218,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           }
           var headers = {};
           $.each(args.headers || {}, function (k, v) { headers[k.toLowerCase()] = v; });
+          // Disable system ajax settings. This stops confluence mobile from injecting callbacks and then throwing exceptions.
+          $.ajaxSettings = {};
+
           // execute the request with our restricted set of inputs
           $.ajax({
             url: url,
@@ -264,11 +267,34 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           _AP.require("confluence/macro/editor", function (editor) {
             editor.getMacroData(callback);
           });
+        },
+        saveCookie: function(name, value, expires){
+          AJS.Cookie.save(prefixCookie(name), value, expires);
+        },
+        readCookie: function(name, callback){
+          var value = AJS.Cookie.read(prefixCookie(name));
+          if(typeof callback === "function"){
+            callback(value);
+          }
+        },
+        eraseCookie: function(name){
+          AJS.Cookie.erase(prefixCookie(name));
+        },
+        triggerJiraEvent: function(e){
+          _AP.require(['jira/event'], function(jiraEvent){
+            jiraEvent[e]();
+          });
         }
       }
     });
 
-    statusHelper.showLoadingStatus($home);
+    function prefixCookie(name){
+      return options.key + '-' + options.ns + '-' + name;
+    }
+
+    // Do not delay showing the loading indicator if this is a dialog.
+    var noDelay = (isDialog || isSimpleDialog || isInlineDialog);
+    statusHelper.showLoadingStatus($home, noDelay ? 0 : 1000);
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
@@ -374,7 +400,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       // create the new iframe
       create(options);
     }
-    if ($.isReady) {
+    if(typeof ConfluenceMobile !== "undefined"){
+      doCreate();
+    } else if ($.isReady) {
       // if the dom is ready then this is being run during an ajax update;
       // in that case, defer creation until the next event loop tick to ensure
       // that updates to the desired container node's parents have completed
@@ -404,5 +432,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
 if (!_AP.create) {
   _AP.require(["host/main"], function(main) {
     _AP.create = main;
+  });
+}
+
+if(typeof ConfluenceMobile !== "undefined"){
+  //confluence will not run scripts loaded in the body of mobile pages by default.
+  ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
+    window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
   });
 }

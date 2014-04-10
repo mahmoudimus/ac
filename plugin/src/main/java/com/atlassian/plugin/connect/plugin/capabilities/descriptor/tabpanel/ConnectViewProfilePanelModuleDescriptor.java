@@ -40,4 +40,11 @@ public class ConnectViewProfilePanelModuleDescriptor extends ViewProfilePanelMod
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameProfileTabPanel(renderStrategy, moduleContextFilter, userManager);
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+
 }

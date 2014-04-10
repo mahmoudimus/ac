@@ -9,6 +9,7 @@ import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.JwtAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -38,6 +39,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class JwtAuthorizationGeneratorTest
 {

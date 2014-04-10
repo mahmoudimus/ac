@@ -11,7 +11,8 @@
             "../plugin/src/main/resources/js/iframe/plugin/request.js",
             "../plugin/src/main/resources/js/iframe/plugin/env.js",
             "../plugin/src/main/resources/js/iframe/plugin/inline-dialog.js",
-            "../plugin/src/main/resources/js/iframe/plugin/messages.js"
+            "../plugin/src/main/resources/js/iframe/plugin/messages.js",
+            "../plugin/src/main/resources/js/iframe/plugin/cookie.js"
         ]
     },
     "plugins": ["plugins/markdown"],

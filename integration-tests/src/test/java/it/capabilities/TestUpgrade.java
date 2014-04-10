@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.matcher.ValueMatchers.hasProperty;
 import static it.matcher.ValueMatchers.isArrayMatching;
 import static org.hamcrest.Matchers.hasItem;
@@ -65,7 +66,7 @@ public class TestUpgrade extends AbstractBrowserlessTest
 
         JSON pluginJson = JSON.parse(plugin1.getUpmPluginJson());
         Matcher<Iterable<? super Value>> valMatcher = hasItem(
-                hasProperty("key", PLUGIN_KEY + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + KEY_PAGE_TWO));
+                hasProperty("key", addonAndModuleKey(PLUGIN_KEY,KEY_PAGE_TWO)));
         
         assertThat(pluginJson.get("modules"), isArrayMatching(valMatcher));
 

@@ -60,13 +60,13 @@ public class TestAppPermissions extends ConnectWebDriverTestBase
                 .description("foo")
                 .addOAuth();
 
-        runner.add(GeneralPageModule.key("page")
-                                    .name("Page")
-                                    .path("/page")
+        runner.add(GeneralPageModule.key("appPermPage")
+                                    .name("App Perm Page")
+                                    .path("/apppermpage")
                                     .resource(new CallServlet(product.getProductInstance().getBaseUrl(), runner.getSignedRequestHandler().get())))
               .start();
 
-        String status = product.visit(MessagePage.class, runner.getPluginKey(), "page", EXTRA_PREFIX).getMessage();
+        String status = product.visit(MessagePage.class, runner.getPluginKey(), "appPermPage", EXTRA_PREFIX).getMessage();
         assertEquals("403", status);
     }
 

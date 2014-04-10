@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -63,7 +64,7 @@ public class TestWebPanel extends JiraWebDriverTestBase
     {
         loginAsAdmin();
 
-        this.webPanelModuleKey = remotePlugin.getAddon().getKey() + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + WEB_PANEL_KEY;
+        this.webPanelModuleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),WEB_PANEL_KEY);
     }
 
     @Test

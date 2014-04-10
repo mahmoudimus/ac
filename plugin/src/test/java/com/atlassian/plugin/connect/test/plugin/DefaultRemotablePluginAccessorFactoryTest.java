@@ -10,6 +10,7 @@ import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.*;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
@@ -40,6 +41,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
+@ConvertToWiredTest
 @Ignore("convert to wired test")
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultRemotablePluginAccessorFactoryTest

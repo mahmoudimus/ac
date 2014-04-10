@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -45,6 +46,7 @@ import static org.mockito.Mockito.when;
 /**
  * @since 1.0
  */
+@ConvertToWiredTest
 @Ignore("convert to wired test")
 public class WebItemProviderTest
 {

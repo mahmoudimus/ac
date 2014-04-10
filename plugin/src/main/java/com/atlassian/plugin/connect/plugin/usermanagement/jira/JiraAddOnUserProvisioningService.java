@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.atlassian.plugin.connect.plugin.usermanagement.jira.SubvertedPermissionsTransactionTemplate.subvertPermissions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
 
@@ -102,7 +103,10 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     @Override
     public void provisionAddonUserForScopes(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        transactionTemplate.execute(new TransactionCallback<Void>()
+        // Subvert permission checking while provisioning add-on users. This can be invoked on a thread with no
+        // authentication context (for example, the auto-update task thread run scheduled by the UPM) so permission
+        // checks would fail.
+        transactionTemplate.execute(subvertPermissions(new TransactionCallback<Void>()
         {
             @Override
             public Void doInTransaction()
@@ -110,7 +114,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                 provisionAddonUserForScopesInTransaction(username, previousScopes, newScopes);
                 return null;
             }
-        });
+        }));
     }
 
     private void provisionAddonUserForScopesInTransaction(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException

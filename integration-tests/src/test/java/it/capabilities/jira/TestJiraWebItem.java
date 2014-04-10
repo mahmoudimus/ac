@@ -27,6 +27,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
@@ -375,7 +376,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     
     private String getModuleKey(String module)
     {
-        return remotePlugin.getAddon().getKey() + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + module;
+        return addonAndModuleKey(remotePlugin.getAddon().getKey(),module);
     }
 
 }

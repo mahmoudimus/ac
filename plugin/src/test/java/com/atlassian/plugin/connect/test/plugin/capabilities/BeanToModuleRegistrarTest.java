@@ -1,5 +1,5 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities;
-
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.WebHookModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -27,6 +27,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newCon
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class BeanToModuleRegistrarTest
 {

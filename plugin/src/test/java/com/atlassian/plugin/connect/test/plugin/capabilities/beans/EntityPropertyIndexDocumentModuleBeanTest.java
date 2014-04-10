@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans;
+package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;

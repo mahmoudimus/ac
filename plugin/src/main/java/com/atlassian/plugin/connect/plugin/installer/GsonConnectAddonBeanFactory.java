@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  *
@@ -45,6 +46,12 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     @Override
     public ConnectAddonBean fromJson(final String jsonDescriptor) throws InvalidDescriptorException
     {
+        return fromJson(jsonDescriptor,null);
+    }
+
+    @Override
+    public ConnectAddonBean fromJson(String jsonDescriptor, Map<String, String> i18nCollector) throws InvalidDescriptorException
+    {
         final String schema;
         try
         {
@@ -68,18 +75,24 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
             throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
         }
 
-        ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor);
+        ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
         addOnBeanValidatorService.validate(addOn);
 
         return addOn;
     }
 
     @Override
-    public ConnectAddonBean fromJsonSkipValidation(final String jsonDescriptor) throws InvalidDescriptorException
+    public ConnectAddonBean fromJsonSkipValidation(final String jsonDescriptor)
+    {
+        return fromJsonSkipValidation(jsonDescriptor,null);
+    }
+
+    @Override
+    public ConnectAddonBean fromJsonSkipValidation(String jsonDescriptor, Map<String, String> i18nCollector)
     {
         try
         {
-            return ConnectModulesGsonFactory.getGson().fromJson(jsonDescriptor, ConnectAddonBean.class);
+            return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector);
         }
         catch (Exception e)
         {
@@ -87,6 +100,6 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
             log.error(exceptionMessage);
             String i18nMessage = i18nResolver.getText("connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
             throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
-        }
+        }    
     }
 }

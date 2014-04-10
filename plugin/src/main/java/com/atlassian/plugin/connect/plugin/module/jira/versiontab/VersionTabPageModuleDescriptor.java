@@ -72,4 +72,10 @@ public class VersionTabPageModuleDescriptor extends AbstractJiraTabPageModuleDes
     {
         return IFrameVersionTab.class;
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

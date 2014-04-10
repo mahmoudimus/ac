@@ -7,6 +7,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -35,6 +36,7 @@ import java.util.UUID;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.IFrameContextMatchers.hasIFramePath;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -43,6 +45,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class WorkflowPostFunctionModuleDescriptorFactoryTest
 {
@@ -115,7 +118,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(addon, plugin, bean);
 
-        assertEquals("my-key:my-key"+ ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-post-function", descriptor.getCompleteKey());
+        assertEquals("my-key:" + addonAndModuleKey("my-key","my-post-function"), descriptor.getCompleteKey());
     }
 
     @Test

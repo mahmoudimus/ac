@@ -36,4 +36,10 @@ public class ConnectVersionTabPanelModuleDescriptor extends VersionTabPanelModul
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameVersionTabPanel(renderStrategy, moduleContextFilter);
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

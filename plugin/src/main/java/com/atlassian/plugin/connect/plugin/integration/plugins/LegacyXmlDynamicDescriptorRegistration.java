@@ -32,7 +32,7 @@ import static java.util.Arrays.asList;
 public class LegacyXmlDynamicDescriptorRegistration
 {
     private final BundleContext bundleContext;
-    private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
+    private final ConnectAddonI18nManager connectAddonI18nManager;
     private static final Logger log = LoggerFactory.getLogger(DynamicDescriptorRegistration.class);
 
     public static interface Registration
@@ -43,11 +43,11 @@ public class LegacyXmlDynamicDescriptorRegistration
     @Autowired
     public LegacyXmlDynamicDescriptorRegistration(
             BundleContext bundleContext,
-            I18nPropertiesPluginManager i18nPropertiesPluginManager
+            ConnectAddonI18nManager connectAddonI18nManager
     )
     {
         this.bundleContext = bundleContext;
-        this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
+        this.connectAddonI18nManager = connectAddonI18nManager;
     }
 
     /**
@@ -95,7 +95,7 @@ public class LegacyXmlDynamicDescriptorRegistration
             {
                 try
                 {
-                    i18nPropertiesPluginManager.add(plugin.getKey(), reg.getI18nProperties());
+                    connectAddonI18nManager.add(plugin.getKey(), reg.getI18nProperties());
                 }
                 catch (IOException e)
                 {

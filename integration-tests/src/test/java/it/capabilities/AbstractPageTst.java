@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.equalTo;
@@ -81,7 +82,7 @@ public class AbstractPageTst extends ConnectWebDriverTestBase
     public void beforeEachTestBase()
     {
         this.pluginKey = remotePlugin.getAddon().getKey();
-        this.awesomePageModuleKey = pluginKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + MY_AWESOME_PAGE_KEY;
+        this.awesomePageModuleKey = addonAndModuleKey(pluginKey,MY_AWESOME_PAGE_KEY);
     }
 
     protected <T extends Page> RemotePluginEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)

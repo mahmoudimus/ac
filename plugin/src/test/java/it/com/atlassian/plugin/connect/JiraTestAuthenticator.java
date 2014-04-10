@@ -1,7 +1,7 @@
 package it.com.atlassian.plugin.connect;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 
 
@@ -19,7 +19,13 @@ public class JiraTestAuthenticator implements TestAuthenticator
     @Override
     public void authenticateUser(String username)
     {
-        User user = userManager.getUserObject("admin");
+        ApplicationUser user = userManager.getUserByName("admin");
         jiraAuthenticationContext.setLoggedInUser(user);
+    }
+
+    @Override
+    public void unauthenticate()
+    {
+        jiraAuthenticationContext.clearLoggedInUser();
     }
 }

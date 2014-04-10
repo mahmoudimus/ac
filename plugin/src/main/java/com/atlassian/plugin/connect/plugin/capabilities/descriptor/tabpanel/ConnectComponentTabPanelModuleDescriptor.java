@@ -36,4 +36,10 @@ public class ConnectComponentTabPanelModuleDescriptor extends ComponentTabPanelM
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameComponentTabPanel(renderStrategy, moduleContextFilter);
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

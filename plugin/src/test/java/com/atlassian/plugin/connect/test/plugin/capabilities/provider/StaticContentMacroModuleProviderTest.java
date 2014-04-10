@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.StaticContentMacroModuleDescriptorFactory;
@@ -16,6 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 
+@ConvertToWiredTest
 @Ignore("replace with wired tests")
 @RunWith(MockitoJUnitRunner.class)
 public class StaticContentMacroModuleProviderTest extends AbstractContentMacroModuleProviderTest<StaticContentMacroModuleProvider,
@@ -34,7 +36,7 @@ public class StaticContentMacroModuleProviderTest extends AbstractContentMacroMo
                 remotablePluginAccessorFactory);
 
         return new StaticContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory,
-                hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, i18nPropertiesPluginManager);
+                hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
     }
 
     @Override

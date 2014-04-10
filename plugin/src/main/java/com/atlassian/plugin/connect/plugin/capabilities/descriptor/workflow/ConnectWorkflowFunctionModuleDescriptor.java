@@ -26,11 +26,13 @@ import com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.FunctionProvider;
 import com.opensymphony.workflow.TypeResolver;
 import com.opensymphony.workflow.WorkflowException;
+
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,8 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private final OSWorkflowConfigurator workflowConfigurator;
     private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private String addonKey;
+    private String moduleKey;
 
     private URI triggeredUri;
 
@@ -151,4 +155,11 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
             renderStrategy.renderAccessDenied(writer);
         }
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+
 }

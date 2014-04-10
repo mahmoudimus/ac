@@ -6,6 +6,9 @@
     </plugin-info>
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
+    <resource type="i18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
+    <resource type="i18n" name="confluence-addon-i18n" location="connect-addons"/>
+    
 
     <ao key="ao-module" namespace="atlassianconnect">
         <description>The AO module for storing connect addon data.</description>
@@ -146,6 +149,13 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog</dependency>
     </web-resource>
 
+
+    <web-resource key="jira">
+        <resource type="download" name="jira-event.js" location="/js/jira/event.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+    </web-resource>
+
     <web-resource key="schema-xsl">
         <resource type="download" content-type="application/xml" name="xs3p.xsl" location="/xsd/xs3p.xsl"/>
     </web-resource>
@@ -163,6 +173,17 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:inline-dialog</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:messages</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira</dependency>
+    </web-resource>
+
+    <web-resource key="atlassian-connect-mobile-resources" name="Connect resources for inclusion on every mobile page.">
+        <context>atl.mobile.confluence.view.content</context>
+        <context>preview</context>
+        <dependency>com.atlassian.auiplugin:jquery-lib</dependency>
+        <dependency>com.atlassian.auiplugin:aui-experimental-spinner</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"

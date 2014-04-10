@@ -1,12 +1,14 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DefaultConnectWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.descriptor.WebSectionModuleDescriptorFactoryForTests;
@@ -27,11 +29,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectWebSectionModuleDescriptorFactoryTest
 {
@@ -54,7 +58,7 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     @Before
     public void beforeEachTest() throws Exception
     {
-        ConnectWebSectionModuleDescriptorFactory webSectionFactory = new ConnectWebSectionModuleDescriptorFactory(conditionModuleFragmentFactory, new WebSectionModuleDescriptorFactoryForTests(webInterfaceManager));
+        ConnectWebSectionModuleDescriptorFactory webSectionFactory = new DefaultConnectWebSectionModuleDescriptorFactory(conditionModuleFragmentFactory, new WebSectionModuleDescriptorFactoryForTests(webInterfaceManager));
         when(plugin.getKey()).thenReturn("my-awesome-plugin");
         when(plugin.getName()).thenReturn("My Plugin™");
 
@@ -89,13 +93,13 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     @Test
     public void keyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getKey(), is("my-awesome-plugin" + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-web-section"));
+        assertThat(descriptor.getKey(), is(addonAndModuleKey("my-awesome-plugin","my-web-section")));
     }
 
     @Test
     public void completeKeyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getCompleteKey(), is("my-awesome-plugin:my-awesome-plugin" + ModuleKeyUtils.ADDON_MODULE_SEPARATOR + "my-web-section"));
+        assertThat(descriptor.getCompleteKey(), is("my-awesome-plugin:" + addonAndModuleKey("my-awesome-plugin","my-web-section")));
     }
 
     @Test
