@@ -37,11 +37,11 @@ var warned = false,
 function validate(opts, addonKey, descriptor, schema, callback) {
     validator.validateDescriptor(descriptor, schema, function (errors) {
         if (errors) {
-            if (!opts.quiet && !opts.test) {
+            if (!opts.quiet && !opts.testReport) {
                 console.log(util.inspect(errors, {colors: true, depth: 5}));
             }
         }
-        if (opts.test) {
+        if (opts.testReport) {
             validationResults.push({
                 "addon": addonKey,
                 "errors": errors || []
@@ -54,16 +54,17 @@ function validate(opts, addonKey, descriptor, schema, callback) {
 downloader.run({
     before: function (opts) {
         marketplace.requestQueue().drain = function () {
-            var r = {
-                "results": validationResults
-            };
-            console.log(JSON.stringify(r));
+            if (opts.testReport) {
+                var r = {
+                    "results": validationResults
+                };
+                fs.writeFileSync(opts.testReport, JSON.stringify(r));
+            }
         }
     },
     cliOptsCallback: function (nomnom) {
-        return nomnom.option('test', {
-            flag: true,
-            help: 'Outputs results as test output'
+        return nomnom.option('testReport', {
+            help: 'Outputs results to given file as test output'
         });
     },
     descriptorDownloadedCallback: function (result, body, opts) {
