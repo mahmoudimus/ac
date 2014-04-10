@@ -9,8 +9,8 @@ var marketplace = require('./marketplace'),
     extend = require('node.extend'),
     colors = require('colors');
 
-var downloadDestination = path.resolve(__dirname, "descriptors/"),
-    marketplaceOpts = {
+var marketplaceOpts = {
+        downloadDirectory: path.resolve(__dirname, "./descriptors"),
         marketplaceAddonCallback: function (addon, opts) {
             var descriptorUrl = _.find(addon.version.links, {
                 'rel': 'descriptor'
@@ -51,7 +51,7 @@ function downloadDescriptor(opts, addon, descriptorUrl, callback) {
             } catch (e) {}
 
             if (!opts.type || opts.type === type) {
-                var filename = downloadDestination + addonKey + '-descriptor' + "." + type;
+                var filename = opts.downloadDirectory + '/' + addonKey + '-descriptor' + "." + type;
                 fs.writeFile(filename, body, function(err) {
                     if (err) {
                         console.log("Unable to write descriptor for add-on " + addonKey + " to disk", err);
@@ -80,8 +80,8 @@ exports.run = function(runOpts) {
     var opts = extend({}, marketplaceOpts);
     opts = extend(opts, runOpts);
 
-    if (!fs.existsSync(opts.downloadDestination)) {
-        fs.mkdirSync(opts.downloadDestination);
+    if (!fs.existsSync(opts.downloadDirectory)) {
+        fs.mkdirSync(opts.downloadDirectory);
     }
 
     marketplace.run(opts);
