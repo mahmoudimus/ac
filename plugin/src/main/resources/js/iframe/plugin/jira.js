@@ -45,7 +45,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
             */
             return {
                 valid: valid,
-                value: valid ? "" + workflowListener.call() : undef
+                value: valid ? "" + workflowListener.call() :  undefined
             };
         }
     };
