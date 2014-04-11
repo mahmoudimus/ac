@@ -1,19 +1,16 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
-import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
-import com.google.common.base.Optional;
-import org.openqa.selenium.By;
+import com.atlassian.pageobjects.ProductInstance;
+import com.atlassian.webdriver.utils.Check;
+import com.atlassian.webdriver.utils.element.ElementConditions;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
+import org.openqa.selenium.By;
+
 import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
-import com.atlassian.webdriver.utils.element.ElementConditions;
-import org.openqa.selenium.WebElement;
 
 /**
  * Created by cwhittington on 10/04/2014.
@@ -30,6 +27,9 @@ public class JiraWorkflowTransitionPage implements Page
     private com.atlassian.webdriver.AtlassianWebDriver driver;
 
     @Inject
+    ProductInstance productInstance;
+
+    @Inject
     private PageBinder pageBinder;
 
     @Inject private WebDriverPoller poller;
@@ -41,6 +41,19 @@ public class JiraWorkflowTransitionPage implements Page
         this.workflowStep = workflowStep;
         this.workflowTransition = workflowTransition;
 
+    }
+
+    public JiraWorkflowTransitionPage createOrEditDraft()
+    {
+        if(Check.elementExists(By.id("create_draft_workflow"), driver))
+        {
+            driver.findElement(By.id("create_draft_workflow")).click();
+        } else {
+            driver.findElement(By.id("view_draft_workflow")).click();
+        }
+        this.workflowMode = "draft";
+        this.driver.navigate().to(productInstance.getBaseUrl() + this.getUrl());
+        return this;
     }
 
     @Override
@@ -55,8 +68,10 @@ public class JiraWorkflowTransitionPage implements Page
         return url;
     };
 
+
     public JiraAddWorkflowTransitionFunctionParamsPage addPostFunction(String addonKey, String postFunctionName)
     {
+
         poller.waitUntil(ElementConditions.isPresent(By.id("view_post_functions")), 5);
         driver.findElement(By.id("view_post_functions")).click();
         driver.findElement(By.className("criteria-post-function-add")).click();
