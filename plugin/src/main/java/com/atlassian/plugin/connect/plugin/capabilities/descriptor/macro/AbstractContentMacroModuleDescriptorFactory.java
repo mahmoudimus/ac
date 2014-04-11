@@ -72,6 +72,10 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         {
             element.setAttribute("icon", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
         }
+        if (bean.isHidden())
+        {
+            element.setAttribute("hidden", "true");
+        }
 
         handleParameters(bean, element);
         handleCategories(bean, element);
