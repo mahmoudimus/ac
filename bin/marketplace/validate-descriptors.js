@@ -34,18 +34,20 @@ var warned = false,
     validationResults = [],
     counter = 0;
 
-function validate(opts, addonKey, descriptor, schema, callback) {
+function validate(opts, addonKey, descriptorFilename, descriptor, schema, callback) {
     validator.validateDescriptor(descriptor, schema, function (errors) {
+        var r = {
+            "addon": addonKey,
+            "descriptorUrl": descriptorFilename,
+            "errors": errors || []
+        };
         if (errors) {
             if (!opts.quiet && !opts.testReport) {
-                console.log(util.inspect(errors, {colors: true, depth: 5}));
+                console.log(util.inspect(r, {colors: true, depth: 5}));
             }
         }
         if (opts.testReport) {
-            validationResults.push({
-                "addon": addonKey,
-                "errors": errors || []
-            });
+            validationResults.push(r);
         }
         callback();
     });
@@ -92,7 +94,7 @@ downloader.run({
         marketplace.requestQueue().push({
             self: this,
             executor: validate,
-            args: [opts, result.addon.key, descriptor, schema]
+            args: [opts, result.addon.key, result.descriptorFilename, descriptor, schema]
         }, function () {});
     }
 });
