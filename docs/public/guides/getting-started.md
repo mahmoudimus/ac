@@ -93,7 +93,8 @@ application.
 
 ### 2.1 Auto resizing your iframe
 In the example above, a div with the class name "ac-content" is wrapped around the contents of the page.
-This allows the dimensions of your iframe's content to be measured and the iframe to resize automatically. This keeps the add-on content visible without scroll bars.
+This allows the dimensions of your iframe's content to be measured and the iframe to resize automatically.
+This keeps the add-on content visible without scroll bars.
 
 <a name="start-addon-host" id="start-addon-host"></a>
 ## 3. Start the add-on
