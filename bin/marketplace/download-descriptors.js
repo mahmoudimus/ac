@@ -5,45 +5,43 @@ var marketplace = require('./marketplace'),
     request = require('request'),
     _ = require('lodash'),
     fs = require('fs'),
+    path = require('path'),
     extend = require('node.extend'),
     colors = require('colors');
 
-var downloadDestination = "descriptors/",
-    marketplaceOpts = {
+var marketplaceOpts = {
+        downloadDirectory: path.resolve(__dirname, "./descriptors"),
         marketplaceAddonCallback: function (addon, opts) {
             var descriptorUrl = _.find(addon.version.links, {
                 'rel': 'descriptor'
             }).href;
 
-            downloadQueue.push({
-                opts: opts,
-                addon: addon,
-                descriptorUrl: descriptorUrl
-            });
+            marketplace.requestQueue().push({
+                self: this,
+                executor: downloadDescriptor,
+                args: [opts, addon, descriptorUrl]
+            }, opts.descriptorDownloadedCallback);
         }
     };
 
 
-var downloadQueue = async.queue(function (task, callback) {
-    downloadDescriptor(task.opts, task.addon.pluginKey, task.addon, task.descriptorUrl, callback);
-}, 3);
-
-
-if (!fs.existsSync(downloadDestination)) {
-    fs.mkdirSync(downloadDestination);
-}
-
-function downloadDescriptor(opts, addonKey, addon, descriptorUrl, callback) {
+function downloadDescriptor(opts, addon, descriptorUrl, callback) {
+    var addonKey = addon.pluginKey;
     if (opts.preDescriptorDownloadedCallback) {
-        opts.preDescriptorDownloadedCallback(addonKey, addon, descriptorUrl, opts);
+        opts.preDescriptorDownloadedCallback({
+            addon: {
+                key: addonKey,
+                listing: addon
+            }
+        }, opts);
     }
     request({
         uri: descriptorUrl,
         method: "GET",
         auth: opts.auth
     }, function(error, response, body) {
-        if (error) {
-            console.log("Unable to download descriptor for add-on", addonKey);
+        if (error || response.statusCode < 200 || response.statusCode >= 300) {
+            console.log(("" + response.statusCode).red, "Unable to download descriptor for add-on", addonKey);
             callback(error);
         } else {
             var type = 'xml';
@@ -53,7 +51,7 @@ function downloadDescriptor(opts, addonKey, addon, descriptorUrl, callback) {
             } catch (e) {}
 
             if (!opts.type || opts.type === type) {
-                var filename = downloadDestination + addonKey + '-descriptor' + "." + type;
+                var filename = opts.downloadDirectory + '/' + addonKey + '-descriptor' + "." + type;
                 fs.writeFile(filename, body, function(err) {
                     if (err) {
                         console.log("Unable to write descriptor for add-on " + addonKey + " to disk", err);
@@ -61,18 +59,14 @@ function downloadDescriptor(opts, addonKey, addon, descriptorUrl, callback) {
                         return;
                     }
 
-                    if (opts.descriptorDownloadedCallback) {
-                        opts.descriptorDownloadedCallback({
-                            addon: {
-                                key: addonKey,
-                                listing: addon
-                            },
-                            descriptorFilename: filename,
-                            type: type,
-                        }, body, opts);
-                    }
-
-                    callback();
+                    callback && callback({
+                        addon: {
+                            key: addonKey,
+                            listing: addon
+                        },
+                        descriptorFilename: filename,
+                        type: type,
+                    }, body, opts);
                 });
             } else if (opts.debug) {
                 var t = "Ignored add-on " + addonKey + " (" + type + ")";
@@ -85,6 +79,11 @@ function downloadDescriptor(opts, addonKey, addon, descriptorUrl, callback) {
 exports.run = function(runOpts) {
     var opts = extend({}, marketplaceOpts);
     opts = extend(opts, runOpts);
+
+    if (!fs.existsSync(opts.downloadDirectory)) {
+        fs.mkdirSync(opts.downloadDirectory);
+    }
+
     marketplace.run(opts);
 }
 
