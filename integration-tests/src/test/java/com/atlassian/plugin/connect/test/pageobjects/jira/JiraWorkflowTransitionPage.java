@@ -12,9 +12,6 @@ import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-/**
- * Created by cwhittington on 10/04/2014.
- */
 public class JiraWorkflowTransitionPage implements Page
 {
     private String workflowMode;
