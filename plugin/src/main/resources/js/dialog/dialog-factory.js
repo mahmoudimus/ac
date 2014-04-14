@@ -40,9 +40,9 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/main", 'host/content'], 
                 container.replaceWith(dialogHtml);
             })
             .fail(function(xhr, status, ex) {
-                var title = "Unable to load add-on content. Please try again later.";
+                var title = $("<p class='title' />").text("Unable to load add-on content. Please try again later.");
                 container.html("<div class='aui-message error ap-aui-message'></div>");
-                container.find(".error").append("<p class='title'>" + title + "</p>");
+                container.find(".error").append(title);
                 var msg = status + (ex ? ": " + ex.toString() : "");
                 container.find(".error").text(msg);
                 AJS.log(msg);
