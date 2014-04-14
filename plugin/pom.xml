@@ -887,6 +887,7 @@
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
                         </configuration>
                     </execution>
                     <execution>
@@ -900,6 +901,7 @@
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
                         </configuration>
                     </execution>
                     <execution>
@@ -914,6 +916,7 @@
                             <ignoreFilter>shallow</ignoreFilter>
                             <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
                         </configuration>
                     </execution>
                 </executions>
