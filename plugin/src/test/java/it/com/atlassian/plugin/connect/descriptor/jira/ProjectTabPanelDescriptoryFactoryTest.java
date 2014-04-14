@@ -1,8 +1,5 @@
 package it.com.atlassian.plugin.connect.descriptor.jira;
 
-import java.io.IOException;
-
-import com.atlassian.jira.plugin.AbstractTabPanelModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectProjectTabPanelModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
@@ -11,11 +8,11 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescrip
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 

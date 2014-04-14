@@ -2,17 +2,9 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider;
-
-import com.google.common.base.Objects;
-import org.hamcrest.Description;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @ConvertToWiredTest

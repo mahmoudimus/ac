@@ -1,20 +1,5 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
@@ -45,12 +30,7 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisabl
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonEnableFailedEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonInstalledEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstallFailedEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstalledEvent;
+import com.atlassian.plugin.connect.spi.event.*;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -73,11 +53,13 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;

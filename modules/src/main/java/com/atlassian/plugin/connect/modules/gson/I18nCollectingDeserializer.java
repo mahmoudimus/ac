@@ -1,12 +1,14 @@
 package com.atlassian.plugin.connect.modules.gson;
 
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.google.common.base.Strings;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+
 import java.lang.reflect.Type;
 import java.util.Map;
-
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-
-import com.google.common.base.Strings;
-import com.google.gson.*;
 
 public class I18nCollectingDeserializer implements JsonDeserializer<I18nProperty>
 {

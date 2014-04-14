@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import java.util.Map;
-
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
