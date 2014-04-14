@@ -14,7 +14,6 @@
             });
 
             jira.WorkflowConfiguration.onSave(function() {
-                document.getElementById("bleh").innerHTML = 'i have run on save';
                 return "workflow configuration text";
             });
         });
