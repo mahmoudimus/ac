@@ -21,6 +21,9 @@
             params = url.getQueryParamValue('ui-params');
             return this.decode(params);
         },
+        /**
+        * returns ui params from window.name
+        */
         fromWindowName: function(w, param){
             w = w || window;
             var decoded = this.decode(w.name);
@@ -28,7 +31,7 @@
             if(!param){
                 return decoded;
             }
-            return decoded[param];
+            return (decoded) ? decoded[param] : undefined;
         },
         /**
         * Decode a base64 encoded json string containing ui params

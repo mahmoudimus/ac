@@ -6,19 +6,19 @@ AP.define("history", ["_dollar", "_rpc", "_ui-params"],
 * Note: This is only enabled for page modules (Admin page, General page, Configure page, User profile page).
 * ### Example ###
 * ```
-* AP.require(["history"], function(bridgeHistory){
+* AP.require(["history"], function(history){
 
     // Register a function to run when state is changed.
     // You should use this to update your UI to show the state.
-    bridgeHistory.popState(function(e){
+    history.popState(function(e){
         alert("The URL has changed from: " + e.oldURL + "to: " + e.newURL);
     });
 
     // Adds a new entry to the history and changes the url in the browser.
-    bridgeHistory.pushState("page2");
+    history.pushState("page2");
 
     // Changes the URL back and invokes any registered popState callbacks.
-    bridgeHistory.back();
+    history.back();
 
 });
 * ```
@@ -36,9 +36,9 @@ function ($, rpc, uiParams) {
             * The current url anchor.
             * @return String
             * @example
-            * AP.require(["history"], function(bridgeHistory){
-            *    bridgeHistory.pushState("page5");
-            *    bridgeHistory.getState(); // returns "page5";
+            * AP.require(["history"], function(history){
+            *    history.pushState("page5");
+            *    history.getState(); // returns "page5";
             * });
             */
             getState: function(){
@@ -52,8 +52,8 @@ function ($, rpc, uiParams) {
             * Will invoke the popstate callback
             * @param int delta
             * @example
-            * AP.require(["history"], function(bridgeHistory){
-            *    bridgeHistory.go(-2); // go back by 2 entries in the browser history.
+            * AP.require(["history"], function(history){
+            *    history.go(-2); // go back by 2 entries in the browser history.
             * });
             */
             go: function(delta){
@@ -63,8 +63,8 @@ function ($, rpc, uiParams) {
             * Goes back one step in the joint session history.
             * Will invoke the popstate callback
             * @example
-            * AP.require(["history"], function(bridgeHistory){
-            *    bridgeHistory.back(); // go back by 1 entry in the browser history.
+            * AP.require(["history"], function(history){
+            *    history.back(); // go back by 1 entry in the browser history.
             * });
             */
             back: function(){
@@ -74,8 +74,8 @@ function ($, rpc, uiParams) {
             * Goes back one step in the joint session history.
             * Will invoke the popstate callback
             * @example
-            * AP.require(["history"], function(bridgeHistory){
-            *    bridgeHistory.forward(); // go forward by 1 entry in the browser history.
+            * AP.require(["history"], function(history){
+            *    history.forward(); // go forward by 1 entry in the browser history.
             * });
             */
             forward: function(){
