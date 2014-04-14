@@ -32,7 +32,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private VendorBean vendor;
     private Map<String, String> links;
     private ModuleList modules;
-    private Set<String> scopes; // cannot be Set<ScopeName> otherwise the copy-by-reflection in ConnectReflectionHelper sets `ConnectAddonBean.scopes` and reading it produces a ClassCastException
+    private Set<ScopeName> scopes;
     private LifecycleBean lifecycle;
     private String baseUrl;
     private AuthenticationBean authentication;
@@ -55,7 +55,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.lifecycle = defaultBean.getLifecycle();
         this.baseUrl = defaultBean.getBaseUrl();
         this.authentication = defaultBean.getAuthentication();
-        this.scopes = transformScopeNamesToStrings(defaultBean.getScopes());
+        this.scopes = defaultBean.getScopes();
         this.enableLicensing = defaultBean.getEnableLicensing();
     }
 

@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
 @ConfluenceComponent
 public class ConfluenceAddonI18nManager implements InitializingBean, ConnectAddonI18nManager
