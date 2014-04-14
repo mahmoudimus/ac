@@ -12,6 +12,7 @@ requirejs.config({
     baseUrl: 'base/src/main/resources/js/iframe/plugin',
 
     paths: {
+        'iframe/host/analytics': '../host/analytics',
         'iframe/_events': '../_events',
         'iframe/_uri': '../_uri',
         '_events': '../_events',

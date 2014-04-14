@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.module.webitem;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
@@ -36,6 +37,7 @@ import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
+@ConvertToWiredTest
 public abstract class RemoteWebItemModuleDescriptorTestBase
 {
     protected abstract String getExpectedUrl();

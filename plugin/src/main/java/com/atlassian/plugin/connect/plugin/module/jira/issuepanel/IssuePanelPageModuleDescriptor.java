@@ -42,4 +42,10 @@ public final class IssuePanelPageModuleDescriptor extends RemoteWebPanelModuleDe
     {
         return "atl.jira.view.issue.right.context";
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

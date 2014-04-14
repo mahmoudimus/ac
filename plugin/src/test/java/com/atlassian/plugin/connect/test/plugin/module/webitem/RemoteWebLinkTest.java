@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.plugin.module.webitem;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
@@ -25,6 +26,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @Ignore("convert to wire test")
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteWebLinkTest

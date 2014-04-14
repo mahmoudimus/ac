@@ -108,4 +108,10 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
         descriptor.init(getPlugin(), config);
         return descriptor;
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

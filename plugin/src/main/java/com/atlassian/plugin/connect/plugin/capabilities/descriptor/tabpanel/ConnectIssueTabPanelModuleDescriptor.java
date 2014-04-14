@@ -36,4 +36,11 @@ public class ConnectIssueTabPanelModuleDescriptor extends IssueTabPanelModuleDes
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameIssueTabPanel(renderStrategy, moduleContextFilter);
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+
 }

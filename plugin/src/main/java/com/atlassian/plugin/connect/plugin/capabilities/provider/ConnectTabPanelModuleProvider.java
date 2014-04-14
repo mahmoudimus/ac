@@ -48,6 +48,15 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
                             ConnectViewProfilePanelModuleDescriptor.class, ConnectIFrameProfileTabPanel.class))
                     .build();
 
+    public static final Map<Class<? extends ModuleDescriptor>, String> DESCRIPTOR_TO_FIELD =
+            new ImmutableMap.Builder<Class<? extends ModuleDescriptor>, String>()
+                    .put(ConnectIssueTabPanelModuleDescriptor.class, ISSUE_TAB_PANELS)
+                    .put(ConnectProjectTabPanelModuleDescriptor.class, PROJECT_TAB_PANELS)
+                    .put(ConnectComponentTabPanelModuleDescriptor.class, COMPONENT_TAB_PANELS)
+                    .put(ConnectVersionTabPanelModuleDescriptor.class, VERSION_TAB_PANELS)
+                    .put(ConnectViewProfilePanelModuleDescriptor.class, PROFILE_TAB_PANELS)
+                    .build();
+
     @Autowired
     public ConnectTabPanelModuleProvider(ConnectTabPanelModuleDescriptorFactory descriptorFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,

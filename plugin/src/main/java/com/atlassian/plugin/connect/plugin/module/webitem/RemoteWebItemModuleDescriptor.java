@@ -152,4 +152,10 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
         return absolute || url.startsWith("http");
     }
 
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+
 }

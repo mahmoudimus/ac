@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -29,6 +30,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+@ConvertToWiredTest
 @Ignore("Replace with wired tests")
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPageModuleProvider>

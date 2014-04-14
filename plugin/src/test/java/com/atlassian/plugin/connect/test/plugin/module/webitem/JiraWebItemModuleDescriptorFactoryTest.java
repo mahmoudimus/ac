@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
@@ -32,6 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @Ignore("convert to wired test")
 @RunWith(MockitoJUnitRunner.class)
 public class JiraWebItemModuleDescriptorFactoryTest

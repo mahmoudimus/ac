@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.test.server.ConnectRunner.newMustacheServlet;
@@ -33,38 +34,56 @@ public class AppRunner
     {
         try
         {
-            ConnectRunner runner = new ConnectRunner(JIRA,"dialog-option-plugin")
-                    .addModules("webItems",
-                            newWebItemBean()
-                                    .withContext(AddOnUrlContext.addon)
-                                    .withName(new I18nProperty("AC General Web Item", "ac.gen"))
-                                    .withKey("ac-general-web-item")
-                                    .withLocation("system.top.navigation.bar")
-                                    .withWeight(1)
-                                    .withTarget(
-                                            newWebItemTargetBean()
-                                            .withType(WebItemTargetType.dialog)
-                                            .withOption("width","100")
-                                            .withOption("height","600")
-                                            .build()
-                                    )
-                                    .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
+            ConnectRunner runner = new ConnectRunner(JIRA,"tab-panels-plugin")
+                    .setAuthenticationToNone()
+                    .addModules("jiraIssueTabPanels",
+                            newTabPanelBean()
+                                    .withName(new I18nProperty("Name and Key", "name.and.key"))
+                                    .withUrl("http://www.google.com")
                                     .build()
-                            
-                            ,newWebItemBean()
-                            .withContext(AddOnUrlContext.addon)
-                            .withName(new I18nProperty("AC General Web Item 2", "ac.gen2"))
-                            .withKey("ac-general-web-item2")
-                            .withLocation("system.top.navigation.bar")
-                            .withWeight(1)
-                            .withTarget(
-                                    newWebItemTargetBean()
-                                            .withType(WebItemTargetType.inlineDialog)
-                                            .withOption("width","42")
-                                            .withOption("height","42")
-                                            .build()
-                            )
-                            .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
+                            ,newTabPanelBean()
+                                .withName(new I18nProperty("Name Only", null))
+                                .withUrl("http://www.google.com")
+                                .build()
+                    )
+                    .addModules("jiraComponentTabPanels",
+                            newTabPanelBean()
+                                    .withName(new I18nProperty("Name and Key", "name.and.key"))
+                                    .withUrl("http://www.google.com")
+                                    .build()
+                            ,newTabPanelBean()
+                            .withName(new I18nProperty("Name Only", null))
+                            .withUrl("http://www.google.com")
+                            .build()
+                    )
+                    .addModules("jiraProjectTabPanels",
+                            newTabPanelBean()
+                                    .withName(new I18nProperty("Name and Key", "name.and.key"))
+                                    .withUrl("http://www.google.com")
+                                    .build()
+                            ,newTabPanelBean()
+                            .withName(new I18nProperty("Name Only", null))
+                            .withUrl("http://www.google.com")
+                            .build()
+                    )
+                    .addModules("jiraVersionTabPanels",
+                            newTabPanelBean()
+                                    .withName(new I18nProperty("Name and Key", "name.and.key"))
+                                    .withUrl("http://www.google.com")
+                                    .build()
+                            ,newTabPanelBean()
+                            .withName(new I18nProperty("Name Only", null))
+                            .withUrl("http://www.google.com")
+                            .build()
+                    )
+                    .addModules("jiraProfileTabPanels",
+                            newTabPanelBean()
+                                    .withName(new I18nProperty("Name and Key", "name.and.key"))
+                                    .withUrl("http://www.google.com")
+                                    .build()
+                            ,newTabPanelBean()
+                            .withName(new I18nProperty("Name Only", null))
+                            .withUrl("http://www.google.com")
                             .build()
                     )
                                     .start();

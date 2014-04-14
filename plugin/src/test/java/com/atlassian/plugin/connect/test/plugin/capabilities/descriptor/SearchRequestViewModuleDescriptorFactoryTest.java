@@ -8,6 +8,7 @@ import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFact
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
@@ -39,6 +40,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class SearchRequestViewModuleDescriptorFactoryTest
 {

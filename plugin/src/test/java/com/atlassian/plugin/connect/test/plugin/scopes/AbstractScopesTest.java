@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.PermissionManagerImpl;
@@ -34,6 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 public abstract class AbstractScopesTest
 {
     private static final String PLUGIN_KEY = "my-plugin";
@@ -93,11 +95,11 @@ public abstract class AbstractScopesTest
 
         Set<ScopeName> scopeSet = (null == scope) ? Sets.<ScopeName>newHashSet() : Sets.newHashSet(scope);
         ConnectAddonBean addon = ConnectAddonBean.newConnectAddonBean()
-                .withKey(PLUGIN_KEY)
-                .withName("Test add-on " + PLUGIN_KEY)
-                .withBaseurl("https://example.com")
-                .withScopes(scopeSet)
-                .build();
+                                                 .withKey(PLUGIN_KEY)
+                                                 .withName("Test add-on " + PLUGIN_KEY)
+                                                 .withBaseurl("https://example.com")
+                                                 .withScopes(scopeSet)
+                                                 .build();
         final String mockDescriptor = String.format("~~ mock descriptor for add-on %s ~~", PLUGIN_KEY);
 
         final ConnectAddonRegistry connectAddonRegistry = mock(ConnectAddonRegistry.class);

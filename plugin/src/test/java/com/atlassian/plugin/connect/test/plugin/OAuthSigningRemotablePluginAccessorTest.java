@@ -4,6 +4,7 @@ import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.OAuthSigningRemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -32,6 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
 {

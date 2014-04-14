@@ -189,4 +189,10 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 			return new DescriptorToRegister(descriptor);
 		}
 	}
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

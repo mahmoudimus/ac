@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import org.junit.runner.RunWith;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
+@ConvertToWiredTest
 @RunWith(Parameterized.class)
 public class JiraRestScopesTest extends AbstractScopesTest
 {

@@ -1,11 +1,10 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params"], function ($, XdmRpc, addons, statusHelper, messages, uiParams) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params", "host/analytics"], function ($, XdmRpc, addons, statusHelper, messages, uiParams, analytics) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
-      events = (AJS.EventQueue = AJS.EventQueue || []),
       defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); },
       log = (window.AJS && window.AJS.log) || (window.console && window.console.log) || (function() {});
 
@@ -55,10 +54,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         productContextJson = options.productCtx,
         isInited;
 
-    function publish(name, props) {
-      props = $.extend(props || {}, {moduleKey: ns});
-      events.push({name: name, properties: props});
-    }
+    analytics.iframePerformance.start(options.key, ns);
 
     var timeout = setTimeout(function () {
       timeout = null;
@@ -67,9 +63,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       $timeout.find("a.ap-btn-cancel").click(function () {
         statusHelper.showLoadErrorStatus($home);
         $nexus.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
+        analytics.iframePerformance.cancel(options.key, ns);
       });
       layoutIfNeeded();
-      publish("plugin.iframetimedout", {elapsed: new Date().getTime() - start});
+      analytics.iframePerformance.timeout(options.key, ns);
     }, 20000);
 
     function preventTimeout() {
@@ -113,7 +110,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             statusHelper.showLoadedStatus($home);
             layoutIfNeeded();
             $nexus.trigger("ra.iframe.init");
-            publish("plugin.iframeinited", {elapsed: elapsed});
+            analytics.iframePerformance.end(options.key, ns);
           }
         },
         resize: debounce(function (width, height) {

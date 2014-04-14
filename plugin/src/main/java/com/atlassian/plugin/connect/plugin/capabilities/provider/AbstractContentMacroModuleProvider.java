@@ -17,7 +17,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
-import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
+import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
@@ -40,19 +40,19 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
     private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
-    private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
+    private final ConnectAddonI18nManager connectAddonI18nManager;
     protected final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
     public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, I18nPropertiesPluginManager i18nPropertiesPluginManager)
+            HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, ConnectAddonI18nManager connectAddonI18nManager)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
         this.absoluteAddOnUrlConverter = absoluteAddOnUrlConverter;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
-        this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
+        this.connectAddonI18nManager = connectAddonI18nManager;
     }
 
     protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, T macroBean);
@@ -70,7 +70,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         try
         {
-            i18nPropertiesPluginManager.add(addon.getKey(), i18nBuilder.getI18nProperties());
+            connectAddonI18nManager.add(addon.getKey(), i18nBuilder.getI18nProperties());
         }
         catch (IOException e)
         {

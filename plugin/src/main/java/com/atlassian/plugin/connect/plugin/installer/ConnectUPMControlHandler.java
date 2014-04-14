@@ -42,15 +42,6 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     }
 
     @Override
-    public void enablePlugins(Plugin... plugins)
-    {
-        for (Plugin plugin : plugins)
-        {
-            enablePlugin(plugin.getKey());
-        }
-    }
-
-    @Override
     public void enablePlugins(String... pluginKeys)
     {
         for (String key : pluginKeys)

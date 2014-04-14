@@ -35,4 +35,10 @@ public class FixedXhtmlMacroModuleDescriptor extends XhtmlMacroModuleDescriptor
     {
         return new FixedMacroMetadata(super.getMacroMetadata());
     }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }
