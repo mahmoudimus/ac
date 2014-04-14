@@ -20,6 +20,7 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     private MacroBodyType bodyType;
     private Set<String> aliases;
     private Boolean featured;
+    private Boolean hidden;
     private List<MacroParameterBean> parameters;
     private MacroEditorBean editor;
     private ImagePlaceholderBean imagePlaceholder;
@@ -39,6 +40,7 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
         this.bodyType = defaultBean.getBodyType();
         this.aliases = defaultBean.getAliases();
         this.featured = defaultBean.isFeatured();
+        this.hidden = defaultBean.isHidden();
         this.parameters = defaultBean.getParameters();
         this.editor = defaultBean.getEditor();
         this.imagePlaceholder = defaultBean.getImagePlaceholder();
@@ -95,6 +97,12 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     public T withFeatured(Boolean featured)
     {
         this.featured = featured;
+        return (T) this;
+    }
+
+    public T withHidden(Boolean hidden)
+    {
+        this.hidden = hidden;
         return (T) this;
     }
 
