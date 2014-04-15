@@ -1,8 +1,9 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
-import com.atlassian.pageobjects.Page;
+import com.atlassian.jira.pageobjects.pages.AbstractJiraPage;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.ProductInstance;
+import com.atlassian.pageobjects.elements.query.TimedCondition;
 import com.atlassian.webdriver.utils.Check;
 import com.atlassian.webdriver.utils.element.ElementConditions;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
@@ -12,8 +13,7 @@ import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class JiraWorkflowTransitionPage implements Page
-{
+public class JiraWorkflowTransitionPage extends AbstractJiraPage {
     private String workflowMode;
     private String workflowName;
     private Integer workflowStep;
@@ -38,6 +38,11 @@ public class JiraWorkflowTransitionPage implements Page
         this.workflowStep = workflowStep;
         this.workflowTransition = workflowTransition;
 
+    }
+    @Override
+    public TimedCondition isAt()
+    {
+        return elementFinder.find(By.id("workflow-transition-info")).timed().isPresent();
     }
 
     public JiraWorkflowTransitionPage createOrEditDraft()
