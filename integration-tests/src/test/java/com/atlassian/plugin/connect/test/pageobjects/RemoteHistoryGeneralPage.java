@@ -113,6 +113,19 @@ public class RemoteHistoryGeneralPage extends RemotePage implements Page
         });
     }
 
+    public void clearLog(){
+        runInFrame(new Callable<String>()
+        {
+
+            @Override
+            public String call() throws Exception
+            {
+                driver.findElement(By.id("clearlog")).click();
+                return null;
+            }
+        });
+    }
+
     public String logNewUrl(){
         return runInFrame(new Callable<String>()
         {

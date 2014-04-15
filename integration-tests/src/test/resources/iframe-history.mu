@@ -10,6 +10,7 @@
         <button id="forward">Forward</button>
         <button id="back">Backward</button>
         <button id="pushstate">Push state</button>
+        <button id="clearlog">Clear log</button>
 
         <div id="log"></div>
     </div>
@@ -20,6 +21,10 @@
         history.popState(function(e){
             $("#log")[0].innerHTML = '<div class="newurl">' + e.newURL + "</div>" +
             '<div class="oldurl">' + e.oldURL + "</div>";
+        });
+
+        $("#clearlog").bind("click", function(){
+            $("#log")[0].innerHTML = '';
         });
         $("#pushstate").bind("click", function(){
             history.pushState("mypushedstate" + i);

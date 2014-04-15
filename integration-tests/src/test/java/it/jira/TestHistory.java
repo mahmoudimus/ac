@@ -98,7 +98,7 @@ public class TestHistory extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testHistoryPopStateDoesNotRunOnJavascriptBack() throws MalformedURLException, URISyntaxException
+    public void testHistoryPopStateDoesNotRunOnPushState() throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
         product.visit(RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
@@ -109,10 +109,8 @@ public class TestHistory extends JiraWebDriverTestBase
         URI url = new URI(addonHistoryGeneralPage.hostUrl());
 
         addonHistoryGeneralPage.javascriptPushState();
-        URI newUrl = new URI(addonHistoryGeneralPage.hostUrl());
-        assertThat(newUrl.getFragment(), is("!mypushedstate0"));
-
-        addonHistoryGeneralPage.javascriptBack();
+        addonHistoryGeneralPage.clearLog();
+        addonHistoryGeneralPage.javascriptPushState();
         assertThat(addonHistoryGeneralPage.logMessage(), isEmptyString());
     }
 
