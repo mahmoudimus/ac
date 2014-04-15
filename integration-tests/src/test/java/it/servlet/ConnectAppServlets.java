@@ -59,6 +59,15 @@ public class ConnectAppServlets
     }
 
     /**
+     * @return a servlet with history test buttons
+     */
+    public static HttpServlet historyServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-history.mu"));
+    }
+
+
+    /**
      * Verify from a WebDriver test using {@link RemoteWebPanel#getCustomMessage()}.
      *
      * @param message the message to display
