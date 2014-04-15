@@ -8,9 +8,7 @@ import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
-import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
@@ -64,6 +62,25 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
 
+        if(bean.hasRenderModes())
+        {
+            for(MacroRenderModeBean renderMode : bean.getRenderModes())
+            {
+                if(renderMode.getRenderModeType() == MacroRenderModeType.mobile)
+                {
+                    element.addElement("device-type").addText("mobile");
+                } else {
+                    // help vendors find errors in their descriptors
+                    throw new PluginInstallException("Unsupported render type '"
+                            + renderMode.getRenderModeType()
+                            + "' - "
+                            + plugin.getName()
+                            + "' (" + plugin.getKey() + ")");
+
+                }
+            }
+        }
+
         if (bean.hasDocumentation())
         {
             element.setAttribute("documentation-url", bean.getDocumentation().getUrl());
@@ -71,6 +88,10 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         if (bean.hasIcon())
         {
             element.setAttribute("icon", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
+        }
+        if (bean.isHidden())
+        {
+            element.setAttribute("hidden", "true");
         }
 
         handleParameters(bean, element);

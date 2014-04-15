@@ -1,0 +1,2 @@
+// This is an empty file, but populated from our build, running
+// ./bin/marketplace/validate-descriptors.js --type json --test > plugin/src/test/resources/descriptor/descriptor-validation-results.json

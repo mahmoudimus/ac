@@ -1,23 +1,22 @@
 #!/usr/bin/env node
 
 var downloader = require('./download-descriptors'),
-    xml2js = require('xml2js'),
     _ = require('lodash'),
     util = require('util');
 
 downloader.run({
-    descriptorDownloadedCallback: function (addonKey, filename, type, body, opts) {
+    descriptorDownloadedCallback: function (result, body, opts) {
         var scopes = [];
-        if (type === 'json') {
+        if (result.type === 'json') {
             scopes = JSON.parse(body).scopes;
         } else {
-            console.log(addonKey, "XML descriptor not supported");
+            console.log(result.addon.key, "XML descriptor not supported");
         }
 
         scopes = _.uniq(_.flatten(scopes));
 
         if (scopes.length) {
-            console.log(addonKey + " : " + util.inspect(scopes, { colors: true }));
+            console.log(result.addon.key + " : " + util.inspect(scopes, { colors: true }));
         }
     }
 });

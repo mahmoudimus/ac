@@ -13,4 +13,10 @@ public class ConfluenceTestAuthenticator implements TestAuthenticator
         ConfluenceUser user = FindUserHelper.getUserByUsername(username);
         AuthenticatedUserThreadLocal.set(user);
     }
+
+    @Override
+    public void unauthenticate()
+    {
+        AuthenticatedUserThreadLocal.set(null);
+    }
 }
