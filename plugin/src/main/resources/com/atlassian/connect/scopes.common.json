@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["entities", "license"],
+      "restPathKeys": ["entities", "license", "remoteplugintest"],
       "methods": ["GET"]
     },
     {
