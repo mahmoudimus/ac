@@ -81,13 +81,13 @@
             });
 
 
-            test("iframePerformance timeout triggers an analytics event", function() {
+            test("iframePerformance timeout triggers timeout and end analytics events", function() {
                 var addonKey = "myaddonkey",
                 moduleKey = "myModuleKey";
 
                 analytics.iframePerformance.start(addonKey, moduleKey);
                 analytics.iframePerformance.timeout(addonKey, moduleKey);
-                ok(this.triggerSpy.calledOnce);
+                ok(this.triggerSpy.calledTwice);
             });
 
             test("iframePerformance timeout analytics event includes addon / module keys", function() {
