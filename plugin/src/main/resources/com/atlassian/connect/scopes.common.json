@@ -12,6 +12,12 @@
     }
   ],
   "restPaths": [
+      {
+          "key": "remoteplugintest",
+          "name": "remoteplugintest",
+          "basePaths": ["/user($|/.*)"],
+          "versions": ["1", "latest"]
+      },
     {
       "key": "entities",
       "name": "applinks",
