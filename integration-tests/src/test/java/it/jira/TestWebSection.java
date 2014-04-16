@@ -110,6 +110,17 @@ public class TestWebSection extends JiraWebDriverTestBase
             super(triggerLocator, dropdownLocator);
         }
 
+        @Override
+        public JiraAuiDropdownMenu open()
+        {
+            if (!isOpen())
+            {
+                trigger().javascript().mouse().click();
+                waitForOpen();
+            }
+            return this;
+        }
+
         public PageElement getItem(By selector)
         {
             return getDropdown().find(selector);
