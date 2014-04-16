@@ -66,7 +66,7 @@ public class StaticAddOnScopes
         }
         catch (IOException e)
         {
-            // Ignore: IOException is thrown if the integration_test file does not exist, and it exists only in integration tests.
+            // Ignore: IOException is thrown if the integration_test file does not exist.
             // TestJiraWebItem tests will fail due to 403 responses if this file does not exist during integration tests,
             // and we don't want it to exist in prod.
         }
