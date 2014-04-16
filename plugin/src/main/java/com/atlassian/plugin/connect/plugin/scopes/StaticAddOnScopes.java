@@ -57,13 +57,18 @@ public class StaticAddOnScopes
 
         for (String product : products)
         {
-            String scopesFileResourceName = resourceLocation(product);
-            AddOnScopeBeans scopeBeans = parseScopeBeans(scopesFileResourceName);
+            addProductScopes(keyToScope, product);
+        }
 
-            for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
-            {
-                constructAndAddScope(keyToScope, scopesFileResourceName, scopeBeans, scopeBean);
-            }
+        try
+        {
+            addProductScopes(keyToScope, "integration_test");
+        }
+        catch (IOException e)
+        {
+            // Ignore: IOException is thrown if the integration_test file does not exist, and it exists only in integration tests.
+            // TestJiraWebItem tests will fail due to 403 responses if this file does not exist during integration tests,
+            // and we don't want it to exist in prod.
         }
 
         // copy element references into an ArrayList so that equals() comparisons work
@@ -71,6 +76,17 @@ public class StaticAddOnScopes
         ArrayList<AddOnScope> addOnScopes = new ArrayList<AddOnScope>(keyToScope.values());
         Collections.sort(addOnScopes);
         return addOnScopes;
+    }
+
+    private static void addProductScopes(Map<ScopeName, AddOnScope> keyToScope, String product) throws IOException
+    {
+        String scopesFileResourceName = resourceLocation(product);
+        AddOnScopeBeans scopeBeans = parseScopeBeans(scopesFileResourceName);
+
+        for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
+        {
+            constructAndAddScope(keyToScope, scopesFileResourceName, scopeBeans, scopeBean);
+        }
     }
 
     private static AddOnScopeBeans parseScopeBeans(String scopesFileResourceName) throws IOException

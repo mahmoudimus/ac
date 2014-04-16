@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["entities", "license", "remoteplugintest"],
+      "restPathKeys": ["entities", "license"],
       "methods": ["GET"]
     },
     {
@@ -12,12 +12,6 @@
     }
   ],
   "restPaths": [
-      {
-          "key": "remoteplugintest",
-          "name": "remoteplugintest",
-          "basePaths": ["/user($|/.*)"],
-          "versions": ["1", "latest"]
-      },
     {
       "key": "entities",
       "name": "applinks",
