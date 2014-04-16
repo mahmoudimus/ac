@@ -1,18 +1,17 @@
 package com.atlassian.plugin.connect.plugin.registry;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Named
 @ExportAsDevService

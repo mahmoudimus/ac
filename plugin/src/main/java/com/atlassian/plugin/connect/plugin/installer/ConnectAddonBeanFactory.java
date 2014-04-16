@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+
+import java.util.Map;
 
 /**
  * Validates and unmarshalls Connect addon JSON descriptors.

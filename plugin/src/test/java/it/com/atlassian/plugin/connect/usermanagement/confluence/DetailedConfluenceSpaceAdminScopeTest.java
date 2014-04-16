@@ -1,9 +1,5 @@
 package it.com.atlassian.plugin.connect.usermanagement.confluence;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.security.SpacePermissionManager;
@@ -11,11 +7,7 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
-import com.atlassian.crowd.exception.ApplicationNotFoundException;
-import com.atlassian.crowd.exception.ApplicationPermissionException;
-import com.atlassian.crowd.exception.GroupNotFoundException;
-import com.atlassian.crowd.exception.OperationFailedException;
-import com.atlassian.crowd.exception.UserNotFoundException;
+import com.atlassian.crowd.exception.*;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.JwtConstants;
@@ -41,15 +33,11 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.CREATEEDIT_PAGE_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.CREATE_ATTACHMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.EDITBLOG_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_ATTACHMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_BLOG_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_COMMENT_PERMISSION;
-import static com.atlassian.confluence.security.SpacePermission.REMOVE_PAGE_PERMISSION;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+import static com.atlassian.confluence.security.SpacePermission.*;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.junit.Assert.assertEquals;

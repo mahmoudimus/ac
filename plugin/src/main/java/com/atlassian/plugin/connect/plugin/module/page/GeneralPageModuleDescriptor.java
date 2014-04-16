@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicD
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

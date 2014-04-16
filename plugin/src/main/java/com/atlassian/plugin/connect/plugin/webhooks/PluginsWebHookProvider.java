@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.plugin.webhooks;
 
-import javax.inject.Named;
-
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectAddonEventSerializer;
 import com.atlassian.plugin.connect.spi.event.*;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.*;
+
+import javax.inject.Named;
 
 /**
  * Registers Web hooks for remote plugins

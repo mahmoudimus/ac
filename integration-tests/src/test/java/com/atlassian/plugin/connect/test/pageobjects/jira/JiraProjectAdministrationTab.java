@@ -1,10 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
-import com.atlassian.jira.projectconfig.pageobjects.ProjectConfigActions;
-import com.atlassian.jira.projectconfig.pageobjects.ProjectConfigHeader;
-import com.atlassian.jira.projectconfig.pageobjects.ProjectConfigPageTab;
-import com.atlassian.jira.projectconfig.pageobjects.ProjectConfigTabs;
-import com.atlassian.jira.projectconfig.pageobjects.ProjectInfoLocator;
+import com.atlassian.jira.projectconfig.pageobjects.*;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.ElementBy;

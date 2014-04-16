@@ -1,18 +1,16 @@
 package com.atlassian.plugin.connect.plugin.integration.plugins;
 
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
-
-import javax.inject.Inject;
-
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.google.common.collect.Maps.newHashMap;
 
