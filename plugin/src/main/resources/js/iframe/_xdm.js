@@ -1,4 +1,4 @@
-(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri"], function (events, base64, uri) {
+(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri", "host/analytics"], function (events, base64, uri, analytics) {
 
   "use strict";
 
@@ -202,6 +202,12 @@
             // Create responders for each response type
             done = function (message) { sendDone(pid, message); };
             fail = function (message) { sendFail(pid, message); };
+
+            //analytics
+            if(self.isHost){
+              analytics.trackBridgeMethod(name, addonKey, channel);
+            }
+
             // The local method is considered async if it accepts more arguments than the message has sent;
             // the additional arguments are filled in with the above async responder callbacks;
             // TODO: consider specifying args somehow in the remote stubs so that non-callback args can be
