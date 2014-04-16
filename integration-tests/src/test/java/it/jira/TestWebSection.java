@@ -86,6 +86,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     @Test
     public void testWebItemFoundWithinWebSection()
     {
+        loginAsAdmin();
         product.visit(JiraViewProjectPage.class, project.getKey());
 
         AddonDropdownMenu dropdown = connectPageOperations.getPageBinder().bind(AddonDropdownMenu.class, By.id(addonAndModuleKey(PLUGIN_KEY, HEADER_WEB_ITEM_ID)), By.id(addonAndModuleKey(PLUGIN_KEY, DROPDOWN_CONTENT_ID)));
@@ -106,6 +107,17 @@ public class TestWebSection extends JiraWebDriverTestBase
         public AddonDropdownMenu(final By triggerLocator, final By dropdownLocator)
         {
             super(triggerLocator, dropdownLocator);
+        }
+
+        @Override
+        public JiraAuiDropdownMenu open()
+        {
+            if (!isOpen())
+            {
+                trigger().javascript().mouse().click();
+                waitForOpen();
+            }
+            return this;
         }
 
         public PageElement getItem(By selector)
