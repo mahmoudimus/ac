@@ -112,15 +112,5 @@ public class TestWebSection extends JiraWebDriverTestBase
         {
             return getDropdown().find(selector);
         }
-
-        @Override
-        protected PageElement trigger()
-        {
-            PageElement element = super.trigger();
-            
-            waitUntilTrue(element.timed().isVisible());
-            
-            return element;
-        }
     }
 }
