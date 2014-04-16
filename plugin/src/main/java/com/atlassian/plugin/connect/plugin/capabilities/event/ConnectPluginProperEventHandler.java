@@ -1,9 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.PluginController;
-import com.atlassian.plugin.PluginState;
+import com.atlassian.activeobjects.plugin.ActiveObjectModuleDescriptor;
+import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
@@ -16,6 +14,8 @@ import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -57,13 +57,25 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
     {
         if (isTheConnectPlugin(pluginEnabledEvent.getPlugin()))
         {
+            
+        }
+        
+        
+    }
+    
+    @PluginEventListener
+    public void pluginModuleEnabled(PluginModuleEnabledEvent event)
+    {
+        ModuleDescriptor descriptor = event.getModule();
+        if(isTheConnectPlugin(descriptor.getPlugin()) && descriptor.getClass().getSimpleName().equals("ActiveObjectModuleDescriptor"))
+        {
             //enable all the addons if needed
             for(String addonKey : addonRegistry.getAddonKeysToEnableOnRestart())
             {
                 addonManager.enableConnectAddon(addonKey);
             }
         }
-        
+
         //TODO: remove this call after the initila deploy of file-less addons
         convertOldAddons();
     }
