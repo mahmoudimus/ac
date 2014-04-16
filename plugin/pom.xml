@@ -419,14 +419,7 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.activeobjects</groupId>
-            <artifactId>activeobjects-plugin</artifactId>
-            <version>${ao.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        
+       
     </dependencies>
 
     <build>
@@ -495,8 +488,6 @@
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                                 <use.test.http.client>true</use.test.http.client>
-                                <activeobjects.servicefactory.config.long.timeout>${ao.long.timeout}</activeobjects.servicefactory.config.long.timeout>
-                                <activeobjects.servicefactory.config.short.timeout>${ao.short.timeout}</activeobjects.servicefactory.config.short.timeout>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -570,8 +561,6 @@
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                                 <use.test.http.client>true</use.test.http.client>
-                                <activeobjects.servicefactory.config.long.timeout>${ao.long.timeout}</activeobjects.servicefactory.config.long.timeout>
-                                <activeobjects.servicefactory.config.short.timeout>${ao.short.timeout}</activeobjects.servicefactory.config.short.timeout>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
