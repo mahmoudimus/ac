@@ -9,10 +9,17 @@ _AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
         anchorPrefix = "!";
 
     function stripPrefix (text) {
+        if(text === undefined || text === null){
+            return "";
+        }
         return text.toString().replace(new RegExp("^" + anchorPrefix), "");
     }
 
     function addPrefix (text) {
+        if(text === undefined || text === null){
+            throw "You must supply text to prefix";
+        }
+
         return anchorPrefix + stripPrefix(text);
     }
 
