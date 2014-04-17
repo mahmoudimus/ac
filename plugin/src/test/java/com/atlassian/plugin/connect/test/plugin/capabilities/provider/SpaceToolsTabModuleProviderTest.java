@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.XWorkInterceptorBean;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.XWorkActionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
@@ -34,9 +34,7 @@ import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ConvertToWiredTest
 @Ignore("convert to wired test")

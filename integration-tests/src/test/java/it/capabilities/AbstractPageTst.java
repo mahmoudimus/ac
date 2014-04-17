@@ -4,7 +4,6 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;

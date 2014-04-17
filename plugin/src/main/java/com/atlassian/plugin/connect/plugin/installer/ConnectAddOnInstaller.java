@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.Plugin;
-
 import com.atlassian.upm.spi.PluginInstallException;
 import org.dom4j.Document;
 

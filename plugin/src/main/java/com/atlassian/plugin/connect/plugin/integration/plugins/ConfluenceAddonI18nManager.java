@@ -1,29 +1,27 @@
 package com.atlassian.plugin.connect.plugin.integration.plugins;
 
-import java.io.*;
+import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.util.resource.AlternativeDirectoryResourceLoader;
+import com.atlassian.sal.api.ApplicationProperties;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.inject.Inject;
-
-import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.event.events.PluginRefreshedEvent;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.plugin.util.resource.AlternativeDirectoryResourceLoader;
-import com.atlassian.sal.api.ApplicationProperties;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -122,5 +120,4 @@ public class ConfluenceAddonI18nManager implements InitializingBean, ConnectAddo
     {
         return new File(applicationProperties.getHomeDirectory(),CACHES_DIR);
     }
-
 }

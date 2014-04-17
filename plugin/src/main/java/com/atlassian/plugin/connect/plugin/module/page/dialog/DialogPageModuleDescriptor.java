@@ -6,11 +6,10 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;

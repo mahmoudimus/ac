@@ -28,7 +28,8 @@ public class StaticAddOnScopes
      */
     public static Collection<AddOnScope> buildForConfluence() throws IOException
     {
-        return buildFor("confluence", "common");
+        // TODO ACDEV-1214: don't load integration_test scopes in prod
+        return buildFor("confluence", "common", "integration_test");
     }
 
     /**
@@ -40,7 +41,8 @@ public class StaticAddOnScopes
      */
     public static Collection<AddOnScope> buildForJira() throws IOException
     {
-        return buildFor("jira", "common");
+        // TODO ACDEV-1214: don't load integration_test scopes in prod
+        return buildFor("jira", "common", "integration_test");
     }
 
     /**
@@ -58,17 +60,6 @@ public class StaticAddOnScopes
         for (String product : products)
         {
             addProductScopes(keyToScope, product);
-        }
-
-        try
-        {
-            addProductScopes(keyToScope, "integration_test");
-        }
-        catch (IOException e)
-        {
-            // Ignore: IOException is thrown if the integration_test file does not exist.
-            // TestJiraWebItem tests will fail due to 403 responses if this file does not exist during integration tests,
-            // and we don't want it to exist in prod.
         }
 
         // copy element references into an ArrayList so that equals() comparisons work

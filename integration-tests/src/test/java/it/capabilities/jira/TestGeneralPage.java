@@ -2,8 +2,6 @@ package it.capabilities.jira;
 
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;

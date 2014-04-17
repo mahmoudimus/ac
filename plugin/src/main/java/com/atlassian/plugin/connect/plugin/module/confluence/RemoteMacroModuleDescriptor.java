@@ -2,14 +2,13 @@ package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 
 import static com.google.common.base.Preconditions.checkNotNull;

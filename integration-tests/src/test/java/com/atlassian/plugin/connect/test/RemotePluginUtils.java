@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.test;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-
 import com.atlassian.pageobjects.ProductInstance;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-
 import org.apache.commons.lang.RandomStringUtils;
+
+import java.io.IOException;
+import java.net.URLEncoder;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.test.Utils.emptyGet;

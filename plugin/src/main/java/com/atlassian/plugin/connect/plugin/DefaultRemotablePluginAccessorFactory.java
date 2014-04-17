@@ -22,7 +22,6 @@ import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
-import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
@@ -38,8 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.rmi.Remote;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -373,7 +370,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
         if (AuthenticationMethod.JWT.equals(authenticationMethod))
         {
-            return new JwtSigningRemotablePluginAccessor(plugin, displayUrl, jwtService, consumerService,
+            final ConnectAddonBean addon = connectAddonBeanFactory.fromJsonSkipValidation(connectAddonRegistry.getDescriptor(pluginKey));
+            return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtService, consumerService,
                     connectApplinkManager, httpContentRetriever, userManager);
         }
         else if (AuthenticationMethod.NONE.equals(authenticationMethod))

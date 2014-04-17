@@ -16,9 +16,7 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestWebSection extends JiraWebDriverTestBase
 {

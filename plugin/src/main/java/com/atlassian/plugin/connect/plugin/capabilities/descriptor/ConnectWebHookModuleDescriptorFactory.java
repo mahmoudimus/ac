@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUti
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonToPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.webhook.RemotablePluginsPluginUriResolver;
 import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;

@@ -2,7 +2,6 @@ package it.capabilities.confluence;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;

@@ -2,10 +2,10 @@ package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.PermissionManagerImpl;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;

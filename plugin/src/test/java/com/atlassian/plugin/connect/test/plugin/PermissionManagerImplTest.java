@@ -3,11 +3,11 @@ package com.atlassian.plugin.connect.test.plugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.PermissionManagerImpl;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
@@ -240,11 +240,11 @@ public class PermissionManagerImplTest
         private ConnectAddonBean buildAddOnBean(Set<ScopeName> scopeNames)
         {
             return ConnectAddonBean.newConnectAddonBean()
-                                   .withKey(PLUGIN_KEY)
-                                   .withName("Mock add-on " + PLUGIN_KEY)
-                                   .withBaseurl("https://example.com/" + PLUGIN_KEY)
-                                   .withScopes(scopeNames)
-                                   .build();
+                    .withKey(PLUGIN_KEY)
+                    .withName("Mock add-on " + PLUGIN_KEY)
+                    .withBaseurl("https://example.com/" + PLUGIN_KEY)
+                    .withScopes(scopeNames)
+                    .build();
         }
     }
 

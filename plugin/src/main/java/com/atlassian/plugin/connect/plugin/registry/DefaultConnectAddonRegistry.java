@@ -1,5 +1,10 @@
 package com.atlassian.plugin.connect.plugin.registry;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -9,6 +14,8 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -18,20 +25,41 @@ import com.google.gson.Gson;
 @ExportAsDevService
 public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
 {
-    private final ConnectAddonEntityService addonEntityService;
+    private static final String ADDON_LIST_KEY = "ac.addon.list";
+    private static final String ADDON_KEY_PREFIX = "acnct.";
+
+    private final PluginSettingsFactory pluginSettingsFactory;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
 
     @Inject
-    public DefaultConnectAddonRegistry(ConnectAddonEntityService addonEntityService, ConnectAddonBeanFactory connectAddonBeanFactory)
+    public DefaultConnectAddonRegistry(PluginSettingsFactory pluginSettingsFactory, ConnectAddonBeanFactory connectAddonBeanFactory)
     {
-        this.addonEntityService = addonEntityService;
+        this.pluginSettingsFactory = pluginSettingsFactory;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
     }
 
     @Override
     public void removeAll(String pluginKey)
     {
-        addonEntityService.delete(pluginKey);
+        PluginSettings settings = settings();
+        settings.remove(addonStorageKey(pluginKey));
+
+        Set<String> addonKeys = getAddonKeySet(settings);
+        addonKeys.remove(pluginKey);
+
+        settings.put(ADDON_LIST_KEY, new ArrayList<String>(addonKeys));
+    }
+
+    private Set<String> getAddonKeySet(PluginSettings settings)
+    {
+        List<String> keyList = (List<String>) settings.get(ADDON_LIST_KEY);
+
+        if (null == keyList)
+        {
+            return new HashSet<String>();
+        }
+
+        return new HashSet<String>(keyList);
     }
 
     @Override
@@ -157,21 +185,27 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public Iterable<String> getAllAddonKeys()
     {
-        return addonEntityService.getAddonKeys();
+        return getAddonKeySet(settings());
     }
 
     @Override
     public Iterable<ConnectAddonBean> getAllAddonBeans()
     {
+        PluginSettings settings = settings();
         Gson gson = new Gson();
 
         ImmutableList.Builder<ConnectAddonBean> addons = ImmutableList.builder();
-        for (ConnectAddonEntity entity : addonEntityService.getAllAddons())
+        for (String addonKey : getAddonKeySet(settings))
         {
-            AddonSettings settings = gson.fromJson(entity.getSettings(), AddonSettings.class);
-            if (has(settings.getDescriptor()))
+            String json = (String) settings.get(addonStorageKey(addonKey));
+
+            if (!Strings.isNullOrEmpty(json))
             {
-                addons.add(connectAddonBeanFactory.fromJsonSkipValidation(settings.getDescriptor()));
+                AddonSettings addonSettings = gson.fromJson(json, AddonSettings.class);
+                if (has(addonSettings.getDescriptor()))
+                {
+                    addons.add(connectAddonBeanFactory.fromJsonSkipValidation(addonSettings.getDescriptor()));
+                }
             }
         }
 
@@ -199,15 +233,22 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public Iterable<String> getAddonKeysToEnableOnRestart()
     {
+        PluginSettings settings = settings();
         Gson gson = new Gson();
 
         ImmutableList.Builder<String> addonsToEnable = ImmutableList.builder();
-        for (ConnectAddonEntity entity : addonEntityService.getAllAddons())
+
+        for (String addonKey : getAddonKeySet(settings))
         {
-            AddonSettings settings = gson.fromJson(entity.getSettings(), AddonSettings.class);
-            if (PluginState.ENABLED.name().equals(settings.getRestartState()))
+            String json = (String) settings.get(addonStorageKey(addonKey));
+
+            if (!Strings.isNullOrEmpty(json))
             {
-                addonsToEnable.add(entity.getAddonKey());
+                AddonSettings addonSettings = gson.fromJson(json, AddonSettings.class);
+                if (PluginState.ENABLED.name().equals(addonSettings.getRestartState()))
+                {
+                    addonsToEnable.add(addonKey);
+                }
             }
         }
 
@@ -219,22 +260,39 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         return !Strings.isNullOrEmpty(value);
     }
 
+    private PluginSettings settings()
+    {
+        return pluginSettingsFactory.createGlobalSettings();
+    }
+
+    private String addonStorageKey(String addonKey)
+    {
+        return ADDON_KEY_PREFIX + addonKey;
+    }
+
     public void storeAddonSettings(String pluginKey, AddonSettings addonSettings)
     {
         String settingsToStore = new Gson().toJson(addonSettings);
 
-        addonEntityService.createOrUpdate(pluginKey, settingsToStore);
+        PluginSettings settings = settings();
+        settings.put(addonStorageKey(pluginKey), settingsToStore);
+        
+        Set<String> addonSet = getAddonKeySet(settings);
+        addonSet.add(pluginKey);
+        
+        settings.put(ADDON_LIST_KEY,new ArrayList<String>(addonSet));
+        
     }
 
     private AddonSettings getAddonSettings(String pluginKey)
     {
         AddonSettings addonsettings = new AddonSettings();
 
-        ConnectAddonEntity entity = addonEntityService.get(pluginKey);
+        String json = (String) settings().get(addonStorageKey(pluginKey));
 
-        if (null != entity)
+        if (!Strings.isNullOrEmpty(json))
         {
-            addonsettings = new Gson().fromJson(entity.getSettings(), AddonSettings.class);
+            addonsettings = new Gson().fromJson(json, AddonSettings.class);
         }
 
         return addonsettings;

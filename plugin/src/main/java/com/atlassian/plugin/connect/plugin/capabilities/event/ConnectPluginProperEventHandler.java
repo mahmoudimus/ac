@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
-import java.io.IOException;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
@@ -21,11 +16,14 @@ import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
 
 @Named
 public class ConnectPluginProperEventHandler implements InitializingBean, DisposableBean

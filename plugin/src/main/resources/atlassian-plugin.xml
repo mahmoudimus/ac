@@ -9,12 +9,6 @@
     <resource type="i18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
     <resource type="i18n" name="confluence-addon-i18n" location="connect-addons"/>
     
-
-    <ao key="ao-module" namespace="atlassianconnect">
-        <description>The AO module for storing connect addon data.</description>
-        <entity>com.atlassian.plugin.connect.plugin.registry.ConnectAddonEntity</entity>
-    </ao>
-    
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"

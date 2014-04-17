@@ -4,6 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
@@ -29,13 +30,16 @@ public class RemotePluginRequestSigner implements RequestSigner
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final ConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final ConnectAddOnIdentifierService legacyAddOnIdentifierService;
+    private final ConnectAddonRegistry connectAddonRegistry;
 
     @Inject
-    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, LegacyAddOnIdentifierService legacyAddOnIdentifierService)
+    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, LegacyAddOnIdentifierService legacyAddOnIdentifierService,
+                                     ConnectAddonRegistry connectAddonRegistry)
     {
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
         this.legacyAddOnIdentifierService = checkNotNull(legacyAddOnIdentifierService);
+        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
     }
 
     @Override
