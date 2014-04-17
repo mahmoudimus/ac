@@ -2,20 +2,16 @@ package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
-import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.google.common.base.Function;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.concurrent.Callable;
-
-import static com.atlassian.pageobjects.elements.query.Poller.waitUntilFalse;
-import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
-import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runInFrame;
 
 /**
  * Page with buttons for executing the javascript history plugin
@@ -62,10 +58,25 @@ public class RemoteHistoryGeneralPage extends RemotePage implements Page
         driver.navigate().back();
     }
 
+    private boolean waitForHistoryChange(final String oldText)
+    {
+
+        driver.waitUntil(new Function<WebDriver, Boolean>()
+        {
+
+            @Override
+            public Boolean apply(WebDriver webDriver)
+            {
+                return !driver.findElement(By.id("log")).getText().equals(oldText);
+
+            }
+        });
+        return true;
+    }
+
     public void javascriptForward() {
         runInFrame(new Callable<Void>()
         {
-
             @Override
             public Void call() throws Exception
             {
@@ -76,13 +87,13 @@ public class RemoteHistoryGeneralPage extends RemotePage implements Page
     }
 
     public void javascriptBack() {
-        runInFrame(new Callable<Void>()
-        {
+        runInFrame(new Callable<Void>() {
 
             @Override
-            public Void call() throws Exception
-            {
+            public Void call() throws Exception {
+                String text = driver.findElement(By.id("log")).getText();
                 driver.findElement(By.id("back")).click();
+                waitForHistoryChange(text);
                 return null;
             }
         });
@@ -95,7 +106,9 @@ public class RemoteHistoryGeneralPage extends RemotePage implements Page
             @Override
             public Void call() throws Exception
             {
+                String text = driver.findElement(By.id("log")).getText();
                 driver.findElement(By.id("pushstate")).click();
+                waitForHistoryChange(text);
                 return null;
             }
         });

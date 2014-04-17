@@ -1,11 +1,8 @@
 package it.jira;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteHistoryGeneralPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -16,13 +13,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.isEmptyString;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class TestHistory extends JiraWebDriverTestBase
 {
@@ -111,7 +105,7 @@ public class TestHistory extends JiraWebDriverTestBase
         addonHistoryGeneralPage.javascriptPushState();
         addonHistoryGeneralPage.clearLog();
         addonHistoryGeneralPage.javascriptPushState();
-        assertThat(addonHistoryGeneralPage.logMessage(), isEmptyString());
+        assertEquals(addonHistoryGeneralPage.logMessage(), "history pushstate1");
     }
 
     @Test

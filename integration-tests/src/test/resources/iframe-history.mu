@@ -28,13 +28,19 @@
         });
         $("#pushstate").bind("click", function(){
             history.pushState("mypushedstate" + i);
+            $("#log")[0].innerHTML = 'history pushstate' + i;
             i++;
         });
         $("#back").bind("click", function(){
-            history.back();
+            setTimeout(function(){
+                history.back();
+                $("#log")[0].innerHTML = 'back';
+            }, 200);
+
         });
         $('#forward').bind("click", function(){
             history.forward();
+            $("#log")[0].innerHTML = 'forward';
         });
     });
     </script>
