@@ -67,6 +67,23 @@
         <url-pattern>/render-signed-iframe</url-pattern>
     </servlet>
 
+    <servlet key="acPermanentRedirectingServlet"
+             name="Ac Permanent Redirecting Servlet"
+             class="com.atlassian.plugin.connect.plugin.module.util.redirect.AcRedirectServlet">
+        <description>
+            Permanent redirects from old /atlassian-connect/* urls to /ac/*
+        </description>
+        <init-param>
+            <param-name>from.pattern</param-name>
+            <param-value>atlassian-connect</param-value>
+        </init-param>
+        <init-param>
+            <param-name>to.text</param-name>
+            <param-value>ac</param-value>
+        </init-param>
+        <url-pattern>/atlassian-connect/*</url-pattern>
+    </servlet>
+
     <servlet key="addon-iframe-servlet"
              class="com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet">
         <url-pattern>/ac/*</url-pattern>
