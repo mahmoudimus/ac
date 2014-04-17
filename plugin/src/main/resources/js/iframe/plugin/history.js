@@ -114,7 +114,11 @@ function ($, rpc, uiParams) {
                 historyMessage: function(e){
                     state = e.newURL;
                     for(var i in popStateCallbacks){
-                        popStateCallbacks[i](e);
+                        try {
+                            popStateCallbacks[i](e);
+                        } catch (err) {
+                            $.log("History popstate callback exception: " + err.message);
+                        }
                     }
                 }
             },
