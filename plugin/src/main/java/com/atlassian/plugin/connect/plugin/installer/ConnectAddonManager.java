@@ -167,6 +167,8 @@ public class ConnectAddonManager
 
     public ConnectAddonBean installConnectAddon(String jsonDescriptor)
     {
+        long startTime = System.currentTimeMillis();
+        
         Map<String, String> i18nCollector = newHashMap();
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nCollector);
         
@@ -219,11 +221,15 @@ public class ConnectAddonManager
 
         eventPublisher.publish(new ConnectAddonInstalledEvent(pluginKey));
 
+        long endTime = System.currentTimeMillis();
+        
+        log.info("Connect addon '" + addOn.getKey() + "' installed in " + (endTime - startTime) + "ms");
         return addOn;
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException
     {
+        long startTime = System.currentTimeMillis();
         //Instances of remotablePluginAccessor are only meant to be used for the current operation and should not be cached across operations.
         remotablePluginAccessorFactory.remove(pluginKey);
 
@@ -244,6 +250,9 @@ public class ConnectAddonManager
                 {
                     log.debug("Enabled connect addon '" + pluginKey + "'");
                 }
+
+                long endTime = System.currentTimeMillis();
+                log.info("Connect addon '" + addon.getKey() + "' enabled in " + (endTime - startTime) + "ms");
             }
             else
             {
@@ -268,6 +277,7 @@ public class ConnectAddonManager
     private void disableConnectAddon(final String pluginKey, boolean persistState, boolean sendEvent)
             throws ConnectAddOnUserDisableException
     {
+        long startTime = System.currentTimeMillis();
         remotablePluginAccessorFactory.remove(pluginKey);
 
         if (addonRegistry.hasDescriptor(pluginKey))
@@ -290,6 +300,9 @@ public class ConnectAddonManager
             {
                 log.debug("Disabled connect addon '" + pluginKey + "'");
             }
+
+            long endTime = System.currentTimeMillis();
+            log.info("Connect addon '" + pluginKey + "' disabled in " + (endTime - startTime) + "ms");
         }
     }
 
@@ -319,6 +332,7 @@ public class ConnectAddonManager
     private void uninstallConnectAddon(final String pluginKey, boolean sendEvent)
             throws ConnectAddOnUserDisableException
     {
+        long startTime = System.currentTimeMillis();
         if (addonRegistry.hasDescriptor(pluginKey))
         {
             try
@@ -368,6 +382,9 @@ public class ConnectAddonManager
         {
             log.debug("Uninstalled connect addon '" + pluginKey + "'");
         }
+
+        long endTime = System.currentTimeMillis();
+        log.info("Connect addon '" + pluginKey + "' uninstalled in " + (endTime - startTime) + "ms");
     }
 
     public ConnectAddonBean getExistingAddon(String pluginKey)
