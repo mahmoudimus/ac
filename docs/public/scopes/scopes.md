@@ -41,3 +41,16 @@ See the following pages for details on which remote endpoints are available in C
 * [Confluence REST](../scopes/confluence-rest-scopes.html)
 * [Confluence JSON-RPC](../scopes/confluence-jsonrpc-scopes.html)
 * [Confluence XML-RPC](../scopes/confluence-xmlrpc-scopes.html)
+
+### Example
+
+Scopes are declared as a top level attribute of the [`atlassian-connect.json` descriptor](../modules/):
+
+    {
+        "baseUrl": "http://my-addon.com",
+        "key": "atlassian-connect-addon"
+        modules: {},
+        scopes: [
+            "read", "write"
+        ]
+    }
