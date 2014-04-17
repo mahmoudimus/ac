@@ -12,10 +12,9 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/main", 'host/content'], 
         container,
         module = {key: options.moduleKey},
         uiParams = $.extend({dlg: 1}, options.uiParams);
-
         dialog.create({
             id: options.id,
-            ns: options.moduleKey,
+            ns: options.moduleKey || options.key,
             chrome: dialogOptions.chrome || options.chrome,
             header: dialogOptions.header,
             width: dialogOptions.width,
