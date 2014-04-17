@@ -159,7 +159,7 @@ public class ConnectJsonExamples
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .build();
 
-        return gson.toJson(createJsonArray("generalPages", pageModuleBean));
+        return gson.toJson(createModuleArray("generalPages", pageModuleBean));
     }
 
     private static String createProjectAdminPageExample()
@@ -171,7 +171,7 @@ public class ConnectJsonExamples
                 .withLocation("projectgroup4")
                 .build();
 
-        return gson.toJson(createJsonArray("jiraProjectAdminTabPanels", pageModuleBean));
+        return gson.toJson(createModuleArray("jiraProjectAdminTabPanels", pageModuleBean));
     }
 
     private static String createWebhookExample()
@@ -181,7 +181,7 @@ public class ConnectJsonExamples
                 .withUrl("/issue-created")
                 .build();
 
-        return gson.toJson(createJsonArray("webhooks", bean));
+        return gson.toJson(createModuleArray("webhooks", bean));
     }
 
     private static String createWebItemExample()
@@ -197,7 +197,7 @@ public class ConnectJsonExamples
                 .withWeight(200)
                 .build();
 
-        return gson.toJson(createJsonArray("webItems", webItemModuleBean));
+        return gson.toJson(createModuleArray("webItems", webItemModuleBean));
     }
 
     private static String createPostFunctionExample()
@@ -212,7 +212,7 @@ public class ConnectJsonExamples
                 .withView(new UrlBean("/view"))
                 .build();
 
-        return gson.toJson(createJsonArray("jiraWorkflowPostFunctions", bean));
+        return gson.toJson(createModuleArray("jiraWorkflowPostFunctions", bean));
     }
 
     private static String createWebPanelExample()
@@ -226,7 +226,7 @@ public class ConnectJsonExamples
                 .withWeight(50)
                 .build();
 
-        return gson.toJson(createJsonArray("webPanels", webPanelModuleBean));
+        return gson.toJson(createModuleArray("webPanels", webPanelModuleBean));
     }
 
     private static String createWebSectionExample()
@@ -238,7 +238,7 @@ public class ConnectJsonExamples
                 .withWeight(50)
                 .build();
 
-        return gson.toJson(createJsonArray("webSections", webSectionModuleBean));
+        return gson.toJson(createModuleArray("webSections", webSectionModuleBean));
     }
 
     public static String createComponentTabPanelExample()
@@ -250,7 +250,7 @@ public class ConnectJsonExamples
                 .withWeight(100)
                 .build();
 
-        return gson.toJson(createJsonArray("jiraComponentTabPanels", bean));
+        return gson.toJson(createModuleArray("jiraComponentTabPanels", bean));
     }
 
     private static String createScopesExample()
@@ -268,7 +268,7 @@ public class ConnectJsonExamples
                 .withWeight(100)
                 .build();
 
-        return gson.toJson(createJsonArray("jiraSearchRequestViews", bean));
+        return gson.toJson(createModuleArray("jiraSearchRequestViews", bean));
     }
 
     private static String createDynamicMacroExample()
@@ -309,7 +309,7 @@ public class ConnectJsonExamples
                 )
                 .build();
 
-        return gson.toJson(createJsonArray("dynamicContentMacros", macroModuleBean));
+        return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
     }
 
     private static String createStaticMacroExample()
@@ -348,7 +348,7 @@ public class ConnectJsonExamples
                 )
                 .build();
 
-        return gson.toJson(createJsonArray("staticContentMacros", macroModuleBean));
+        return gson.toJson(createModuleArray("staticContentMacros", macroModuleBean));
     }
 
     private static String createMacroParamsExample()
@@ -376,7 +376,7 @@ public class ConnectJsonExamples
                 .withLocation("contenttools")
                 .build();
 
-        return gson.toJson(createJsonArray("spaceToolsTabs", spaceToolsTabModuleBean));
+        return gson.toJson(createModuleArray("spaceToolsTabs", spaceToolsTabModuleBean));
     }
 
     private static String createI18nExample()
@@ -559,7 +559,6 @@ public class ConnectJsonExamples
         JsonArray arr = new JsonArray();
         arr.add(gson.toJsonTree(bean));
         obj.add(name, arr);
-
         return obj;
     }
 
@@ -567,8 +566,13 @@ public class ConnectJsonExamples
     {
         JsonObject obj = new JsonObject();
         obj.add(name, gson.toJsonTree(bean));
-
         return obj;
     }
 
+    private static JsonObject createModuleArray(String name, ModuleBean bean)
+    {
+        JsonObject modules = new JsonObject();
+        modules.add("modules", createJsonArray(name, bean));
+        return modules;
+    }
 }
