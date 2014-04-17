@@ -79,7 +79,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     @Test
     public void completeKeyIsCorrect()
     {
-        assertThat(moduleDescriptor.getCompleteKey(), startsWith(addon.getKey() + ":" + addonAndModuleKey("com-atlassian-plugin-key","attachment-indexing")));
+        assertThat(moduleDescriptor.getCompleteKey(), startsWith(addon.getKey() + ":" + addonAndModuleKey(addon.getKey(),"attachment-indexing")));
     }
 
     @Test
