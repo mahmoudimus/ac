@@ -26,6 +26,7 @@ requirejs.config({
     'inline-dialog/simple': '../src/main/resources/js/inline-dialog/simple',
     'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
     'jira/event': '../src/main/resources/js/jira/event',
+    'jira/workflow-post-function': '../src/main/resources/js/jira/workflow-post-function',
     'messages/main': '../src/main/resources/js/messages/main',
     // shared
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
@@ -106,6 +107,11 @@ requirejs.config({
         ]
     },
     'jira/event': {
+        deps: [
+        'iframe/host/_dollar'
+        ]
+    },
+    'jira/workflow-post-function': {
         deps: [
         'iframe/host/_dollar'
         ]

@@ -97,6 +97,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       });
     }
 
+    function getProductContext(){
+      return JSON.parse(productContextJson);
+    }
+
     var rpc = new XdmRpc($, {
       remote: options.src,
       remoteKey: options.key,
@@ -244,20 +248,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           }).then(done, fail);
         },
         // !!! JIRA specific !!!
-        getWorkflowConfiguration: function (uuid, callback) {
-          if(!/^[\w|-]+$/.test(uuid)){
-            throw new Error("Invalid workflow ID");
-          }
-          var value,
-          selector = $("#postFunction\\.config-"+uuid)[0];
-
-          // if the matching selector has an id that starts with the correct string
-          if(selector && selector.id.match(/postFunction\.config\-/).length === 1){
-            value = $(selector).val();
-          } else {
-            throw ("Workflow configuration not found");
-          }
-          callback(value);
+        getWorkflowConfiguration: function (callback) {
+          AP.require('jira/workflow-post-function', function(wpf){
+            var postFunctionId = getProductContext()["postFunction.id"];
+            wpf.getConfiguration(postFunctionId, callback);
+          });
         },
         // !!! Confluence specific !!!
         saveMacro: function(updatedParams) {
@@ -379,21 +374,13 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       });
     }
 
-    // !!! JIRA specific !!!
-    var done = false;
-    $(document).delegate("#add_submit, #update_submit", "click", function (e) {
-      if (!done) {
-        e.preventDefault();
-        rpc.setWorkflowConfigurationMessage(function (either) {
-          if (either.valid) {
-            $("#postFunction\\.config-" + either.uuid).val(either.value);
-            done = true;
-            $(e.target).click();
-          }
-        });
+    // JIRA workflow post function binder.
+    _AP.require('jira/workflow-post-function', function(wpf){
+      if (wpf.isOnWorkflowPostFunctionPage()) {
+        var postFunctionId = getProductContext()["postFunction.id"];
+        wpf.registerSubmissionButton(rpc, postFunctionId);
       }
     });
-    // !!! end JIRA !!!
 
     // register the rpc bridge with the addons module
     addons.get(options.key).add(rpc);

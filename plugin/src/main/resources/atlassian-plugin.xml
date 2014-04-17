@@ -92,6 +92,12 @@
         <resource type="download" name="history.js" location="/js/iframe/host/history.js" />
     </web-resource>
 
+    <web-resource key="workflow-post-function">
+        <resource type="download" name="workflow-post-function.js" location="js/jira/workflow-post-function.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+    </web-resource>
+
     <web-resource key="dialog">
         <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
         <resource type="download" name="main.js" location="js/dialog/main.js" />
@@ -162,6 +168,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:inline-dialog</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:messages</dependency>
