@@ -114,7 +114,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     {
         WebItemModuleBeanBuilder webItemBean = newWebItemBean()
                 .withName(new I18nProperty(bean.getName().getValue(),
-                        MacroI18nBuilder.getMacroI18nKey(addon.getKey(), bean.getRawKey())))
+                        MacroI18nBuilder.getMacroI18nKey(addon.getKey(), bean.getKey(addon))))
                 .withKey(bean.getRawKey())
                 .withLocation("system.editor.featured.macros.default");
 
