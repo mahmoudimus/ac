@@ -7,20 +7,20 @@ AP.define("history", ["_dollar", "_rpc", "_ui-params"],
 * ### Example ###
 * ```
 * AP.require(["history"], function(history){
-
-    // Register a function to run when state is changed.
-    // You should use this to update your UI to show the state.
-    history.popState(function(e){
-        alert("The URL has changed from: " + e.oldURL + "to: " + e.newURL);
-    });
-
-    // Adds a new entry to the history and changes the url in the browser.
-    history.pushState("page2");
-
-    // Changes the URL back and invokes any registered popState callbacks.
-    history.back();
-
-});
+*
+*    // Register a function to run when state is changed.
+*    // You should use this to update your UI to show the state.
+*    history.popState(function(e){
+*        alert("The URL has changed from: " + e.oldURL + "to: " + e.newURL);
+*    });
+*
+*    // Adds a new entry to the history and changes the url in the browser.
+*    history.pushState("page2");
+*
+*    // Changes the URL back and invokes any registered popState callbacks.
+*    history.back();
+*
+* });
 * ```
 * @exports history
 */
