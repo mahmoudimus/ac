@@ -65,6 +65,43 @@ Atlassian Connect is replacing the OAuth 1.0 2LO implementation with JWT.
 </div>
 </div>
 
+
+### Dialogs: Removal of `getIframeHtmlForUrl`
+
+The method `dialog.getIframeHtmlForUrl(...)` is no longer available for JSON descriptor based add-ons.
+
+<div class="ac-deprecations">
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Deprecated in</h5>
+    </div>
+    <div class="aui-item">
+        <span class="aui-lozenge">1.0-rc2</span>
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>OnDemand removal</h5>
+    </div>
+    <div class="aui-item">
+        __24th March, 2014__
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Upgrade guide</h5>
+    </div>
+    <div class="aui-item">
+        <p>For dialogs with custom content, we recommend using <code>dialog.create({key: 'my-module-key',...})</code>
+        instead (see <a href="../javascript/module-Dialog.html">Javascript Dialog documentation</a>).</p>
+        <p>The key references a general page (or a web item).
+        In order to prevent the general page or web item to show up anywhere else, you can use the <code>"location"</code>
+        property with a value of <code>"none"</code>.</p>
+    </div>
+</div>
+</div>
+
+
 ### Email sender resource
 
 Atlassian Connect will no longer provide a REST endpoint allowing add-ons to send emails to users as either JIRA or Confluence.
