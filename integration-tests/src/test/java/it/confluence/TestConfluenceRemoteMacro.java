@@ -132,8 +132,6 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(SIMPLE_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), SIMPLE_MACRO);
 
-        System.out.println("Page source: " + product.getTester().getDriver().getPageSource());
-
         assertEquals(SIMPLE_MACRO_PATH, page.getText(REQUEST_URI));
         assertTrue(StringUtils.isNotBlank(page.getText(REQUEST_QUERY)));
         assertEquals("GET", page.getText(REQUEST_METHOD));
