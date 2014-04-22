@@ -49,8 +49,8 @@ Scopes are declared as a top level attribute of the [`atlassian-connect.json` de
     {
         "baseUrl": "http://my-addon.com",
         "key": "atlassian-connect-addon"
-        modules: {},
-        scopes: [
+        "modules": {},
+        "scopes": [
             "read", "write"
         ]
     }
