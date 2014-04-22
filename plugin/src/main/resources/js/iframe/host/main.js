@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params"], function ($, XdmRpc, addons, statusHelper, messages, uiParams) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params", 'host/history'], function ($, XdmRpc, addons, statusHelper, messages, uiParams, connectHistory) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -87,6 +87,16 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       return $nexus.data("ra.dialog.buttons").getButton(name);
     }
 
+    if(isGeneral){
+      options.uiParams = {
+        historyState: connectHistory.getState()
+      };
+      // register for url hash changes to invoking history.popstate callbacks.
+      $(window).on("hashchange", function(e){
+        connectHistory.hashChange(e.originalEvent, rpc.historyMessage);
+      });
+    }
+
     function getProductContext(){
       return JSON.parse(productContextJson);
     }
@@ -96,10 +106,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       remoteKey: options.key,
       container: contentId,
       channel: channelId,
-      props: {width: initWidth, height: initHeight}
+      props: {width: initWidth, height: initHeight},
+      uiParams: options.uiParams
     }, {
       remote: [
         "dialogMessage",
+        "historyMessage",
         // !!! JIRA specific !!!
         "setWorkflowConfigurationMessage"
       ],
@@ -274,6 +286,27 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           _AP.require(['jira/event'], function(jiraEvent){
             jiraEvent[e]();
           });
+        },
+        historyPushState: function(url){
+          if(isGeneral){
+            return connectHistory.pushState(url);
+          } else {
+            log("History is only available to page modules");
+          }
+        },
+        historyReplaceState: function(url){
+          if(isGeneral){
+            return connectHistory.replaceState(url);
+          } else {
+            log("History is only available to page modules");
+          }
+        },
+        historyGo: function(delta){
+          if(isGeneral){
+            return connectHistory.go(delta);
+          } else {
+            log("History is only available to page modules");
+          }
         }
       }
     });
