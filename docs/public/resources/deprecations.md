@@ -100,9 +100,9 @@ Atlassian Connect is replacing the OAuth 1.0 2LO implementation with JWT.
 </div>
 
 
-### Dialogs: Removal of `getIframeHtmlForUrl`
+### Opening dialogs by URL
 
-The method `dialog.getIframeHtmlForUrl(...)` is no longer available for JSON descriptor based add-ons.
+JSON descriptor based add-ons can no longer open dialogs using a `url` parameter, for instance with `dialog.create({url: 'my-contents.html'})`.
 
 <div class="ac-deprecations">
 <div class="aui-group">
@@ -126,7 +126,7 @@ The method `dialog.getIframeHtmlForUrl(...)` is no longer available for JSON des
         <h5>Upgrade guide</h5>
     </div>
     <div class="aui-item">
-        <p>For dialogs with custom content, we recommend using <code>dialog.create({key: 'my-module-key',...})</code>
+        <p>We recommend using <code>dialog.create({key: 'my-module-key',...})</code>
         instead (see <a href="../javascript/module-Dialog.html">Javascript Dialog documentation</a>).</p>
         <p>The key references a general page (or a web item).
         In order to prevent the general page or web item to show up anywhere else, you can use the <code>"location"</code>
