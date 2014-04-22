@@ -80,7 +80,9 @@ public class RemoteHistoryGeneralPage extends RemotePage implements Page
             @Override
             public Void call() throws Exception
             {
+                String text = driver.findElement(By.id("log")).getText();
                 driver.findElement(By.id("forward")).click();
+                waitForHistoryChange(text);
                 return null;
             }
         });
