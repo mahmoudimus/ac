@@ -170,6 +170,12 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
         assertThat(descriptor.isEnabledByDefault(), is(true));
     }
 
+    @Test
+    public void verifyIsHidden() throws Exception
+    {
+        assertThat(descriptor.getMacroMetadata().isHidden(), is(true));
+    }
+
     protected T createBeanBuilder()
     {
         return newContentMacroModuleBeanBuilder()
@@ -181,6 +187,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
                 .withOutputType(MacroOutputType.BLOCK)
                 .withCategories("media", "confluence_content")
                 .withDescription(new I18nProperty("The Macro Description", "macro.desc.key"))
+                .withHidden(true)
                 .withDocumentation(LinkBean.newLinkBean()
                         .withUrl("http://docs.example.com/macro")
                         .withTitle("Doc Title")

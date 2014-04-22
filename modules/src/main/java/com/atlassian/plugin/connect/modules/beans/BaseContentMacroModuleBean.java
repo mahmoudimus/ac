@@ -85,6 +85,12 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private LinkBean documentation;
 
     /**
+     * A list of alternative renderModes.
+     */
+    private List<MacroRenderModeBean> renderModes;
+
+
+    /**
      * The categories the macro should appear in. A macro with no category will show up in the default 'All' category.
      *
      * Currently, the following categories are supported by Confluence:
@@ -95,7 +101,6 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * * `development`: Development
      * * `external-content`: External Content
      * * `formatting`: Formatting
-     * * `hidden-macros`: Hidden
      * * `media`: Media
      * * `navigation`: Navigation
      * * `reporting`: Reporting
@@ -121,10 +126,16 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private Set<String> aliases;
 
     /**
-     * Whether the macro should be "featured", meaning having an additional link in the "Insert More Content" menu in the editor toolbar
+     * Whether the macro should be "featured", meaning having an additional link in the "Insert More Content" menu in the editor toolbar.
      */
     @CommonSchemaAttributes(defaultValue = "false")
     private Boolean featured;
+
+    /**
+     * If set to true, the macro will not appear in the macro browser.
+     */
+    @CommonSchemaAttributes(defaultValue = "false")
+    private Boolean hidden;
 
     /**
      * The list of parameter input fields that will be displayed.
@@ -177,10 +188,6 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         {
             aliases = ImmutableSet.of();
         }
-        if (null == featured)
-        {
-            featured = false;
-        }
         if (null == parameters)
         {
             parameters = newArrayList();
@@ -207,6 +214,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         return documentation;
     }
 
+    public List<MacroRenderModeBean> getRenderModes()
+    {
+        return renderModes;
+    }
+
     public Set<String> getCategories()
     {
         return categories;
@@ -229,7 +241,12 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
 
     public Boolean isFeatured()
     {
-        return featured;
+        return (null != featured) && featured;
+    }
+
+    public Boolean isHidden()
+    {
+        return (null != hidden) && hidden;
     }
 
     public List<MacroParameterBean> getParameters()
@@ -255,6 +272,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     public boolean hasIcon()
     {
         return icon != null;
+    }
+
+    public boolean hasRenderModes()
+    {
+        return renderModes != null;
     }
 
     public boolean hasDocumentation()

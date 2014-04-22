@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -791,7 +791,9 @@
                                         <include>js/iframe-min/plugin/request-min.js</include>
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
                                         <include>js/iframe-min/plugin/inline-dialog-min.js</include>
+                                        <include>js/iframe-min/plugin/history-min.js</include>
                                         <include>js/iframe-min/plugin/messages-min.js</include>
+                                        <include>js/iframe-min/plugin/cookie-min.js</include>
                                         <include>js/iframe-min/plugin/_resize_listener-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>
@@ -800,6 +802,22 @@
                                     </includes>
                                 </aggregation>
                             </aggregations>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>host-min-js</id>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                        <configuration>
+                            <gzip>false</gzip>
+                            <jswarn>false</jswarn>
+                            <excludeResources>true</excludeResources>
+                            <sourceDirectory>${project.build.outputDirectory}/js</sourceDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/js</outputDirectory>
+                            <excludes>
+                                <exclude>${project.build.outputDirectory}/js/iframe</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
@@ -1021,6 +1039,7 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
+                                    <skipTests>false</skipTests>
                                     <configFile>karma.iframe.conf.js</configFile>
                                 </configuration>
                             </execution>
@@ -1031,7 +1050,45 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
+                                    <skipTests>false</skipTests>
                                     <configFile>karma.conf.js</configFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <browsers>Chrome</browsers>
+                            <karmaExecutable>node_modules/karma/bin/karma</karmaExecutable>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>descriptor-validation-tests</id>
+            <activation>
+                <property>
+                    <name>descriptorValidation</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- karma testrunner plugin for iframe code -->
+                    <plugin>
+                        <groupId>com.kelveden</groupId>
+                        <artifactId>maven-karma-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <!-- test add-on validation results -->
+                            <execution>
+                                <id>descriptor-validator-results-tests</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <skipTests>false</skipTests>
+                                    <configFile>karma.descriptor-validator.conf.js</configFile>
                                 </configuration>
                             </execution>
                         </executions>

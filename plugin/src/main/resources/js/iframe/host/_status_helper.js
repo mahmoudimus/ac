@@ -19,11 +19,17 @@ _AP.define("host/_status_helper", ["_dollar"], function ($) {
     };
 
     function hideStatuses($home){
+        // If there's a pending timer to show the loading status, kill it.
+        if ($home.data('loadingStatusTimer')) {
+            clearTimeout($home.data('loadingStatusTimer'));
+            $home.removeData('loadingStatusTimer');
+        }
         $home.find(".ap-status").addClass("hidden");
     }
 
     function showStatus($home, status){
         hideStatuses($home);
+        $home.closest('.ap-container').removeClass('hidden');
         $home.find('.ap-' + status).removeClass('hidden');
         /* setTimout fixes bug in AUI spinner positioning */
         setTimeout(function(){
@@ -39,8 +45,14 @@ _AP.define("host/_status_helper", ["_dollar"], function ($) {
         hideStatuses($home);
     }
 
-    function showLoadingStatus($home){
-        showStatus($home, 'loading');
+    function showLoadingStatus($home, delay){
+        if (!delay) {
+            showStatus($home, 'loading');
+        } else {
+            // Wait a second before showing loading status.
+            var timer = setTimeout(showStatus.bind(null, $home, 'loading'), delay);
+            $home.data('loadingStatusTimer', timer);
+        }
     }
 
     function showloadTimeoutStatus($home){
