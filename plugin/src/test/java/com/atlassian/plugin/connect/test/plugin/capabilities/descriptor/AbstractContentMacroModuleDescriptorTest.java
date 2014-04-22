@@ -17,8 +17,9 @@ import com.atlassian.spring.container.ContainerManager;
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
@@ -31,10 +32,10 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 
+@RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseContentMacroModuleBean, T extends BaseContentMacroModuleBeanBuilder<T, B>>
 {
     @Mock
@@ -56,7 +57,6 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     }
 
     private void setupContainer() {
-        MockitoAnnotations.initMocks(this);
         when(containerContext.isSetup()).thenReturn(true);
         when(containerContext.getComponent("docBean")).thenReturn(new MockDocBean());
         ContainerManager.getInstance().setContainerContext(containerContext);
