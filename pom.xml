@@ -643,7 +643,8 @@
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.17.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>6.3-OD-04-016</atlassian.jira.version>
+        <atlassian.jira.version>6.3-OD-05-001</atlassian.jira.version>
+        <atlassian.jira.projects.version>1.0.32</atlassian.jira.projects.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
         <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
         <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>
