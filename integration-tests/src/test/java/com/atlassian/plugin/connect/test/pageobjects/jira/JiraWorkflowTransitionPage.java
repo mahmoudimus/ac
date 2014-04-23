@@ -87,8 +87,13 @@ public class JiraWorkflowTransitionPage extends AbstractJiraPage {
 
     }
 
-    public String workflowPostFunctionConfigurationValue(String moduleKey)
+    public JiraAddWorkflowTransitionFunctionParamsPage updatePostFunction(String addonKey, String postFunctionName)
     {
-        return (String) driver.executeScript("return document.getElementsByClassName('module-" + moduleKey + "')[0].value;");
+        poller.waitUntil(ElementConditions.isPresent(By.id("view_post_functions")), 5);
+        driver.findElement(By.id("view_post_functions")).click();
+        driver.findElement(By.className("criteria-post-function-edit")).click();
+        return pageBinder.bind(JiraAddWorkflowTransitionFunctionParamsPage.class, postFunctionName);
+
     }
+
 }
