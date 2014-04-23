@@ -12,7 +12,8 @@
             "../plugin/src/main/resources/js/iframe/plugin/env.js",
             "../plugin/src/main/resources/js/iframe/plugin/inline-dialog.js",
             "../plugin/src/main/resources/js/iframe/plugin/messages.js",
-            "../plugin/src/main/resources/js/iframe/plugin/cookie.js"
+            "../plugin/src/main/resources/js/iframe/plugin/cookie.js",
+            "../plugin/src/main/resources/js/iframe/plugin/history.js"
         ]
     },
     "plugins": ["plugins/markdown"],

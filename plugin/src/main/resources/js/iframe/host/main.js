@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params"], function ($, XdmRpc, addons, statusHelper, messages, uiParams) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params", 'host/history'], function ($, XdmRpc, addons, statusHelper, messages, uiParams, connectHistory) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -87,15 +87,31 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       return getDialogButtons()[name];
     }
 
+    if(isGeneral){
+      options.uiParams = {
+        historyState: connectHistory.getState()
+      };
+      // register for url hash changes to invoking history.popstate callbacks.
+      $(window).on("hashchange", function(e){
+        connectHistory.hashChange(e.originalEvent, rpc.historyMessage);
+      });
+    }
+
+    function getProductContext(){
+      return JSON.parse(productContextJson);
+    }
+
     var rpc = new XdmRpc($, {
       remote: options.src,
       remoteKey: options.key,
       container: contentId,
       channel: channelId,
-      props: {width: initWidth, height: initHeight}
+      props: {width: initWidth, height: initHeight},
+      uiParams: options.uiParams
     }, {
       remote: [
         "dialogMessage",
+        "historyMessage",
         // !!! JIRA specific !!!
         "setWorkflowConfigurationMessage"
       ],
@@ -240,20 +256,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           }).then(done, fail);
         },
         // !!! JIRA specific !!!
-        getWorkflowConfiguration: function (uuid, callback) {
-          if(!/^[\w|-]+$/.test(uuid)){
-            throw new Error("Invalid workflow ID");
-          }
-          var value,
-          selector = $("#postFunction\\.config-"+uuid)[0];
-
-          // if the matching selector has an id that starts with the correct string
-          if(selector && selector.id.match(/postFunction\.config\-/).length === 1){
-            value = $(selector).val();
-          } else {
-            throw ("Workflow configuration not found");
-          }
-          callback(value);
+        getWorkflowConfiguration: function (callback) {
+          AP.require('jira/workflow-post-function', function(wpf){
+            var postFunctionId = getProductContext()["postFunction.id"];
+            wpf.getConfiguration(postFunctionId, callback);
+          });
         },
         // !!! Confluence specific !!!
         saveMacro: function(updatedParams) {
@@ -287,6 +294,27 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           _AP.require(['jira/event'], function(jiraEvent){
             jiraEvent[e]();
           });
+        },
+        historyPushState: function(url){
+          if(isGeneral){
+            return connectHistory.pushState(url);
+          } else {
+            log("History is only available to page modules");
+          }
+        },
+        historyReplaceState: function(url){
+          if(isGeneral){
+            return connectHistory.replaceState(url);
+          } else {
+            log("History is only available to page modules");
+          }
+        },
+        historyGo: function(delta){
+          if(isGeneral){
+            return connectHistory.go(delta);
+          } else {
+            log("History is only available to page modules");
+          }
         }
       }
     });
@@ -354,21 +382,13 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       });
     }
 
-    // !!! JIRA specific !!!
-    var done = false;
-    $(document).delegate("#add_submit, #update_submit", "click", function (e) {
-      if (!done) {
-        e.preventDefault();
-        rpc.setWorkflowConfigurationMessage(function (either) {
-          if (either.valid) {
-            $("#postFunction\\.config-" + either.uuid).val(either.value);
-            done = true;
-            $(e.target).click();
-          }
-        });
+    // JIRA workflow post function binder.
+    _AP.require('jira/workflow-post-function', function(wpf){
+      if (wpf.isOnWorkflowPostFunctionPage()) {
+        var postFunctionId = getProductContext()["postFunction.id"];
+        wpf.registerSubmissionButton(rpc, postFunctionId);
       }
     });
-    // !!! end JIRA !!!
 
     // register the rpc bridge with the addons module
     addons.get(options.key).add(rpc);

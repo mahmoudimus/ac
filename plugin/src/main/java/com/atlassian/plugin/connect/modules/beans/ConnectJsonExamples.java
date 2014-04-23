@@ -28,8 +28,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -48,13 +50,19 @@ public class ConnectJsonExamples
 {
     private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
 
-    public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String ADDON_COMPLETE_EXAMPLE = createAddonCompleteExample();
+    public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String AUTHENTICATION_EXAMPLE = createAuthenticationExample();
     public static final String COMPONENT_TAB_PANEL_EXAMPLE = createComponentTabPanelExample();
+    public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
+    public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
+    public static final String ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
+    public static final String ENTITY_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createEntityPropertyIndexKeyConfigurationExample();
     public static final String I18N_EXAMPLE = createI18nExample();
     public static final String ICON_EXAMPLE = createIconExample();
+    public static final String IMAGE_PLACEHOLDER_EXAMPLE = createImagePlaceholderExample();
+    public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
     public static final String LINK_EXAMPLE = createLinkExample();
     public static final String LINKS_EXAMPLE = createLinksExample();
     public static final String MACRO_EDITOR_EXAMPLE = createMacroEditorExample();
@@ -64,9 +72,10 @@ public class ConnectJsonExamples
     public static final String PARAMS_EXAMPLE = createParamsExample();
     public static final String POST_FUNCTION_EXAMPLE = createPostFunctionExample();
     public static final String PRJ_ADMIN_PAGE_EXAMPLE = createProjectAdminPageExample();
+    public static final String SCOPES_EXAMPLE = createScopesExample();
     public static final String SEARCH_VIEW_EXAMPLE = createSearchViewExample();
     public static final String SINGLE_CONDITION_EXAMPLE = createSingleConditionExample();
-    public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
+    public static final String SPACE_TOOLS_TAB_EXAMPLE = createSpaceToolsTabExample();
     public static final String STATIC_MACRO_EXAMPLE = createStaticMacroExample();
     public static final String URL_EXAMPLE = createUrlExample();
     public static final String VENDOR_EXAMPLE = createVendorExample();
@@ -75,12 +84,6 @@ public class ConnectJsonExamples
     public static final String WEBITEM_TARGET_EXAMPLE = createWebitemTargetExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
-    public static final String LIFECYCLE_EXAMPLE = createLifecycleExample();
-    public static final String IMAGE_PLACEHOLDER_EXAMPLE = createImagePlaceholderExample();
-    public static final String SPACE_TOOLS_TAB_EXAMPLE = createSpaceToolsTabExample();
-    public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
-    public static final String ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
-    public static final String ENTITY_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createEntityPropertyIndexKeyConfigurationExample();
 
     private static String createAddonExample()
     {
@@ -250,6 +253,12 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("jiraComponentTabPanels", bean));
     }
 
+    private static String createScopesExample()
+    {
+        HashSet<ScopeName> scopeNames = Sets.newHashSet(ScopeName.READ, ScopeName.WRITE);
+        return gson.toJson(createJsonObject("scopes", scopeNames));
+    }
+
     public static String createSearchViewExample()
     {
         SearchRequestViewModuleBean bean = SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
@@ -355,7 +364,7 @@ public class ConnectJsonExamples
                 .withValues("Map", "Satellite")
                 .build();
 
-        return gson.toJson(createModuleArray("parameters", macroParameterBean));
+        return gson.toJson(createJsonArray("parameters", macroParameterBean));
     }
 
     private static String createSpaceToolsTabExample()
@@ -373,13 +382,13 @@ public class ConnectJsonExamples
     private static String createI18nExample()
     {
         I18nProperty bean = new I18nProperty("jim", "my.name.is.jim");
-        return gson.toJson(createModuleObject("name", bean));
+        return gson.toJson(createJsonObject("name", bean));
     }
 
     private static String createIconExample()
     {
         IconBean bean = newIconBean().withUrl("/my-icon.png").withWidth(16).withHeight(16).build();
-        return gson.toJson(createModuleObject("icon", bean));
+        return gson.toJson(createJsonObject("icon", bean));
     }
 
     private static String createWebitemTargetExample()
@@ -391,19 +400,19 @@ public class ConnectJsonExamples
                 .withOption("onHover", true)
                 .build();
 
-        return gson.toJson(createModuleObject("target", bean));
+        return gson.toJson(createJsonObject("target", bean));
     }
 
     private static String createLinkExample()
     {
         LinkBean bean = newLinkBean().withUrl("/go-somewhere").withAltText("somewhere").withTitle("Go Somewhere").build();
-        return gson.toJson(createModuleObject("link", bean));
+        return gson.toJson(createJsonObject("link", bean));
     }
 
     private static String createSingleConditionExample()
     {
         SingleConditionBean bean = newSingleConditionBean().withCondition("user_is_logged_in").build();
-        return gson.toJson(createModuleObject("condition", bean));
+        return gson.toJson(createJsonObject("condition", bean));
     }
 
     private static String createCompositeConditionExample()
@@ -420,31 +429,31 @@ public class ConnectJsonExamples
                         , newSingleConditionBean().withCondition(JiraConditions.USER_IS_LOGGED_IN).build()
                 ).build();
 
-        return gson.toJson(createModuleObject("conditions", bean));
+        return gson.toJson(createJsonObject("conditions", bean));
     }
 
     private static String createUrlExample()
     {
         UrlBean bean = new UrlBean("/my-url");
-        return gson.toJson(createModuleObject("endpoint", bean));
+        return gson.toJson(createJsonObject("endpoint", bean));
     }
 
     private static String createVendorExample()
     {
         VendorBean bean = newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build();
-        return gson.toJson(createModuleObject("vendor", bean));
+        return gson.toJson(createJsonObject("vendor", bean));
     }
 
     private static String createPanelLayoutExample()
     {
         WebPanelLayout bean = new WebPanelLayout("100", "200");
-        return gson.toJson(createModuleObject("layout", bean));
+        return gson.toJson(createJsonObject("layout", bean));
     }
 
     private static String createAuthenticationExample()
     {
         AuthenticationBean bean = newAuthenticationBean().withType(AuthenticationType.JWT).build();
-        return gson.toJson(createModuleObject("authentication", bean));
+        return gson.toJson(createJsonObject("authentication", bean));
     }
 
     private static String createParamsExample()
@@ -493,7 +502,7 @@ public class ConnectJsonExamples
                 .withWidth("400px")
                 .build();
 
-        return gson.toJson(createModuleObject("editor", macroEditorBean));
+        return gson.toJson(createJsonObject("editor", macroEditorBean));
     }
 
     private static String createImagePlaceholderExample()
@@ -505,7 +514,7 @@ public class ConnectJsonExamples
                 .withApplyChrome(true)
                 .build();
 
-        return gson.toJson(createModuleObject("imagePlaceholder", imagePlaceholderBean));
+        return gson.toJson(createJsonObject("imagePlaceholder", imagePlaceholderBean));
     }
 
     private static String createEntityPropertyExample()
@@ -524,7 +533,7 @@ public class ConnectJsonExamples
                 .withKeyConfiguration(issueAttachmentIndexConfiguration)
                 .build();
 
-        return gson.toJson(createModuleArray("jiraEntityProperties", entityPropertyModuleBean));
+        return gson.toJson(createJsonArray("jiraEntityProperties", entityPropertyModuleBean));
     }
 
     private static String createEntityPropertyIndexExtractionConfigurationExample()
@@ -544,22 +553,26 @@ public class ConnectJsonExamples
         return gson.toJson(issueAttachmentIndexConfiguration);
     }
 
-    private static JsonObject createModuleArray(String name, ModuleBean bean)
+    private static JsonObject createJsonArray(String name, ModuleBean bean)
     {
         JsonObject obj = new JsonObject();
         JsonArray arr = new JsonArray();
         arr.add(gson.toJsonTree(bean));
         obj.add(name, arr);
-
         return obj;
     }
 
-    private static JsonObject createModuleObject(String name, Object bean)
+    private static JsonObject createJsonObject(String name, Object bean)
     {
         JsonObject obj = new JsonObject();
         obj.add(name, gson.toJsonTree(bean));
-
         return obj;
     }
 
+    private static JsonObject createModuleArray(String name, ModuleBean bean)
+    {
+        JsonObject modules = new JsonObject();
+        modules.add("modules", createJsonArray(name, bean));
+        return modules;
+    }
 }

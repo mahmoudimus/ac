@@ -192,6 +192,8 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         }
     }
 
+    public String getKey() { return key; }
+
     public AuthenticationBean getAuthentication()
     {
         return authentication;
