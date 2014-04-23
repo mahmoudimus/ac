@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import javax.inject.Inject;
 
-import com.atlassian.jira.pageobjects.pages.project.AbstractProjectTab;
+import com.atlassian.jira.projects.pageobjects.page.legacy.AbstractProjectTab;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.utils.WebItemUtils;
