@@ -29,7 +29,7 @@ _AP.define("host/_status_helper", ["_dollar"], function ($) {
         setTimeout(function(){
             var spinner = AJS.$('.small-spinner', '.ap-' + status);
             if(spinner.length){
-                spinner.spin();
+                spinner.spin({zIndex: "1"});
             }
         }, 10);
     }
