@@ -74,6 +74,10 @@
         }
     },
     "resources": {
+        "status.html": {
+            "title": "Atlassian Connect Status",
+            "new": true
+        },
         "release-notes.html": {
             "title": "Release Notes",
             "new": true
