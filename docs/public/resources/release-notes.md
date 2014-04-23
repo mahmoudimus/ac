@@ -1,6 +1,8 @@
 
 # Release Notes
 
+For a list of critical issues in production, please see the <a href="https://developer.atlassian.com/display/MARKET/Atlassian+Connect+Status" target="_blank">Atlassian Connect Status</a> page.
+
 ## [1.0.1](../release-notes/1-0-1.html)
 * Allow POST method for "screens/addToDefault/{fieldId}"
 * UPM auto-update fails to upgrade add-on
