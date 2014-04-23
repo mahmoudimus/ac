@@ -4,6 +4,8 @@
 ## [1.1.0](../release-notes/1-1-rc.html)
 * Support for managing cookies through javascript. Check out the [cookie api](../javascript/module-cookie.html)
 * Support for managing browser history through javascript. Check out the [history api](../javascript/module-history.html)
+* Update dialogs to allow the chrome flag
+* Dialog height is now always the height of the iframe.
 
 ## [1.0.1](../release-notes/1-0-1.html)
 * Allow POST method for "screens/addToDefault/{fieldId}"
