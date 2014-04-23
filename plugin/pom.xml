@@ -491,6 +491,11 @@
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.oauth</groupId>
+                                    <artifactId>atlassian-oauth-service-provider-spi</artifactId>
+                                    <version>${atlassian.oauth.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
                                     <version>${atlassian.webhooks.version}</version>
@@ -563,6 +568,11 @@
                                 <use.test.http.client>true</use.test.http.client>
                             </systemPropertyVariables>
                             <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.oauth</groupId>
+                                    <artifactId>atlassian-oauth-service-provider-spi</artifactId>
+                                    <version>${atlassian.oauth.version}</version>
+                                </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>

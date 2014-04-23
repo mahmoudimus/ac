@@ -66,6 +66,11 @@
         <url-pattern>/ac/*</url-pattern>
     </servlet>
 
+    <servlet key="grant-three-legged-auth-servlet"
+             class="com.atlassian.plugin.connect.plugin.threeleggedauth.servlet.GrantThreeLeggedAuthServlet">
+        <url-pattern>/ac/tla/grant*</url-pattern>
+    </servlet>
+
     <web-panel key="connect-dialog-options" location="atl.header" class="com.atlassian.plugin.connect.plugin.dialog.DialogOptionsWebPanel"/>
     
     <!-- docs are built and copied into target/classes/docs during the prepare-package phase -->
