@@ -75,10 +75,10 @@ public class GrantThreeLeggedAuthServlet extends HttpServlet
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws IOException
     {
-        UserKey user = userManager.getRemoteUserKey(req);
+        UserKey userKey = userManager.getRemoteUserKey(req);
 
         // accessible only to logged-in users so that we don't leak installed-add-on-key knowledge to anonymous randoms
-        if (null == user)
+        if (null == userKey)
         {
             resp.sendRedirect(getLoginUri(getUri(req)).toASCIIString());
         }
@@ -94,9 +94,9 @@ public class GrantThreeLeggedAuthServlet extends HttpServlet
                 {
                     String actionPrefixI18nKey = EXTANT_I18N_KEY;
 
-                    if (null == findExtantAccessToken(user))
+                    if (null == findExtantAccessToken(userKey))
                     {
-                        tokenStore.put(createAccessToken(user, getOrCreateConsumer(addOnKey), addOnKey));
+                        tokenStore.put(createAccessToken(userKey, getOrCreateConsumer(addOnKey), addOnKey));
                         actionPrefixI18nKey = GRANTED_I18N_KEY;
                     }
 
@@ -134,10 +134,10 @@ public class GrantThreeLeggedAuthServlet extends HttpServlet
         return consumer;
     }
 
-    private ServiceProviderToken findExtantAccessToken(UserKey user)
+    private ServiceProviderToken findExtantAccessToken(UserKey userKey)
     {
         ServiceProviderToken token = null;
-        final Iterable<ServiceProviderToken> userAccessTokens =  tokenStore.getAccessTokensForUser(user.getStringValue());
+        final Iterable<ServiceProviderToken> userAccessTokens =  tokenStore.getAccessTokensForUser(userKey.getStringValue());
 
         for (ServiceProviderToken accessToken : userAccessTokens)
         {
@@ -189,7 +189,7 @@ public class GrantThreeLeggedAuthServlet extends HttpServlet
     private URI getUri(HttpServletRequest request)
     {
         StringBuffer builder = request.getRequestURL();
-        
+
         if (request.getQueryString() != null)
         {
             builder.append("?");
