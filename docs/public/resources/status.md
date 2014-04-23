@@ -1,1 +1,0 @@
-<meta http-equiv="refresh" content="0;URL=https://developer.atlassian.com/display/MARKET/Atlassian+Connect+Status">
