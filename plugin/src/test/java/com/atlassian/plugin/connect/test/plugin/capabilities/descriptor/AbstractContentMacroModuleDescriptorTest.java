@@ -33,12 +33,13 @@ import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 @ConvertToWiredTest
 public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseContentMacroModuleBean, T extends BaseContentMacroModuleBeanBuilder<T, B>>
 {
-    public static final String THE_MACRO_NAME = "the-macro-name";
+    public static final String MACRO_NAME_KEY = "the-macro-name";
+    public static final String MACRO_NAME = "The Macro Name";
     protected Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     protected XhtmlMacroModuleDescriptor descriptor;
     protected ConnectAddonBean addon = newConnectAddonBean().withKey("my-plugin").build();
 
-    protected final String FULL_MACRO_KEY = ModuleKeyUtils.addonAndModuleKey(addon.getKey(), THE_MACRO_NAME);
+    protected final String FULL_MACRO_KEY = ModuleKeyUtils.addonAndModuleKey(addon.getKey(), MACRO_NAME_KEY);
     protected abstract XhtmlMacroModuleDescriptor createModuleDescriptorForTest();
 
     protected abstract T newContentMacroModuleBeanBuilder();
@@ -83,7 +84,8 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     @Test
     public void verifyMacroTitleIsSet() throws Exception
     {
-        assertThat(descriptor.getMacroMetadata().getTitle().getKey(), is("my-plugin." + FULL_MACRO_KEY + ".label"));
+        // TODO the key is actually the raw value, as we've removed i18n support until we fix Confluence to support reloading i18n dynamically
+        assertThat(descriptor.getMacroMetadata().getTitle().getKey(), is(MACRO_NAME));
     }
 
     @Test
@@ -180,7 +182,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     {
         return newContentMacroModuleBeanBuilder()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
-                .withKey(THE_MACRO_NAME)
+                .withKey(MACRO_NAME_KEY)
                 .withUrl("/my-macro")
                 .withAliases("alias1", "alias2")
                 .withBodyType(MacroBodyType.PLAIN_TEXT)
