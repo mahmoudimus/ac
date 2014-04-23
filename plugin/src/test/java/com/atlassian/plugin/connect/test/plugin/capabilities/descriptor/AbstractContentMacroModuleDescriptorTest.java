@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 import com.atlassian.confluence.macro.browser.beans.MacroIcon;
 import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
+import com.atlassian.confluence.util.i18n.DocumentationBean;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
@@ -11,9 +12,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
-
+import com.atlassian.spring.container.ContainerContext;
+import com.atlassian.spring.container.ContainerManager;
+import org.apache.commons.lang.NotImplementedException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
@@ -26,10 +32,15 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
+import static org.mockito.Mockito.when;
 
 
+@RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseContentMacroModuleBean, T extends BaseContentMacroModuleBeanBuilder<T, B>>
 {
+    @Mock
+    protected ContainerContext containerContext;
+
     protected Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     protected XhtmlMacroModuleDescriptor descriptor;
 
@@ -40,8 +51,15 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     @Before
     public void beforeEachTest() throws Exception
     {
+        setupContainer();
         this.descriptor = createModuleDescriptorForTest();
         this.descriptor.enabled();
+    }
+
+    private void setupContainer() {
+        when(containerContext.isSetup()).thenReturn(true);
+        when(containerContext.getComponent("docBean")).thenReturn(new MockDocBean());
+        ContainerManager.getInstance().setContainerContext(containerContext);
     }
 
     @Test
@@ -206,4 +224,33 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
                         .build()
                 );
     }
+
+    private static class MockDocBean implements DocumentationBean {
+
+        @Override
+        public String getLink(String docLink) {
+            return docLink;
+        }
+
+        @Override
+        public String getTitle(String docLink) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public String getAlt(String docLink) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public boolean isLocal(String docLink) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public boolean exists(String docLink) {
+            throw new NotImplementedException();
+        }
+    }
+
 }
