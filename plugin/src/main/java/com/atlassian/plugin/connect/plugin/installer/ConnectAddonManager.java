@@ -285,6 +285,14 @@ public class ConnectAddonManager
     private void callSyncHandler(Plugin plugin, ConnectAddonBean addon, String path, String jsonEventData) throws LifecycleCallbackException
     {
         String callbackUrl = addon.getBaseUrl() + path;
+        
+        // try distributing prod shared secrets over http (note the lack of "s") and it shall be rejected
+        if (!isDevModeService.isDevMode() && null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
+        {
+            String message = String.format("Cannot issue callback except via HTTPS. Current base URL = '%s'", addon.getBaseUrl());
+            throw new LifecycleCallbackException(message, Option.some("connect.remote.upm.install.exception"));
+        }
+
         Response response = getSyncHandlerResponse(plugin, addon, callbackUrl, jsonEventData);
 
         final int statusCode = response.getStatusCode();
