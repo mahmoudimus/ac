@@ -157,6 +157,8 @@ public class ConnectAddonBean extends BaseModuleBean
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
+     *
+     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SCOPES_EXAMPLE}
      */
     @SchemaIgnore("shallow")
     private Set<String> scopes;
