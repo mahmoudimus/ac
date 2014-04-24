@@ -26,6 +26,8 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
                     var $home = $(config.iframe).closest(".ap-container");
                     statusHelper.showLoadedStatus($home);
                     clearTimeout(timeout);
+                    // Let the integration tests know the iframe has loaded.
+                    $home.find(".ap-content").addClass("iframe-init");
                 }
             }
         };
