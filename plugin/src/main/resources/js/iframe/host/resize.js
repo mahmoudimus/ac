@@ -18,6 +18,12 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
     }
 
     rpc.extend(function(config){
+
+        function resizeHandler() {
+            var height = $(document).height() - AJS.$("#header > nav").outerHeight() - AJS.$("#footer").outerHeight() - 20;
+            $(config.iframe).css({width: "100%", height: height + "px"});
+        }
+
         return {
             internals: {
                 resize: debounce(function(width, height){
@@ -28,13 +34,8 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
                     if (isGeneral) {
                         // This adds border between the iframe and the page footer as the connect addon has scrolling content and can't do this
                         $(config.iframe).addClass("full-size-general-page");
-                        function resizeHandler() {
-                            var height = $(document).height() - AJS.$("#header > nav").outerHeight() - AJS.$("#footer").outerHeight() - 20;
-                            $(config.iframe).css({width: "100%", height: height + "px"});
-                        }
                         $(window).on('resize', resizeHandler);
                         resizeHandler();
-
                     }
                     else {
                         // This is only here to support integration testing
