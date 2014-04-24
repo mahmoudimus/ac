@@ -148,7 +148,8 @@
     self = $.extend({
       id: id,
       remoteOrigin: remoteOrigin,
-      channel: channel
+      channel: channel,
+      addonKey: addonKey
     }, mixin);
 
     // Sends a message of a specific type to the remote peer via a post-message event
@@ -412,7 +413,7 @@
     return self;
   }
 
-//  XdmRpc.debug = true;
+  XdmRpc.debug = true;
 
   return XdmRpc;
 

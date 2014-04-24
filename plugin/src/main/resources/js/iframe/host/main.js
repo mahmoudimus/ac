@@ -3,9 +3,7 @@
  */
 _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"], function ($, XdmRpc, addons, rpc, uiParams) {
 
-  var xhrProperties = ["status", "statusText", "responseText"],
-      xhrHeaders = ["Content-Type"],
-      events = (AJS.EventQueue = AJS.EventQueue || []),
+  var events = (AJS.EventQueue = AJS.EventQueue || []),
       defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); },
       log = (window.AJS && window.AJS.log) || (window.console && window.console.log) || (function() {});
 
