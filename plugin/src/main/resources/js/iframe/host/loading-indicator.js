@@ -19,7 +19,7 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
                         statusHelper.showLoadErrorStatus($home);
                         //state.iframe.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
                     });
-                }, 2000);
+                }, 20000);
             },
             internals: {
                 init: function(state){

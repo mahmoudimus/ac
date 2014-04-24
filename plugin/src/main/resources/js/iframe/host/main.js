@@ -64,7 +64,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
     };
     rpc.extend({
       init: function(){
-        // actions for when
+        // actions for init'ing
       }
     });
 
