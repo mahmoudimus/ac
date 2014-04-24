@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -153,12 +153,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-projects-page-objects</artifactId>
-            <version>${atlassian.jira.projects.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.jira.tests</groupId>
             <artifactId>jira-func-test-basics</artifactId>
             <version>${functestbasics.version}</version>
@@ -271,12 +265,6 @@
             <artifactId>jersey-server</artifactId>
             <version>1.8-atlassian-8</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey.contribs</groupId>
-            <artifactId>jersey-multipart</artifactId>
-            <version>1.11</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
