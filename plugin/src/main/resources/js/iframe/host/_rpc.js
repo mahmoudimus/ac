@@ -39,7 +39,7 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
         extend(proxy, rpc);
         each(inits, function (_, init) {
           try { init(extend({}, options)); }
-          catch (ex) { $.handleError(ex); }
+          catch (ex) { console.log(ex); }
         });
         isInited = true;
       }

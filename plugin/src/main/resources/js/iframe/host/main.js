@@ -66,7 +66,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
     };
     rpc.extend({
       init: function(){
-        console.log('i am init');
+        // actions for when
       }
     });
 
@@ -78,109 +78,15 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       events.push({name: name, properties: props});
     }
 
-    var timeout = setTimeout(function () {
-      timeout = null;
-      statusHelper.showloadTimeoutStatus($home);
-      var $timeout = $home.find(".ap-load-timeout");
-      $timeout.find("a.ap-btn-cancel").click(function () {
-        statusHelper.showLoadErrorStatus($home);
-        $nexus.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
-      });
-      layoutIfNeeded();
-      publish("plugin.iframetimedout", {elapsed: new Date().getTime() - start});
-    }, 20000);
-
-    function preventTimeout() {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-      }
-    }
-
-    function getDialogButtons() {
-      return $nexus.data("ra.dialog.buttons");
-    }
-
-    function getDialogButton(name) {
-      return $nexus.data("ra.dialog.buttons").getButton(name);
-    }
-
-
     function getProductContext(){
       return JSON.parse(productContextJson);
-    }
-
-
-
-    function prefixCookie(name){
-      return options.key + '-' + options.ns + '-' + name;
     }
 
     // Do not delay showing the loading indicator if this is a dialog.
     var noDelay = (isDialog || isSimpleDialog || isInlineDialog);
 
-    var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
 
-    $iframe.data("ap-rpc", rpc);
-
-    function layoutIfNeeded() {
-      var $stats = $(".ap-stats", $home);
-      $stats.removeClass("hidden");
-      if (isSimpleDialog) {
-        var panelHeight = $nexus.parent().height();
-        $iframe.parents(".ap-servlet-placeholder, .ap-container").height(panelHeight);
-        var containerHeight = $iframe.parents(".ap-container").height(),
-            iframeHeight = containerHeight;
-        if ($stats.find(".ap-status:visible").length > 0) {
-            iframeHeight -= $stats.outerHeight(true);
-        }
-        $iframe.height(iframeHeight);
-        $content.height(iframeHeight);
-      }
-    }
-
-    layoutIfNeeded();
-
-    // a simplified version of underscore's debounce
-    function debounce(fn, wait) {
-      var timeout;
-      return function() {
-        var ctx = this,
-            args = [].slice.call(arguments);
-        function later() {
-          timeout = null;
-          fn.apply(ctx, args);
-        }
-        if (timeout) {
-          clearTimeout(timeout);
-        }
-        timeout = setTimeout(later, wait || 50);
-      };
-    }
-
-    // wireup dialog buttons if appropriate
-    var dialogButtons = getDialogButtons();
-    if (dialogButtons) {
-      dialogButtons.each(function (name, button) {
-        button.click(function (e, callback) {
-          if (isInited) {
-            rpc.dialogMessage(name, callback);
-          }
-          else {
-            callback(true);
-          }
-        });
-      });
-    }
-
-    // clean up when the iframe is removed by other scripts coordinating through the $nexus
-    $nexus.bind("ra.iframe.destroy", function () {
-      addons.get(options.key).remove(rpc);
-      rpc.destroy();
-    });
-
-    $nexus.trigger("ra.iframe.create");
   }
 
   return function (options) {
@@ -194,11 +100,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
             }, 50);
             return;
         }
-      // make sure the content div is empty
-      contentDiv(options.ns).find("iframe").each(function (_, iframe) {
-        var rpc = $(iframe).data("ap-rpc");
-        if (rpc) rpc.destroy();
-      });
+
       // create the new iframe
       create(options);
     }

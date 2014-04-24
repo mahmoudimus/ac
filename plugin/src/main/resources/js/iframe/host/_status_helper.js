@@ -81,6 +81,6 @@ _AP.define("host/_status_helper", ["_dollar"], function ($) {
         showloadTimeoutStatus: showloadTimeoutStatus,
         showLoadErrorStatus: showLoadErrorStatus,
         showLoadedStatus: showLoadedStatus
-    }
+    };
 
 });
