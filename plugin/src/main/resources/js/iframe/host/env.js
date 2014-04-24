@@ -1,11 +1,12 @@
 _AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
     "use strict";
-    var timeZone;
+
+    var connectModuleData; // data sent from the velocity template
 
     rpc.extend(function(config){
         return {
             init: function(state){
-                timeZone = state.data.timeZone;
+                connectModuleData = state;
             },
             internals: {
                 getLocation: function () {
@@ -23,10 +24,10 @@ _AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
                         // JIRA 6, Confluence 5
                         fullName = $("a#user-menu-link").attr("title");
                     }
-                    return {fullName: fullName, id: config.uid, key: config.ukey};
+                    return {fullName: fullName, id: connectModuleData.uid, key: connectModuleData.ukey};
                 },
                 getTimeZone: function () {
-                    return timeZone;
+                    return connectModuleData.data.timeZone;
                 }
             }
         };
