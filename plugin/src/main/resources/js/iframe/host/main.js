@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params", 'host/history'], function ($, XdmRpc, addons, statusHelper, messages, uiParams, connectHistory) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"], function ($, XdmRpc, addons, rpc, uiParams) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -55,6 +55,24 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         productContextJson = options.productCtx,
         isInited;
 
+
+    var xdmOptions = {
+      remote: options.src,
+      remoteKey: options.key,
+      container: contentId,
+      channel: channelId,
+      props: {width: initWidth, height: initHeight},
+      uiParams: options.uiParams
+    };
+    rpc.extend({
+      init: function(){
+        console.log('i am init');
+      }
+    });
+
+    rpc.init(options, xdmOptions);
+
+
     function publish(name, props) {
       props = $.extend(props || {}, {moduleKey: ns});
       events.push({name: name, properties: props});
@@ -87,229 +105,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       return $nexus.data("ra.dialog.buttons").getButton(name);
     }
 
-    if(isGeneral){
-      options.uiParams = {
-        historyState: connectHistory.getState()
-      };
-      // register for url hash changes to invoking history.popstate callbacks.
-      $(window).on("hashchange", function(e){
-        connectHistory.hashChange(e.originalEvent, rpc.historyMessage);
-      });
-    }
 
     function getProductContext(){
       return JSON.parse(productContextJson);
     }
 
-    var rpc = new XdmRpc($, {
-      remote: options.src,
-      remoteKey: options.key,
-      container: contentId,
-      channel: channelId,
-      props: {width: initWidth, height: initHeight},
-      uiParams: options.uiParams
-    }, {
-      remote: [
-        "dialogMessage",
-        "historyMessage",
-        // !!! JIRA specific !!!
-        "setWorkflowConfigurationMessage"
-      ],
-      local: {
-        init: function () {
-          if (!isInited) {
-            isInited = true;
-            preventTimeout();
-            $content.addClass("iframe-init");
-            var elapsed = new Date().getTime() - start;
-            statusHelper.showLoadedStatus($home);
-            layoutIfNeeded();
-            $nexus.trigger("ra.iframe.init");
-            publish("plugin.iframeinited", {elapsed: elapsed});
-          }
-        },
-        resize: debounce(function (width, height) {
-          // debounce resizes to avoid excessive page reflow
-          if (!isDialog) {
-            // dialog content plugins do not honor resize requests, since their content size is fixed
-            $("iframe", $content).css({width: width, height: height});
-            if(isInlineDialog){
-                _AP.require(["inline-dialog"], function (inlineDialog) {
-                    inlineDialog.resizeInlineDialog($content, width, height);
-                });
-            }
-          }
-        }),
-        sizeToParent: debounce(function() {
-          // sizeToParent is only available for general-pages
-          if (isGeneral) {
-            // This adds border between the iframe and the page footer as the connect addon has scrolling content and can't do this
-            $iframe.addClass("full-size-general-page");
-            function resizeHandler() {
-              var height = $(document).height() - AJS.$("#header > nav").outerHeight() - AJS.$("#footer").outerHeight() - 20;
-              $("iframe", $content).css({width: "100%", height: height + "px"});
-            }
-            $(window).on('resize', resizeHandler);
-            resizeHandler();
-          }
-          else {
-            // This is only here to support integration testing
-            // see com.atlassian.plugin.connect.test.pageobjects.RemotePage#isNotFullSize()
-            $iframe.addClass("full-size-general-page-fail");
-          }
-        }),
-        getLocation: function () {
-          return window.location.href;
-        },
-        getUser: function () {
-          // JIRA 5.0, Confluence 4.3(?)
-          var meta = AJS.Meta,
-              fullName = meta ? meta.get("remote-user-fullname") : null;
-          if (!fullName) {
-            // JIRA 4.4, Confluence 4.1, Refapp 2.15.0
-            fullName = $("a#header-details-user-fullname, .user.ajs-menu-title, a#user").text();
-          }
-          if (!fullName) {
-            // JIRA 6, Confluence 5
-            fullName = $("a#user-menu-link").attr("title");
-          }
-          return {fullName: fullName, id: options.uid, key: options.ukey};
-        },
-        getTimeZone: function () {
-          return options.data.timeZone;
-        },
-        showMessage: function (name, title, body, options) {
-          return messages.showMessage(name, title, body, options);
-        },
-        clearMessage: function (id) {
-          return messages.clearMessage(id);
-        },
-        setDialogButtonEnabled: function (name, enabled) {
-          var button = getDialogButton(name);
-          if (button) button.setEnabled(enabled);
-        },
-        isDialogButtonEnabled: function (name, callback) {
-          var button = getDialogButton(name);
-          callback(button ? button.isEnabled() : void 0);
-        },
-        createDialog: function(dialogOptions) {
-          _AP.require("dialog", function(dialog) {
-            dialog.create(options.key, productContextJson, dialogOptions);
-          });
-        },
-        closeDialog: function() {
-          _AP.require("dialog", function(dialog) {
-            // TODO: only allow closing from same plugin key?
-            dialog.close();
-          });
-        },
-        hideInlineDialog: function() {
-            _AP.require(["inline-dialog"], function (inlineDialog) {
-                inlineDialog.hideInlineDialog($content, $nexus);
-            });
-        },
 
-        request: function (args, success, error) {
-          // add the context path to the request url
-          var url = options.cp + args.url;
-          // reduce the xhr object to the just bits we can/want to expose over the bridge
-          function toJSON(xhr) {
-            var json = {headers: {}};
-            // only copy key properties and headers for transport across the bridge
-            $.each(xhrProperties, function (i, v) { json[v] = xhr[v]; });
-            // only copy key response headers for transport across the bridge
-            $.each(xhrHeaders, function (i, v) { json.headers[v] = xhr.getResponseHeader(v); });
-            return json;
-          }
-          function done(data, textStatus, xhr) {
-            success([data, textStatus, toJSON(xhr)]);
-          }
-          function fail(xhr, textStatus, errorThrown) {
-            error([toJSON(xhr), textStatus, errorThrown]);
-          }
-          var headers = {};
-          $.each(args.headers || {}, function (k, v) { headers[k.toLowerCase()] = v; });
-          // Disable system ajax settings. This stops confluence mobile from injecting callbacks and then throwing exceptions.
-          $.ajaxSettings = {};
-
-          // execute the request with our restricted set of inputs
-          $.ajax({
-            url: url,
-            type: args.type || "GET",
-            data: args.data,
-            dataType: "text", // prevent jquery from parsing the response body
-            contentType: args.contentType,
-            headers: {
-              // */* will undo the effect on the accept header of having set dataType to "text"
-              "Accept": headers.accept || "*/*",
-              // send the client key header to force scope checks
-              "AP-Client-Key": options.key
-            }
-          }).then(done, fail);
-        },
-        // !!! JIRA specific !!!
-        getWorkflowConfiguration: function (callback) {
-          AP.require('jira/workflow-post-function', function(wpf){
-            var postFunctionId = getProductContext()["postFunction.id"];
-            wpf.getConfiguration(postFunctionId, callback);
-          });
-        },
-        // !!! Confluence specific !!!
-        saveMacro: function(updatedParams) {
-          _AP.require("confluence/macro/editor", function(editor) {
-            editor.saveMacro(updatedParams);
-          });
-        },
-        closeMacroEditor: function () {
-          _AP.require("confluence/macro/editor", function (editor) {
-            editor.close();
-          });
-        },
-        getMacroData: function(callback){
-          _AP.require("confluence/macro/editor", function (editor) {
-            editor.getMacroData(callback);
-          });
-        },
-        saveCookie: function(name, value, expires){
-          AJS.Cookie.save(prefixCookie(name), value, expires);
-        },
-        readCookie: function(name, callback){
-          var value = AJS.Cookie.read(prefixCookie(name));
-          if(typeof callback === "function"){
-            callback(value);
-          }
-        },
-        eraseCookie: function(name){
-          AJS.Cookie.erase(prefixCookie(name));
-        },
-        triggerJiraEvent: function(e){
-          _AP.require(['jira/event'], function(jiraEvent){
-            jiraEvent[e]();
-          });
-        },
-        historyPushState: function(url){
-          if(isGeneral){
-            return connectHistory.pushState(url);
-          } else {
-            log("History is only available to page modules");
-          }
-        },
-        historyReplaceState: function(url){
-          if(isGeneral){
-            return connectHistory.replaceState(url);
-          } else {
-            log("History is only available to page modules");
-          }
-        },
-        historyGo: function(delta){
-          if(isGeneral){
-            return connectHistory.go(delta);
-          } else {
-            log("History is only available to page modules");
-          }
-        }
-      }
-    });
 
     function prefixCookie(name){
       return options.key + '-' + options.ns + '-' + name;
@@ -317,7 +118,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
 
     // Do not delay showing the loading indicator if this is a dialog.
     var noDelay = (isDialog || isSimpleDialog || isInlineDialog);
-    statusHelper.showLoadingStatus($home, noDelay ? 0 : 1000);
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
@@ -373,17 +173,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         });
       });
     }
-
-    // JIRA workflow post function binder.
-    _AP.require('jira/workflow-post-function', function(wpf){
-      if (wpf.isOnWorkflowPostFunctionPage()) {
-        var postFunctionId = getProductContext()["postFunction.id"];
-        wpf.registerSubmissionButton(rpc, postFunctionId);
-      }
-    });
-
-    // register the rpc bridge with the addons module
-    addons.get(options.key).add(rpc);
 
     // clean up when the iframe is removed by other scripts coordinating through the $nexus
     $nexus.bind("ra.iframe.destroy", function () {
