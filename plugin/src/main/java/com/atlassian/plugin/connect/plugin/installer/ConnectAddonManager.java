@@ -194,7 +194,7 @@ public class ConnectAddonManager
                     {
                         callSyncHandler(plugin, addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey, addon), SyncHandler.UNINSTALLED);
                     }
-                    catch (PluginInstallException e)
+                    catch (PluginException e)
                     {
                         log.warn("Failed to notify remote host that add-on was uninstalled.", e);
                     }
