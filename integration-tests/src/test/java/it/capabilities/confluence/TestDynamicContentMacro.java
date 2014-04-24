@@ -75,6 +75,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         DynamicContentMacroModuleBean shortBodyMacro = createShortBodyMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean parameterMacro = createParameterMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean editorMacro = createEditorMacro(newDynamicContentMacroModuleBean());
+        DynamicContentMacroModuleBean hiddenMacro = createHiddenMacro(newDynamicContentMacroModuleBean());
 
         DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/render-no-resize-macro")
@@ -96,7 +97,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         imagePlaceholderMacro,
                         parameterMacro,
                         smallInlineMacro,
-                        editorMacro
+                        editorMacro,
+                        hiddenMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())

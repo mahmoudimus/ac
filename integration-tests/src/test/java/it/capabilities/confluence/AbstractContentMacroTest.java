@@ -58,6 +58,9 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     protected static final String EDITOR_MACRO_NAME = "Editor Macro";
     protected static final String EDITOR_MACRO_KEY = "editor-macro";
 
+    protected static final String HIDDEN_MACRO_NAME = "Hidden Macro";
+    protected static final String HIDDEN_MACRO_KEY = "hidden-macro";
+
     protected ViewPage savedPage;
 
     protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createImagePlaceholderMacro(T builder)
@@ -208,6 +211,16 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 .build();
     }
 
+    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createHiddenMacro(T builder)
+    {
+        return builder
+                .withKey(HIDDEN_MACRO_KEY)
+                .withUrl(DEFAULT_MACRO_URL)
+                .withName(new I18nProperty(HIDDEN_MACRO_NAME, ""))
+                .withHidden(true)
+                .build();
+    }
+
     @BeforeClass
     public static void overridePageObjects()
     {
@@ -334,6 +347,16 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         editorPage.cancel();
         
         assertThat(submitted, is(true));
+    }
+
+    @Test
+    public void testHiddenMacro() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        MacroItem macro = macroBrowser.searchForFirst(HIDDEN_MACRO_NAME);
+
+        assertThat(macro, is(nullValue()));
     }
 
     protected abstract String getAddonBaseUrl();

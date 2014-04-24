@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 import com.atlassian.confluence.macro.browser.beans.MacroIcon;
 import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
+import com.atlassian.confluence.util.i18n.DocumentationBean;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -14,12 +15,17 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.spring.container.ContainerContext;
+import com.atlassian.spring.container.ContainerManager;
+import org.apache.commons.lang.NotImplementedException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -29,12 +35,18 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
+import static org.mockito.Mockito.when;
 
+
+@RunWith(MockitoJUnitRunner.class)
 @ConvertToWiredTest
 public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseContentMacroModuleBean, T extends BaseContentMacroModuleBeanBuilder<T, B>>
 {
     public static final String MACRO_NAME_KEY = "the-macro-name";
     public static final String MACRO_NAME = "The Macro Name";
+    @Mock
+    protected ContainerContext containerContext;
+
     protected Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     protected XhtmlMacroModuleDescriptor descriptor;
     protected ConnectAddonBean addon = newConnectAddonBean().withKey("my-plugin").build();
@@ -47,8 +59,15 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     @Before
     public void beforeEachTest() throws Exception
     {
+        setupContainer();
         this.descriptor = createModuleDescriptorForTest();
         this.descriptor.enabled();
+    }
+
+    private void setupContainer() {
+        when(containerContext.isSetup()).thenReturn(true);
+        when(containerContext.getComponent("docBean")).thenReturn(new MockDocBean());
+        ContainerManager.getInstance().setContainerContext(containerContext);
     }
 
     @Test
@@ -178,6 +197,12 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
         assertThat(descriptor.isEnabledByDefault(), is(true));
     }
 
+    @Test
+    public void verifyIsHidden() throws Exception
+    {
+        assertThat(descriptor.getMacroMetadata().isHidden(), is(true));
+    }
+
     protected T createBeanBuilder()
     {
         return newContentMacroModuleBeanBuilder()
@@ -189,6 +214,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
                 .withOutputType(MacroOutputType.BLOCK)
                 .withCategories("media", "confluence_content")
                 .withDescription(new I18nProperty("The Macro Description", "macro.desc.key"))
+                .withHidden(true)
                 .withDocumentation(LinkBean.newLinkBean()
                         .withUrl("http://docs.example.com/macro")
                         .withTitle("Doc Title")
@@ -207,4 +233,33 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
                         .build()
                 );
     }
+
+    private static class MockDocBean implements DocumentationBean {
+
+        @Override
+        public String getLink(String docLink) {
+            return docLink;
+        }
+
+        @Override
+        public String getTitle(String docLink) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public String getAlt(String docLink) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public boolean isLocal(String docLink) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public boolean exists(String docLink) {
+            throw new NotImplementedException();
+        }
+    }
+
 }

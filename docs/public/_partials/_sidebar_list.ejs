@@ -11,13 +11,16 @@
 %>
 
 <ul class="aui-nav">
-    <% for (var page in public._data[category]) { %>
-    <li <%= selected(category + '/' + page) %>>
-        <a href="<%= relDocRoot + category + '/' + page %>"><%= public._data[category][page].title %>
-        <% if (public._data[category][page].new) { %>
-            <span class="aui-lozenge aui-lozenge-success">new!</span>
-        <% } %>
-        </a>
-    </li>
+    <%
+    for (var i in public._data[category]) {
+        var page = public._data[category][i];
+    %>
+        <li <%= selected(category + '/' + page.filename) %>>
+            <a href="<%= (page.url ? page.url : (relDocRoot + category + '/' + page.filename)) %>"><%= page.title %>
+            <% if (page.new) { %>
+                <span class="aui-lozenge aui-lozenge-success">new!</span>
+            <% } %>
+            </a>
+        </li>
     <% } %>
 </ul>

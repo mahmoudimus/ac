@@ -63,7 +63,9 @@ following content:
         <script src="//HOSTNAME:PORT/CONTEXT/atlassian-connect/all.js" type="text/javascript"></script>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <div class="ac-content">
+            <h1>Hello World!</h1>
+        </div>
     </body>
 </html>
 ```
@@ -88,6 +90,11 @@ The library supplies a number of functions you can use in your add-on, as descri
 [Javascript API](../concepts/javascript-api.html). For our simple HTML file, this line is required
 because it enables the resizing of the iframe in which the page is to be embedded in the Atlassian
 application.
+
+### 2.1 Auto resizing your iframe
+In the example above, a div with the class name "ac-content" is wrapped around the contents of the page.
+This allows the dimensions of your iframe's content to be measured and the iframe to resize automatically.
+This keeps the add-on content visible without scroll bars.
 
 <a name="start-addon-host" id="start-addon-host"></a>
 ## 3. Start the add-on
@@ -126,10 +133,10 @@ You can start JIRA or Confluence with Atlassian Connect as follows:
 
 
 #### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.2-OD-10-004-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-03-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.4-OD-20-006 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.0,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.15 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.5-OD-23-004 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Note:
 We recommend you start the host application using the SDK command shown here. Atlassian Connect is
