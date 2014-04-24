@@ -19,19 +19,24 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
 
     rpc.extend(function(config){
 
+        var connectModuleData;
+
         function resizeHandler() {
             var height = $(document).height() - AJS.$("#header > nav").outerHeight() - AJS.$("#footer").outerHeight() - 20;
             $(config.iframe).css({width: "100%", height: height + "px"});
         }
 
         return {
+            init: function(state){
+                connectModuleData = state;
+            },
             internals: {
                 resize: debounce(function(width, height){
                     $(config.iframe).css({width: width, height: height});
                 }),
                 sizeToParent: debounce(function() {
                     // sizeToParent is only available for general-pages
-                    if (isGeneral) {
+                    if (connectModuleData.isGeneral) {
                         // This adds border between the iframe and the page footer as the connect addon has scrolling content and can't do this
                         $(config.iframe).addClass("full-size-general-page");
                         $(window).on('resize', resizeHandler);

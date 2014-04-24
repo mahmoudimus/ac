@@ -48,7 +48,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
         isDialog = !!options.dlg,
         isInlineDialog = ($content.closest('.aui-inline-dialog').length > 0),
         isSimpleDialog = !!options.simpleDlg,
-        isGeneral = !!options.general,
         // json string representing product context
         productContextJson = options.productCtx,
         isInited;
@@ -67,6 +66,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
         // actions for init'ing
       }
     });
+
+
+    options.isGeneral = !!options.general,
 
     rpc.init(options, xdmOptions);
 
