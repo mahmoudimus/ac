@@ -95,7 +95,6 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * * `development`: Development
      * * `external-content`: External Content
      * * `formatting`: Formatting
-     * * `hidden-macros`: Hidden
      * * `media`: Media
      * * `navigation`: Navigation
      * * `reporting`: Reporting
@@ -121,10 +120,16 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private Set<String> aliases;
 
     /**
-     * Whether the macro should be "featured", meaning having an additional link in the "Insert More Content" menu in the editor toolbar
+     * Whether the macro should be "featured", meaning having an additional link in the "Insert More Content" menu in the editor toolbar.
      */
     @CommonSchemaAttributes(defaultValue = "false")
     private Boolean featured;
+
+    /**
+     * If set to true, the macro will not appear in the macro browser.
+     */
+    @CommonSchemaAttributes(defaultValue = "false")
+    private Boolean hidden;
 
     /**
      * The list of parameter input fields that will be displayed.
@@ -177,10 +182,6 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         {
             aliases = ImmutableSet.of();
         }
-        if (null == featured)
-        {
-            featured = false;
-        }
         if (null == parameters)
         {
             parameters = newArrayList();
@@ -229,7 +230,12 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
 
     public Boolean isFeatured()
     {
-        return featured;
+        return (null != featured) && featured;
+    }
+
+    public Boolean isHidden()
+    {
+        return (null != hidden) && hidden;
     }
 
     public List<MacroParameterBean> getParameters()

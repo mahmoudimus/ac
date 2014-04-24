@@ -1,7 +1,7 @@
 package it.capabilities.jira;
 
-import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
-import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
+import com.atlassian.jira.projectconfig.pageobjects.ProjectConfigTabs;
+import com.atlassian.jira.projectconfig.pageobjects.summary.ProjectSummaryPageTab;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;

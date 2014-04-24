@@ -1,6 +1,10 @@
 
 # Release Notes
 
+## [1.0.1](../release-notes/1-0-1.html)
+* Allow POST method for "screens/addToDefault/{fieldId}"
+* UPM auto-update fails to upgrade add-on
+
 ## [1.0.0](../release-notes/1-0.html)
 * Installing an add-on into OnDemand will not work unless the base url starts with https
 * Support for context parameters on remote conditions
