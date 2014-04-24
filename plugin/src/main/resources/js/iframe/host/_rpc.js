@@ -8,12 +8,7 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
       proxy = {},
       rpc,
       apis = {},
-      stubs = [
-        "dialogMessage",
-        "historyMessage",
-        // !!! JIRA specific !!!
-        "setWorkflowConfigurationMessage"
-      ],
+      stubs = [],
       internals = {},
       inits = [],
       isInited;
