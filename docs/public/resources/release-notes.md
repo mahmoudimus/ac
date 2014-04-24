@@ -1,6 +1,11 @@
 
 # Release Notes
 
+## [1.0.2](../release-notes/1-0-2.html)
+* Fixed workflow post functions
+* Support for hidden macros in the macro browser
+* Removing content from Web-panel no longer leaves grey bar in place
+
 ## [1.0.1](../release-notes/1-0-1.html)
 * Allow POST method for "screens/addToDefault/{fieldId}"
 * UPM auto-update fails to upgrade add-on
