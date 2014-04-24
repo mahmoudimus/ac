@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.imports;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
+import com.atlassian.crowd.embedded.api.CrowdService;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
@@ -78,7 +79,8 @@ public class CommonImports
             @ComponentImport RemotePluginLicenseService remotePluginLicenseService,
             @ComponentImport JwtService jwtService,
             @ComponentImport JwtApplinkFinder jwtApplinkFinder,
-            @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore)
+            @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
+            @ComponentImport CrowdService crowdService)
     {
     }
 }

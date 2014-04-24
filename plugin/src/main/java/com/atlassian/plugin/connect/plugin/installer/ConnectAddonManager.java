@@ -26,6 +26,7 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nM
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
@@ -115,7 +116,8 @@ public class ConnectAddonManager
     private final SharedSecretService sharedSecretService;
     private final HttpClientFactory httpClientFactory;
     private final ConnectAddonI18nManager i18nManager;
-    
+    private final ThreeLeggedAuthService threeLeggedAuthService;
+
     private final AtomicBoolean isTestHttpClient;
 
     @Inject
@@ -125,7 +127,9 @@ public class ConnectAddonManager
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory, ConnectAddonI18nManager i18nManager)
+                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
+                               SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory, ConnectAddonI18nManager i18nManager,
+                               ThreeLeggedAuthService threeLeggedAuthService)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -146,6 +150,7 @@ public class ConnectAddonManager
         this.sharedSecretService = sharedSecretService;
         this.httpClientFactory = httpClientFactory;
         this.i18nManager = i18nManager;
+        this.threeLeggedAuthService = threeLeggedAuthService;
 
         this.isTestHttpClient = new AtomicBoolean(false);
     }
@@ -361,6 +366,7 @@ public class ConnectAddonManager
                     }
 
                     connectApplinkManager.deleteAppLink(addon);
+                    threeLeggedAuthService.revokeAll(addon); // JWT plugin reads grants to determine "act on behalf of a user" access and defunct grants clutter the UI
                 }
                 else
                 {

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="decorator" content="atl.general"/>
+    </head>
+    <body>
+        <div class="aui-page-header">
+            <h1>Three-Legged Auth</h1>
+        </div>
+        <div class="content aui-page-panel-content">
+            $bodyContent
+        </div>
+    </body>
+</html>
