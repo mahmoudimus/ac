@@ -2,7 +2,7 @@
  * Methods for showing the status of a connect-addon (loading, time'd-out etc)
  */
 
-_AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
+_AP.define("host/history", ["_dollar", "_uri", "_rpc"], function ($, Uri, rpc) {
     "use strict";
 
     var lastAdded,
@@ -77,6 +77,31 @@ _AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
         anchor = stripPrefix(hostWindowUrl.anchor());
         return anchor;
     }
+
+    rpc.extend(function(config){
+        var isGeneral = false;
+        return {
+                xdmOptions: (function(){
+                    console.log("AI M RUNNING", config, arguments);
+                    if(isGeneral){
+                        return {
+                            uiParams: {
+                                historyState: getState()
+                            }
+                        };
+                    }
+                }),
+            init: function(state){
+                if(state.isGeneral){
+                    isGeneral = true;
+                    // register for url hash changes to invoking history.popstate callbacks.
+                    $(window).on("hashchange", function(e){
+                        hashChange(e.originalEvent, rpc.historyMessage);
+                    });
+                }
+            }
+        };
+    });
 
     return {
         pushState: pushState,
