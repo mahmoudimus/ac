@@ -11,7 +11,6 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
@@ -285,7 +284,7 @@ public class ConnectAddonManager
     private void callSyncHandler(Plugin plugin, ConnectAddonBean addon, String path, String jsonEventData) throws LifecycleCallbackException
     {
         String callbackUrl = addon.getBaseUrl() + path;
-        
+
         // try distributing prod shared secrets over http (note the lack of "s") and it shall be rejected
         if (!isDevModeService.isDevMode() && null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
         {
