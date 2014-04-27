@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.concurrent.Callable;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 
 /**
  * Page with buttons for executing the javascript history plugin
@@ -34,7 +35,7 @@ public class RemoteHistoryGeneralPage extends RemotePage implements Page
 
 
     public RemoteHistoryGeneralPage(String addonKey, String moduleKey) {
-        super(moduleKey);
+        super(addonAndModuleKey(addonKey, moduleKey));
         this.addonKey = addonKey;
         this.moduleKey = moduleKey;
     }
