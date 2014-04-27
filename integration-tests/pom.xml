@@ -153,6 +153,12 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-projects-page-objects</artifactId>
+            <version>${atlassian.jira.projects.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.jira.tests</groupId>
             <artifactId>jira-func-test-basics</artifactId>
             <version>${functestbasics.version}</version>
