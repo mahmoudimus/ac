@@ -113,8 +113,9 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private WebItemModuleBean createFeaturedWebItem(ConnectAddonBean addon, T bean)
     {
         WebItemModuleBeanBuilder webItemBean = newWebItemBean()
-                .withName(new I18nProperty(bean.getName().getValue(),
-                        MacroI18nBuilder.getMacroI18nKey(addon.getKey(), bean.getKey(addon))))
+                // due to issues with Confluence not reloading i18n properties, we have to use the raw name here
+                // TODO use i18n key when we fix Confluence to support reloading i18n
+                .withName(new I18nProperty(bean.getName().getValue(), bean.getName().getValue()))
                 .withKey(bean.getRawKey())
                 .withLocation("system.editor.featured.macros.default");
 

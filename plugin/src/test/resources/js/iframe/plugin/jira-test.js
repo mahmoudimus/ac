@@ -24,12 +24,6 @@ var xdmMockJira;
         module("Jira plugin", {
             setup: function(){
                 xdmMockJira.getWorkflowConfiguration.reset();
-                this.getUuidWorkflowStub = sinon.stub(jira.WorkflowConfiguration, 'getUuid').returns('bar');
-                this.getUuidStub = sinon.stub(jira, 'getUuid').returns('foo');
-            },
-            teardown: function(){
-                this.getUuidStub.restore();
-                this.getUuidWorkflowStub.restore();
             }
         });
 
@@ -38,17 +32,12 @@ var xdmMockJira;
             ok(xdmMockJira.getWorkflowConfiguration.calledOnce);
         });
 
-        test('getWorkflowConfiguration passes uuid to remote getWorkflowConfiguration', function(){
-            jira.getWorkflowConfiguration();
-            equal(xdmMockJira.getWorkflowConfiguration.args[0][0], this.getUuidStub());
-        });
-
         test('getWorkflowConfiguration passes callback to remote getWorkflowConfiguration', function(){
             var callback = sinon.spy();
 
             jira.getWorkflowConfiguration(callback);
 
-            deepEqual(xdmMockJira.getWorkflowConfiguration.args[0][1], callback);
+            deepEqual(xdmMockJira.getWorkflowConfiguration.args[0][0], callback);
         });
 
         test('onSave callback is triggered when event is triggered', function(){
@@ -68,10 +57,6 @@ var xdmMockJira;
             jira.WorkflowConfiguration.onSave(sinon.stub().returns(value));
 
             equal(jira.WorkflowConfiguration.trigger().value, value);
-        });
-
-        test('uuid is returned when workflow configuration is triggered', function(){
-            equal(jira.WorkflowConfiguration.trigger().uuid, this.getUuidWorkflowStub());
         });
 
         test('valid is true when workflow validation function returns true', function(){
