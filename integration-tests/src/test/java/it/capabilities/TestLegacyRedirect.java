@@ -83,14 +83,4 @@ public class TestLegacyRedirect extends ConnectWebDriverTestBase
         assertEquals(HttpStatus.SC_OK, conn.getResponseCode());
     }
 
-    private static final class MessageServlet extends HttpServlet
-    {
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
-            resp.setContentType("text/plain");
-            resp.getWriter().write(req.getParameter("message"));
-            resp.getWriter().close();
-        }
-    }
 }
