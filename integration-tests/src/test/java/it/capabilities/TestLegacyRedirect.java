@@ -83,4 +83,13 @@ public class TestLegacyRedirect extends ConnectWebDriverTestBase
         assertEquals(HttpStatus.SC_OK, conn.getResponseCode());
     }
 
+    @Test
+    public void testCanAccessDirectly() throws Exception
+    {
+        URL url = new URL(product.getProductInstance().getBaseUrl() + "/plugins/servlet/ac/" +
+                remotePlugin.getAddon().getKey() + "/" + ADDON_GENERALPAGE);
+        HttpURLConnection yc = (HttpURLConnection) url.openConnection();
+        assertEquals(HttpStatus.SC_OK, yc.getResponseCode());
+    }
+
 }
