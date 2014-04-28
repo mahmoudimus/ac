@@ -54,13 +54,13 @@ _AP.define("host/history", ["_dollar", "_uri", "_rpc"], function ($, Uri, rpc) {
         history.go(delta);
     }
 
-    function hashChange (event, rpcCallback) {
+    function hashChange (event, historyMessage) {
         var newUrlObj = new Uri.init(event.newURL);
         var oldUrlObj = new Uri.init(event.oldURL);
         if( ( newUrlObj.anchor() !== oldUrlObj.anchor() ) && // if the url has changed
             ( lastAdded !== newUrlObj.anchor() ) //  and it's not the page we just pushed.
          ){
-            rpcCallback(sanitizeHashChangeEvent(event));
+            historyMessage(sanitizeHashChangeEvent(event));
         }
         lastAdded = null;
     }
@@ -91,24 +91,40 @@ _AP.define("host/history", ["_dollar", "_uri", "_rpc"], function ($, Uri, rpc) {
                         };
                     }
                 }),
-            init: function(state){
+            init: function (state) {
                 if(state.isGeneral){
                     isGeneral = true;
                     // register for url hash changes to invoking history.popstate callbacks.
                     $(window).on("hashchange", function(e){
-                        hashChange(e.originalEvent, rpc.historyMessage);
+                        hashChange(e.originalEvent, config.historyMessage);
                     });
                 }
-            }
+            },
+            internals: {
+                historyPushState: function (url) {
+                    if(isGeneral){
+                        return pushState(url);
+                    } else {
+                        $.log("History is only available to page modules");
+                    }
+                },
+                historyReplaceState: function (url) {
+                    if(isGeneral){
+                        return replaceState(url);
+                    } else {
+                        $.log("History is only available to page modules");
+                    }
+                },
+                historyGo: function (delta) {
+                    if(isGeneral){
+                        return go(delta);
+                    } else {
+                        log("History is only available to page modules");
+                    }
+                }
+            },
+            stubs: ["historyMessage"] 
         };
     });
-
-    return {
-        pushState: pushState,
-        replaceState: replaceState,
-        go: go,
-        hashChange: hashChange,
-        getState: getState
-    };
 
 });
