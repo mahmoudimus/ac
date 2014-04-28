@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="decorator" content="atl.general"/>
+    </head>
+    <body>
+        <div class="aui-page-header">
+            <h1>Three-Legged Auth</h1>
+        </div>
+        <div class="content aui-page-panel-content">
+            $message
+        </div>
+        <p></p>
+        <div class="content aui-page-panel-content">
+            You may also <a href="/jira/plugins/servlet/oauth/users/access-tokens">view or revoke all grants</a>.
+        </div>
+    </body>
+</html>

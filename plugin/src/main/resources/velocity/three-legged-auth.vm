@@ -8,7 +8,21 @@
             <h1>Three-Legged Auth</h1>
         </div>
         <div class="content aui-page-panel-content">
-            $bodyContent
+            <form action="#" method="post" class="aui">
+                <div class="field-group">
+                    <p>$addOnWantsUserAgency</p>
+                    <div class="buttons-container">
+                        <div class="buttons">
+                            <input class="button submit" type="submit" value="$yes">
+                            <input class="button cancel" type="reset"  value="$no" onclick="window.top.location='/jira'; return false;">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <p></p>
+        <div class="content aui-page-panel-content">
+            You may also <a href="/jira/plugins/servlet/oauth/users/access-tokens">view or revoke all grants</a>.
         </div>
     </body>
 </html>

@@ -12,6 +12,7 @@ import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +32,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Component
 public class GrantThreeLeggedAuthServlet extends HttpServlet
 {
+    private static final String CONNECT_SCOPE_AGENT_MISSING_SCOPE = "connect.scope.agent.missing_scope";
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
@@ -37,11 +40,12 @@ public class GrantThreeLeggedAuthServlet extends HttpServlet
     private final I18nResolver i18nResolver;
     private final ThreeLeggedAuthService threeLeggedAuthService;
     private final TemplateRenderer templateRenderer;
-
-    private static final String AGENCY_DESC_WITH_ADD_ON_I18N_KEY = "connect.scope.agent.description.personal.withkey";
-    private static final String EXTANT_I18N_KEY = "connect.prefix.extant";
-    private static final String GRANTED_I18N_KEY = "connect.prefix.granted";
     private static final Pattern PATH_PATTERN = Pattern.compile("^(/[^/]+){3}/([^/]+)"); // .../ac/tla/grant/{add-on-key}
+
+    private static final String ADD_ON_ALREADY_HAS_GRANT_I18N_KEY = "connect.scope.agent.description.personal.withkey";
+    private static final String VELOCITY_TEMPLATE_MESSAGE = "velocity/three-legged-auth-message.vm";
+    private static final String VELOCITY_TEMPLATE_FORM = "velocity/three-legged-auth.vm";
+    private static final String ADD_ON_WANTS_USER_AGENCY_I18N_KEY = "connect.scope.agent.request";
 
     @Autowired
     public GrantThreeLeggedAuthServlet(JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
@@ -64,6 +68,8 @@ public class GrantThreeLeggedAuthServlet extends HttpServlet
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws IOException
     {
+        // TODO: add authentication to prevent spoofing
+
         UserKey userKey = userManager.getRemoteUserKey(req);
 
         // accessible only to logged-in users so that we don't leak installed-add-on-key knowledge to anonymous randoms
@@ -82,19 +88,98 @@ public class GrantThreeLeggedAuthServlet extends HttpServlet
                 if (jsonConnectAddOnIdentifierService.isConnectAddOn(addOnKey))
                 {
                     ConnectAddonBean addOnBean = connectAddonBeanFactory.fromJsonSkipValidation(connectAddonRegistry.getDescriptor(addOnKey));
-                    String bodyContent;
 
                     if (addOnBean.getScopes().contains(ScopeName.AGENT))
                     {
-                        String actionPrefixI18nKey = grantUserAgencyToAddOn(userKey, addOnBean) ? GRANTED_I18N_KEY : EXTANT_I18N_KEY;
-                        bodyContent = String.format("%s %s", i18nResolver.getText(actionPrefixI18nKey), i18nResolver.getText(AGENCY_DESC_WITH_ADD_ON_I18N_KEY, addOnKey));
+                        if (threeLeggedAuthService.hasGrant(userKey, addOnBean))
+                        {
+                            String redirect = req.getParameter("onSuccess");
+
+                            // just go straight to the redirect if it was supplied
+                            if (StringUtils.isEmpty(redirect))
+                            {
+                                String message = i18nResolver.getText(ADD_ON_ALREADY_HAS_GRANT_I18N_KEY, addOnBean.getName());
+                                templateRenderer.render(VELOCITY_TEMPLATE_MESSAGE, ImmutableMap.<String, Object>of("message", message), resp.getWriter());
+                            }
+                            else
+                            {
+                                resp.sendRedirect(URLDecoder.decode(redirect, "UTF-8"));
+                            }
+                        }
+                        else
+                        {
+                            templateRenderer.render(VELOCITY_TEMPLATE_FORM, ImmutableMap.<String, Object>of(
+                                    "addOnWantsUserAgency", i18nResolver.getText(ADD_ON_WANTS_USER_AGENCY_I18N_KEY, addOnBean.getName()),
+                                    "yes", i18nResolver.getText("yes"),
+                                    "no", i18nResolver.getText("no")
+                                ),
+                                resp.getWriter()
+                            );
+                        }
                     }
                     else
                     {
-                        bodyContent = String.format("The Connect add-on \"%s\" cannot request the ability to act on your behalf as it does not request the \"%s\" scope.", addOnBean.getName(), ScopeName.AGENT);
+                        String message = i18nResolver.getText(CONNECT_SCOPE_AGENT_MISSING_SCOPE, addOnBean.getName(), ScopeName.AGENT);
+                        templateRenderer.render(VELOCITY_TEMPLATE_MESSAGE, ImmutableMap.<String, Object>of("message", message), resp.getWriter());
                     }
+                }
+                else
+                {
+                    resp.sendError(HttpServletResponse.SC_NOT_FOUND, String.format("'%s' is not an installed Connect add-on key", addOnKey));
+                }
+            }
+            else
+            {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
+        }
+    }
 
-                    templateRenderer.render("velocity/three-legged-auth.vm", ImmutableMap.<String, Object>of("bodyContent", bodyContent), resp.getWriter());
+    @Override
+    public void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws IOException
+    {
+        // TODO: add authentication to prevent spoofing
+
+        UserKey userKey = userManager.getRemoteUserKey(req);
+
+        // accessible only to logged-in users so that we don't leak installed-add-on-key knowledge to anonymous randoms
+        if (null == userKey)
+        {
+            resp.sendRedirect(getLoginUri(getUri(req)).toASCIIString());
+        }
+        else
+        {
+            Matcher matcher = PATH_PATTERN.matcher(req.getPathInfo());
+
+            if (matcher.find())
+            {
+                String addOnKey = matcher.group(2);
+
+                if (jsonConnectAddOnIdentifierService.isConnectAddOn(addOnKey))
+                {
+                    ConnectAddonBean addOnBean = connectAddonBeanFactory.fromJsonSkipValidation(connectAddonRegistry.getDescriptor(addOnKey));
+
+                    if (addOnBean.getScopes().contains(ScopeName.AGENT))
+                    {
+                        grantUserAgencyToAddOn(userKey, addOnBean);
+                        String redirect = req.getParameter("onSuccess");
+
+                        // just go straight to the redirect if it was supplied
+                        if (StringUtils.isEmpty(redirect))
+                        {
+                            String message = i18nResolver.getText(ADD_ON_ALREADY_HAS_GRANT_I18N_KEY, addOnBean.getName());
+                            templateRenderer.render(VELOCITY_TEMPLATE_MESSAGE, ImmutableMap.<String, Object>of("message", message), resp.getWriter());
+                        }
+                        else
+                        {
+                            resp.sendRedirect(URLDecoder.decode(redirect, "UTF-8"));
+                        }
+                    }
+                    else
+                    {
+                        String message = i18nResolver.getText(CONNECT_SCOPE_AGENT_MISSING_SCOPE, addOnBean.getName(), ScopeName.AGENT);
+                        templateRenderer.render(VELOCITY_TEMPLATE_MESSAGE, ImmutableMap.<String, Object>of("message", message), resp.getWriter());
+                    }
                 }
                 else
                 {
