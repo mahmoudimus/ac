@@ -49,7 +49,10 @@ public final class AcRedirectServlet extends HttpServlet
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        final String newUrl = req.getRequestURI().replaceFirst(fromPattern, toPattern);
+        final StringBuffer requestURL = req.getRequestURL();
+        int index = requestURL.indexOf(fromPattern);
+
+        final String newUrl = requestURL.replace(index, index + fromPattern.length(), toPattern).toString();
         log.debug("Redirecting from {} to {}", new Object[] {req.getRequestURI(), newUrl});
         resp.setStatus(HttpStatus.SC_MOVED_PERMANENTLY);
         resp.addHeader(HttpHeaders.LOCATION, newUrl);
