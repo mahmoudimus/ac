@@ -28,6 +28,12 @@ public class TestXMLDescriptorLegacyRedirect extends AbstractBrowserlessTest
         HttpURLConnection.setFollowRedirects(false);
     }
 
+    @AfterClass
+    public static void restoreUrlHandlers()
+    {
+        HttpURLConnection.setFollowRedirects(true);
+    }
+
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {

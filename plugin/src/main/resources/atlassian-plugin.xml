@@ -69,11 +69,11 @@
         </description>
         <init-param>
             <param-name>from.pattern</param-name>
-            <param-value>atlassian-connect</param-value>
+            <param-value>/atlassian-connect/</param-value>
         </init-param>
         <init-param>
             <param-name>to.text</param-name>
-            <param-value>ac</param-value>
+            <param-value>/ac/</param-value>
         </init-param>
         <url-pattern>/atlassian-connect/*</url-pattern>
     </servlet>
