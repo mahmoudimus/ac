@@ -14,8 +14,8 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
 
-// Tests the inverse of the Json test of the same name. i.e. that the redirect is not applied for xml descriptors
-public class TestLegacyRedirect extends AbstractBrowserlessTest
+// Tests the inverse of the Json test TestLegacyRedirect. i.e. that the redirect is not applied for xml descriptors
+public class TestXMLDescriptorLegacyRedirect extends AbstractBrowserlessTest
 {
     private static final String ADDON_GENERALPAGE = "ac-general-page";
     private static final String ADDON_GENERALPAGE_NAME = "AC General Page";
