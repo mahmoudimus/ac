@@ -1,4 +1,4 @@
-(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri", "host/analytics"], function (events, base64, uri, analytics) {
+(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri",  "_ui-params", "host/analytics"], function (events, base64, uri, uiParams, analytics) {
 
   "use strict";
 
@@ -202,12 +202,6 @@
             // Create responders for each response type
             done = function (message) { sendDone(pid, message); };
             fail = function (message) { sendFail(pid, message); };
-
-            //analytics
-            if(self.isHost){
-              analytics.trackBridgeMethod(name, addonKey, channel);
-            }
-
             // The local method is considered async if it accepts more arguments than the message has sent;
             // the additional arguments are filled in with the above async responder callbacks;
             // TODO: consider specifying args somehow in the remote stubs so that non-callback args can be
@@ -358,8 +352,13 @@
     //  - channel:    deprecated
     function createIframe(config) {
       var iframe = document.createElement("iframe"),
-        id = "easyXDM_" + config.container + "_provider";
-      $.extend(iframe, {id: id, name: id, frameBorder: "0"}, config.props);
+        id = "easyXDM_" + config.container + "_provider",
+        windowName = "";
+
+      if(config.uiParams){
+        windowName = uiParams.encode(config.uiParams);
+      }
+      $.extend(iframe, {id: id, name: windowName, frameBorder: "0"}, config.props);
       //$.extend will not add the attribute rel.
       iframe.setAttribute('rel', 'nofollow');
       $("#" + config.container).append(iframe);

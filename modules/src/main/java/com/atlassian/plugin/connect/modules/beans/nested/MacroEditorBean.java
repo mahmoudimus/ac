@@ -20,15 +20,24 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder
  *    AP.require(["confluence", "dialog"], function (confluence, dialog) {
  *        function onSubmit() {
  *            var macroParams = {
- *                key: value
+ *                myParameter: value
  *            };
  *            confluence.saveMacro(macroParams);
  *            confluence.closeMacroEditor();
  *            return true;
- *         }
+ *        }
  *
- *         dialog.getButton("submit").bind(onSubmit);
- *     }
+ *        dialog.getButton("submit").bind(onSubmit);
+ *    });
+ *
+ * In order to retrieve the custom data again when the editor is opened, use `confluence.getMacroData` (see
+ * [Confluence API](../../javascript/module-confluence.html)):
+ *
+ *    AP.require("confluence", function (confluence) {
+ *        var macroData = confluence.getMacroData(function(macroParams) {
+ *            domeSomethingWith(macroParams.myParameter);
+ *        });
+ *    });
  *
  *#### Example
  *

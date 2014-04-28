@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocume
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceholderMacro;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.MacroI18nBuilder;
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -54,12 +53,14 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     {
         DOMElement element = new DOMElement("macro");
         // For macros, the name has to be a key and can't contain spaces etc.
-        String macroName = bean.getKey(addon);
+        String fQModuleKey = bean.getKey(addon);
         // If 'featured' is true, the web item needs the macro name as it's key...
         // So chose a different prefix for the macro itself
-        element.setAttribute("key", "macro-" + macroName);
-        element.setAttribute("name", macroName);
-        element.setAttribute("i18n-name-key", MacroI18nBuilder.getMacroI18nKey(addon.getKey(), macroName));
+        element.setAttribute("key", "macro-" + fQModuleKey);
+        element.setAttribute("name", fQModuleKey);
+        // due to issues with Confluence not reloading i18n properties, we have to use the raw name here
+        // TODO use i18n when we fix Confluence to support reloading i18n
+        element.setAttribute("i18n-name-key", bean.getName().getValue());
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
 
@@ -89,6 +90,10 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         if (bean.hasIcon())
         {
             element.setAttribute("icon", getAbsoluteUrl(addon, bean.getIcon().getUrl()));
+        }
+        if (bean.isHidden())
+        {
+            element.setAttribute("hidden", "true");
         }
 
         handleParameters(bean, element);

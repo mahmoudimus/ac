@@ -21,11 +21,13 @@ requirejs.config({
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'iframe/host/content': '../src/main/resources/js/iframe/host/content',
     'iframe/host/analytics': '../src/main/resources/js/iframe/host/analytics',
+    'iframe/host/history': '../src/main/resources/js/iframe/host/history',
     'dialog/main': '../src/main/resources/js/dialog/main',
     'inline-dialog/main': '../src/main/resources/js/inline-dialog/main',
     'inline-dialog/simple': '../src/main/resources/js/inline-dialog/simple',
     'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
     'jira/event': '../src/main/resources/js/jira/event',
+    'jira/workflow-post-function': '../src/main/resources/js/jira/workflow-post-function',
     'messages/main': '../src/main/resources/js/messages/main',
     // shared
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
@@ -59,6 +61,12 @@ requirejs.config({
         'aui-atlassian',
         'iframe/_amd',
         'iframe/_ui-params'
+        ]
+    },
+    'iframe/host/history': {
+        deps: [
+        'iframe/host/_dollar',
+        'iframe/_uri'
         ]
     },
     'iframe/_base64': {
@@ -100,6 +108,11 @@ requirejs.config({
         ]
     },
     'jira/event': {
+        deps: [
+        'iframe/host/_dollar'
+        ]
+    },
+    'jira/workflow-post-function': {
         deps: [
         'iframe/host/_dollar'
         ]

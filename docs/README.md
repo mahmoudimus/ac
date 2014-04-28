@@ -4,7 +4,7 @@ This directory contains everything you need to generate documentation for Atlass
 
 * Getting started guide -- `public/guides/index.md`
 * Other potential guides -- `public/guides/*.md`
-* Module reference docs driven by JavaDoc in ModuleBeans -- these are auto generated using the JSON schema and lives in `public/capabilities/*`
+* Module reference docs driven by JavaDoc in ModuleBeans -- these are auto generated using the JSON schema and lives in `public/modules/*`
 * Any other documentation that we can think of (e.g., FAQs, Help & Support, etc.)
 
 ## How does it all work?
@@ -16,7 +16,7 @@ We use a Nodejs based static site generator called [Harp](http://harpjs.com/). I
     .
     ├── README.md (this file)
     ├── build.js (extracts JSON schema and updates harp.json with schema contents)
-    ├── harp.json (acts as a global JSON that's available to the templates. Contains JSON schema used for capabilities docs)
+    ├── harp.json (acts as a global JSON that's available to the templates. Contains JSON schema used for modules docs)
     ├── package.json (standard Nodejs package.json)
     └── public
         ├── _layout.ejs (global layout)
@@ -27,10 +27,10 @@ We use a Nodejs based static site generator called [Harp](http://harpjs.com/). I
         │   │   └── styles.less
         │   ├── images
         │   └── js
-        ├── capabilities
-        │   ├── confluence (build.js will populate this with capabilities markdown files)
+        ├── modules
+        │   ├── confluence (build.js will populate this with modules markdown files)
         │   ├── index.md
-        │   └── jira (build.js will populate this with capabilities markdown files)
+        │   └── jira (build.js will populate this with modules markdown files)
         ├── guides
         │   └── index.md (getting started guide)
         └── index.md (homepage)
@@ -40,7 +40,7 @@ We use a Nodejs based static site generator called [Harp](http://harpjs.com/). I
 Harp takes everything stored under the `public` directory and preprocesses it. Harp supports Jade, Markdown, EJS, CoffeeScript, LESS, and Stylus. If you want to write plain ole HTML, CSS, JS, you can do that too. However, to adhere to a common convention, let's assume the following rules:
 
 * All guides must be written with Markdown
-* All capabilities JavaDocs must be written with Markdown
+* All modules JavaDocs must be written with Markdown
 * Any unconventional styling you need to apply to your doco can be done with plain ole HTML within Markdown
 
 Got it? If not, all you need to know is that you need to write your docs in Markdown!
@@ -74,6 +74,10 @@ You'll likely never need to do this locally since we'll probably be doing this d
 As awesome as Doklovic is, his JSON schema doesn't get generated dynamically. Unfortunately, it still requires Maven to do the heavy lifting. So, today, to generate the JSON schema (if you make changes to the ModuleBeans JavaDocs), you have to:
 
     mvn install -DskipTests
+    
+or just to generate the schema:
+
+	mvn process-classes
 
 After you do that, you'll need to run:
 

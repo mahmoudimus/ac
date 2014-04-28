@@ -44,7 +44,7 @@ public class ModuleKeyUtils
 
     public static String addonAndModuleKey(String addonKey, String moduleKey)
     {
-        return cleanKey(addonKey) + ADDON_MODULE_SEPARATOR + cleanKey(moduleKey);
+        return addonKey + ADDON_MODULE_SEPARATOR + cleanKey(moduleKey);
     }
 
     public static String moduleKeyOnly(String moduleKey)

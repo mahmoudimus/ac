@@ -1,5 +1,39 @@
 # Deprecation Notices
 
+### Opening Dialogs by URL
+
+Dialogs will no longer open via javascript using the url option. Instead all dialogs must be opened by their module key.
+<div class="ac-deprecations">
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Deprecated in</h5>
+    </div>
+    <div class="aui-item">
+        <span class="aui-lozenge">1.0-m25</span>
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>OnDemand removal</h5>
+    </div>
+    <div class="aui-item">
+        __May, 2014__
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Upgrade guide</h5>
+    </div>
+    <div class="aui-item">
+        <p>We recommend replacing javascript such as:</p>
+        `dialog.create({url: '/module-url.html'});`
+        <p>with the following (where key is the module key specified in your atlassian-connect.json file):</p>
+        `dialog.create({key: 'my-module-key'});`
+    </div>
+</div>
+</div>
+
+
 ### XML descriptor
 
 The `atlassian-plugin.xml` descriptor format is deprecated in favour of the new JSON descriptor format. XML descriptor
@@ -64,6 +98,43 @@ Atlassian Connect is replacing the OAuth 1.0 2LO implementation with JWT.
     </div>
 </div>
 </div>
+
+
+### Opening dialogs by URL
+
+JSON descriptor based add-ons can no longer open dialogs using a `url` parameter, for instance with `dialog.create({url: 'my-contents.html'})`.
+
+<div class="ac-deprecations">
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Deprecated in</h5>
+    </div>
+    <div class="aui-item">
+        <span class="aui-lozenge">1.0-rc2</span>
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>OnDemand removal</h5>
+    </div>
+    <div class="aui-item">
+        __24th March, 2014__
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Upgrade guide</h5>
+    </div>
+    <div class="aui-item">
+        <p>We recommend using <code>dialog.create({key: 'my-module-key',...})</code>
+        instead (see <a href="../javascript/module-Dialog.html">Javascript Dialog documentation</a>).</p>
+        <p>The key references a general page (or a web item).
+        In order to prevent the general page or web item to show up anywhere else, you can use the <code>"location"</code>
+        property with a value of <code>"none"</code>.</p>
+    </div>
+</div>
+</div>
+
 
 ### Email sender resource
 

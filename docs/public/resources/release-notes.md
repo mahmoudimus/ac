@@ -9,6 +9,11 @@
 * Allow POST method for "screens/addToDefault/{fieldId}"
 * UPM auto-update fails to upgrade add-on
 
+## [1.0.2](../release-notes/1-0-2.html)
+* Fixed workflow post functions
+* Support for hidden macros in the macro browser
+* Removing content from Web-panel no longer leaves grey bar in place
+
 ## [1.0.0](../release-notes/1-0.html)
 * Installing an add-on into OnDemand will not work unless the base url starts with https
 * Support for context parameters on remote conditions
