@@ -44,7 +44,7 @@
 
     <servlet key="remotablePluginsPermanentRedirectingServlet"
              name="Remotable Plugins Permanent Redirecting Servlet"
-             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">
+             class="com.atlassian.plugin.connect.plugin.module.util.redirect.LegacyAddonRedirectServlet">
         <description>
             Redirects to a Remote App resource, usually an image, with a permanent redirect, but
             doesn't sign the request.  Request parameters are included in the redirect.
@@ -63,7 +63,7 @@
 
     <servlet key="acPermanentRedirectingServlet"
              name="Ac Permanent Redirecting Servlet"
-             class="com.atlassian.plugin.connect.plugin.module.util.redirect.AcRedirectServlet">
+             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">
         <description>
             Permanent redirects from old /atlassian-connect/* urls to /ac/*
         </description>
