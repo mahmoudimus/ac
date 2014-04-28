@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.threeleggedauth;
 
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.jwt.core.JwtUtil;
 import com.atlassian.jwt.core.http.auth.SimplePrincipal;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
@@ -147,7 +146,7 @@ public class OAuthConsumerThreeLeggedAuthService implements ThreeLeggedAuthServi
     // don't stomp on normal oauth tokens created for this add-on, allow us to set a tla-specific description
     private String getConsumerKey(ConnectAddonBean addOnBean)
     {
-        return JwtUtil.getThreeLeggedAuthKey(addOnBean.getKey());
+        return "tla_" + addOnBean.getKey();
     }
 
     private Consumer createConsumer(ConnectAddonBean addOnBean)
