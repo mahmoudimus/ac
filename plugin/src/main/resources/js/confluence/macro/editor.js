@@ -48,7 +48,6 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
                 var data = {
                         "width": "100%",
                         "height": "100%",
-                        "raw": "true",
                         "ui-params": uiParams.encode({dlg: 1})
                     };
                 $.extend(data, openEditorMacroData);
