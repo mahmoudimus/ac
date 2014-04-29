@@ -20,7 +20,7 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
             id: options.id,
             titleId: options.titleId,
             size: options.size,
-            extraClasses: ['ap-aui-dialog2'],
+            extraClasses: ['ap-aui-dialog2', 'ap-aui-dialog2-chromeless'],
             removeOnHide: true
         }));
         $el.append($nexus);
