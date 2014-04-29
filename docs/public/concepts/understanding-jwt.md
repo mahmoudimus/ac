@@ -138,7 +138,7 @@ Most modern languages have JWT libraries available. We recommend you use one of 
     <tr><td>Haskell</td><td>[haskell-jwt](http://hackage.haskell.org/package/jwt)</td></tr>
 </table>
 
-The [JWT decoder from Heroku](http://jwt-decoder.herokuapp.com/jwt/decode) is a handy web based decoder of JWT tokens.
+The [JWT decoder](http://jwt-decoder.herokuapp.com/jwt/decode) is a handy web based decoder for Atlassian Connect JWT tokens.
 
 <a name='create'></a>
 ## Creating a JWT Token 
