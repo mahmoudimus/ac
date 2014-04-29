@@ -3,14 +3,15 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.StaticContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.sal.api.user.UserManager;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -18,6 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacroModuleDescriptorTest<StaticContentMacroModuleBean, StaticContentMacroModuleBeanBuilder>
 {
@@ -43,7 +45,7 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
         StaticContentMacroModuleBean bean = createBeanBuilder()
                 .build();
 
-        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, bean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(addon, plugin, bean);
     }
 
     @Override

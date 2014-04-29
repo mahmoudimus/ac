@@ -6,7 +6,9 @@
     </plugin-info>
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
-
+    <resource type="i18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
+    <resource type="i18n" name="confluence-addon-i18n" location="connect-addons"/>
+    
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
@@ -90,6 +92,7 @@
         <resource type="download" name="content.js" location="/js/iframe/host/content.js" />
         <resource type="download" name="_status_helper.js" location="/js/iframe/host/_status_helper.js" />
         <resource type="download" name="history.js" location="/js/iframe/host/history.js" />
+        <resource type="download" name="analytics.js" location="/js/iframe/host/analytics.js" />
     </web-resource>
 
     <web-resource key="workflow-post-function">

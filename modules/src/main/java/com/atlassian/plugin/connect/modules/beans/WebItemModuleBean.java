@@ -217,7 +217,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     public String toString()
     {
         return Objects.toStringHelper(this)
-                      .add("key", getKey())
+                      .add("key", getRawKey())
                       .add("name", getName())
                       .add("url", getUrl())
                       .add("location", getLocation())

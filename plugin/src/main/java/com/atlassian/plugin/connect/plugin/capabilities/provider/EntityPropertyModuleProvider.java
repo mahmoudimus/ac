@@ -2,12 +2,13 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectEntityPropertyModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import org.osgi.framework.BundleContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -24,14 +25,14 @@ public class EntityPropertyModuleProvider implements ConnectModuleProvider<Entit
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final Plugin plugin, final String jsonFieldName, final List<EntityPropertyModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectAddonBean addon, final Plugin theConnectPlugin, final String jsonFieldName, final List<EntityPropertyModuleBean> beans)
     {
         return Lists.transform(beans, new Function<EntityPropertyModuleBean, ModuleDescriptor>()
         {
             @Override
             public ModuleDescriptor apply(final EntityPropertyModuleBean bean)
             {
-                return descriptorFactory.createModuleDescriptor(plugin, bean);
+                return descriptorFactory.createModuleDescriptor(addon, theConnectPlugin, bean);
             }
         });
     }

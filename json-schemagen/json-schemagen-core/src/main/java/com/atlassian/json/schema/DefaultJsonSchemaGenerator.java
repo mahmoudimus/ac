@@ -17,12 +17,12 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
 
     public DefaultJsonSchemaGenerator()
     {
-        this(false, new InterfaceList(), new JsonSchemaDocs(), null);
+        this(EnumCase.UPPER, new InterfaceList(), new JsonSchemaDocs(), null);
     }
 
-    public DefaultJsonSchemaGenerator(boolean lowercaseEnums, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
+    public DefaultJsonSchemaGenerator(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {
-        super(lowercaseEnums,interfaceList, schemaDocs, ignoreFilter);
+        super(enumCase,interfaceList, schemaDocs, ignoreFilter);
     }
 
     @Override
@@ -165,13 +165,20 @@ public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
                 List<String> stringList = new ArrayList<String>();
                 for (T constant : clazz.getEnumConstants())
                 {
-                    if (lowercaseEnums)
+                    switch(enumCase)
                     {
-                        stringList.add(constant.toString().toLowerCase());
-                    }
-                    else
-                    {
-                        stringList.add(constant.toString());
+                        case LOWER :
+                            stringList.add(constant.toString().toLowerCase());
+                            break;
+                        
+                        case UPPER :
+                            stringList.add(constant.toString().toUpperCase());
+                            break;
+                        
+                        case INSENSITIVE :
+                            stringList.add(constant.toString().toLowerCase());
+                            stringList.add(constant.toString().toUpperCase());
+                            break;
                     }
                 }
 

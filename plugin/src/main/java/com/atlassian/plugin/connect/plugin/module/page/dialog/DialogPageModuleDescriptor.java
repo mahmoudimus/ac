@@ -5,12 +5,11 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
@@ -24,17 +23,17 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     public static final String DIALOG_CLASSIFIER = "dialog";
     public static final String SIMPLE_DIALOG_CLASSIFIER = "simpleDialog";
 
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     private Element descriptor;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public DialogPageModuleDescriptor(
             ModuleFactory moduleFactory,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             RemotePageDescriptorCreator remotePageDescriptorCreator, final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
         super(moduleFactory);
@@ -104,5 +103,11 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
         {
             registration.unregister();
         }
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 }

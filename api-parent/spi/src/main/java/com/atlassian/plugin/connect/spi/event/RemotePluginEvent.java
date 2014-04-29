@@ -1,14 +1,20 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import java.util.Map;
-
+import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@PrivacyPolicySafe
+@Deprecated
 public abstract class RemotePluginEvent
 {
+    @PrivacyPolicySafe
     private final String pluginKey;
+
+    @PrivacyPolicySafe(false)
     private final Map<String, Object> data;
 
     protected RemotePluginEvent(String pluginKey, Map<String, Object> data)

@@ -4,25 +4,36 @@ import com.atlassian.jira.pageobjects.pages.ViewProfileTab;
 import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.TimedCondition;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 
 /**
  *
  */
 public class InsufficientPermissionsViewProfileTab implements ViewProfileTab
 {
+    private String addonKey;
+    private String moduleKey;
+
+    public InsufficientPermissionsViewProfileTab(String addonKey, String moduleKey)
+    {
+        this.addonKey = addonKey;
+        this.moduleKey = moduleKey;
+    }
+
     @ElementBy(id = "errorMessage")
     private PageElement errorMessage;
 
     @Override
     public String getUrlPart()
     {
-        return "my-plugin:profile-tab-panel";
+        return ConnectPluginInfo.getPluginKey() + ":" + ModuleKeyUtils.addonAndModuleKey(addonKey,moduleKey);
     }
 
     @Override
     public String linkId()
     {
-        return "up_profile-tab-panel_a";
+        return "up_" + ModuleKeyUtils.addonAndModuleKey(addonKey,moduleKey) + "_a";
     }
 
     @Override

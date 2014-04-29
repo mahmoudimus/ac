@@ -68,7 +68,7 @@ public class XWorkActionModuleBean extends RequiredKeyBean
      */
     public String getUrl()
     {
-        return namespace + "/" + getKey() + ".action";
+        return namespace + "/" + getRawKey() + ".action";
     }
 
     public static XWorkActionModuleBeanBuilder newXWorkActionBean()

@@ -55,25 +55,28 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
     private final JwtService jwtService;
     private final ApplicationLink applicationLink;
     private final ConsumerService consumerService;
+    private final URI addOnBaseUrl;
 
-    public JwtAuthorizationGenerator(JwtService jwtService, ApplicationLink applicationLink, ConsumerService consumerService)
+    public JwtAuthorizationGenerator(JwtService jwtService, ApplicationLink applicationLink, ConsumerService consumerService, URI addOnBaseUrl)
     {
         this.jwtService = checkNotNull(jwtService);
         this.applicationLink = checkNotNull(applicationLink);
         this.consumerService = checkNotNull(consumerService);
+        this.addOnBaseUrl = checkNotNull(addOnBaseUrl);
     }
 
     @Override
     public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters)
     {
         checkArgument(null != parameters, "Parameters Map argument cannot be null");
-        return Option.some(JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, parameters, null, consumerService.getConsumer().getKey(), jwtService, applicationLink));
+        return Option.some(JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, null, consumerService.getConsumer().getKey(), jwtService, applicationLink));
     }
 
-    static String encodeJwt(HttpMethod httpMethod, URI targetPath, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, ApplicationLink appLink)
+    static String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, ApplicationLink appLink)
     {
         checkArgument(null != httpMethod, "HttpMethod argument cannot be null");
         checkArgument(null != targetPath, "URI argument cannot be null");
+        checkArgument(null != addOnBaseUrl, "base URI argument cannot be null");
 
         JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuedAt(TimeUtil.currentTimeSeconds())
@@ -95,7 +98,7 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
                 completeParams.putAll(constructParameterMap(targetPath));
             }
 
-            CanonicalHttpUriRequest request = new CanonicalHttpUriRequest(httpMethod.toString(), targetPath.getPath(), "", completeParams);
+            CanonicalHttpUriRequest request = new CanonicalHttpUriRequest(httpMethod.toString(), extractRelativePath(targetPath, addOnBaseUrl), "", completeParams);
             log.debug("Canonical request is: " + HttpRequestCanonicalizer.canonicalize(request));
 
             JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, request);
@@ -110,6 +113,33 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
         }
 
         return jwtService.issueJwt(jsonBuilder.build(), appLink);
+    }
+
+    private static String extractRelativePath(URI targetUri, URI addOnBaseUri)
+    {
+        String path = targetUri.getPath();
+        final String targetString = targetUri.toString();
+        final String baseString = addOnBaseUri.toString();
+
+        if (!StringUtils.isEmpty(targetString) && !StringUtils.isEmpty(baseString))
+        {
+            if (targetString.startsWith(baseString))
+            {
+                path = URI.create(StringUtils.removeStart(targetString, baseString)).getPath();
+            }
+            else
+            {
+                // don't sign something intended for "example.com" that is going to "other.domain.biz"
+                if (targetUri.isAbsolute())
+                {
+                    final String message = String.format("Do not ask for the target URL '%s' to be signed for an add-on with a base URL of '%s': an absolute target URL should begin with the base URL.",
+                            targetString, baseString);
+                    throw new IllegalArgumentException(message);
+                }
+            }
+        }
+
+        return path;
     }
 
     @VisibleForTesting

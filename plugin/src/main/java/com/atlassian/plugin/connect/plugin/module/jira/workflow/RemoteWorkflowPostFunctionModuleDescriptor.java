@@ -65,4 +65,10 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends ConnectWorkflowF
         iFrameRenderStrategyRegistry.register(getPluginKey(), getKey(), classifier, strategy);
     }
 
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+
 }

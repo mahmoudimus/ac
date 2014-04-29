@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -41,8 +42,8 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName,
-            List<ConnectPageModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName,
+                                                 List<ConnectPageModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
@@ -50,8 +51,8 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         {
             // register a render strategy for our iframe page
             IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(plugin.getKey())
-                    .module(bean.getKey())
+                    .addOn(addon.getKey())
+                    .module(bean.getKey(addon))
                     .pageTemplate()
                     .urlTemplate(bean.getUrl())
                     .decorator(getDecorator())
@@ -60,19 +61,19 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .title(bean.getDisplayName())
                     .resizeToParent(true)
                     .build();
-            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), pageRenderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), pageRenderStrategy);
 
             // and an additional strategy for raw content, in case the user wants to use it as a dialog target
             IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(plugin.getKey())
-                    .module(bean.getKey())
+                    .addOn(addon.getKey())
+                    .module(bean.getKey(addon))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())
                     .conditionClasses(getConditionClasses())
                     .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .build();
-            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
 
             if (hasWebItem())
             {
@@ -82,16 +83,16 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
                 WebItemModuleBean webItemBean = newWebItemBean()
                         .withName(bean.getName())
-                        .withKey(bean.getKey())
+                        .withKey(bean.getRawKey())
                         .withContext(page)
-                        .withUrl(ConnectIFrameServlet.iFrameServletPath(plugin.getKey(), bean.getKey()))
+                        .withUrl(ConnectIFrameServlet.iFrameServletPath(addon.getKey(), bean.getRawKey()))
                         .withLocation(location)
                         .withWeight(weight)
                         .withIcon(bean.getIcon())
                         .withConditions(bean.getConditions())
                         .build();
 
-                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemBean, getConditionClasses()));
+                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, webItemBean, getConditionClasses()));
             }
         }
 

@@ -25,6 +25,9 @@
     </rest>
 
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
+    
+    <component-import key="salLicenseHandler" interface="com.atlassian.sal.api.license.LicenseHandler"/>
+    
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
     <component key="testPluginInstaller" 
                class="com.atlassian.plugin.connect.testsupport.DefaultTestPluginInstaller" 
@@ -37,6 +40,8 @@
                interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults"
                public="true"
             />
+    
+    <component key="jiraLicenseUpdater" class="com.atlassian.plugin.connect.testsupport.LicenseUpdater"/>
     
     <servlet-filter key="connect-test-addon" class="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilter"
                     location="after-encoding" weight="1">

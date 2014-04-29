@@ -6,6 +6,7 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.OAuthSigningRemotablePluginAccessor;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.base.Function;
@@ -17,21 +18,16 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
 {

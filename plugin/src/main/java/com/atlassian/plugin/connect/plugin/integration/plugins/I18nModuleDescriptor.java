@@ -18,4 +18,10 @@ public final class I18nModuleDescriptor extends AbstractModuleDescriptor<Void>
     {
         throw new UnsupportedOperationException();
     }
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
+    
 }

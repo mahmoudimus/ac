@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.module.page.GeneralPageModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
@@ -96,7 +96,7 @@ public class XmlOAuthToJsonJwtUpdateTest
             assertEquals(getOldBaseUrl(), appLink.getDisplayUrl().toString());
         }
 
-        jwtPlugin = testPluginInstaller.installPlugin(createJwtAddOn(oAuthPlugin));
+        jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthPlugin));
         assertNotNull(jwtPlugin);
         oAuthPlugin = null; // we get to this line of code only if installing the update works
     }

@@ -4,6 +4,7 @@ import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.WebDriverElement;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.utils.by.ByJquery;
 

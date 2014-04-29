@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +24,7 @@ public class JsonConnectAddOnIdentifierServiceTest
 {
     private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private @Mock PluginAccessor pluginAccessor;
+    private @Mock ConnectAddonRegistry connectAddonRegistry;
     private @Mock Plugin plugin;
 
     @Test
@@ -60,6 +62,6 @@ public class JsonConnectAddOnIdentifierServiceTest
     @Before
     public void beforeEachTest()
     {
-        jsonConnectAddOnIdentifierService = new JsonConnectAddOnIdentifierService(pluginAccessor);
+        jsonConnectAddOnIdentifierService = new JsonConnectAddOnIdentifierService(pluginAccessor, connectAddonRegistry);
     }
 }

@@ -1,11 +1,13 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.XWorkInterceptorBean;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.XWorkActionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
@@ -27,14 +29,14 @@ import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@ConvertToWiredTest
 @Ignore("convert to wired test")
 @RunWith (MockitoJUnitRunner.class)
 public class SpaceToolsTabModuleProviderTest
@@ -52,11 +54,13 @@ public class SpaceToolsTabModuleProviderTest
     @Mock private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     @Mock private IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
+    private ConnectAddonBean addon;
     private SpaceToolsTabModuleProvider provider;
 
     @Before
     public void setup()
     {
+        this.addon = newConnectAddonBean().withKey("my-plugin").build();
         provider = new SpaceToolsTabModuleProvider(webItemModuleDescriptorFactory, xWorkActionDescriptorFactory,
                 productAccessor, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
         when(plugin.getKey()).thenReturn("my-plugin");
@@ -70,7 +74,7 @@ public class SpaceToolsTabModuleProviderTest
                 .withLocation("test-location")
                 .build();
 
-        provider.provideModules(plugin, "spaceTools", ImmutableList.of(bean));
+        provider.provideModules(addon, plugin, "spaceTools", ImmutableList.of(bean));
 
         WebItemBeans webItems = captureWebItemBeans();
 
@@ -81,7 +85,7 @@ public class SpaceToolsTabModuleProviderTest
 
         // Space Admin web item
         assertEquals("Test Module", webItems.spaceAdmin.getName().getValue());
-        assertTrue(webItems.spaceAdmin.getKey().endsWith(SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX));
+        assertTrue(webItems.spaceAdmin.getRawKey().endsWith(SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX));
         assertEquals(666, webItems.spaceAdmin.getWeight());
         // Space Admin should *always* be in the LEGACY_LOCATION, regardless of any specific location specified by the
         // Space Tab Module bean.
@@ -91,7 +95,7 @@ public class SpaceToolsTabModuleProviderTest
     @Test
     public void testWebItemUrl()
     {
-        provider.provideModules(plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
+        provider.provideModules(addon, plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
 
         WebItemBeans webItems = captureWebItemBeans();
         String expectedUrl = "/plugins/atlassian-connect/my-plugin/test-module.action?key=${space.key}";
@@ -103,7 +107,7 @@ public class SpaceToolsTabModuleProviderTest
     public void testWebItemDefaultWeight()
     {
         when(productAccessor.getPreferredGeneralWeight()).thenReturn(666);
-        provider.provideModules(plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
+        provider.provideModules(addon, plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
 
         WebItemBeans webItems = captureWebItemBeans();
         assertEquals(666, webItems.spaceTools.getWeight());
@@ -113,7 +117,7 @@ public class SpaceToolsTabModuleProviderTest
     @Test
     public void testSpaceToolsWebItemDefaultLocation()
     {
-        provider.provideModules(plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
+        provider.provideModules(addon, plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
 
         WebItemBeans webItems = captureWebItemBeans();
         assertEquals(SpaceToolsTabModuleProvider.SPACE_TOOLS_SECTION + "/" + SpaceToolsTabModuleProvider.DEFAULT_LOCATION, webItems.spaceTools.getLocation());
@@ -123,11 +127,11 @@ public class SpaceToolsTabModuleProviderTest
     @Test
     public void testAction()
     {
-        provider.provideModules(plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
+        provider.provideModules(addon, plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
         XWorkActionModuleBean actionModuleBean = captureActionBean();
 
         assertEquals("/plugins/atlassian-connect/my-plugin", actionModuleBean.getNamespace());
-        assertEquals("test-module", actionModuleBean.getKey());
+        assertEquals("test-module", actionModuleBean.getRawKey());
         assertEquals(SpaceToolsIFrameAction.class, actionModuleBean.getClazz());
     }
 
@@ -135,7 +139,7 @@ public class SpaceToolsTabModuleProviderTest
     @Ignore
     public void testActionContextData()
     {
-        provider.provideModules(plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
+        provider.provideModules(addon, plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
         XWorkActionModuleBean actionModuleBean = captureActionBean();
 
         SpaceToolsTabContext context = (SpaceToolsTabContext) actionModuleBean.getParameters().get("context");
@@ -150,7 +154,7 @@ public class SpaceToolsTabModuleProviderTest
     @Test
     public void testActionInterceptor()
     {
-        provider.provideModules(plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
+        provider.provideModules(addon, plugin, "spaceTools", ImmutableList.of(DEFAULTS_BEAN));
         XWorkActionModuleBean actionModuleBean = captureActionBean();
 
         XWorkInterceptorBean interceptorBean = actionModuleBean.getInterceptorsBeans().get(0);
@@ -161,14 +165,14 @@ public class SpaceToolsTabModuleProviderTest
     private XWorkActionModuleBean captureActionBean()
     {
         ArgumentCaptor<XWorkActionModuleBean> captor = ArgumentCaptor.forClass(XWorkActionModuleBean.class);
-        verify(xWorkActionDescriptorFactory).create(eq(plugin), captor.capture());
+        verify(xWorkActionDescriptorFactory).create(addon, eq(plugin), captor.capture());
         return captor.getValue();
     }
 
     private WebItemBeans captureWebItemBeans()
     {
         ArgumentCaptor<WebItemModuleBean> captor = ArgumentCaptor.forClass(WebItemModuleBean.class);
-        verify(webItemModuleDescriptorFactory, times(2)).createModuleDescriptor(eq(plugin), captor.capture());
+        verify(webItemModuleDescriptorFactory, times(2)).createModuleDescriptor(addon, eq(plugin), captor.capture());
         List<WebItemModuleBean> beans = captor.getAllValues();
         return new WebItemBeans(beans.get(0), beans.get(1));
     }

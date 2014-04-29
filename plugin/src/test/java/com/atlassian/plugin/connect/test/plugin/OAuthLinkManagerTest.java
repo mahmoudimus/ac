@@ -5,6 +5,7 @@ import com.atlassian.oauth.Request;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.when;
 /**
  *
  */
+@ConvertToWiredTest
 @RunWith (MockitoJUnitRunner.class)
 public class OAuthLinkManagerTest
 {

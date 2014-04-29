@@ -8,11 +8,13 @@ import com.atlassian.confluence.pageobjects.component.editor.InsertMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
@@ -24,9 +26,7 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriverTest
@@ -255,7 +255,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
 
         MacroList macroList = editorContent.autoCompleteMacroList(SIMPLE_MACRO_ALIAS);
-        assertThat(macroList.hasEntryWithKey(SIMPLE_MACRO_KEY), is(true));
+        assertThat(macroList.hasEntryWithKey(getAddonAndMacroKey(SIMPLE_MACRO_KEY)), is(true));
     }
 
     @Test
@@ -282,7 +282,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editorPage.openInsertMenu();
 
-        assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
+        assertThat(insertMenu.hasEntryWithKey(getAddonAndMacroKey(FEATURED_MACRO_KEY)), is(true));
     }
 
     @Test
@@ -310,7 +310,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+        RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
 
         String content = dialog.getEmbeddedPage().getValueById("description");
 
@@ -326,7 +326,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+        RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
 
         assertThat(dialog.cancel(), is(true));
     }
@@ -340,11 +340,12 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+        RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
 
         boolean submitted = dialog.submit();
 
         editorPage.cancel();
+        
         assertThat(submitted, is(true));
     }
 
@@ -360,6 +361,13 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
     protected abstract String getAddonBaseUrl();
 
+    protected abstract ConnectAddonBean getCurrentAddon();
+
+    protected String getAddonAndMacroKey(String module)
+    {
+        return ModuleKeyUtils.addonAndModuleKey(getCurrentAddon().getKey(), module);
+    }
+    
     protected void selectMacro(CreatePage editorPage, String macroName)
     {
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();

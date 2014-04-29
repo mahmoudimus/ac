@@ -15,24 +15,37 @@
     </plugin-info>
 
     <!-- NOTE, this plugin has to be transformed because there's some magic that makes wired tests work -->
+    
+    <!-- FRAMEWORK COMPONENTS -->
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
-    <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry"/>
-    <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService" />
-    <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService"/>
+    <component-import key="salUserManager" interface="com.atlassian.sal.api.user.UserManager" />
+    <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
+    <component-import key="crowdApplicationService" interface="com.atlassian.crowd.manager.application.ApplicationService" />
+    <component-import key="crowdApplicationManager" interface="com.atlassian.crowd.manager.application.ApplicationManager" />
+    
+    <!-- CONNECT COMPONENTS -->
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager" />
     <component-import key="connectDescriptorValidator" interface="com.atlassian.plugin.connect.modules.schema.ConnectDescriptorValidator" />
     <component-import key="connectSchemaLocator" interface="com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator" />
-    <component-import key="crowdApplicationManager" interface="com.atlassian.crowd.manager.application.ApplicationManager" />
-    <component-import key="crowdApplicationService" interface="com.atlassian.crowd.manager.application.ApplicationService" />
-    <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
+    <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry"/>
+    <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService"/>
+    <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService" />
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry" />
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
-    <component-import key="salUserManager" interface="com.atlassian.sal.api.user.UserManager" />
-    <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
 
+    <!-- CONNECT MODULE PROVIDERS -->
+    <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
+    <component-import key="workflowPostFunctionModuleProvider" application="jira" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider" />
+
+    <!-- CONNECT DESCRIPTOR FACTORIES -->
+    <component-import key="tabPanelDescriptorFactory" application="jira" interface="com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory" />
+    <component-import key="webSectionDescriptorFactory" interface="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory" />
+
+    <!-- CONNECT TEST SUPPORT -->
     <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller" />
     <component-import key="testFilterResults" interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults" />
-    
+
+    <!-- OUR OWN LOCAL COMPONENTS -->
     <component key="jiraTestAuthenticator" 
                class="it.com.atlassian.plugin.connect.JiraTestAuthenticator" 
                interface="it.com.atlassian.plugin.connect.TestAuthenticator"

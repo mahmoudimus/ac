@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-public final class MustacheServlet extends ContextServlet
+public class MustacheServlet extends ContextServlet
 {
     private final String templatePath;
 

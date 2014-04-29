@@ -63,7 +63,7 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testPageMacro() throws XmlRpcFault, IOException
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "test", loadResourceAsString("confluence/test-page-macro.xhtml"));
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "testPageMacro", loadResourceAsString("confluence/test-page-macro.xhtml"));
         loginAsBetty();
         ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-0");
 
@@ -75,7 +75,7 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testPageMacroMultipleImplementations() throws XmlRpcFault, IOException
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "test", loadResourceAsString("confluence/test-page-macro-multiple.xhtml"));
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "testMultiMacro", loadResourceAsString("confluence/test-page-macro-multiple.xhtml"));
         loginAsBetty();
 
         ConfluencePageMacroPage iframe1 = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-0");
@@ -88,24 +88,5 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
         assertEquals(OAuthUtils.getConsumerKey(), iframe2.getConsumerKey());
     }
 
-    public static final class MyMacroServlet extends HttpServlet
-    {
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
-            final String pageId = req.getParameter("ctx_page_id");
-            final String favoriteFooty = req.getParameter("footy");
-            final String body = req.getParameter("body");
-            resp.setDateHeader("Expires", System.currentTimeMillis() + TimeUnit.DAYS.toMillis(10));
-            resp.setHeader("Cache-Control", "public");
-
-            renderHtml(resp, "confluence/macro/extended.mu", new HashMap<String, Object>()
-            {{
-                    put("pageId", pageId);
-                    put("footy", favoriteFooty);
-                    put("body", body);
-                    put("server", "???");
-                }});
-        }
-    }
+    
 }

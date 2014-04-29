@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.Condition;
@@ -48,21 +49,21 @@ public class WebItemModuleDescriptorFactory
     }
 
     @Override
-    public WebItemModuleDescriptor createModuleDescriptor(Plugin plugin, WebItemModuleBean bean)
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebItemModuleBean bean)
     {
-        return createModuleDescriptor(plugin, bean, Collections.<Class<? extends Condition>>emptyList());
+        return createModuleDescriptor(addon, theConnectPlugin, bean, Collections.<Class<? extends Condition>>emptyList());
     }
 
-    public WebItemModuleDescriptor createModuleDescriptor(Plugin plugin, WebItemModuleBean bean, Class<? extends Condition> additionalCondition)
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebItemModuleBean bean, Class<? extends Condition> additionalCondition)
     {
-        return createModuleDescriptor(plugin, bean, Collections.<Class<? extends Condition>>singletonList(additionalCondition));
+        return createModuleDescriptor(addon, theConnectPlugin, bean, Collections.<Class<? extends Condition>>singletonList(additionalCondition));
     }
 
-    public WebItemModuleDescriptor createModuleDescriptor(Plugin plugin, WebItemModuleBean bean, Iterable<Class<? extends Condition>> additionalConditions)
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebItemModuleBean bean, Iterable<Class<? extends Condition>> additionalConditions)
     {
         Element webItemElement = new DOMElement("web-item");
 
-        String webItemKey = bean.getKey();
+        String webItemKey = bean.getKey(addon);
 
         webItemElement.addAttribute("key", webItemKey);
         webItemElement.addAttribute("section", bean.getLocation());
@@ -79,7 +80,7 @@ public class WebItemModuleDescriptorFactory
                     .setText(bean.getTooltip().getValue());
         }
 
-        String linkId = plugin.getKey() + "-" + webItemKey;
+        String linkId = addon.getKey() + "-" + webItemKey;
         Element linkElement = webItemElement.addElement("link").addAttribute("linkId", linkId);
         String url = bean.getUrl();
         linkElement.setText(url);
@@ -88,12 +89,12 @@ public class WebItemModuleDescriptorFactory
 
         if (null != bean.getIcon())
         {
-            webItemElement.add(iconModuleFragmentFactory.createFragment(plugin.getKey(), bean.getIcon()));
+            webItemElement.add(iconModuleFragmentFactory.createFragment(addon.getKey(), bean.getIcon()));
         }
 
         if (!bean.getConditions().isEmpty())
         {
-            webItemElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions(),
+            webItemElement.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions(),
                     additionalConditions));
         }
 
@@ -108,7 +109,7 @@ public class WebItemModuleDescriptorFactory
 
         if (!bean.getTarget().isPageTarget())
         {
-            styles.add("ap-plugin-key-" + plugin.getKey());
+            styles.add("ap-plugin-key-" + addon.getKey());
             styles.add("ap-module-key-" + webItemKey);
         }
 
@@ -138,23 +139,23 @@ public class WebItemModuleDescriptorFactory
             log.debug("Created web item: " + printNode(webItemElement));
         }
 
-        return createWebItemDescriptor(plugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog);
+        return createWebItemDescriptor(addon, theConnectPlugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog);
     }
 
-    private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element webItemElement, String moduleKey, String url,
+    private WebItemModuleDescriptor createWebItemDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, Element webItemElement, String moduleKey, String url,
                                                             boolean absolute, AddOnUrlContext urlContext, boolean isDialog)
     {
         webItemElement.addAttribute("system", "true");
 
         final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(
                 url
-                , plugin.getKey()
+                , addon.getKey()
                 , moduleKey
                 , absolute
                 , urlContext
                 , isDialog);
 
-        descriptor.init(plugin, webItemElement);
+        descriptor.init(theConnectPlugin, webItemElement);
 
         return descriptor;
     }

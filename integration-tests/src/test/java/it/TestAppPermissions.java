@@ -14,6 +14,8 @@ import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableMap;
+
+import org.junit.After;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -40,48 +42,57 @@ public class TestAppPermissions extends ConnectWebDriverTestBase
     public static final String EXTRA_PREFIX = "servlet-";
     private static final String LICENSE_RESPONSE_STATUS_CODE_ID = "licenseResponseStatusCode";
 
+    private AtlassianConnectAddOnRunner runner;
+    
+    @After
+    public void killRunner() throws Exception
+    {
+        if(null != runner)
+        {
+            runner.stopAndUninstall();
+        }
+    }
+    
     @Test
     public void testNoPermissions() throws Exception
     {
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+        runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .description("foo")
                 .addOAuth();
 
-        runner.add(GeneralPageModule.key("page")
-                                    .name("Page")
-                                    .path("/page")
+        runner.add(GeneralPageModule.key("appPermPage")
+                                    .name("App Perm Page")
+                                    .path("/apppermpage")
                                     .resource(new CallServlet(product.getProductInstance().getBaseUrl(), runner.getSignedRequestHandler().get())))
               .start();
 
-        String status = product.visit(MessagePage.class, runner.getPluginKey(), "page", EXTRA_PREFIX).getMessage();
+        String status = product.visit(MessagePage.class, runner.getPluginKey(), "appPermPage", EXTRA_PREFIX).getMessage();
         assertEquals("403", status);
-        runner.stopAndUninstall();
     }
 
 
     @Test
     public void testPluginDoesntHavePermissionToRetrievePluginLicense() throws Exception
     {
-        AtlassianConnectAddOnRunner runner = createLicenseRetrievingPlugin().start();
+        runner = createLicenseRetrievingPlugin().start();
 
         assertThat(visitLicenseResponsePage().waitForValue(LICENSE_RESPONSE_STATUS_CODE_ID), is("403"));
 
-        runner.stopAndUninstall();
     }
 
     @Test
     public void testPluginHasPermissionsToRetrievePluginLicense() throws Exception
     {
-        AtlassianConnectAddOnRunner runner = createLicenseRetrievingPlugin(Permissions.READ_LICENSE).start();
+        runner = createLicenseRetrievingPlugin(Permissions.READ_LICENSE).start();
 
         assertThat(visitLicenseResponsePage().waitForValue(LICENSE_RESPONSE_STATUS_CODE_ID), not("403"));
 
-        runner.stopAndUninstall();
     }
 
     private RemotePluginTestPage visitLicenseResponsePage()
     {
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        logout();
+        loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "pluginLicensePage", "Plugin License Page", EXTRA_PREFIX);
         return page.clickRemotePluginLink();
     }

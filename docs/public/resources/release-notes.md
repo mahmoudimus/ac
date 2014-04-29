@@ -3,16 +3,16 @@
 
 ## [1.1.0](../release-notes/1-1-rc.html)
 * Support for managing cookies through javascript. Check out the [cookie api](../javascript/module-cookie.html)
-* Support for managing browser history through javascript. Check out the [history api](../javascript/module-history.html)
+* API clarification: when targeting HTTP requests to an add-on the `baseUrl` of an add-on is not included in the canonical query for query hash computation.
+
+## [1.0.1](../release-notes/1-0-1.html)
+* Allow POST method for "screens/addToDefault/{fieldId}"
+* UPM auto-update fails to upgrade add-on
 
 ## [1.0.2](../release-notes/1-0-2.html)
 * Fixed workflow post functions
 * Support for hidden macros in the macro browser
 * Removing content from Web-panel no longer leaves grey bar in place
-
-## [1.0.1](../release-notes/1-0-1.html)
-* Allow POST method for "screens/addToDefault/{fieldId}"
-* UPM auto-update fails to upgrade add-on
 
 ## [1.0.0](../release-notes/1-0.html)
 * Installing an add-on into OnDemand will not work unless the base url starts with https

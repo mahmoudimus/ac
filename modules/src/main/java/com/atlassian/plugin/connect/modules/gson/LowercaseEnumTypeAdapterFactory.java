@@ -59,7 +59,7 @@ public class LowercaseEnumTypeAdapterFactory implements TypeAdapterFactory
 
         public T read(JsonReader reader) throws IOException
         {
-            return lowercaseToConstant.get(reader.nextString());
+            return lowercaseToConstant.get(reader.nextString().toLowerCase());
         }
     }
 }
