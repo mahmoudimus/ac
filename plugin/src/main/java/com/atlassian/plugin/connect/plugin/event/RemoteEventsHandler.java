@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
+import com.atlassian.plugin.connect.spi.event.RemotePluginInstallFailedEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginInstalledEvent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
@@ -46,8 +47,6 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
-
-//import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 
 /**
  * For handling legacy xml-descriptor add-ons. See {@link com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager} for JSON-descriptor add-ons.
@@ -139,11 +138,14 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                             Response response = request.execute(Request.Method.POST).claim();
                             if (response.getStatusCode() != 200)
                             {
-                                log.error("Error contacting remote application [" + response.getStatusText() + "]");
-                                throw new PluginInstallException("Error contacting remote application [" + response.getStatusText() + "]", errorI18nKey);
+                                String message = "Error contacting remote application [" + response.getStatusText() + "]";
+                                log.error(message);
+                                eventPublisher.publish(new RemotePluginInstallFailedEvent(addon.getKey(), response.getStatusCode(), response.getStatusText()));
+                                throw new PluginInstallException(message, errorI18nKey);
                             }
                             else
                             {
+                                eventPublisher.publish(new RemotePluginInstalledEvent(addon.getKey(), data));
                                 called = true;
                             }
                         }
@@ -154,6 +156,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         catch (Exception e)
         {
             log.error("Error contacting remote application [" + e.getMessage() + "]", e);
+            eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, 400, e.getMessage()));
             throw new PluginInstallException("Error contacting remote application [" + e.getMessage() + "]", errorI18nKey);
         }
 
@@ -199,7 +202,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
     {
         final Consumer consumer = consumerService.getConsumer();
 
-        ImmutableMap.Builder builder = ImmutableMap.<String, Object>builder()
+        ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()
                                                    .put("links", ImmutableMap.of(
                                                            "oauth", applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/latest/oauth"))
                                                    .put("clientKey", nullToEmpty(consumer.getKey()))

@@ -23,7 +23,7 @@ public class TestSchemaGenerator
     public void testName() throws Exception
     {
         JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
-                true
+                EnumCase.LOWER
                 , new InterfaceListBuilder()
                 .withImplementation(SimpleSmell.class)
                 .withImplementation(ComplexSmell.class)
@@ -46,7 +46,7 @@ public class TestSchemaGenerator
     public void testCommonAttrs() throws Exception
     {
         JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
-                true
+                EnumCase.LOWER
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
                 ,""
@@ -66,7 +66,7 @@ public class TestSchemaGenerator
     public void testInheritance() throws Exception
     {
         JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
-                true
+                EnumCase.LOWER
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
                 ,""
@@ -88,7 +88,7 @@ public class TestSchemaGenerator
     public void testStringAttrs() throws Exception
     {
         JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
-                true
+                EnumCase.LOWER
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
                 ,""
@@ -108,7 +108,7 @@ public class TestSchemaGenerator
     public void testNumericAttrs() throws Exception
     {
         JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
-                true
+                EnumCase.LOWER
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
                 ,""
@@ -128,7 +128,7 @@ public class TestSchemaGenerator
     public void testArrayAttrs() throws Exception
     {
         JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
-                true
+                EnumCase.LOWER
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
                 ,""
@@ -148,7 +148,7 @@ public class TestSchemaGenerator
     public void testObjectAttrs() throws Exception
     {
         JsonSchemaGenerator generator = new DefaultJsonSchemaGeneratorProvider().provide(
-                true
+                EnumCase.LOWER
                 , new InterfaceListBuilder().build()
                 , new JsonSchemaDocs()
                 ,""

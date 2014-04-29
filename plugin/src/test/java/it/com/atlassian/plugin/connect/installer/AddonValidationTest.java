@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -68,7 +69,7 @@ public class AddonValidationTest
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(installed);
+                testPluginInstaller.uninstallAddon(installed);
             }
             catch (Exception e)
             {
@@ -81,6 +82,7 @@ public class AddonValidationTest
     {
         return new ConnectAddonBeanBuilder()
                 .withKey("ac-test-" + System.currentTimeMillis())
+                .withModule("webItems", randomWebItemBean())
                 .withBaseurl("https://example.com/");
     }
 
@@ -92,12 +94,12 @@ public class AddonValidationTest
 
     private void install(ConnectAddonBean addonBean) throws Exception
     {
-        installedPlugin.set(testPluginInstaller.installPlugin(addonBean));
+        installedPlugin.set(testPluginInstaller.installAddon(addonBean));
     }
 
     private void install(String jsonDescriptor) throws Exception
     {
-        installedPlugin.set(testPluginInstaller.installPlugin(jsonDescriptor));
+        installedPlugin.set(testPluginInstaller.installAddon(jsonDescriptor));
     }
 
     private void installExpectingUpmErrorCode(ConnectAddonBean addonBean, String errorCode) throws Exception
@@ -109,7 +111,9 @@ public class AddonValidationTest
         }
         catch (PluginInstallException e)
         {
-            assertEquals(errorCode, e.getCode().get());
+            String actualCode = (e.getCode().isDefined()) ? e.getCode().get() : e.getMessage();
+            
+            assertEquals(errorCode, actualCode);
         }
     }
 
@@ -122,7 +126,9 @@ public class AddonValidationTest
         }
         catch (PluginInstallException e)
         {
-            assertEquals(errorCode, e.getCode().get());
+            String actualCode = (e.getCode().isDefined()) ? e.getCode().get() : e.getMessage();
+            
+            assertEquals(errorCode, actualCode);
         }
     }
 
@@ -312,7 +318,7 @@ public class AddonValidationTest
     @Test
     public void installedMalformedJSONDescriptorResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(TestFileReader.readAddonTestFile("malformedDescriptor.json"), "connect.invalid.descriptor.malformed.json");
+        installExpectingUpmErrorCode(TestFileReader.readAddonTestFile("malformedDescriptor.json"), invalidDescriptorErrorMessage());
     }
 
     private ConnectAddonBeanBuilder testBeanBuilderWithJwtAndInstalledCallback()
@@ -335,5 +341,10 @@ public class AddonValidationTest
     {
         return i18nResolver.getText("connect.install.error.remote.descriptor.validation",
                 applicationProperties.getDisplayName());
+    }
+    
+    private String invalidDescriptorErrorMessage()
+    {
+        return i18nResolver.getText("connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 }

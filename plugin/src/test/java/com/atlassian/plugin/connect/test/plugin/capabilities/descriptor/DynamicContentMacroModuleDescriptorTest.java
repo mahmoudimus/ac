@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
@@ -14,6 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacroModuleDescriptorTest<DynamicContentMacroModuleBean, DynamicContentMacroModuleBeanBuilder>
 {
@@ -30,7 +32,7 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
                 macroModuleContextExtractor);
 
         DynamicContentMacroModuleBean bean = createBeanBuilder().build();
-        return macroModuleDescriptorFactory.createModuleDescriptor(plugin, bean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(addon, plugin, bean);
     }
 
     @Override

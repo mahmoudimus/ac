@@ -76,7 +76,7 @@ public class WorkflowPostFunctionModuleBeanTest
         Gson gson = ConnectModulesGsonFactory.getGson();
         WorkflowPostFunctionModuleBean addOn = gson.fromJson(json, WorkflowPostFunctionModuleBean.class);
 
-        assertEquals("my-function", addOn.getKey());
+        assertEquals("my-function", addOn.getRawKey());
         assertEquals("My function", addOn.getName().getValue());
         assertEquals("my.function", addOn.getName().getI18n());
         assertEquals("My function explanation", addOn.getDescription().getValue());

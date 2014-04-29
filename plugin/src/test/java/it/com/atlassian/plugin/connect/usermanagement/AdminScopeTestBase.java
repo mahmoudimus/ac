@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
@@ -83,7 +84,7 @@ public abstract class AdminScopeTestBase
     public void isNoLongerTopLevelAdminAfterReinstallWithDowngradedScope() throws IOException
     {
         plugin = installPlugin(getScope());
-        testPluginInstaller.uninstallPlugin(plugin);
+        testPluginInstaller.uninstallAddon(plugin);
         plugin = installPlugin(getScopeOneDown());
         assertEquals(false, isUserTopLevelAdmin(getAddonUsername(plugin)));
     }
@@ -109,6 +110,7 @@ public abstract class AdminScopeTestBase
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
                 .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+                .withModule("webItems", randomWebItemBean())
                 .build();
     }
 
@@ -117,7 +119,7 @@ public abstract class AdminScopeTestBase
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
         testAuthenticator.unauthenticate();
     }
@@ -129,7 +131,7 @@ public abstract class AdminScopeTestBase
                 .build();
 
         LOG.warn("Installing test plugin '{}'", addonBean.getKey());
-        Plugin installedPlugin = testPluginInstaller.installPlugin(addonBean);
+        Plugin installedPlugin = testPluginInstaller.installAddon(addonBean);
         checkArgument(null != installedPlugin, "'installedPlugin' should not be null after installation: check the logs for installation messages");
         return installedPlugin;
     }

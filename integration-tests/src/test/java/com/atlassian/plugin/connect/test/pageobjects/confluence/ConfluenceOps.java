@@ -29,7 +29,7 @@ public final class ConfluenceOps
     public ConfluencePageData setPage(Option<ConfluenceUser> user, String spaceKey, String titlePrefix, String content) throws MalformedURLException, XmlRpcFault
     {
         final Map<String, Object> struct = newXmlRpcStruct();
-        struct.put("title", titlePrefix + "_" + System.currentTimeMillis());
+        struct.put("title", titlePrefix + "_" + System.nanoTime());
         struct.put("space", spaceKey);
         struct.put("content", content);
         return new ConfluencePageData(asMap(getClient(user).invoke("confluence2.storePage", new Object[]{"", struct})));

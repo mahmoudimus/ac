@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.*;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -47,6 +48,15 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
                             ConnectViewProfilePanelModuleDescriptor.class, ConnectIFrameProfileTabPanel.class))
                     .build();
 
+    public static final Map<Class<? extends ModuleDescriptor>, String> DESCRIPTOR_TO_FIELD =
+            new ImmutableMap.Builder<Class<? extends ModuleDescriptor>, String>()
+                    .put(ConnectIssueTabPanelModuleDescriptor.class, ISSUE_TAB_PANELS)
+                    .put(ConnectProjectTabPanelModuleDescriptor.class, PROJECT_TAB_PANELS)
+                    .put(ConnectComponentTabPanelModuleDescriptor.class, COMPONENT_TAB_PANELS)
+                    .put(ConnectVersionTabPanelModuleDescriptor.class, VERSION_TAB_PANELS)
+                    .put(ConnectViewProfilePanelModuleDescriptor.class, PROFILE_TAB_PANELS)
+                    .build();
+
     @Autowired
     public ConnectTabPanelModuleProvider(ConnectTabPanelModuleDescriptorFactory descriptorFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -58,7 +68,7 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName,
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName,
                                                  List<ConnectTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
@@ -69,17 +79,17 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
             {
                 // register a render strategy for tab panels
                 IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                        .addOn(plugin.getKey())
-                        .module(bean.getKey())
+                        .addOn(addon.getKey())
+                        .module(bean.getKey(addon))
                         .genericBodyTemplate()
                         .urlTemplate(bean.getUrl())
                         .conditions(bean.getConditions())
                         .title(bean.getDisplayName())
                         .build();
-                iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
+                iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
 
                 // construct a module descriptor that JIRA will use to retrieve tab modules from
-                builder.add(descriptorFactory.createModuleDescriptor(plugin, bean, FIELD_TO_HINTS.get(jsonFieldName)));
+                builder.add(descriptorFactory.createModuleDescriptor(addon, theConnectPlugin, bean, FIELD_TO_HINTS.get(jsonFieldName)));
             }
         }
 

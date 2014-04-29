@@ -80,7 +80,7 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withModules("jiraWorkflowPostFunctions", bean)
                 .build();
 
-        plugin = testPluginInstaller.installPlugin(addon);
+        plugin = testPluginInstaller.installAddon(addon);
     }
 
     @AfterClass
@@ -88,7 +88,7 @@ public class WorkflowPostFunctionModuleProviderTest
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
 
     }

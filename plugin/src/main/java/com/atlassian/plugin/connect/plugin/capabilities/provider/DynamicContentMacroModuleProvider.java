@@ -2,18 +2,18 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
+import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
@@ -30,26 +30,26 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
                                              AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
                                              IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                              IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-										     I18nPropertiesPluginManager i18nPropertiesPluginManager)
+										     ConnectAddonI18nManager connectAddonI18nManager)
     {
-        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, i18nPropertiesPluginManager);
+        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
         this.dynamicContentMacroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 
     @Override
-    protected ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, DynamicContentMacroModuleBean macroBean)
+    protected ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon,Plugin theConnectPlugin, DynamicContentMacroModuleBean macroBean)
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(plugin.getKey())
-                .module(macroBean.getKey())
+                .addOn(addon.getKey())
+                .module(macroBean.getKey(addon))
                 .genericBodyTemplate(macroBean.getOutputType() == MacroOutputType.INLINE)
                 .urlTemplate(macroBean.getUrl())
                 .dimensions(macroBean.getWidth(), macroBean.getHeight())
                 .ensureUniqueNamespace(true)
                 .build();
 
-        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), CONTENT_CLASSIFIER, renderStrategy);
+        iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getRawKey(), CONTENT_CLASSIFIER, renderStrategy);
 
-        return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(plugin, macroBean);
+        return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, macroBean);
     }
 }

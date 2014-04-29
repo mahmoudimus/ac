@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module.jira;
 
-import java.net.URI;
-
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptor;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -9,7 +7,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
@@ -17,8 +15,9 @@ import com.atlassian.plugin.connect.spi.module.IFrameViewProfilePanel;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
+
+import java.net.URI;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredUriAttribute;
@@ -29,16 +28,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final IFrameRendererImpl iFrameRenderer;
     private Element descriptor;
     private URI url;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public JiraProfileTabModuleDescriptor(
             ModuleFactory moduleFactory,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             JiraAuthenticationContext jiraAuthenticationContext,
             IFrameRendererImpl iFrameRenderer)
     {
@@ -107,5 +106,11 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
         });
         descriptor.init(getPlugin(), config);
         return descriptor;
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 }

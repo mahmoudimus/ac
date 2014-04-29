@@ -2,6 +2,7 @@ package it.capabilities.jira;
 
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
@@ -20,6 +21,8 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 import static it.capabilities.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.*;
@@ -31,7 +34,6 @@ import static org.junit.Assert.assertThat;
  */
 public class TestGeneralPage extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
     private static final String KEY_MY_CONTEXT_PAGE = "my-context-page";
     private static final String KEY_MY_AWESOME_PAGE = "my-awesome-page";
     private static final String PAGE_NAME = "My Awesome Page";
@@ -41,6 +43,10 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
     
     private static ConnectRunner remotePlugin;
+    
+    private String addonKey;
+    private String awesomePageModuleKey;
+    private String contextPageModuleKey;
 
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
@@ -48,7 +54,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
                 .setAuthenticationToNone()
                 .addModules(
                         "generalPages",
@@ -81,6 +87,14 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         }
     }
 
+    @Before
+    public void beforeEachTest()
+    {
+        this.addonKey = remotePlugin.getAddon().getKey();
+        this.awesomePageModuleKey = addonAndModuleKey(addonKey,KEY_MY_AWESOME_PAGE);
+        this.contextPageModuleKey = addonAndModuleKey(addonKey,KEY_MY_CONTEXT_PAGE);
+    }
+    
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
@@ -88,12 +102,12 @@ public class TestGeneralPage extends JiraWebDriverTestBase
 
         product.visit(JiraViewProjectPage.class, project.getKey());
 
-        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, PAGE_NAME);
+        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, awesomePageModuleKey, PAGE_NAME);
 
         assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/" + KEY_MY_AWESOME_PAGE));
+        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));
 
         RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
         assertThat(addonContentsPage.isFullSize(), is(true));
@@ -111,16 +125,16 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         loginAsAdmin();
 
         // web item should be displayed
-        assertThat("Expected web-item for page to be present", connectPageOperations.existsWebItem(KEY_MY_AWESOME_PAGE), is(true));
+        assertThat("Expected web-item for page to be present", connectPageOperations.existsWebItem(awesomePageModuleKey), is(true));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         product.visit(HomePage.class);
         // web item should not be displayed
-        assertThat("Expected web-item for page to NOT be present", connectPageOperations.existsWebItem(KEY_MY_AWESOME_PAGE), is(false));
+        assertThat("Expected web-item for page to NOT be present", connectPageOperations.existsWebItem(awesomePageModuleKey), is(false));
 
         // directly retrieving page should result in access denied
-        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, PLUGIN_KEY, KEY_MY_AWESOME_PAGE);
+        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, addonKey, moduleKeyOnly(awesomePageModuleKey));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(PAGE_NAME));
     }
@@ -135,7 +149,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         
         product.visit(JiraViewProjectPage.class, project.getKey());
 
-        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_CONTEXT_PAGE, CONTEXT_PAGE_NAME);
+        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, contextPageModuleKey, CONTEXT_PAGE_NAME);
 
         assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
 

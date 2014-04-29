@@ -93,7 +93,7 @@ public class TestJira extends JiraWebDriverTestBase
             {
                 RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
                 JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
-                        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey(), remotePlugin.getPluginKey());
+                        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey(), remotePlugin.getPluginKey(), remotePlugin.getPluginKey() + ":");
                 Assert.assertEquals("Success", page.getMessage());
                 return null;
             }

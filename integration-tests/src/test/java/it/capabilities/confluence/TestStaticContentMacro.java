@@ -4,6 +4,7 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
@@ -180,5 +181,11 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     protected String getAddonBaseUrl()
     {
         return remotePlugin.getAddon().getBaseUrl();
+    }
+
+    @Override
+    protected ConnectAddonBean getCurrentAddon()
+    {
+        return remotePlugin.getAddon();
     }
 }

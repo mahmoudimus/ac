@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Strings;
 
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -74,7 +75,19 @@ public final class AtlassianConnectRestClient
         HttpDelete delete = new HttpDelete(UpmTokenRequestor.getUpmPluginResource(baseUrl, appKey));
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        userRequestSender.sendRequestAsUser(delete, responseHandler, defaultUsername, defaultPassword);
+        
+        try
+        {
+            userRequestSender.sendRequestAsUser(delete, responseHandler, defaultUsername, defaultPassword);
+        }
+        catch (HttpResponseException e)
+        {
+            //eat 404's as it means the addon does not exist
+            if(e.getStatusCode() != 404)
+            {
+                throw e;
+            }
+        }
     }
 
     public String getUpmPluginJson(String appKey) throws Exception

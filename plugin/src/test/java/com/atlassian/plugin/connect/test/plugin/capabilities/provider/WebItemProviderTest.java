@@ -1,15 +1,12 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IconModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
@@ -26,13 +23,17 @@ import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.descrip
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.when;
 /**
  * @since 1.0
  */
+@ConvertToWiredTest
 @Ignore("convert to wired test")
 public class WebItemProviderTest
 {
@@ -55,11 +57,13 @@ public class WebItemProviderTest
     private HttpServletRequest servletRequest;
     private IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private ConnectAddonBean addon;
 
     @Before
     public void setup() throws Exception
     {
         plugin = new PluginForTests("my-key", "My Plugin");
+        this.addon = newConnectAddonBean().withKey("my-key").build();
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
         webInterfaceManager = mock(WebInterfaceManager.class);
         webFragmentHelper = mock(WebFragmentHelper.class);
@@ -103,7 +107,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -125,7 +129,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -147,7 +151,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -168,7 +172,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -190,7 +194,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -212,7 +216,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -239,7 +243,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(plugin, JSON_FIELD_NAME, newArrayList(bean, bean2));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean, bean2));
 
         assertEquals(2, descriptors.size());
 

@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
@@ -18,6 +19,7 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,7 +46,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
                 .setAuthenticationToNone()
                 .addModules("generalPages",
                         newPageBean()
@@ -100,11 +102,11 @@ public class TestDialog extends ConnectWebDriverTestBase
     public void testOpenCloseDialogKey() throws Exception
     {
         loginAsAdmin();
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME);
+        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_GENERALPAGE), ADDON_GENERALPAGE_NAME);
         remotePage.clickRemotePluginLink();
 
-        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, ADDON_GENERALPAGE, remotePlugin.getAddon().getKey());
-        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(ADDON_DIALOG);
+        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_GENERALPAGE), remotePlugin.getAddon().getKey());
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_DIALOG));
 
         // check the dimensions are the same as those in the js (mustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
@@ -122,11 +124,11 @@ public class TestDialog extends ConnectWebDriverTestBase
     public void testWebItemDialogOpenByKey() throws Exception
     {
         loginAsAdmin();
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG);
+        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_GENERALPAGE_WEBITEM_DIALOG), ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG);
         remotePage.clickRemotePluginLink();
 
-        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, ADDON_GENERALPAGE_WEBITEM_DIALOG, remotePlugin.getAddon().getKey());
-        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(ADDON_WEBITEM_DIALOG);
+        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_GENERALPAGE_WEBITEM_DIALOG), remotePlugin.getAddon().getKey());
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_WEBITEM_DIALOG));
 
         // check the dimensions are the same as those in the js (mustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));

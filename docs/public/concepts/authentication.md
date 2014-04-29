@@ -92,7 +92,7 @@ For example:
         "lifecycle": {
             "installed": "/add-on-installed-callback"
         }
-        modules: {} // etc
+        "modules": {} // etc
     }
 
 

@@ -21,6 +21,7 @@ requirejs.config({
     'iframe/host/_status_helper': '../src/main/resources/js/iframe/host/_status_helper',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'iframe/host/content': '../src/main/resources/js/iframe/host/content',
+    'iframe/host/analytics': '../src/main/resources/js/iframe/host/analytics',
     'iframe/host/history': '../src/main/resources/js/iframe/host/history',
     'dialog/main': '../src/main/resources/js/dialog/main',
     'dialog/button': '../src/main/resources/js/dialog/button',
@@ -138,6 +139,11 @@ requirejs.config({
         'iframe/host/_dollar'
         ]
     },
+    'iframe/host/analytics': {
+        deps: [
+        'iframe/host/_dollar'
+        ]
+    },
     ///////////////////
     //  SHARED SIDE  //
     ///////////////////
@@ -166,8 +172,16 @@ requirejs.config({
     'iframe/_xdm': {
       deps: [
         'iframe/_uri',
-        'iframe/_events'
+        'iframe/_events',
+        'iframe/host/analytics'
       ]
+    },
+    'iframe/host/analytics':{
+        deps: [
+        'iframe/host/_ap',
+        'iframe/host/_dollar',
+        'iframe/_amd'
+        ]
     },
     'iframe/host/main':{
         deps: [

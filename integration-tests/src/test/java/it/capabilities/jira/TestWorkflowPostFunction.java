@@ -40,8 +40,8 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                         newWorkflowPostFunctionBean()
                             .withName(new I18nProperty("My function", null))
                             .withKey(WORKFLOW_POST_FUNCTION_PAGE)
-                            .withView(new UrlBean("/wpf-view"))
-                            .withEdit(new UrlBean("/wpf-edit"))
+                            .withView(new UrlBean("/wpf-view?config={postFunction.config}"))
+                            .withEdit(new UrlBean("/wpf-edit?config={postFunction.config}"))
                             .withCreate(new UrlBean("/wpf-create"))
                             .withTriggered(new UrlBean("/wpf-triggered"))
                             .withDescription(new I18nProperty("workflow post function description", null))
@@ -82,7 +82,9 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
         JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction("my-plugin", WORKFLOW_POST_FUNCTION_PAGE);
         assertThat(addonPage.isLoaded(), equalTo(true));
         addonPage.submitWorkflowParams();
-        String workflowConfiguration = workflowTransitionPage.workflowPostFunctionConfigurationValue(WORKFLOW_POST_FUNCTION_PAGE);
+
+        JiraAddWorkflowTransitionFunctionParamsPage postFunction = workflowTransitionPage.updatePostFunction("my-plugin", WORKFLOW_POST_FUNCTION_PAGE);
+        String workflowConfiguration = postFunction.getIframeQueryParams().get("config");
         assertEquals("workflow configuration text", workflowConfiguration);
     }
 

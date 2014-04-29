@@ -21,6 +21,9 @@ We poll the add-on descriptor URL that you included when you submitted your list
 automatically update your add-on in the Atlassian Marketplace with a new version. The way we increment your version
 number depends on the changes made to your descriptor.
 
+**Note**: Our polling service uses user-agent **`Marketplacebot`**. You can search for this user-agent in your access logs to
+distinguish normal traffic from our polling service.
+
 ##Major, minor, and micro version update definitions  
 
 Updates are published to the Marketplace within a few minutes of detecting changes from your [descriptor file](../modules/). 

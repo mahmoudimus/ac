@@ -8,6 +8,8 @@ import org.openqa.selenium.By;
 
 import javax.inject.Inject;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+
 public class JiraAddWorkflowTransitionFunctionParamsPage extends RemotePluginEmbeddedTestPage
 {
     @Inject
@@ -15,9 +17,9 @@ public class JiraAddWorkflowTransitionFunctionParamsPage extends RemotePluginEmb
 
     @Inject private WebDriverPoller poller;
 
-    public JiraAddWorkflowTransitionFunctionParamsPage(String moduleKey)
+    public JiraAddWorkflowTransitionFunctionParamsPage(String addonKey, String moduleKey)
     {
-        super(moduleKey);
+        super(addonAndModuleKey(addonKey, moduleKey));
     }
 
     public void submitWorkflowParams()

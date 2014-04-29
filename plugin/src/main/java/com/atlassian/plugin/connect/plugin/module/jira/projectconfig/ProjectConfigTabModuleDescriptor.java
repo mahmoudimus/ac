@@ -5,7 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.*;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
@@ -41,7 +41,7 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
 	private final ProjectConfigTabPageBuilder projectConfigTabPageBuilder;
 	private final BundleContext bundleContext;
 	private final IFramePageRenderer iFramePageRenderer;
@@ -51,12 +51,12 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
     private Element descriptor;
 
 	private WebItemCreator.Builder webItemCreatorBuilder;
-	private DynamicDescriptorRegistration.Registration registration;
+	private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 	private Condition condition;
 
     public ProjectConfigTabModuleDescriptor(
             ModuleFactory moduleFactory,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             BundleContext bundleContext,
             IFramePageRenderer iFramePageRenderer,
             UserManager userManager,
@@ -189,4 +189,10 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 			return new DescriptorToRegister(descriptor);
 		}
 	}
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
+    }
 }

@@ -1,16 +1,15 @@
 package com.atlassian.plugin.connect.plugin.module.jira.issuepanel;
 
-import com.atlassian.plugin.hostcontainer.HostContainer;
-import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.webpanel.RemoteWebPanelModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.hostcontainer.HostContainer;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.sal.api.user.UserManager;
-
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 
@@ -25,7 +24,7 @@ public final class IssuePanelPageModuleDescriptor extends RemoteWebPanelModuleDe
     public IssuePanelPageModuleDescriptor(
             ModuleFactory moduleFactory,
             IFrameRendererImpl iFrameRenderer,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             HostContainer hostContainer,
             BundleContext bundleContext,
             ConditionProcessor conditionProcessor,
@@ -41,5 +40,11 @@ public final class IssuePanelPageModuleDescriptor extends RemoteWebPanelModuleDe
     protected String getLocation(final Element element)
     {
         return "atl.jira.view.issue.right.context";
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 }

@@ -7,7 +7,7 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -16,16 +16,13 @@ import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-
-import org.junit.Test;
-
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static org.junit.Assert.*;
 
 public abstract class AbstractAddonLifecycleTest
 {
@@ -80,9 +77,10 @@ public abstract class AbstractAddonLifecycleTest
         this.baseBean = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
                 .withAuthentication(authBean)
+                .withModule("webItems", randomWebItemBean())
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.installOnlyBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -93,7 +91,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.installAndEnabledBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -105,7 +103,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.installAndDisabledBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -117,7 +115,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.uninstallOnlyBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -128,7 +126,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.installAndUninstallBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -140,7 +138,7 @@ public abstract class AbstractAddonLifecycleTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .build();
 
-        addonKey = ModuleKeyGenerator.randomName(pluginKeyPrefix);
+        addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
         this.fullLifecycleBean = newConnectAddonBean(baseBean)
                 .withKey(addonKey)
                 .withLifecycle(
@@ -164,7 +162,7 @@ public abstract class AbstractAddonLifecycleTest
         String addonKey = null;
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
             
             addonKey = plugin.getKey();
             
@@ -177,7 +175,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -192,11 +190,11 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
             
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
@@ -209,7 +207,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -224,7 +222,7 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
             
@@ -239,7 +237,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -254,11 +252,11 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
 
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             assertFalse("addon user is active", connectAddOnUserService.isAddOnUserActive(addonKey));
@@ -272,7 +270,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -287,7 +285,7 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
 
@@ -295,10 +293,10 @@ public abstract class AbstractAddonLifecycleTest
             
             applicationService.removeUser(getApplication(),ADD_ON_USER_KEY_PREFIX + addonKey);
 
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
             UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
@@ -310,7 +308,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -325,7 +323,7 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
             final String finalKey = addonKey;
@@ -335,7 +333,7 @@ public abstract class AbstractAddonLifecycleTest
             UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
             assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
 
-            testPluginInstaller.disablePlugin(addonKey);
+            testPluginInstaller.disableAddon(addonKey);
 
             WaitUntil.invoke(new WaitUntil.WaitCondition()
             {
@@ -350,7 +348,7 @@ public abstract class AbstractAddonLifecycleTest
                 {
                     return "waiting for disable webhook post...";
                 }
-            });
+            },5);
 
             assertFalse("addon user is active", connectAddOnUserService.isAddOnUserActive(addonKey));
 
@@ -363,7 +361,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, DISABLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -378,7 +376,7 @@ public abstract class AbstractAddonLifecycleTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
             final String finalKey = addonKey;
@@ -388,7 +386,7 @@ public abstract class AbstractAddonLifecycleTest
             UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
             assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
 
-            testPluginInstaller.disablePlugin(addonKey);
+            testPluginInstaller.disableAddon(addonKey);
             WaitUntil.invoke(new WaitUntil.WaitCondition()
             {
                 @Override
@@ -402,13 +400,13 @@ public abstract class AbstractAddonLifecycleTest
                 {
                     return "waiting for disable webhook post...";
                 }
-            });
+            },5);
 
             assertFalse("addon user is active", connectAddOnUserService.isAddOnUserActive(addonKey));
 
             assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
 
-            testPluginInstaller.enablePlugin(addonKey);
+            testPluginInstaller.enableAddon(addonKey);
             WaitUntil.invoke(new WaitUntil.WaitCondition()
             {
                 @Override
@@ -422,7 +420,7 @@ public abstract class AbstractAddonLifecycleTest
                 {
                     return "waiting for enable webhook post...";
                 }
-            });
+            },5);
 
             assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
 
@@ -437,7 +435,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
