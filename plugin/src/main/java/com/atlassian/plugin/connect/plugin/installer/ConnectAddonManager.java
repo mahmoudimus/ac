@@ -429,10 +429,6 @@ public class ConnectAddonManager
         {
             applicationLink.removeProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
         }
-        else
-        {
-            log.error("Unable to disable the user for add-on '{}' because the add-on has no ApplicationLink!", addOnKey);
-        }
 
         connectAddOnUserService.disableAddonUser(addOnKey);
     }
