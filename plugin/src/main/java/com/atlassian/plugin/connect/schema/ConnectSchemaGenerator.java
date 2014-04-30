@@ -21,9 +21,9 @@ public class ConnectSchemaGenerator extends DefaultJsonSchemaGenerator
 {
     private final ProductFilter product;
     
-    public ConnectSchemaGenerator(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter, ProductFilter product)
+    public ConnectSchemaGenerator(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter, String shortClassnameField, ProductFilter product)
     {
-        super(enumCase, interfaceList, schemaDocs, ignoreFilter);
+        super(enumCase, interfaceList, schemaDocs, ignoreFilter, shortClassnameField);
         this.product = product;
     }
 

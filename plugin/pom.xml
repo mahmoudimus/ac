@@ -860,6 +860,7 @@
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
+                            <shortClassnameField>slug</shortClassnameField>
                         </configuration>
                     </execution>
                     <execution>
@@ -874,6 +875,7 @@
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
+                            <shortClassnameField>slug</shortClassnameField>
                         </configuration>
                     </execution>
                     <execution>
