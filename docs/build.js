@@ -16,11 +16,14 @@ var genSrcPrefix = buildDir + "/gensrc";
 
 var srcFiles = ["public", "package.json"];
 
-var jiraSchemaPath = '../plugin/target/classes/schema/jira-schema.json';
-var confluenceSchemaPath = '../plugin/target/classes/schema/confluence-schema.json';
-var jiraScopesPath = '../plugin/target/classes/com/atlassian/connect/scopes.jira.json';
-var confluenceScopesPath = '../plugin/target/classes/com/atlassian/connect/scopes.confluence.json';
-var commonScopesPath = '../plugin/target/classes/com/atlassian/connect/scopes.common.json';
+var jiraSchemaSourcePath =       '../plugin/target/classes/schema/jira-schema.json';
+var confluenceSchemaSourcePath = '../plugin/target/classes/schema/confluence-schema.json';
+
+var jiraSchemaPath =       'schema/schema/jira-schema.json';
+var confluenceSchemaPath = 'schema/schema/confluence-schema.json';
+var jiraScopesPath =       'schema/com/atlassian/connect/scopes.jira.json';
+var confluenceScopesPath = 'schema/com/atlassian/connect/scopes.confluence.json';
+var commonScopesPath =     'schema/com/atlassian/connect/scopes.common.json';
 
 program
   .option('-s, --serve', 'Serve and automatically watch for changes')
@@ -409,6 +412,7 @@ function rebuildHarpSite() {
 
     fs.deleteSync(buildDir);
 
+    dereferenceSchema();
     compileJsDocs();
 
     var schemas = {
@@ -499,7 +503,8 @@ function startHarpServerAndWatchSrcFiles() {
 
     harpServer = startHarpServer();
 
-    var watchedFiles = srcFiles.concat(jiraSchemaPath, confluenceSchemaPath);
+    var watchedFiles = srcFiles.concat(jiraSchemaSourcePath, confluenceSchemaSourcePath,
+                                       jiraSchemaPath, confluenceSchemaPath);
 
     var watcher = chokidar.watch(watchedFiles, {
         persistent:true,
@@ -523,6 +528,13 @@ function compileHarpSources() {
 
 function compileJsDocs() {
     fork('./node_modules/.bin/jsdoc', ["-c", "jsdoc-conf.json", "-t", "jsdoc-template"]);
+}
+
+function dereferenceSchema() {
+    var runOptions = [];
+    if (program.debug)
+        runOptions.push("-d");
+    fork('./de-ref.js', runOptions)
 }
 rebuildHarpSite();
 
