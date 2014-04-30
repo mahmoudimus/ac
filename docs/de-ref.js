@@ -46,7 +46,9 @@ function dereference(object, objectRoot, path) {
 
         // copy junk over
         for(var property in foundObj)
-          object[property] = foundObj[property];
+          // only copy if it's not already there
+          if (object[property] === undefined)
+            object[property] = foundObj[property];
       }
     }
   } 

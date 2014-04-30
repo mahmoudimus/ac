@@ -44,7 +44,7 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
             property.title = property.fieldTitle;
         }
 
-        property.slug = slugify(property.title || property.id);
+        property.slug = slugify(property.title || property.slug);
 
         if (property.type === "array") {
             property.id = id;
@@ -109,16 +109,17 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
  * Transform a schema entity root into a model object, suitable for rendering.
  */
 function entityToModel(schemaEntity) {
-    var name = schemaEntity.title || schemaEntity.id;
+    var name = schemaEntity.title || schemaEntity.slug;
     var description = renderMarkdown(schemaEntity.description || name);
 
     var model = {
-        id: schemaEntity.id,
+        id: schemaEntity.slug,
         name: name,
-        slug: slugify(schemaEntity.pageName || name),
+        slug: slugify(schemaEntity.slug || schemaEntity.pageName || name),
         description: description,
         type: schemaEntity.type
     };
+
 
     if (model.type === 'object') {
         model.properties = collapseArrayAndObjectProperties(schemaEntity.properties, schemaEntity.required, model);
@@ -130,8 +131,8 @@ function entityToModel(schemaEntity) {
             if (b.required && !a.required) {
                 return 1;
             }
-            a = (a.title || a.key).toLowerCase();
-            b = (a.title || b.key).toLowerCase();
+            a = (a.title || a.slug || "").toLowerCase();
+            b = (a.title || b.slug || "").toLowerCase();
             if (a < b) return -1;
             if (a > b) return 1;
             return 0;
@@ -232,6 +233,10 @@ function findProductModules(schemas, productId, productDisplayName) {
     // unwrap array types
     productModules = _.map(productModules, function (moduleOrArray) {
         return moduleOrArray.type === "array" ? moduleOrArray.items : moduleOrArray;
+    });
+    // remove slugs or other junk
+    productModules = _.filter(productModules, function(maybeAnObject) {
+      return maybeAnObject.type === "object";
     });
     var moduleList = schemas[productId].properties.modules;
     // the module list serves as our landing page for each product's modules
