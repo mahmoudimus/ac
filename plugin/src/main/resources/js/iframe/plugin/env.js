@@ -112,6 +112,9 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
 
     size: function (width, height, container) {
       var w = width == null ? "100%" : width, h, docHeight;
+      if(!container){
+        container = this.container();
+      }
       if (height) {
         h = height;
       } else {
