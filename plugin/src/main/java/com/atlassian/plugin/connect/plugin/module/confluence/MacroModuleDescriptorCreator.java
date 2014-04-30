@@ -18,7 +18,6 @@ import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.ContextParameterParser;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -45,7 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.net.URI;
 import java.util.*;
 
-import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
+import static com.atlassian.plugin.connect.plugin.module.util.redirect.LegacyAddonRedirectServlet.getPermanentRedirectUrl;
 import static com.atlassian.plugin.connect.plugin.util.EncodingUtils.escapeAll;
 import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;

@@ -12,7 +12,7 @@ _AP.define("dialog/simple", ["_dollar", "_uri", "host/_status_helper"], function
    * which the request to the Remotable Plugin to be signed with outgoing OAuth credentials.
    *
    * @param {String} contentUrl The URL (relative to the Atlassian app root) that will retrieve the content to display,
-   *           eg. "/plugins/servlet/atlassian-connect/app-key/macro".
+   *           eg. "/plugins/servlet/ac/app-key/macro".
    * @param {Object} options Options to configure the behaviour and appearance of the dialog.
    * @param {String} [options.header="Remotable Plugins Dialog Title"]  Dialog header.
    * @param {String} [options.headerClass="ap-dialog-header"] CSS class to apply to dialog header.
