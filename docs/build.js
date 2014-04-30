@@ -503,8 +503,7 @@ function startHarpServerAndWatchSrcFiles() {
 
     harpServer = startHarpServer();
 
-    var watchedFiles = srcFiles.concat(jiraSchemaSourcePath, confluenceSchemaSourcePath,
-                                       jiraSchemaPath, confluenceSchemaPath);
+    var watchedFiles = srcFiles.concat(jiraSchemaSourcePath, confluenceSchemaSourcePath);
 
     var watcher = chokidar.watch(watchedFiles, {
         persistent:true,
