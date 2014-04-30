@@ -11,7 +11,6 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
-import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -21,7 +20,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
@@ -115,13 +113,12 @@ public class ConnectAddonManager
     private final SharedSecretService sharedSecretService;
     private final HttpClientFactory httpClientFactory;
     private final ConnectAddonI18nManager i18nManager;
-    
+
     private final AtomicBoolean isTestHttpClient;
 
     @Inject
     public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
-                               RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient,
-                               JsonConnectAddOnIdentifierService connectIdentifier, ConnectAddonRegistry addonRegistry,
+                               RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient, ConnectAddonRegistry addonRegistry,
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
@@ -148,6 +145,17 @@ public class ConnectAddonManager
         this.i18nManager = i18nManager;
 
         this.isTestHttpClient = new AtomicBoolean(false);
+
+        if (Boolean.parseBoolean(System.getProperty(USE_TEST_HTTP_CLIENT, "false")) && !isTestHttpClient.get())
+        {
+            HttpClientOptions options = new HttpClientOptions();
+            options.setConnectionTimeout(testConnectionTimeout, TimeUnit.MILLISECONDS);
+            options.setRequestTimeout(testRequestTimeout, TimeUnit.MILLISECONDS);
+            options.setSocketTimeout(testSocketTimeout, TimeUnit.MILLISECONDS);
+
+            this.httpClient = httpClientFactory.create(options);
+            this.isTestHttpClient.set(true);
+        }
     }
 
     public boolean hasDescriptor(String pluginKey)
@@ -168,10 +176,10 @@ public class ConnectAddonManager
     public ConnectAddonBean installConnectAddon(String jsonDescriptor)
     {
         long startTime = System.currentTimeMillis();
-        
+
         Map<String, String> i18nCollector = newHashMap();
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nCollector);
-        
+
         String pluginKey = addOn.getKey();
 
         if(!i18nCollector.isEmpty())
@@ -186,7 +194,7 @@ public class ConnectAddonManager
                 log.error("Unable to write i18n props for addon '" + pluginKey + "'",e);
             }
         }
-        
+
         String previousDescriptor = addonRegistry.getDescriptor(pluginKey);
 
         AuthenticationType authType = addOn.getAuthentication().getType();
@@ -222,7 +230,7 @@ public class ConnectAddonManager
         eventPublisher.publish(new ConnectAddonInstalledEvent(pluginKey));
 
         long endTime = System.currentTimeMillis();
-        
+
         log.info("Connect addon '" + addOn.getKey() + "' installed in " + (endTime - startTime) + "ms");
         return addOn;
     }
@@ -347,9 +355,9 @@ public class ConnectAddonManager
                     {
                         try
                         {
-                            callSyncHandler(addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey, addon), SyncHandler.UNINSTALLED);
+                            callSyncHandler(addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey, addon));
                         }
-                        catch (PluginInstallException e)
+                        catch (LifecycleCallbackException e)
                         {
                             log.warn("Failed to notify remote host that add-on was uninstalled.", e);
                         }
@@ -400,7 +408,14 @@ public class ConnectAddonManager
 
     private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret)
     {
-        callSyncHandler(addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), sharedSecret, addon), ConnectAddonManager.SyncHandler.INSTALLED);
+        try
+        {
+            callSyncHandler(addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), sharedSecret, addon));
+        }
+        catch (LifecycleCallbackException e)
+        {
+            throw new PluginInstallException(e.getMessage(), e.getI18nKey());
+        }
     }
 
     // removing the property from the app link removes the Authenticator's ability to assign a user to incoming requests
@@ -439,85 +454,52 @@ public class ConnectAddonManager
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation
-    private void callSyncHandler(ConnectAddonBean addon, String path, String jsonEventData, SyncHandler handler)
+    private void callSyncHandler(ConnectAddonBean addon, String path, String jsonEventData) throws LifecycleCallbackException
     {
-        if (Boolean.parseBoolean(System.getProperty(USE_TEST_HTTP_CLIENT, "false")) && !isTestHttpClient.get())
-        {
-            HttpClientOptions options = new HttpClientOptions();
-            options.setConnectionTimeout(testConnectionTimeout, TimeUnit.MILLISECONDS);
-            options.setRequestTimeout(testRequestTimeout, TimeUnit.MILLISECONDS);
-            options.setSocketTimeout(testSocketTimeout, TimeUnit.MILLISECONDS);
-
-            this.httpClient = httpClientFactory.create(options);
-            this.isTestHttpClient.set(true);
-        }
-
-        Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
 
         // try distributing prod shared secrets over http (note the lack of "s") and it shall be rejected
         if (!isDevModeService.isDevMode() && null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
         {
             String message = String.format("Cannot issue callback except via HTTPS. Current base URL = '%s'", addon.getBaseUrl());
-            switch (handler)
-            {
-                case INSTALLED:
-                    throw new PluginInstallException(handler.name() + ": " + message, errorI18nKey);
-                case UNINSTALLED:
-                    throw new PluginException(handler.name() + ": " + message);
-            }
+            throw new LifecycleCallbackException(message, Option.some("connect.remote.upm.install.exception"));
         }
 
+        Response response = getSyncHandlerResponse(addon, callbackUrl, jsonEventData);
+
+        final int statusCode = response.getStatusCode();
+        // a selection of 2xx response codes both indicate success and are semantically valid for this callback
+        if (!OK_INSTALL_HTTP_CODES.contains(statusCode))
+        {
+            String statusText = response.getStatusText();
+            String responseEntity = response.getEntity(); // calling response.getEntity() multiple times results in IllegalStateException("Entity may only be accessed once")
+            log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]:" + responseEntity);
+
+            String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]:" + responseEntity;
+            throw new LifecycleCallbackException(message, findI18nKeyForHttpErrorCode(statusCode));
+        }
+    }
+
+    private Response getSyncHandlerResponse(ConnectAddonBean addon, String callbackUrl, String jsonEventData) throws LifecycleCallbackException
+    {
         try
         {
-            String pluginKey = addon.getKey();
-
             URI installHandler = getURI(callbackUrl);
 
             Request.Builder request = httpClient.newRequest(installHandler);
             request.setAttribute("purpose", "web-hook-notification");
-            request.setAttribute("pluginKey", pluginKey);
+            request.setAttribute("pluginKey", addon.getKey());
             request.setContentType(MediaType.APPLICATION_JSON);
             request.setEntity(jsonEventData);
 
+            // It's important to use the plugin in the call to remotablePluginAccessorFactory.get(plugin) as we might be calling this due to an uninstall event
             com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap());
             if (authHeader.isDefined())
             {
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());
             }
 
-            Response response = request.execute(Request.Method.POST).claim();
-            final int statusCode = response.getStatusCode();
-
-            // a selection of 2xx response codes both indicate success and are semantically valid for this callback
-            if (!OK_INSTALL_HTTP_CODES.contains(statusCode))
-            {
-                String statusText = response.getStatusText();
-                final String responseEntity = response.getEntity(); // calling response.getEntity() multiple times results in IllegalStateException("Entity may only be accessed once")
-                log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]:" + responseEntity);
-
-                String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]:" + responseEntity;
-                switch (handler)
-                {
-                    case INSTALLED:
-                        throw new PluginInstallException(handler.name() + ": " + message, findI18nKeyForHttpErrorCode(statusCode));
-                    case UNINSTALLED:
-                        throw new PluginException(handler.name() + ": " + message);
-                }
-            }
-
-        }
-        catch (PluginInstallException e)
-        {
-            // don't wrap a PluginInstallException in another PluginInstallException
-            // because that is useless and obscures the original message
-            throw e;
-        }
-        catch (PluginException e)
-        {
-            // don't wrap a PluginException in another PluginException
-            // because that is useless and obscures the original message
-            throw e;
+            return request.execute(Request.Method.POST).claim();
         }
         catch (Exception e)
         {
@@ -527,21 +509,15 @@ public class ConnectAddonManager
             if (e.getCause() instanceof UnknownHostException)
             {
                 String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.domain", e.getCause().getLocalizedMessage());
-                errorI18nKey = Option.some(i18nMessage);
+                throw new LifecycleCallbackException(message, Option.some(i18nMessage));
             }
             else if (e.getCause() instanceof SocketTimeoutException)
             {
                 String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.timeout", callbackUrl);
-                errorI18nKey = Option.some(i18nMessage);
+                throw new LifecycleCallbackException(message, Option.some(i18nMessage));
             }
 
-            switch (handler)
-            {
-                case INSTALLED:
-                    throw new PluginInstallException(handler.name() + ": " + message, errorI18nKey);
-                case UNINSTALLED:
-                    throw new PluginException(handler.name() + ": " + message);
-            }
+            throw new LifecycleCallbackException(message, Option.some("connect.remote.upm.install.exception"));
         }
     }
 
