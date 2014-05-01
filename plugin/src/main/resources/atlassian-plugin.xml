@@ -104,6 +104,7 @@
         <resource type="download" name="resize.js" location="/js/iframe/host/resize.js" />
         <resource type="download" name="loading-indicator.js" location="/js/iframe/host/loading-indicator.js" />
         <resource type="download" name="request.js" location="/js/iframe/host/request.js" />
+        <resource type="download" name="dialog.js" location="/js/iframe/host/dialog.js" />
         <resource type="download" name="_events.js" location="/js/iframe/_events.js" />
         <resource type="download" name="_xdm.js" location="/js/iframe/_xdm.js" />
         <resource type="download" name="_uri.js" location="/js/iframe/_uri.js" />

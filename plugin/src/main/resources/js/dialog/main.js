@@ -91,6 +91,10 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
 
     return {
         id: dialogId,
+        getButton: function(name){
+            var buttons = $nexus.data('ra.dialog.buttons');
+            return (name) ? buttons[name] : buttons;
+        },
 
         /**
         * Constructs a new AUI dialog. The dialog has a single content panel containing a single iframe.

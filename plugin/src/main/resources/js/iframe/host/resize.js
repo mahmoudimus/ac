@@ -14,10 +14,14 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
 
         return {
             init: function(state){
+
             },
             internals: {
+                // TODO: add debounce support
                 resize: function(width, height){
-                    resize(this.iframe, width, height);
+                    if(!this.uiParams.isDialog){
+                        resize(this.iframe, width, height);
+                    }
                 },
                 sizeToParent: _.debounce(function() {
                     // sizeToParent is only available for general-pages

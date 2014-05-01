@@ -46,8 +46,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
         isDialog = !!options.dlg,
         isInlineDialog = ($content.closest('.aui-inline-dialog').length > 0),
         isSimpleDialog = !!options.simpleDlg,
-        // json string representing product context
-        productContextJson = options.productCtx,
         isInited;
 
     if(typeof options.uiParams !== "object"){
@@ -56,6 +54,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
 
     if(!!options.general) {
       options.uiParams.isGeneral = true;
+    }
+
+    if(options.dlg){
+      options.uiParams.isDialog = true;
     }
 
     // TODO: re-add analytics
@@ -67,7 +69,8 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       container: contentId,
       channel: channelId,
       props: {width: initWidth, height: initHeight},
-      uiParams: options.uiParams
+      uiParams: options.uiParams,
+      productContextJson: options.productCtx
     };
 
     rpc.extend({
