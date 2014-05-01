@@ -418,10 +418,12 @@ function convertXmlRpcScopesToViewModel(scopeDefinitions) {
  * Delete the build dir, regenerate the model from the schema and rebuild the documentation.
  */
 function rebuildHarpSite() {
+    dereferenceSchema(function() { rebuildHarpSiteWithDeReferencedSchema(); });
+}
 
+function rebuildHarpSiteWithDeReferencedSchema() {
     fs.deleteSync(buildDir);
 
-    dereferenceSchema();
     compileJsDocs();
 
     var schemas = {
@@ -538,11 +540,11 @@ function compileJsDocs() {
     fork('./node_modules/.bin/jsdoc', ["-c", "jsdoc-conf.json", "-t", "jsdoc-template"]);
 }
 
-function dereferenceSchema() {
+function dereferenceSchema(callback) {
     var runOptions = [];
     if (program.debug)
         runOptions.push("-d");
-    fork('./de-ref.js', runOptions)
+    fork('./de-ref.js', runOptions, callback);
 }
 rebuildHarpSite();
 
