@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var _ = require('lodash');
-var jsonPath = require('jsonPath').eval;
+var jsonPath = require('JSONPath').eval;
 var fs = require('fs-extra');
 var program = require('commander');
 
