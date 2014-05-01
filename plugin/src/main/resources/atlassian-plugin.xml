@@ -8,7 +8,7 @@
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
     <resource type="i18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
     <resource type="i18n" name="confluence-addon-i18n" location="connect-addons"/>
-    
+
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
@@ -61,9 +61,9 @@
         <url-pattern>/render-signed-iframe</url-pattern>
     </servlet>
 
-    <servlet key="acPermanentRedirectingServlet"
+    <servlet-filter key="acPermanentRedirectingFilter"
              name="Ac Permanent Redirecting Servlet"
-             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">
+             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectOnNotFoundFilter">
         <description>
             Permanent redirects from old /atlassian-connect/* urls to /ac/*
         </description>
@@ -76,7 +76,9 @@
             <param-value>/plugins/servlet/ac/</param-value>
         </init-param>
         <url-pattern>/atlassian-connect/*</url-pattern>
-    </servlet>
+    </servlet-filter>
+
+
 
     <servlet key="addon-iframe-servlet"
              class="com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet">
@@ -84,7 +86,7 @@
     </servlet>
 
     <web-panel key="connect-dialog-options" location="atl.header" class="com.atlassian.plugin.connect.plugin.dialog.DialogOptionsWebPanel"/>
-    
+
     <!-- docs are built and copied into target/classes/docs during the prepare-package phase -->
     <web-resource key="docs">
         <resource type="download" name="docs/" location="docs" />
