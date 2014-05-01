@@ -23,6 +23,27 @@ var files = {
     commonScopes:     'com/atlassian/connect/scopes.common.json'
 };
 
+/**
+ * Schema generate puts the slugs under properties. That jacks things up, moving it up a notch.
+ */
+function slugUp(object, parent, parentName) {
+    if (object == null) return;
+
+    if (typeof object === 'object') {
+        // if we're in a property collection &
+        // we have a slug, move it to the parent
+        if (parentName == "properties" && object.slug)
+        {
+            parent.slug = object.slug;
+            delete object.slug;
+        }
+
+        for (var prop in object) {
+            slugUp(object[prop], object, prop);
+        }
+    }
+}
+
 function dereference(object, objectRoot, path) {
     if (object == null) return;
 
@@ -67,8 +88,10 @@ for (var file in files) {
     var sourceJson = fs.readJsonSync(source);
 
     // only need to dereference the schemas, save a few ms on the step
-    if (file.match(/Schema$/))
+    if (file.match(/Schema$/)) {
+        slugUp(sourceJson);
         dereference(sourceJson, sourceJson, "$");
+    }
 
     fs.outputJsonSync(target, sourceJson);
 }

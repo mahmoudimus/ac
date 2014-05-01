@@ -238,10 +238,6 @@ function findProductModules(schemas, productId, productDisplayName) {
     productModules = _.map(productModules, function (moduleOrArray) {
         return moduleOrArray.type === "array" ? moduleOrArray.items : moduleOrArray;
     });
-    // remove slugs or other junk
-    productModules = _.filter(productModules, function(maybeAnObject) {
-      return maybeAnObject.type === "object";
-    });
     var moduleList = schemas[productId].properties.modules;
     // the module list serves as our landing page for each product's modules
     moduleList.pageName = "index";
