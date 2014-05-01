@@ -1,4 +1,4 @@
-_AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, simpleDialog) {
+_AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], function($, dialog, uiParams) {
 
     var enc = encodeURIComponent;
 
@@ -42,8 +42,20 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
          */
         openCustomEditor: function(macroData, opts) {
             AJS.Rte.BookmarkManager.storeBookmark();
-
             openEditorMacroData = macroData.params;
+
+            function getIframeHtmlForMacro(url) {
+                var data = {
+                        "width": "100%",
+                        "height": "100%",
+                        "ui-params": uiParams.encode({dlg: 1})
+                    };
+                $.extend(data, openEditorMacroData);
+                return $.ajax(url, {
+                    data: data
+                });
+            }
+
             saveMacro = function(updatedParameters) {
                 // Render the macro
                 var macroRenderRequest = {
@@ -61,27 +73,21 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
 
             var dialogOpts = {
                 header: macroData.params ? opts.editTitle : opts.insertTitle,
-                submitText: macroData.params ? "Save" : "Insert"
+                submitText: macroData.params ? "Save" : "Insert",
+                chrome: true,
+                ns: macroData.name,
+                width: opts.width || null,
+                height: opts.height || null
             };
 
-            if (opts.width) {
-                dialogOpts.width = opts.width;
-            }
-            if (opts.height) {
-                dialogOpts.height = opts.height;
-            }
+            dialog.create(dialogOpts, false);
 
-            var url = opts.url;
-            var additionalParams = AJS.$.extend({}, macroData.params, { body: macroData.body });
-            var first = true;
-            AJS.$.each(additionalParams, function(key, value) {
-                url += first && url.indexOf("?") < 0 ? "?" : "&";
-                url += enc(key) + "=" + enc(value);
-                first = false;
+            getIframeHtmlForMacro(opts.url).done(function(data){
+                var dialogHtml = $(data);
+                dialogHtml.addClass('ap-dialog-container');
+                $('.ap-dialog-container').replaceWith(dialogHtml);
             });
 
-            macroEditorDialog = simpleDialog(url, dialogOpts);
-            macroEditorDialog.show();
         },
 
         /**
