@@ -5,7 +5,9 @@ import java.rmi.RemoteException;
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
@@ -21,6 +23,7 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,7 +34,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestIssueTabPanelWithJSDialog extends TestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
     private static final String ISSUE_TAB_PANEL_W_DIALOG = "issue-tab-panel-w-dialog";
     private static JiraOps jiraOps = new JiraOps(jira().getProductInstance());
 
@@ -95,10 +98,10 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_W_DIALOG, issueKey, PLUGIN_KEY);
+                JiraViewIssuePageWithRemotePluginIssueTab.class, addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG), issueKey, PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
 
-        RemoteDialogOpeningPage dialogOpeningPage = jira().getPageBinder().bind(RemoteDialogOpeningPage.class, null, ISSUE_TAB_PANEL_W_DIALOG, remotePlugin.getAddon().getKey());
-        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(ADDON_DIALOG);
+        RemoteDialogOpeningPage dialogOpeningPage = jira().getPageBinder().bind(RemoteDialogOpeningPage.class, null, addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG), remotePlugin.getAddon().getKey());
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(PLUGIN_KEY,ADDON_DIALOG));
 
         assertThat(closeDialogPage.getFromQueryString("myproject_key"), is(PROJECT_KEY));
         assertThat(closeDialogPage.getFromQueryString("myissue_key"), is(issueKey));

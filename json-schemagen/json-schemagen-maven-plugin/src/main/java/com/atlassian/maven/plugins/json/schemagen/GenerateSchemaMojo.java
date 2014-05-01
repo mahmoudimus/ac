@@ -1,6 +1,7 @@
 package com.atlassian.maven.plugins.json.schemagen;
 
 import com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider;
+import com.atlassian.json.schema.EnumCase;
 import com.atlassian.json.schema.JsonSchemaGenerator;
 import com.atlassian.json.schema.JsonSchemaGeneratorProvider;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
@@ -41,8 +42,8 @@ public class GenerateSchemaMojo extends AbstractSchemaGenMojo
     @Parameter(defaultValue = "com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider")
     private String generatorProvider = DEFAULT_PROVIDER;
 
-    @Parameter(defaultValue = "true")
-    private Boolean lowercaseEnums = true;
+    @Parameter(defaultValue = "upper")
+    private String enumCase = "upper";
 
     @Parameter
     private String ignoreFilter = "";
@@ -88,7 +89,7 @@ public class GenerateSchemaMojo extends AbstractSchemaGenMojo
                 interfaceList = gson.fromJson(ifaceJson,InterfaceList.class);
             }
 
-            JsonSchemaGenerator generator = provider.provide(lowercaseEnums,interfaceList,schemaDocs,ignoreFilter);
+            JsonSchemaGenerator generator = provider.provide(getEnumCase(enumCase),interfaceList,schemaDocs,ignoreFilter);
             JsonSchema schema = generator.generateSchema(getRootClass());
             
             File rawFile = new File(rawOutput);
@@ -107,6 +108,18 @@ public class GenerateSchemaMojo extends AbstractSchemaGenMojo
         finally
         {
             Thread.currentThread().setContextClassLoader(oldClassloader);
+        }
+    }
+
+    private EnumCase getEnumCase(String enumCase)
+    {
+        try
+        {
+            return EnumCase.valueOf(enumCase.toUpperCase());
+        }
+        catch (IllegalArgumentException e)
+        {
+            return EnumCase.UPPER;
         }
     }
 

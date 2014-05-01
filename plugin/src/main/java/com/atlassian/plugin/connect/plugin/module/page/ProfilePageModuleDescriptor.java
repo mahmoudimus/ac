@@ -2,11 +2,10 @@ package com.atlassian.plugin.connect.plugin.module.page;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -16,14 +15,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ProfilePageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;
     private Element descriptor;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public ProfilePageModuleDescriptor(
             ModuleFactory moduleFactory,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             RemotePageDescriptorCreator remotePageDescriptorCreator)
     {
         super(moduleFactory);
@@ -63,5 +62,11 @@ public class ProfilePageModuleDescriptor extends AbstractModuleDescriptor<Void>
         {
             registration.unregister();
         }
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 }

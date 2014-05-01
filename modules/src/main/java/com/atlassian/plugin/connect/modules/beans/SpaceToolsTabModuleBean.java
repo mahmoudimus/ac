@@ -121,7 +121,7 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         toStringHelper
                 .add("name", getName())
-                .add("key", getKey())
+                .add("key", getRawKey())
                 .add("url", getUrl())
                 .add("weight", getWeight())
                 .add("location", getLocation());

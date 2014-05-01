@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.plugin.webhooks;
 
-import javax.inject.Named;
-
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectAddonEventSerializer;
 import com.atlassian.plugin.connect.spi.event.*;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.*;
+
+import javax.inject.Named;
 
 /**
  * Registers Web hooks for remote plugins
@@ -60,7 +60,7 @@ public final class PluginsWebHookProvider implements WebHookProvider
         }
     }
 
-    private static final class ConnectAddonEventMatcher<E extends ConnectAddonEvent> implements EventMatcher<E>
+    private static final class ConnectAddonEventMatcher<E extends ConnectAddonLifecycleEvent> implements EventMatcher<E>
     {
         @Override
         public boolean matches(final E event, final Object consumerParams)
@@ -70,12 +70,17 @@ public final class PluginsWebHookProvider implements WebHookProvider
         }
     }
 
-    private static final class ConnectAddonEventSerializerFactory<E extends ConnectAddonEvent> implements EventSerializerFactory<E>
+    private static final class ConnectAddonEventSerializerFactory<E extends ConnectAddonLifecycleEvent> implements EventSerializerFactory<E>
     {
         @Override
         public EventSerializer create(final E event)
         {
-            return new ConnectAddonEventSerializer(event,event.getData());
+            String data = null;
+            if (event instanceof ConnectAddonLifecycleWithDataEvent)
+            {
+                data = ((ConnectAddonLifecycleWithDataEvent) event).getData();
+            }
+            return new ConnectAddonEventSerializer(event, data);
         }
     }
 }

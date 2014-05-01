@@ -138,7 +138,7 @@ Most modern languages have JWT libraries available. We recommend you use one of 
     <tr><td>Haskell</td><td>[haskell-jwt](http://hackage.haskell.org/package/jwt)</td></tr>
 </table>
 
-The [JWT decoder from Heroku](http://jwt-decoder.herokuapp.com/jwt/decode) is a handy web based decoder of JWT tokens.
+The [JWT decoder](http://jwt-decoder.herokuapp.com/jwt/decode) is a handy web based decoder for Atlassian Connect JWT tokens.
 
 <a name='create'></a>
 ## Creating a JWT Token 
@@ -278,10 +278,12 @@ To create a query string hash, follow the detailed instructions below:
 2. Append the character `'&'`<br><br>
 3. Compute canonical URI
   *  Discard the protocol, server, port, context path and query parameters from the full URL.
+     *  For requests targeting add-ons discard the `baseUrl` in the add-on descriptor.
   *  Removing the context path allows a reverse proxy to redirect incoming requests for `"jira.example.com/getsomething"`
    to `"example.com/jira/getsomething"` without breaking authentication. The requester cannot know that the reverse proxy
    will prepend the context path `"/jira"` to the originally requested path `"/getsomething"`
   *  Empty-string is not permitted; use `"/"` instead.
+  *  Url-encode any `'&'` characters in the path.
   *  Do not suffix with a `'/'` character unless it is the only character. e.g.
      *  Canonical URI of `"http://localhost:2990/jira/some/path/?param=value"` is `"/some/path"`
      *  Canonical URI of `"http://localhost:2990"` is `"/"`

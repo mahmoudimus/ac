@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
 import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator remotePageDescriptorCreator;
     private final WebItemCreator webItemCreator;
     private final UrlValidator urlValidator;
@@ -34,13 +34,13 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
 
     private Element descriptor;
     private Element link;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
     private String url;
     private String moduleKey;
 
     public RemoteWebItemModuleDescriptor(
             ModuleFactory moduleFactory,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             RemotePageDescriptorCreator remotePageDescriptorCreator,
             UrlValidator urlValidator,
             ConditionProcessor conditionProcessor,
@@ -150,6 +150,12 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
     {
         boolean absolute = Boolean.parseBoolean(getOptionalAttribute(link, "absolute", "false"));
         return absolute || url.startsWith("http");
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 
 }

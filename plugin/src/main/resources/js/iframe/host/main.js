@@ -3,9 +3,7 @@
  */
 _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"], function ($, XdmRpc, addons, rpc, uiParams) {
 
-  var events = (AJS.EventQueue = AJS.EventQueue || []),
-      defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); },
-      log = (window.AJS && window.AJS.log) || (window.console && window.console.log) || (function() {});
+  var defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); };
 
   function contentDiv(ns) {
     return $("#embedded-" + ns);
@@ -60,6 +58,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       options.uiParams.isGeneral = true;
     }
 
+    // TODO: re-add analytics
+    //analytics.iframePerformance.start(options.key, ns);
+
     var xdmOptions = {
       remote: options.src,
       remoteKey: options.key,
@@ -68,30 +69,14 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       props: {width: initWidth, height: initHeight},
       uiParams: options.uiParams
     };
+
     rpc.extend({
       init: function(){
         // actions for init'ing
       }
     });
 
-
-
     rpc.init(options, xdmOptions);
-
-
-    function publish(name, props) {
-      props = $.extend(props || {}, {moduleKey: ns});
-      events.push({name: name, properties: props});
-    }
-
-    function getProductContext(){
-      return JSON.parse(productContextJson);
-    }
-
-    // Do not delay showing the loading indicator if this is a dialog.
-    var noDelay = (isDialog || isSimpleDialog || isInlineDialog);
-
-        $iframe = $("iframe", $content);
 
   }
 

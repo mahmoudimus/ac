@@ -5,16 +5,16 @@ import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptorImp
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -31,7 +31,7 @@ public final class ProjectTabPageModuleDescriptor extends AbstractJiraTabPageMod
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final ProjectSerializer projectSerializer;
 
-    public ProjectTabPageModuleDescriptor(ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
+    public ProjectTabPageModuleDescriptor(ModuleFactory moduleFactory, LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
             IFrameRendererImpl iFrameRenderer, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator, UrlVariableSubstitutor urlVariableSubstitutor,
             ProjectSerializer projectSerializer)
     {
@@ -68,5 +68,11 @@ public final class ProjectTabPageModuleDescriptor extends AbstractJiraTabPageMod
     protected Class getIFrameTabClass()
     {
         return IFrameProjectTab.class;
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 }

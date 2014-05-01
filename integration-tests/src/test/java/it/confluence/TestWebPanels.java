@@ -63,7 +63,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
     {
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(admin), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
         RemoteWebPanel webPanel = connectPageOperations.findWebPanelFromXMLAddOn("edit-screen-web-panel").waitUntilContentLoaded();
 
@@ -82,7 +82,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
     {
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(admin), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
         RemoteWebPanel webPanel = connectPageOperations.findWebPanelFromXMLAddOn("edit-screen-web-panel-2").waitUntilContentLoaded();
 

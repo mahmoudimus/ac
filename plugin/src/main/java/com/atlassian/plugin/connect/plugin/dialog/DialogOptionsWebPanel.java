@@ -1,20 +1,23 @@
 package com.atlassian.plugin.connect.plugin.dialog;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebPanel;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.templaterenderer.TemplateRenderer;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.toCompleteKey;
 
 public class DialogOptionsWebPanel extends AbstractWebPanel implements WebPanel
 {
@@ -74,7 +77,7 @@ public class DialogOptionsWebPanel extends AbstractWebPanel implements WebPanel
         {
             if (param.getKey().startsWith(WebItemModuleDescriptorFactory.DIALOG_OPTION_PREFIX))
             {
-                addOption(keyedOptions, descriptor.getCompleteKey(), param.getKey(), param.getValue());
+                addOption(keyedOptions, descriptor.getKey(), param.getKey(), param.getValue());
             }
         }
     }
@@ -88,4 +91,5 @@ public class DialogOptionsWebPanel extends AbstractWebPanel implements WebPanel
 
         keyedOptions.get(moduleKey).put(StringUtils.substringAfter(key, WebItemModuleDescriptorFactory.DIALOG_OPTION_PREFIX), value);
     }
+
 }

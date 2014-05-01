@@ -2,14 +2,13 @@ package com.atlassian.plugin.connect.plugin.module.page;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.DefaultWebItemContext;
 import com.atlassian.plugin.connect.spi.module.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 
 import static com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator.createLocalUrl;
@@ -20,14 +19,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class ConfigurePageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;
     private Element descriptor;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public ConfigurePageModuleDescriptor(
             ModuleFactory moduleFactory,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             ProductAccessor productAccessor,
             RemotePageDescriptorCreator remotePageDescriptorCreator,
             UserIsAdminCondition userIsAdminCondition)
@@ -77,5 +76,11 @@ public final class ConfigurePageModuleDescriptor extends AbstractModuleDescripto
         {
             registration.unregister();
         }
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 }

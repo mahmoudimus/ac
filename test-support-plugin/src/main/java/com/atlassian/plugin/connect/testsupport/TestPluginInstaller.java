@@ -9,17 +9,25 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 public interface TestPluginInstaller
 {
 
-    Plugin installPlugin(ConnectAddonBean bean) throws IOException;
+    Plugin installAddon(ConnectAddonBean bean) throws IOException;
 
-    Plugin installPlugin(String jsonDescriptor) throws IOException;
+    Plugin installAddon(String jsonDescriptor) throws IOException;
 
     Plugin installPlugin(File jarFile) throws IOException;
 
+    void uninstallAddon(Plugin plugin) throws IOException;
+
     void uninstallPlugin(Plugin plugin) throws IOException;
 
+    void disableAddon(String pluginKey) throws IOException;
+
+    void enableAddon(String pluginKey) throws IOException;
+    
     void disablePlugin(String pluginKey) throws IOException;
 
     void enablePlugin(String pluginKey) throws IOException;
 
     String getInternalAddonBaseUrl(String pluginKey);
+    
+    Iterable<String> getInstalledAddonKeys();
 }

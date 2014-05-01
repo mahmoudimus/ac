@@ -1,0 +1,17 @@
+{
+    "scopes": [
+        {
+            "key": "READ",
+            "restPathKeys": ["remoteplugintest"],
+            "methods": ["GET"]
+        }
+    ],
+    "restPaths": [
+        {
+            "key": "remoteplugintest",
+            "name": "remoteplugintest",
+            "basePaths": ["/user($|/.*)"],
+            "versions": ["1", "latest"]
+        }
+    ]
+}

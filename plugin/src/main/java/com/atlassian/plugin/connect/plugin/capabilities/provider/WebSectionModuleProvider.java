@@ -2,9 +2,10 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
-import org.osgi.framework.BundleContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,23 +25,23 @@ public class WebSectionModuleProvider implements ConnectModuleProvider<WebSectio
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<WebSectionModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<WebSectionModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
         for (WebSectionModuleBean bean : beans)
         {
-            descriptors.addAll(beanToDescriptors(plugin, bean));
+            descriptors.addAll(beanToDescriptors(addon, theConnectPlugin, bean));
         }
 
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, WebSectionModuleBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectAddonBean addon,Plugin theConnectPlugin, WebSectionModuleBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        descriptors.add(webSectionFactory.createModuleDescriptor(plugin, bean));
+        descriptors.add(webSectionFactory.createModuleDescriptor(addon, theConnectPlugin, bean));
 
         return descriptors;
     }

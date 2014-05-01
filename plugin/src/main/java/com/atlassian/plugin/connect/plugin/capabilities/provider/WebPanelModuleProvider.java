@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -32,7 +33,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<WebPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<WebPanelModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
@@ -40,27 +41,27 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
         {
             // register an iframe rendering strategy
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(plugin.getKey())
-                    .module(bean.getKey())
+                    .addOn(addon.getKey())
+                    .module(bean.getKey(addon))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .title(bean.getDisplayName())
                     .dimensions(bean.getLayout().getWidth(), bean.getLayout().getHeight())
                     .build();
-            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
 
             // construct a module descriptor that will supply a web panel to the product
-            descriptors.addAll(beanToDescriptors(plugin, bean));
+            descriptors.addAll(beanToDescriptors(addon, theConnectPlugin, bean));
         }
 
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, WebPanelModuleBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectAddonBean addon,Plugin theConnectPlugin, WebPanelModuleBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        descriptors.add(webPanelFactory.createModuleDescriptor(plugin, bean));
+        descriptors.add(webPanelFactory.createModuleDescriptor(addon, theConnectPlugin, bean));
 
         return descriptors;
     }

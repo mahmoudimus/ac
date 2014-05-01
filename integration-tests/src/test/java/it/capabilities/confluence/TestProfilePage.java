@@ -51,7 +51,7 @@ public class TestProfilePage extends AbstractPageTst
 
         // directly retrieving page should result in access denied
         InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class,
-                PLUGIN_KEY, MY_AWESOME_PAGE_KEY);
+                pluginKey, MY_AWESOME_PAGE_KEY);
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(MY_AWESOME_PAGE));
     }

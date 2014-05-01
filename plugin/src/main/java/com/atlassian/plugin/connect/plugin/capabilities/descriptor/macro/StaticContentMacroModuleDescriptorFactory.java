@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
@@ -38,7 +38,7 @@ public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMa
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
     }
 
-    protected ModuleFactory createModuleFactory(final Plugin plugin, final DOMElement element, final StaticContentMacroModuleBean bean)
+    protected ModuleFactory createModuleFactory(final ConnectAddonBean addon, final DOMElement element, final StaticContentMacroModuleBean bean)
     {
         return new ModuleFactory()
         {
@@ -46,14 +46,14 @@ public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMa
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
                 StaticContentMacro macro = new StaticContentMacro(
-                        plugin.getKey(), bean.getKey(), bean.getUrl(),
+                        addon.getKey(), bean.getKey(addon), bean.getUrl(),
                         MacroEnumMapper.map(bean.getBodyType()), MacroEnumMapper.map(bean.getOutputType()),
                         iFrameUriBuilderFactory, macroModuleContextExtractor, macroContentManager,
                         remotablePluginAccessorFactory);
 
                 if (bean.hasImagePlaceholder())
                 {
-                    return (T) decorateWithImagePlaceHolder(plugin, macro, bean.getImagePlaceholder());
+                    return (T) decorateWithImagePlaceHolder(addon, macro, bean.getImagePlaceholder());
                 }
                 return (T) macro;
             }

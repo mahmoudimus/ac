@@ -17,14 +17,14 @@ import static com.atlassian.json.schema.util.StringUtil.lowerCamel;
 
 public abstract class AbstractJsonSchemaGenerator implements JsonSchemaGenerator
 {
-    protected final boolean lowercaseEnums;
+    protected final EnumCase enumCase;
     protected final InterfaceList interfaceList;
     protected final JsonSchemaDocs schemaDocs;
     protected final String ignoreFilter;
 
-    protected AbstractJsonSchemaGenerator(boolean lowercaseEnums, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
+    protected AbstractJsonSchemaGenerator(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {
-        this.lowercaseEnums = lowercaseEnums;
+        this.enumCase = enumCase;
         this.interfaceList = interfaceList;
         this.schemaDocs = schemaDocs;
         

@@ -5,6 +5,8 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
@@ -52,7 +54,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
                         newWebItemBean()
@@ -118,9 +120,9 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testAbsoluteWebItem() throws Exception
     {
-        loginAs(BETTY_USERNAME, BETTY_USERNAME);
+        loginAsBetty();
 
-        RemoteWebItem webItem = findViewPageWebItem(ABSOLUTE_WEBITEM).right();
+        RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
         assertNotNull("Web item should be found", webItem);
 
         assertTrue("Web item link should be absolute", webItem.isPointingToACInternalUrl());
@@ -134,7 +136,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
 
-        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(ADDON_WEBITEM);
+        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM));
         RemoteWebItem webItem = pageAndWebItem.right();
         assertNotNull("Web item should be found", webItem);
 
@@ -150,7 +152,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
 
-        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(ADDON_DIRECT_WEBITEM);
+        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_DIRECT_WEBITEM));
         RemoteWebItem webItem = pageAndWebItem.right();
         assertNotNull("Web item should be found", webItem);
 
@@ -167,7 +169,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
         ConfluenceViewPage viewPage = createAndVisitViewPage();
 
-        RemoteWebItem webItem = viewPage.findWebItem(PRODUCT_WEBITEM, Optional.<String>of("action-menu-link"));
+        RemoteWebItem webItem = viewPage.findWebItem(getModuleKey(PRODUCT_WEBITEM), Optional.<String>of("action-menu-link"));
         assertNotNull("Web item should be found", webItem);
 
         webItem.click();
@@ -180,9 +182,9 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void bettyCanSeeWebItem() throws Exception
     {
-        loginAs(BETTY_USERNAME, BETTY_USERNAME);
+        loginAsBetty();
 
-        RemoteWebItem webItem = findViewPageWebItem(ABSOLUTE_WEBITEM).right();
+        RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
 
         assertNotNull("Web item should be found", webItem);
     }
@@ -192,7 +194,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
         ConfluenceViewPage viewPage = createAndVisitViewPage();
-        assertFalse("Web item should NOT be found", viewPage.existsWebItem(ABSOLUTE_WEBITEM));
+        assertFalse("Web item should NOT be found", viewPage.existsWebItem(getModuleKey(ABSOLUTE_WEBITEM)));
     }
 
 
@@ -201,7 +203,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
 
-        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(ADDON_WEBITEM_INLINE_DIALOG);
+        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG));
         RemoteWebItem webItem = pageAndWebItem.right();
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
@@ -233,7 +235,10 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     }
 
 
-    //TODO: once generalPage is complete, add a test to check that a web item pointing to the page works properly
+    private String getModuleKey(String module)
+    {
+        return ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(),module);
+    }
 
 
 }

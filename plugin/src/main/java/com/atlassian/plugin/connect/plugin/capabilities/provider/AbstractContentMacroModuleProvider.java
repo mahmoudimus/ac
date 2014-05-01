@@ -4,6 +4,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -16,13 +17,16 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
-import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
+import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -32,78 +36,87 @@ import static com.google.common.collect.Lists.newArrayList;
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
         implements ConnectModuleProvider<T>
 {
+    private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleProvider.class);
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
     private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
-    private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
+    private final ConnectAddonI18nManager connectAddonI18nManager;
     protected final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
     public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, I18nPropertiesPluginManager i18nPropertiesPluginManager)
+            HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, ConnectAddonI18nManager connectAddonI18nManager)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
         this.absoluteAddOnUrlConverter = absoluteAddOnUrlConverter;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
-        this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
+        this.connectAddonI18nManager = connectAddonI18nManager;
     }
 
-    protected abstract ModuleDescriptor createMacroModuleDescriptor(Plugin plugin, T macroBean);
+    protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, T macroBean);
 
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<T> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<T> beans)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
-        MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(plugin.getKey());
+        MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(addon.getKey());
 
         for (T bean : beans)
         {
-            moduleDescriptors.addAll(createModuleDescriptors(plugin, bean));
-            i18nBuilder.add(bean);
+            moduleDescriptors.addAll(createModuleDescriptors(addon, theConnectPlugin, bean));
+            i18nBuilder.add(bean, addon);
         }
 
-        i18nPropertiesPluginManager.add(plugin.getKey(), i18nBuilder.getI18nProperties());
+        try
+        {
+            connectAddonI18nManager.add(addon.getKey(), i18nBuilder.getI18nProperties());
+        }
+        catch (IOException e)
+        {
+            log.error("Unable to register I18n properties for addon: " + addon.getKey(), e);
+        }
 
         return moduleDescriptors;
     }
 
-    protected List<ModuleDescriptor> createModuleDescriptors(Plugin plugin, T macroBean)
+    protected List<ModuleDescriptor> createModuleDescriptors(ConnectAddonBean addon, Plugin theConnectPlugin, T macroBean)
     {
         List<ModuleDescriptor> descriptors = newArrayList();
 
         // The actual Macro module descriptor
-        descriptors.add(createMacroModuleDescriptor(plugin, macroBean));
+        descriptors.add(createMacroModuleDescriptor(addon, theConnectPlugin, macroBean));
 
         // Add a web item if the Macro is featured
         if (macroBean.isFeatured())
         {
-            WebItemModuleBean featuredWebItem = createFeaturedWebItem(plugin, macroBean);
-            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, featuredWebItem));
+            WebItemModuleBean featuredWebItem = createFeaturedWebItem(addon, macroBean);
+            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, featuredWebItem));
 
             // Add a featured icon web resource
             if (macroBean.hasIcon())
             {
-                descriptors.add(createFeaturedIconWebResource(plugin, macroBean));
+                descriptors.add(createFeaturedIconWebResource(addon, theConnectPlugin, macroBean));
             }
         }
 
         if (macroBean.hasEditor())
         {
-            createEditorIFrame(plugin, macroBean);
-            descriptors.add(createEditorWebResource(plugin, macroBean));
+            createEditorIFrame(addon, macroBean);
+            descriptors.add(createEditorWebResource(addon, theConnectPlugin, macroBean));
         }
 
         return ImmutableList.copyOf(descriptors);
     }
 
 
-    private WebItemModuleBean createFeaturedWebItem(Plugin plugin, T bean)
+    private WebItemModuleBean createFeaturedWebItem(ConnectAddonBean addon, T bean)
     {
         WebItemModuleBeanBuilder webItemBean = newWebItemBean()
-                .withName(new I18nProperty(bean.getName().getValue(),
-                        MacroI18nBuilder.getMacroI18nKey(plugin.getKey(), bean.getKey())))
-                .withKey(bean.getKey())
+                // due to issues with Confluence not reloading i18n properties, we have to use the raw name here
+                // TODO use i18n key when we fix Confluence to support reloading i18n
+                .withName(new I18nProperty(bean.getName().getValue(), bean.getName().getValue()))
+                .withKey(bean.getRawKey())
                 .withLocation("system.editor.featured.macros.default");
 
         if (bean.hasIcon())
@@ -118,9 +131,9 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     }
 
     // No web-resource beans/builders/descriptors/providers, so falling back to XML
-    private ModuleDescriptor createFeaturedIconWebResource(Plugin plugin, T bean)
+    private ModuleDescriptor createFeaturedIconWebResource(ConnectAddonBean addon, Plugin theConnectPlugin, T bean)
     {
-        String macroKey = bean.getKey();
+        String macroKey = bean.getKey(addon);
 
         Element webResource = new DOMElement("web-resource")
                 .addAttribute("key", macroKey + "-featured-macro-resources");
@@ -143,21 +156,21 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                 .addAttribute("name", "ICON_URL")
-                .addAttribute("value", getAbsoluteUrl(plugin, bean.getIcon().getUrl()));
+                .addAttribute("value", getAbsoluteUrl(addon, bean.getIcon().getUrl()));
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
-        jsDescriptor.init(plugin, webResource);
+        jsDescriptor.init(theConnectPlugin, webResource);
 
         return jsDescriptor;
     }
 
-    private void createEditorIFrame(Plugin plugin, T macroBean)
+    private void createEditorIFrame(ConnectAddonBean addon, T macroBean)
     {
         MacroEditorBean editor = macroBean.getEditor();
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(plugin.getKey())
-                .module(macroBean.getKey())
+                .addOn(addon.getKey())
+                .module(macroBean.getKey(addon))
                 .dialogTemplate()
                 .urlTemplate(editor.getUrl())
                 .title(macroBean.getDisplayName())
@@ -165,14 +178,14 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .simpleDialog(true)
                 .build();
 
-        iFrameRenderStrategyRegistry.register(plugin.getKey(), macroBean.getKey(), renderStrategy);
+        iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getRawKey(), renderStrategy);
     }
 
-    private ModuleDescriptor createEditorWebResource(Plugin plugin, T macroBean)
+    private ModuleDescriptor createEditorWebResource(ConnectAddonBean addon, Plugin theConnectPlugin, T macroBean)
     {
         MacroEditorBean editor = macroBean.getEditor();
 
-        String macroKey = macroBean.getKey();
+        String macroKey = macroBean.getKey(addon);
         String editTitle = editor.hasEditTitle() ? editor.getEditTitle().getValue() : macroBean.getDisplayName();
         String insertTitle = editor.hasInsertTitle() ? editor.getInsertTitle().getValue() : macroBean.getDisplayName();
 
@@ -202,7 +215,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                 .addAttribute("name", "URL")
-                .addAttribute("value", ConnectIFrameServlet.iFrameServletPath(plugin.getKey(), macroBean.getKey())).getParent()
+                .addAttribute("value", ConnectIFrameServlet.iFrameServletPath(addon.getKey(), macroBean.getRawKey())).getParent()
                 .addElement("var")
                 .addAttribute("name", "WIDTH")
                 .addAttribute("value", editor.getWidth()).getParent()
@@ -219,22 +232,22 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("i18n-key", "macro.browser.insert.macro.title").getParent();
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
-        jsDescriptor.init(plugin, webResource);
+        jsDescriptor.init(theConnectPlugin, webResource);
 
         return jsDescriptor;
     }
 
-    private String getAbsoluteUrl(Plugin plugin, String url)
+    private String getAbsoluteUrl(ConnectAddonBean addon, String url)
     {
         try
         {
-            return absoluteAddOnUrlConverter.getAbsoluteUrl(plugin.getKey(), url);
+            return absoluteAddOnUrlConverter.getAbsoluteUrl(addon.getKey(), url);
         }
         catch (URISyntaxException e)
         {
             throw new PluginParseException("Malformed icon url declared by '"
-                    + plugin.getName()
-                    + "' (" + plugin.getKey() + "): "
+                    + addon.getName()
+                    + "' (" + addon.getKey() + "): "
                     + url, e);
         }
     }

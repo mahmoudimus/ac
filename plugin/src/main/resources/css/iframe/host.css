@@ -48,6 +48,10 @@
   display: block;
 }
 
+.ap-aui-message {
+  margin: 10px;
+}
+
 .ap-content {
   line-height: 0;
   margin: 0;

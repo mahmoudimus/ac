@@ -12,13 +12,13 @@ import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENABLED;
 

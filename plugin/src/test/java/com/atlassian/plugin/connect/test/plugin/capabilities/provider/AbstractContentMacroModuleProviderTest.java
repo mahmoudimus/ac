@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.EditorImagePlaceholder;
 import com.atlassian.confluence.macro.ImagePlaceholder;
@@ -11,29 +8,29 @@ import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.AbstractContentMacroModuleProvider;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilder;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.integration.plugins.I18nPropertiesPluginManager;
+import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +38,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
+import java.util.List;
+import java.util.Map;
+
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -52,6 +53,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractContentMacroModuleProvider,
         B extends BaseContentMacroModuleBean, T extends BaseContentMacroModuleBeanBuilder<T, B>>
@@ -63,7 +65,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
     @Mock
     protected HostContainer hostContainer;
     @Mock
-    protected I18nPropertiesPluginManager i18nPropertiesPluginManager;
+    protected ConnectAddonI18nManager connectAddonI18nManager;
 
     @Mock
     protected IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
@@ -78,6 +80,8 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
     protected RemotablePluginAccessorFactory remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
     protected AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter = new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests);
 
+    protected ConnectAddonBean addon = newConnectAddonBean().withKey("my-plugin").build();
+    
     private P moduleProvider;
 
 
@@ -88,7 +92,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
     @Before
     public void beforeEachTest() throws Exception
     {
-        when(webItemModuleDescriptorFactory.createModuleDescriptor(any(Plugin.class), any(WebItemModuleBean.class)))
+        when(webItemModuleDescriptorFactory.createModuleDescriptor(addon, any(Plugin.class), any(WebItemModuleBean.class)))
                 .thenReturn(mock(WebItemModuleDescriptor.class));
         
         when(iFrameRenderStrategyBuilderFactory.builder()).thenReturn(iFrameRenderStrategyBuilder);
@@ -102,7 +106,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
         T builder = createMacroBeanBuilder()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
                 .withUrl("/my-macro");
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(addon, plugin, "", Lists.newArrayList(builder.build()));
         assertThat(modules, containsInAnyOrder(is(instanceOf(XhtmlMacroModuleDescriptor.class))));
     }
 
@@ -113,7 +117,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
                 .withUrl("/my-macro")
                 .withFeatured(true);
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(addon, plugin, "", Lists.newArrayList(builder.build()));
         assertThat(modules, containsInAnyOrder(
                 is(instanceOf(XhtmlMacroModuleDescriptor.class)),
                 is(instanceOf(WebItemModuleDescriptor.class))
@@ -128,7 +132,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                 .withUrl("/my-macro")
                 .withFeatured(true)
                 .withIcon(IconBean.newIconBean().withUrl("/assets/image.png").build());
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(addon, plugin, "", Lists.newArrayList(builder.build()));
         assertThat(modules, containsInAnyOrder(
                 is(instanceOf(XhtmlMacroModuleDescriptor.class)),
                 is(instanceOf(WebItemModuleDescriptor.class)),
@@ -150,7 +154,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                         .withHeight("100px")
                         .build()
                 );
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(addon, plugin, "", Lists.newArrayList(builder.build()));
         assertThat(modules, containsInAnyOrder(
                 is(instanceOf(XhtmlMacroModuleDescriptor.class)),
                 is(instanceOf(ServletModuleDescriptor.class)),
@@ -168,7 +172,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                                                           .withUrl("/images/placeholder.png")
                                                           .build()
                 );
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(addon, plugin, "", Lists.newArrayList(builder.build()));
         Macro macro = getMacro(modules);
         assertThat(macro, is(instanceOf(EditorImagePlaceholder.class)));
     }
@@ -281,7 +285,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
 
     private ImagePlaceholder getImagePlaceholder(T builder, Map<String, String> parameters)
     {
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(addon, plugin, "", Lists.newArrayList(builder.build()));
         EditorImagePlaceholder macro = (EditorImagePlaceholder) getMacro(modules);
         return macro.getImagePlaceholder(parameters, mock(ConversionContext.class));
     }
