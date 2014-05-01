@@ -26,7 +26,7 @@ var files = {
 /**
  * Schema generate puts the slugs under properties. That jacks things up, moving it up a notch.
  */
-function slugUp(object, parent, parentName) {
+function moveSlugUpFromProperties(object, parent, parentName) {
     if (object == null) return;
 
     if (typeof object === 'object') {
@@ -39,7 +39,7 @@ function slugUp(object, parent, parentName) {
         }
 
         for (var prop in object) {
-            slugUp(object[prop], object, prop);
+            moveSlugUpFromProperties(object[prop], object, prop);
         }
     }
 }
@@ -89,7 +89,7 @@ for (var file in files) {
 
     // only need to dereference the schemas, save a few ms on the step
     if (file.match(/Schema$/)) {
-        slugUp(sourceJson);
+        moveSlugUpFromProperties(sourceJson);
         dereference(sourceJson, sourceJson, "$");
     }
 
