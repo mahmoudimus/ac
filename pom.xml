@@ -658,7 +658,7 @@
         <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.4.1</atlassian.mail.version>
         <atlassian.oauth.version>1.3.0</atlassian.oauth.version>
-        <atlassian.jwt.version>1.0-m12</atlassian.jwt.version>
+        <atlassian.jwt.version>1.0.1</atlassian.jwt.version>
         <atlassian.json.schema.validator.version>1.0-m0</atlassian.json.schema.validator.version>
         <atlassian.plugins.version>3.0.7</atlassian.plugins.version>
         <atlassian.plugins.api.version>2.10</atlassian.plugins.api.version>
