@@ -86,7 +86,7 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
             property = _.pick(property, ["id", "type", "title", "slug", "description", "fieldDescription"]);
         }
 
-        if (required && required.indexOf(id) > -1) {
+        if (required === true || (required && required.indexOf(id) > -1)) {
             property.required = true;
         }
         property.key = id;
@@ -215,9 +215,13 @@ function writeEntitiesToDisk(entities, pathMappings) {
  */
 function findRootEntities(schemas) {
     // find top level modules
-    var entities = jsonPath(schemas, "$.*.*[?(@.id)]");
-    // exclude the module lists, they're rendered separately in findJiraModules etc.
-    entities = _.filter(entities, function(entity) {return entity.id !== "moduleList";});
+    var entities = jsonPath(schemas, "$.*.*[?(@.properties)]");
+    // include the modules we want
+    entities = _.filter(entities, function(entity) {
+        return entity.title === "Lifecycle" ||
+               entity.title === "Authentication" ||
+               entity.title === "Plugin Vendor";
+    });
     // add the descriptor root itself (and make it the index.html for modules)
     schemas.jira.pageName = "index";
     entities.unshift(schemas.jira);
