@@ -30,6 +30,7 @@ _AP.define("host/_status_helper", ["_dollar"], function ($) {
     function showStatus($home, status){
         hideStatuses($home);
         $home.closest('.ap-container').removeClass('hidden');
+        $home.find(".ap-stats").removeClass("hidden");
         $home.find('.ap-' + status).removeClass('hidden');
         /* setTimout fixes bug in AUI spinner positioning */
         setTimeout(function(){

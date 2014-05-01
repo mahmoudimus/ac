@@ -65,6 +65,9 @@ AP.require(
       }
       else if (options.resize !== false) {
         var rate = options.resize;
+        if(options.resize === undefined){
+          rate = "auto";
+        }
         rate = rate === "auto" ? 125 : +rate;
         // force rate to an acceptable minimum if it's a number
         if (rate >= 0 && rate < 60) rate = 60;

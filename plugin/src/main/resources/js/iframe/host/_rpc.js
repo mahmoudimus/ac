@@ -5,8 +5,7 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
   var each = $.each,
       extend = $.extend,
       isFn = $.isFunction,
-      proxy = {},
-      rpc,
+      rpcCollection = [],
       apis = {},
       stubs = [],
       internals = {},
@@ -17,12 +16,12 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
   return {
 
     extend: function (config) {
-      if (isFn(config)) config = config(proxy);
+      if (isFn(config)) config = config();
       extend(apis, config.apis);
       extend(internals, config.internals);
       stubs = stubs.concat(config.stubs || []);
 
-      if (isFn(config.xdmOptions)) config.xdmOptions = config.xdmOptions(proxy);
+      if (isFn(config.xdmOptions)) config.xdmOptions = config.xdmOptions();
       extend(xdmOptions, config.xdmOptions);
       var init = config.init;
       if (isFn(init)) inits.push(init);
@@ -37,19 +36,18 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
 
       extend(xdmConfig, xdmOptions);
 
-      if (!isInited) {
         // add stubs for each public api
         each(apis, function (method) { stubs.push(method); });
+
         // empty config for add-on-side ctor
-        rpc = this.rpc = new XdmRpc($, xdmConfig, {remote: stubs, local: internals});
-        //rpc.init();
-        extend(proxy, rpc);
+        var rpc = new XdmRpc($, xdmConfig, {remote: stubs, local: internals});
+        rpcCollection[rpc.id] = rpc;
         each(inits, function (_, init) {
-          try { init(extend({}, options)); }
+          // console.log("INITS", options);
+          try { init(extend({}, options, rpc)); }
           catch (ex) { console.log(ex); }
         });
-        isInited = true;
-      }
+
     }
 
   };

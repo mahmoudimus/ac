@@ -8,9 +8,10 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
 
         return {
             init: function(state){
-                var $home = $(config.iframe).closest(".ap-container");
-                statusHelper.showLoadingStatus($home, 0);
 
+                var $home = $(state.iframe).closest(".ap-container");
+                statusHelper.showLoadingStatus($home, 0);
+                console.log($home);
                 timeout = setTimeout(function(){
                     timeout = null;
                     statusHelper.showloadTimeoutStatus($home);
@@ -22,8 +23,8 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
                 }, 20000);
             },
             internals: {
-                init: function(state){
-                    var $home = $(config.iframe).closest(".ap-container");
+                init: function(){
+                    var $home = $(this.iframe).closest(".ap-container");
                     statusHelper.showLoadedStatus($home);
                     clearTimeout(timeout);
                     // Let the integration tests know the iframe has loaded.

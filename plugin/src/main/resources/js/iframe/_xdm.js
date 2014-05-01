@@ -126,7 +126,7 @@
       // if the authentication method is "none" then it is valid to have no jwt and no oauth in the url
       // but equally we don't trust this iframe as far as we can throw it, so assign it a random id
       // in order to prevent it from talking to any other iframe
-      if (null == remoteKey) {
+      if (null === remoteKey) {
           remoteKey = Math.random(); // unpredictable and unsecured, like an oauth consumer key
       }
 
@@ -208,13 +208,17 @@
             // TODO: consider specifying args somehow in the remote stubs so that non-callback args can be
             //       verified before sending a request to fail fast at the callsite
             async = (args ? args.length : 0) < local.length;
+            var context = locals;
+            if(self.isHost === true){
+              context = self;
+            }
             try {
               if (async) {
                 // If async, apply the method with the responders added to the args list
-                local.apply(locals, args.concat([done, fail]));
+                local.apply(context, args.concat([done, fail]));
               } else {
                 // Otherwise, immediately respond with the result
-                done(local.apply(locals, args));
+                done(local.apply(context, args));
               }
             } catch (ex) {
               // If the invocation threw an error, invoke the fail responder callback with it
@@ -386,7 +390,7 @@
 
     function parseJwtClaims(jwt) {
 
-      if (null == jwt || '' == jwt) {
+      if (null === jwt || '' === jwt) {
         throw('Invalid JWT: must be neither null nor empty-string.');
       }
 
@@ -399,7 +403,7 @@
 
       var encodedClaims = jwt.substring(firstPeriodIndex + 1, secondPeriodIndex);
 
-      if (null == encodedClaims || '' == encodedClaims) {
+      if (null === encodedClaims || '' === encodedClaims) {
         throw('Invalid JWT: encoded claims must be neither null nor empty-string.');
       }
 

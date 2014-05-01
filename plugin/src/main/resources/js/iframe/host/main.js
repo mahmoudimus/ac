@@ -68,7 +68,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
     });
 
 
-    options.isGeneral = !!options.general,
+    options.isGeneral = !!options.general;
 
     rpc.init(options, xdmOptions);
 
@@ -113,7 +113,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       defer(doCreate);
     }
     else {
-      AJS.toInit(function(){
+      AJS.toInit(function hostInit(){
         // Load after confluence editor has finished loading content.
         if(AJS.Confluence && AJS.Confluence.EditorLoader && AJS.Confluence.EditorLoader.load){
          
