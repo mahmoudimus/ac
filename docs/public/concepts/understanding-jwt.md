@@ -283,6 +283,7 @@ To create a query string hash, follow the detailed instructions below:
    to `"example.com/jira/getsomething"` without breaking authentication. The requester cannot know that the reverse proxy
    will prepend the context path `"/jira"` to the originally requested path `"/getsomething"`
   *  Empty-string is not permitted; use `"/"` instead.
+  *  Url-encode any `'&'` characters in the path.
   *  Do not suffix with a `'/'` character unless it is the only character. e.g.
      *  Canonical URI of `"http://localhost:2990/jira/some/path/?param=value"` is `"/some/path"`
      *  Canonical URI of `"http://localhost:2990"` is `"/"`
