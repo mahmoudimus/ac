@@ -11,7 +11,6 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
 
                 var $home = $(state.iframe).closest(".ap-container");
                 statusHelper.showLoadingStatus($home, 0);
-                console.log($home);
                 timeout = setTimeout(function(){
                     timeout = null;
                     statusHelper.showloadTimeoutStatus($home);

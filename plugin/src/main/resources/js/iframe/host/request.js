@@ -4,7 +4,7 @@ _AP.define("request", ["_dollar", "_rpc"], function ($, rpc) {
     var xhrProperties = ["status", "statusText", "responseText"],
         xhrHeaders = ["Content-Type"];
 
-    rpc.extend(function(config){
+    rpc.extend(function(){
         return {
             internals: {
                 request: function(args, success, error){
@@ -42,7 +42,7 @@ _AP.define("request", ["_dollar", "_rpc"], function ($, rpc) {
                             // */* will undo the effect on the accept header of having set dataType to "text"
                             "Accept": headers.accept || "*/*",
                             // send the client key header to force scope checks
-                            "AP-Client-Key": config.addonKey
+                            "AP-Client-Key": this.addonKey
                         }
                     }).then(done, fail);
                 }

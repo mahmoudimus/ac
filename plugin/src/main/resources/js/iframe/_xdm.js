@@ -100,6 +100,7 @@
       mixin = {
         isHost: true,
         iframe: iframe,
+        uiParams: config.uiParams,
         destroy: function () {
           // Unbind postMessage handler when destroyed
           unbind();

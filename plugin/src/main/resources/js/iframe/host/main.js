@@ -52,6 +52,13 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
         productContextJson = options.productCtx,
         isInited;
 
+    if(typeof options.uiParams !== "object"){
+      options.uiParams = {};
+    }
+
+    if(!!options.general) {
+      options.uiParams.isGeneral = true;
+    }
 
     var xdmOptions = {
       remote: options.src,
@@ -68,7 +75,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
     });
 
 
-    options.isGeneral = !!options.general;
 
     rpc.init(options, xdmOptions);
 
