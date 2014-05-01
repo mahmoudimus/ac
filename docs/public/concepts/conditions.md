@@ -95,7 +95,7 @@ You can pass parameters to conditions as follows:
 }
 ```
 
-In this case, the user must have not just access to the issue but resolve permissions specifically. The permissions applicable to Atlassian Connect JIRA add-on modules are equivalent to those applicable to JIRA Java plugin development, as described in the [JIRA Permissions class reference](https://docs.atlassian.com/jira/latest/com/atlassian/jira/security/Permissions.html) documentation. The following section describes the mapping of [JIRA permissions] to the permissions you can use in the Atlassian Connect add-on descriptor.
+In this case, the user must have not just access to the issue but resolve permissions specifically. The permissions applicable to Atlassian Connect JIRA add-on modules are equivalent to those applicable to JIRA Java plugin development, as described in the [JIRA Permissions class reference](https://docs.atlassian.com/jira/latest/com/atlassian/jira/security/Permissions.html) documentation.
 
 
 # Product Specific Conditions

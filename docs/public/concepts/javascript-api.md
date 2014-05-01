@@ -31,9 +31,9 @@ The only restriction on the data shared in this manner is that it must be serial
 
 For more information on the event API [visit the events documentation](../javascript/module-Events.html).
 
-### JavaScript client library
+## JavaScript client library
 
-Atlassian Connect provides a JavaScript client library called all.js. The Atlassian application hosts this file, making it available at the following location relative to the Atlassian application URL: 
+Atlassian Connect provides a JavaScript client library called all.js. The Atlassian application hosts this file, making it available at the following location relative to the Atlassian application URL:
 
 ```
 http://{HOSTNAME}:{PORT}/{CONTEXT}/atlassian-connect/all.js
@@ -56,9 +56,56 @@ You must add the `all.js` script to your pages in order to establish the cross-d
 If you're using the [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) client library to build your add-on, this will automatically be inserted into your pages at run time.
 
 #### Note:
-Don't download the all.js file and serve it up from your add-on server directly. The all.js file must be served up by the parent in order for the cross-domain messaging bridge to be established.
+Don't download the all.js file and serve it up from your add-on server directly. The all.js file must be served up by the product host in order for the cross-domain messaging bridge to be established.
 
-## Debugging `all.js`
+### Options
+
+The JavaScript client library has some configuration options that allow to customize its behavior. The options are passed using the `data-options` attribute.
+
+```
+<script src="https://{HOSTNAME}:{PORT}/{CONTEXT}/atlassian-connect/all.js" data-options="option1:value;option2:value"></script>
+```
+
+The following options are currently supported:
+
+<table class='aui'>
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Values</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>`resize`</td>
+            <td>`true` or `false`</td>
+            <td>`true`</td>
+            <td>You can deactivate the automatic resizing by setting `resize=false`.</td>
+        </tr>
+        <tr>
+            <td>`sizeToParent`</td>
+            <td>`true` or `false`</td>
+            <td>`false`</td>
+            <td>With `sizeToParent:true`, the iframe will take up its parent's space (instead of being sized to its internal content).</td>
+        </tr>
+        <tr>
+            <td>`margin`</td>
+            <td>`true` or `false`</td>
+            <td>`true`</td>
+            <td>If `true`, the `margin` option sets the body element's top, right and left margin to 10px for dialogs, and to 0 for non-dialog pages.</td>
+        </tr>
+        <tr>
+            <td>`base`</td>
+            <td>`true` or `false`</td>
+            <td>`false`</td>
+            <td>With `base:true`, a base tag pointing to the host page is injected: `<base href="{host}" target="_parent" />`. This can be useful for embedded links to product pages.</td>
+        </tr>
+    </tbody>
+</table>
+
+### Debugging `all.js`
 
 A non-compressed version of the all.js javascript can be viewed by replacing `all.js` with `all-debug.js` for example:
 
@@ -71,12 +118,12 @@ A non-compressed version of the all.js javascript can be viewed by replacing `al
 This can be helpful when trying to trace errors or debug the add-on javascript.
 
 ## Note on URL Encoding
-URL query parameters are encoded as `application/x-www-form-urlencoded`. 
-This converts spaces to `+` which can cause issues when using JavaScript functions such as `decodeURIComponent`. 
+URL query parameters are encoded as `application/x-www-form-urlencoded`.
+This converts spaces to `+` which can cause issues when using JavaScript functions such as `decodeURIComponent`.
 A simple way to handle this is to convert `+` to `%20` before decoding. A utility function `decodeQueryComponent` is provided for this purpose. e.g
 
 ```
 AP.require("_util", function(util){
   alert(util.decodeQueryComponent(window.location.href));
 });
-``` 
+```
