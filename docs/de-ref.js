@@ -96,7 +96,8 @@ exports.run = function() {
             dereference(sourceJson, sourceJson, "$");
             renamePropertySlugToId(sourceJson);
             delete sourceJson.definitions;
-            fs.outputJsonSync(target, sourceJson);
         }
+
+        fs.outputJsonSync(target, sourceJson);
     }
 }
