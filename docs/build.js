@@ -10,6 +10,7 @@ var fork = require("child_process").fork;
 var chokidar = require("chokidar");
 var jsonPath = require("JSONPath").eval;
 var program = require("commander");
+var dereferencer = require("./de-ref");
 
 var buildDir = "./target";
 var genSrcPrefix = buildDir + "/gensrc";
@@ -410,11 +411,9 @@ function convertXmlRpcScopesToViewModel(scopeDefinitions) {
  * Delete the build dir, regenerate the model from the schema and rebuild the documentation.
  */
 function rebuildHarpSite() {
-    dereferenceSchema(function() { rebuildHarpSiteWithDeReferencedSchema(); });
-}
-
-function rebuildHarpSiteWithDeReferencedSchema() {
     fs.deleteSync(buildDir);
+
+    dereferencer.run();
 
     compileJsDocs();
 
@@ -532,12 +531,6 @@ function compileJsDocs() {
     fork('./node_modules/.bin/jsdoc', ["-c", "jsdoc-conf.json", "-t", "jsdoc-template"]);
 }
 
-function dereferenceSchema(callback) {
-    var runOptions = [];
-    if (program.debug)
-        runOptions.push("-d");
-    fork('./de-ref.js', runOptions, callback);
-}
 rebuildHarpSite();
 
 if (program.serve) {

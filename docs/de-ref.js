@@ -1,16 +1,7 @@
-#!/usr/bin/env node
 
 var _ = require('lodash');
 var jsonPath = require('JSONPath').eval;
 var fs = require('fs-extra');
-var program = require('commander');
-
-program
-    .option('-d, --debug', 'Output debug information')
-    .parse(process.argv);
-
-var debug = program.debug ? console.log : function () {/* no-op */
-};
 
 var sourceSchemaDirectory = "../plugin/target/classes/";
 var targetSchemaDirectory = "schema/";
@@ -92,21 +83,20 @@ function dereference(object, objectRoot, path) {
     }
 }
 
-for (var file in files) {
-    var source = sourceSchemaDirectory + files[file];
-    var target = targetSchemaDirectory + files[file];
+exports.run = function() {
+    for (var file in files) {
+        var source = sourceSchemaDirectory + files[file];
+        var target = targetSchemaDirectory + files[file];
 
-    debug("copying", source, "to", target);
+        var sourceJson = fs.readJsonSync(source);
 
-    var sourceJson = fs.readJsonSync(source);
-
-    // only need to dereference the schemas, save a few ms on the step
-    if (file.match(/Schema$/)) {
-        moveSlugUpFromProperties(sourceJson);
-        dereference(sourceJson, sourceJson, "$");
-        renamePropertySlugToId(sourceJson);
-        delete sourceJson.definitions;
+        // only need to dereference the schemas, save a few ms on the step
+        if (file.match(/Schema$/)) {
+            moveSlugUpFromProperties(sourceJson);
+            dereference(sourceJson, sourceJson, "$");
+            renamePropertySlugToId(sourceJson);
+            delete sourceJson.definitions;
+            fs.outputJsonSync(target, sourceJson);
+        }
     }
-
-    fs.outputJsonSync(target, sourceJson);
 }
