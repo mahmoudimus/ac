@@ -120,7 +120,8 @@ class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {
 
     @Override
     public PrintWriter getWriter() throws IOException {
-        return devNullWriter != null ? new PrintWriter(devNullWriter) : super.getWriter();
+        log.info("****************getWriter ", devNullWriter);
+        return devNullWriter != null ? devNullWriter : super.getWriter();
     }
 
 
