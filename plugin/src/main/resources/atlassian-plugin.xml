@@ -75,7 +75,7 @@
             <param-name>to.text</param-name>
             <param-value>/plugins/servlet/ac/</param-value>
         </init-param>
-        <url-pattern>/atlassian-connect/*</url-pattern>
+        <url-pattern>/plugins/servlet/atlassian-connect/*</url-pattern>
     </servlet-filter>
 
 
