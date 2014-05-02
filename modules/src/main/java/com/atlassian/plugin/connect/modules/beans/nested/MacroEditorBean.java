@@ -56,13 +56,11 @@ public class MacroEditorBean extends BaseModuleBean
 
     /**
      * An optional title that will be shown in the edit dialog header for an existing macro.
-     * Confluence renders this as "Edit '{editTitle}' Macro".
      */
     private I18nProperty editTitle;
 
     /**
      * An optional title that will be shown in the edit dialog header for a new macro.
-     * Confluence renders this as "Insert '{insertTitle}' Macro".
      */
     private I18nProperty insertTitle;
 

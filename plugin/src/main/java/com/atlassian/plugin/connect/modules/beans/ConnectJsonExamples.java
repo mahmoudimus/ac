@@ -496,8 +496,8 @@ public class ConnectJsonExamples
     {
         MacroEditorBean macroEditorBean = newMacroEditorBean()
                 .withUrl("/generate_md")
-                .withInsertTitle(new I18nProperty("MarkDown", "macro.md.insert"))
-                .withEditTitle(new I18nProperty("MarkDown", "macro.md.edit"))
+                .withInsertTitle(new I18nProperty("Insert New MarkDown", "macro.md.insert"))
+                .withEditTitle(new I18nProperty("Edit MarkDown", "macro.md.edit"))
                 .withHeight("300px")
                 .withWidth("400px")
                 .build();
