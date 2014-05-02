@@ -83,7 +83,7 @@ public class RedirectOnNotFoundFilter implements Filter {
 class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {
     private static final Logger log = LoggerFactory.getLogger(RedirectOnNotFoundFilter.class);
     // TODO: Do I need to hijack the output stream too?
-    private CharArrayWriter devNullWriter;
+    private PrintWriter devNullWriter = new PrintWriter(new CharArrayWriter());
 
     public RedirectingHttpServletResponseWrapper(HttpServletResponse response) {
         super(response);
@@ -109,9 +109,11 @@ class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {
 
     private void checkStatus(int sc) {
         log.info("****************checkStatus ", sc);
-        if (sc == HttpStatus.SC_NOT_FOUND)
+        if (sc != HttpStatus.SC_NOT_FOUND)
         {
-            devNullWriter = new CharArrayWriter();
+            // 404 by default as we don't get a 404 from a servlet normally, rather from the web
+            // container
+            devNullWriter = null;
         }
         log.info("****************devNullWriter ", devNullWriter);
     }
