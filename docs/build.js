@@ -44,7 +44,7 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
             property.title = property.fieldTitle;
         }
 
-        property.slug = slugify(property.title || property.slug);
+        property.slug = slugify(property.title || property.id);
 
         if (property.type === "array") {
             property.id = id;
@@ -109,13 +109,13 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
  * Transform a schema entity root into a model object, suitable for rendering.
  */
 function entityToModel(schemaEntity) {
-    var name = schemaEntity.title || schemaEntity.slug;
+    var name = schemaEntity.title || schemaEntity.id;
     var description = renderMarkdown(schemaEntity.description || name);
 
     var model = {
-        id: schemaEntity.slug,
+        id: schemaEntity.id,
         name: name,
-        slug: slugify(schemaEntity.slug || schemaEntity.pageName || name),
+        slug: slugify(schemaEntity.id || schemaEntity.pageName || name),
         description: description,
         type: schemaEntity.type
     };
@@ -131,8 +131,8 @@ function entityToModel(schemaEntity) {
             if (b.required && !a.required) {
                 return 1;
             }
-            a = (a.title || a.slug || "").toLowerCase();
-            b = (a.title || b.slug || "").toLowerCase();
+            a = (a.title || a.key).toLowerCase();
+            b = (a.title || b.key).toLowerCase();
             if (a < b) return -1;
             if (a > b) return 1;
             return 0;
@@ -215,13 +215,9 @@ function writeEntitiesToDisk(entities, pathMappings) {
  */
 function findRootEntities(schemas) {
     // find top level modules
-    var entities = jsonPath(schemas, "$.*.*[?(@.properties)]");
-    // include the modules we want
-    entities = _.filter(entities, function(entity) {
-        return entity.title === "Lifecycle" ||
-               entity.title === "Authentication" ||
-               entity.title === "Plugin Vendor";
-    });
+    var entities = jsonPath(schemas, "$.*.*[?(@.slug)]");
+    // exclude the module lists, they're rendered separately in findJiraModules etc.
+    entities = _.filter(entities, function(entity) {return entity.slug !== "moduleList";});
     // add the descriptor root itself (and make it the index.html for modules)
     schemas.jira.pageName = "index";
     entities.unshift(schemas.jira);

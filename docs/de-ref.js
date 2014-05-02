@@ -44,6 +44,19 @@ function moveSlugUpFromProperties(object, parent, parentName) {
     }
 }
 
+function renamePropertySlugToId(object) {
+    if (object == null) return;
+
+    if (typeof object === 'object') {
+        object.id = object.slug;
+        delete object.slug;
+
+        for (var prop in object) {
+            renamePropertySlugToId(object[prop]);
+        }
+    }
+}
+
 function dereference(object, objectRoot, path) {
     if (object == null) return;
 
@@ -91,6 +104,8 @@ for (var file in files) {
     if (file.match(/Schema$/)) {
         moveSlugUpFromProperties(sourceJson);
         dereference(sourceJson, sourceJson, "$");
+        renamePropertySlugToId(sourceJson);
+        delete sourceJson.definitions;
     }
 
     fs.outputJsonSync(target, sourceJson);
