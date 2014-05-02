@@ -87,7 +87,7 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
             property = _.pick(property, ["id", "type", "title", "slug", "description", "fieldDescription"]);
         }
 
-        if (required === true || (required && required.indexOf(id) > -1)) {
+        if (required && required.indexOf(id) > -1) {
             property.required = true;
         }
         property.key = id;
@@ -116,11 +116,10 @@ function entityToModel(schemaEntity) {
     var model = {
         id: schemaEntity.id,
         name: name,
-        slug: slugify(schemaEntity.id || schemaEntity.pageName || name),
+        slug: slugify(schemaEntity.pageName || name),
         description: description,
         type: schemaEntity.type
     };
-
 
     if (model.type === 'object') {
         model.properties = collapseArrayAndObjectProperties(schemaEntity.properties, schemaEntity.required, model);
@@ -216,9 +215,9 @@ function writeEntitiesToDisk(entities, pathMappings) {
  */
 function findRootEntities(schemas) {
     // find top level modules
-    var entities = jsonPath(schemas, "$.*.*[?(@.slug)]");
+    var entities = jsonPath(schemas, "$.*.*[?(@.id)]");
     // exclude the module lists, they're rendered separately in findJiraModules etc.
-    entities = _.filter(entities, function(entity) {return entity.slug !== "moduleList";});
+    entities = _.filter(entities, function(entity) {return entity.id !== "moduleList";});
     // add the descriptor root itself (and make it the index.html for modules)
     schemas.jira.pageName = "index";
     entities.unshift(schemas.jira);
