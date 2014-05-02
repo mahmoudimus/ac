@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * when it get
  */
 public class RedirectOnNotFoundFilter implements Filter {
-    private static final Logger log = LoggerFactory.getLogger(RedirectServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(RedirectOnNotFoundFilter.class);
     private static final String FROM_PATTERN = "from.pattern";
     private static final String TO_TEXT = "to.text";
 
@@ -49,11 +49,16 @@ public class RedirectOnNotFoundFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
                          FilterChain filterChain) throws IOException, ServletException {
+        log.info("****************doFilter");
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         RedirectingHttpServletResponseWrapper wrapper = new RedirectingHttpServletResponseWrapper(response);
         filterChain.doFilter(servletRequest, wrapper);
+        log.info("****************after filterChain.doFilter");
+
         if (wrapper.is404())
         {
+            log.info("****************is 404");
+
             HttpServletRequest request = (HttpServletRequest) servletRequest;
 
             final StringBuffer requestURL = request.getRequestURL();
@@ -61,9 +66,11 @@ public class RedirectOnNotFoundFilter implements Filter {
 
             final String newUrl = requestURL.replace(index, index + fromPattern.length(), toPattern).toString();
             log.debug("Redirecting from {} to {}", new Object[] {request.getRequestURI(), newUrl});
+            log.info("****************Redirecting from {} to {}", new Object[] {request.getRequestURI(), newUrl});
             response.setStatus(HttpStatus.SC_MOVED_PERMANENTLY);
             response.addHeader(HttpHeaders.LOCATION, newUrl);
-            response.getWriter().close();        }
+            response.getWriter().close();
+        }
     }
 
 
@@ -74,6 +81,7 @@ public class RedirectOnNotFoundFilter implements Filter {
 }
 
 class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {
+    private static final Logger log = LoggerFactory.getLogger(RedirectOnNotFoundFilter.class);
     // TODO: Do I need to hijack the output stream too?
     private CharArrayWriter devNullWriter;
 
@@ -100,10 +108,12 @@ class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {
     }
 
     private void checkStatus(int sc) {
+        log.info("****************checkStatus ", sc);
         if (sc == HttpStatus.SC_NOT_FOUND)
         {
             devNullWriter = new CharArrayWriter();
         }
+        log.info("****************devNullWriter ", devNullWriter);
     }
 
     @Override
