@@ -93,8 +93,8 @@ exports.run = function() {
         // only need to dereference the schemas, save a few ms on the step
         if (file.match(/Schema$/)) {
             moveSlugUpFromProperties(sourceJson);
-            dereference(sourceJson, sourceJson, "$");
             renamePropertySlugToId(sourceJson);
+            dereference(sourceJson, sourceJson, "$");
             delete sourceJson.definitions;
         }
 
