@@ -320,11 +320,11 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
         selectMacro(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
 
-        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
-        String url = editorContent.getImagePlaceholderUrl();
-
         try
         {
+            ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
+            String url = editorContent.getImagePlaceholderUrl();
+
             assertThat(url, is(getAddonBaseUrl() + "/images/placeholder.png"));
         }
         finally
@@ -342,16 +342,21 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
-        String content = dialog.getEmbeddedPage().getValueById("description");
+        RemotePluginDialog dialog = null;
 
         try
         {
+            dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
+            String content = dialog.getEmbeddedPage().getValueById("description");
+
             assertThat(content, is("Select from:"));
         }
         finally
         {
-            dialog.cancel();
+            if (dialog != null)
+            {
+                dialog.cancel();
+            }
             editorPage.cancel();
         }
     }
@@ -365,10 +370,9 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
-
         try
         {
+            RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
             assertThat(dialog.cancel(), is(true));
         }
         finally
@@ -386,16 +390,19 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(CUSTOM_TITLE_EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(CUSTOM_TITLE_EDITOR_MACRO_KEY));
-        String title = dialog.getTitle();
+        RemotePluginDialog dialog = null;
 
         try
         {
-            assertThat(title, is(CUSTOM_TITLE));
+            dialog = connectPageOperations.findDialog(getAddonAndMacroKey(CUSTOM_TITLE_EDITOR_MACRO_KEY));
+            assertThat(dialog.getTitle(), is(CUSTOM_TITLE));
         }
         finally
         {
-            dialog.cancel();
+            if (dialog != null)
+            {
+                dialog.cancel();
+            }
             editorPage.cancel();
         }
     }
@@ -409,17 +416,19 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
-
-        String title = dialog.getTitle();
+        RemotePluginDialog dialog = null;
 
         try
         {
-            assertThat(title, containsString(EDITOR_MACRO_NAME));
+            dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
+            assertThat(dialog.getTitle(), containsString(EDITOR_MACRO_NAME));
         }
         finally
         {
-            dialog.cancel();
+            if (dialog != null)
+            {
+                dialog.cancel();
+            }
             editorPage.cancel();
         }
     }
@@ -433,13 +442,10 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
-
-        boolean submitted = dialog.submit();
-
         try
         {
-            assertThat(submitted, is(true));
+            RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
+            assertThat(dialog.submit(), is(true));
         }
         finally
         {
