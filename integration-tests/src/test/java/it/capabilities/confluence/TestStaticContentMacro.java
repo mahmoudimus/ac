@@ -45,6 +45,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         StaticContentMacroModuleBean shortBodyMacro = createShortBodyMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean parameterMacro = createParameterMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean editorMacro = createEditorMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean customTitleEditorMacro = createCustomEditorTitleMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean hiddenMacro = createHiddenMacro(newStaticContentMacroModuleBean());
 
         StaticContentMacroModuleBean storageFormatMacro = newStaticContentMacroModuleBean()
@@ -75,6 +76,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                         storageFormatMacro,
                         getMacro,
                         editorMacro,
+                        customTitleEditorMacro,
                         hiddenMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.wrapContextAwareServlet(parameterServlet))
