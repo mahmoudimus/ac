@@ -1,21 +1,19 @@
 package com.atlassian.plugin.connect.plugin.integration.plugins;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.StateAware;
-
 import com.google.common.collect.ImmutableList;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;

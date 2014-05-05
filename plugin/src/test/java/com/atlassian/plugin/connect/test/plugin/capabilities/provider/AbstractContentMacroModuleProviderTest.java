@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.EditorImagePlaceholder;
 import com.atlassian.confluence.macro.ImagePlaceholder;
@@ -10,7 +7,6 @@ import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -18,30 +14,32 @@ import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModule
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.AbstractContentMacroModuleProvider;
-import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilder;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.newMacroEditorBean;

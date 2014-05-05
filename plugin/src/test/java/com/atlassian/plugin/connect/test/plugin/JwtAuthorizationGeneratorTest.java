@@ -9,8 +9,8 @@ import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.JwtAuthorizationGenerator;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.collect.ImmutableMap;
@@ -28,14 +28,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +44,9 @@ public class JwtAuthorizationGeneratorTest
 {
     private static final String A_MOCK_JWT = "a.mock.jwt";
     private static final Map<String, String[]> PARAMS = ImmutableMap.of("a_param", new String[]{"a_value"});
-    private static final URI A_URI = URI.create("http://any.url/path?b_param=b+value+with+spaces&c_param=c_value");
+    private static final ImmutableMap<String, String[]> ALL_PARAMS = ImmutableMap.of("a_param", new String[]{"a_value"}, "b_param", new String[]{"b value with spaces"}, "c_param", new String[]{"c_value"});
+    private static final URI A_URI_BASE = URI.create("http://any.url");
+    private static final URI A_URI = URI.create(A_URI_BASE.toString() + "/path?b_param=b+value+with+spaces&c_param=c_value");
 
     @Mock
     private JwtService jwtService;
@@ -95,10 +96,8 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void hasQueryHashClaimWithCorrectValue() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        CanonicalHttpUriRequest canonicalRequest = new CanonicalHttpUriRequest(HttpMethod.POST.toString(), A_URI.getPath(), "",
-                ImmutableMap.of("a_param", new String[]{"a_value"}, "b_param", new String[]{"b value with spaces"}, "c_param", new String[]{"c_value"}));
-        String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(canonicalRequest);
-        verify(jwtService).issueJwt(argThat(hasClaim(JwtConstants.Claims.QUERY_HASH, expectedQueryHash, true)), eq(applicationLink));
+        final String expectedQueryHash = generateQueryHash(HttpMethod.POST, A_URI.getPath(), "", ALL_PARAMS);
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -119,18 +118,94 @@ public class JwtAuthorizationGeneratorTest
         generator.generate(HttpMethod.GET, A_URI, null);
     }
 
+    @Test(expected = NullPointerException.class)
+    public void nullBaseUrlResultsInException()
+    {
+        new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void absoluteUrlThatDoesNotStartWithTheBaseUrlResultsInException()
+    {
+        generateGet("https://example.com/foo", "https://other.domain", PARAMS);
+    }
+
+    @Test
+    public void signedRelativeUrlWithNoBaseIsEquivalentToAbsoluteUrlWithAnyBase() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/path", "", ALL_PARAMS);
+        generateGet("/path", "https://example.com", ALL_PARAMS);
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+    }
+
+    @Test
+    public void signedUrlDoesNotIncludeAddOnBaseUrlWhenBaseUrlContainsPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", "", Collections.<String, String[]>emptyMap());
+        generateGet("https://example.com/base/and/path", "https://example.com/base", Collections.<String, String[]>emptyMap());
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+    }
+
+    @Test
+    public void signedUrlDoesNotIncludeAddOnBaseUrlWhenBaseUrlContainsPathAndThereAreParams() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", "", PARAMS);
+        generateGet("https://example.com/base/and/path", "https://example.com/base", PARAMS);
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+    }
+
+    @Test
+    public void signedUrlDoesNotIncludeAddOnBaseUrlWhenBaseUrlContainsPathAndThereAreParamsInTheTargetPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", "", PARAMS);
+        generateGet("https://example.com/base/and/path?a_param=a_value", "https://example.com/base", Collections.<String, String[]>emptyMap());
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+    }
+
+    @Test
+    public void signedUrlDoesNotIncludeAddOnBaseUrlWhenBaseUrlEndsInSlash() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/path", "", ALL_PARAMS);
+        generateGet("https://example.com/path", "https://example.com/", ALL_PARAMS);
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+    }
+
+    @Test
+    public void signedUrlPathIsSlashWhenThereIsImplicitlyNoPathRelativeToTheBaseUrl() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/", "", ALL_PARAMS);
+        generateGet("https://example.com/base", "https://example.com/base", ALL_PARAMS);
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+    }
+
     @Before
     public void beforeEachTest()
     {
         when(jwtService.issueJwt(any(String.class), eq(applicationLink))).thenReturn(A_MOCK_JWT);
         when(consumerService.getConsumer()).thenReturn(Consumer.key("whatever").name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
-        generator = new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService);
+        generator = new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, A_URI_BASE);
         generate();
+    }
+
+    private ArgumentMatcher<String> hasQueryHash(String expectedQueryHash)
+    {
+        return hasClaim(JwtConstants.Claims.QUERY_HASH, expectedQueryHash, true);
+    }
+
+    private String generateQueryHash(HttpMethod httpMethod, String targetUrl, String baseUrl, Map<String, String[]> params) throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        CanonicalHttpUriRequest canonicalRequest = new CanonicalHttpUriRequest(httpMethod.toString(), targetUrl, baseUrl, params);
+        return HttpRequestCanonicalizer.computeCanonicalRequestHash(canonicalRequest);
     }
 
     private Option<String> generate()
     {
         return generator.generate(HttpMethod.POST, A_URI, PARAMS);
+    }
+
+    private String generateGet(String url, String baseUrl, Map<String, String[]> params)
+    {
+        return new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params).get();
     }
 
     private static ArgumentMatcher<String> hasClaim(final String claimName)

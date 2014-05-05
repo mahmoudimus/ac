@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteInlineDialog;
@@ -13,9 +12,9 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
-import it.servlet.condition.CheckUsernameConditionServlet;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.servlet.condition.CheckUsernameConditionServlet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,13 +30,10 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 /**
  * @since 1.0

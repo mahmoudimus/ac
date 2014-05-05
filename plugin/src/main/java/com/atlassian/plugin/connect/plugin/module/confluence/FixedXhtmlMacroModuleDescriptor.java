@@ -7,7 +7,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 
 /**

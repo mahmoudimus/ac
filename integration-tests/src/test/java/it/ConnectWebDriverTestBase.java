@@ -50,7 +50,7 @@ public abstract class ConnectWebDriverTestBase
         if(!ADMIN_USERNAME.equals(currentUsername))
         {
             loginAs(ADMIN_USERNAME, ADMIN_USERNAME);
-            this.currentUsername = ADMIN_USERNAME;
+            currentUsername = ADMIN_USERNAME;
         }
     }
 
@@ -59,7 +59,7 @@ public abstract class ConnectWebDriverTestBase
         if(!BETTY_USERNAME.equals(currentUsername))
         {
             loginAs(BETTY_USERNAME, BETTY_USERNAME);
-            this.currentUsername = BETTY_USERNAME;
+            currentUsername = BETTY_USERNAME;
         }
     }
 
@@ -68,7 +68,7 @@ public abstract class ConnectWebDriverTestBase
         if(!BARNEY_USERNAME.equals(currentUsername))
         {
             loginAs(BARNEY_USERNAME, BARNEY_USERNAME);
-            this.currentUsername = BARNEY_USERNAME;
+            currentUsername = BARNEY_USERNAME;
         }
     }
 

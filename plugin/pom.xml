@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -419,14 +419,7 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.activeobjects</groupId>
-            <artifactId>activeobjects-plugin</artifactId>
-            <version>${ao.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        
+       
     </dependencies>
 
     <build>
@@ -495,8 +488,6 @@
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                                 <use.test.http.client>true</use.test.http.client>
-                                <activeobjects.servicefactory.config.long.timeout>${ao.long.timeout}</activeobjects.servicefactory.config.long.timeout>
-                                <activeobjects.servicefactory.config.short.timeout>${ao.short.timeout}</activeobjects.servicefactory.config.short.timeout>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -549,6 +540,12 @@
                                     <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
                                     <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
+
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.analytics</groupId>
+                                    <artifactId>analytics-client</artifactId>
+                                    <version>${atlassian.analytics.version}</version>
+                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                         <product>
@@ -564,8 +561,6 @@
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                                 <use.test.http.client>true</use.test.http.client>
-                                <activeobjects.servicefactory.config.long.timeout>${ao.long.timeout}</activeobjects.servicefactory.config.long.timeout>
-                                <activeobjects.servicefactory.config.short.timeout>${ao.short.timeout}</activeobjects.servicefactory.config.short.timeout>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -611,12 +606,18 @@
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
                                 </bundledArtifact>
-                                
+
                                 <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
                                 <bundledArtifact>
                                     <groupId>com.atlassian.upm</groupId>
                                     <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
                                     <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
+
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.analytics</groupId>
+                                    <artifactId>analytics-client</artifactId>
+                                    <version>${atlassian.analytics.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
@@ -748,6 +749,22 @@
                                     </includes>
                                 </aggregation>
                             </aggregations>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>host-min-js</id>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                        <configuration>
+                            <gzip>false</gzip>
+                            <jswarn>false</jswarn>
+                            <excludeResources>true</excludeResources>
+                            <sourceDirectory>${project.build.outputDirectory}/js</sourceDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/js</outputDirectory>
+                            <excludes>
+                                <exclude>${project.build.outputDirectory}/js/iframe</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
@@ -974,6 +991,7 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
+                                    <skipTests>false</skipTests>
                                     <configFile>karma.iframe.conf.js</configFile>
                                 </configuration>
                             </execution>
@@ -984,7 +1002,45 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
+                                    <skipTests>false</skipTests>
                                     <configFile>karma.conf.js</configFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <browsers>Chrome</browsers>
+                            <karmaExecutable>node_modules/karma/bin/karma</karmaExecutable>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>descriptor-validation-tests</id>
+            <activation>
+                <property>
+                    <name>descriptorValidation</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- karma testrunner plugin for iframe code -->
+                    <plugin>
+                        <groupId>com.kelveden</groupId>
+                        <artifactId>maven-karma-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <!-- test add-on validation results -->
+                            <execution>
+                                <id>descriptor-validator-results-tests</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <skipTests>false</skipTests>
+                                    <configFile>karma.descriptor-validator.conf.js</configFile>
                                 </configuration>
                             </execution>
                         </executions>

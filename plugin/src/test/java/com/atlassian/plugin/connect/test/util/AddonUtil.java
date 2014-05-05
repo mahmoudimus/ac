@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.test.util;
 
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-
 import org.apache.commons.lang.RandomStringUtils;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;

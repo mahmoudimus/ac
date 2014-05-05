@@ -2,18 +2,17 @@ package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
+import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 
 import static com.google.common.base.Preconditions.checkNotNull;

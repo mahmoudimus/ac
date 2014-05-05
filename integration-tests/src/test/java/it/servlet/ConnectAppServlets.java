@@ -59,6 +59,30 @@ public class ConnectAppServlets
     }
 
     /**
+     * @return a servlet with history test buttons
+     */
+    public static HttpServlet historyServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-history.mu"));
+    }
+
+    /**
+     * @return a servlet that will create a workflow post function
+     */
+    public static HttpServlet workflowPostFunctionServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("jira/iframe-workflow-post-function.mu"));
+    }
+
+    /**
+     * @return a servlet that will create a workflow post function that will fail validation
+     */
+    public static HttpServlet failValidateWorkflowPostFunctionServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("jira/iframe-fail-validate-workflow-post-function.mu"));
+    }
+
+    /**
      * Verify from a WebDriver test using {@link RemoteWebPanel#getCustomMessage()}.
      *
      * @param message the message to display

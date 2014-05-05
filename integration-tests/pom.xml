@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -153,6 +153,12 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-projects-page-objects</artifactId>
+            <version>${atlassian.jira.projects.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.jira.tests</groupId>
             <artifactId>jira-func-test-basics</artifactId>
             <version>${functestbasics.version}</version>
@@ -298,8 +304,6 @@
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <use.test.http.client>true</use.test.http.client>
-                                <activeobjects.servicefactory.config.long.timeout>${ao.long.timeout}</activeobjects.servicefactory.config.long.timeout>
-                                <activeobjects.servicefactory.config.short.timeout>${ao.short.timeout}</activeobjects.servicefactory.config.short.timeout>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -373,8 +377,6 @@
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <use.test.http.client>true</use.test.http.client>
-                                <activeobjects.servicefactory.config.long.timeout>${ao.long.timeout}</activeobjects.servicefactory.config.long.timeout>
-                                <activeobjects.servicefactory.config.short.timeout>${ao.short.timeout}</activeobjects.servicefactory.config.short.timeout>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>

@@ -32,11 +32,14 @@ _AP.define("messages/main", ["_dollar"], function($) {
     }
 
     return {
-        showMessage: function (name, title, body, options) {
+        showMessage: function (name, title, bodyHTML, options) {
             var msgBar = getMessageBar();
 
             options = filterMessageOptions(options);
-            $.extend(options, {title: title, body: body });
+            $.extend(options, {
+                title: title,
+                body: AJS.escapeHtml(bodyHTML)
+            });
 
             if($.inArray(name, MESSAGE_TYPES) < 0){
                 throw "Invalid message type. Must be: " + MESSAGE_TYPES.join(", ");

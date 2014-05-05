@@ -8,13 +8,13 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
 
 import static com.google.common.base.Preconditions.checkNotNull;

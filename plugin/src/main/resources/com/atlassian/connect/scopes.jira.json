@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "user", "filter", "myself", "groupsPicker"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "user", "filter", "myself", "groupsPicker", "auditing"],
       "pathKeys": ["download attachments"],
       "methods": ["GET"]
     },
@@ -15,7 +15,7 @@
     },
     {
       "key": "WRITE",
-      "restPathKeys": ["issue", "comment", "worklog", "filter"],
+      "restPathKeys": ["issue", "comment", "worklog", "filter", "auditing"],
       "methods": ["POST", "PUT"]
     },
     {
@@ -241,6 +241,13 @@
       "basePaths": ["/myself"],
       "versions": ["2", "latest"],
       "public": true
+    },
+    {
+       "key": "auditing",
+       "name": "api",
+       "basePaths": ["/auditing($|/.*)"],
+       "versions": ["2", "latest"],
+       "public": true
     }
   ],
   "soapRpcPaths": [

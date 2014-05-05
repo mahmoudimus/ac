@@ -1,16 +1,16 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.AbstractConnectPageModuleProvider;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;

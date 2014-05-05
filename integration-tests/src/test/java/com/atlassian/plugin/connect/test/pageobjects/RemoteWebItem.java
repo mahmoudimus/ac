@@ -147,7 +147,7 @@ public class RemoteWebItem
 
     public boolean isActiveDialog()
     {
-        PageElement dialog = elementFinder.find(By.className("aui-popup"));
+        PageElement dialog = elementFinder.find(By.className("aui-dialog2"));
         return (dialog.isPresent() && dialog.isVisible());
     }
 

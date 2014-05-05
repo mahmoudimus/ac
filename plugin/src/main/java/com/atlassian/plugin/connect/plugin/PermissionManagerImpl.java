@@ -40,9 +40,7 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterables.*;
 import static java.lang.String.format;
 
 /**
@@ -68,13 +66,15 @@ public final class PermissionManagerImpl implements PermissionManager
             PluginEventManager pluginEventManager,
             PermissionsReader permissionsReader,
             JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
-            ScopeService scopeService, ConnectAddonRegistry connectAddonRegistry, ConnectAddonBeanFactory connectAddonBeanFactory) throws IOException
+            ScopeService scopeService,
+            ConnectAddonRegistry connectAddonRegistry,
+            ConnectAddonBeanFactory connectAddonBeanFactory) throws IOException
     {
         this(pluginAccessor, permissionsReader, jsonConnectAddOnIdentifierService,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class),
-                scopeService, connectAddonRegistry,
-                connectAddonBeanFactory
+                scopeService,
+                connectAddonRegistry, connectAddonBeanFactory
         );
     }
 
@@ -84,15 +84,16 @@ public final class PermissionManagerImpl implements PermissionManager
             PermissionsReader permissionsReader,
             JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker,
-            ScopeService scopeService, ConnectAddonRegistry connectAddonRegistry, ConnectAddonBeanFactory connectAddonBeanFactory) throws IOException
+            ScopeService scopeService,
+            ConnectAddonRegistry connectAddonRegistry, ConnectAddonBeanFactory connectAddonBeanFactory) throws IOException
     {
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.permissionsReader = checkNotNull(permissionsReader);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
         this.allScopes = scopeService.build();
-        this.connectAddonRegistry = connectAddonRegistry;
-        this.connectAddonBeanFactory = connectAddonBeanFactory;
+        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
+        this.connectAddonBeanFactory = checkNotNull(connectAddonBeanFactory);
     }
 
     @Override

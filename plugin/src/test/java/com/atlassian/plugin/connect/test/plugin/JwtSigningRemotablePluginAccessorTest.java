@@ -7,10 +7,11 @@ import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.JwtSigningRemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.sal.api.user.UserKey;
@@ -30,27 +31,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
@@ -445,7 +434,13 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
         UserManager userManager = mock(UserManager.class);
         when(userManager.getRemoteUserKey()).thenReturn(mockRemoteUserKey);
 
-        return new JwtSigningRemotablePluginAccessor(mockPlugin(), baseUrlSupplier, jwtService, consumerService,
+        ConnectAddonBean addon = ConnectAddonBean.newConnectAddonBean()
+                .withKey(PLUGIN_KEY)
+                .withName(PLUGIN_NAME)
+                .withBaseurl(baseUrl)
+                .build();
+
+        return new JwtSigningRemotablePluginAccessor(addon, baseUrlSupplier, jwtService, consumerService,
                 connectApplinkManager, mockCachingHttpContentRetriever(), userManager);
     }
 }

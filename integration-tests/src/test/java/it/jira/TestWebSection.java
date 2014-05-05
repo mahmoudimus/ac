@@ -16,9 +16,7 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestWebSection extends JiraWebDriverTestBase
 {
@@ -88,6 +86,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     @Test
     public void testWebItemFoundWithinWebSection()
     {
+        loginAsAdmin();
         product.visit(JiraViewProjectPage.class, project.getKey());
 
         AddonDropdownMenu dropdown = connectPageOperations.getPageBinder().bind(AddonDropdownMenu.class, By.id(addonAndModuleKey(PLUGIN_KEY, HEADER_WEB_ITEM_ID)), By.id(addonAndModuleKey(PLUGIN_KEY, DROPDOWN_CONTENT_ID)));
@@ -110,19 +109,20 @@ public class TestWebSection extends JiraWebDriverTestBase
             super(triggerLocator, dropdownLocator);
         }
 
+        @Override
+        public JiraAuiDropdownMenu open()
+        {
+            if (!isOpen())
+            {
+                trigger().javascript().mouse().click();
+                waitForOpen();
+            }
+            return this;
+        }
+
         public PageElement getItem(By selector)
         {
             return getDropdown().find(selector);
-        }
-
-        @Override
-        protected PageElement trigger()
-        {
-            PageElement element = super.trigger();
-            
-            waitUntilTrue(element.timed().isVisible());
-            
-            return element;
         }
     }
 }

@@ -1,26 +1,20 @@
 package com.atlassian.plugin.connect.test.plugin.module.webitem;
 
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.webitem.ConfluenceWebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.spring.container.ContainerContext;
 import com.atlassian.spring.container.ContainerManager;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.junit.Before;
@@ -29,6 +23,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;

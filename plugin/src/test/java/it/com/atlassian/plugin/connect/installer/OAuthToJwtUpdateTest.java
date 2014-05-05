@@ -6,15 +6,14 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.test.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,9 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import it.com.atlassian.plugin.connect.TestAuthenticator;
-
-import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static junit.framework.Assert.*;
 import static org.junit.Assert.assertEquals;

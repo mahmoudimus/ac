@@ -1,8 +1,7 @@
 package it.capabilities.jira;
 
-import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
+import com.atlassian.jira.projects.pageobjects.page.BrowseProjectPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;

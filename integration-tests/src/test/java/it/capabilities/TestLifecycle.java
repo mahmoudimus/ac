@@ -8,13 +8,12 @@ import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 import it.AbstractBrowserlessTest;
-
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.test.RemotePluginUtils.randomWebItemBean;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class TestLifecycle extends AbstractBrowserlessTest
 {

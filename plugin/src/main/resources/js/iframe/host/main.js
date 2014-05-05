@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params"], function ($, XdmRpc, addons, statusHelper, messages, uiParams) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params", "host/analytics", 'host/history'], function ($, XdmRpc, addons, statusHelper, messages, uiParams, analytics, connectHistory) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -37,7 +37,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
   function create(options) {
 
     $.extend(options, uiParams.fromUrl(options.src));
-    console.log("namespace: " + options.ns);
+
     var ns = options.ns,
         homeId = "ap-" + ns,
         $home = $("#" + homeId),
@@ -55,10 +55,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         productContextJson = options.productCtx,
         isInited;
 
-    function publish(name, props) {
-      props = $.extend(props || {}, {moduleKey: ns});
-      events.push({name: name, properties: props});
-    }
+    analytics.iframePerformance.start(options.key, ns);
 
     var timeout = setTimeout(function () {
       timeout = null;
@@ -67,9 +64,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       $timeout.find("a.ap-btn-cancel").click(function () {
         statusHelper.showLoadErrorStatus($home);
         $nexus.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
+        analytics.iframePerformance.cancel(options.key, ns);
       });
       layoutIfNeeded();
-      publish("plugin.iframetimedout", {elapsed: new Date().getTime() - start});
+      analytics.iframePerformance.timeout(options.key, ns);
     }, 20000);
 
     function preventTimeout() {
@@ -84,7 +82,21 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     }
 
     function getDialogButton(name) {
-      return $nexus.data("ra.dialog.buttons").getButton(name);
+      return getDialogButtons()[name];
+    }
+
+    if(isGeneral){
+      options.uiParams = {
+        historyState: connectHistory.getState()
+      };
+      // register for url hash changes to invoking history.popstate callbacks.
+      $(window).on("hashchange", function(e){
+        connectHistory.hashChange(e.originalEvent, rpc.historyMessage);
+      });
+    }
+
+    function getProductContext(){
+      return JSON.parse(productContextJson);
     }
 
     var rpc = new XdmRpc($, {
@@ -92,32 +104,29 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       remoteKey: options.key,
       container: contentId,
       channel: channelId,
-      props: {width: initWidth, height: initHeight}
+      props: {width: initWidth, height: initHeight},
+      uiParams: options.uiParams
     }, {
       remote: [
         "dialogMessage",
+        "historyMessage",
         // !!! JIRA specific !!!
         "setWorkflowConfigurationMessage"
       ],
       local: {
         init: function () {
-            console.log("local init running....");
           if (!isInited) {
             isInited = true;
             preventTimeout();
-            console.log("initing iframe class...");
-              console.log("contentId: " + contentId);
-            console.log("content: " + $content);
             $content.addClass("iframe-init");
             var elapsed = new Date().getTime() - start;
             statusHelper.showLoadedStatus($home);
             layoutIfNeeded();
             $nexus.trigger("ra.iframe.init");
-            publish("plugin.iframeinited", {elapsed: elapsed});
+            analytics.iframePerformance.end(options.key, ns);
           }
         },
         resize: debounce(function (width, height) {
-            console.log("resizing with height: " + height);
           // debounce resizes to avoid excessive page reflow
           if (!isDialog) {
             // dialog content plugins do not honor resize requests, since their content size is fixed
@@ -135,7 +144,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             // This adds border between the iframe and the page footer as the connect addon has scrolling content and can't do this
             $iframe.addClass("full-size-general-page");
             function resizeHandler() {
-                console.log("resizingToParent with height: " + height);
               var height = $(document).height() - AJS.$("#header > nav").outerHeight() - AJS.$("#footer").outerHeight() - 20;
               $("iframe", $content).css({width: "100%", height: height + "px"});
             }
@@ -183,12 +191,20 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           callback(button ? button.isEnabled() : void 0);
         },
         createDialog: function(dialogOptions) {
-          _AP.require("dialog", function(dialog) {
-            dialog.create(options.key, productContextJson, dialogOptions);
+          _AP.require("dialog/dialog-factory", function(dialogFactory) {
+
+            //open by key or url. This can be simplified when opening via url is removed.
+            if(dialogOptions.key) {
+              options.moduleKey = dialogOptions.key;
+            } else if(dialogOptions.url) {
+              options.url = dialogOptions.url;
+            }
+
+            dialogFactory(options, dialogOptions, productContextJson);
           });
         },
         closeDialog: function() {
-          _AP.require("dialog", function(dialog) {
+          _AP.require(["dialog/main"], function(dialog) {
             // TODO: only allow closing from same plugin key?
             dialog.close();
           });
@@ -212,11 +228,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             return json;
           }
           function done(data, textStatus, xhr) {
-              console.log("rpc load success!")
             success([data, textStatus, toJSON(xhr)]);
           }
           function fail(xhr, textStatus, errorThrown) {
-              console.log("rpc fail!")
             error([toJSON(xhr), textStatus, errorThrown]);
           }
           var headers = {};
@@ -240,20 +254,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           }).then(done, fail);
         },
         // !!! JIRA specific !!!
-        getWorkflowConfiguration: function (uuid, callback) {
-          if(!/^[\w|-]+$/.test(uuid)){
-            throw new Error("Invalid workflow ID");
-          }
-          var value,
-          selector = $("#postFunction\\.config-"+uuid)[0];
-
-          // if the matching selector has an id that starts with the correct string
-          if(selector && selector.id.match(/postFunction\.config\-/).length === 1){
-            value = $(selector).val();
-          } else {
-            throw ("Workflow configuration not found");
-          }
-          callback(value);
+        getWorkflowConfiguration: function (callback) {
+          AP.require('jira/workflow-post-function', function(wpf){
+            var postFunctionId = getProductContext()["postFunction.id"];
+            wpf.getConfiguration(postFunctionId, callback);
+          });
         },
         // !!! Confluence specific !!!
         saveMacro: function(updatedParams) {
@@ -287,6 +292,27 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           _AP.require(['jira/event'], function(jiraEvent){
             jiraEvent[e]();
           });
+        },
+        historyPushState: function(url){
+          if(isGeneral){
+            return connectHistory.pushState(url);
+          } else {
+            log("History is only available to page modules");
+          }
+        },
+        historyReplaceState: function(url){
+          if(isGeneral){
+            return connectHistory.replaceState(url);
+          } else {
+            log("History is only available to page modules");
+          }
+        },
+        historyGo: function(delta){
+          if(isGeneral){
+            return connectHistory.go(delta);
+          } else {
+            log("History is only available to page modules");
+          }
         }
       }
     });
@@ -301,11 +327,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
-    console.log("iframe = " + $content.attr("id"));
+
     $iframe.data("ap-rpc", rpc);
 
     function layoutIfNeeded() {
-        console.log("laying out iframe...");
       var $stats = $(".ap-stats", $home);
       $stats.removeClass("hidden");
       if (isSimpleDialog) {
@@ -343,7 +368,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     // wireup dialog buttons if appropriate
     var dialogButtons = getDialogButtons();
     if (dialogButtons) {
-      dialogButtons.each(function (name, button) {
+      $.each(dialogButtons, function(name, button) {
         button.click(function (e, callback) {
           if (isInited) {
             rpc.dialogMessage(name, callback);
@@ -355,18 +380,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       });
     }
 
-    // !!! JIRA specific !!!
-    var done = false;
-    $(document).delegate("#add_submit, #update_submit", "click", function (e) {
-      if (!done) {
-        e.preventDefault();
-        rpc.setWorkflowConfigurationMessage(function (either) {
-          if (either.valid) {
-            $("#postFunction\\.config-" + either.uuid).val(either.value);
-            done = true;
-            $(e.target).click();
-          }
-        });
+    // JIRA workflow post function binder.
+    _AP.require('jira/workflow-post-function', function(wpf){
+      if (wpf.isOnWorkflowPostFunctionPage()) {
+        var postFunctionId = getProductContext()["postFunction.id"];
+        wpf.registerSubmissionButton(rpc, postFunctionId);
       }
     });
     // !!! end JIRA !!!
@@ -386,7 +404,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
   return function (options) {
     var attemptCounter = 0;
     function doCreate() {
-        console.log("running DoCreate....");
         //If the element we are going to append the iframe to doesn't exist in the dom (yet). Wait for it to appear.
         if(contentDiv(options.ns).length === 0 && attemptCounter < 10){
             setTimeout(function(){

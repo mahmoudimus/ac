@@ -1,11 +1,5 @@
 package it.com.atlassian.plugin.connect.descriptor;
 
-import java.io.IOException;
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -15,29 +9,27 @@ import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBui
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.test.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AndCompositeCondition;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
-import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContainingSimpleName;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
