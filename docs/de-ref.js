@@ -14,36 +14,15 @@ var files = {
     commonScopes:     'com/atlassian/connect/scopes.common.json'
 };
 
-/**
- * Schema generate puts the slugs under properties. That jacks things up, moving it up a notch.
- */
-function moveSlugUpFromProperties(object, parent, parentName) {
+function renamePropertyShortClassNameToId(object) {
     if (object == null) return;
 
     if (typeof object === 'object') {
-        // if we're in a property collection &
-        // we have a slug, move it to the parent
-        if (parentName == "properties" && object.slug)
-        {
-            parent.slug = object.slug;
-            delete object.slug;
-        }
+        object.id = object.shortClassName;
+        delete object.shortClassName;
 
         for (var prop in object) {
-            moveSlugUpFromProperties(object[prop], object, prop);
-        }
-    }
-}
-
-function renamePropertySlugToId(object) {
-    if (object == null) return;
-
-    if (typeof object === 'object') {
-        object.id = object.slug;
-        delete object.slug;
-
-        for (var prop in object) {
-            renamePropertySlugToId(object[prop]);
+            renamePropertyShortClassNameToId(object[prop]);
         }
     }
 }
@@ -92,8 +71,7 @@ exports.run = function() {
 
         // only need to dereference the schemas, save a few ms on the step
         if (file.match(/Schema$/)) {
-            moveSlugUpFromProperties(sourceJson);
-            renamePropertySlugToId(sourceJson);
+            renamePropertyShortClassNameToId(sourceJson);
             dereference(sourceJson, sourceJson, "$");
             delete sourceJson.definitions;
         }
