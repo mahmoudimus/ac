@@ -10,8 +10,8 @@ import com.atlassian.plugin.connect.modules.util.ProductFilter;
 public class ConfluenceSchemaGeneratorProvider implements JsonSchemaGeneratorProvider
 {
     @Override
-    public JsonSchemaGenerator provide(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter, String shortClassnameField)
+    public JsonSchemaGenerator provide(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {
-        return new ConnectSchemaGenerator(enumCase,interfaceList,schemaDocs, ignoreFilter, shortClassnameField, ProductFilter.CONFLUENCE);
+        return new ConnectSchemaGenerator(enumCase,interfaceList,schemaDocs, ignoreFilter, ProductFilter.CONFLUENCE);
     }
 }
