@@ -1,7 +1,10 @@
-_AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main"], function ($, rpc, dialogFactory, dialogMain) {
+_AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main", "_events"], function ($, rpc, dialogFactory, dialogMain, events) {
     "use strict";
 
-    rpc.extend(function(){
+    var opener;
+
+
+    rpc.extend(function(remote){
         return {
             stubs: ["dialogMessage"],
             init: function(state){
@@ -45,12 +48,29 @@ _AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main"]
                         xdmOptions.url = dialogOptions.url;
                     }
                     dialogFactory(xdmOptions, dialogOptions, this.productContextJson);
+/*
+                    this.events.on('dialog.close', function(data){
+                        console.log("CREATE DIALOG DIALOG.close", data);
+                    });
+                    */
+                    //this.events.emit("dialog.close");
+                    var that = this;
+                    opener = function(){
+                        return that;
+                    };
+
+
                 },
-                closeDialog: function(data) {
-                    console.log("CLOSEDIALGO", arguments, this);
-                    
-                    //remote.events.once("dialog." + event, callback);
-                    //dialogMain.close();
+                closeDialog: function(done, fail) {
+                    console.log("ARGS", arguments, this);
+                    dialogMain.close('something in close');
+                    //opener().events.emit('dialog.close', 'abc');
+  /*
+                    console.log("CLOSE DIALOG", remote, this, arguments);
+                    //opener.dialogMessage("dialog.close", callback);
+                    opener().events.emit('dialog.close', 'abc');
+                    dialogMain.close('something in close');
+                    */
                 }
             }
         };
