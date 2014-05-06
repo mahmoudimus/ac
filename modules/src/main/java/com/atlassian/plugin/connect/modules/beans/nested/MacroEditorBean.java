@@ -123,7 +123,7 @@ public class MacroEditorBean extends BaseModuleBean
 
     public boolean hasInsertTitle()
     {
-        return null != editTitle;
+        return null != insertTitle;
     }
 
     public String getWidth()
