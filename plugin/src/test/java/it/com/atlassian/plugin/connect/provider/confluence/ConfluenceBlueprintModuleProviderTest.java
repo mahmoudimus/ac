@@ -1,12 +1,16 @@
 package it.com.atlassian.plugin.connect.provider.confluence;
 
+import com.atlassian.confluence.pages.Page;
+import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
+import com.atlassian.confluence.spaces.Space;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultBlueprintModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.BlueprintModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -15,12 +19,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,13 +41,14 @@ public class ConfluenceBlueprintModuleProviderTest {
     public static final String MODULE_NAME = "My Blueprint";
     public static final String MODULE_KEY = "my-blueprint";
     public static final String BASE_URL = "http://my.connect.addon.com";
+    public static final String SPACE_KEY = "ds";
 
-    private final DefaultBlueprintModuleProvider blueprintModuleProvider;
+    private final BlueprintModuleProvider blueprintModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
     private HttpServletRequest servletRequest;
     private final TestAuthenticator testAuthenticator;
 
-    public ConfluenceBlueprintModuleProviderTest(DefaultBlueprintModuleProvider blueprintModuleProvider,
+    public ConfluenceBlueprintModuleProviderTest(BlueprintModuleProvider blueprintModuleProvider,
                                                  TestPluginInstaller testPluginInstaller,
                                                  TestAuthenticator testAuthenticator) {
         this.blueprintModuleProvider = blueprintModuleProvider;
@@ -80,28 +88,27 @@ public class ConfluenceBlueprintModuleProviderTest {
 
             List<ModuleDescriptor> descriptors = blueprintModuleProvider.provideModules(addon, plugin, "blueprints", newArrayList(bean));
 
-            assertEquals(1, descriptors.size());
+            // should get a WebItem Descriptor and a Blueprint Descriptor
+            assertEquals(2, descriptors.size());
 
-//            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
-//            descriptor.enabled();
+            // check the web item descriptor
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
+            descriptor.enabled();
+            Map<String, Object> context = new HashMap<String, Object>();
+            Page page = mock(Page.class);
+            Space space = mock(Space.class);
+            WebInterfaceContext wic = mock(WebInterfaceContext.class);
+            when(space.getId()).thenReturn(1234L);
+            when(space.getKey()).thenReturn(SPACE_KEY);
+            when(wic.getSpace()).thenReturn(space);
+            when(wic.getPage()).thenReturn(page);
+            context.put("webInterfaceContext", wic);
+            String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
+            assertTrue("wrong url prefix. expected: " + BASE_URL + "/my/addon but got: " + convertedUrl, convertedUrl.startsWith(BASE_URL + "/my/addon"));
+            assertTrue("space key not found in: " + convertedUrl, convertedUrl.contains("mySpace=" + SPACE_KEY));
 
-//            Map<String, Object> context = new HashMap<String, Object>();
-//            Page page = mock(Page.class);
-//            Space space = mock(Space.class);
-//            WebInterfaceContext wic = mock(WebInterfaceContext.class);
-//
-//            when(space.getId()).thenReturn(1234L);
-//            when(space.getKey()).thenReturn(SPACE_KEY);
-//
-//            when(wic.getSpace()).thenReturn(space);
-//            when(wic.getPage()).thenReturn(page);
-//
-//            context.put("webInterfaceContext", wic);
-//
-//            String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
-//
-//            assertTrue("wrong url prefix. expected: " + BASE_URL + "/my/addon but got: " + convertedUrl, convertedUrl.startsWith(BASE_URL + "/my/addon"));
-//            assertTrue("space key not found in: " + convertedUrl, convertedUrl.contains("mySpace=" + SPACE_KEY));
+            // check the blueprint descriptor
+
         } finally {
             if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);

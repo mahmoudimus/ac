@@ -5,7 +5,14 @@ import com.atlassian.plugin.connect.modules.beans.builder.BlueprintModuleBeanBui
 /**
  * Blueprints allow your connect add on to provide content creation templates.
  */
-public class BlueprintModuleBean extends BeanWithKeyAndParams {
+public class BlueprintModuleBean extends RequiredKeyBean {
+
+    public BlueprintModuleBean() {
+    }
+
+    public BlueprintModuleBean(BlueprintModuleBeanBuilder builder) {
+        super(builder);
+    }
 
     public static BlueprintModuleBeanBuilder newWebItemBean()
     {
