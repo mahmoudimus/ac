@@ -280,6 +280,14 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.StaticContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<StaticContentMacroModuleBean> staticContentMacros;
 
+    /**
+     * Blueprints allow your connect add on provide content creation templates.
+     *
+     * @schemaTitle Blueprint
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultBlueprintModuleProvider", products = {ProductFilter.CONFLUENCE})
+    private List<BlueprintModuleBean> blueprints;
+
     public ModuleList()
     {
         this.adminPages = newArrayList();
@@ -297,6 +305,7 @@ public class ModuleList extends BaseModuleBean
         this.profilePages = newArrayList();
         this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
+        this.blueprints = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
@@ -382,6 +391,10 @@ public class ModuleList extends BaseModuleBean
         if (null == staticContentMacros)
         {
             this.staticContentMacros = newArrayList();
+        }
+        if (null == blueprints)
+        {
+            this.blueprints = newArrayList();
         }
     }
 
@@ -484,6 +497,10 @@ public class ModuleList extends BaseModuleBean
         return staticContentMacros;
     }
 
+    public List<BlueprintModuleBean> getBlueprints() {
+        return blueprints;
+    }
+
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
@@ -517,6 +534,7 @@ public class ModuleList extends BaseModuleBean
                 .append(profilePages, other.profilePages)
                 .append(spaceToolsTabs, other.spaceToolsTabs)
                 .append(staticContentMacros, other.staticContentMacros)
+                .append(blueprints, blueprints)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
                 .append(webPanels, webPanels)
@@ -545,6 +563,7 @@ public class ModuleList extends BaseModuleBean
                 .append(profilePages)
                 .append(spaceToolsTabs)
                 .append(staticContentMacros)
+                .append(blueprints)
                 .append(webhooks)
                 .append(webItems)
                 .append(webPanels)

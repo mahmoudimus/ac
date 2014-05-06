@@ -419,7 +419,15 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-       
+
+        <!-- blueprints plugin -->
+        <dependency>
+            <groupId>com.atlassian.confluence.plugins</groupId>
+            <artifactId>confluence-create-content-plugin</artifactId>
+            <version>4.0.10</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
-import com.atlassian.jira.util.collect.MapBuilder;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
@@ -11,6 +10,7 @@ import com.google.gson.Gson;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
@@ -95,10 +95,9 @@ public class WebItemModuleBeanTest
 
     private ConnectAddonBeanBuilder createAddonBeanBuilder(WebItemModuleBean webItemBean)
     {
-        Map<String, String> links = MapBuilder.build(
-                "self", "http://www.example.com/capabilities",
-                "homepage", "http://www.example.com"
-        );
+        Map<String, String> links = new HashMap<String,String>();
+        links.put("self","http://www.example.com/capabilities");
+        links.put("homepage","http://www.example.com");
 
         return newConnectAddonBean()
                 .withName("My Plugin")
