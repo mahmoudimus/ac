@@ -18,9 +18,9 @@
     
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>external.atlassian.json</groupId>
             <artifactId>json-schemagen-core</artifactId>
-            <version>${project.version}</version>
+            <version>${schema.generator.version}</version>
             <scope>provided</scope>
         </dependency>
 

@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.builder.CompositeConditionBeanBuilder;
@@ -21,6 +22,7 @@ import java.util.List;
  * @schemaTitle Composite Condition
  * @since 1.0
  */
+@SchemaDefinition("compositeCondition")
 public class CompositeConditionBean extends BaseModuleBean implements ConditionalBean
 {
     private List<ConditionalBean> conditions;

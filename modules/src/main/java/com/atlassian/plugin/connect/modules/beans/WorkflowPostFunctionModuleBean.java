@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.WorkflowPostFunctionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
@@ -159,7 +160,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @schemaTitle Workflow Post Function
  * @since 1.0
  */
-
+@SchemaDefinition("workflowPostFunction")
 public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
 {
     /**

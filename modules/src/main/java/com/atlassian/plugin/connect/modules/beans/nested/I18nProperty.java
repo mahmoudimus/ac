@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -13,6 +15,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @schemaTitle i18n Property
  * @since 1.0
  */
+@SchemaDefinition("i18nProperty")
 public class I18nProperty
 {
     /**

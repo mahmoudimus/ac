@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 
 import java.net.URI;
@@ -13,6 +14,7 @@ import java.net.URISyntaxException;
  * @schemaTitle URL
  * @since 1.0
  */
+@SchemaDefinition("url")
 public class UrlBean
 {
     @StringSchemaAttributes(format = "uri-template")
