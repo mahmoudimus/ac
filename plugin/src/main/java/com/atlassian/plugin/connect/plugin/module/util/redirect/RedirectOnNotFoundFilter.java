@@ -83,15 +83,8 @@ public class RedirectOnNotFoundFilter implements Filter {
 class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {
     private static final Logger log = LoggerFactory.getLogger(RedirectOnNotFoundFilter.class);
 
-    private PrintWriter devNullWriter = new PrintWriter(new CharArrayWriter());
-    private ServletOutputStream devNullOutputStream = new ServletOutputStream() {
-
-        @Override
-        public void write(int b) throws IOException
-        {
-            // dev null
-        }
-    };
+    private PrintWriter devNullWriter;
+    private ServletOutputStream devNullOutputStream;
 
     public RedirectingHttpServletResponseWrapper(HttpServletResponse response) {
         super(response);
@@ -117,12 +110,17 @@ class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {
 
     private void checkStatus(int sc) {
         log.info("****************checkStatus ", sc);
-        if (sc != HttpStatus.SC_NOT_FOUND)
+        if (sc == HttpStatus.SC_NOT_FOUND)
         {
-            // 404 by default as we don't get a 404 from a servlet normally, rather from the web
-            // container
-            devNullWriter = null;
-            devNullOutputStream = null;
+            devNullWriter = new PrintWriter(new CharArrayWriter());
+            devNullOutputStream  = new ServletOutputStream() {
+
+                @Override
+                public void write(int b) throws IOException
+                {
+                    // dev null
+                }
+            };
         }
         log.info("****************devNullWriter ", devNullWriter);
     }
