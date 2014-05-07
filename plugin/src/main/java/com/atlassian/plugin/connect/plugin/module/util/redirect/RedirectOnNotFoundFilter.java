@@ -65,8 +65,8 @@ public class RedirectOnNotFoundFilter implements Filter {
             int index = requestURL.indexOf(fromPattern);
 
             final String newUrl = requestURL.replace(index, index + fromPattern.length(), toPattern).toString();
-            log.debug("Redirecting from {} to {}", new Object[] {request.getRequestURI(), newUrl});
-            log.info("****************Redirecting from {} to {}", new Object[] {request.getRequestURI(), newUrl});
+            log.debug("Redirecting from {} to {}", new Object[]{request.getRequestURI(), newUrl});
+            log.info("****************Redirecting from {} to {}", new Object[]{request.getRequestURI(), newUrl});
             response.setStatus(HttpStatus.SC_MOVED_PERMANENTLY);
             response.addHeader(HttpHeaders.LOCATION, newUrl);
             response.getWriter().close();
@@ -82,8 +82,16 @@ public class RedirectOnNotFoundFilter implements Filter {
 
 class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {
     private static final Logger log = LoggerFactory.getLogger(RedirectOnNotFoundFilter.class);
-    // TODO: Do I need to hijack the output stream too?
+
     private PrintWriter devNullWriter = new PrintWriter(new CharArrayWriter());
+    private ServletOutputStream devNullOutputStream = new ServletOutputStream() {
+
+        @Override
+        public void write(int b) throws IOException
+        {
+            // dev null
+        }
+    };
 
     public RedirectingHttpServletResponseWrapper(HttpServletResponse response) {
         super(response);
@@ -114,6 +122,7 @@ class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {
             // 404 by default as we don't get a 404 from a servlet normally, rather from the web
             // container
             devNullWriter = null;
+            devNullOutputStream = null;
         }
         log.info("****************devNullWriter ", devNullWriter);
     }
@@ -125,10 +134,45 @@ class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {
     }
 
 
-
+    @Override
+    public ServletOutputStream getOutputStream() throws IOException
+    {
+        log.info("****************getOutputStream ", devNullOutputStream);
+        return devNullOutputStream != null ? devNullOutputStream :
+                super.getOutputStream();
+    }
 
     boolean is404() {
         return devNullWriter != null;
     }
 
+
+    @Override
+    public void sendError(int sc) throws IOException
+    {
+        log.info("****************sendError ");
+        checkStatus(sc);
+        if (!is404())
+        {
+            super.sendError(sc);
+        }
+    }
+
+    @Override
+    public void sendError(int sc, String msg) throws IOException
+    {
+        log.info("****************sendError ");
+        checkStatus(sc);
+        if (!is404())
+        {
+            super.sendError(sc, msg);
+        }
+    }
+
+    @Override
+    public void sendRedirect(String location) throws IOException
+    {
+        log.info("****************sendRedirect");
+//        super.sendRedirect(location);
+    }
 }
