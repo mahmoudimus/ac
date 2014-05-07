@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectTabPanelModuleBeanBuilder;
 
@@ -17,6 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#COMPONENT_TAB_PANEL_EXAMPLE}
  * @since 1.0
  */
+@SchemaDefinition("tabPanel")
 public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     @Required

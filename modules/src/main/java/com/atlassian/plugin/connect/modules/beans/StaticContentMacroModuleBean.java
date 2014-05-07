@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
 
 /**
@@ -36,6 +37,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModu
  * @schemaTitle Static Content Macro
  * @since 1.0
  */
+@SchemaDefinition("staticContentMacro")
 public class StaticContentMacroModuleBean extends BaseContentMacroModuleBean
 {
     public StaticContentMacroModuleBean()

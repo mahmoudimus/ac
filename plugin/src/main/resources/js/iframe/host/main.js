@@ -82,7 +82,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     }
 
     function getDialogButton(name) {
-      return $nexus.data("ra.dialog.buttons").getButton(name);
+      return getDialogButtons()[name];
     }
 
     if(isGeneral){
@@ -191,12 +191,20 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           callback(button ? button.isEnabled() : void 0);
         },
         createDialog: function(dialogOptions) {
-          _AP.require("dialog", function(dialog) {
-            dialog.create(options.key, productContextJson, dialogOptions);
+          _AP.require("dialog/dialog-factory", function(dialogFactory) {
+
+            //open by key or url. This can be simplified when opening via url is removed.
+            if(dialogOptions.key) {
+              options.moduleKey = dialogOptions.key;
+            } else if(dialogOptions.url) {
+              options.url = dialogOptions.url;
+            }
+
+            dialogFactory(options, dialogOptions, productContextJson);
           });
         },
         closeDialog: function() {
-          _AP.require("dialog", function(dialog) {
+          _AP.require(["dialog/main"], function(dialog) {
             // TODO: only allow closing from same plugin key?
             dialog.close();
           });
@@ -360,7 +368,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     // wireup dialog buttons if appropriate
     var dialogButtons = getDialogButtons();
     if (dialogButtons) {
-      dialogButtons.each(function (name, button) {
+      $.each(dialogButtons, function(name, button) {
         button.click(function (e, callback) {
           if (isInited) {
             rpc.dialogMessage(name, callback);

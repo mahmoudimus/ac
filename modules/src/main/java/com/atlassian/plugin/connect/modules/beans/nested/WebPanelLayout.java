@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
+import com.atlassian.json.schema.annotation.SchemaDefinition;
+
 /**
  *#### Example
  *
@@ -7,6 +9,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
  * @schemaTitle Web Panel Layout
  * @since 1.0
  */
+@SchemaDefinition("webPanelLayout")
 public class WebPanelLayout
 {
     private final String width;
