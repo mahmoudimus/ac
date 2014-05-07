@@ -1,103 +1,166 @@
-
 define(['dialog/main'], function() {
 
-  _AP.require(["dialog"], function(dialog) {
+    _AP.require(["dialog/main"], function(simpleDialog) {
 
-    module("Dialog Main", {
-      setup: function() {
-        AJS.contextPath = function() { return ""; };
-        this.dialogSpy = {
-          show: sinon.spy(),
-          on: sinon.spy(),
-          remove: sinon.spy(),
-          hide: sinon.spy()
-        };
-        this.layerSpy = {
-          changeSize: sinon.spy()
-        };
+        module("Main Dialog", {
+            setup: function(){
+                this.dialogSpy = {
+                    show: sinon.spy(),
+                    on: sinon.spy(),
+                    remove: sinon.spy(),
+                    hide: sinon.spy()
+                };
+                this.layerSpy = {
+                    changeSize: sinon.spy()
+                };
 
-        AJS.dialog2 = sinon.stub().returns(this.dialogSpy);
-        AJS.layer = sinon.stub().returns(this.layerSpy);
+                AJS.dialog2 = sinon.stub().returns(this.dialogSpy);
+                AJS.layer = sinon.stub().returns(this.layerSpy);
 
-        this.server = sinon.fakeServer.create();
-      },
-      teardown: function() {
-        this.server.restore();
-        // remove any dialog elements
-        $(".aui-dialog2").remove();
-        dialog.close();
-        // clean up mock
-        _AP.AJS = null;
-      }
+            },
+            teardown: function(){
+                // clean up mock
+                _AP.AJS = null;
+                AJS.dialog2 = null;
+                AJS.layer = null;
+            }
+        });
+
+        test("dialog options.id sets the dialog id", function() {
+            var dialogId = "abc123";
+            var dialog = simpleDialog.create({
+                id: dialogId
+            });
+
+            equal(AJS.dialog2.args[0][0].attr('id'), dialogId);
+        });
+
+        test("dialog options.width sets the dialog width", function(){
+            var dialogId = "foobar";
+            simpleDialog.create({
+                id: dialogId,
+                width: 345,
+                chrome: false
+            });
+
+            equal(this.layerSpy.changeSize.args[0][0], 345);
+        });
+
+        test("dialog options.height sets the dialog height", function(){
+            var dialogId = "batman";
+            simpleDialog.create({
+                id: dialogId,
+                height: 315,
+                chrome: false
+            });
+
+            equal(this.layerSpy.changeSize.args[0][1], 315);
+        });
+
+        test("dialog options.size sets the size of the dialog", function(){
+            simpleDialog.create({
+                id: "my-dialog",
+                size: 'large',
+                chrome: false
+            });
+
+            ok(AJS.dialog2.args[0][0].is(".aui-dialog2-large"), "Size argument was passed to dialog");
+        });
+
+        test("dialog options.header sets the dialog title", function(){
+            var text = "my title text";
+            simpleDialog.create({
+                id: "my-dialog",
+                header: text,
+                chrome: true
+            });
+
+            equal(AJS.dialog2.args[0][0].find('h1').text(), text);
+        });
+
+
+        test("Dialog create takes a titleId argument", function() {
+            simpleDialog.create({
+                id: "my-dialog",
+                titleId: "my-dialog",
+                chrome: true
+            });
+            // aui appends "dialog-title" to the end of your dialog titles.
+            equal(AJS.dialog2.args[0][0].attr("aria-labelledby"), "my-dialog-dialog-title", "TitleId attribute was passed to dialog");
+        });
+
+        test("Dialog close", function(){
+            simpleDialog.create({
+                id: "my-dialog",
+                chrome: true
+            });
+            simpleDialog.close();
+
+            ok(this.dialogSpy.hide.calledOnce, "Dialog close was called");
+        });
+
+        test("chromeless opens a chromeless dialog", function(){
+            simpleDialog.create({
+                id: "my-dialog",
+                chrome: false
+            });
+
+            equal(AJS.dialog2.args[0][0].find(".aui-dialog2-header").length, 0);
+        });
+
+        test("by default, dialogs are chromeless", function(){
+            simpleDialog.create({
+                id: "my-dialog"
+            });
+
+            equal(AJS.dialog2.args[0][0].find(".aui-dialog2-header").length, 0);
+        });
+
+        test("options.chrome opens a dialog with chrome", function(){
+            simpleDialog.create({
+                id: "my-dialog",
+                chrome: true
+            });
+
+            equal(AJS.dialog2.args[0][0].find(".aui-dialog2-header").length, 1);
+        });
+
+        test("dialogs with chrome contain a submit button", function(){
+            simpleDialog.create({
+                id: "my-dialog",
+                chrome: true
+            });
+
+            equal(AJS.dialog2.args[0][0].find(".ap-dialog-submit").length, 1);
+        });
+
+        test("dialogs with chrome contain a cancel button", function(){
+            simpleDialog.create({
+                id: "my-dialog",
+                chrome: true
+            });
+
+            equal(AJS.dialog2.args[0][0].find(".ap-dialog-cancel").length, 1);
+        });
+
+        test("dialog with a submit button can set the text", function(){
+            simpleDialog.create({
+                id: "my-dialog",
+                chrome: true,
+                submitText: "some submit text"
+            });
+            equal(AJS.dialog2.args[0][0].find(".ap-dialog-submit").text(), "some submit text");
+        });
+
+        test("dialog with a cancel button can set the text", function(){
+            simpleDialog.create({
+                id: "my-dialog",
+                chrome: true,
+                cancelText: "some cancel text"
+            });
+            equal(AJS.dialog2.args[0][0].find(".ap-dialog-cancel").text(), "some cancel text");
+        });
+
+
     });
-
-    test("Dialog exists", function() {
-      ok(dialog.create, "Dialog create function exists");
-    });
-
-    test("Dialog create launches an xhr", function() {
-      this.server.respondWith("GET", /.*my-plugin\/blah/,
-        [200, { "Content-Type": "text/html" }, 'This is the <span id="my-span">content</span>']);
-
-      dialog.create("my-plugin", "{}", {
-        id: "my-dialog",
-        key: "blah"
-      });
-      equal(1, $("#my-dialog").length, "Dialog element was created");
-      ok(this.dialogSpy.show.calledOnce, "Dialog was shown");
-
-      this.server.respond();
-      equal(1, $("#my-span").length, "Dialog content was rendered");
-    });
-
-    test("Dialog create takes a size argument", function() {
-      this.server.respondWith("GET", /.*my-plugin\/blah/,
-        [200, { "Content-Type": "text/html" }, 'This is the <span id="my-span">content</span>']);
-
-      dialog.create("my-plugin", "{}", {
-        id: "my-dialog",
-        key: "blah",
-        size: "xlarge"
-      });
-      ok($("#my-dialog").is(".aui-dialog2-xlarge"), "Size argument was passed to dialog");
-    });
-
-    test("Dialog create takes a titleId argument", function() {
-      this.server.respondWith("GET", /.*my-plugin\/blah/,
-        [200, { "Content-Type": "text/html" }, 'This is the <span id="my-span">content</span>']);
-
-      dialog.create("my-plugin", "{}", {
-        id: "my-dialog",
-        key: "blah",
-        titleId: "my-title-id"
-      });
-      equal($("#my-dialog").attr("aria-labelledby"), "my-title-id", "TitleId attribute was passed to dialog");
-    });
-
-    test("Dialog create takes a size arguments", function() {
-      this.server.respondWith("GET", /.*my-plugin\/blah/,
-        [200, { "Content-Type": "text/html" }, 'This is the <span id="my-span">content</span>']);
-
-      dialog.create("my-plugin", "{}", {
-        id: "my-dialog",
-        key: "blah",
-        width: "111px",
-        height: "222px"
-      });
-      equal("111px", this.layerSpy.changeSize.args[0][0], "Width was set on layer");
-      equal("222px", this.layerSpy.changeSize.args[0][1], "Height was set on layer");
-    });
-
-    test("Dialog close", function() {
-      this.server.respondWith("GET", /.*my-plugin\/blah/,
-        [200, { "Content-Type": "text/html" }, 'This is the <span id="my-span">content</span>']);
-
-      dialog.create("my-plugin", "{}", {
-        id: "my-dialog",
-        key: "blah"
-      });
-      dialog.close();
-      ok(this.dialogSpy.hide.calledOnce, "Dialog close was called");
-    });
-  });
 });

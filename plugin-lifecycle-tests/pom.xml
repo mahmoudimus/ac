@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.2</version>
+        <version>1.1.0-alpha.01</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-connect-plugin</artifactId>
-            <version>1.0-m30.1</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -193,6 +193,13 @@
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
                                 </bundledArtifact>
+
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                         <product>
@@ -246,6 +253,13 @@
                                     <groupId>com.atlassian.labs</groupId>
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
+                                </bundledArtifact>
+
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
@@ -353,7 +367,6 @@
         <devmode>true</devmode>
         <fastdev.version>2.2</fastdev.version>
         <toolbox.version>2.0.6</toolbox.version>
-        <plugin.testrunner.version>1.1.6</plugin.testrunner.version>
     </properties>
 
 </project>

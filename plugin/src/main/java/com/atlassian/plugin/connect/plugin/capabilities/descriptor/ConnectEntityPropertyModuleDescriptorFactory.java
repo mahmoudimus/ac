@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptor;
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptorImpl;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
@@ -26,11 +27,11 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
     }
 
     @Override
-    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(Plugin plugin, EntityPropertyModuleBean bean)
+    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, EntityPropertyModuleBean bean)
     {
         Element indexDocumentConfiguration = new DOMElement(DESCRIPTOR_NAME);
 
-        indexDocumentConfiguration.addAttribute("key", bean.getKey());
+        indexDocumentConfiguration.addAttribute("key", bean.getKey(addon));
         indexDocumentConfiguration.addAttribute("entity-key", bean.getEntityType().getValue());
         indexDocumentConfiguration.addAttribute("i18n-name-key", bean.getName().getI18n());
 
@@ -48,7 +49,7 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
         }
 
         EntityPropertyIndexDocumentModuleDescriptorImpl descriptor = autowireUtil.createBean(EntityPropertyIndexDocumentModuleDescriptorImpl.class);
-        descriptor.init(plugin, indexDocumentConfiguration);
+        descriptor.init(theConnectPlugin, indexDocumentConfiguration);
 
         return descriptor;
     }

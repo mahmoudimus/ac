@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.plugin;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.NoAuthRemotablePluginAccessor;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.base.Supplier;
@@ -14,12 +15,10 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-
+@ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
 public class NoAuthRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
 {

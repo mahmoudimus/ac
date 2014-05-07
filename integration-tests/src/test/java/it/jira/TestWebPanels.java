@@ -94,6 +94,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
     @Test
     public void testViewIssuePageWithEmbeddedPanelAnonymous() throws Exception
     {
+        logout();
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(), EXTRA_PREFIX);
 

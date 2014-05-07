@@ -2,18 +2,17 @@ package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
+import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -23,15 +22,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final MacroModuleDescriptorCreator.Builder macroModuleDescriptorCreatorBuilder;
 
     private Element descriptor;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public MacroPageModuleDescriptor(
             ModuleFactory moduleFactory,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             MacroModuleDescriptorCreator macroModuleDescriptorCreator,
             final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
             final UserManager userManager,
@@ -88,5 +87,11 @@ public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Vo
         {
             registration.unregister();
         }
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 }

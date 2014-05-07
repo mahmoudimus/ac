@@ -7,17 +7,14 @@ import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.google.common.base.Function;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -160,8 +157,7 @@ public class ConnectAddonBean extends BaseModuleBean
      *
      * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SCOPES_EXAMPLE}
      */
-    @SchemaIgnore("shallow")
-    private Set<String> scopes;
+    private Set<ScopeName> scopes;
     
     public ConnectAddonBean()
     {
@@ -173,7 +169,7 @@ public class ConnectAddonBean extends BaseModuleBean
         this.links = newHashMap();
         this.lifecycle = LifecycleBean.newLifecycleBean().build();
         this.modules = new ModuleList();
-        this.scopes = new HashSet<String>();
+        this.scopes = new HashSet<ScopeName>();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
         this.enableLicensing = null;
@@ -220,7 +216,7 @@ public class ConnectAddonBean extends BaseModuleBean
 
         if (null == scopes)
         {
-            this.scopes = new HashSet<String>();
+            this.scopes = new HashSet<ScopeName>();
         }
         
         if (null == lifecycle)
@@ -279,27 +275,7 @@ public class ConnectAddonBean extends BaseModuleBean
 
     public Set<ScopeName> getScopes()
     {
-        // I would make the data member a Set of ScopeNames but gson sets bad scope names to null.
-        return new HashSet<ScopeName>(transform(scopes, new Function<String, ScopeName>(){
-
-            @Override
-            public ScopeName apply(@Nullable String input)
-            {
-                if (null == input)
-                {
-                    throw new IllegalArgumentException("Scope names must not be null");
-                }
-
-                try
-                {
-                    return ScopeName.valueOf(input.toUpperCase());
-                }
-                catch (IllegalArgumentException e)
-                {
-                    throw new IllegalArgumentException(String.format("Unknown scope name '%s'", input), e);
-                }
-            }
-        }));
+        return scopes;
     }
 
     public LifecycleBean getLifecycle()
@@ -319,7 +295,7 @@ public class ConnectAddonBean extends BaseModuleBean
 
     public Boolean getEnableLicensing()
     {
-        return enableLicensing;
+        return (null != enableLicensing) ? enableLicensing : Boolean.FALSE;
     }
 
     public static ConnectAddonBeanBuilder newConnectAddonBean()

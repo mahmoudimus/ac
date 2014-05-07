@@ -12,6 +12,7 @@ import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.collect.Sets;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import it.com.atlassian.plugin.connect.rule.DevMode;
 import it.com.atlassian.plugin.connect.rule.DisableDevMode;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -34,13 +36,13 @@ public class AddonValidationTest
     private static final String WEBHOOK_REQUIRING_READ_SCOPE = "page_created";
     private static final String WEBHOOK_REQUIRING_ADMIN_SCOPE = "user_created";
 
-    @ClassRule
-    public static final DisableDevMode disableDevMode = new DisableDevMode(); // TLS validation is disabled in dev mode
-
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final ApplicationProperties applicationProperties;
     private final I18nResolver i18nResolver;
+
+    @Rule
+    public final DisableDevMode disableDevMode = new DisableDevMode(); // TLS validation is disabled in dev mode
 
     private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
 
@@ -67,7 +69,7 @@ public class AddonValidationTest
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(installed);
+                testPluginInstaller.uninstallAddon(installed);
             }
             catch (Exception e)
             {
@@ -80,6 +82,7 @@ public class AddonValidationTest
     {
         return new ConnectAddonBeanBuilder()
                 .withKey("ac-test-" + System.currentTimeMillis())
+                .withModule("webItems", randomWebItemBean())
                 .withBaseurl("https://example.com/");
     }
 
@@ -91,12 +94,12 @@ public class AddonValidationTest
 
     private void install(ConnectAddonBean addonBean) throws Exception
     {
-        installedPlugin.set(testPluginInstaller.installPlugin(addonBean));
+        installedPlugin.set(testPluginInstaller.installAddon(addonBean));
     }
 
     private void install(String jsonDescriptor) throws Exception
     {
-        installedPlugin.set(testPluginInstaller.installPlugin(jsonDescriptor));
+        installedPlugin.set(testPluginInstaller.installAddon(jsonDescriptor));
     }
 
     private void installExpectingUpmErrorCode(ConnectAddonBean addonBean, String errorCode) throws Exception
@@ -108,7 +111,9 @@ public class AddonValidationTest
         }
         catch (PluginInstallException e)
         {
-            assertEquals(errorCode, e.getCode().get());
+            String actualCode = (e.getCode().isDefined()) ? e.getCode().get() : e.getMessage();
+            
+            assertEquals(errorCode, actualCode);
         }
     }
 
@@ -121,7 +126,9 @@ public class AddonValidationTest
         }
         catch (PluginInstallException e)
         {
-            assertEquals(errorCode, e.getCode().get());
+            String actualCode = (e.getCode().isDefined()) ? e.getCode().get() : e.getMessage();
+            
+            assertEquals(errorCode, actualCode);
         }
     }
 
@@ -278,10 +285,15 @@ public class AddonValidationTest
     }
 
     @Test
+    @DevMode
     public void a404ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://atlassian.com").build(),
-                "connect.install.error.remote.host.bad.response.404");
+        ConnectAddonBeanBuilder builder = testBeanBuilderWithJwt();
+        ConnectAddonBean bean = builder
+            .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(builder.getKey()))
+            .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/status/404").build())
+            .build();
+        installExpectingUpmErrorCode(bean, "connect.install.error.remote.host.bad.response.404");
     }
 
     @Test
@@ -292,16 +304,21 @@ public class AddonValidationTest
     }
 
     @Test
+    @DevMode
     public void installedCallbackTimingOutResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://example.com").build(),
-                i18nResolver.getText("connect.install.error.remote.host.timeout", "https://example.com/installed"));
+        ConnectAddonBeanBuilder builder = testBeanBuilderWithJwt();
+        ConnectAddonBean bean = builder
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(builder.getKey()))
+                .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/timeout/60").build())
+                .build();
+        installExpectingUpmErrorCode(bean, i18nResolver.getText("connect.install.error.remote.host.timeout", bean.getBaseUrl() + bean.getLifecycle().getInstalled()));
     }
 
     @Test
     public void installedMalformedJSONDescriptorResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(TestFileReader.readAddonTestFile("malformedDescriptor.json"), "connect.invalid.descriptor.malformed.json");
+        installExpectingUpmErrorCode(TestFileReader.readAddonTestFile("malformedDescriptor.json"), invalidDescriptorErrorMessage());
     }
 
     private ConnectAddonBeanBuilder testBeanBuilderWithJwtAndInstalledCallback()
@@ -324,5 +341,10 @@ public class AddonValidationTest
     {
         return i18nResolver.getText("connect.install.error.remote.descriptor.validation",
                 applicationProperties.getDisplayName());
+    }
+    
+    private String invalidDescriptorErrorMessage()
+    {
+        return i18nResolver.getText("connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 }

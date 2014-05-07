@@ -13,6 +13,9 @@ import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static com.atlassian.webdriver.utils.element.ElementConditions.*;
+
 public class JiraWorkflowTransitionPage extends AbstractJiraPage {
     private String workflowMode;
     private String workflowName;
@@ -71,24 +74,32 @@ public class JiraWorkflowTransitionPage extends AbstractJiraPage {
     };
 
 
-    public JiraAddWorkflowTransitionFunctionParamsPage addPostFunction(String addonKey, String postFunctionName)
+    public JiraAddWorkflowTransitionFunctionParamsPage addPostFunction(String addonKey, String moduleKey)
     {
 
-        poller.waitUntil(ElementConditions.isPresent(By.id("view_post_functions")), 5);
+        poller.waitUntil(isPresent(By.id("view_post_functions")), 5);
         driver.findElement(By.id("view_post_functions")).click();
+
+        poller.waitUntil(isPresent(By.className("criteria-post-function-add")), 5);
         driver.findElement(By.className("criteria-post-function-add")).click();
 
         // Select post function and submit.
-        poller.waitUntil(ElementConditions.isPresent(By.id(addonKey + ":" + postFunctionName)), 5);
-        driver.findElement(By.id(addonKey + ":" + postFunctionName)).click();
+        By radioButton  = By.id("com.atlassian.plugins.atlassian-connect-plugin:" + addonAndModuleKey(addonKey, moduleKey));
+        poller.waitUntil(isPresent(radioButton), 5);
+        driver.findElement(radioButton).click();
         driver.findElement(By.id("add_submit")).click();
 
-        return pageBinder.bind(JiraAddWorkflowTransitionFunctionParamsPage.class, postFunctionName);
+        return pageBinder.bind(JiraAddWorkflowTransitionFunctionParamsPage.class, addonKey, moduleKey);
 
     }
 
-    public String workflowPostFunctionConfigurationValue(String moduleKey)
+    public JiraAddWorkflowTransitionFunctionParamsPage updatePostFunction(String addonKey, String moduleKey)
     {
-        return (String) driver.executeScript("return document.getElementsByClassName('module-" + moduleKey + "')[0].value;");
+        poller.waitUntil(isPresent(By.id("view_post_functions")), 5);
+        driver.findElement(By.id("view_post_functions")).click();
+        driver.findElement(By.className("criteria-post-function-edit")).click();
+        return pageBinder.bind(JiraAddWorkflowTransitionFunctionParamsPage.class, addonKey, moduleKey);
+
     }
+
 }

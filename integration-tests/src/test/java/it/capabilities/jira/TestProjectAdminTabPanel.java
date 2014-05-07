@@ -1,9 +1,10 @@
 package it.capabilities.jira;
 
-import com.atlassian.jira.projectconfig.pageobjects.ProjectConfigTabs;
-import com.atlassian.jira.projectconfig.pageobjects.summary.ProjectSummaryPageTab;
+import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
+import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
@@ -12,10 +13,7 @@ import it.servlet.condition.ParameterCapturingConditionServlet;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsCollectionContaining;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TestRule;
 
 import java.rmi.RemoteException;
@@ -23,6 +21,7 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static junit.framework.Assert.assertNotNull;
@@ -36,7 +35,6 @@ import static org.junit.Assert.assertThat;
  */
 public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
     private static final String PROJECT_CONFIG_MODULE_KEY = "my-connect-project-config";
     private static final String PROJECT_CONFIG_TAB_NAME = "My Connect Project Config";
 
@@ -44,13 +42,15 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
+    private String configModuleKey;
+
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
-
+    
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
                 .setAuthenticationToNone()
                 .addModule(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
                         .withName(new I18nProperty(PROJECT_CONFIG_TAB_NAME, null))
@@ -69,6 +69,12 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                 .start();
     }
 
+    @Before
+    public void beforeEachTest()
+    {
+        this.configModuleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),PROJECT_CONFIG_MODULE_KEY);    
+    }
+    
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
@@ -87,7 +93,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
         assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
         final JiraProjectAdministrationTab remoteProjectAdministrationTab =
-                page.getTabs().gotoTab(PROJECT_CONFIG_MODULE_KEY, JiraProjectAdministrationTab.class, project.getKey(), PROJECT_CONFIG_MODULE_KEY);
+                page.getTabs().gotoTab(configModuleKey, JiraProjectAdministrationTab.class, project.getKey(), configModuleKey);
 
         // Test of workaround for JRA-26407.
         assertNotNull(remoteProjectAdministrationTab.getProjectHeader());

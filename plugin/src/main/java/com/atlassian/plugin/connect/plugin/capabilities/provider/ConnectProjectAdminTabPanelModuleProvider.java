@@ -5,6 +5,7 @@ import java.util.List;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -48,7 +49,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
@@ -57,30 +58,30 @@ public class ConnectProjectAdminTabPanelModuleProvider
             // render a web item for our tab
             WebItemModuleBean webItemModuleBean = newWebItemBean()
                     .withName(bean.getName())
-                    .withKey(bean.getKey())
-                    .withUrl(iFrameServletPath(plugin.getKey(), bean.getKey()))
+                    .withKey(bean.getRawKey())
+                    .withUrl(iFrameServletPath(addon.getKey(), bean.getRawKey()))
                     .withContext(AddOnUrlContext.page)
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())
                     .withConditions(bean.getConditions())
                     .build();
 
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, webItemModuleBean,
-                    IsProjectAdminCondition.class));
+            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin,
+                    webItemModuleBean, IsProjectAdminCondition.class));
 
             // register a render strategy for the servlet backing our iframe tab
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(plugin.getKey())
-                    .module(bean.getKey())
+                    .addOn(addon.getKey())
+                    .module(bean.getKey(addon))
                     .projectAdminTabTemplate()
                     .urlTemplate(bean.getUrl())
-                    .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey())
+                    .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey(addon))
                     .conditions(bean.getConditions())
                     .conditionClass(IsProjectAdminCondition.class)
                     .title(bean.getDisplayName())
                     .build();
 
-            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), renderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
         }
 
         return builder.build();

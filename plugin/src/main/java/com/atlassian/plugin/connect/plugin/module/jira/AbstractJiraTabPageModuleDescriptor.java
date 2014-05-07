@@ -4,14 +4,14 @@ import com.atlassian.jira.plugin.JiraResourcedModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
+import com.atlassian.plugin.connect.plugin.module.ContainingRemoteCondition;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.module.ContainingRemoteCondition;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
@@ -25,18 +25,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final ConditionProcessor conditionProcessor;
     private final UrlValidator urlValidator;
 
     private Element descriptor;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     protected String url;
 
     public AbstractJiraTabPageModuleDescriptor(
             final ModuleFactory moduleFactory,
-            final DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             final ConditionProcessor conditionProcessor,
             final UrlValidator urlValidator)
     {
@@ -138,5 +138,11 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
         {
             throw new PluginParseException(ex);
         }
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 }

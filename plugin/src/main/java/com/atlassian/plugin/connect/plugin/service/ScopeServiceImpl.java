@@ -35,6 +35,8 @@ public class ScopeServiceImpl implements ScopeService
 
         String lowerCaseDisplayName = applicationDisplayName.toLowerCase();
 
+        // alternately we could send the display name straight through to StaticAddOnScopes.buildFor(String)
+        // but with a name like "display name" I'm not confident that it won't contain formatting or extra characters
         if (lowerCaseDisplayName.contains("confluence"))
         {
             return StaticAddOnScopes.buildForConfluence();
@@ -45,8 +47,6 @@ public class ScopeServiceImpl implements ScopeService
             return StaticAddOnScopes.buildForJira();
         }
 
-        // alternately we could send the display name straight through to StaticAddOnScopes.buildFor(String)
-        // but with a name like "display name" I'm not confident that it won't contain formatting or extra characters
         throw new IllegalArgumentException(String.format("Application display name '%s' is not recognised as either Confluence or JIRA. Please set it to a value that when converted to lower case contains either 'confluence' or 'jira'.", applicationDisplayName));
     }
 }

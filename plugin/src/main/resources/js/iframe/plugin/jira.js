@@ -28,7 +28,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
         /**
         * Save a workflow configuration if valid.
         * @memberOf WorkflowConfiguration
-        * @returns {WorkflowConfigurationTriggerResponse} An object Containing `{valid, uuid, value}` properties.valid (the result of the validation listener), uuid and value (result of onSave listener) properties.
+        * @returns {WorkflowConfigurationTriggerResponse} An object Containing `{valid, value}` properties.valid (the result of the validation listener) and value (result of onSave listener) properties.
         */
         trigger: function () {
             var valid = true;
@@ -40,7 +40,6 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
             * @name WorkflowConfigurationTriggerResponse
             * @class
             * @property {Boolean} valid The result of the validation listener {@link WorkflowConfiguration.onSaveValidation}
-            * @property {String} uuid uuid of the {@link WorkflowConfiguration}
             * @property {*} value The result of the {@link WorkflowConfiguration.onSave}
             */
             return {
@@ -67,6 +66,13 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 */
                 getWorkflowConfiguration: function (callback) {
                     remote.getWorkflowConfiguration(callback);
+                },
+                /**
+                * Refresh an issue page without reloading the browser.
+                * This is helpful when your add-on updates information about an issue in the background.
+                */
+                refreshIssuePage: function () {
+                    remote.triggerJiraEvent('refreshIssuePage');
                 }
             },
 
@@ -76,7 +82,8 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     return WorkflowConfiguration.trigger();
                 }
 
-            }
+            },
+            stubs: ["triggerJiraEvent"]
 
         };
 

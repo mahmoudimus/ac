@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.After;
 import org.junit.Before;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.util.List;
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -67,35 +69,56 @@ public abstract class AbstractJiraPermissionScopeTest
     @Before
     public void setUp()
     {
+        
         ConnectAddonBean baseBean = newConnectAddonBean()
-                .withName("JIRA Project Admin Add-on")
                 .withKey(ADDON_KEY)
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(ADDON_KEY))
+                .withName("JIRA Project Admin Add-on")
                 .withAuthentication(newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .withLifecycle(
                         newLifecycleBean()
                                 .withInstalled(INSTALLED)
                                 .build()
                 )
-                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(ADDON_KEY))
+                .withModule("webItems", randomWebItemBean())
                 .build();
 
         this.adminAddOn = newConnectAddonBean(baseBean)
+                
                 .withScopes(Sets.newHashSet(ScopeName.ADMIN))
                 .build();
+
         this.projectAdminAddOn = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.PROJECT_ADMIN))
                 .build();
+
         this.deleteAddOn = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.DELETE))
                 .build();
+
         this.writeAddOn = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.WRITE))
                 .build();
+
         this.readAddOn = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.READ))
                 .build();
 
         testAuthenticator.authenticateUser("admin");
+    }
+    
+    @After
+    public void resetBeans()
+    {
+        this.adminAddOn = null;
+
+        this.projectAdminAddOn = null;
+
+        this.deleteAddOn = null;
+
+        this.writeAddOn = null;
+
+        this.readAddOn = null;
     }
 
     public ConnectAddonBean getAdminAddOn()
@@ -205,11 +228,11 @@ public abstract class AbstractJiraPermissionScopeTest
         {
             if (from != null)
             {
-                plugin = testPluginInstaller.installPlugin(from);
+                plugin = testPluginInstaller.installAddon(from);
             }
-            plugin = testPluginInstaller.installPlugin(to);
+            plugin = testPluginInstaller.installAddon(to);
 
-            List<String> projectAdminErrors = permissionsForAllProjects(permission, permissionMustExist);
+            List<String> projectAdminErrors = permissionsForAllProjects(permission, permissionMustExist, plugin);
             assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
         }
         finally
@@ -218,7 +241,7 @@ public abstract class AbstractJiraPermissionScopeTest
         }
     }
 
-    protected List<String> permissionsForAllProjects(Permission permission, boolean permissionMustExist) throws ConnectAddOnUserInitException
+    protected List<String> permissionsForAllProjects(Permission permission, boolean permissionMustExist, Plugin plugin) throws ConnectAddOnUserInitException
     {
         ApplicationUser addonUser = getAddOnUser();
         List<Project> allProjects = projectService.getAllProjects(addonUser).getReturnedValue();
@@ -246,9 +269,9 @@ public abstract class AbstractJiraPermissionScopeTest
         {
             if (from != null)
             {
-                plugin = testPluginInstaller.installPlugin(from);
+                plugin = testPluginInstaller.installAddon(from);
             }
-            plugin = testPluginInstaller.installPlugin(to);
+            plugin = testPluginInstaller.installAddon(to);
 
             Project project = createJediProject();
             ApplicationUser addonUser = getAddOnUser();
@@ -294,29 +317,33 @@ public abstract class AbstractJiraPermissionScopeTest
     {
         ApplicationUser admin = userManager.getUserByKey(ADMIN);
         ProjectService.DeleteProjectValidationResult result = projectService.validateDeleteProject(admin.getDirectoryUser(), PROJECT_KEY);
-        projectService.deleteProject(admin, result);
+        
+        if(result.isValid())
+        {
+            projectService.deleteProject(admin, result);
+        }
     }
 
     protected void uninstallPlugin(Plugin plugin) throws IOException
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallPlugin(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
     }
 
     protected Plugin installPlugin(ConnectAddonBean addon) throws IOException
     {
-        return testPluginInstaller.installPlugin(addon);
+        return testPluginInstaller.installAddon(addon);
     }
 
     protected void disablePlugin(Plugin plugin) throws IOException
     {
-        testPluginInstaller.disablePlugin(plugin.getKey());
+        testPluginInstaller.disableAddon(plugin.getKey());
     }
 
     protected void enablePlugin(Plugin plugin) throws IOException
     {
-        testPluginInstaller.enablePlugin(plugin.getKey());
+        testPluginInstaller.enableAddon(plugin.getKey());
     }
 }

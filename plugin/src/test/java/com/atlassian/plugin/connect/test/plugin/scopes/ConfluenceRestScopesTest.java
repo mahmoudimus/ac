@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -8,6 +9,7 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.Collection;
 
+@ConvertToWiredTest
 @RunWith(Parameterized.class)
 public class ConfluenceRestScopesTest extends AbstractScopesTest
 {

@@ -5,7 +5,6 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.descriptors.CannotDisable;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -26,16 +25,16 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
 {
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddOnUserService connectAddOnUserService;
-    private final ConnectAddonRegistry connectAddonRegistry;
 
     private static final Logger log = LoggerFactory.getLogger(RemotePluginContainerModuleDescriptor.class);
     
-    public RemotePluginContainerModuleDescriptor(ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService, ConnectAddonRegistry connectAddonRegistry)
+    private String addonBaseUrl;
+    
+    public RemotePluginContainerModuleDescriptor(ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService)
     {
         super(ModuleFactory.LEGACY_MODULE_FACTORY);
         this.connectApplinkManager = connectApplinkManager;
         this.connectAddOnUserService = connectAddOnUserService;
-        this.connectAddonRegistry = connectAddonRegistry;
     }
 
     @Override
@@ -50,7 +49,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             throw new PluginParseException("Can only have one remote-plugin-container module in a descriptor");
         }
 
-        connectAddonRegistry.storeBaseUrl(plugin.getKey(), displayUrl);
+        this.addonBaseUrl = displayUrl;
         
         if(null != oauthElement)
         {
@@ -61,6 +60,11 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
         
     }
 
+    public String getAddonBaseUrl()
+    {
+        return addonBaseUrl;    
+    }
+    
     @Override
     public void enabled()
     {
@@ -77,5 +81,11 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     public Void getModule()
     {
         return null;
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 }

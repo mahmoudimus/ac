@@ -2,6 +2,8 @@ package it.capabilities.confluence;
 
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminPage;
@@ -30,7 +32,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestAdminPage extends ConfluenceWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
 
     private static final String PAGE_NAME = "My Admin Page";
     private static final String PAGE_KEY = "my-admin-page";
@@ -73,12 +75,12 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         loginAsAdmin();
         product.visit(ConfluenceAdminHomePage.class);
 
-        ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, PAGE_KEY);
+        ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY, PAGE_KEY));
 
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(adminPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/" + PAGE_KEY));
+        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/" + PLUGIN_KEY + "/" + PAGE_KEY));
 
         // TODO Admin page web-item location has incorrect text ("OSGi")
 
@@ -89,8 +91,8 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     @Test
     public void nonAdminCanNotSeePage()
     {
-        loginAs(TestConstants.BARNEY_USERNAME, TestConstants.BARNEY_USERNAME);
-        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", PAGE_KEY);
+        loginAsBarney();
+        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }
@@ -107,7 +109,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         assertThat("Expected web-item for page to NOT be present", adminPage.getWebItem(PAGE_KEY).isPresent(), is(false));
 
         // directly retrieving page should result in access denied
-        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, "my-plugin", PAGE_KEY);
+        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("My Admin Page"));
     }

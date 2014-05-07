@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
-import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
@@ -22,22 +21,18 @@ import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException
 import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.plugin.module.AutowireWithConnectPluginDecorator;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.osgi.factory.OsgiPlugin;
 import com.atlassian.sal.api.ApplicationProperties;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -70,38 +65,36 @@ public class BeanToModuleRegistrar
         this.registrations = new ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration>();
     }
 
-    public synchronized void registerDescriptorsForBeans(Plugin plugin, ConnectAddonBean addon) throws InvalidDescriptorException
+    public synchronized void registerDescriptorsForBeans(ConnectAddonBean addon) throws InvalidDescriptorException
     {
         //don't register modules more than once
-        if (registrations.containsKey(plugin.getKey()))
+        if (registrations.containsKey(addon.getKey()))
         {
             return;
         }
 
-        BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
-        AutowireWithConnectPluginDecorator connectAutowiringPlugin = new AutowireWithConnectPluginDecorator((AutowireCapablePlugin) theConnectPlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
 
-        BeanTransformContext ctx = new BeanTransformContext(connectAutowiringPlugin, addonBundleContext, ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase()));
+        BeanTransformContext ctx = new BeanTransformContext(theConnectPlugin, ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase()));
 
         //we MUST add in the lifecycle webhooks first
         ModuleList moduleList = getCapabilitiesWithLifecycleWebhooks(addon);
 
         //now process the module fields
-        processFields(moduleList, ctx, descriptorsToRegister);
+        processFields(addon, moduleList, ctx, descriptorsToRegister);
 
 
         if (!descriptorsToRegister.isEmpty())
         {
-            registrations.putIfAbsent(plugin.getKey(), dynamicDescriptorRegistration.registerDescriptors(plugin, descriptorsToRegister));
+            registrations.putIfAbsent(addon.getKey(), dynamicDescriptorRegistration.registerDescriptors(theConnectPlugin, descriptorsToRegister));
         }
     }
 
-    public synchronized void unregisterDescriptorsForPlugin(Plugin plugin)
+    public synchronized void unregisterDescriptorsForAddon(String addonKey)
     {
-        if (registrations.containsKey(plugin.getKey()))
+        if (registrations.containsKey(addonKey))
         {
-            DynamicDescriptorRegistration.Registration reg = registrations.remove(plugin.getKey());
+            DynamicDescriptorRegistration.Registration reg = registrations.remove(addonKey);
 
             if (null != reg)
             {
@@ -115,6 +108,22 @@ public class BeanToModuleRegistrar
                 }
             }
         }
+    }
+    
+    public Collection<ModuleDescriptor<?>> getRegisteredDescriptorsForAddon(String addonKey)
+    {
+        if (registrations.containsKey(addonKey))
+        {
+            DynamicDescriptorRegistration.Registration reg = registrations.get(addonKey);
+            return reg.getRegisteredDescriptors();
+        }
+        
+        return Collections.EMPTY_LIST;
+    }
+    
+    public boolean descriptorsAreRegistered(String pluginKey)
+    {
+        return registrations.containsKey(pluginKey);
     }
 
     private ModuleList getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
@@ -141,7 +150,7 @@ public class BeanToModuleRegistrar
         return builder.build().getModules();
     }
 
-    private void processFields(ModuleList moduleList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
+    private void processFields(ConnectAddonBean addon, ModuleList moduleList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
     {
         for (Field field : moduleList.getClass().getDeclaredFields())
         {
@@ -166,7 +175,8 @@ public class BeanToModuleRegistrar
                         beanList = moduleBean == null ? ImmutableList.<ModuleBean>of() : newArrayList(moduleBean);
                     }
 
-                    descriptorsToRegister.addAll(getDescriptors(ctx, field.getName(), anno, beanList));
+                    List<DescriptorToRegister> registerMe = getDescriptors(addon, ctx, field.getName(), anno, beanList);
+                    descriptorsToRegister.addAll(registerMe);
                 }
                 catch (IllegalAccessException e)
                 {
@@ -177,7 +187,7 @@ public class BeanToModuleRegistrar
     }
 
 
-    private List<DescriptorToRegister> getDescriptors(BeanTransformContext ctx, String jsonFieldName, ConnectModule providerAnnotation, List<? extends ModuleBean> beans)
+    private List<DescriptorToRegister> getDescriptors(ConnectAddonBean addon, BeanTransformContext ctx, String jsonFieldName, ConnectModule providerAnnotation, List<? extends ModuleBean> beans)
     {
         List<ProductFilter> products = Arrays.asList(providerAnnotation.products());
         if (products.contains(ProductFilter.ALL) || (null != ctx.getAppFilter() && products.contains(ctx.getAppFilter())))
@@ -199,7 +209,10 @@ public class BeanToModuleRegistrar
             if (!providers.isEmpty())
             {
                 ConnectModuleProvider provider = providers.iterator().next();
-                return Lists.transform(provider.provideModules(ctx.getConnectAutowiringPlugin(), jsonFieldName, beans), new Function<ModuleDescriptor, DescriptorToRegister>()
+
+                List<ModuleDescriptor> descriptors = provider.provideModules(addon, ctx.getTheConnectPlugin(), jsonFieldName, beans);
+                
+                return Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
                 {
                     @Override
                     public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
@@ -221,25 +234,18 @@ public class BeanToModuleRegistrar
 
     private class BeanTransformContext
     {
-        private final AutowireWithConnectPluginDecorator connectAutowiringPlugin;
-        private final BundleContext addonBundleContext;
+        private final Plugin theConnectPlugin;
         private final ProductFilter appFilter;
 
-        private BeanTransformContext(AutowireWithConnectPluginDecorator connectAutowiringPlugin, BundleContext addonBundleContext, ProductFilter appFilter)
+        private BeanTransformContext(Plugin theConnectPlugin, ProductFilter appFilter)
         {
-            this.connectAutowiringPlugin = connectAutowiringPlugin;
-            this.addonBundleContext = addonBundleContext;
+            this.theConnectPlugin = theConnectPlugin;
             this.appFilter = appFilter;
         }
 
-        private AutowireWithConnectPluginDecorator getConnectAutowiringPlugin()
+        private Plugin getTheConnectPlugin()
         {
-            return connectAutowiringPlugin;
-        }
-
-        private BundleContext getAddonBundleContext()
-        {
-            return addonBundleContext;
+            return theConnectPlugin;
         }
 
         private ProductFilter getAppFilter()

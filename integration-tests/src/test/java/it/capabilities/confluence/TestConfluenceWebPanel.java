@@ -131,7 +131,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     public void iFrameParametersAreCorrectOnEditPage() throws Exception
     {
         ConfluenceEditPage editPage = createAndVisitPage(ConfluenceEditPage.class);
-        RemoteWebPanel webPanel = editPage.findWebPanel(editorWebPanel.getKey());
+        RemoteWebPanel webPanel = editPage.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
         assertThat(webPanel.getSpaceKey(), is(SPACE));
         assertThat(webPanel.getPageId(), is(editPage.getPageId()));
     }
@@ -169,7 +169,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     {
         remotePlugin.setToggleableConditionShouldDisplay(false);
         createAndVisitPage(ConfluenceViewPage.class); // revisit the view page now that condition has been set to false
-        assertThat(connectPageOperations.existsWebPanel(viewWebPanel.getKey()), is(false));
+        assertThat(connectPageOperations.existsWebPanel(viewWebPanel.getKey(remotePlugin.getAddon())), is(false));
     }
 
     @Test
@@ -238,19 +238,19 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     private RemoteWebPanel findEditPageWebPanel() throws Exception
     {
         ConfluenceEditPage editPage = createAndVisitPage(ConfluenceEditPage.class);
-        return editPage.findWebPanel(editorWebPanel.getKey());
+        return editPage.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
     }
 
     private RemoteWebPanel findViewPageWebPanel() throws Exception
     {
         ConfluenceViewPage viewPage = createAndVisitPage(ConfluenceViewPage.class);
-        return viewPage.findWebPanel(viewWebPanel.getKey());
+        return viewPage.findWebPanel(viewWebPanel.getKey(remotePlugin.getAddon()));
     }
 
     private RemoteWebPanel findProfilePageWebPanel() throws Exception
     {
         ConfluenceUserProfilePage profilePage = product.visit(ConfluenceUserProfilePage.class);
-        return profilePage.findWebPanel(profileWebPanel.getKey());
+        return profilePage.findWebPanel(profileWebPanel.getKey(remotePlugin.getAddon()));
     }
 
     private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception

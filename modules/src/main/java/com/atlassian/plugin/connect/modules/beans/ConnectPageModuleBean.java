@@ -154,7 +154,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         toStringHelper
                 .add("name", getName())
-                .add("key", getKey())
+                .add("key", getRawKey())
                 .add("url", getUrl())
                 .add("weight", getWeight())
                 .add("icon", getIcon())

@@ -65,7 +65,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
     {
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
 
         RemoteWebItem webItem = editPage.findWebItem(GENERAL_WEBITEM, Optional.of("help-menu-link"));
@@ -83,7 +83,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
     {
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
 
         RemoteWebItem webItem = editPage.findWebItem(ABSOLUTE_WEB_ITEM, Optional.of("help-menu-link"));

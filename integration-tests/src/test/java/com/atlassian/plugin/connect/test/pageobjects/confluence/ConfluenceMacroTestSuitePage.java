@@ -46,11 +46,11 @@ public class ConfluenceMacroTestSuitePage extends ConfluenceMacroPage
         return driver.findElement(By.className("image-macro")).findElement(By.tagName("img")).getAttribute("alt");
     }
 
-    public RemotePluginTestPage visitGeneralLink()
+    public RemotePluginTestPage visitGeneralLink(String id)
     {
         WebElement menuLink = driver.findElement(By.id("help-menu-link"));
         menuLink.click();
-        driver.findElement(By.id("remotePluginGeneral")).click();
-        return pageBinder.bind(RemotePluginTestPage.class, "remotePluginGeneral", EXTRA_PREFIX);
+        driver.findElement(By.id(id)).click();
+        return pageBinder.bind(RemotePluginTestPage.class, id, EXTRA_PREFIX);
     }
 }

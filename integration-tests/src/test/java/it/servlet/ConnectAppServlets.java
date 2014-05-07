@@ -59,6 +59,14 @@ public class ConnectAppServlets
     }
 
     /**
+     * @return a servlet with history test buttons
+     */
+    public static HttpServlet historyServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-history.mu"));
+    }
+
+    /**
      * @return a servlet that will create a workflow post function
      */
     public static HttpServlet workflowPostFunctionServlet()
@@ -144,7 +152,7 @@ public class ConnectAppServlets
 
     public static HttpServlet echoQueryParametersServlet()
     {
-        return wrapContextAwareServlet(new EchoQueryParametersServlet());
+        return wrapContextAwareServlet(new EchoQueryParametersServlet("echo-query.mu"));
     }
 
     public static HttpServlet resourceServlet(String resourcePath, String contentType)

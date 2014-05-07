@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
-import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
+import static com.atlassian.plugin.connect.plugin.module.util.redirect.LegacyAddonRedirectServlet.getPermanentRedirectUrl;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import static org.apache.commons.lang.Validate.notNull;

@@ -1,8 +1,10 @@
 package it.capabilities.jira;
 
-import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
+import com.atlassian.jira.projects.pageobjects.page.BrowseProjectPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -17,6 +19,7 @@ import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.hasEntry;
@@ -29,7 +32,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestProjectTabPanel extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
     private static final String MODULE_KEY = "ac-play-project-tab";
 
     private static ConnectRunner remotePlugin;
@@ -114,7 +117,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
 
         public AppProjectTabPage(final String projectKey)
         {
-            super(projectKey, PLUGIN_KEY, MODULE_KEY); // my-plugin:ac-play-project-tab-panel
+            super(projectKey, ConnectPluginInfo.getPluginKey(), addonAndModuleKey(PLUGIN_KEY,MODULE_KEY)); // my-plugin:ac-play-project-tab-panel
         }
     }
 

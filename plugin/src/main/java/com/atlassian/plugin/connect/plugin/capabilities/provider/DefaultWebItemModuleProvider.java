@@ -7,6 +7,7 @@ import java.util.List;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -40,44 +41,44 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, String jsonFieldName, List<WebItemModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<WebItemModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
         for (WebItemModuleBean bean : beans)
         {
-            descriptors.addAll(beanToDescriptors(plugin, bean));
+            descriptors.addAll(beanToDescriptors(addon, theConnectPlugin, bean));
         }
 
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, WebItemModuleBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectAddonBean addon, Plugin theConnectPlugin, WebItemModuleBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
         if (bean.isAbsolute() || bean.getContext().equals(AddOnUrlContext.product) || bean.getContext().equals(AddOnUrlContext.addon))
         {
-            descriptors.add(webItemFactory.createModuleDescriptor(plugin, bean));
+            descriptors.add(webItemFactory.createModuleDescriptor(addon, theConnectPlugin, bean));
         }
         else
         {
-            String localUrl = ConnectIFrameServlet.iFrameServletPath(plugin.getKey(),bean.getUrl());
+            String localUrl = ConnectIFrameServlet.iFrameServletPath(addon.getKey(),bean.getUrl());
             WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl).build();
-            descriptors.add(webItemFactory.createModuleDescriptor(plugin, newBean));
+            descriptors.add(webItemFactory.createModuleDescriptor(addon, theConnectPlugin, newBean));
         }
         // Allow a web item which opens in a dialog to be opened programmatically, too
         if (bean.getTarget().isDialogTarget() || bean.getTarget().isInlineDialogTarget())
         {
             IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(plugin.getKey())
-                    .module(bean.getKey())
+                    .addOn(addon.getKey())
+                    .module(bean.getKey(addon))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())
                     .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .build();
-            iFrameRenderStrategyRegistry.register(plugin.getKey(), bean.getKey(), RAW_CLASSIFIER, rawRenderStrategy);
+            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
         }
 
         return descriptors;

@@ -6,7 +6,9 @@
     </plugin-info>
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
-
+    <resource type="i18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
+    <resource type="i18n" name="confluence-addon-i18n" location="connect-addons"/>
+    
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
@@ -42,7 +44,7 @@
 
     <servlet key="remotablePluginsPermanentRedirectingServlet"
              name="Remotable Plugins Permanent Redirecting Servlet"
-             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">
+             class="com.atlassian.plugin.connect.plugin.module.util.redirect.LegacyAddonRedirectServlet">
         <description>
             Redirects to a Remote App resource, usually an image, with a permanent redirect, but
             doesn't sign the request.  Request parameters are included in the redirect.
@@ -57,6 +59,23 @@
             Generates a template for serving a signed remote iframe
         </description>
         <url-pattern>/render-signed-iframe</url-pattern>
+    </servlet>
+
+    <servlet key="acPermanentRedirectingServlet"
+             name="Ac Permanent Redirecting Servlet"
+             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">
+        <description>
+            Permanent redirects from old /atlassian-connect/* urls to /ac/*
+        </description>
+        <init-param>
+            <param-name>from.pattern</param-name>
+            <param-value>/plugins/servlet/atlassian-connect/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>to.text</param-name>
+            <param-value>/plugins/servlet/ac/</param-value>
+        </init-param>
+        <url-pattern>/atlassian-connect/*</url-pattern>
     </servlet>
 
     <servlet key="addon-iframe-servlet"
@@ -89,6 +108,8 @@
         <resource type="download" name="_ui-params.js" location="/js/iframe/_ui-params.js" />
         <resource type="download" name="content.js" location="/js/iframe/host/content.js" />
         <resource type="download" name="_status_helper.js" location="/js/iframe/host/_status_helper.js" />
+        <resource type="download" name="history.js" location="/js/iframe/host/history.js" />
+        <resource type="download" name="analytics.js" location="/js/iframe/host/analytics.js" />
     </web-resource>
 
     <web-resource key="workflow-post-function">
@@ -99,8 +120,10 @@
 
     <web-resource key="dialog">
         <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
-        <resource type="download" name="main.js" location="js/dialog/main.js" />
-        <resource type="download" name="simple.js" location="js/dialog/simple.js" />
+        <resource type="download" name="dialog-button.js" location="js/dialog/button.js" />
+        <resource type="download" name="dialog-main.js" location="js/dialog/main.js" />
+        <resource type="download" name="dialog-factory.js" location="js/dialog/dialog-factory.js" />
+        <resource type="download" name="binder.js" location="js/dialog/binder.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
@@ -141,9 +164,15 @@
     </web-resource>
 
     <web-resource key="dialog-page-resource">
-        <resource type="download" name="dialog-binder.js" location="/js/dialog/binder.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog</dependency>
+    </web-resource>
+
+
+    <web-resource key="jira">
+        <resource type="download" name="jira-event.js" location="/js/jira/event.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
     <web-resource key="schema-xsl">
@@ -164,6 +193,17 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:inline-dialog</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:messages</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira</dependency>
+    </web-resource>
+
+    <web-resource key="atlassian-connect-mobile-resources" name="Connect resources for inclusion on every mobile page.">
+        <context>atl.mobile.confluence.view.content</context>
+        <context>preview</context>
+        <dependency>com.atlassian.auiplugin:jquery-lib</dependency>
+        <dependency>com.atlassian.auiplugin:aui-experimental-spinner</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"

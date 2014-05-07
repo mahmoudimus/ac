@@ -1,9 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.DynamicContentMacro;
 import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
@@ -34,9 +35,9 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
     }
 
     @Override
-    protected DOMElement createDOMElement(Plugin plugin, DynamicContentMacroModuleBean bean)
+    protected DOMElement createDOMElement(ConnectAddonBean addon, DynamicContentMacroModuleBean bean)
     {
-        DOMElement element = super.createDOMElement(plugin, bean);
+        DOMElement element = super.createDOMElement(addon, bean);
 
         if (null != bean.getWidth())
         {
@@ -50,21 +51,21 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
         return element;
     }
 
-    protected ModuleFactory createModuleFactory(final Plugin plugin, final DOMElement element, final DynamicContentMacroModuleBean bean)
+    protected ModuleFactory createModuleFactory(final ConnectAddonBean addon, final DOMElement element, final DynamicContentMacroModuleBean bean)
     {
         return new ModuleFactory()
         {
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(plugin.getKey(),
-                        bean.getKey(), CONTENT_CLASSIFIER);
+                IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addon.getKey(),
+                        bean.getRawKey(), CONTENT_CLASSIFIER);
                 DynamicContentMacro macro = new DynamicContentMacro(MacroEnumMapper.map(bean.getBodyType()),
                         MacroEnumMapper.map(bean.getOutputType()), renderStrategy, macroModuleContextExtractor);
 
                 if (bean.hasImagePlaceholder())
                 {
-                    return (T) decorateWithImagePlaceHolder(plugin, macro, bean.getImagePlaceholder());
+                    return (T) decorateWithImagePlaceHolder(addon, macro, bean.getImagePlaceholder());
                 }
                 return (T) macro;
             }

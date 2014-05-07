@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params"], function ($, XdmRpc, addons, statusHelper, messages, uiParams) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper", "messages/main", "_ui-params", "host/analytics", 'host/history'], function ($, XdmRpc, addons, statusHelper, messages, uiParams, analytics, connectHistory) {
 
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
@@ -55,10 +55,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         productContextJson = options.productCtx,
         isInited;
 
-    function publish(name, props) {
-      props = $.extend(props || {}, {moduleKey: ns});
-      events.push({name: name, properties: props});
-    }
+    analytics.iframePerformance.start(options.key, ns);
 
     var timeout = setTimeout(function () {
       timeout = null;
@@ -67,9 +64,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       $timeout.find("a.ap-btn-cancel").click(function () {
         statusHelper.showLoadErrorStatus($home);
         $nexus.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
+        analytics.iframePerformance.cancel(options.key, ns);
       });
       layoutIfNeeded();
-      publish("plugin.iframetimedout", {elapsed: new Date().getTime() - start});
+      analytics.iframePerformance.timeout(options.key, ns);
     }, 20000);
 
     function preventTimeout() {
@@ -84,7 +82,17 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     }
 
     function getDialogButton(name) {
-      return $nexus.data("ra.dialog.buttons").getButton(name);
+      return getDialogButtons()[name];
+    }
+
+    if(isGeneral){
+      options.uiParams = {
+        historyState: connectHistory.getState()
+      };
+      // register for url hash changes to invoking history.popstate callbacks.
+      $(window).on("hashchange", function(e){
+        connectHistory.hashChange(e.originalEvent, rpc.historyMessage);
+      });
     }
 
     function getProductContext(){
@@ -96,10 +104,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       remoteKey: options.key,
       container: contentId,
       channel: channelId,
-      props: {width: initWidth, height: initHeight}
+      props: {width: initWidth, height: initHeight},
+      uiParams: options.uiParams
     }, {
       remote: [
         "dialogMessage",
+        "historyMessage",
         // !!! JIRA specific !!!
         "setWorkflowConfigurationMessage"
       ],
@@ -113,7 +123,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
             statusHelper.showLoadedStatus($home);
             layoutIfNeeded();
             $nexus.trigger("ra.iframe.init");
-            publish("plugin.iframeinited", {elapsed: elapsed});
+            analytics.iframePerformance.end(options.key, ns);
           }
         },
         resize: debounce(function (width, height) {
@@ -181,12 +191,20 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           callback(button ? button.isEnabled() : void 0);
         },
         createDialog: function(dialogOptions) {
-          _AP.require("dialog", function(dialog) {
-            dialog.create(options.key, productContextJson, dialogOptions);
+          _AP.require("dialog/dialog-factory", function(dialogFactory) {
+
+            //open by key or url. This can be simplified when opening via url is removed.
+            if(dialogOptions.key) {
+              options.moduleKey = dialogOptions.key;
+            } else if(dialogOptions.url) {
+              options.url = dialogOptions.url;
+            }
+
+            dialogFactory(options, dialogOptions, productContextJson);
           });
         },
         closeDialog: function() {
-          _AP.require("dialog", function(dialog) {
+          _AP.require(["dialog/main"], function(dialog) {
             // TODO: only allow closing from same plugin key?
             dialog.close();
           });
@@ -217,6 +235,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           }
           var headers = {};
           $.each(args.headers || {}, function (k, v) { headers[k.toLowerCase()] = v; });
+          // Disable system ajax settings. This stops confluence mobile from injecting callbacks and then throwing exceptions.
+          $.ajaxSettings = {};
+
           // execute the request with our restricted set of inputs
           $.ajax({
             url: url,
@@ -254,11 +275,55 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
           _AP.require("confluence/macro/editor", function (editor) {
             editor.getMacroData(callback);
           });
+        },
+        saveCookie: function(name, value, expires){
+          AJS.Cookie.save(prefixCookie(name), value, expires);
+        },
+        readCookie: function(name, callback){
+          var value = AJS.Cookie.read(prefixCookie(name));
+          if(typeof callback === "function"){
+            callback(value);
+          }
+        },
+        eraseCookie: function(name){
+          AJS.Cookie.erase(prefixCookie(name));
+        },
+        triggerJiraEvent: function(e){
+          _AP.require(['jira/event'], function(jiraEvent){
+            jiraEvent[e]();
+          });
+        },
+        historyPushState: function(url){
+          if(isGeneral){
+            return connectHistory.pushState(url);
+          } else {
+            log("History is only available to page modules");
+          }
+        },
+        historyReplaceState: function(url){
+          if(isGeneral){
+            return connectHistory.replaceState(url);
+          } else {
+            log("History is only available to page modules");
+          }
+        },
+        historyGo: function(delta){
+          if(isGeneral){
+            return connectHistory.go(delta);
+          } else {
+            log("History is only available to page modules");
+          }
         }
       }
     });
 
-    statusHelper.showLoadingStatus($home);
+    function prefixCookie(name){
+      return options.key + '-' + options.ns + '-' + name;
+    }
+
+    // Do not delay showing the loading indicator if this is a dialog.
+    var noDelay = (isDialog || isSimpleDialog || isInlineDialog);
+    statusHelper.showLoadingStatus($home, noDelay ? 0 : 1000);
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
@@ -303,7 +368,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     // wireup dialog buttons if appropriate
     var dialogButtons = getDialogButtons();
     if (dialogButtons) {
-      dialogButtons.each(function (name, button) {
+      $.each(dialogButtons, function(name, button) {
         button.click(function (e, callback) {
           if (isInited) {
             rpc.dialogMessage(name, callback);
@@ -322,6 +387,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
         wpf.registerSubmissionButton(rpc, postFunctionId);
       }
     });
+    // !!! end JIRA !!!
 
     // register the rpc bridge with the addons module
     addons.get(options.key).add(rpc);
@@ -354,7 +420,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
       // create the new iframe
       create(options);
     }
-    if ($.isReady) {
+    if(typeof ConfluenceMobile !== "undefined"){
+      doCreate();
+    } else if ($.isReady) {
       // if the dom is ready then this is being run during an ajax update;
       // in that case, defer creation until the next event loop tick to ensure
       // that updates to the desired container node's parents have completed
@@ -384,5 +452,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
 if (!_AP.create) {
   _AP.require(["host/main"], function(main) {
     _AP.create = main;
+  });
+}
+
+if(typeof ConfluenceMobile !== "undefined"){
+  //confluence will not run scripts loaded in the body of mobile pages by default.
+  ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
+    window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
   });
 }

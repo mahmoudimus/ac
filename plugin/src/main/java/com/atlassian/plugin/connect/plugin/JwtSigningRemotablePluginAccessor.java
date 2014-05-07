@@ -4,7 +4,7 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
@@ -30,7 +30,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     private final UserManager userManager;
     private final AuthorizationGenerator authorizationGenerator;
 
-    public JwtSigningRemotablePluginAccessor(Plugin plugin,
+    public JwtSigningRemotablePluginAccessor(ConnectAddonBean addon,
                                              Supplier<URI> baseUrlSupplier,
                                              JwtService jwtService,
                                              ConsumerService consumerService,
@@ -38,12 +38,12 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
                                              HttpContentRetriever httpContentRetriever,
                                              UserManager userManager)
     {
-        super(plugin, baseUrlSupplier, httpContentRetriever);
+        super(addon.getKey(),addon.getName(), baseUrlSupplier, httpContentRetriever);
         this.jwtService = jwtService;
         this.consumerService = consumerService;
         this.connectApplinkManager = connectApplinkManager;
         this.userManager = userManager;
-        this.authorizationGenerator = new JwtAuthorizationGenerator(jwtService, getAppLink(), consumerService);
+        this.authorizationGenerator = new JwtAuthorizationGenerator(jwtService, getAppLink(), consumerService, URI.create(addon.getBaseUrl()));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
 
         UserKey userKey = userManager.getRemoteUserKey();
         String userKeyValue = userKey == null ? "" : userKey.getStringValue();
-        String encodedJwt = JwtAuthorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, params, userKeyValue, consumerService.getConsumer().getKey(), jwtService, getAppLink());
+        String encodedJwt = JwtAuthorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, getBaseUrl(), params, userKeyValue, consumerService.getConsumer().getKey(), jwtService, getAppLink());
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(createGetUrl(targetPath, params))));
         uriBuilder.addQueryParameter(JwtConstants.JWT_PARAM_NAME, encodedJwt);
 

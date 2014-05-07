@@ -28,7 +28,8 @@ public class StaticAddOnScopes
      */
     public static Collection<AddOnScope> buildForConfluence() throws IOException
     {
-        return buildFor("confluence", "common");
+        // TODO ACDEV-1214: don't load integration_test scopes in prod
+        return buildFor("confluence", "common", "integration_test");
     }
 
     /**
@@ -40,7 +41,8 @@ public class StaticAddOnScopes
      */
     public static Collection<AddOnScope> buildForJira() throws IOException
     {
-        return buildFor("jira", "common");
+        // TODO ACDEV-1214: don't load integration_test scopes in prod
+        return buildFor("jira", "common", "integration_test");
     }
 
     /**
@@ -57,13 +59,7 @@ public class StaticAddOnScopes
 
         for (String product : products)
         {
-            String scopesFileResourceName = resourceLocation(product);
-            AddOnScopeBeans scopeBeans = parseScopeBeans(scopesFileResourceName);
-
-            for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
-            {
-                constructAndAddScope(keyToScope, scopesFileResourceName, scopeBeans, scopeBean);
-            }
+            addProductScopes(keyToScope, product);
         }
 
         // copy element references into an ArrayList so that equals() comparisons work
@@ -71,6 +67,17 @@ public class StaticAddOnScopes
         ArrayList<AddOnScope> addOnScopes = new ArrayList<AddOnScope>(keyToScope.values());
         Collections.sort(addOnScopes);
         return addOnScopes;
+    }
+
+    private static void addProductScopes(Map<ScopeName, AddOnScope> keyToScope, String product) throws IOException
+    {
+        String scopesFileResourceName = resourceLocation(product);
+        AddOnScopeBeans scopeBeans = parseScopeBeans(scopesFileResourceName);
+
+        for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
+        {
+            constructAndAddScope(keyToScope, scopesFileResourceName, scopeBeans, scopeBean);
+        }
     }
 
     private static AddOnScopeBeans parseScopeBeans(String scopesFileResourceName) throws IOException

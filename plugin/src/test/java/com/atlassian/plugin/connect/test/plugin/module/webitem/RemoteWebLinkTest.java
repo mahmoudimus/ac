@@ -1,8 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.module.webitem;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
@@ -10,9 +9,7 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstit
 import com.atlassian.plugin.connect.plugin.module.webitem.RemoteWebLink;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -20,11 +17,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+@ConvertToWiredTest
 @Ignore("convert to wire test")
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteWebLinkTest

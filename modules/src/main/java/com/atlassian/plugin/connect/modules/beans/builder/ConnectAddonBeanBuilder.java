@@ -3,7 +3,10 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -13,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedList;
+import static com.google.common.collect.Collections2.transform;
 
 /**
  * @since 1.0
@@ -121,16 +125,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
 
     public T withScopes(Set<ScopeName> scopes)
     {
-        if (null == this.scopes)
-        {
-            this.scopes = new HashSet<ScopeName>(scopes.size());
-        }
-        else
-        {
-            this.scopes.clear();
-        }
-
-        this.scopes.addAll(scopes);
+        this.scopes = ImmutableSet.copyOf(scopes);
         return (T) this;
     }
 
@@ -156,6 +151,18 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     {
         this.enableLicensing = enable;
         return (T) this;
+    }
+
+    private static HashSet<String> transformScopeNamesToStrings(Set<ScopeName> scopeNames)
+    {
+        return new HashSet<String>(transform(scopeNames, new Function<ScopeName, String>()
+        {
+            @Override
+            public String apply(@Nullable ScopeName scopeName)
+            {
+                return null == scopeName ? null : scopeName.name();
+            }
+        }));
     }
 
     private void addBeanReflectivelyByType(String fieldName, ModuleList capabilities, ModuleBean bean)
@@ -191,6 +198,8 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
             throw new RuntimeException("Unable to find module field '" + fieldName + "' for bean of type: " + bean.getClass());
         }
     }
+
+    public String getKey() { return key; }
 
     public AuthenticationBean getAuthentication()
     {
