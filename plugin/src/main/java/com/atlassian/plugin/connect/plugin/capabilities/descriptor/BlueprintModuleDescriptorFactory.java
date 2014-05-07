@@ -1,10 +1,17 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.confluence.plugins.createcontent.extensions.BlueprintModuleDescriptor;
+import com.atlassian.confluence.util.i18n.DocumentationBeanFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import org.springframework.stereotype.Component;
+import com.atlassian.plugin.connect.modules.beans.builder.LinkBeanBuilder;
+import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.google.common.base.Strings;
+import org.dom4j.Element;
+import org.dom4j.dom.DOMElement;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The {@link com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean} to
@@ -12,13 +19,42 @@ import org.springframework.stereotype.Component;
  * mapping.
  *
  * @see com.atlassian.plugin.connect.plugin.capabilities.descriptor.BlueprintModuleDescriptorFactory
+ * @see com.atlassian.plugin.connect.plugin.capabilities.descriptor.BlueprintContentTemplateModuleDescriptorFactory
  */
-@Component
+@ConfluenceComponent
 public class BlueprintModuleDescriptorFactory
         implements ConnectModuleDescriptorFactory<BlueprintModuleBean, BlueprintModuleDescriptor>
 {
+    private final ModuleFactory moduleFactory;
+
+    @Autowired
+    public BlueprintModuleDescriptorFactory(ModuleFactory moduleFactory) {
+        this.moduleFactory = moduleFactory;
+    }
+
     @Override
     public BlueprintModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, BlueprintModuleBean bean) {
-        return null;
+        DocumentationBeanFactory documentationBeanFactory = new ConnectDocumentationBeanFactory(new LinkBeanBuilder().build());
+
+        Element blueprintElement = new DOMElement("blueprint");
+
+        String blueprintKey = bean.getKey(addon)+"-blueprint";
+        String contentTemplateKey = bean.getKey(addon)+"-content-template";
+
+        String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
+        blueprintElement.addAttribute("key", blueprintKey);
+        blueprintElement.addAttribute("section", "system.create.dialog/content");
+        blueprintElement.addAttribute("i18n-name-key", i18nKeyOrName);
+        blueprintElement.addAttribute("create-result", "view");
+        blueprintElement.addAttribute("index-key", blueprintKey);
+
+        blueprintElement.addElement("content-template")
+                .addAttribute("ref",contentTemplateKey);
+
+        blueprintElement.addAttribute("system", "true");
+
+        final BlueprintModuleDescriptor descriptor = new BlueprintModuleDescriptor(moduleFactory, documentationBeanFactory);
+        descriptor.init(plugin, blueprintElement);
+        return descriptor;
     }
 }

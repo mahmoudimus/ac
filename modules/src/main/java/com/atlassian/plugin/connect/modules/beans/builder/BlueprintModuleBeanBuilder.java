@@ -3,11 +3,18 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 
 public class BlueprintModuleBeanBuilder extends RequiredKeyBeanBuilder<BlueprintModuleBeanBuilder,BlueprintModuleBean> {
-    public BlueprintModuleBeanBuilder() {
-    }
+
+    private String url;
+
+    public BlueprintModuleBeanBuilder() { }
 
     public BlueprintModuleBeanBuilder(BlueprintModuleBean bean) {
         super(bean);
+    }
+
+    public BlueprintModuleBeanBuilder withUrl(String url) {
+        this.url = url;
+        return this;
     }
 
     public BlueprintModuleBean build() {

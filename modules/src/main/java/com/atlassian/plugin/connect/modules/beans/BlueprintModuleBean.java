@@ -14,12 +14,12 @@ public class BlueprintModuleBean extends RequiredKeyBean {
         super(builder);
     }
 
-    public static BlueprintModuleBeanBuilder newWebItemBean()
+    public static BlueprintModuleBeanBuilder newBlueprintModuleBean()
     {
         return new BlueprintModuleBeanBuilder();
     }
 
-    public static BlueprintModuleBeanBuilder newWebItemBean(BlueprintModuleBean defaultBean)
+    public static BlueprintModuleBeanBuilder newBlueprintModuleBean(BlueprintModuleBean defaultBean)
     {
         return new BlueprintModuleBeanBuilder(defaultBean);
     }

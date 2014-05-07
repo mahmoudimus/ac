@@ -1,8 +1,7 @@
 package it.com.atlassian.plugin.connect.provider.confluence;
 
-import com.atlassian.confluence.pages.Page;
-import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
-import com.atlassian.confluence.spaces.Space;
+import com.atlassian.confluence.plugins.createcontent.extensions.BlueprintModuleDescriptor;
+import com.atlassian.confluence.plugins.createcontent.extensions.ContentTemplateModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
@@ -11,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.BlueprintModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -20,15 +20,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -67,12 +63,12 @@ public class ConfluenceBlueprintModuleProviderTest {
     }
 
     @Test
-    public void singleAddonLinkWithReplacement() throws Exception {
+    public void createBlueprintModules() throws Exception {
         //System.out.println("session user: " + userManager.getRemoteUser().getUsername());
-        BlueprintModuleBean bean = newWebItemBean()
+        BlueprintModuleBean bean = BlueprintModuleBean.newBlueprintModuleBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
-//                .withUrl("/my/addon?mySpace={space.key}")
+                .withUrl("/my/blueprint/hello-world")
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
@@ -91,23 +87,40 @@ public class ConfluenceBlueprintModuleProviderTest {
             List<ModuleDescriptor> descriptors = blueprintModuleProvider.provideModules(addon, plugin, "blueprints", newArrayList(bean));
 
             // should get a WebItem Descriptor and a Blueprint Descriptor
-            assertEquals(2, descriptors.size());
+            assertEquals(3, descriptors.size());
 
             // check the web item descriptor
-            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
-            descriptor.enabled();
-            Map<String, Object> context = new HashMap<String, Object>();
-            Page page = mock(Page.class);
-            Space space = mock(Space.class);
-            WebInterfaceContext wic = mock(WebInterfaceContext.class);
-            when(space.getId()).thenReturn(1234L);
-            when(space.getKey()).thenReturn(SPACE_KEY);
-            when(wic.getSpace()).thenReturn(space);
-            when(wic.getPage()).thenReturn(page);
-            context.put("webInterfaceContext", wic);
-            String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
-            assertTrue("wrong url prefix. expected: " + BASE_URL + "/my/addon but got: " + convertedUrl, convertedUrl.startsWith(BASE_URL + "/my/addon"));
-            assertTrue("space key not found in: " + convertedUrl, convertedUrl.contains("mySpace=" + SPACE_KEY));
+            WebItemModuleDescriptor webItemDescriptor = (WebItemModuleDescriptor) descriptors.get(0);
+
+            assertEquals(PLUGIN_KEY + "__" + MODULE_KEY + "-web-item", webItemDescriptor.getKey());
+            assertEquals(MODULE_NAME, webItemDescriptor.getI18nNameKey());
+            assertEquals("system.create.dialog/content",webItemDescriptor.getSection());
+            ResourceDescriptor iconResourceDescriptor = webItemDescriptor.getResourceDescriptor("download", "icon");
+            assertNotNull(iconResourceDescriptor);
+            assertEquals("web-item-icon-resource-location",iconResourceDescriptor.getLocation()); //TODO
+
+            String blueprintKey = webItemDescriptor.getParams().get("blueprintKey");
+            assertNotNull(blueprintKey);
+            assertEquals(PLUGIN_KEY+"__"+MODULE_KEY+"-web-item",blueprintKey);
+
+            webItemDescriptor.enabled();
+
+            // check the content template descriptor
+            ContentTemplateModuleDescriptor contentTemplateModuleDescriptor = (ContentTemplateModuleDescriptor) descriptors.get(1);
+            assertNotNull(contentTemplateModuleDescriptor);
+
+            assertEquals(PLUGIN_KEY + "__" + MODULE_KEY + "-content-template", contentTemplateModuleDescriptor.getKey());
+            assertEquals(MODULE_NAME, contentTemplateModuleDescriptor.getI18nNameKey());
+
+            contentTemplateModuleDescriptor.enabled();
+
+            // check the blueprint descriptor
+            BlueprintModuleDescriptor blueprintModuleDescriptor = (BlueprintModuleDescriptor) descriptors.get(2);
+            assertNotNull(blueprintModuleDescriptor);
+
+            // TODO
+
+            blueprintModuleDescriptor.enabled();
 
         } finally {
             if (null != plugin) {
