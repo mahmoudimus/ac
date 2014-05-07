@@ -11,7 +11,6 @@ import com.atlassian.plugin.ModuleCompleteKey;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.Resources;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.elements.ResourceLocation;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;

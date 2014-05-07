@@ -46,12 +46,12 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         contentTemplateElement.addElement("resource")
                 .addAttribute("type", "download")
                 .addAttribute("name", "template")
-                .addAttribute("location", "com/atlassian/connect/blueprint.xml"); // TODO
+                .addAttribute("location", addon.getBaseUrl()+bean.getBlueprintTemplate().getUrl()); // TODO - support inline content
 
         contentTemplateElement.addElement("context-provider")
                 .addAttribute("class", "content-template-context-provider-class"); // TODO
 
-        final ContentTemplateModuleDescriptor descriptor = new ContentTemplateModuleDescriptor(moduleFactory, i18nBeanFactory, new DefaultLocaleManager());
+        final ContentTemplateModuleDescriptor descriptor = new ConnectContentTemplateModuleDescriptor(moduleFactory, i18nBeanFactory, new DefaultLocaleManager());
         descriptor.init(plugin, contentTemplateElement);
         return descriptor;
     }

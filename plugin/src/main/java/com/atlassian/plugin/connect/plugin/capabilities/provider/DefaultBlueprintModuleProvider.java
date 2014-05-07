@@ -39,20 +39,18 @@ public class DefaultBlueprintModuleProvider implements BlueprintModuleProvider {
 
         for (BlueprintModuleBean bean : beans) {
 
-            BlueprintModuleBean blueprintModuleBean = BlueprintModuleBean.newBlueprintModuleBean()
-                    .withName(bean.getName())
-                    .withKey(bean.getRawKey())
-                    .build();
-
-            builder.add(blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(connectAddonBean,
+            builder.add(
+                    blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(connectAddonBean,
                     theConnectPlugin,
-                    blueprintModuleBean));
-            builder.add(blueprintContentTemplateModuleDescriptorFactory.createModuleDescriptor(connectAddonBean,
+                    bean));
+            builder.add(
+                    blueprintContentTemplateModuleDescriptorFactory.createModuleDescriptor(connectAddonBean,
                     theConnectPlugin,
-                    blueprintModuleBean));
-            builder.add(blueprintModuleDescriptorFactory.createModuleDescriptor(connectAddonBean,
+                    bean));
+            builder.add(
+                    blueprintModuleDescriptorFactory.createModuleDescriptor(connectAddonBean,
                     theConnectPlugin,
-                    blueprintModuleBean));
+                    bean));
 
         }
 

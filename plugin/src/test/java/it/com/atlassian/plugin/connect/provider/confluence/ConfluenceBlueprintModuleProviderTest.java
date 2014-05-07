@@ -7,6 +7,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.builder.BlueprintTemplateBeanBulder;
+import com.atlassian.plugin.connect.modules.beans.builder.IconBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.BlueprintModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -42,7 +44,6 @@ public class ConfluenceBlueprintModuleProviderTest {
 
     private final BlueprintModuleProvider blueprintModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
-    private HttpServletRequest servletRequest;
     private final TestAuthenticator testAuthenticator;
 
     public ConfluenceBlueprintModuleProviderTest(BlueprintModuleProvider blueprintModuleProvider,
@@ -55,11 +56,7 @@ public class ConfluenceBlueprintModuleProviderTest {
 
     @BeforeClass
     public void setup() {
-        this.servletRequest = mock(HttpServletRequest.class);
-        when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
-
         testAuthenticator.authenticateUser("admin");
-
     }
 
     @Test
@@ -68,8 +65,10 @@ public class ConfluenceBlueprintModuleProviderTest {
         BlueprintModuleBean bean = BlueprintModuleBean.newBlueprintModuleBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
-                .withUrl("/my/blueprint/hello-world")
+                .withTemplate(new BlueprintTemplateBeanBulder().withUrl("/blueprints/blueprint.xml").build())
+                .withIcon(new IconBeanBuilder().withUrl("/blueprints/blueprints.png").build())
                 .build();
+
 
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
@@ -101,7 +100,7 @@ public class ConfluenceBlueprintModuleProviderTest {
 
             String blueprintKey = webItemDescriptor.getParams().get("blueprintKey");
             assertNotNull(blueprintKey);
-            assertEquals(PLUGIN_KEY+"__"+MODULE_KEY+"-web-item",blueprintKey);
+            assertEquals(PLUGIN_KEY + "__" + MODULE_KEY + "-web-item", blueprintKey);
 
             webItemDescriptor.enabled();
 
@@ -111,6 +110,7 @@ public class ConfluenceBlueprintModuleProviderTest {
 
             assertEquals(PLUGIN_KEY + "__" + MODULE_KEY + "-content-template", contentTemplateModuleDescriptor.getKey());
             assertEquals(MODULE_NAME, contentTemplateModuleDescriptor.getI18nNameKey());
+            assertEquals(BASE_URL+"/blueprints/blueprint.xml",contentTemplateModuleDescriptor.getResourceDescriptor("download","template").getLocation());
 
             contentTemplateModuleDescriptor.enabled();
 
