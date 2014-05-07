@@ -8,6 +8,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.BlueprintModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -69,6 +70,7 @@ public class ConfluenceBlueprintModuleProviderTest {
     public void singleAddonLinkWithReplacement() throws Exception {
         //System.out.println("session user: " + userManager.getRemoteUser().getUsername());
         BlueprintModuleBean bean = newWebItemBean()
+                .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
 //                .withUrl("/my/addon?mySpace={space.key}")
                 .build();
@@ -106,8 +108,6 @@ public class ConfluenceBlueprintModuleProviderTest {
             String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
             assertTrue("wrong url prefix. expected: " + BASE_URL + "/my/addon but got: " + convertedUrl, convertedUrl.startsWith(BASE_URL + "/my/addon"));
             assertTrue("space key not found in: " + convertedUrl, convertedUrl.contains("mySpace=" + SPACE_KEY));
-
-            // check the blueprint descriptor
 
         } finally {
             if (null != plugin) {
