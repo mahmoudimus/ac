@@ -46,7 +46,6 @@ public class RedirectOnNotFoundFilter implements Filter
      * <param-value>ac</param-value>
      * </init-param>
      *
-     * @param filterConfig
      */
     public void init(FilterConfig filterConfig)
     {
@@ -87,8 +86,6 @@ public class RedirectOnNotFoundFilter implements Filter
 
 class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper
 {
-    private static final Logger log = LoggerFactory.getLogger(RedirectOnNotFoundFilter.class);
-
     private PrintWriter devNullWriter;
     private ServletOutputStream devNullOutputStream;
 
