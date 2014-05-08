@@ -15,20 +15,23 @@
 
         var self = {
             _emitEvent: function(event){
-                $.each(_channels, function (id, channel) {
+                $.each(_channels[event.source.key], function (id, channel) {
                     channel.bus._emitEvent(event);
                 });
             },
             remove: function (xdm) {
-                var channel = _channels[xdm.id];
+                var channel = _channels[xdm.addonKey][xdm.id];
                 if (channel) {
                     channel.bus.offAny(channel.listener);
                 }
-                delete _channels[xdm.id];
+                delete _channels[xdm.addonKey][xdm.id];
                 return this;
             },
             init: function(config, xdm){
-                var channel = _channels[xdm.id] = {
+                if(!_channels[xdm.addonKey]){
+                    _channels[xdm.addonKey] = {};
+                }
+                var channel = _channels[xdm.addonKey][xdm.id] = {
                     bus: xdm.events,
                     listener: function () {
                         var event = arguments[arguments.length - 1];

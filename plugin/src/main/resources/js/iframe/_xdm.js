@@ -213,6 +213,8 @@
             var context = locals;
             if(self.isHost === true){
                 context = self;
+            } else {
+              context.isHost = false;
             }
             try {
               if (async) {
@@ -281,8 +283,8 @@
       // The actual event object is the last argument passed to any listener
       var event = arguments[arguments.length - 1];
       var trace = event.trace = event.trace || {};
-      var traceKey = id + "|xdm";
-      if ((self.isHost && !trace[traceKey] && event.source.channel !== id)
+      var traceKey = self.id + "|xdm";
+      if ((self.isHost && !trace[traceKey] && event.source.channel !== self.id)
           || (!self.isHost && event.source.key === localKey)) {
         // Only forward an event once in this listener
         trace[traceKey] = true;
@@ -297,17 +299,17 @@
     locals._event = function (event) {
       // Reset/ignore any tracing info that may have come across the bridge
       delete event.trace;
-      if (self.isHost) {
+      if (this.isHost) {
         // When the running on the host-side, forcibly reset the event's key and origin fields, to prevent spoofing by
         // untrusted add-ons; also include the host-side XdmRpc instance id to tag the event with this particular
         // instance of the host/add-on relationship
         event.source = {
           channel: id, // Note: the term channel here != the deprecated xdm channel param
-          key: remoteKey,
+          key: this.addonKey,
           origin: remoteOrigin
         };
       }
-      debug("Receiving as " + (self.isHost ? "host" : "addon") + " event:", event);
+      debug("Receiving as " + (this.isHost ? "host" : "addon") + " event:", event);
       // Emit the event on the local bus
       bus._emitEvent(event);
     };
