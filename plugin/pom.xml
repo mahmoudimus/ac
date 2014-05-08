@@ -424,7 +424,7 @@
         <dependency>
             <groupId>com.atlassian.confluence.plugins</groupId>
             <artifactId>confluence-create-content-plugin</artifactId>
-            <version>4.0.10</version>
+            <version>4.0.11-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -628,6 +628,12 @@
                                     <artifactId>analytics-client</artifactId>
                                     <version>${atlassian.analytics.version}</version>
                                 </bundledArtifact>
+
+                                <dependency>
+                                    <groupId>com.atlassian.confluence.plugins</groupId>
+                                    <artifactId>confluence-create-content-plugin</artifactId>
+                                    <version>4.0.11-SNAPSHOT</version>
+                                </dependency>
                             </bundledArtifacts>
                         </product>
                     </products>

@@ -42,11 +42,7 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
         contentTemplateElement.addAttribute("key", contentTemplateKey);
         contentTemplateElement.addAttribute("i18n-name-key", i18nKeyOrName);
-
-        contentTemplateElement.addElement("resource")
-                .addAttribute("type", "download")
-                .addAttribute("name", "template")
-                .addAttribute("location", addon.getBaseUrl()+bean.getBlueprintTemplate().getUrl()); // TODO - support inline content
+        contentTemplateElement.addAttribute("resource-class", i18nKeyOrName);
 
         contentTemplateElement.addElement("context-provider")
                 .addAttribute("class", "content-template-context-provider-class"); // TODO
