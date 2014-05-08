@@ -136,6 +136,7 @@
       channel = param(loc, "xdm_c");
       // Define the add-on-side mixin
       mixin = {
+        isHost: false,
         isActive: function () {
           // Add-on-side instances are always active, as they must always have a parent window peer
           return true;
@@ -211,7 +212,7 @@
             async = (args ? args.length : 0) < local.length;
             var context = locals;
             if(self.isHost === true){
-              context = self;
+                context = self;
             }
             try {
               if (async) {
@@ -306,7 +307,7 @@
           origin: remoteOrigin
         };
       }
-      debug("Receiving " + (self.isHost ? "addon" : "host") + " event:", event);
+      debug("Receiving as " + (self.isHost ? "host" : "addon") + " event:", event);
       // Emit the event on the local bus
       bus._emitEvent(event);
     };
@@ -418,7 +419,7 @@
     return self;
   }
 
-  XdmRpc.debug = true;
+//  XdmRpc.debug = true;
 
   return XdmRpc;
 

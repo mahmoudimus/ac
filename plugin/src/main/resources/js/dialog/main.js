@@ -139,9 +139,7 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
             }
 
             dialog = AJS.dialog2(dialogElement);
-            dialog.on("hide", function() {
-                closeDialog();
-            });
+            dialog.on("hide", closeDialog);
 
             displayDialogContent($nexus, mergedOptions);
 

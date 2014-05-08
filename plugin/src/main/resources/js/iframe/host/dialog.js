@@ -1,9 +1,6 @@
 _AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main", "_events"], function ($, rpc, dialogFactory, dialogMain, events) {
     "use strict";
 
-    var opener;
-
-
     rpc.extend(function(remote){
         return {
             stubs: ["dialogMessage"],
@@ -21,12 +18,7 @@ _AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main",
                             });
                         });
                     }
-
-                    // on close, do stuff
                 }
-            },
-            local: {
-
             },
             internals: {
                 setDialogButtonEnabled: function (name, enabled) {
@@ -48,29 +40,11 @@ _AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main",
                         xdmOptions.url = dialogOptions.url;
                     }
                     dialogFactory(xdmOptions, dialogOptions, this.productContextJson);
-/*
-                    this.events.on('dialog.close', function(data){
-                        console.log("CREATE DIALOG DIALOG.close", data);
-                    });
-                    */
-                    //this.events.emit("dialog.close");
-                    var that = this;
-                    opener = function(){
-                        return that;
-                    };
-
 
                 },
                 closeDialog: function(done, fail) {
-                    console.log("ARGS", arguments, this);
-                    dialogMain.close('something in close');
-                    //opener().events.emit('dialog.close', 'abc');
-  /*
-                    console.log("CLOSE DIALOG", remote, this, arguments);
-                    //opener.dialogMessage("dialog.close", callback);
-                    opener().events.emit('dialog.close', 'abc');
-                    dialogMain.close('something in close');
-                    */
+                    this.events.emit('ra.iframe.destroy'); //infinate loop.
+                    dialogMain.close();
                 }
             }
         };
