@@ -7,7 +7,7 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/main", 'host/content'], 
     * @param {Object} dialog options (width, height, etc)
     * @param {String} productContextJson pass context back to the server
     */
-    return function(options, dialogOptions, productContextJson) {
+    return function(options, dialogOptions, productContext) {
         var promise,
         container,
         module = {key: options.moduleKey},
@@ -27,9 +27,9 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/main", 'host/content'], 
         container = AJS.$('.ap-dialog-container');
 
         if(options.url){
-            promise = hostContentUtilities.getIframeHtmlForUrl(options.key, options.url, uiParams);
+            promise = hostContentUtilities.getIframeHtmlForUrl(options.key, options.url, productContext, uiParams);
         } else {
-            promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContextJson, module, uiParams);
+            promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContext, module, uiParams);
         }
 
         promise

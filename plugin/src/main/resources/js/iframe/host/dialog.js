@@ -39,7 +39,7 @@ _AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main",
                     } else if(dialogOptions.url) {
                         xdmOptions.url = dialogOptions.url;
                     }
-                    dialogFactory(xdmOptions, dialogOptions, this.productContextJson);
+                    dialogFactory(xdmOptions, dialogOptions, this.productContext);
 
                 },
                 closeDialog: function(done, fail) {

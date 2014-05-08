@@ -69,13 +69,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       container: contentId,
       channel: channelId,
       props: {width: initWidth, height: initHeight},
-      uiParams: options.uiParams,
-      productContextJson: options.productCtx
+      uiParams: options.uiParams
     };
 
     rpc.extend({
-      init: function(){
-        // actions for init'ing
+      init: function(opts, xdm){
+        xdm.productContext = JSON.parse(options.productCtx);
       }
     });
 
