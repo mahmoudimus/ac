@@ -1,6 +1,4 @@
-_AP.define("jira/workflow-post-function", ["_dollar"], function($) {
-
-    var done = false;
+_AP.define("jira/workflow-post-function", ["_dollar","_rpc"], function($, rpc) {
 
     function postFunctionConfigInput(postFunctionId, val){
         var element = $("#postFunction-config-" + postFunctionId);
@@ -10,30 +8,42 @@ _AP.define("jira/workflow-post-function", ["_dollar"], function($) {
         return element.val();
     }
 
-    return {
-        isOnWorkflowPostFunctionPage: function(){
-            return ($("input[name='postFunction.id']").length > 0);
-        },
-        registerSubmissionButton: function(rpc, postFunctionId, repeat){
-            $(document).delegate("#add_submit, #update_submit", "click", function (e) {
-                if (!done || repeat) {
-                    e.preventDefault();
-                    rpc.setWorkflowConfigurationMessage(function (either) {
-                        if (either.valid) {
-                            postFunctionConfigInput(postFunctionId, either.value);
-                            done = true;
-                            $(e.target).click();
-                        }
-                    });
+    function isOnWorkflowPostFunctionPage () {
+        return ($("input[name='postFunction.id']").length > 0);
+    }
+
+    rpc.extend(function(){
+        return {
+            init: function (state, xdm) {
+                if(!isOnWorkflowPostFunctionPage()){
+                    return;
                 }
-            });
-        },
-        getWorkflowConfiguration: function (postFunctionId, callback){
-            var val = postFunctionConfigInput(postFunctionId);
-            if (callback) {
-                callback(val);
-            }
-            return val;
-        }
-    };
+                var done = false;
+                $(document).delegate("#add_submit, #update_submit", "click", function (e) {
+                    if(!done){
+                        e.preventDefault();
+                        state.setWorkflowConfigurationMessage(function (either) {
+                            if (either.valid) {
+                                postFunctionConfigInput(xdm.productContext["postFunction.id"], either.value);
+                                done = true;
+                                $(e.target).click();
+                            }
+                        });
+                    }
+                });
+
+            },
+            internals: {
+                getWorkflowConfiguration: function (callback) {
+                    var val = postFunctionConfigInput(this.productContext["postFunction.id"]);
+                    if (callback) {
+                        callback(val);
+                    }
+                    return val;
+                }
+            },
+            stubs: ["setWorkflowConfigurationMessage"]
+        };
+    });
+
 });
