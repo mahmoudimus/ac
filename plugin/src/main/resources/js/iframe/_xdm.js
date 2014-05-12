@@ -91,7 +91,7 @@
       // Host-side constructor branch
       var iframe = createIframe(config);
       target = iframe.contentWindow;
-      localKey = param(config.remote, "oauth_consumer_key");
+      localKey = param(config.remote, "oauth_consumer_key") || param(config.remote, "jwt");
       remoteKey = config.remoteKey;
       addonKey = remoteKey;
       remoteOrigin = getBaseUrl(config.remote);
@@ -306,7 +306,7 @@
         event.source = {
           channel: this.id || id, // Note: the term channel here != the deprecated xdm channel param
           key: this.addonKey,
-          origin: remoteOrigin
+          origin: this.remoteOrigin || remoteOrigin
         };
       }
       debug("Receiving as " + (this.isHost ? "host" : "addon") + " event:", event);

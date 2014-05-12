@@ -35,7 +35,8 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
         each(apis, function (method) { stubs.push(method); });
 
         // empty config for add-on-side ctor
-        var rpc = new XdmRpc($, xdmConfig, {remote: stubs, local: internals});
+        // TODO: stop copying internals and fix references instead (fix for events going across add-ons when they shouldn't)
+        var rpc = new XdmRpc($, xdmConfig, {remote: stubs, local: $.extend({}, internals)});
         rpcCollection[rpc.id] = rpc;
         each(inits, function (_, init) {
           // console.log("INITS", options);
