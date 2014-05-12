@@ -3,9 +3,7 @@
   "use strict";
 
   // Capture some common values and symbol aliases
-  var w = window,
-      loc = w.location.toString(),
-      count = 0;
+  var count = 0;
 
   /**
    * Sets up cross-iframe remote procedure calls.
@@ -37,6 +35,8 @@
 
     var self, id, target, remoteOrigin, channel, mixin,
         localKey, remoteKey, addonKey,
+        w = window,
+        loc = w.location.toString(),
         locals = bindings.local || {},
         remotes = bindings.remote || [],
         localOrigin = getBaseUrl(loc);
@@ -304,7 +304,7 @@
         // untrusted add-ons; also include the host-side XdmRpc instance id to tag the event with this particular
         // instance of the host/add-on relationship
         event.source = {
-          channel: id, // Note: the term channel here != the deprecated xdm channel param
+          channel: this.id || id, // Note: the term channel here != the deprecated xdm channel param
           key: this.addonKey,
           origin: remoteOrigin
         };

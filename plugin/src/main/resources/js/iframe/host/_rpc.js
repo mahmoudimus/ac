@@ -10,8 +10,7 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
       stubs = [],
       internals = {},
       inits = [],
-      isInited,
-      xdmOptions = {};
+      isInited;
 
   return {
 
@@ -21,8 +20,6 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
       extend(internals, config.internals);
       stubs = stubs.concat(config.stubs || []);
 
-      if (isFn(config.xdmOptions)) config.xdmOptions = config.xdmOptions();
-      extend(xdmOptions, config.xdmOptions);
       var init = config.init;
       if (isFn(init)) inits.push(init);
       return config.apis;
@@ -30,11 +27,9 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
 
     // init connect host side
     // options = things that go to all init functions
-    // xdmOptions = module key / addon key etc.
+
     init: function (options, xdmConfig) {
       options = options || {};
-
-      extend(xdmConfig, xdmOptions);
 
         // add stubs for each public api
         each(apis, function (method) { stubs.push(method); });
