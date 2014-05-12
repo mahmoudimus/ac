@@ -3,11 +3,11 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
 
     rpc.extend(function(config){
         return {
-            init: function(state, rpc){
+            init: function(state, xdm){
                 var $home = $(state.iframe).closest(".ap-container");
                 statusHelper.showLoadingStatus($home, 0);
-                rpc.timeout = setTimeout(function(){
-                    rpc.timeout = null;
+                xdm.timeout = setTimeout(function(){
+                    xdm.timeout = null;
                     statusHelper.showloadTimeoutStatus($home);
                     var $timeout = $home.find(".ap-load-timeout");
                     $timeout.find("a.ap-btn-cancel").click(function () {
