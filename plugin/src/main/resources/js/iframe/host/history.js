@@ -4,7 +4,6 @@
 
 _AP.define("host/history", ["_dollar", "_uri", "_rpc"], function ($, Uri, rpc) {
     "use strict";
-
     var lastAdded,
         anchorPrefix = "!";
 
@@ -79,44 +78,32 @@ _AP.define("host/history", ["_dollar", "_uri", "_rpc"], function ($, Uri, rpc) {
     }
 
     rpc.extend(function(config){
-        var isGeneral = false;
         return {
-                xdmOptions: (function(){
-                    console.log("AI M RUNNING", config, arguments);
-                    if(isGeneral){
-                        return {
-                            uiParams: {
-                                historyState: getState()
-                            }
-                        };
-                    }
-                }),
             init: function (state) {
-                if(state.isGeneral){
-                    isGeneral = true;
+                if(state.uiParams.isGeneral){
                     // register for url hash changes to invoking history.popstate callbacks.
                     $(window).on("hashchange", function(e){
-                        hashChange(e.originalEvent, config.historyMessage);
+                        hashChange(e.originalEvent, state.historyMessage);
                     });
                 }
             },
             internals: {
                 historyPushState: function (url) {
-                    if(isGeneral){
+                    if(this.uiParams.isGeneral){
                         return pushState(url);
                     } else {
                         $.log("History is only available to page modules");
                     }
                 },
                 historyReplaceState: function (url) {
-                    if(isGeneral){
+                    if(this.uiParams.isGeneral){
                         return replaceState(url);
                     } else {
                         $.log("History is only available to page modules");
                     }
                 },
                 historyGo: function (delta) {
-                    if(isGeneral){
+                    if(this.uiParams.isGeneral){
                         return go(delta);
                     } else {
                         log("History is only available to page modules");
