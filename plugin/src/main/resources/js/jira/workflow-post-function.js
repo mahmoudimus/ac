@@ -1,6 +1,6 @@
 _AP.define("jira/workflow-post-function", ["_dollar","_rpc"], function($, rpc) {
 
-    function postFunctionConfigInput(postFunctionId, val){
+    function postFunctionConfigInput (postFunctionId, val) {
         var element = $("#postFunction-config-" + postFunctionId);
         if (val) {
             element.val(val);

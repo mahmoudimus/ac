@@ -24,8 +24,7 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/main", 'host/content'], 
             cancelText: dialogOptions.cancelText
         }, false);
 
-        container = AJS.$('.ap-dialog-container');
-
+        container = $('.ap-dialog-container');
         if(options.url){
             promise = hostContentUtilities.getIframeHtmlForUrl(options.key, options.url, productContext, uiParams);
         } else {
