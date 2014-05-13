@@ -13,9 +13,6 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
         }
 
         return {
-            init: function(state){
-
-            },
             internals: {
                 // TODO: add debounce support
                 resize: function(width, height){

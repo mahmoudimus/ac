@@ -193,8 +193,8 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog-page-resource</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:remote-condition</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:inline-dialog</dependency>

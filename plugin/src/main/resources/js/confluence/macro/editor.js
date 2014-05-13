@@ -1,4 +1,4 @@
-_AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], function($, dialog, uiParams) {
+_AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params", "_rpc"], function($, dialog, uiParams, rpc) {
 
     var enc = encodeURIComponent;
 
@@ -10,19 +10,32 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
         macroEditorDialog,
         openEditorMacroData;
 
-    return {
-        getMacroData: function(callback){
-            return callback(openEditorMacroData);
+
+    var module = {
+        /**
+         * Saves the macro currently being edited. Relies on openCustomEditor() first being invoked by MacroBrowser.
+         *
+         * @param {Object} updatedMacroParameters the updated parameters for the macro being edited.
+         */
+        saveMacro: function(updatedMacroParameters) {
+            if (!saveMacro) {
+                $.handleError("Illegal state: no macro currently being edited!");
+            }
+            saveMacro(updatedMacroParameters);
+            saveMacro = undefined;
         },
         /**
          * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>saveMacro</code>
          * before closing the editor.
          */
-        close: function() {
-            if (macroEditorDialog && macroEditorDialog.close) {
-                macroEditorDialog.close();
-            }
-            macroEditorDialog = undefined;
+        // close: function() {
+        //     if (macroEditorDialog && macroEditorDialog.close) {
+        //         macroEditorDialog.close();
+        //     }
+        //     macroEditorDialog = undefined;
+        // },
+        getMacroData: function(callback){
+            return callback(openEditorMacroData);
         },
 
         /**
@@ -70,6 +83,7 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
                 };
                 tinymce.confluence.MacroUtils.insertMacro(macroRenderRequest);
             };
+            console.log('opening custom editor', macroData, opts);
 
             var dialogOpts = {
                 header: macroData.params ? opts.editTitle : opts.insertTitle,
@@ -90,20 +104,26 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
 
         },
 
-        /**
-         * Saves the macro currently being edited. Relies on openCustomEditor() first being invoked by MacroBrowser.
-         *
-         * @param {Object} updatedMacroParameters the updated parameters for the macro being edited.
-         */
-        saveMacro: function(updatedMacroParameters) {
-            if (!saveMacro) {
-                $.handleError("Illegal state: no macro currently being edited!");
-            }
-            saveMacro(updatedMacroParameters);
-            saveMacro = undefined;
-        }
-
-
     };
+
+
+    rpc.extend(function () {
+        return {
+            init: function () {},
+            internals: {
+                saveMacro: function (updatedParams) {
+                    module.saveMacro(updatedParams);
+                },
+                closeMacroEditor: function () {
+                    module.closeMacroEditor();
+                },
+                getMacroData: function (callback) {
+                    module.getMacroData(callback);
+                }
+            }
+        };
+    });
+
+    return module;
 
 });
