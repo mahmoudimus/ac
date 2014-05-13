@@ -80,7 +80,6 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params", "
                 };
                 tinymce.confluence.MacroUtils.insertMacro(macroRenderRequest);
             };
-            console.log('opening custom editor', macroData, opts);
 
             var dialogOpts = {
                 header: macroData.params ? opts.editTitle : opts.insertTitle,
