@@ -28,12 +28,9 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params", "
          * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>saveMacro</code>
          * before closing the editor.
          */
-        // close: function() {
-        //     if (macroEditorDialog && macroEditorDialog.close) {
-        //         macroEditorDialog.close();
-        //     }
-        //     macroEditorDialog = undefined;
-        // },
+        close: function() {
+            dialog.close();
+        },
         getMacroData: function(callback){
             return callback(openEditorMacroData);
         },
@@ -115,7 +112,7 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params", "
                     module.saveMacro(updatedParams);
                 },
                 closeMacroEditor: function () {
-                    module.closeMacroEditor();
+                    module.close();
                 },
                 getMacroData: function (callback) {
                     module.getMacroData(callback);
