@@ -14,7 +14,7 @@ _AP.define("jira/workflow-post-function", ["_dollar"], function($) {
 
     function registerSubmissionButton (postFunctionId, callback, repeat) {
         if(!isOnWorkflowPostFunctionPage()){
-            return;
+            throw "Not on a workflow configuration page";
         }
         var done = false;
         $(document).delegate("#add_submit, #update_submit", "click", function (e) {
