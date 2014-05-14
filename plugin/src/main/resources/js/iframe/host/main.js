@@ -76,7 +76,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       }
     });
 
-    options.productContext = JSON.parse(options.productCtx);
+    if(options.productCtx){
+      options.productContext = JSON.parse(options.productCtx);
+    } else {
+      options.productContext = {};
+    }
 
     rpc.init(options, xdmOptions);
 
