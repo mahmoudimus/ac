@@ -19,8 +19,10 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
             },
             internals: {
                 init: function(){
+                    this.analytics.iframePerformance.end();
                     var $home = $(this.iframe).closest(".ap-container");
                     statusHelper.showLoadedStatus($home);
+
                     clearTimeout(this.timeout);
                     // Let the integration tests know the iframe has loaded.
                     $home.find(".ap-content").addClass("iframe-init");

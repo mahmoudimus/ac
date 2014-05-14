@@ -73,11 +73,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       init: function(opts, xdm){
         xdm.analytics = analytics.get(xdm.addonKey, ns);
         xdm.analytics.iframePerformance.start();
-      },
-      internals: {
-        init: function(){
-          this.analytics.iframePerformance.end();
-        }
       }
     });
 
