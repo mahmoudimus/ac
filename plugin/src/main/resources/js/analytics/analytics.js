@@ -19,36 +19,6 @@ _AP.define("analytics/analytics", ["_dollar"], function($){
         this.addonKey = addonKey;
         this.moduleKey = moduleKey;
         this.metrics = {};
-        this.iframePerformance = {
-            start: function(){
-                metrics.startLoading = time();
-            },
-            end: function(){
-                var value = time() - metrics.startLoading;
-                proto.track('iframe.performance.load', {
-                    addonKey: addonKey,
-                    moduleKey: moduleKey,
-                    value: value > THRESHOLD ? 'x' : Math.ceil((value) / TRIMPPRECISION)
-                });
-                //delete metrics.startLoading;
-            },
-            timeout: function(){
-                proto.track('iframe.performance.timeout', {
-                    addonKey: addonKey,
-                    moduleKey: moduleKey
-                });
-                //track an end event during a timeout so we always have complete start / end data.
-                this.end();
-            },
-            // User clicked cancel button during loading
-            cancel: function(){
-                proto.track('iframe.performance.cancel', {
-                    addonKey: addonKey,
-                    moduleKey: moduleKey
-                });
-            }
-        };
-
     }
 
     var proto = Analytics.prototype;
@@ -83,6 +53,37 @@ _AP.define("analytics/analytics", ["_dollar"], function($){
             addonKey: this.addonKey,
             moduleKey: this.moduleKey
         });
+    };
+
+    proto.iframePerformance = {
+        start: function(){
+            metrics.startLoading = time();
+        },
+        end: function(){
+            var value = time() - metrics.startLoading;
+            delete metrics.startLoading;
+
+            this.track('iframe.performance.load', {
+                addonKey: this.addonKey,
+                moduleKey: this.moduleKey,
+                value: value > THRESHOLD ? 'x' : Math.ceil((value) / TRIMPPRECISION)
+            });
+        },
+        timeout: function(){
+            track('iframe.performance.timeout', {
+                addonKey: this.addonKey,
+                moduleKey: this.moduleKey
+            });
+            //track an end event during a timeout so we always have complete start / end data.
+            this.end();
+        },
+        // User clicked cancel button during loading
+        cancel: function(){
+            track('iframe.performance.cancel', {
+                addonKey: this.addonKey,
+                moduleKey: this.moduleKey
+            });
+        }
     };
 
     return {
