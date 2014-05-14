@@ -407,12 +407,12 @@ public class WebItemModuleProviderTest
                 .withName(new I18nProperty(VELOCITY_LABEL, ""))
                 .withKey(MODULE_KEY)
                 .withUrl("/my/addon")
-                .withLocation("atl.admin/menu")
+                .withLocation("system.top.navigation.bar")
                 .withTooltip(new I18nProperty(VELOCITY_TOOLTIP,""))
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
-                .withName(PLUGIN_NAME)
+                .withName("JD Plugin")
                 .withKey(pluginKey)
                 .withBaseurl(BASE_URL)
                 .withAuthentication(AuthenticationBean.none())
@@ -425,18 +425,17 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, getConnectPlugin(), "webItems", newArrayList(bean));
-
-            assertEquals(1, descriptors.size());
-
-            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
-            descriptor.enabled();
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) getConnectPlugin().getModuleDescriptor(addonAndModuleKey(pluginKey,MODULE_KEY));
 
             Map<String,Object> vars = new HashMap<String, Object>();
             vars.put("var","ooops");
             vars.put("awesome","awesome-ooops");
             
-            assertEquals(VELOCITY_LABEL_KILLED, descriptor.getWebLabel().getDisplayableLabel(servletRequest,vars));
+            String label = descriptor.getWebLabel().getDisplayableLabel(servletRequest,vars);
+            String tooltip = descriptor.getTooltip().getDisplayableLabel(servletRequest,vars);
+            
+            
+            assertEquals(VELOCITY_LABEL_KILLED, label);
             assertEquals(VELOCITY_TOOLTIP_KILLED, descriptor.getTooltip().getDisplayableLabel(servletRequest,vars));
 
         }
