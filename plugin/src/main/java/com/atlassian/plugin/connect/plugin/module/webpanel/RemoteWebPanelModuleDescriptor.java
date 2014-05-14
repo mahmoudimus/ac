@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.webpanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.capabilities.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
@@ -104,7 +105,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
         {
             desc.addAttribute("weight", weight);
         }
-        desc.addElement("label").addAttribute("key", panelName);
+        desc.addElement("label").addAttribute("key", VelocityKiller.attack(panelName));
         desc.addAttribute("class", IFrameRemoteWebPanel.class.getName());
         Condition condition = conditionProcessor.process(descriptor, desc, getPluginKey(), "#" + moduleKey);
 

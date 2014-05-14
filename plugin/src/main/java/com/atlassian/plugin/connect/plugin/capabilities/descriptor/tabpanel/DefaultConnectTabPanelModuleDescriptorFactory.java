@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.VelocityKiller;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,8 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
         element.addElement(ORDER).setText(Integer.toString(bean.getWeight()));
 
         element.addElement(LABEL)
-                .addAttribute(KEY, bean.getName().getI18n())
-                .setText(bean.getName().getValue());
+                .addAttribute(KEY, VelocityKiller.attack(bean.getName().getI18n()))
+                                                 .setText(VelocityKiller.attack(bean.getName().getValue()));
 
         if (!bean.getConditions().isEmpty())
         {

@@ -10,6 +10,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
+import com.atlassian.plugin.connect.plugin.capabilities.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
@@ -246,9 +247,9 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("key", "editor-featured-macro-" + macroKey)
                     .addAttribute("section", "system.editor.featured.macros.default")
                     .addElement("label")
-                    .addText(name).getParent()
-                    .addElement("link")
-                    .addAttribute("linkId", macroKey).getParent();
+                    .addText(VelocityKiller.attack(name)).getParent()
+                                           .addElement("link")
+                                           .addAttribute("linkId", macroKey).getParent();
 
             if (macroConfig.attribute("icon-url") != null)
             {

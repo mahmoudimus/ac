@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.module.websection.ProductSpecificWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;
@@ -47,14 +48,14 @@ public class DefaultConnectWebSectionModuleDescriptorFactory implements ConnectW
         webSectionElement.addAttribute("name", bean.getDisplayName());
 
         webSectionElement.addElement("label")
-                         .addAttribute("key", bean.getName().getI18n())
-                         .setText(bean.getName().getValue());
+                         .addAttribute("key", VelocityKiller.attack(bean.getName().getI18n()))
+                         .setText(VelocityKiller.attack(bean.getName().getValue()));
 
         if (null != bean.getTooltip())
         {
             webSectionElement.addElement("tooltip")
-                             .addAttribute("key", bean.getTooltip().getI18n())
-                             .setText(bean.getTooltip().getValue());
+                             .addAttribute("key", VelocityKiller.attack(bean.getTooltip().getI18n()))
+                             .setText(VelocityKiller.attack(bean.getTooltip().getValue()));
         }
 
         if (!bean.getConditions().isEmpty())

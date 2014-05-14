@@ -4,6 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -70,14 +71,14 @@ public class WebItemModuleDescriptorFactory
         webItemElement.addAttribute("weight", Integer.toString(bean.getWeight()));
 
         webItemElement.addElement("label")
-                .addAttribute("key", bean.getName().getI18n())
-                .setText(bean.getName().getValue());
+                .addAttribute("key", VelocityKiller.attack(bean.getName().getI18n()))
+                                                   .setText(VelocityKiller.attack(bean.getName().getValue()));
 
         if (null != bean.getTooltip())
         {
             webItemElement.addElement("tooltip")
-                    .addAttribute("key", bean.getTooltip().getI18n())
-                    .setText(bean.getTooltip().getValue());
+                    .addAttribute("key", VelocityKiller.attack(bean.getTooltip().getI18n()))
+                    .setText(VelocityKiller.attack(bean.getTooltip().getValue()));
         }
 
         String linkId = addon.getKey() + "-" + webItemKey;

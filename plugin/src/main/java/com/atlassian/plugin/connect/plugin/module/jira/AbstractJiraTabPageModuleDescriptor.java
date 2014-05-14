@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.jira;
 import com.atlassian.jira.plugin.JiraResourcedModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.capabilities.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
@@ -99,7 +100,7 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
             moduleKey += "-remote-condition";
         }
         desc.addAttribute("key", moduleKey);
-        desc.addElement("label").setText(tabName);
+        desc.addElement("label").setText(VelocityKiller.attack(tabName));
         desc.addAttribute("class", getIFrameTabClass().getName());
         if (weight != null)
         {

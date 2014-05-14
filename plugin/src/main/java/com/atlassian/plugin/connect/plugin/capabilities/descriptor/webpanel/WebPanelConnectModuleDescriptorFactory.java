@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 
@@ -59,7 +60,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
             webPanelElement.add(conditionFragment);
         }
 
-        webPanelElement.addElement("label").addAttribute("key", i18nKeyOrName);
+        webPanelElement.addElement("label").addAttribute("key", VelocityKiller.attack(i18nKeyOrName));
         webPanelElement.addAttribute("class", IFrameRemoteWebPanel.class.getName());
         webPanelElement.addAttribute("width", bean.getLayout().getWidth());
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
