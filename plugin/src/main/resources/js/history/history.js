@@ -2,7 +2,7 @@
  * Methods for showing the status of a connect-addon (loading, time'd-out etc)
  */
 
-_AP.define("host/history", ["_dollar", "_uri", "_rpc"], function ($, Uri, rpc) {
+_AP.define("history/history", ["_dollar", "_uri"], function ($, Uri) {
     "use strict";
     var lastAdded,
         anchorPrefix = "!";
@@ -77,41 +77,12 @@ _AP.define("host/history", ["_dollar", "_uri", "_rpc"], function ($, Uri, rpc) {
         return anchor;
     }
 
-    rpc.extend(function(config){
-        return {
-            init: function (state) {
-                if(state.uiParams.isGeneral){
-                    // register for url hash changes to invoking history.popstate callbacks.
-                    $(window).on("hashchange", function(e){
-                        hashChange(e.originalEvent, state.historyMessage);
-                    });
-                }
-            },
-            internals: {
-                historyPushState: function (url) {
-                    if(this.uiParams.isGeneral){
-                        return pushState(url);
-                    } else {
-                        $.log("History is only available to page modules");
-                    }
-                },
-                historyReplaceState: function (url) {
-                    if(this.uiParams.isGeneral){
-                        return replaceState(url);
-                    } else {
-                        $.log("History is only available to page modules");
-                    }
-                },
-                historyGo: function (delta) {
-                    if(this.uiParams.isGeneral){
-                        return go(delta);
-                    } else {
-                        log("History is only available to page modules");
-                    }
-                }
-            },
-            stubs: ["historyMessage"] 
-        };
-    });
+    return {
+        pushState: pushState,
+        replaceState: replaceState,
+        go: go,
+        hashChange: hashChange,
+        getState: getState
+    };
 
 });

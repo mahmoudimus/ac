@@ -102,24 +102,6 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params", "
 
     };
 
-
-    rpc.extend(function () {
-        return {
-            init: function () {},
-            internals: {
-                saveMacro: function (updatedParams) {
-                    module.saveMacro(updatedParams);
-                },
-                closeMacroEditor: function () {
-                    module.close();
-                },
-                getMacroData: function (callback) {
-                    module.getMacroData(callback);
-                }
-            }
-        };
-    });
-
     return module;
 
 });
