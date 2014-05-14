@@ -22,7 +22,7 @@ _AP.define("jira/workflow-post-function", ["_dollar"], function($) {
                 e.preventDefault();
                 callback(function (either) {
                     if (either.valid) {
-                        workflowPostFunction.postFunctionConfigInput(postFunctionId, either.value);
+                        postFunctionConfigInput(postFunctionId, either.value);
                         done = true;
                         $(e.target).click();
                     }
