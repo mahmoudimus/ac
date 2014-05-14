@@ -424,7 +424,7 @@
         <dependency>
             <groupId>com.atlassian.confluence.plugins</groupId>
             <artifactId>confluence-create-content-plugin</artifactId>
-            <version>4.0.11-SNAPSHOT</version>
+            <version>4.0.13-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -601,6 +601,11 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>atlassian-connect-test-support-plugin</artifactId>
                                     <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.confluence.plugins</groupId>
+                                    <artifactId>confluence-create-content-plugin</artifactId>
+                                    <version>4.0.13-SNAPSHOT</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 
