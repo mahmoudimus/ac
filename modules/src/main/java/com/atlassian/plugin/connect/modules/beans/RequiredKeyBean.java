@@ -41,7 +41,7 @@ public class RequiredKeyBean extends NamedBean
      * Will have a configuration page module with a URL of `/plugins/servlet/ac/my-addon/configure-me`.
      */
     @Required
-    @StringSchemaAttributes(pattern = "[a-zA-z0-9-]+")
+    @StringSchemaAttributes(pattern = "^[a-zA-Z0-9-]+$")
     private String key;
 
     private transient String calculatedKey;
