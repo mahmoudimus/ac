@@ -21,7 +21,7 @@ requirejs.config({
     'iframe/host/_status_helper': '../src/main/resources/js/iframe/host/_status_helper',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'iframe/host/content': '../src/main/resources/js/iframe/host/content',
-    'iframe/host/analytics': '../src/main/resources/js/iframe/host/analytics',
+    'analytics/analytics': '../src/main/resources/js/analytics/analytics',
     'history/history': '../src/main/resources/js/history/history',
     'dialog/main': '../src/main/resources/js/dialog/main',
     'dialog/button': '../src/main/resources/js/dialog/button',
@@ -139,7 +139,7 @@ requirejs.config({
         'iframe/host/_dollar'
         ]
     },
-    'iframe/host/analytics': {
+    'analytics/analytics': {
         deps: [
         'iframe/host/_dollar'
         ]
@@ -172,8 +172,7 @@ requirejs.config({
     'iframe/_xdm': {
       deps: [
         'iframe/_uri',
-        'iframe/_events',
-        'iframe/host/analytics'
+        'iframe/_events'
       ]
     },
     'iframe/host/analytics':{

@@ -213,6 +213,9 @@
             var context = locals;
             if(self.isHost === true){
                 context = self;
+                if(context.analytics){
+                  context.analytics.trackBridgeMethod(name);
+                }
             } else {
               context.isHost = false;
             }

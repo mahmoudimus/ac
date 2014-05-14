@@ -78,7 +78,7 @@ _AP.define("analytics/analytics", ["_dollar"], function($){
         if($.inArray(name, bridgeMethodBlackList) !== -1){
             return false;
         }
-        track('bridge.invokemethod', {
+        this.track('bridge.invokemethod', {
             name: name,
             addonKey: this.addonKey,
             moduleKey: this.moduleKey
