@@ -115,8 +115,8 @@
         <resource type="download" name="_ui-params.js" location="/js/iframe/_ui-params.js" />
         <resource type="download" name="content.js" location="/js/iframe/host/content.js" />
         <resource type="download" name="_status_helper.js" location="/js/iframe/host/_status_helper.js" />
-        <resource type="download" name="history.js" location="/js/history/main.js" />
-        <resource type="download" name="analytics.js" location="/js/iframe/host/analytics.js" />
+        <resource type="download" name="history.js" location="/js/history/history.js" />
+        <resource type="download" name="analytics.js" location="/js/analytics/analytics.js" />
     </web-resource>
 
     <web-resource key="workflow-post-function">

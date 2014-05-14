@@ -12,6 +12,7 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
                     var $timeout = $home.find(".ap-load-timeout");
                     $timeout.find("a.ap-btn-cancel").click(function () {
                         statusHelper.showLoadErrorStatus($home);
+                        this.analytics.iframePerformance.timeout();
                         //state.iframe.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
                     });
                 }, 20000);

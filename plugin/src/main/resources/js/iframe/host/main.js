@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"], function ($, XdmRpc, addons, rpc, uiParams) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params", "analytics/analytics"], function ($, XdmRpc, addons, rpc, uiParams, analytics) {
 
   var defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); };
 
@@ -62,7 +62,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
 
     // TODO: re-add analytics
     //analytics.iframePerformance.start(options.key, ns);
-
     var xdmOptions = {
       remote: options.src,
       remoteKey: options.key,
@@ -71,6 +70,18 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       props: {width: initWidth, height: initHeight},
       uiParams: options.uiParams
     };
+
+    rpc.extend({
+      init: function(opts, xdm){
+        xdm.analytics = analytics.get(xdm.addonKey, ns);
+        xdm.analytics.iframePerformance.start();
+      },
+      internals: {
+        init: function(){
+          this.analytics.iframePerformance.end();
+        }
+      }
+    });
 
     options.productContext = JSON.parse(options.productCtx);
 
