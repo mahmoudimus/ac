@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectProjectAdminTabPanelModuleBeanBuilder;
 
 /**
@@ -10,6 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectProjectAdminTab
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PRJ_ADMIN_PAGE_EXAMPLE}
  * @schemaTitle Project Admin Tab Panel
  */
+@SchemaDefinition("projectAdminTabPanel")
 public class ConnectProjectAdminTabPanelModuleBean extends ConnectTabPanelModuleBean
 {
     private static final String PROJECT_CONFIG_TAB_LOCATION_PREFIX = "atl.jira.proj.config/";
