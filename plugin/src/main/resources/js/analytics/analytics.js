@@ -1,24 +1,38 @@
 _AP.define("analytics/analytics", ["_dollar"], function($){
     "use strict";
 
+    /**
+     * Blacklist certain bridge functions from being sent to analytics
+     * @const
+     * @type {Array}
+     */
     var bridgeMethodBlackList = [
         "resize",
         "init"
     ];
 
-    var THRESHOLD = 20000; // Timings beyond 20 seconds (connect's load timeout) will be clipped to an X.
-    var TRIMPPRECISION = 100; // Trim extra zeros from the load time.
+    /**
+     * Timings beyond 20 seconds (connect's load timeout) will be clipped to an X.
+     * @const
+     * @type {int}
+     */
+    var THRESHOLD = 20000;
 
-    var metrics = {};
+    /**
+     * Trim extra zeros from the load time.
+     * @const
+     * @type {int}
+     */
+    var TRIMPPRECISION = 100;
 
     function time() {
         return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
     }
 
     function Analytics(addonKey, moduleKey) {
+        var metrics = {};
         this.addonKey = addonKey;
         this.moduleKey = moduleKey;
-        this.metrics = {};
         this.iframePerformance = {
             start: function(){
                 metrics.startLoading = time();
@@ -30,7 +44,7 @@ _AP.define("analytics/analytics", ["_dollar"], function($){
                     moduleKey: moduleKey,
                     value: value > THRESHOLD ? 'x' : Math.ceil((value) / TRIMPPRECISION)
                 });
-                //delete metrics.startLoading;
+                delete metrics.startLoading;
             },
             timeout: function(){
                 proto.track('iframe.performance.timeout', {
