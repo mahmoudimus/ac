@@ -1,7 +1,11 @@
 package com.atlassian.plugin.connect.modules.util;
 
+import java.io.StringWriter;
+
 import com.atlassian.plugin.connect.modules.util.VelocityKiller;
 
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -144,10 +148,28 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testUTF() throws Exception
+    public void testDottedVar() throws Exception
     {
-        String raw = "\\U+0024\\U+007Bvar\\U+007D";
-        String expected = "\\U+0024\\U+007Bvar\\U+007D";
+        String raw = "I have a $dotted.var and ${another.one}";
+        String expected = "I have a \\$dotted.var and \\${another.one}";
+
+        assertEquals(expected, VelocityKiller.attack(raw));
+    }
+
+    @Test
+    public void testParenVar() throws Exception
+    {
+        String raw = "I have a $paren() and ${another()}";
+        String expected = "I have a \\$paren() and \\${another()}";
+
+        assertEquals(expected, VelocityKiller.attack(raw));
+    }
+
+    @Test
+    public void testBangVar() throws Exception
+    {
+        String raw = "I have a $!bang";
+        String expected = "I have a \\$!bang";
 
         assertEquals(expected, VelocityKiller.attack(raw));
     }

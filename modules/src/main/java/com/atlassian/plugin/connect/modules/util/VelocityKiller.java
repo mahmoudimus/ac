@@ -11,7 +11,7 @@ import com.google.common.base.Strings;
  */
 public class VelocityKiller
 {
-    public static final Pattern VELOCITY_VAR_PATTERN = Pattern.compile("\\$(\\{([a-zA-Z0-9\\-_]+)\\}|([a-zA-Z0-9\\-_]+))");
+    public static final Pattern VELOCITY_VAR_PATTERN = Pattern.compile("\\$(\\{([a-zA-Z0-9\\-_\\.\\(\\)]+)\\}|([a-zA-Z0-9\\-_\\.\\(\\)\\!]+))");
     
     public static String attack(String rawValue)
     {
