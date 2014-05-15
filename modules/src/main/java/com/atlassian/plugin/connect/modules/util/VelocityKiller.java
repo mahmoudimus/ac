@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.util;
+package com.atlassian.plugin.connect.modules.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import com.google.common.base.Strings;
 
 /**
- * Class used to sanistize strings by removing ${} and just leaving the variable names.
+ * Class used to sanitize strings by removing ${} and just leaving the variable names.
  * This is used by anything that needs to pass descriptor string values to a method that renders velocity. e.g. WebLabel
  */
 public class VelocityKiller
@@ -22,6 +22,6 @@ public class VelocityKiller
         
         Matcher matcher = VELOCITY_VAR_PATTERN.matcher(rawValue);
         
-        return matcher.replaceAll("$1");
+        return matcher.replaceAll("\\\\\\$$1");
     }
 }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.util.VelocityKiller;
+import com.atlassian.plugin.connect.modules.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
@@ -85,7 +85,7 @@ public final class WebItemCreator
 
             String name = getOptionalAttribute(configurationElement, "link-name", escapeHtml(
                     getRequiredAttribute(configurationElement, "name")));
-            config.addElement("label").addAttribute("key", VelocityKiller.attack(name));
+            config.addElement("label").addAttribute("key", name);
             Element linkElement = config.addElement("link").
                     addAttribute("linkId", key);
 
