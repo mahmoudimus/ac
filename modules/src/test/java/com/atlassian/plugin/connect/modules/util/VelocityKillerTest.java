@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.modules.util;
 
-import java.io.StringWriter;
-
-import com.atlassian.plugin.connect.modules.util.VelocityKiller;
-
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -17,7 +11,7 @@ public class VelocityKillerTest
     {
         String raw = "I have a $var";
         String expected = "I have a \\$var";
-        
+
         assertEquals(expected, VelocityKiller.attack(raw));
     }
 
