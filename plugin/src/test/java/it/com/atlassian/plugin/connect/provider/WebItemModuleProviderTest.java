@@ -53,8 +53,8 @@ public class WebItemModuleProviderTest
     public static final String BASE_URL = "https://my.connect.addon.com";
     public static final String VELOCITY_LABEL = "My $var is ${awesome}";
     public static final String VELOCITY_TOOLTIP = "My tooltip $var is ${awesome}";
-    public static final String VELOCITY_LABEL_KILLED = "My var is {awesome}";
-    public static final String VELOCITY_TOOLTIP_KILLED = "My tooltip var is {awesome}";
+    public static final String VELOCITY_LABEL_KILLED = "My \\$var is \\${awesome}";
+    public static final String VELOCITY_TOOLTIP_KILLED = "My tooltip \\$var is \\${awesome}";
 
     private final WebItemModuleProvider webItemModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
