@@ -4,6 +4,7 @@
 
 _AP.define("history/history", ["_dollar", "_uri"], function ($, Uri) {
     "use strict";
+
     var lastAdded,
         anchorPrefix = "!";
 

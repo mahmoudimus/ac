@@ -14,7 +14,7 @@
     rpc.extend(function () {
 
         var self = {
-            _emitEvent: function(event){
+            _emitEvent: function (event) {
                 $.each(_channels[event.source.key], function (id, channel) {
                     channel.bus._emitEvent(event);
                 });
@@ -27,7 +27,7 @@
                 delete _channels[xdm.addonKey][xdm.id];
                 return this;
             },
-            init: function(config, xdm){
+            init: function (config, xdm) {
                 if(!_channels[xdm.addonKey]){
                     _channels[xdm.addonKey] = {};
                 }

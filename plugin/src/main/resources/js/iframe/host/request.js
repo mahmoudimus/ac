@@ -4,14 +4,14 @@ _AP.define("request", ["_dollar", "_rpc"], function ($, rpc) {
     var xhrProperties = ["status", "statusText", "responseText"],
         xhrHeaders = ["Content-Type"];
 
-    rpc.extend(function(){
+    rpc.extend(function () {
         return {
             internals: {
-                request: function(args, success, error){
+                request: function (args, success, error) {
                     // add the context path to the request url
                     var url = AJS.contextPath() + args.url;
                     // reduce the xhr object to the just bits we can/want to expose over the bridge
-                    function toJSON(xhr) {
+                    function toJSON (xhr) {
                         var json = {headers: {}};
                         // only copy key properties and headers for transport across the bridge
                         $.each(xhrProperties, function (i, v) { json[v] = xhr[v]; });
@@ -19,10 +19,10 @@ _AP.define("request", ["_dollar", "_rpc"], function ($, rpc) {
                         $.each(xhrHeaders, function (i, v) { json.headers[v] = xhr.getResponseHeader(v); });
                         return json;
                     }
-                    function done(data, textStatus, xhr) {
+                    function done (data, textStatus, xhr) {
                         success([data, textStatus, toJSON(xhr)]);
                     }
-                    function fail(xhr, textStatus, errorThrown) {
+                    function fail (xhr, textStatus, errorThrown) {
                         error([toJSON(xhr), textStatus, errorThrown]);
                     }
 

@@ -3,9 +3,9 @@ _AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
 
     var connectModuleData; // data sent from the velocity template
 
-    rpc.extend(function(config){
+    rpc.extend(function (config) {
         return {
-            init: function(state){
+            init: function (state) {
                 connectModuleData = state;
             },
             internals: {

@@ -1,9 +1,9 @@
 _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], function ($, rpc, statusHelper) {
     "use strict";
 
-    rpc.extend(function(config){
+    rpc.extend(function (config) {
         return {
-            init: function(state, xdm){
+            init: function (state, xdm) {
                 var $home = $(state.iframe).closest(".ap-container");
                 statusHelper.showLoadingStatus($home, 0);
                 xdm.timeout = setTimeout(function(){
@@ -18,7 +18,7 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
                 }, 20000);
             },
             internals: {
-                init: function(){
+                init: function() {
                     this.analytics.iframePerformance.end();
                     var $home = $(this.iframe).closest(".ap-container");
                     statusHelper.showLoadedStatus($home);

@@ -1,6 +1,4 @@
-_AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params", "_rpc"], function($, dialog, uiParams, rpc) {
-
-    var enc = encodeURIComponent;
+_AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], function($, dialog, uiParams) {
 
     // When openCustomEditor is invoked, it will assign a function for saving the macro
     // being edited to this field. This simplifies the client's job of saving the macro
