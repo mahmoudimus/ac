@@ -69,18 +69,17 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       uiParams: options.uiParams
     };
 
+    if(options.productCtx && !options.productContext){
+      options.productContext = JSON.parse(options.productCtx);
+    }
+
     rpc.extend({
       init: function(opts, xdm){
         xdm.analytics = analytics.get(xdm.addonKey, ns);
         xdm.analytics.iframePerformance.start();
+        xdm.productContext = options.productContext;
       }
     });
-
-    if(options.productCtx){
-      options.productContext = JSON.parse(options.productCtx);
-    } else {
-      options.productContext = {};
-    }
 
     rpc.init(options, xdmOptions);
 
