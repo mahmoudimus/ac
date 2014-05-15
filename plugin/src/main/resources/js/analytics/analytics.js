@@ -6,7 +6,7 @@ _AP.define("analytics/analytics", ["_dollar"], function($){
      * @const
      * @type {Array}
      */
-    var bridgeMethodBlackList = [
+    var BRIDGEMETHODBLACKLIST = [
         "resize",
         "init"
     ];
@@ -89,7 +89,7 @@ _AP.define("analytics/analytics", ["_dollar"], function($){
     };
 
     proto.trackBridgeMethod = function(name){
-        if($.inArray(name, bridgeMethodBlackList) !== -1){
+        if($.inArray(name, BRIDGEMETHODBLACKLIST) !== -1){
             return false;
         }
         this.track('bridge.invokemethod', {
