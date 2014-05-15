@@ -3,17 +3,22 @@ package com.atlassian.plugin.connect.testsupport;
 import java.io.File;
 import java.io.IOException;
 
+import javax.annotation.Nullable;
+
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.upm.api.util.Option;
+import com.atlassian.upm.spi.PluginControlHandler;
 import com.atlassian.upm.spi.PluginInstallHandler;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,7 +32,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class DefaultTestPluginInstaller implements TestPluginInstaller, DisposableBean
 {
     public static final String DESCRIPTOR_PREFIX = "connect-descriptor-";
-    private ServiceTracker serviceTracker;
+    private ServiceTracker installServiceTracker;
+    private ServiceTracker controlServiceTracker;
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
     private final ApplicationProperties applicationProperties;
@@ -43,15 +49,21 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     }
 
     @Override
-    public Plugin installPlugin(ConnectAddonBean bean) throws IOException
+    public Plugin installAddon(ConnectAddonBean bean) throws IOException
     {
         String json = ConnectModulesGsonFactory.addonBeanToJson(bean);
-        File descriptor = createTempDescriptor(json);
-        
+        return installAddon(json);
+    }
+
+    @Override
+    public Plugin installAddon(String jsonDescriptor) throws IOException
+    {
+        File descriptor = createTempDescriptor(jsonDescriptor);
+
         PluginInstallHandler handler = getInstallHandler();
 
         checkNotNull(handler);
-        
+
         return handler.installPlugin(descriptor, Option.<String>some("application/json")).getPlugin();
     }
 
@@ -64,9 +76,39 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     }
 
     @Override
+    public void uninstallAddon(Plugin plugin) throws IOException
+    {
+        PluginControlHandler handler = getControlHandler();
+
+        checkNotNull(handler);
+
+        handler.uninstall(plugin);
+    }
+
+    @Override
     public void uninstallPlugin(Plugin plugin) throws IOException
     {
         pluginController.uninstall(plugin);
+    }
+
+    @Override
+    public void disableAddon(String pluginKey) throws IOException
+    {
+        PluginControlHandler handler = getControlHandler();
+
+        checkNotNull(handler);
+        
+        handler.disablePlugin(pluginKey);
+    }
+
+    @Override
+    public void enableAddon(String pluginKey) throws IOException
+    {
+        PluginControlHandler handler = getControlHandler();
+
+        checkNotNull(handler);
+
+        handler.enablePlugins(pluginKey);
     }
 
     @Override
@@ -80,66 +122,115 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     {
         pluginController.enablePlugins(pluginKey);
     }
-    
+
     @Override
     public String getInternalAddonBaseUrl(String pluginKey)
     {
         String productBase = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
-        
+
         if(productBase.endsWith("/"))
         {
             productBase = StringUtils.chop(productBase);
         }
-        
+
         return productBase + AddonTestFilter.FILTER_MAPPING + "/" + pluginKey;
+    }
+
+    @Override
+    public Iterable<String> getInstalledAddonKeys()
+    {
+        PluginControlHandler handler = getControlHandler();
+
+        checkNotNull(handler);
+
+        return Iterables.transform(handler.getPlugins(),new Function<Plugin, String>() {
+            @Override
+            public String apply(@Nullable Plugin input)
+            {
+                return (null != input) ? input.getKey() : null;
+            }
+        });
     }
 
     private File createTempDescriptor(String json) throws IOException
     {
-        File tmpFile = File.createTempFile(ModuleKeyGenerator.randomName(DESCRIPTOR_PREFIX), ".json");
+        File tmpFile = File.createTempFile(ModuleKeyUtils.randomName(DESCRIPTOR_PREFIX), ".json");
         Files.write(json,tmpFile, Charsets.UTF_8);
-        
+
         return tmpFile;
     }
-    
+
     private PluginInstallHandler getInstallHandler()
     {
         /*
         NOTE: we have to get the handler via OSGi by it's string name because we can't depend on the connect plugin.
          */
-        ServiceTracker tracker = getServiceTracker();
-        
-        checkNotNull(tracker);
-        for(ServiceReference ref : tracker.getServiceReferences())
+        if(null == installServiceTracker)
         {
-            PluginInstallHandler handler = (PluginInstallHandler) tracker.getService(ref);
-            if(handler.getClass().getName().contains("ConnectUPMInstallHandler"))
-            {
-                return handler;
-            }
+            installServiceTracker = getServiceTracker(PluginInstallHandler.class);
         }
         
+
+        checkNotNull(installServiceTracker);
+        for(ServiceReference ref : installServiceTracker.getServiceReferences())
+        {
+            Object service = installServiceTracker.getService(ref);
+            if(service.getClass().getName().contains("ConnectUPMInstallHandler"))
+            {
+                return (PluginInstallHandler) service;
+            }
+        }
+
         return null;
     }
 
-    private ServiceTracker getServiceTracker()
+    private PluginControlHandler getControlHandler()
     {
-        if(null == serviceTracker)
+        /*
+        NOTE: we have to get the handler via OSGi by it's string name because we can't depend on the connect plugin.
+         */
+        if(null == controlServiceTracker)
         {
-            synchronized (this)
-            {
-                ServiceTracker tracker = new ServiceTracker(bundleContext, PluginInstallHandler.class.getName(), null);
-                tracker.open();
-                this.serviceTracker = tracker;
-            }
+            controlServiceTracker = getServiceTracker(PluginControlHandler.class);
         }
         
-        return serviceTracker;
+        checkNotNull(controlServiceTracker);
+        for(ServiceReference ref : controlServiceTracker.getServiceReferences())
+        {
+            Object service = controlServiceTracker.getService(ref);
+            if(service.getClass().getName().contains("ConnectUPMControlHandler"))
+            {
+                return (PluginControlHandler) service;
+            }
+        }
+
+        return null;
+    }
+
+    private ServiceTracker getServiceTracker(Class clazz)
+    {
+        ServiceTracker tracker;
+        
+            synchronized (this)
+            {
+                tracker = new ServiceTracker(bundleContext, clazz.getName(), null);
+                tracker.open();
+            }
+        
+        return tracker;
     }
 
     @Override
     public void destroy() throws Exception
     {
-        serviceTracker.close();
+        if(null != controlServiceTracker)
+        {
+            controlServiceTracker.close();
+        }
+
+        if(null != installServiceTracker)
+        {
+            installServiceTracker.close();
+        }
     }
 }

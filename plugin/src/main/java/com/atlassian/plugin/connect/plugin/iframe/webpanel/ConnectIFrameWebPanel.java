@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.webpanel;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -35,7 +36,7 @@ public class ConnectIFrameWebPanel implements WebPanel
         {
             ModuleContextParameters unfilteredContext = moduleContextExtractor.extractParameters(context);
             ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
-            renderStrategy.render(filteredContext, writer);
+            renderStrategy.render(filteredContext, writer, Option.<String>none());
         }
         else
         {

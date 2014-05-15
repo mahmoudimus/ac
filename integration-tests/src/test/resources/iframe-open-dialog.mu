@@ -29,7 +29,7 @@
           dialog.create({
                 width: "231px",
                 height: "356px",
-                key: "my-dialog"
+                key: "{{dialogKey}}"
           }).on("close", function (data) {
             $("#dialog-close-data")[0].innerHTML = data;
           });

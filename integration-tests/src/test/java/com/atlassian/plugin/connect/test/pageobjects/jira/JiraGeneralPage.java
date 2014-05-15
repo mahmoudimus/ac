@@ -88,6 +88,31 @@ public final class JiraGeneralPage implements GeneralPage
         );
     }
 
+    public void clickRemotePluginLinkWithoutBinding()
+    {
+        link.get().fold(
+                new Supplier<Void>()
+                {
+                    @Override
+                    public Void get()
+                    {
+                        throw new IllegalStateException(format("Could not find link '%s'", link()));
+                    }
+                },
+                new Function<WebElement, Void>()
+                {
+                    @Override
+                    public Void apply(WebElement l)
+                    {
+                        l.click();
+                        logger.debug("Link '{}' was found and clicked.", l);
+                        
+                        return null;
+                    }
+                }
+        );
+    }
+
     @Override
     public String getRemotePluginLinkHref()
     {

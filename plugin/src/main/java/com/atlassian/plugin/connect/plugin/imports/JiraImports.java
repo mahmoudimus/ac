@@ -6,6 +6,7 @@ import com.atlassian.jira.bc.issue.attachment.AttachmentService;
 import com.atlassian.jira.bc.issue.worklog.WorklogService;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
+import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.bc.subtask.conversion.IssueToSubTaskConversionService;
 import com.atlassian.jira.bc.subtask.conversion.SubTaskToIssueConversionService;
 import com.atlassian.jira.config.SubTaskManager;
@@ -17,7 +18,10 @@ import com.atlassian.jira.issue.link.IssueLinkTypeManager;
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.issue.vote.VoteManager;
 import com.atlassian.jira.issue.watchers.WatcherManager;
+import com.atlassian.jira.permission.PermissionSchemeManager;
+import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
+import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
@@ -58,8 +62,11 @@ public class JiraImports
             @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
             @JiraImport JiraBaseUrls jiraBaseUrls,
             @JiraImport ("jiraPermissionManager") PermissionManager jiraPermissionManager,
+            @JiraImport PermissionSchemeManager permissionSchemeManager,
             @JiraImport ProjectComponentManager projectComponentManager,
             @JiraImport ProjectRoleManager projectRoleManager,
+            @JiraImport ProjectRoleService projectRoleService,
+            @JiraImport ProjectManager projectManager,
             @JiraImport ProjectService projectService,
             @JiraImport SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
             @JiraImport SessionSearchObjectManagerFactory sessionSearchObjectManagerFactory,
@@ -77,7 +84,8 @@ public class JiraImports
             @JiraImport WebFragmentHelper webFragmentHelper,
             @JiraImport WorklogService worklogService,
             @JiraImport ApplicationService applicationService,
-            @JiraImport ApplicationManager applicationManager)
+            @JiraImport ApplicationManager applicationManager,
+            @JiraImport GlobalPermissionManager globalPermissionManager)
     {
     }
 }

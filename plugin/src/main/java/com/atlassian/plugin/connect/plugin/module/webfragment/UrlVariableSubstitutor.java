@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.webfragment;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,25 @@ public class UrlVariableSubstitutor
     }
 
     /**
+     * Appends (rather than substitutes) a map of parameters to the end of the url.
+     * @return the URL, with the supplied parameters appended
+     */
+    public String append(String source, Map<String, String> parameters)
+    {
+        StringBuilder sb = new StringBuilder(source);
+        String sep = source.contains("?") ? "&" : "?";
+        for (Map.Entry<String, String> entry : parameters.entrySet())
+        {
+            if (!StringUtils.isEmpty(entry.getValue()))
+            {
+                sb.append(sep).append(entry.getKey()).append("=").append(encodeQuery(entry.getValue()));
+                sep = "&";
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * Parses from the given URL a {@link Map} of name-in-source to context-variable-name.
      * @param source string containing variables (e.g. "http://server:80/path?my_page_id={page.id}" or "my_page_id={page.id}")
      * @return {@link Map} of name-in-source to context-variable-name (e.g. "my_page_id" => "page.id")
@@ -96,6 +116,10 @@ public class UrlVariableSubstitutor
 
     private String encodeQuery(String value)
     {
+        if (StringUtils.isEmpty(value))
+        {
+            return "";
+        }
         try
         {
             return URIUtil.encodeWithinQuery(value);

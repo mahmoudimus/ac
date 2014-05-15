@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
 import org.junit.BeforeClass;
@@ -33,6 +34,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
 public class JiraWebitemModuleProviderTest
 {
@@ -49,6 +51,7 @@ public class JiraWebitemModuleProviderTest
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private HttpServletRequest servletRequest;
+    private ConnectAddonBean addon;
 
     public JiraWebitemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
@@ -60,6 +63,7 @@ public class JiraWebitemModuleProviderTest
     @BeforeClass
     public void setup()
     {
+        this.addon = newConnectAddonBean().withKey("my-plugin").build();
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
         
@@ -89,9 +93,9 @@ public class JiraWebitemModuleProviderTest
 
         try
         {
-            plugin = testPluginInstaller.installPlugin(addon);
+            plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(plugin, "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
 
             assertEquals(1, descriptors.size());
 
@@ -114,7 +118,7 @@ public class JiraWebitemModuleProviderTest
         {
             if(null != plugin)
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }

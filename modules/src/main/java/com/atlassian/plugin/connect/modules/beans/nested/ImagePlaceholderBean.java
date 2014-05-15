@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.ImagePlaceholderBeanBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -19,6 +20,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * @schemaTitle Image Placeholder
  * @since 1.0
  */
+@SchemaDefinition("imagePlaceholder")
 public class ImagePlaceholderBean
 {
     /**

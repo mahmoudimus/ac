@@ -15,6 +15,8 @@ public class RequiredKeyBeanBuilder<T extends RequiredKeyBeanBuilder, B extends 
 
     public RequiredKeyBeanBuilder(RequiredKeyBean defaultBean)
     {
+        super(defaultBean);
+        
         this.key = defaultBean.getRawKey();
     }
 

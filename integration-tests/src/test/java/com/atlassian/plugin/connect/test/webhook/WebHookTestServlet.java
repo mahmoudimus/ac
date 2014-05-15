@@ -21,6 +21,8 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
+import static com.atlassian.plugin.connect.test.RemotePluginUtils.randomWebItemBean;
+
 public final class WebHookTestServlet extends HttpServlet
 {
     private volatile BlockingDeque<WebHookBody> webHooksQueue = new LinkedBlockingDeque<WebHookBody>();
@@ -42,16 +44,16 @@ public final class WebHookTestServlet extends HttpServlet
         }
     }
 
-    public static void runInRunner(String baseUrl, String webHookId, WebHookTester tester) throws Exception
+    public static void runInRunner(String baseUrl, String webHookId, String pluginKey, WebHookTester tester) throws Exception
     {
-        runInRunner(baseUrl, webHookId, webHookId, tester);
+        runInRunner(baseUrl, webHookId, webHookId, pluginKey, tester);
     }
 
-    public static void runInRunner(String baseUrl, String webHookId, String eventId, WebHookTester tester) throws Exception
+    public static void runInRunner(String baseUrl, String webHookId, String eventId, String pluginKey, WebHookTester tester) throws Exception
     {
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, webHookId)
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, pluginKey)
                 .add(WebhookModule.key(webHookId + path.hashCode())
                         .path(path)
                         .event(eventId)
@@ -75,11 +77,12 @@ public final class WebHookTestServlet extends HttpServlet
         runInJsonRunner(baseUrl, webHookId, webHookId, tester);
     }
 
-    public static void runInstallInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    public static void runInstallInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addInstallLifecycle()
+                .addModule("webItems", randomWebItemBean())
                 .addRoute(ConnectRunner.INSTALLED_PATH, servlet)
                 .start();
 
@@ -95,12 +98,13 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stopAndUninstall();
     }
 
-    public static void runEnableInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    public static void runEnableInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .setAuthenticationToNone()
                 .addEnableLifecycle()
+                .addModule("webItems",randomWebItemBean())
                 .addRoute(ConnectRunner.ENABLED_PATH, servlet)
                 .start();
 
@@ -116,11 +120,12 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stopAndUninstall();
     }
 
-    public static void runDisableInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    public static void runDisableInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addDisableLifecycle()
+                .addModule("webItems",randomWebItemBean())
                 .addRoute(ConnectRunner.DISABLED_PATH, servlet)
                 .start();
 
@@ -136,11 +141,12 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stopAndUninstall();
     }
 
-    public static void runUninstalledInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    public static void runUninstalledInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addUninstallLifecycle()
+                .addModule("webItems",randomWebItemBean())
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet)
                 .start();
 
@@ -164,6 +170,7 @@ public final class WebHookTestServlet extends HttpServlet
                 .setAuthenticationToNone()
                 .addModule("webhooks", WebHookModuleBean.newWebHookBean().withEvent(eventId).withUrl(path).build())
                 .addRoute(path, servlet)
+                .addModule("webItems",randomWebItemBean())
                 .addScope(ScopeName.READ) // for receiving web hooks
                 .start();
 
@@ -179,11 +186,11 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stopAndUninstall();
     }
 
-    public static void runSyncInRunner(String baseUrl, String eventId, WebHookTester tester) throws Exception
+    public static void runSyncInRunner(String baseUrl, String eventId, String pluginKey, WebHookTester tester) throws Exception
     {
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, eventId)
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, pluginKey)
                 .addInfoParam(eventId, path)
                 .addRoute(path, servlet)
                 .start();
@@ -216,7 +223,7 @@ public final class WebHookTestServlet extends HttpServlet
 
     public WebHookBody waitForHook() throws InterruptedException
     {
-        return webHooksQueue.poll(5, TimeUnit.SECONDS);
+        return webHooksQueue.poll(10, TimeUnit.SECONDS);
     }
 
     private static final class JsonWebHookBody implements WebHookBody

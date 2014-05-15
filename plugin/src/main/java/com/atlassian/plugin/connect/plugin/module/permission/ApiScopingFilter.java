@@ -131,13 +131,13 @@ public class ApiScopingFilter implements Filter
         UserKey user = userManager.getRemoteUserKey(req);
         if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, user))
         {
-            log.warn("Request not in an authorized API scope from app '{}' as user '{}' on URL '{}'",
-                    new Object[]{clientKey, user, req.getRequestURI()});
+            log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
+                    new Object[]{clientKey, user, req.getMethod(), req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
             return;
         }
-        log.info("Authorized app '{}' to access API at URL '{}' for user '{}'",
-                new Object[]{clientKey, req.getRequestURI(), user});
+        log.info("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
+                new Object[]{clientKey, req.getMethod(), req.getRequestURI(), user});
         chain.doFilter(inputConsumingRequest, res);
     }
 

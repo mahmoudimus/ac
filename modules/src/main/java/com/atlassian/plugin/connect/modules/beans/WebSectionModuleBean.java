@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebSectionModuleBeanBuilder;
@@ -24,6 +25,7 @@ import java.util.List;
  * @schemaTitle Web Section
  * @since 1.0
  */
+@SchemaDefinition("webSection")
 public class WebSectionModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
@@ -104,7 +106,7 @@ public class WebSectionModuleBean extends BeanWithKeyAndParamsAndConditions
     public String toString()
     {
         return Objects.toStringHelper(this)
-                .add("key", getKey())
+                .add("key", getRawKey())
                 .add("name", getName())
                 .add("location", getLocation())
                 .add("weight", getWeight())

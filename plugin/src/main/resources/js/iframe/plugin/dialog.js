@@ -1,4 +1,4 @@
-AP.define("dialog", ["_dollar", "_rpc"],
+AP.define("dialog", ["_dollar", "_rpc", "_ui-params", "_uri"],
 
   /**
    * The Dialog module provides a mechanism for launching an add-on's modules as modal dialogs from within an add-on's iframe.
@@ -16,11 +16,17 @@ AP.define("dialog", ["_dollar", "_rpc"],
    * @exports Dialog
    */
 
-  function ($, rpc) {
+  function ($, rpc, UiParams, Uri) {
   "use strict";
 
-  var isDialog = window.location.toString().indexOf("dialog=1") > 0,
-      exports;
+    var isDialog = Boolean(UiParams.fromUrl(window.location.toString()).dlg),
+      exports,
+      url = new Uri.init(window.location.toString());
+
+    // if it has been set to a dialog on the server.
+    if(url.getQueryParamValue("dialog") === "1"){
+      isDialog = true;
+    }
 
   rpc.extend(function (remote) {
 
@@ -45,10 +51,14 @@ AP.define("dialog", ["_dollar", "_rpc"],
         /**
         * @name DialogOptions
         * @class
-        * @property {String} key The module key of the page you want to open as a dialog
-        * @property {String} size Opens the dialog at a preset size: small, medium, large, x-large or maximum (full screen).
-        * @property {Number|String} width overrides size, define the width as a percentage (append a % to the number) or pixels.
-        * @property {Number|String} height overrides size, define the height as a percentage (append a % to the number) or pixels.
+        * @property {String}        key         The module key of the page you want to open as a dialog
+        * @property {String}        size        Opens the dialog at a preset size: small, medium, large, x-large or maximum (full screen).
+        * @property {Number|String} width       overrides size, define the width as a percentage (append a % to the number) or pixels.
+        * @property {Number|String} height      overrides size, define the height as a percentage (append a % to the number) or pixels.
+        * @property {Boolean}       chrome      (optional) opens the dialog with heading and buttons.
+        * @property {String}        header      (optional) text to display in the header if opening a dialog with chrome.
+        * @property {String}        submitText  (optional) text for the submit button if opening a dialog with chrome.
+        * @property {String}        cancelText  (optional) text for the cancel button if opening a dialog with chrome.
         */
         remote.createDialog(options);
         return {
@@ -198,7 +208,7 @@ AP.define("dialog", ["_dollar", "_rpc"],
             });
             return !!result;
           }
-        }
+        };
       }
 
     };

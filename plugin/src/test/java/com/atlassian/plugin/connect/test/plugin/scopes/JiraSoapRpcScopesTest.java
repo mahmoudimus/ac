@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -8,6 +9,7 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.Collection;
 
+@ConvertToWiredTest
 @RunWith(Parameterized.class)
 public class JiraSoapRpcScopesTest extends AbstractScopesTest
 {
@@ -26,7 +28,6 @@ public class JiraSoapRpcScopesTest extends AbstractScopesTest
             {ScopeName.READ, HttpMethod.POST, PATH, "getIssuesFromJqlSearch", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getVersions", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getIssuesFromTextSearchWithProject", true},
-            {ScopeName.READ, HttpMethod.POST, PATH, "getSecurityLevels", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getPriorities", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getProjectAvatars", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getComponents", true},
@@ -35,7 +36,6 @@ public class JiraSoapRpcScopesTest extends AbstractScopesTest
             {ScopeName.READ, HttpMethod.POST, PATH, "getAttachmentsFromIssue", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getGroup", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getProjectAvatar", true},
-            {ScopeName.READ, HttpMethod.POST, PATH, "getFieldsForEdit", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getIssueById", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getUser", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getSecurityLevel", true},
@@ -46,13 +46,15 @@ public class JiraSoapRpcScopesTest extends AbstractScopesTest
             {ScopeName.READ, HttpMethod.POST, PATH, "getProjectsNoSchemes", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getFieldsForAction", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getStatuses", true},
-            {ScopeName.READ, HttpMethod.POST, PATH, "getFieldsForCreate", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getResolutionDateById", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getProjectByKey", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getIssuesFromTextSearchWithLimit", true},
             {ScopeName.READ, HttpMethod.POST, PATH, "getResolutions", true},
 
             // writes
+            {ScopeName.WRITE, HttpMethod.POST, PATH, "getFieldsForCreate", true},
+            {ScopeName.WRITE, HttpMethod.POST, PATH, "getFieldsForEdit", true},
+            {ScopeName.WRITE, HttpMethod.POST, PATH, "getSecurityLevels", true},
             {ScopeName.WRITE, HttpMethod.POST, PATH, "createIssueWithParentWithSecurityLevel", true},
             {ScopeName.WRITE, HttpMethod.POST, PATH, "createIssueWithParent", true},
             {ScopeName.WRITE, HttpMethod.POST, PATH, "createIssueWithSecurityLevel", true},

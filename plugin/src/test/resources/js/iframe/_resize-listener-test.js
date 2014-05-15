@@ -47,20 +47,12 @@
                 equal($("iframe#" + this.iframeId())[0].offsetHeight, 11, "iframe starts at 11px high");
             });
 
-
-            test('AP.resize crosses the bridge', function () {
-                stop();
-                var spy = sinon.spy(),
-                xdm = this.createXdm(null, null, {resize: spy});
-
-                $("iframe#" + this.iframeId()).load(function(){
-                    xdm.events.on('resized', function(e){
-                        ok(spy.calledOnce, 'resize was called in the bridge');
-                        xdm.destroy();
-                        start();
-                    });
-                });
-
+            asyncTest('AP.resize crosses the bridge', function () {
+                var spy = function(){
+                    ok(true, 'resize was called in the bridge');
+                    start();
+                };
+                this.createXdm(null, null, {resize: spy});
             });
 
             test('resize function is called when the iframe contents change dimensions', function () {
@@ -69,14 +61,10 @@
                 xdm = this.createXdm('resize-listener-autoresize.html', {width:10, height:11}, {
                     resize: spy
                 });
-                $("iframe#" + this.iframeId()).load(function(){
-                    xdm.events.on('resized', function(e){
-                        setTimeout(function(){
-                        ok(spy.calledTwice, 'resize function was called twice');
-                        start();
 
-                        }, 500);
-                    });
+                xdm.events.on('resized', function(e){
+                    equal(spy.callCount, 2, 'resize function was called twice');
+                    start();
                 });
             });
 

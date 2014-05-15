@@ -9,10 +9,7 @@ import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import org.apache.http.auth.AuthenticationException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
+import org.junit.*;
 
 import java.io.IOException;
 
@@ -23,6 +20,8 @@ import static it.TestConstants.BETTY_USERNAME;
 public abstract class ConnectWebDriverTestBase
 {
     protected static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
+    
+    protected static String currentUsername = null;
 
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
@@ -38,30 +37,44 @@ public abstract class ConnectWebDriverTestBase
         LicenseStatusBannerHelper.instance().execute(product);
     }
 
-    @Before
-    @After
-    public final void logout()
+    @BeforeClass
+    @AfterClass
+    public static void logout()
     {
+        currentUsername = null;
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
-    protected HomePage loginAsAdmin()
+    protected void loginAsAdmin()
     {
-        return loginAs(ADMIN_USERNAME, ADMIN_USERNAME);
+        if(!ADMIN_USERNAME.equals(currentUsername))
+        {
+            loginAs(ADMIN_USERNAME, ADMIN_USERNAME);
+            currentUsername = ADMIN_USERNAME;
+        }
     }
 
-    protected HomePage loginAsBetty()
+    protected void loginAsBetty()
     {
-        return loginAs(BETTY_USERNAME, BETTY_USERNAME);
+        if(!BETTY_USERNAME.equals(currentUsername))
+        {
+            loginAs(BETTY_USERNAME, BETTY_USERNAME);
+            currentUsername = BETTY_USERNAME;
+        }
     }
 
-    protected HomePage loginAsBarney()
+    protected void loginAsBarney()
     {
-        return loginAs(BARNEY_USERNAME, BARNEY_USERNAME);
+        if(!BARNEY_USERNAME.equals(currentUsername))
+        {
+            loginAs(BARNEY_USERNAME, BARNEY_USERNAME);
+            currentUsername = BARNEY_USERNAME;
+        }
     }
 
     protected HomePage loginAs(String username, String password)
     {
+        logout();
         return product.visit(LoginPage.class).login(username, password, HomePage.class);
     }
 }

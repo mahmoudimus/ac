@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.SpaceToolsTabModuleBeanBuilder;
 import com.google.common.base.Objects;
@@ -22,6 +23,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SPACE_TOOLS_TAB_EXAMPLE}
  * @since 1.0
  */
+@SchemaDefinition("spaceTools")
 public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
@@ -121,7 +123,7 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         toStringHelper
                 .add("name", getName())
-                .add("key", getKey())
+                .add("key", getRawKey())
                 .add("url", getUrl())
                 .add("weight", getWeight())
                 .add("location", getLocation());

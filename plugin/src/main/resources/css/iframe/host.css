@@ -22,6 +22,13 @@
   text-decoration: none;
 }
 
+/* ap-content div has some whitespace in it, which results in the element having
+ * a minimum height of ~20px. Setting font-size to 0px should be safe given that
+ * the element only contains an iframe. */
+.ap-container .ap-content {
+  font-size: 0px;
+}
+
 .ap-container iframe {
   border: 0;
 }
@@ -39,4 +46,15 @@
 
 .aui-inline-dialog .ap-stats, .ap-dialog-content .ap-stats {
   display: block;
+}
+
+.ap-aui-message {
+  margin: 10px;
+}
+
+.ap-content {
+  line-height: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 0;
 }

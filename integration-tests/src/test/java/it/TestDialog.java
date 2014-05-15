@@ -59,7 +59,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     @Test
     public void testOpenCloseDialogUrl()
     {
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog", EXTRA_PREFIX);
 
         page.clickRemotePluginLink();
@@ -76,7 +76,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     @Test
     public void testOpenCloseDialogKey() throws Exception
     {
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog", EXTRA_PREFIX);
 
         page.clickRemotePluginLink();
@@ -93,7 +93,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     @Test
     public void testOpenCloseDialogKeyDimensions() throws Exception
     {
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog", EXTRA_PREFIX);
 
         page.clickRemotePluginLink();
@@ -104,13 +104,16 @@ public class TestDialog extends ConnectWebDriverTestBase
         // check the dimensions are the same as those in the js (moustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
+
+        closeDialogPage.close();
+        closeDialogPage.waitUntilClosed();
     }
 
 
     @Test
     public void testOpenCloseDialogUrlDimensions() throws Exception
     {
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog", EXTRA_PREFIX);
 
         page.clickRemotePluginLink();
@@ -121,6 +124,9 @@ public class TestDialog extends ConnectWebDriverTestBase
         // check the dimensions are the same as those in the js (moustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(654));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(918));
+
+        closeDialogPage.close();
+        closeDialogPage.waitUntilClosed();
     }
 
 }

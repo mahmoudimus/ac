@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.SearchRequestViewModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
@@ -15,7 +16,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.emp
  *
  * After an add-on declaring a Search Request View module is installed, a new entry will show up in the
  * *Export* menu on the Issue Navigator page. Clicking the entry will redirect to the URL that is provided
- * by your add-on, passing in the issue keys, pagination information and the OAuth parameters that allow you
+ * by your add-on, passing in the issue keys, pagination information and the signed parameters that allow you
  * to verify the validity of the request.
  *
  * To declare a Search Request View, you must mainly provide the URL that will handle the HTTP GET request.
@@ -35,6 +36,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.emp
  * @schemaTitle Search Request View
  * @since 1.0
  */
+@SchemaDefinition("searchRequestView")
 public class SearchRequestViewModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**

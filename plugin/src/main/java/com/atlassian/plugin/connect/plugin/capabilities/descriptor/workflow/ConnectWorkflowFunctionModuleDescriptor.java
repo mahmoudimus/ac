@@ -1,12 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -25,17 +20,23 @@ import com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.FunctionProvider;
 import com.opensymphony.workflow.TypeResolver;
 import com.opensymphony.workflow.WorkflowException;
-
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
+
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -51,6 +52,8 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private final OSWorkflowConfigurator workflowConfigurator;
     private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private String addonKey;
+    private String moduleKey;
 
     private URI triggeredUri;
 
@@ -74,7 +77,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
             @Override
             public FunctionProvider getFunction(final String type, final Map args) throws WorkflowException
             {
-                return new RemoteWorkflowPostFunctionProvider(eventPublisher, jiraRestBeanMarshaler, plugin.getKey(), getKey());
+                return new RemoteWorkflowPostFunctionProvider(eventPublisher, jiraRestBeanMarshaler, addonKeyOnly(getKey()), getKey());
             }
         };
     }
@@ -112,7 +115,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
                 plugin.getKey(),
                 triggeredUri,
-                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                new PluginModuleListenerParameters(addonKeyOnly(getKey()), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
         
         //need to wrap since the pluginTypeResolver may have already gone away
@@ -130,7 +133,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     @Override
     public void writeHtml(String resourceName, Map<String, ?> startingParams, Writer writer) throws IOException
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(getPluginKey(), getKey(), resourceName);
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()), resourceName);
 
         if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
         {
@@ -143,12 +146,18 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
                     JiraModuleContextFilter.POSTFUNCTION_CONFIG,
                     (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_CONFIG)
             );
-            renderStrategy.render(moduleContext, writer);
+            renderStrategy.render(moduleContext, writer, Option.<String>none());
         }
         else
         {
             renderStrategy.renderAccessDenied(writer);
         }
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 
 }

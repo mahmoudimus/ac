@@ -5,7 +5,6 @@ import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.version.Version;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
-import com.atlassian.sal.api.user.UserProfile;
 
 /**
  *
@@ -50,16 +49,6 @@ public class JiraModuleContextParametersImpl extends HashMapModuleContextParamet
         {
             put(JiraModuleContextFilter.PROJECT_KEY, project.getKey());
             put(JiraModuleContextFilter.PROJECT_ID, Long.toString(project.getId()));
-        }
-    }
-
-    @Override
-    public void addProfileUser(final UserProfile userProfile)
-    {
-        if (userProfile != null)
-        {
-            put(JiraModuleContextFilter.PROFILE_NAME, userProfile.getUsername());
-            put(JiraModuleContextFilter.PROFILE_KEY, userProfile.getUserKey().getStringValue());
         }
     }
 }

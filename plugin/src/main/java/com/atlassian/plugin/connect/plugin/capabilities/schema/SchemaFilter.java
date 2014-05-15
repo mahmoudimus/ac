@@ -6,10 +6,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.util.ProductFilter;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,22 +13,18 @@ import org.slf4j.LoggerFactory;
 public class SchemaFilter implements Filter
 {
     private static final Logger log = LoggerFactory.getLogger(SchemaFilter.class);
-    public static final String JSON_SCHEMA_TYPE = "application/schema+json";
+    public static final String JSON_SCHEMA_TYPE = "application/schema+json; charset=utf-8";
     
-    private FilterConfig config;
-    private final Plugin plugin;
     private final ConnectSchemaLocator schemaLocator;
 
-    public SchemaFilter(PluginRetrievalService pluginRetrievalService, ConnectSchemaLocator schemaLocator)
+    public SchemaFilter(ConnectSchemaLocator schemaLocator)
     {
         this.schemaLocator = schemaLocator;
-        this.plugin = pluginRetrievalService.getPlugin();
     }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException
     {
-        this.config = filterConfig;
     }
 
     @Override
@@ -51,20 +43,20 @@ public class SchemaFilter implements Filter
         String productPath = StringUtils.substringAfterLast(req.getRequestURI(), "/schema/");
         try
         {
-            ProductFilter requestedProduct = ProductFilter.valueOf(productPath.toUpperCase());
             String schema;
+            
             if(pretty)
             {
-                schema = schemaLocator.getPrettySchema(requestedProduct);
+                schema = schemaLocator.getPrettySchema(productPath);
             }
             else
             {
-                schema = schemaLocator.getSchema(requestedProduct);
+                schema = schemaLocator.getSchema(productPath);
             }
-
+            
             res.setContentType(JSON_SCHEMA_TYPE);
             res.setStatus(HttpServletResponse.SC_OK);
-            res.setContentLength(schema.length());
+            res.setContentLength(schema.getBytes("UTF-8").length);
             ServletOutputStream sos = res.getOutputStream();
             sos.write(schema.getBytes());
             sos.flush();

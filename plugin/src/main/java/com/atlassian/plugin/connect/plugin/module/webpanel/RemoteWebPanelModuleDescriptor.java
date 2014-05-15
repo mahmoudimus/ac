@@ -3,19 +3,19 @@ package com.atlassian.plugin.connect.plugin.module.webpanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.hostcontainer.HostContainer;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
+import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.hostcontainer.HostContainer;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
@@ -23,7 +23,6 @@ import com.atlassian.plugin.web.descriptors.DefaultWebPanelModuleDescriptor;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 
@@ -39,7 +38,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
 {
     public static final String REMOTE_WEB_PANEL_MODULE_PREFIX = "remote-web-panel-";
     private final IFrameRendererImpl iFrameRenderer;
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final HostContainer hostContainer;
     private final BundleContext bundleContext;
     private final ConditionProcessor conditionProcessor;
@@ -53,12 +52,12 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     private String location;
 
     private Element descriptor;
-    private DynamicDescriptorRegistration.Registration registration;
+    private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public RemoteWebPanelModuleDescriptor(
             ModuleFactory moduleFactory,
             IFrameRendererImpl iFrameRenderer,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration,
             HostContainer hostContainer,
             BundleContext bundleContext,
             ConditionProcessor conditionProcessor,
@@ -164,5 +163,11 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     protected String getLocation(final Element element)
     {
         return getRequiredAttribute(element, "location");
+    }
+
+    @Override
+    public String getModuleClassName()
+    {
+        return super.getModuleClassName();
     }
 }

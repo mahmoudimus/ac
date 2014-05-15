@@ -8,7 +8,7 @@
 _AP.require("confluence/macro/editor", function(macroEditor) {
 
     AJS.bind("init.rte", function () {
-
+        console.log("binding macro editor: " + AJS.params.contextPath + "%%URL%%");
         // These parameters are injected contextually by the MacroVariableInjectorTransformer
         var macroName = "%%MACRONAME%%";
         var editorOpts = {

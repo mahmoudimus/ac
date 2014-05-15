@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -8,6 +9,7 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.Collection;
 
+@ConvertToWiredTest
 @RunWith(Parameterized.class)
 public class ConfluenceXMLRPCScopesTest extends AbstractScopesTest
 {
@@ -37,6 +39,14 @@ public class ConfluenceXMLRPCScopesTest extends AbstractScopesTest
                 {ScopeName.WRITE, "confluence1.addPermissionsToSpace", false},
                 {ScopeName.ADMIN, "confluence2.addUserToGroup", false},
                 {ScopeName.ADMIN, "confluence1.addUserToGroup", false},
+                {ScopeName.SPACE_ADMIN, "confluence2.getSpacePermissionSet", true},
+                {ScopeName.WRITE, "confluence2.getSpacePermissionSet", false},
+                {ScopeName.SPACE_ADMIN, "confluence1.getSpacePermissionSet", true},
+                {ScopeName.WRITE, "confluence1.getSpacePermissionSet", false},
+                {ScopeName.SPACE_ADMIN, "confluence2.getSpacePermissionSets", true},
+                {ScopeName.WRITE, "confluence2.getSpacePermissionSets", false},
+                {ScopeName.SPACE_ADMIN, "confluence1.getSpacePermissionSets", true},
+                {ScopeName.WRITE, "confluence1.getSpacePermissionSets", false},
         });
     }
 

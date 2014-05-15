@@ -48,7 +48,17 @@ To run a single test/method, do something like:
     mvn clean verify -P it -DtestGroups=jira -Dit.test=TestPageModules#testMyGeneralLoaded
 
 To run an integration test against a particular product in IDEA. (Note only applies to tests that can run against more than one product)
-    Edit configurations -> VM Options = -DtestedProduct=<product>
+    Edit configurations -> VM Options = -DtestedProduct=<product>    
+
+
+### Wired Tests
+See [doco for details](https://developer.atlassian.com/display/DOCS/Run+Wired+Tests+with+the+Plugin+Test+Console)
+
+To run manually
+
+    cd plugin
+    mvn amps:debug -Pwired -Dproduct=<jira|confluence> -Dproduct.version=<version>
+    
 
 ## Running
 

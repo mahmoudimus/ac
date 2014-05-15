@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
+@ConvertToWiredTest
 @RunWith(Parameterized.class)
 public class JiraRestScopesTest extends AbstractScopesTest
 {
@@ -76,14 +78,6 @@ public class JiraRestScopesTest extends AbstractScopesTest
                         // groups picker requires READ
                         {null, HttpMethod.GET, "/jira/rest/api/2/groups/picker", false},
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/groups/picker", true},
-
-                        // application properties
-                        {null, HttpMethod.GET, "/jira/rest/api/2/application-properties", false},
-                        {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/application-properties", true},
-                        {ScopeName.READ, HttpMethod.PUT, "/jira/rest/api/2/application-properties/jira.home", false},
-                        {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/api/2/application-properties/jira.home", false},
-                        {ScopeName.ADMIN, HttpMethod.PUT, "/jira/rest/api/2/application-properties/jira.home", true},
-                        {ScopeName.ADMIN, HttpMethod.POST, "/jira/rest/api/2/application-properties/jira.home", false},
                 }));
 
         // never allow an add-on to change a user's details or password

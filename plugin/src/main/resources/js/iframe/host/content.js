@@ -1,7 +1,7 @@
 /**
  * Utility methods for rendering connect addons in AUI components
  */
-_AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
+_AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, UiParams) {
     "use strict";
 
     function getContentUrl(pluginKey, capability){
@@ -21,15 +21,35 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
         var pluginKey = getWebItemPluginKey(target),
             moduleKey = getWebItemModuleKey(target),
             type = target.hasClass('ap-inline-dialog') ? 'inlineDialog' : 'dialog';
-            return window._AP[type + 'Options'][pluginKey + ':' + moduleKey] || {};
+            return window._AP[type + 'Options'][moduleKey] || {};
     }
 
-    function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
-        var contentUrl = this.getContentUrl(pluginKey, capability);
+    // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
+    // Will be removed when XML descriptors are dropped - plugins should pass key of the <dialog-page>, NOT the url.
+    // TODO: Remove this class when support for XML Descriptors goes away
+    function getIframeHtmlForUrl(pluginKey, remoteUrl, params) {
+        var contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
                 "dialog": true,
+                "ui-params": UiParams.encode(params),
+                "plugin-key": pluginKey,
+                "remote-url": remoteUrl,
+                "width": "100%",
+                "height": "100%",
+                "raw": "true"
+            }
+        });
+    }
+
+
+    function getIframeHtmlForKey(pluginKey, productContextJson, capability, params) {
+        var contentUrl = getContentUrl(pluginKey, capability);
+        return $.ajax(contentUrl, {
+            dataType: "html",
+            data: {
+                "ui-params": UiParams.encode(params),
                 "plugin-key": pluginKey,
                 "product-context": productContextJson,
                 "key": capability.key,
@@ -53,7 +73,8 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
                 header: $el.text(),
                 width:  url.getQueryParamValue('width'),
                 height: url.getQueryParamValue('height'),
-                cp:     url.getQueryParamValue('cp')
+                cp:     url.getQueryParamValue('cp'),
+                key: getWebItemPluginKey($el)
             };
             callback(href, options, event.type);
         }
@@ -64,6 +85,7 @@ _AP.define("host/content", ["_dollar", "_uri"], function ($, uri) {
 
     return {
         getContentUrl: getContentUrl,
+        getIframeHtmlForUrl: getIframeHtmlForUrl,
         getIframeHtmlForKey: getIframeHtmlForKey,
         eventHandler: eventHandler,
         getOptionsForWebItem: getOptionsForWebItem

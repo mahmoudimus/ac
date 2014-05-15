@@ -1,11 +1,11 @@
 # Security
 
-Connect security enables us to treat our customers with respect, by protecting their data from unauthorised access and
-from malicious or accidental changes, and encourages them to install more Connect add-ons by assuring them that they can
-install add-ons without compromising their data.
+Connect security enables us to protect customer data from unauthorised access and from malicious or accidental changes,
+thus allowing administrators to install and evaluate add-ons, and users to leverage installed add-ons in a secure manner.
 
 Connect's security goals are to
-* identifies add-ons,
+
+* identify add-ons,
 * work out what each add-on can do,
 * accept allowed actions with minimal friction,
 * clearly reject disallowed actions,
@@ -17,26 +17,24 @@ further divided into [static](../scopes/scopes.html) and run-time authorisation.
 
 ## Authentication
 
-Authentication tells the product the identity of the add-on and is the basis of all other security. Without knowing who
-you are talking to you cannot work out what they are allowed to do. On each incoming API request the identity of the
-add-on is established, with requests that do not contain authentication information being treated as anonymous.
+Authentication tells the product the identity of the add-on and is the basis of all other security. On each incoming API
+request the identity of the add-on is established, with requests that do not contain authentication information being
+treated as anonymous.
 
 Read more details in our [authentication documentation](./authentication.html).
 
 ## Authorisation
 
 Now that the add-on sending each incoming request has been identified we need to work out if the add-on is allowed to
-make this request, allowing authorised actions and rejecting unauthorised actions. Complicating this, we want to help
+make this request, allowing authorised actions and rejecting unauthorised actions. We want to help
 administrators installing add-ons to understand what each add-on can do and also allow them to arbitrarily limit the
 potential actions of individual add-ons.
 
 ### Static Authorisation: Scopes
 
-We want each add-on to declare the maximum set of actions that it may perform. Without this, administrators would be
-forced to assume that all add-ons can possibly perform all actions, leading to less trust and fewer installations. For
-example, without this "maximum" an add-on that claims in its description to only read user data could potentially change
-it too, and administrators would trust all add-ons less, whereas with this "maximum" the admin can be assured that the
-"reading" add-on really can only read.
+An add-on must declare the maximum set of actions that it may perform: read, write, etc. This security level is enforced
+by Connect and cannot be bypassed by add-on implementations. Therefore administrators can be assured that the add-ons with
+"read" permission can only read data and not modify it, and that add-ons with "write" permission cannot delete data, etc.
 
 Add-on vendors cannot possibly know about the myriad product instances into which the add-on may be installed, so they
 need a way of statically specifying the maximum set of actions that their add-on may perform. This is expressed in the
@@ -56,8 +54,8 @@ in advance what individual administrators will decide must be protected from add
 write access).
 
 We enable administrators to arbitrarily limit add-on access to user data at run-time by assigning every add-on its own
-user. Administrators can then permission these add-on users in very similar ways to how they permission normal users,
-minimising what they must learn. Every incoming server-to-server request from a Connect add-on is assigned the add-on's
+user. Administrators can then permission these add-on users in very similar ways to how they permission normal users.
+Every incoming server-to-server request from a Connect add-on is assigned the add-on's
 user and authorisation proceeds as normal from that point onwards, with the add-on user's permissions limiting what API
 features the incoming requests may target. Add-ons are not told which user they are assigned and do not need to specify
 it: it is automatically mapped from the identity of the add-on itself.
@@ -75,7 +73,7 @@ appropriate message to the user.
 
 ### Road Map
 
-Currently, the actions that an add-on is capable of performing is limited to the intersection of its scopes and the
+Currently, the set of actions that an add-on is capable of performing is limited to the intersection of its scopes and the
 add-on user's permissions (for server-to-server) or to the intersection of its scopes and the in-browser user's
 permissions (for in-browser requests).
 

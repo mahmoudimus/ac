@@ -1,13 +1,10 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
-import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
@@ -39,22 +36,17 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     private final UserManager userManager;
     private final FormatConverter formatConverter;
     private final JsonDescriptorValidator jsonDescriptorValidator;
-    private final ConnectSchemaLocator schemaLocator;
-    private final ApplicationProperties applicationProperties;
 
     @Inject
     public ConnectUPMInstallHandler(LegacyAddOnIdentifierService connectIdentifier,
             ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter,
-            JsonDescriptorValidator jsonDescriptorValidator, ConnectSchemaLocator schemaLocator,
-            final ApplicationProperties applicationProperties)
+            JsonDescriptorValidator jsonDescriptorValidator)
     {
         this.connectIdentifier = connectIdentifier;
         this.connectInstaller = connectInstaller;
         this.userManager = userManager;
         this.formatConverter = formatConverter;
         this.jsonDescriptorValidator = jsonDescriptorValidator;
-        this.schemaLocator = schemaLocator;
-        this.applicationProperties = applicationProperties;
     }
 
     @Override
@@ -62,13 +54,13 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     {
         boolean isConnectXml = connectIdentifier.isConnectAddOn(descriptorFile);
         boolean canInstall = isConnectXml;
-                
+
         if (!isConnectXml)
         {
             try
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                canInstall = jsonDescriptorValidator.isConnectJson(json);
+                canInstall = jsonDescriptorValidator.isConnectJson(json, isJsonContentType(descriptorFile, contentType));
 
                 if (!canInstall)
                 {
@@ -83,8 +75,29 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         }
 
         //TODO: if we have a json validation error and we can determine an error lifecycle url, we need to post the error message to the remote
-        
+
         return canInstall;
+    }
+
+    private static boolean isJsonContentType(File descriptorFile, Option<String> contentType)
+    {
+        return matchesContentType(contentType, "application/json", "text/json")
+                || descriptorFile.getName().toLowerCase().endsWith(".json");
+    }
+
+    private static boolean matchesContentType(Option<String> actualContentType, String... desiredContentType)
+    {
+        for (String contentType : actualContentType)
+        {
+            for (String desired : desiredContentType)
+            {
+                if (contentType.equals(desired) || contentType.startsWith(desired + ";"))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -94,7 +107,6 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         {
             boolean isXml = connectIdentifier.isConnectAddOn(descriptorFile);
             Plugin plugin;
-            DescriptorValidationResult result;
 
             UserProfile user = userManager.getRemoteUser();
             String username = user == null ? "" : user.getUsername();
@@ -122,8 +134,8 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             // pretty sure if we end up here Connect has done something wrong, not the add-on, so let's describe it as
             // an internal error and recommend contacting Atlassian support.
             log.error("Failed to install " + descriptorFile.getName() + ": " + e.getMessage(), e);
-            throw new PluginInstallException("Unable to install connect add on. " + e.getMessage(),
-                    Option.some("connect.remote.upm.install.internal.error"));
+            Option<String> i18nKey = Option.some("connect.remote.upm.install.internal.error");
+            throw new PluginInstallException("Unable to install connect add on. " + e.getMessage(),i18nKey);
         }
     }
 

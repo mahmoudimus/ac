@@ -1,6 +1,8 @@
 package it.capabilities.jira;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
@@ -33,7 +35,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestAdminPage extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = "my-plugin";
+    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
 
     private static final String PAGE_NAME = "My Admin Page";
     private static final String PAGE_KEY = "my-admin-page";
@@ -57,7 +59,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())
-                .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .start();
     }
 
@@ -76,12 +78,12 @@ public class TestAdminPage extends JiraWebDriverTestBase
         loginAsAdmin();
         product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
 
-        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PAGE_KEY, PAGE_NAME);
+        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY), PAGE_NAME);
 
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(adminPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/" + PAGE_KEY));
+        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + PLUGIN_KEY + "/" + PAGE_KEY));
 
         RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
@@ -93,8 +95,10 @@ public class TestAdminPage extends JiraWebDriverTestBase
         loginAsAdmin();
         product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
 
-        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PAGE_KEY, PAGE_NAME);
+        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY), PAGE_NAME);
 
+        assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
+        
         RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
         assertTrue("Addon is full size", addonContentsPage.isFullSize());
     }
@@ -102,8 +106,8 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void nonAdminCanNotSeePage()
     {
-        loginAs(TestConstants.BARNEY_USERNAME, TestConstants.BARNEY_USERNAME);
-        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", PAGE_KEY);
+        loginAsBarney();
+        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }

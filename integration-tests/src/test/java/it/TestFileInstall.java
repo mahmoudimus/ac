@@ -47,7 +47,7 @@ public class TestFileInstall extends ConnectWebDriverTestBase
                 baseUrl, "admin", "admin");
         client.install(descriptorFile.toURI().toString());
 
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "first",
                 "First (file)");
         assertTrue(page.isRemotePluginLinkPresent());

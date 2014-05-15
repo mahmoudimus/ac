@@ -44,6 +44,11 @@ public class ConditionUtils
 
     public static boolean isRemoteCondition(SingleConditionBean bean)
     {
-        return (bean.getCondition().startsWith("http") || bean.getCondition().startsWith("/"));
+        return isRemoteCondition(bean.getCondition());
+    }
+
+    public static boolean isRemoteCondition(String condition)
+    {
+        return (condition.startsWith("http") ||condition.startsWith("/"));
     }
 }

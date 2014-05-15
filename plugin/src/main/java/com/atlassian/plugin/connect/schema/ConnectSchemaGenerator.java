@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.schema;
 
 import com.atlassian.json.schema.DefaultJsonSchemaGenerator;
+import com.atlassian.json.schema.EnumCase;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.model.JsonSchema;
 import com.atlassian.json.schema.scanner.model.InterfaceList;
@@ -16,9 +17,9 @@ public class ConnectSchemaGenerator extends DefaultJsonSchemaGenerator
 {
     private final ProductFilter product;
     
-    public ConnectSchemaGenerator(boolean lowercaseEnums, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, ProductFilter product)
+    public ConnectSchemaGenerator(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter, ProductFilter product)
     {
-        super(lowercaseEnums, interfaceList, schemaDocs);
+        super(enumCase, interfaceList, schemaDocs, ignoreFilter);
         this.product = product;
     }
 

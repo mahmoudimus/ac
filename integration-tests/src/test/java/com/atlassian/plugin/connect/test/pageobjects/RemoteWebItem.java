@@ -88,16 +88,20 @@ public class RemoteWebItem
     {
         if (dropDownLinkId.isPresent())
         {
-            elementFinder.find(By.id(dropDownLinkId.get())).click();
+            PageElement element = elementFinder.find(By.id(dropDownLinkId.get()));
+            waitUntilTrue(element.timed().isVisible());
+            element.javascript().mouse().click();
         }
-        webItem.click();
+        webItem.javascript().mouse().click();
     }
 
     public void hover()
     {
         if (dropDownLinkId.isPresent())
         {
-            elementFinder.find(By.id(dropDownLinkId.get())).click();
+            PageElement element = elementFinder.find(By.id(dropDownLinkId.get()));
+            waitUntilTrue(element.timed().isVisible());
+            element.javascript().mouse().click();
         }
         webItem.javascript().mouse().mouseover();
     }
@@ -143,7 +147,7 @@ public class RemoteWebItem
 
     public boolean isActiveDialog()
     {
-        PageElement dialog = elementFinder.find(By.className("aui-popup"));
+        PageElement dialog = elementFinder.find(By.className("aui-dialog2"));
         return (dialog.isPresent() && dialog.isVisible());
     }
 

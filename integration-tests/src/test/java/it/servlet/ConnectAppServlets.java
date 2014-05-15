@@ -59,6 +59,30 @@ public class ConnectAppServlets
     }
 
     /**
+     * @return a servlet with history test buttons
+     */
+    public static HttpServlet historyServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-history.mu"));
+    }
+
+    /**
+     * @return a servlet that will create a workflow post function
+     */
+    public static HttpServlet workflowPostFunctionServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("jira/iframe-workflow-post-function.mu"));
+    }
+
+    /**
+     * @return a servlet that will create a workflow post function that will fail validation
+     */
+    public static HttpServlet failValidateWorkflowPostFunctionServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("jira/iframe-fail-validate-workflow-post-function.mu"));
+    }
+
+    /**
      * Verify from a WebDriver test using {@link RemoteWebPanel#getCustomMessage()}.
      *
      * @param message the message to display
@@ -88,7 +112,14 @@ public class ConnectAppServlets
      */
     public static HttpServlet openDialogServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-open-dialog.mu"));
+        return openDialogServlet("my-dialog");
+    }
+
+    public static HttpServlet openDialogServlet(String dialogKey)
+    {
+        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("iframe-open-dialog.mu"));
+        contextServlet.getBaseContext().put("dialogKey", dialogKey);
+        return contextServlet;
     }
 
     /**
@@ -121,7 +152,7 @@ public class ConnectAppServlets
 
     public static HttpServlet echoQueryParametersServlet()
     {
-        return wrapContextAwareServlet(new EchoQueryParametersServlet());
+        return wrapContextAwareServlet(new EchoQueryParametersServlet("echo-query.mu"));
     }
 
     public static HttpServlet resourceServlet(String resourcePath, String contentType)

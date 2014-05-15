@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.0-alpha.01</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,10 +21,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>external.atlassian.json</groupId>
             <artifactId>json-schemagen-core</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
+            <version>${schema.generator.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
@@ -38,11 +38,25 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
-            <artifactId>atlassian-spring-scanner</artifactId>
+            <artifactId>atlassian-spring-scanner-annotation</artifactId>
+            <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner-runtime</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
         <dependency>
             <groupId>com.atlassian.labs</groupId>
             <artifactId>fastdev-plugin</artifactId>
@@ -117,6 +131,11 @@
         <dependency>
             <groupId>com.atlassian.applinks</groupId>
             <artifactId>applinks-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.healthcheck</groupId>
+            <artifactId>atlassian-healthcheck</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -400,7 +419,7 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-        
+       
     </dependencies>
 
     <build>
@@ -409,8 +428,11 @@
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
+                    <enableDevToolbox>true</enableDevToolbox>
+                    <enableFastdev>true</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
+                    <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
                     <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
                     <testBundleExcludes>
                         <testBundleExclude>
@@ -427,64 +449,6 @@
                         </testBundleExclude>
                     </testBundleExcludes>
                     <instructions>
-                        <!-- <Import-Package>
-                            com.atlassian.upm.*,
-                            com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
-                            com.atlassian.confluence.plugin.webresource;resolution:=optional,
-                            com.atlassian.confluence.security.websudo;resolution:=optional,
-                            com.atlassian.jira;resolution:=optional,
-                            com.atlassian.jira.config;resolution:=optional,
-                            com.atlassian.jira.plugin.webfragment.descriptors;resolution:=optional,
-                            com.atlassian.jira.security;resolution:=optional,
-                            com.atlassian.jira.security.websudo;resolution:=optional,
-                            com.atlassian.oauth*;version="(1.2,2.0]",
-                            com.atlassian.jwt.*;version="${atlassian.jwt.version}",
-
-                            com.atlassian.plugin;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.descriptors;resolution:="optional",
-                            com.atlassian.plugin.elements;resolution:="optional",
-                            com.atlassian.plugin.event;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.event.events;resolution:="optional",
-                            com.atlassian.plugin.hostcontainer;resolution:="optional",
-                            com.atlassian.plugin.module;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.schema.descriptor;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.schema.spi;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.servlet;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.servlet.descriptors;resolution:="optional",
-                            com.atlassian.plugin.servlet.filter ;resolution:="optional",
-                            com.atlassian.plugin.servlet.util;resolution: ="optional",
-                            com.atlassian.plugin.tracker;resolution:="optional",
-                            com.atlassian.plugin.util;resolution:="optional",
-                            com.atlassian.plugin.web;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.web.conditions;resolution:="optional",
-                            com.atlassian.plugin.web.descriptors;resolution:="optional",
-                            com.atlassian.plugin.web.model;resolution:="optional",
-                            com.atlassian.plugin.webresource;version="${atlassian.plugins.api.version}",
-                            com.atlassian.plugin.webresource.transformer;resolution:="optional",
-
-                            com.atlassian.templaterenderer;version="1.4.0",
-                            com.atlassian.refapp.auth.external;resolution:=optional,
-                            com.atlassian.sal.api.*;version="(2.4,3.0]",
-                            com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
-                            com.atlassian.crowd.embedded.api.*;version="2.0";resolution:=optional,
-                            com.atlassian.webhooks.spi*;version="${atlassian.webhooks.api.version}",
-                            com.atlassian.httpclient.api*;version="${atlassian.httpclient.api.version}",
-                            com.sun.mail.handlers;resolution:=optional,
-                            net.oauth*,
-                            javax.servlet;version="0.0.0",
-                            javax.servlet.http;version="0.0.0",
-                            javax.inject;version="1",
-                            javax.xml*,
-                            org.apache.commons.lang.*;version="2.4",
-                            org.dom4j*,
-                            org.joda.time*;version="1.6",
-                            org.slf4j*;version="1.5",
-                            org.xml.sax*,
-                            com.atlassian.plugin.connect.api*;version="${project.version}",
-                            com.atlassian.plugin.connect.spi*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin*;version="${project.version}",
-                            *;resolution:=optional
-                        </Import-Package> -->
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
                             com.atlassian.plugin.connect.api.*;version="${project.version}",
@@ -507,6 +471,7 @@
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                        <use.test.http.client>true</use.test.http.client>
                     </systemPropertyVariables>
 
                     <products>
@@ -522,6 +487,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <use.test.http.client>true</use.test.http.client>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -567,15 +533,18 @@
                             </pluginArtifacts>
 
                             <bundledArtifacts>
+
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
                                 <bundledArtifact>
-                                    <groupId>com.atlassian.devrel</groupId>
-                                    <artifactId>developer-toolbox-plugin</artifactId>
-                                    <version>${toolbox.version}</version>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
+
                                 <bundledArtifact>
-                                    <groupId>com.atlassian.labs</groupId>
-                                    <artifactId>fastdev-plugin</artifactId>
-                                    <version>${fastdev.version}</version>
+                                    <groupId>com.atlassian.analytics</groupId>
+                                    <artifactId>analytics-client</artifactId>
+                                    <version>${atlassian.analytics.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
@@ -591,6 +560,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <use.test.http.client>true</use.test.http.client>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -635,6 +605,19 @@
                                     <groupId>com.atlassian.labs</groupId>
                                     <artifactId>fastdev-plugin</artifactId>
                                     <version>${fastdev.version}</version>
+                                </bundledArtifact>
+
+                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
+
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.analytics</groupId>
+                                    <artifactId>analytics-client</artifactId>
+                                    <version>${atlassian.analytics.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
@@ -748,6 +731,7 @@
                                         <include>js/iframe-min/_events-min.js</include>
                                         <include>js/iframe-min/_base64-min.js</include>
                                         <include>js/iframe-min/_uri-min.js</include>
+                                        <include>js/iframe-min/_ui-params-min.js</include>
                                         <include>js/iframe-min/_xdm-min.js</include>
                                         <include>js/iframe-min/plugin/_rpc-min.js</include>
                                         <include>js/iframe-min/plugin/events-min.js</include>
@@ -756,6 +740,7 @@
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
                                         <include>js/iframe-min/plugin/inline-dialog-min.js</include>
                                         <include>js/iframe-min/plugin/messages-min.js</include>
+                                        <include>js/iframe-min/plugin/cookie-min.js</include>
                                         <include>js/iframe-min/plugin/_resize_listener-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>
@@ -764,6 +749,22 @@
                                     </includes>
                                 </aggregation>
                             </aggregations>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>host-min-js</id>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                        <configuration>
+                            <gzip>false</gzip>
+                            <jswarn>false</jswarn>
+                            <excludeResources>true</excludeResources>
+                            <sourceDirectory>${project.build.outputDirectory}/js</sourceDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/js</outputDirectory>
+                            <excludes>
+                                <exclude>${project.build.outputDirectory}/js/iframe</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
@@ -848,9 +849,9 @@
 
             <!-- this MUST run after compilation -->
             <plugin>
-                <groupId>${project.groupId}</groupId>
+                <groupId>external.atlassian.json</groupId>
                 <artifactId>json-schemagen-maven-plugin</artifactId>
-                <version>${project.version}</version>
+                <version>${schema.generator.version}</version>
                 <executions>
                     <execution>
                         <id>schema-support</id>
@@ -861,6 +862,7 @@
                         <configuration>
                             <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
                             <sourcepath>src/main/java:../modules/src/main/java</sourcepath>
+                            <debug>${debugSchemaGen}</debug>
                         </configuration>
                     </execution>
                     <execution>
@@ -874,6 +876,7 @@
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
                         </configuration>
                     </execution>
                     <execution>
@@ -887,6 +890,22 @@
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>shallow-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <ignoreFilter>shallow</ignoreFilter>
+                            <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
                         </configuration>
                     </execution>
                 </executions>
@@ -970,6 +989,7 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
+                                    <skipTests>false</skipTests>
                                     <configFile>karma.iframe.conf.js</configFile>
                                 </configuration>
                             </execution>
@@ -980,7 +1000,45 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
+                                    <skipTests>false</skipTests>
                                     <configFile>karma.conf.js</configFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <browsers>Chrome</browsers>
+                            <karmaExecutable>node_modules/karma/bin/karma</karmaExecutable>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>descriptor-validation-tests</id>
+            <activation>
+                <property>
+                    <name>descriptorValidation</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- karma testrunner plugin for iframe code -->
+                    <plugin>
+                        <groupId>com.kelveden</groupId>
+                        <artifactId>maven-karma-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <!-- test add-on validation results -->
+                            <execution>
+                                <id>descriptor-validator-results-tests</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <skipTests>false</skipTests>
+                                    <configFile>karma.descriptor-validator.conf.js</configFile>
                                 </configuration>
                             </execution>
                         </executions>
@@ -1086,11 +1144,12 @@
         <skipITs>true</skipITs>
         <build.test.plugin>false</build.test.plugin>
         <devmode>true</devmode>
-        <fastdev.version>2.2</fastdev.version>
-        <toolbox.version>2.0.6</toolbox.version>
-        <plugin.testrunner.version>1.1.3</plugin.testrunner.version>
+        <fastdev.version>2.4</fastdev.version>
+        <toolbox.version>2.0.12</toolbox.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
+        <debugSchemaGen>false</debugSchemaGen>
+        <ao.version>0.25.2</ao.version>
     </properties>
 </project>

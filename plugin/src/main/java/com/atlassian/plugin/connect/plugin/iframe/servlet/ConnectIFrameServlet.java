@@ -1,19 +1,20 @@
 package com.atlassian.plugin.connect.plugin.iframe.servlet;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParser;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleUiParamParser;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.atlassian.plugin.connect.plugin.module.page.dialog.DialogPageModuleDescriptor.DIALOG_CLASSIFIER;
 import static com.atlassian.plugin.connect.plugin.module.page.dialog.DialogPageModuleDescriptor.SIMPLE_DIALOG_CLASSIFIER;
@@ -31,14 +32,17 @@ public class ConnectIFrameServlet extends HttpServlet
 
     private final IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry;
     private final ModuleContextParser moduleContextParser;
+    private final ModuleUiParamParser moduleUiParamParser;
     private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
 
     public ConnectIFrameServlet(IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry,
             ModuleContextParser moduleContextParser,
+                                ModuleUiParamParser moduleUiParamParser,
             LegacyAddOnIdentifierService legacyAddOnIdentifierService)
     {
         this.IFrameRenderStrategyRegistry = IFrameRenderStrategyRegistry;
         this.moduleContextParser = moduleContextParser;
+        this.moduleUiParamParser = moduleUiParamParser;
         this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;
     }
 
@@ -66,11 +70,12 @@ public class ConnectIFrameServlet extends HttpServlet
             if (renderStrategy != null)
             {
                 resp.setContentType("text/html");
-                //TODO: fix AC-986 properly
-                if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
+                ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
+                
+                if (renderStrategy.shouldShow(moduleContextParameters))
                 {
-                    ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
-                    renderStrategy.render(moduleContextParameters, resp.getWriter());
+                    Option<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
+                    renderStrategy.render(moduleContextParameters, resp.getWriter(), moduleUiParameters);
                 }
                 else
                 {

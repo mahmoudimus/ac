@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.uri;
 
+import com.atlassian.fugue.Effect;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
@@ -88,6 +90,7 @@ public class IFrameUriBuilderImpl
 
         private boolean sign = true;
         private boolean includeStandardParams = true;
+        private Option<String> uiParameters = Option.none();
 
         private InitializedBuilderImpl(final String addonKey, final String namespace, final UriBuilder uriBuilder)
         {
@@ -129,12 +132,28 @@ public class IFrameUriBuilderImpl
         }
 
         @Override
+        public InitializedBuilder uiParams(Option<String> uiParameters)
+        {
+            this.uiParameters = uiParameters;
+            return this;
+        }
+
+        @Override
         public String build()
         {
             if (includeStandardParams)
             {
                 addStandardIFrameUrlParameters();
             }
+
+            uiParameters.foreach(new Effect<String>()
+            {
+                @Override
+                public void apply(String uiParam)
+                {
+                    uriBuilder.addQueryParameter("ui-params", uiParam);
+                }
+            });
 
             if (sign)
             {

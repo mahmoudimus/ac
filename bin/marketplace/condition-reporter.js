@@ -1,12 +1,14 @@
+#!/usr/bin/env node
+
 var downloader = require('./download-descriptors'),
     xml2js = require('xml2js'),
     _ = require('lodash'),
     util = require('util');
 
 downloader.run({
-    descriptorDownloadedCallback: function (addonKey, filename, type, body, opts) {
+    descriptorDownloadedCallback: function (result, body, opts) {
         var conditions = [];
-        if (type === 'json') {
+        if (result.type === 'json') {
             var descriptor = JSON.parse(body);
             _.forEach(descriptor.modules, function (m) {
                 var c = m.conditions;
@@ -36,7 +38,7 @@ downloader.run({
         conditions = _.uniq(_.flatten(conditions));
 
         if (conditions.length) {
-            console.log(addonKey + " : " + util.inspect(conditions, { colors: true }));
+            console.log(result.addon.key + " : " + util.inspect(conditions, { colors: true }));
         }
     }
 });

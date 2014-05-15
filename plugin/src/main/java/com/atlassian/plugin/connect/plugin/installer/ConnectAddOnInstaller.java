@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.Plugin;
-
 import com.atlassian.upm.spi.PluginInstallException;
 import org.dom4j.Document;
 
@@ -10,7 +9,8 @@ import org.dom4j.Document;
  */
 public interface ConnectAddOnInstaller
 {
+    @Deprecated
     Plugin install(String username, Document document) throws PluginInstallException;
 
-    Plugin install(String username, String capabilities) throws PluginInstallException;
+    Plugin install(String username, String jsonDescriptor) throws PluginInstallException;
 }

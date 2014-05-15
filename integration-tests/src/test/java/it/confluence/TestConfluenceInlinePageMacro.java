@@ -63,7 +63,7 @@ public final class TestConfluenceInlinePageMacro extends ConfluenceWebDriverTest
     @Test
     public void testInlinePageMacro() throws XmlRpcFault, IOException
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "test", loadResourceAsString("confluence/test-page-macro.xhtml"));
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "testinlineMacro", loadResourceAsString("confluence/test-page-macro.xhtml"));
         loginAsBetty();
         ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-0");
 

@@ -5,6 +5,7 @@
   <title>$!title</title>
   <meta name="tab" content="$!title"/>
   <meta name="decorator" content="$decorator"/>
+  <content tag="show-main-container">false</content> <!-- confluence secret to not show the container with the header -->
 </head>
 <body>
   <div class="ap-servlet-placeholder">

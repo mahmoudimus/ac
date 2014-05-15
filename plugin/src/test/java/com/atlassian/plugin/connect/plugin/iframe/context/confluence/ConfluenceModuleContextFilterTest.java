@@ -17,11 +17,17 @@ import com.atlassian.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -38,13 +44,11 @@ public class ConfluenceModuleContextFilterTest
     @Mock private SpaceManager spaceManager;
     @Mock private PageManager pageManager;
 
-    private ConfluenceModuleContextFilter filter;
+    @InjectMocks private ConfluenceModuleContextFilter filter;
 
     @Before
     public void setup()
     {
-        filter = new ConfluenceModuleContextFilter(permissionManager, userAccessor, userManager, spaceManager, pageManager);
-
         when(userAccessor.getExistingUserByKey(any(UserKey.class))).thenReturn(mock(ConfluenceUser.class));
     }
 
@@ -63,8 +67,10 @@ public class ConfluenceModuleContextFilterTest
 
         ModuleContextParameters filtered = filter.filter(params);
         assertFalse(filtered.containsKey("page.id"));
-        assertFalse(filtered.containsKey("page.version"));
-        assertFalse(filtered.containsKey("page.type"));
+
+        // page.version and page.type are not protected information
+        assertTrue(filtered.containsKey("page.version"));
+        assertTrue(filtered.containsKey("page.type"));
     }
 
     @Test
@@ -104,23 +110,6 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testNoPageIdMeansNoPageContext()
-    {
-        BlogPost post = mock(BlogPost.class);
-        when(pageManager.getAbstractPage(anyLong())).thenReturn(post);
-        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(post))).thenReturn(true);
-
-        ModuleContextParameters params = new HashMapModuleContextParameters();
-        params.put("page.version", "2");
-        params.put("page.type", "blog");
-
-        ModuleContextParameters filtered = filter.filter(params);
-        assertFalse(filtered.containsKey("page.id"));
-        assertFalse(filtered.containsKey("page.version"));
-        assertFalse(filtered.containsKey("page.type"));
-    }
-
-    @Test
     public void testFilterAllowedSpaceKey()
     {
         Space space = mock(Space.class);
@@ -139,7 +128,8 @@ public class ConfluenceModuleContextFilterTest
     {
         Space space = mock(Space.class);
         when(space.getId()).thenReturn(1L);
-        when(spaceManager.getSpace(anyString())).thenReturn(space);
+        when(spaceManager.getSpace(eq("TEST"))).thenReturn(space);
+        when(spaceManager.getSpace(eq(1L))).thenReturn(space);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(space))).thenReturn(true);
 
         ModuleContextParameters params = new HashMapModuleContextParameters();
@@ -190,5 +180,66 @@ public class ConfluenceModuleContextFilterTest
         ModuleContextParameters filtered = filter.filter(params);
         assertFalse(filtered.containsKey("space.key"));
         assertEquals("2", filtered.get("space.id"));
+    }
+
+    @Test
+    public void testFilterProfileNameAndKeyAllowed()
+    {
+        ConfluenceUser bob = mock(ConfluenceUser.class);
+        UserKey userKey = new UserKey("babecafe");
+        when(userAccessor.getExistingUserByKey(eq(userKey))).thenReturn(bob);
+        when(userAccessor.getUserByName(eq("bob"))).thenReturn(bob);
+        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(bob))).thenReturn(true);
+
+        ModuleContextParameters params = new HashMapModuleContextParameters();
+        params.put("profileUser.name", "bob");
+        params.put("profileUser.key", "babecafe");
+
+        ModuleContextParameters filtered = filter.filter(params);
+
+        assertThat(filtered, hasEntry(is("profileUser.name"), is("bob")));
+        assertThat(filtered, hasEntry(is("profileUser.key"), is("babecafe")));
+    }
+
+    @Test
+    public void testFilterProfileNameAllowedAndKeyForbidden()
+    {
+        ConfluenceUser bob = mock(ConfluenceUser.class); // bob is allowed
+        ConfluenceUser eve = mock(ConfluenceUser.class); // eve is not
+        UserKey userKey = new UserKey("defaced");
+        when(userAccessor.getUserByName(eq("bob"))).thenReturn(bob);
+        when(userAccessor.getExistingUserByKey(eq(userKey))).thenReturn(eve);
+        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(bob))).thenReturn(true);
+        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(eve))).thenReturn(false);
+
+        ModuleContextParameters params = new HashMapModuleContextParameters();
+        params.put("profileUser.name", "bob");
+        params.put("profileUser.key", "defaced");
+
+        ModuleContextParameters filtered = filter.filter(params);
+
+        assertThat(filtered, hasEntry(is("profileUser.name"), is("bob")));
+        assertThat(filtered, not(hasEntry(is("profileUser.key"), is("defaced"))));
+    }
+
+    @Test
+    public void testFilterProfileNameAndKeyForbidden()
+    {
+        ConfluenceUser eve = mock(ConfluenceUser.class); // eve is not
+        UserKey userKey = new UserKey("defaced");
+        when(userAccessor.getUserByName(eq("eve"))).thenReturn(eve);
+        when(userAccessor.getExistingUserByKey(eq(userKey))).thenReturn(eve);
+        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(eve))).thenReturn(false);
+
+        ModuleContextParameters params = new HashMapModuleContextParameters();
+        params.put("profileUser.name", "eve");
+        params.put("profileUser.key", "defaced");
+
+        ModuleContextParameters filtered = filter.filter(params);
+
+        assertThat(filtered, not(hasEntry(is("profileUser.name"), is("eve"))));
+        assertThat(filtered, not(hasEntry(is("profileUser.key"), is("defaced"))));
+
+        assertTrue("Filtered context should be empty", filtered.isEmpty());
     }
 }

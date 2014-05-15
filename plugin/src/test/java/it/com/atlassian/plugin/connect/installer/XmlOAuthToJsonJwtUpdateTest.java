@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.module.page.GeneralPageModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
@@ -19,6 +19,7 @@ import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -56,6 +57,7 @@ public class XmlOAuthToJsonJwtUpdateTest
     private static final String OAUTH_VERSION_SLASHED = "/" + OAUTH_VERSION;
 
     private final TestPluginInstaller testPluginInstaller;
+    private final TestAuthenticator testAuthenticator;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final AddonTestFilterResults testFilterResults;
     private final ConnectApplinkManager connectApplinkManager;
@@ -64,11 +66,13 @@ public class XmlOAuthToJsonJwtUpdateTest
     private Plugin jwtPlugin;
 
     public XmlOAuthToJsonJwtUpdateTest(TestPluginInstaller testPluginInstaller,
+                                       TestAuthenticator testAuthenticator,
                                        ConnectAddonRegistry connectAddonRegistry,
                                        AddonTestFilterResults testFilterResults,
                                        ConnectApplinkManager connectApplinkManager)
     {
         this.testPluginInstaller = testPluginInstaller;
+        this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
         this.testFilterResults = testFilterResults;
         this.connectApplinkManager = connectApplinkManager;
@@ -77,6 +81,7 @@ public class XmlOAuthToJsonJwtUpdateTest
     @BeforeClass
     public void beforeAllTests() throws IOException, URISyntaxException
     {
+        testAuthenticator.authenticateUser("admin");
         oAuthPlugin = testPluginInstaller.installPlugin(createXmlDescriptorFile());
 
         // preconditions
@@ -91,7 +96,7 @@ public class XmlOAuthToJsonJwtUpdateTest
             assertEquals(getOldBaseUrl(), appLink.getDisplayUrl().toString());
         }
 
-        jwtPlugin = testPluginInstaller.installPlugin(createJwtAddOn(oAuthPlugin));
+        jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthPlugin));
         assertNotNull(jwtPlugin);
         oAuthPlugin = null; // we get to this line of code only if installing the update works
     }

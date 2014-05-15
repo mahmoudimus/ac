@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyGenerator;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionFactory;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
@@ -300,12 +301,12 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @Override
-        public void render(final ModuleContextParameters moduleContextParameters, final Writer writer)
+        public void render(final ModuleContextParameters moduleContextParameters, final Writer writer, Option<String> uiParameters)
                 throws IOException
         {
             String namespace = generateNamespace();
 
-            String signedUri = buildUrl(moduleContextParameters, namespace);
+            String signedUri = buildUrl(moduleContextParameters, uiParameters, namespace);
 
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
                     .addOn(addOnKey)
@@ -328,22 +329,23 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
         private String generateNamespace()
         {
-            return uniqueNamespace ? ModuleKeyGenerator.randomName(moduleKey) : moduleKey;
+            return uniqueNamespace ? ModuleKeyUtils.randomName(moduleKey) : moduleKey;
         }
 
         @VisibleForTesting
-        public String buildUrl(ModuleContextParameters moduleContextParameters)
+        public String buildUrl(ModuleContextParameters moduleContextParameters, Option<String> uiParameters)
         {
-            return buildUrl(moduleContextParameters, generateNamespace());
+            return buildUrl(moduleContextParameters, uiParameters, generateNamespace());
         }
 
-        private String buildUrl(ModuleContextParameters moduleContextParameters, String namespace)
+        private String buildUrl(ModuleContextParameters moduleContextParameters, Option<String> uiParameters, String namespace)
         {
             return iFrameUriBuilderFactory.builder()
                             .addOn(addOnKey)
                             .namespace(namespace)
                             .urlTemplate(urlTemplate)
                             .context(moduleContextParameters)
+                            .uiParams(uiParameters)
                             .dialog(isDialog)
                             .build();
         }
@@ -361,9 +363,11 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @Override
-        public boolean shouldShow(Map<String, Object> conditionContext)
+        public boolean shouldShow(Map<String, ? extends Object> conditionContext)
         {
-            return condition == null || condition.shouldDisplay(conditionContext);
+            boolean show = condition == null || condition.shouldDisplay((Map<String,Object>)conditionContext);
+            
+            return show;
         }
 
         @Override

@@ -20,7 +20,7 @@ public class RequiredKeyBeanMatchers
             @Override
             protected String getValue(RequiredKeyBean moduleBean)
             {
-                return moduleBean.getKey();
+                return moduleBean.getRawKey();
             }
         };
     }

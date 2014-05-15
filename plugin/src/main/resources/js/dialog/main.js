@@ -1,99 +1,160 @@
-_AP.define("dialog", ["_dollar", "host/content"], function($, hostContentUtilities) {
+_AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/button"], function($, uri, statusHelper, dialogButton) {
 
-    // Should be ok to reference the nexus at this level since there should only be one dialog open at a time
-  var $nexus;
+    var $global = $(window);
+    var idSeq = 0;
+    var $nexus;
+    var dialog;
+    var dialogId;
 
-  var $dialog; // active dialog element
+    var buttons = {
+        submit: dialogButton.submit({
+            done: closeDialog
+        }),
+        cancel: dialogButton.cancel({
+            done: closeDialog
+        })
+    };
 
-  // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
-  // Will be removed - plugins should pass key of the <dialog-page>, NOT the url.
-  // TODO: Remove this class when support for XML Descriptors goes away
-  function getIframeHtmlForUrl(pluginKey, options) {
-    var contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
-    return $.ajax(contentUrl, {
-      dataType: "html",
-      data: {
-        "dialog": true,
-        "plugin-key": pluginKey,
-        "remote-url": options.url,
-        "width": "100%",
-        "height": "100%",
-        "raw": "true"
-      }
-    });
-  }
-
-  function createDialog(pluginKey, productContextJson, options) {
-
-    if ($nexus) throw new Error("Only one dialog can be open at once");
-    var promise = options.url ? getIframeHtmlForUrl(pluginKey, options) : hostContentUtilities.getIframeHtmlForKey(pluginKey, productContextJson, options);
-
-    promise
-      .done(function(data) {
-        $nexus.html(data);
-      })
-      .fail(function(xhr, status, ex) {
-        var title = "Unable to load plugin content. Please try again later.";
-        $nexus.html("<div class='aui-message error' style='margin: 10px'></div>");
-        $nexus.find(".error").append("<p class='title'>" + title + "</p>");
-        var msg = status + (ex ? ": " + ex.toString() : "");
-        $nexus.find(".error").append(msg);
-        AJS.log(msg);
-      });
-
-    $dialog = createDialogElement(options.id, options.titleId, options.size).appendTo(AJS.$("body"));
-    if (options.width || options.height) {
-      AJS.layer($dialog).changeSize(options.width, options.height);
+    function createChromelessDialogElement(options, $nexus){
+        var $el = $(aui.dialog.dialog2Chrome({
+            id: options.id,
+            titleId: options.titleId,
+            size: options.size,
+            extraClasses: ['ap-aui-dialog2', 'ap-aui-dialog2-chromeless'],
+            removeOnHide: true
+        }));
+        $el.append($nexus);
+        return $el;
     }
 
-    var dialog = AJS.dialog2($dialog);
-    $nexus = $("<div class='ap-servlet-placeholder ap-dialog-container'></div>").appendTo($dialog);
-    dialog.on("hide", function() {
-      // We always show the dialog when it's created, so we need to remove() when it's hidden
-      dialog.remove();
-    });
-    dialog.show();
-    AJS.dim();
-    return dialog;
-  }
+    function createDialogElement(options, $nexus){
+        var $el = $(aui.dialog.dialog2({
+            id: options.id,
+            titleText: options.header,
+            titleId: options.titleId,
+            size: options.size,
+            extraClasses: ['ap-aui-dialog2'],
+            removeOnHide: true,
+            footerActionContent: true
+        }));
 
-  function createDialogElement(id, titleId, size) {
-    // TODO: copied from AUI dialog2 soy. Should make it use that when it's in products.
-    var $el = AJS.$("<section></section>")
-      .addClass("aui-layer aui-layer-hidden aui-layer-modal")
-      .addClass("aui-dialog2 aui-dialog2-" + (size || "medium"))
-      .addClass("ap-aui-dialog2")
-      .attr("role", "dialog")
-      .attr("data-aui-blanketed", "true")
-      .attr("data-aui-focus-selector", ".aui-dialog2-content :input:visible:enabled");
+        buttons.submit.setText(options.submitText);
+        buttons.cancel.setText(options.cancelText);
 
-    if (id) {
-      $el.attr("id", id);
-    }
-    if (titleId) {
-      $el.attr("aria-labelledby", titleId);
-    }
-    return $el;
-  }
+        //soy templates don't support sending objects, so make the template and bind them.
+        $el.find('.aui-dialog2-footer-actions').empty().append(buttons.submit.$el, buttons.cancel.$el);
 
-  function closeDialog() {
-    if ($nexus) {
-      // Signal the XdmRpc for the dialog's iframe to clean up
-      $nexus.trigger("ra.iframe.destroy");
-      // Clear the nexus handle to allow subsequent dialogs to open
-      $nexus = null;
-    }
-    if($dialog){
-      $dialog.data('aui-remove-on-hide', true);
-      AJS.dialog2($dialog).hide();
-    } else {
-        AJS.$('.aui-dialog .ap-servlet-placeholder').trigger('ra.dialog.close');
-    }
-    AJS.undim();
-  }
+        $el.find('.aui-dialog2-content').append($nexus);
+        $nexus.data('ra.dialog.buttons', buttons);
 
-  return {
-    create: createDialog,
-    close: closeDialog
-  };
+        function handler(button) {
+            // ignore clicks on disabled links
+            if(button.isEnabled()){
+                button.$el.trigger("ra.dialog.click", button.dispatch);
+            }
+        }
+
+        $.each(buttons, function(i, button) {
+            button.$el.click(function(){
+                handler(button);
+            });
+        });
+
+        return $el;
+    }
+
+    function displayDialogContent($container, options){
+        $container.append('<div id="embedded-' + options.ns + '" class="ap-dialog-container" />');
+    }
+
+
+    function parseDimension(value, viewport) {
+        if (typeof value === "string") {
+            var percent = value.indexOf("%") === value.length - 1;
+            value = parseInt(value, 10);
+            if (percent) value = value / 100 * viewport;
+        }
+        return value;
+    }
+
+    function closeDialog() {
+        if ($nexus) {
+            // Signal the XdmRpc for the dialog's iframe to clean up
+            $nexus.trigger("ra.iframe.destroy")
+            .removeData("ra.dialog.buttons")
+            .unbind();
+            // Clear the nexus handle to allow subsequent dialogs to open
+            $nexus = null;
+        }
+        dialog.hide();
+    }
+
+    return {
+        id: dialogId,
+
+        /**
+        * Constructs a new AUI dialog. The dialog has a single content panel containing a single iframe.
+        * The iframe's content is either created by loading [options.src] as the iframe url. Or fetching the content from the server by add-on key + module key.
+        *
+        * @param {Object} options Options to configure the behaviour and appearance of the dialog.
+        * @param {String} [options.header="Remotable Plugins Dialog Title"]  Dialog header.
+        * @param {String} [options.headerClass="ap-dialog-header"] CSS class to apply to dialog header.
+        * @param {String|Number} [options.width="50%"] width of the dialog, expressed as either absolute pixels (eg 800) or percent (eg 50%)
+        * @param {String|Number} [options.height="50%"] height of the dialog, expressed as either absolute pixels (eg 600) or percent (eg 50%)
+        * @param {String} [options.id] ID attribute to assign to the dialog. Default to "ap-dialog-n" where n is an autoincrementing id.
+        */
+        create: function(options, showLoadingIndicator) {
+
+            var defaultOptions = {
+                    // These options really _should_ be provided by the caller, or else the dialog is pretty pointless
+                    width: "50%",
+                    height: "50%"
+                },
+                dialogId = options.id || "ap-dialog-" + (idSeq += 1),
+                mergedOptions = $.extend({id: dialogId}, defaultOptions, options, {dlg: 1}),
+                dialogElement;
+
+            mergedOptions.w = parseDimension(mergedOptions.width, $global.width());
+            mergedOptions.h = parseDimension(mergedOptions.height, $global.height());
+
+            $nexus = $("<div />").addClass("ap-servlet-placeholder").attr('id', 'ap-' + options.ns)
+            .bind("ra.dialog.close", closeDialog);
+
+            if(options.chrome){
+                dialogElement = createDialogElement(mergedOptions, $nexus);
+
+            } else {
+                dialogElement = createChromelessDialogElement(mergedOptions, $nexus);
+            }
+
+            if(options.size){
+                mergedOptions.w = "100%";
+                mergedOptions.h = "100%";
+            } else {
+                AJS.layer(dialogElement).changeSize(mergedOptions.w, mergedOptions.h);
+            }
+
+            dialog = AJS.dialog2(dialogElement);
+            dialog.on("hide", function() {
+                closeDialog();
+            });
+
+            displayDialogContent($nexus, mergedOptions);
+
+            if(showLoadingIndicator !== false){
+                $nexus.append(statusHelper.createStatusMessages());
+            }
+
+            //difference between a webitem and opening from js.
+            if(options.src){
+                _AP.create(mergedOptions);
+            }
+
+            dialog.show();
+
+        },
+        close: closeDialog
+    };
+
 });
+

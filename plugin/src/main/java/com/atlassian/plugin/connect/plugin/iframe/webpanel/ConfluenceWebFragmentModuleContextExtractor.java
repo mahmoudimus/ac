@@ -4,12 +4,16 @@ import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
+import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.confluence.ConfluenceModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.confluence.ConfluenceModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.confluence.ConfluenceModuleContextParametersImpl;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -18,10 +22,22 @@ import java.util.Map;
 @ConfluenceComponent
 public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor
 {
+    private final UserManager userManager;
+
+    @Inject
+    public ConfluenceWebFragmentModuleContextExtractor(final UserManager userManager)
+    {
+        this.userManager = userManager;
+    }
 
     @Override
-    public ModuleContextParameters extractParameters(final Map<String, Object> webFragmentContext)
+    public ModuleContextParameters extractParameters(final Map<String, ? extends Object> webFragmentContext)
     {
+        if(ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
+        {
+            return (ModuleContextParameters) webFragmentContext;
+        }
+        
         ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl();
 
         @SuppressWarnings("unchecked") // it is what it is
@@ -44,13 +60,27 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
             moduleContext.addPage(page);
         }
 
-        if (webFragmentContext.containsKey("action") && webFragmentContext.get("action") instanceof AbstractPageAwareAction)
+        Object action = webFragmentContext.get("action");
+        if (action instanceof AbstractPageAwareAction)
         {
-            AbstractPageAwareAction pageAwareAction = (AbstractPageAwareAction) webFragmentContext.get("action");
+            AbstractPageAwareAction pageAwareAction = (AbstractPageAwareAction) action;
             if (!moduleContext.containsKey(ConfluenceModuleContextFilter.PAGE_ID))
             {
                 moduleContext.addPage(pageAwareAction.getPage());
             }
+        }
+
+        ConfluenceUser profileUser = (ConfluenceUser) webFragmentContext.get("targetUser");
+        if (profileUser != null)
+        {
+            UserProfile profile = userManager.getUserProfile(profileUser.getKey());
+            moduleContext.addProfileUser(profile);
+        }
+
+        ModuleContextParameters nestedContext = (ModuleContextParameters) webFragmentContext.get(MODULE_CONTEXT_KEY);
+        if (nestedContext != null)
+        {
+            moduleContext.putAll(nestedContext);
         }
 
         return moduleContext;

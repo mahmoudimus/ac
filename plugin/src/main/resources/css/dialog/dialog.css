@@ -1,22 +1,35 @@
-.ap-dialog-container .ap-stats {
+.ap-stats {
     padding: 0px 10px;
     background-color: #f5f5f5;
-}
-
-.ap-dialog-container {
-    height: 100%;
 }
 
 .ap-dialog-container .ap-container {
     height: 100%;
 }
 
-.ap-dialog-container .ap-content {
+.ap-aui-dialog2 div {
     height: 100%;
+}
+
+.ap-aui-dialog2 div.ap-stats {
+	height: auto;
+}
+
+/* in chrome'd dialogs - fixes scrollbars added by iframes with scrollbars pushing the width out */
+.ap-aui-dialog2 .aui-dialog2-content {
+	overflow:hidden;
 }
 
 /* add new aui dialog size of maximum */
 .aui-dialog2-maximum.ap-aui-dialog2.aui-layer {
     top: 0;
     height: 100%;
+}
+
+.ap-aui-dialog2.aui-dialog2-content {
+	padding:0;
+}
+
+.ap-aui-dialog2 iframe {
+	display:block;
 }

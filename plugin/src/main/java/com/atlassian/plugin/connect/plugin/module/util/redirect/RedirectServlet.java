@@ -1,86 +1,60 @@
 package com.atlassian.plugin.connect.plugin.module.util.redirect;
 
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.uri.Uri;
-import com.atlassian.uri.UriBuilder;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
+
+import org.apache.commons.httpclient.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Given an addon key and a relative path, builds an absolute URL and redirects the client to it.
- * @deprecated do not use redirects - use the direct add-on url instead
+ * Performs permanent redirects from the given "from" pattern to the given "to" text
  */
-@Deprecated
 public final class RedirectServlet extends HttpServlet
 {
-    private static final String APP_KEY_PARAM = "app_key";
-    private static final String APP_URL_PARAM = "app_url";
-
     private static final Logger log = LoggerFactory.getLogger(RedirectServlet.class);
+    private static final String FROM_PATTERN = "from.pattern";
+    private static final String TO_TEXT = "to.text";
 
-    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
-
-    public RedirectServlet(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
-    {
-        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-    }
+    private String fromPattern;
+    private String toPattern;
 
     /**
-     * @return a relative url that doesn't include the context path
-     * @deprecated will be removed for 1.0
+     * Requires two servlet config parameters to be set. e.g.
+     *
+     * <init-param>
+     *   <param-name>from.pattern</param-name>
+     *   <param-value>atlassian-connect</param-value>
+     * </init-param>
+     * <init-param>
+     *   <param-name>to.text</param-name>
+     *   <param-value>ac</param-value>
+     * </init-param>
+     *
+     * @param servletConfig
      */
-    @Deprecated
-    public static String getPermanentRedirectUrl(String appKey, URI path)
-    {
-        return new UriBuilder(Uri.parse("/plugins/servlet/redirect/permanent"))
-                .addQueryParameter(RedirectServlet.APP_KEY_PARAM, appKey)
-                .addQueryParameter(RedirectServlet.APP_URL_PARAM, path.toString())
-                .toString();
+    public void init(ServletConfig servletConfig) {
+        fromPattern = checkNotNull(servletConfig.getInitParameter(FROM_PATTERN));
+        toPattern = checkNotNull(servletConfig.getInitParameter(TO_TEXT));
     }
 
-    /**
-     * Expected URL query parameters:
-     * <ul>
-     *     <li><strong>app_key:</strong> The Remotable Plugin key</li>
-     *     <li><strong>app_url:</strong> Relative URL within the Remotable Plugin to redirect to</li>
-     * </ul>
-     */
-    @SuppressWarnings ("unchecked")
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        log.warn("/plugins/servlet/redirect/permanent resource is deprecated and will be removed soon. Please use a direct url to the add-on.");
-        final String appkey = req.getParameter(APP_KEY_PARAM);
-        Validate.notEmpty(appkey, String.format("%s parameter is required", APP_KEY_PARAM));
+        final StringBuffer requestURL = req.getRequestURL();
+        int index = requestURL.indexOf(fromPattern);
 
-        final String appUrl = req.getParameter(APP_URL_PARAM);
-        Validate.notEmpty(appUrl, String.format("%s parameter is required", APP_URL_PARAM));
-
-        final RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(appkey);
-
-        Map<String, String[]> parameterMap = (Map<String, String[]>) req.getParameterMap();
-        String fullAppUrl = getFullUrl(remotablePluginAccessor, appUrl, parameterMap);
-
+        final String newUrl = requestURL.replace(index, index + fromPattern.length(), toPattern).toString();
+        log.debug("Redirecting from {} to {}", new Object[] {req.getRequestURI(), newUrl});
         resp.setStatus(HttpStatus.SC_MOVED_PERMANENTLY);
-        resp.addHeader(HttpHeaders.LOCATION, fullAppUrl);
+        resp.addHeader(HttpHeaders.LOCATION, newUrl);
         resp.getOutputStream().close();
-    }
-
-    private String getFullUrl(RemotablePluginAccessor remotablePluginAccessor, String appRelativeUrl, Map<String, String[]> params)
-    {
-        Uri targetUrl = Uri.parse(appRelativeUrl);
-        return remotablePluginAccessor.createGetUrl(targetUrl.toJavaUri(), params);
     }
 }

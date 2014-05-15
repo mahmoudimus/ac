@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module;
 
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -38,7 +37,6 @@ public final class RemoteCondition implements Condition
     private Iterable<String> contextParams;
     private final ProductAccessor productAccessor;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final BigPipeManager bigPipeManager;
     private final UserManager userManager;
     private final TemplateRenderer templateRenderer;
     private final LicenseRetriever licenseRetriever;
@@ -48,7 +46,6 @@ public final class RemoteCondition implements Condition
 
     public RemoteCondition(ProductAccessor productAccessor,
                            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                           BigPipeManager bigPipeManager,
                            UserManager userManager,
                            TemplateRenderer templateRenderer,
                            LicenseRetriever licenseRetriever,
@@ -56,7 +53,6 @@ public final class RemoteCondition implements Condition
     {
         this.productAccessor = productAccessor;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-        this.bigPipeManager = bigPipeManager;
         this.userManager = userManager;
         this.templateRenderer = templateRenderer;
         this.licenseRetriever = licenseRetriever;
@@ -119,10 +115,6 @@ public final class RemoteCondition implements Condition
                             }
                         }
                 ).claim();
-
-//        bigPipeManager.getBigPipe().getScriptChannel().promiseContent(responsePromise);
-
-        // always return true as the link will be disabled by default via the 'hidden' class
     }
 
     private Map<String, String[]> getParameters(Map<String, Object> context)

@@ -12,9 +12,11 @@ requirejs.config({
     baseUrl: 'base/src/main/resources/js/iframe/plugin',
 
     paths: {
+        'iframe/host/analytics': '../host/analytics',
         'iframe/_events': '../_events',
         'iframe/_uri': '../_uri',
-        '_events': '../_events'
+        '_events': '../_events',
+        'iframe/_ui-params': '../_ui-params',
     },
     // ask Require.js to load these files (all our tests)
     deps: tests,

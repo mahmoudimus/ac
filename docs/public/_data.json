@@ -1,88 +1,126 @@
 {
-    "guides": {
-        "introduction.html": {
-            "title": "Introduction"
-        },
-        "getting-started.html": {
-            "title": "Getting Started"
-        }
+  "guides": [
+    {
+      "filename": "introduction.html",
+      "title": "Introduction"
     },
-    "developing": {
-        "developing-locally.html": {
-            "title": "Developing Locally"
-        },
-        "installing-in-ondemand.html": {
-            "title": "Installing in OnDemand"
-        },
-        "selling-on-marketplace.html": {
-            "title": "Selling on Marketplace"
-        },
-        "upgrades.html": {
-            "title": "Upgrading your Add-on",
-            "new": true
-        }
-    },
-    "concepts": {
-        "security.html": {
-            "title": "Security",
-            "new": true
-        },
-        "authentication.html": {
-            "title": "Authentication"
-        },
-        "conditions.html": {
-            "title": "Conditions"
-        },
-        "context-parameters.html": {
-            "title": "Context Parameters"
-        },
-        "styling-with-aui.html": {
-            "title": "Styling Add-ons with AUI"
-        },
-        "licensing.html": {
-            "title": "Licensing"
-        },
-        "understanding-ondemand.html": {
-            "title": "Understanding OnDemand"
-        }
-    },
-    "scopes": {
-        "jira-rest-scopes.html": {
-            "title": "JIRA REST"
-        },
-        "jira-jsonrpc-scopes.html": {
-            "title": "JIRA JSON-RPC"
-        },
-        "jira-soap-scopes.html": {
-            "title": "JIRA SOAP"
-        },
-        "confluence-rest-scopes.html": {
-            "title": "Confluence REST"
-        },
-        "confluence-jsonrpc-scopes.html": {
-            "title": "Confluence JSON-RPC"
-        },
-        "confluence-xmlrpc-scopes.html": {
-            "title": "Confluence XML-RPC"
-        }
-    },
-    "resources": {
-        "release-notes.html": {
-            "title": "Release Notes",
-            "new": true
-        },
-        "deprecations.html": {
-            "title": "Deprecation Notices",
-            "new": true
-        },
-        "samples.html": {
-            "title": "Sample Add-ons"
-        },
-        "faqs.html": {
-            "title": "FAQs"
-        },
-        "getting-help.html": {
-            "title": "Getting Help"
-        }
+    {
+      "filename": "getting-started.html",
+      "title": "Getting Started"
     }
+  ],
+  "developing": [
+    {
+      "filename": "developing-locally.html",
+      "title": "Developing Locally"
+    },
+    {
+      "filename": "installing-in-ondemand.html",
+      "title": "Installing in OnDemand"
+    },
+    {
+      "filename": "selling-on-marketplace.html",
+      "title": "Selling on Marketplace"
+    },
+    {
+      "filename": "operations.html",
+      "title": "Operations Guide",
+      "new": true
+    },
+    {
+      "filename": "upgrades.html",
+      "title": "Upgrading your Add-on",
+      "new": true
+    }
+  ],
+  "concepts": [
+    {
+      "filename": "security.html",
+      "title": "Security",
+      "new": true
+    },
+    {
+      "filename": "authentication.html",
+      "title": "Authentication"
+    },
+    {
+      "filename": "understanding-jwt.html",
+      "title": "Understanding JWT"
+    },
+    {
+      "filename": "conditions.html",
+      "title": "Conditions"
+    },
+    {
+      "filename": "context-parameters.html",
+      "title": "Context Parameters"
+    },
+    {
+      "filename": "styling-with-aui.html",
+      "title": "Styling Add-ons with AUI"
+    },
+    {
+      "filename": "licensing.html",
+      "title": "Licensing"
+    },
+    {
+      "filename": "understanding-ondemand.html",
+      "title": "Understanding OnDemand"
+    }
+  ],
+  "scopes": [
+    {
+      "filename": "jira-rest-scopes.html",
+      "title": "JIRA REST"
+    },
+    {
+      "filename": "jira-jsonrpc-scopes.html",
+      "title": "JIRA JSON-RPC"
+    },
+    {
+      "filename": "jira-soap-scopes.html",
+      "title": "JIRA SOAP"
+    },
+    {
+      "filename": "confluence-rest-scopes.html",
+      "title": "Confluence REST"
+    },
+    {
+      "filename": "confluence-jsonrpc-scopes.html",
+      "title": "Confluence JSON-RPC"
+    },
+    {
+      "filename": "confluence-xmlrpc-scopes.html",
+      "title": "Confluence XML-RPC"
+    }
+  ],
+  "resources": [
+    {
+      "url": "https://developer.atlassian.com/display/MARKET/Atlassian+Connect+Status",
+      "title": "Atlassian Connect Status",
+      "new": true
+    },
+    {
+      "filename": "release-notes.html",
+      "title": "Release Notes",
+      "new": true
+    },
+    {
+      "filename": "deprecations.html",
+      "title": "Deprecation Notices",
+      "new": true
+    },
+    {
+      "filename": "samples.html",
+      "title": "Sample Add-ons"
+    },
+    {
+      "filename": "faqs.html",
+      "title": "FAQs"
+    },
+    {
+      "filename": "getting-help.html",
+      "title": "Getting Help"
+    }
+  ]
 }

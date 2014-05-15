@@ -5,8 +5,8 @@ import com.atlassian.jira.plugin.browsepanel.TabPanel;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.project.browse.BrowseContext;
 import com.atlassian.jira.web.ExecutingHttpRequest;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParametersImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -17,6 +17,7 @@ import java.util.Map;
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_HELPER;
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_USER;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
+import static com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
 
 /**
  *
@@ -41,12 +42,18 @@ public abstract class AbstractConnectIFrameTabPanel<D extends TabPanelModuleDesc
     public String getHtml(final C ctx)
     {
         // parse and filter module context
-        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
-        populateModuleContext(unfilteredContext, ctx);
+        JiraModuleContextParameters unfilteredContext = createUnfilteredContext(ctx);
         ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
 
         // render tab HTML
         return renderToString(filteredContext, iFrameRenderStrategy);
+    }
+
+    private JiraModuleContextParameters createUnfilteredContext(final C ctx)
+    {
+        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
+        populateModuleContext(unfilteredContext, ctx);
+        return unfilteredContext;
     }
 
     @Override
@@ -70,6 +77,7 @@ public abstract class AbstractConnectIFrameTabPanel<D extends TabPanelModuleDesc
         {
             conditionContext.put(CONTEXT_KEY_USER, ctx.getUser());
         }
+        conditionContext.put(MODULE_CONTEXT_KEY, createUnfilteredContext(ctx));
     }
 
 }

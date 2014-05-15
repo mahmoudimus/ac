@@ -6,11 +6,12 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -32,14 +34,16 @@ public class OAuthToJwtUpdateWithSaasMigrationTest
     private static final Logger LOG = LoggerFactory.getLogger(OAuthToJwtUpdateWithSaasMigrationTest.class);
 
     private final TestPluginInstaller testPluginInstaller;
+    private final TestAuthenticator testAuthenticator;
     private final ConnectAddonRegistry connectAddonRegistry;
     private Plugin oAuthPlugin;
     private Plugin jwtPlugin;
     private ConnectAddonBean oAuthAddOnBean;
 
-    public OAuthToJwtUpdateWithSaasMigrationTest(TestPluginInstaller testPluginInstaller, ConnectAddonRegistry connectAddonRegistry)
+    public OAuthToJwtUpdateWithSaasMigrationTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, ConnectAddonRegistry connectAddonRegistry)
     {
         this.testPluginInstaller = testPluginInstaller;
+        this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
     }
 
@@ -47,8 +51,12 @@ public class OAuthToJwtUpdateWithSaasMigrationTest
     public void beforeAllTests() throws IOException
     {
         oAuthAddOnBean = createOAuthAddOnBean();
-        oAuthPlugin = testPluginInstaller.installPlugin(oAuthAddOnBean);
-        jwtPlugin = testPluginInstaller.installPlugin(createJwtAddOn(oAuthAddOnBean));
+
+        //you MUST login as admin before you can use the testPluginInstaler
+        testAuthenticator.authenticateUser("admin");
+        
+        oAuthPlugin = testPluginInstaller.installAddon(oAuthAddOnBean);
+        jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthAddOnBean));
         oAuthPlugin = null; // we get to this line of code only if installing the update works
     }
 
@@ -65,7 +73,7 @@ public class OAuthToJwtUpdateWithSaasMigrationTest
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
             catch (IOException e)
             {
@@ -141,6 +149,7 @@ public class OAuthToJwtUpdateWithSaasMigrationTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key) + baseUrlSuffix)
                 .withAuthentication(authenticationBean)
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+                .withModule("webItems", randomWebItemBean())
                 .build();
     }
 }

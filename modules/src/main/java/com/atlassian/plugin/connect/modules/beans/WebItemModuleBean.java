@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -37,6 +38,7 @@ import java.util.List;
  * @schemaTitle Web Item
  * @since 1.0
  */
+@SchemaDefinition("webItem")
 public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
@@ -217,7 +219,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     public String toString()
     {
         return Objects.toStringHelper(this)
-                      .add("key", getKey())
+                      .add("key", getRawKey())
                       .add("name", getName())
                       .add("url", getUrl())
                       .add("location", getLocation())

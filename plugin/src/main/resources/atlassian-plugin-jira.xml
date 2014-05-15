@@ -6,8 +6,6 @@
         <package>com.atlassian.plugin.connect.plugin.rest</package>
     </rest>
 
-    <jira-footer key="bigPipeFooter" class="com.atlassian.plugin.connect.plugin.product.jira.JiraBigPipeFooter" />
-
     <!-- plugin points -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.connect.plugin.module.jira.JiraProfileTabModuleDescriptor">
         <description>

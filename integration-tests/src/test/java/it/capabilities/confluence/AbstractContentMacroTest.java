@@ -8,11 +8,13 @@ import com.atlassian.confluence.pageobjects.component.editor.InsertMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
@@ -21,16 +23,18 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.MacroList;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriverTest
 {
+    private static final Logger logger = LoggerFactory.getLogger(AbstractContentMacroTest.class);
+
     protected static final String DEFAULT_MACRO_URL = "/render-macro";
 
     protected static final String SIMPLE_MACRO_NAME = "Simple Macro";
@@ -57,6 +61,12 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
     protected static final String EDITOR_MACRO_NAME = "Editor Macro";
     protected static final String EDITOR_MACRO_KEY = "editor-macro";
+    protected static final String CUSTOM_TITLE_EDITOR_MACRO_NAME = "Custom Title Macro";
+    protected static final String CUSTOM_TITLE_EDITOR_MACRO_KEY = "custom-title-macro";
+    private static final String CUSTOM_TITLE = "Custom Title";
+
+    protected static final String HIDDEN_MACRO_NAME = "Hidden Macro";
+    protected static final String HIDDEN_MACRO_KEY = "hidden-macro";
 
     protected ViewPage savedPage;
 
@@ -67,11 +77,11 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 .withUrl(DEFAULT_MACRO_URL)
                 .withName(new I18nProperty(IMAGE_PLACEHOLDER_MACRO_NAME, ""))
                 .withImagePlaceholder(ImagePlaceholderBean.newImagePlaceholderBean()
-                        .withUrl("/images/placeholder.png")
-                        .withWidth(50)
-                        .withHeight(50)
-                        .withApplyChrome(true)
-                        .build()
+                                .withUrl("/images/placeholder.png")
+                                .withWidth(50)
+                                .withHeight(50)
+                                .withApplyChrome(true)
+                                .build()
                 )
                 .withParameters(newMacroParameterBean()
                         .withIdentifier("param1")
@@ -88,8 +98,8 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 .withUrl(DEFAULT_MACRO_URL)
                 .withName(new I18nProperty(FEATURED_MACRO_NAME, ""))
                 .withIcon(newIconBean()
-                        .withUrl("images/macro-icon.png")
-                        .build()
+                                .withUrl("images/macro-icon.png")
+                                .build()
                 )
                 .withFeatured(true)
                 .build();
@@ -122,10 +132,10 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 .withKey(PARAMETER_MACRO_KEY)
                 .withName(new I18nProperty(PARAMETER_MACRO_NAME, ""))
                 .withParameters(newMacroParameterBean()
-                        .withIdentifier("param1")
-                        .withName(new I18nProperty("Param 1", ""))
-                        .withType("string")
-                        .build()
+                                .withIdentifier("param1")
+                                .withName(new I18nProperty("Param 1", ""))
+                                .withType("string")
+                                .build()
                 )
                 .build();
     }
@@ -184,10 +194,26 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 .withUrl(DEFAULT_MACRO_URL)
                 .withName(new I18nProperty(SIMPLE_MACRO_NAME, ""))
                 .withIcon(newIconBean()
-                        .withUrl("images/macro-icon.png")
-                        .build()
+                                .withUrl("images/macro-icon.png")
+                                .build()
                 )
                 .withAliases(SIMPLE_MACRO_ALIAS)
+                .build();
+    }
+
+    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createCustomEditorTitleMacro(T builder)
+    {
+        return builder
+                .withKey(CUSTOM_TITLE_EDITOR_MACRO_KEY)
+                .withUrl("/echo/params?footy={footy}")
+                .withName(new I18nProperty(CUSTOM_TITLE_EDITOR_MACRO_NAME, ""))
+                .withEditor(MacroEditorBean.newMacroEditorBean()
+                                .withInsertTitle(new I18nProperty(CUSTOM_TITLE, ""))
+                                .withUrl("/render-editor")
+                                .withHeight("200px")
+                                .withWidth("300px")
+                                .build()
+                )
                 .build();
     }
 
@@ -198,13 +224,21 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 .withUrl("/echo/params?footy={footy}")
                 .withName(new I18nProperty(EDITOR_MACRO_NAME, ""))
                 .withEditor(MacroEditorBean.newMacroEditorBean()
-                        .withEditTitle(new I18nProperty("Edit Title", ""))
-                        .withInsertTitle(new I18nProperty("Insert Title", ""))
-                        .withUrl("/render-editor")
-                        .withHeight("200px")
-                        .withWidth("300px")
-                        .build()
+                                .withUrl("/render-editor")
+                                .withHeight("200px")
+                                .withWidth("300px")
+                                .build()
                 )
+                .build();
+    }
+
+    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createHiddenMacro(T builder)
+    {
+        return builder
+                .withKey(HIDDEN_MACRO_KEY)
+                .withUrl(DEFAULT_MACRO_URL)
+                .withName(new I18nProperty(HIDDEN_MACRO_NAME, ""))
+                .withHidden(true)
                 .build();
     }
 
@@ -221,7 +255,15 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         if (null != savedPage)
         {
-            rpc.removePage(savedPage.getPageId());
+            // Don't fail a test because cleanup failed
+            try
+            {
+                rpc.removePage(savedPage.getPageId());
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage());
+            }
         }
     }
 
@@ -231,7 +273,6 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(SIMPLE_MACRO_NAME);
-
         assertThat(macro, is(not(nullValue())));
     }
 
@@ -242,7 +283,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
 
         MacroList macroList = editorContent.autoCompleteMacroList(SIMPLE_MACRO_ALIAS);
-        assertThat(macroList.hasEntryWithKey(SIMPLE_MACRO_KEY), is(true));
+        assertThat(macroList.hasEntryWithKey(getAddonAndMacroKey(SIMPLE_MACRO_KEY)), is(true));
     }
 
     @Test
@@ -268,8 +309,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
         ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editorPage.openInsertMenu();
-
-        assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
+        assertThat(insertMenu.hasEntryWithKey(getAddonAndMacroKey(FEATURED_MACRO_KEY)), is(true));
     }
 
     @Test
@@ -280,12 +320,17 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
         selectMacro(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
 
-        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
-        String url = editorContent.getImagePlaceholderUrl();
+        try
+        {
+            ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
+            String url = editorContent.getImagePlaceholderUrl();
 
-        editorPage.cancel();
-
-        assertThat(url, is(getAddonBaseUrl() + "/images/placeholder.png"));
+            assertThat(url, is(getAddonBaseUrl() + "/images/placeholder.png"));
+        }
+        finally
+        {
+            editorPage.cancel();
+        }
     }
 
     @Test
@@ -297,11 +342,23 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+        RemotePluginDialog dialog = null;
 
-        String content = dialog.getEmbeddedPage().getValueById("description");
+        try
+        {
+            dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
+            String content = dialog.getEmbeddedPage().getValueById("description");
 
-        assertThat(content, is("Select from:"));
+            assertThat(content, is("Select from:"));
+        }
+        finally
+        {
+            if (dialog != null)
+            {
+                dialog.cancel();
+            }
+            editorPage.cancel();
+        }
     }
 
     @Test
@@ -313,9 +370,67 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+        try
+        {
+            RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
+            assertThat(dialog.cancel(), is(true));
+        }
+        finally
+        {
+            editorPage.cancel();
+        }
+    }
 
-        assertThat(dialog.cancel(), is(true));
+    @Test
+    public void testMacroEditorCustomTitle() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        MacroItem macro = macroBrowser.searchForFirst(CUSTOM_TITLE_EDITOR_MACRO_NAME);
+        macro.select();
+
+        RemotePluginDialog dialog = null;
+
+        try
+        {
+            dialog = connectPageOperations.findDialog(getAddonAndMacroKey(CUSTOM_TITLE_EDITOR_MACRO_KEY));
+            assertThat(dialog.getTitle(), is(CUSTOM_TITLE));
+        }
+        finally
+        {
+            if (dialog != null)
+            {
+                dialog.cancel();
+            }
+            editorPage.cancel();
+        }
+    }
+
+    @Test
+    public void testMacroEditorDefaultTitle() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
+        macro.select();
+
+        RemotePluginDialog dialog = null;
+
+        try
+        {
+            dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
+            assertThat(dialog.getTitle(), containsString(EDITOR_MACRO_NAME));
+        }
+        finally
+        {
+            if (dialog != null)
+            {
+                dialog.cancel();
+            }
+            editorPage.cancel();
+        }
     }
 
     @Test
@@ -327,15 +442,34 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+        try
+        {
+            RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
+            assertThat(dialog.submit(), is(true));
+        }
+        finally
+        {
+            editorPage.cancel();
+        }
+    }
 
-        boolean submitted = dialog.submit();
-
-        editorPage.cancel();
-        assertThat(submitted, is(true));
+    @Test
+    public void testHiddenMacro() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        MacroItem macro = macroBrowser.searchForFirst(HIDDEN_MACRO_NAME);
+        assertThat(macro, is(nullValue()));
     }
 
     protected abstract String getAddonBaseUrl();
+
+    protected abstract ConnectAddonBean getCurrentAddon();
+
+    protected String getAddonAndMacroKey(String module)
+    {
+        return ModuleKeyUtils.addonAndModuleKey(getCurrentAddon().getKey(), module);
+    }
 
     protected void selectMacro(CreatePage editorPage, String macroName)
     {

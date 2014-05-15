@@ -4,6 +4,7 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
@@ -44,6 +45,8 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         StaticContentMacroModuleBean shortBodyMacro = createShortBodyMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean parameterMacro = createParameterMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean editorMacro = createEditorMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean customTitleEditorMacro = createCustomEditorTitleMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean hiddenMacro = createHiddenMacro(newStaticContentMacroModuleBean());
 
         StaticContentMacroModuleBean storageFormatMacro = newStaticContentMacroModuleBean()
                 .withUrl("/render-storage-format")
@@ -72,7 +75,9 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                         parameterMacro,
                         storageFormatMacro,
                         getMacro,
-                        editorMacro
+                        editorMacro,
+                        customTitleEditorMacro,
+                        hiddenMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.wrapContextAwareServlet(parameterServlet))
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())
@@ -178,5 +183,11 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     protected String getAddonBaseUrl()
     {
         return remotePlugin.getAddon().getBaseUrl();
+    }
+
+    @Override
+    protected ConnectAddonBean getCurrentAddon()
+    {
+        return remotePlugin.getAddon();
     }
 }
