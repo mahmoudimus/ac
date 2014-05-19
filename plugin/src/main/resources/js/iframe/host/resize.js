@@ -5,7 +5,7 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
         $(iframe).css({width: width, height: height});
     };
 
-    rpc.extend(function (config) {
+    rpc.extend(function () {
 
         function resizeHandler(iframe) {
             var height = $(document).height() - AJS.$("#header > nav").outerHeight() - AJS.$("#footer").outerHeight() - 20;
@@ -13,11 +13,15 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
         }
 
         return {
+            init: function (config, xdm) {
+                xdm.resize = _.debounce(function resize ($, width, height) {
+                    $(this.iframe).css({width: width, height: height});
+                });
+            },
             internals: {
-                // TODO: add debounce support
                 resize: function(width, height) {
                     if(!this.uiParams.isDialog){
-                        resize(this.iframe, width, height);
+                        this.resize($, width, height);
                     }
                 },
                 sizeToParent: _.debounce(function() {
