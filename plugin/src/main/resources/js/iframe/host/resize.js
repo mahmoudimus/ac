@@ -1,14 +1,10 @@
 _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
     "use strict";
 
-    var resize = function (iframe, width, height) {
-        $(iframe).css({width: width, height: height});
-    };
-
     rpc.extend(function () {
 
         function resizeHandler(iframe) {
-            var height = $(document).height() - AJS.$("#header > nav").outerHeight() - AJS.$("#footer").outerHeight() - 20;
+            var height = $(document).height() - $("#header > nav").outerHeight() - $("#footer").outerHeight() - 20;
             $(iframe).css({width: "100%", height: height + "px"});
         }
 
@@ -29,7 +25,9 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
                     if (this.uiParams.isGeneral) {
                         // This adds border between the iframe and the page footer as the connect addon has scrolling content and can't do this
                         $(this.iframe).addClass("full-size-general-page");
-                        $(window).on('resize', function(){ resizeHander(this.iframe); });
+                        $(window).on('resize', function(){
+                            resizeHander(this.iframe);
+                        });
                         resizeHandler(this.iframe);
                     }
                     else {
