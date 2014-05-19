@@ -41,7 +41,10 @@ public class JiraProjectAvatarScopesTest extends AbstractScopesTest
             // bad method type
             {ScopeName.ADMIN, HttpMethod.POST, PROJECT_AVATAR_URL, false},
             {ScopeName.ADMIN, HttpMethod.PUT, PROJECT_AVATAR_URL, false},
-            {ScopeName.ADMIN, HttpMethod.DELETE, PROJECT_AVATAR_URL, false}
+            {ScopeName.ADMIN, HttpMethod.DELETE, PROJECT_AVATAR_URL, false},
+
+            // no scope
+            {null, HttpMethod.GET, PROJECT_AVATAR_URL, false}
         });
     }
 }
