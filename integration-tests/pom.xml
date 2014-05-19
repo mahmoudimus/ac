@@ -153,12 +153,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-projects-page-objects</artifactId>
-            <version>${atlassian.jira.projects.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.jira.tests</groupId>
             <artifactId>jira-func-test-basics</artifactId>
             <version>${functestbasics.version}</version>
@@ -289,7 +283,6 @@
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                        <use.test.http.client>true</use.test.http.client>
                     </systemPropertyVariables>
 
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
@@ -303,7 +296,6 @@
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
-                                <use.test.http.client>true</use.test.http.client>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -357,14 +349,6 @@
                                     <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-
-                            <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
-                                </bundledArtifact>
-                            </bundledArtifacts>
                         </product>
                         <product>
                             <id>confluence</id>
@@ -376,7 +360,6 @@
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
-                                <use.test.http.client>true</use.test.http.client>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -415,14 +398,6 @@
                                     <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-
-                            <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
-                                </bundledArtifact>
-                            </bundledArtifacts>
                         </product>
                     </products>
 
