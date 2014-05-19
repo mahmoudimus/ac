@@ -22,6 +22,7 @@ import javax.inject.Named;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -142,9 +143,33 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
     private String encodeProductContext(Map<String, Object> productContext) throws IOException
     {
-        String json = new JSONObject(productContext).toString();
+        JSONObject jsonObj = new JSONObject();
+        for (Map.Entry<String, Object> entry : productContext.entrySet())
+        {
+            Object value = entry.getValue();
+
+            // json-simple doesn't support serializing java arrays - so unwrap or convert to java.util.List
+            if (value instanceof Object[])
+            {
+                Object[] objArray = (Object[]) value;
+                switch (objArray.length)
+                {
+                    case 0:
+                        value = null;
+                        break;
+                    case 1:
+                        value = objArray[0];
+                        break;
+                    default:
+                        value = Arrays.asList((Object[]) entry.getValue());
+                }
+            }
+
+            jsonObj.put(entry.getKey(), value);
+        }
+
         StringWriter writer = new StringWriter();
-        JavascriptEncoder.escape(writer, json);
+        JavascriptEncoder.escape(writer, jsonObj.toJSONString());
         return writer.toString();
     }
 }
