@@ -5,8 +5,7 @@
   // Note that if it's desireable to publish host-level events to add-ons, this would be a good place to wire
   // up host listeners and publish to each add-on, rather than using each XdmRpc.events object directly.
 
-    var addons = {},
-    _channels = {};
+    var _channels = {};
 
   // Tracks all channels (iframes with an XDM bridge) for a given add-on key, managing event propagation
   // between bridges, and potentially between add-ons.
@@ -43,20 +42,6 @@
                             self._emitEvent(event);
                         }
                     }
-
-// TODO: Experimental cross-addon eventing
-//    // Try to forward to other add-ons if the whitelist regex is specified on the event object
-//    if (event.attrs._acAllow) {
-//      // Deserialize the allowed add-on key whitelisting regex
-//      var re = RegExp.apply(null, /^\/(.*)\/(.*)/.exec(event.attrs._acAllow).slice(1, 3));
-//      // Forward the event to other add-ons matching the whitelist regex
-//      $.each(addons, function (key, addon) {
-//        if (event.source.key !== key && re.test(key)) {
-//          addon._emitEvent(event);
-//        }
-//      });
-//    }
-
                 };
                 channel.bus.onAny(channel.listener); //forward add-on events.
 

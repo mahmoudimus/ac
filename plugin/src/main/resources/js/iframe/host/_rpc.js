@@ -9,8 +9,7 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
       apis = {},
       stubs = [],
       internals = {},
-      inits = [],
-      isInited;
+      inits = [];
 
   return {
 
@@ -38,7 +37,7 @@ _AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
         var rpc = new XdmRpc($, xdmConfig, {remote: stubs, local: $.extend({}, internals)});
         rpcCollection[rpc.id] = rpc;
         each(inits, function (_, init) {
-          try { init(extend({}, options, rpc), rpc); }
+          try { init(extend({}, options), rpc); }
           catch (ex) { console.log(ex); }
         });
 

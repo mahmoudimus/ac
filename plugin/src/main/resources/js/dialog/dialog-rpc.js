@@ -1,7 +1,7 @@
-_AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main", "_events"], function ($, rpc, dialogFactory, dialogMain, events) {
+_AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main"], function ($, rpc, dialogFactory, dialogMain) {
     "use strict";
 
-    rpc.extend(function(remote){
+    rpc.extend(function () {
         return {
             stubs: ["dialogMessage"],
             init: function(state){
@@ -43,7 +43,7 @@ _AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main",
 
                 },
                 closeDialog: function(done, fail) {
-                    this.events.emit('ra.iframe.destroy'); //infinate loop.
+                    this.events.emit('ra.iframe.destroy');
                     dialogMain.close();
                 }
             }
