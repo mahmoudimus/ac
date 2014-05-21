@@ -4,7 +4,7 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
     rpc.extend(function (config) {
         return {
             init: function (state, xdm) {
-                var $home = $(state.iframe).closest(".ap-container");
+                var $home = $(xdm.iframe).closest(".ap-container");
                 statusHelper.showLoadingStatus($home, 0);
                 xdm.timeout = setTimeout(function(){
                     xdm.timeout = null;

@@ -4,14 +4,14 @@ _AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main"]
     rpc.extend(function () {
         return {
             stubs: ["dialogMessage"],
-            init: function(state){
-                if(state.uiParams.isDialog){
+            init: function(state, xdm){
+                if(xdm.uiParams.isDialog){
                     var buttons = dialogMain.getButton();
                     if(buttons){
                         $.each(buttons, function(name, button) {
                             button.click(function (e, callback) {
-                                if(state.isActive()){
-                                    state.dialogMessage(name, callback);
+                                if(xdm.isActive()){
+                                    xdm.dialogMessage(name, callback);
                                 } else {
                                     callback(true);
                                 }

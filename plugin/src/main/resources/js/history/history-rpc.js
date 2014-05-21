@@ -2,11 +2,11 @@ _AP.define("history/rpc", ["_dollar", "history/history", "_rpc"], function($, hi
 
     rpc.extend(function(config){
         return {
-            init: function (state) {
+            init: function (state, xdm) {
                 if(state.uiParams.isGeneral){
                     // register for url hash changes to invoking history.popstate callbacks.
                     $(window).on("hashchange", function(e){
-                        history.hashChange(e.originalEvent, state.historyMessage);
+                        history.hashChange(e.originalEvent, xdm.historyMessage);
                     });
                 }
             },

@@ -35,7 +35,7 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
                         // see com.atlassian.plugin.connect.test.pageobjects.RemotePage#isNotFullSize()
                         $(this.iframe).addClass("full-size-general-page-fail");
                     }
-                }),
+                })
             }
         };
     });

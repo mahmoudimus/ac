@@ -7,8 +7,8 @@ _AP.define("jira/workflow-post-function/rpc", ["_dollar","_rpc", "jira/workflow-
                 if(!workflowPostFunction.isOnWorkflowPostFunctionPage()){
                     return;
                 }
-                var callback = state.setWorkflowConfigurationMessage;
-                workflowPostFunction.registerSubmissionButton(state.productContext["postFunction.id"], callback);
+                var callback = xdm.setWorkflowConfigurationMessage;
+                workflowPostFunction.registerSubmissionButton(xdm.productContext["postFunction.id"], callback);
             },
             internals: {
                 getWorkflowConfiguration: function (callback) {
