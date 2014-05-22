@@ -6,11 +6,15 @@ import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.module.ConnectContentTemplateSupplier;
+import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.base.Strings;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -24,6 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ConfluenceComponent
 public class BlueprintContentTemplateModuleDescriptorFactory
         implements ConnectModuleDescriptorFactory<BlueprintModuleBean, ContentTemplateModuleDescriptor> {
+
+    private static final Logger log = LoggerFactory.getLogger(BlueprintContentTemplateModuleDescriptorFactory.class);
+
     private final ModuleFactory moduleFactory;
     private final I18NBeanFactory i18nBeanFactory;
 
@@ -42,10 +49,13 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
         contentTemplateElement.addAttribute("key", contentTemplateKey);
         contentTemplateElement.addAttribute("i18n-name-key", i18nKeyOrName);
-        contentTemplateElement.addAttribute("resource-class", i18nKeyOrName);
+        contentTemplateElement.addAttribute("resource-class", ConnectContentTemplateSupplier.class.getName());
 
-        contentTemplateElement.addElement("context-provider")
-                .addAttribute("class", "content-template-context-provider-class"); // TODO
+//        contentTemplateElement.addElement("context-provider")
+//                .addAttribute("class", "content-template-context-provider-class"); // TODO
+
+        //        if(log.isDebugEnabled())
+        log.info(Dom4jUtils.printNode(contentTemplateElement));
 
         final ContentTemplateModuleDescriptor descriptor = new ConnectContentTemplateModuleDescriptor(moduleFactory, i18nBeanFactory, new DefaultLocaleManager());
         descriptor.init(plugin, contentTemplateElement);
