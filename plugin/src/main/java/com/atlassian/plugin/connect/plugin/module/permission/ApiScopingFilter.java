@@ -7,8 +7,8 @@ import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
-import com.atlassian.plugin.connect.spi.event.ScopedRequestEvent;
-import com.atlassian.plugin.connect.spi.event.ScopedRequestFailedEvent;
+import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
+import com.atlassian.plugin.connect.spi.event.ScopedRequestDeniedEvent;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -54,7 +54,7 @@ public class ApiScopingFilter implements Filter
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
             ConsumerService consumerService, WebSudoService webSudoService,
-            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, final EventPublisher eventPublisher)
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
@@ -139,13 +139,13 @@ public class ApiScopingFilter implements Filter
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
                     new Object[]{clientKey, user, req.getMethod(), req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
-            eventPublisher.publish(new ScopedRequestFailedEvent(req.getMethod(), req.getRequestURI()));
+            eventPublisher.publish(new ScopedRequestDeniedEvent(req.getMethod(), req.getRequestURI()));
             return;
         }
         log.info("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
                 new Object[]{clientKey, req.getMethod(), req.getRequestURI(), user});
 
-        eventPublisher.publish(new ScopedRequestEvent(req.getMethod(), req.getRequestURI()));
+        eventPublisher.publish(new ScopedRequestAllowedEvent(req.getMethod(), req.getRequestURI()));
         chain.doFilter(inputConsumingRequest, res);
     }
 

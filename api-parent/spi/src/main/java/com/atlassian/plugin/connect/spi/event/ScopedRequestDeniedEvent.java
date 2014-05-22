@@ -4,10 +4,10 @@ import com.atlassian.analytics.api.annotations.EventName;
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
 @PrivacyPolicySafe
-@EventName ("connect.request.incoming.failed")
-public class ScopedRequestFailedEvent extends ScopedRequestEvent
+@EventName ("connect.request.incoming.denied")
+public class ScopedRequestDeniedEvent extends ScopedRequestEvent
 {
-    public ScopedRequestFailedEvent(String httpMethod, String httpRequestUri)
+    public ScopedRequestDeniedEvent(String httpMethod, String httpRequestUri)
     {
         super(httpMethod, httpRequestUri);
     }

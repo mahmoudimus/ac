@@ -4,8 +4,7 @@ import com.atlassian.analytics.api.annotations.EventName;
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
 @PrivacyPolicySafe
-@EventName ("connect.request.incoming")
-public class ScopedRequestEvent
+public abstract class ScopedRequestEvent
 {
     @PrivacyPolicySafe
     private final String httpMethod;
