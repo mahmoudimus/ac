@@ -1,11 +1,14 @@
 package com.atlassian.plugin.connect.plugin.module.permission;
 
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
+import com.atlassian.plugin.connect.spi.event.ScopedRequestEvent;
+import com.atlassian.plugin.connect.spi.event.ScopedRequestFailedEvent;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -47,15 +50,17 @@ public class ApiScopingFilter implements Filter
     private final WebSudoService webSudoService;
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final String ourConsumerKey;
+    private final EventPublisher eventPublisher;
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
-                            ConsumerService consumerService, WebSudoService webSudoService,
-                            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService)
+            ConsumerService consumerService, WebSudoService webSudoService,
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, final EventPublisher eventPublisher)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
         this.webSudoService = webSudoService;
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
+        this.eventPublisher = eventPublisher;
         this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
 
@@ -134,10 +139,13 @@ public class ApiScopingFilter implements Filter
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
                     new Object[]{clientKey, user, req.getMethod(), req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
+            eventPublisher.publish(new ScopedRequestFailedEvent(req.getMethod(), req.getRequestURI()));
             return;
         }
         log.info("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
                 new Object[]{clientKey, req.getMethod(), req.getRequestURI(), user});
+
+        eventPublisher.publish(new ScopedRequestEvent(req.getMethod(), req.getRequestURI()));
         chain.doFilter(inputConsumingRequest, res);
     }
 
