@@ -82,17 +82,6 @@
                 equal($('#postFunction-config-' + this.uuid).val(), workflowconfig);
             });
 
-
-            // test("getWorkflowConfiguration invokes the callback if provided", function(){
-            //     var WORKFLOW_VALUE = "some workflow",
-            //     callback = sinon.spy();
-
-            //     $('#postFunction-config-' + this.uuid).val(WORKFLOW_VALUE);
-            //     workflowPostFunction.postFunctionConfigInput(this.uuid, callback);
-
-            //     equal(callback.args[0][0], WORKFLOW_VALUE);
-            // });
-
         });
     });
 })();
