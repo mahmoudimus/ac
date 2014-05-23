@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import com.atlassian.analytics.api.annotations.EventName;
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
 @PrivacyPolicySafe

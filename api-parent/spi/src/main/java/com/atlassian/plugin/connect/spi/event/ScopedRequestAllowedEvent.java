@@ -4,7 +4,7 @@ import com.atlassian.analytics.api.annotations.EventName;
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
 @PrivacyPolicySafe
-@EventName ("connect.request.incoming.allowed")
+@EventName ("connect.scoped.request.incoming.allowed")
 public class ScopedRequestAllowedEvent extends ScopedRequestEvent
 {
     public ScopedRequestAllowedEvent(String httpMethod, String httpRequestUri)
