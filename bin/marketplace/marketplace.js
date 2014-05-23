@@ -16,7 +16,8 @@ var downloadQueue = async.queue(function (task, callback) {
     task.executor.apply(task.self || this, args);
 }, 3);
 
-downloadQueue.drain = function () { console.log("all done"); }
+downloadQueue.drain = function () {
+}
 
 var getAddonPage = function(opts, uri, callback) {
     if (opts.debug) {
