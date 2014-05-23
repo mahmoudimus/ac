@@ -5,7 +5,7 @@ Add-ons are essentially web applications that integrate with your Atlassian appl
 * [Create a basic `atlassian-connect.json` descriptor](#descriptor)  
 * [Build an add-on web application: A super simple HTML page](#webapp)  
 * [Start up a locally-running copy of JIRA in OnDemand mode](#runjira)  
-* Install and test your add-on
+* [Install and test your add-on](#install)
 
 By the end, you'll see something like this:  
 
@@ -23,7 +23,9 @@ In this step you'll create a JSON descriptor file. This file describes the add-o
 Your `atlassian-connect.json` file will use a `generalPages` module, and add a link to JIRA's top navigation element titled "Your excellent add-on".
 
 1. Create a project directory for your add-on source files.
-    <pre><code data-lang="text">$ mkdir connect<br>$ cd connect/</code></pre>  
+    <pre><code data-lang="text">
+        $ mkdir connect && cd connect/
+    </code></pre>  
     You'll work in this directory for the duration of this tutorial.
 2. In your project directory, create a new file named `atlassian-connect.json`.
     <pre><code data-lang="text">$ vi atlassian-connect.json</code></pre>
@@ -94,11 +96,9 @@ You'll add two key elements in a single HTML file: a `script src` element, and a
 
 Make sense? Let's get started.  
 
-1. Change to the folder where your `atlassian-connect.json` is located.
-    <pre><code data-lang="text">$ cd connect/</code></pre>
-2. Create the page you referenced in the `url` element in your descriptor file, `helloworld.html`.
+1. In the same directory, create the page you referenced in the `url` element in your descriptor file, `helloworld.html`.
     <pre><code data-lang="text">vi helloworld.html</code></pre>
-3. Add the following content:
+2. Add the following content:
 
     ```
 <!DOCTYPE html>
@@ -124,13 +124,11 @@ since our target application is operating locally as well.
 In our case, we'll use a simple web server that ships with [Python](http://python.org) to serve the
 current directory containing your `atlassian-connect.json` and `helloworld.html` files. 
 
-1. Navigate to the directory containing your `atlassian-connect.json` and `helloworld.html` files.
-    <pre><code data-lang="text">$ cd connect/</code></pre>
-2. Start your server on port 8000:
+1. From the same directory, start your server on port 8000:
      <pre><code data-lang="text">$ python -m SimpleHTTPServer 8000</code></pre>
     The server indicates that it's serving HTTP at the current address and port. You'll see something like this: 
     <tt>Serving HTTP on 0.0.0.0 port 8000 ...</tt> 
-3. Confirm the files you created in steps 1 and 2 are served. Visit:
+2. Confirm the files you created in steps 1 and 2 are served. Visit:
     * <code data-lang="text"><a href="http://localhost:8000/atlassian-connect.json">http://localhost:8000/atlassian-connect.json</a></code>
     * <code data-lang="text"><a href="http://localhost:8000/helloworld.html">http://localhost:8000/helloworld.html</a></code>
 
@@ -142,7 +140,8 @@ You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud i
 
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
     <pre><code data-lang="text">$ atlas-version</code></pre>  
-    You should see something like this: 
+    You should see something like this:  
+
     <tt>
         ATLAS Version:    4.2.20  
         ATLAS Home:       /usr/share/atlassian-plugin-sdk-4.2.20  
@@ -150,13 +149,11 @@ You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud i
         ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven
         ...
     </tt>
-    
-2. Start JIRA in OnDemand mode: 
+  
+2. From a new terminal window, start JIRA in OnDemand mode: 
     <pre><code data-lang="text">$ atlas-run-standalone --product jira --version 6.3-OD-03-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
-    __Note__ If you're not using the command above, ensure all components in the `--bundled-plugins` argument are present in your JIRA instances. These component versions will change as Connect development continues.  
+    __Note:__ If you're not using the command above, ensure all components in the `--bundled-plugins` argument are present in your JIRA instances. These component versions will change as Connect development continues.  
     
-    If you're running Confluence instead (ensure your files are updated accordingly, of course) and issue this command:  
-    <pre><code data-lang="text">$ atlas-run-standalone --product confluence --version 5.5-OD-23-004 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>  
     You'll see a lot of output. When finished, your terminal notifies you that the build was successful:  
     <tt>[INFO] [talledLocalContainer] Tomcat 7.x started on port [2990]  
         [INFO] jira started successfully in 217s at http://localhost:2990/jira  
@@ -165,10 +162,10 @@ You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud i
     </tt>  
 
 3. Navigate to <code data-lang="text"><a href="http://localhost:2990/jira/">http://localhost:2990/jira/</a></code>.
-4. Sign in with the credentials `admin` for username, and `admin` for password.
+4. Sign in with `admin` for your username, and `admin` for your password.
 
 
-## Install your add-on in JIRA
+## <a name="install"></a>Install your add-on in JIRA
 
 This step is straightforward if you've ever used the [Universal Plugin Manager (UPM)](https://confluence.atlassian.com/x/8AJTE) before. You'll navigate to the admin section, and add a link to your descriptor file.
 
@@ -176,28 +173,14 @@ When you install your add-on, JIRA retrieves and registers your `atlassian-conne
 
 1. From JIRA, choose __Cog Menu > Add-ons__ from the top navigation menu. 
 
-    <div class="aui-message ">
-        <p class="title">
-            <span class="aui-icon aui-icon-small aui-iconfont-info"></span>
-            <strong>See a message about base URL problems?</strong>
-        </p>
-        <p>
-            You can update your base URL to reflect <code data-lang="text"><a href="http://localhost:2990/jira/">http://localhost:2990/jira/</a></code>.
-        </p>
-        <p>
-            Choose __System > General Configuration > Edit Configuration__ from the admin screen. Ensure your browser URL, base URL, and `helloworld.html` hostname all match.
-        </p>
-        <p>
-            Learn more about [base URL problems](https://confluence.atlassian.com/x/FgNTE).
-        </p>
-    </div>
+    __Note:__ If you see a message about [base URL problems](https://confluence.atlassian.com/x/FgNTE), choose __System > General Configuration > Edit Configuration__ from the admin screen. Ensure your browser URL, base URL, and `helloworld.html` hostname all match.
     
 2. Click __Manage add-ons__ from the side menu. 
 
 3. Click __Upload Add-on__ from the right side of the page.
 
-4. Insert `http://localhost:8000/atlassian-connect.json`. 
-    This URL should match the hosted location of your `atlassian-connect.json` descriptor file.
+4. Insert `http://localhost:8000/atlassian-connect.json`.  
+     This URL should match the hosted location of your `atlassian-connect.json` descriptor file.
 
 5. Click __Upload__.  
     JIRA displays the *Installed and ready to go* dialog when installation is complete.
@@ -210,10 +193,10 @@ When you install your add-on, JIRA retrieves and registers your `atlassian-conne
 8. Reload the page.
 
 9. Click __Your excellent add-on__ in the application header.  
-    Your __Wow, you look incredible today!__ message appears on the page:  
+    Your message appears on the page:  
 <img src="../assets/images/helloworld-addoninapp.jpeg" width="100%" style="border:1px solid #999;margin-top:10px;" />
 
-## 7. What just happened?
+## What just happened?
 
 
 <div class="diagram">
