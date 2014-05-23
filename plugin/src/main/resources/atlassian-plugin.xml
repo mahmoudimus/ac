@@ -142,6 +142,7 @@
     <web-resource key="messages">
         <resource type="download" name="messages-main.css" location="css/messages/main.css" />
         <resource type="download" name="messages-main.js" location="js/messages/main.js" />
+        <resource type="download" name="messages-rpc.js" location="js/messages/messages-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
