@@ -24,11 +24,11 @@ Your `atlassian-connect.json` file will use a `generalPages` module, and add a l
 
 1. Create a project directory for your add-on source files.
     <pre><code data-lang="text">
-        $ mkdir connect && cd connect/
-    </code></pre>  
+        mkdir connect && cd connect/
+    </code></pre>
     You'll work in this directory for the duration of this tutorial.
 2. In your project directory, create a new file named `atlassian-connect.json`.
-    <pre><code data-lang="text">$ vi atlassian-connect.json</code></pre>
+    <pre><code data-lang="text">vi atlassian-connect.json</code></pre>
 3. Add the following text to the file:
 ```
     {
@@ -50,7 +50,7 @@ Your `atlassian-connect.json` file will use a `generalPages` module, and add a l
                     "url": "/helloworld.html",
                     "key": "hello-world",
                     "name": {
-                        "value": "Your excellent add-on"
+                        "value": "Greeting"
                     }
                 }
             ]
@@ -108,7 +108,8 @@ Make sense? Let's get started.
     </head>
     <body>
         <div class="ac-content">
-            <h1>Wow, you look incredible today!</h1>
+            <h1>Hello world</h1>
+            <img src="http://www.placebear.com/500/500"/>
         </div>
     </body>
 </html>
@@ -125,7 +126,7 @@ In our case, we'll use a simple web server that ships with [Python](http://pytho
 current directory containing your `atlassian-connect.json` and `helloworld.html` files. 
 
 1. From the same directory, start your server on port 8000:
-     <pre><code data-lang="text">$ python -m SimpleHTTPServer 8000</code></pre>
+     <pre><code data-lang="text">python -m SimpleHTTPServer 8000</code></pre>
     The server indicates that it's serving HTTP at the current address and port. You'll see something like this: 
     <tt>Serving HTTP on 0.0.0.0 port 8000 ...</tt> 
 2. Confirm the files you created in steps 1 and 2 are served. Visit:
@@ -139,7 +140,7 @@ You've created the essential components of a Connect add-on: You have an `atlass
 You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud instances) of Atlassian products, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
 
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
-    <pre><code data-lang="text">$ atlas-version</code></pre>  
+    <pre><code data-lang="text">$ atlas-version</code></pre>
     You should see something like this:  
 
     <tt>
@@ -151,7 +152,7 @@ You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud i
     </tt>
   
 2. From a new terminal window, start JIRA in OnDemand mode: 
-    <pre><code data-lang="text">$ atlas-run-standalone --product jira --version 6.3-OD-03-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+    <pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-03-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
     __Note:__ If you're not using the command above, ensure all components in the `--bundled-plugins` argument are present in your JIRA instances. These component versions will change as Connect development continues.  
     
     You'll see a lot of output. When finished, your terminal notifies you that the build was successful:  
@@ -169,7 +170,19 @@ You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud i
 
 This step is straightforward if you've ever used the [Universal Plugin Manager (UPM)](https://confluence.atlassian.com/x/8AJTE) before. You'll navigate to the admin section, and add a link to your descriptor file.
 
-When you install your add-on, JIRA retrieves and registers your `atlassian-connect.json` descriptor. 
+When you install your add-on, JIRA retrieves and registers your `atlassian-connect.json` descriptor. The dance between JIRA and your web app (your add-on) looks a bit like this: 
+
+<div class="diagram">
+participant User
+participant Browser
+participant Add_on_server
+participant JIRA
+User->JIRA: Click 'Greeting'
+JIRA->Browser:JIRA sends back your \nadd-on in an iframe
+Browser->Add_on_server:GET /helloworld.html?signed_request=*
+Add_on_server->Browser:Responds with contents of\n helloworld.html page
+Browser->User:Requested page\nrendered
+</div>
 
 1. From JIRA, choose __Cog Menu > Add-ons__ from the top navigation menu. 
 
@@ -192,24 +205,10 @@ When you install your add-on, JIRA retrieves and registers your `atlassian-conne
     
 8. Reload the page.
 
-9. Click __Your excellent add-on__ in the application header.  
+9. Click __Greeting__ in the application header.  
     Your message appears on the page:  
 <img src="../assets/images/helloworld-addoninapp.jpeg" width="100%" style="border:1px solid #999;margin-top:10px;" />
 
-## What just happened?
-
-
-<div class="diagram">
-participant User
-participant Browser
-participant Add_on_server
-participant OnDemand
-User->OnDemand: View your HTML page
-OnDemand->Browser:OnDemand sends back page\nwith iframe to your addon
-Browser->Add_on_server:GET /helloworld.html?signed_request=*
-Add_on_server->Browser:Responds with contents of\n helloworld.html page
-Browser->User:Requested page\nrendered
-</div>
 
 ## 8. What's next?
 
