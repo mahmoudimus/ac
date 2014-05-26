@@ -68,7 +68,7 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
         }
         else
         {
-            log.debug("Could not remove application link for {}", key);
+            log.debug("application link for {} does not exist", key);
         }
     }
 }
