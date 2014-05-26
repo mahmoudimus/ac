@@ -26,8 +26,14 @@
         <url-pattern>/atlassian-connect/docs*</url-pattern>
     </servlet-filter>
 
+    <!-- the 3LA filter needs to run after the JWT filter (to read attributes on the request) and before the ApiScopingFilter (to set the principal) -->
+    <servlet-filter key="three-legged-auth-filter" class="com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthFilter"
+            location="after-encoding" weight="10000">
+        <url-pattern>/*</url-pattern>
+    </servlet-filter>
+
     <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
-            location="before-decoration">
+            location="before-decoration" weight="200">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
