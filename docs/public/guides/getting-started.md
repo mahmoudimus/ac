@@ -1,6 +1,6 @@
 # Getting Started
 
-Add-ons are essentially web applications that integrate with your Atlassian applications. In this tutorial, you'll turn a simple HTML page (a web application, for the sake of illustration) into an Atlassian Connect add-on. You'll install it in a local running copy of JIRA in OnDemand mode. This tutorial shows you a basic preview of the Connect framework and how it interacts with Atlassian applications. Here's what you'll accomplish: 
+Add-ons are essentially web applications that integrate with your Atlassian applications. In this tutorial, you'll turn a simple HTML page (a web application, for the sake of illustration) into an Atlassian Connect add-on. You'll install it in a local running copy of JIRA in OnDemand mode. This Hello World tutorial shows you a basic preview of the Connect framework. Here's what you'll accomplish: 
 
 * [Create a basic `atlassian-connect.json` descriptor](#descriptor)  
 * [Build an add-on web application: A super simple HTML page](#webapp)  
@@ -16,7 +16,7 @@ __Note__: To complete this tutorial, you'll need the [Atlassian SDK](https://dev
 
 ## <a name="descriptor"></a>Create the add-on descriptor (`atlassian-connect.json`)
 
-In this step you'll create a JSON descriptor file. This file describes the add-on to the Atlassian application, which is JIRA in this tutorial. Your descriptor specifies your add-on's key, name, permissions needed to operate, and the different modules it uses for integration. 
+In this step you'll create a JSON descriptor file. This file describes your add-on to the Atlassian application, which in this case is JIRA OnDemand. Your descriptor specifies your add-on's key, name, permissions needed to operate, and the different modules it uses for integration. 
 
 Your `atlassian-connect.json` file will use a `generalPages` module, and add a link to JIRA's top navigation element titled "Greeting".
 
@@ -62,7 +62,7 @@ Your `atlassian-connect.json` file will use a `generalPages` module, and add a l
 
 Now, you're ready to create the web app. You'll use a simple, old-fashioned HTML page as an "app" to demonstrate how Connect integrates with your application. While a static HTML page doesn't represent a typical add-on, it's not that far off either. Just a few components turn any web application into an Atlassian Connect add-on.
 
-You'll use two key components in a single HTML file: a `script src` element, and an `ac-content` wrapper class. 
+You'll add two key pieces to an HTML file: a `script src` element, and an `ac-content` wrapper class. 
 
 <table class="aui">
     <thead>
@@ -79,7 +79,7 @@ You'll use two key components in a single HTML file: a `script src` element, and
                 This element is comprised of 3 values pointing toward `all.js`, formatted as `"//HOSTNAME:PORT/CONTEXT/atlassian-connect/all.js"`. Let's look at the components:
                 </p>
                 <ul>
-                    <li>`HOSTNAME`: The hostname for the Atlassian application. Here, we use `localhost` for the sake of simplicity.</li>
+                    <li>`HOSTNAME`: The hostname for the Atlassian application. Here, you'll use `localhost` for the sake of simplicity.</li>
                     <li>`PORT`: The port number on which the Atlassian application serves its web interface. JIRA uses port 2990, and Confluence uses 1990.</li>
                     <li>`CONTEXT`: The application context for the application, such as `/jira` or `/confluence`.</li>
                     <li>`all.js`: This file is available in any Atlassian application that supports Connect. This [Javascript API library](../concepts/javascript-api.html) provides functions you can use for your add-on. In this case, it enables iframe resizing for the JIRA page that displays your add-on.</li>
@@ -91,9 +91,9 @@ You'll use two key components in a single HTML file: a `script src` element, and
     </tbody>
 </table>  
 
-Simple enough, right? Let's keep going:  
+From the same project directory: 
 
-1. In the same directory, create the page you referenced in the `url` element in your descriptor file, `helloworld.html`.
+1. Create the page you referenced in the `url` element in your descriptor file, `helloworld.html`.
     <pre><code data-lang="text">vi helloworld.html</code></pre>
 2. Add the following content:
 
@@ -117,11 +117,11 @@ Simple enough, right? Let's keep going:
 
 ## <a name="start-addon-host" id="start-addon-host"></a> Start your add-on
 
-That's it as far as coding goes. The next step is to make the files you created available on a web
-server. The options for accomplishing this are many, but this example we'll serve the file locally,
+That's it as far as coding goes. The next step is to make your files available on a web
+server. There are many ways to do this, but in this example we'll serve the file locally,
 since our target application is also operating locally.
 
-In our case, we'll use a simple web server that ships with [Python](http://python.org) to serve the
+You'll use a simple web server that ships with [Python](http://python.org) to serve the
 current directory containing your `atlassian-connect.json` and `helloworld.html` files. 
 
 1. From the same directory, start your server on port 8000:
@@ -134,7 +134,7 @@ current directory containing your `atlassian-connect.json` and `helloworld.html`
 
 ## <a name="runjira"></a>Start JIRA OnDemand using the Atlassian SDK
 
-You've created the essential components of a Connect add-on: You have an `atlassian-connect.json` descriptor file to communicate what your add-on does to JIRA, and a web application (`helloworld.html`) running on a local server. Now, you need to start up JIRA to install your add-on. 
+You've created the essential components of a Connect add-on: an `atlassian-connect.json` descriptor file to communicate what your add-on does to JIRA, and a web application (`helloworld.html`) running on a local server. Now, you need to start JIRA to install your add-on. 
 
 You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud instances) of Atlassian products, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
 
