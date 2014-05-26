@@ -1,6 +1,6 @@
 # Getting Started
 
-Add-ons are essentially web applications that integrate with your Atlassian applications. In this tutorial, you'll turn a simple HTML page (a web application, for the sake of illustration) into an Atlassian Connect add-on. You'll install it in a local running copy of JIRA in OnDemand mode. This tutorial is meant to show you a very basic preview of the Connect framework, and how it interacts with Atlassian applications. By completion, you will: 
+Add-ons are essentially web applications that integrate with your Atlassian applications. In this tutorial, you'll turn a simple HTML page (a web application, for the sake of illustration) into an Atlassian Connect add-on. You'll install it in a local running copy of JIRA in OnDemand mode. This tutorial shows you a basic preview of the Connect framework and how it interacts with Atlassian applications. Here's what you'll accomplish: 
 
 * [Create a basic `atlassian-connect.json` descriptor](#descriptor)  
 * [Build an add-on web application: A super simple HTML page](#webapp)  
@@ -9,18 +9,16 @@ Add-ons are essentially web applications that integrate with your Atlassian appl
 
 By the end, you'll see something like this:  
 
-<img src="../assets/images/helloworld-addoninapp.jpeg" width="80%" style="border:1px solid #999;margin-top:10px;" />
+<img src="../assets/images/helloworld-inapp.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
-__Note__: You can complete this tutorial even if you've never built an add-on before. 
-
-You'll need the [Atlassian SDK](https://developer.atlassian.com/display/DOCS/Downloads) installed and ready to go.  
+__Note__: To complete this tutorial, you'll need the [Atlassian SDK](https://developer.atlassian.com/display/DOCS/Downloads) installed and ready to go. You can build this add-on even if you've never built one before.
 
 
 ## <a name="descriptor"></a>Create the add-on descriptor (`atlassian-connect.json`)
 
 In this step you'll create a JSON descriptor file. This file describes the add-on to the Atlassian application, which is JIRA in this tutorial. Your descriptor specifies your add-on's key, name, permissions needed to operate, and the different modules it uses for integration. 
 
-Your `atlassian-connect.json` file will use a `generalPages` module, and add a link to JIRA's top navigation element titled "Your excellent add-on".
+Your `atlassian-connect.json` file will use a `generalPages` module, and add a link to JIRA's top navigation element titled "Greeting".
 
 1. Create a project directory for your add-on source files.
     <pre><code data-lang="text">
@@ -57,15 +55,14 @@ Your `atlassian-connect.json` file will use a `generalPages` module, and add a l
         }
     }
 ```
-4. Save and close the descriptor file.
-
-    You can click __ESC + `:wq`__ to exit and save the file.
+4. Save and close the descriptor file.  
+   You can click __ESC + `:wq`__ to exit and save the file.
 
 ## <a name="webapp"></a>Create a simple web application to stand in as an add-on
 
 Now, you're ready to create the web app. You'll use a simple, old-fashioned HTML page as an "app" to demonstrate how Connect integrates with your application. While a static HTML page doesn't represent a typical add-on, it's not that far off either. Just a few components turn any web application into an Atlassian Connect add-on.
 
-You'll add two key elements in a single HTML file: a `script src` element, and an `ac-content` wrapper class. 
+You'll use two key components in a single HTML file: a `script src` element, and an `ac-content` wrapper class. 
 
 <table class="aui">
     <thead>
@@ -94,7 +91,7 @@ You'll add two key elements in a single HTML file: a `script src` element, and a
     </tbody>
 </table>  
 
-Make sense? Let's get started.  
+Simple enough, right? Let's keep going:  
 
 1. In the same directory, create the page you referenced in the `url` element in your descriptor file, `helloworld.html`.
     <pre><code data-lang="text">vi helloworld.html</code></pre>
@@ -108,8 +105,10 @@ Make sense? Let's get started.
     </head>
     <body>
         <div class="ac-content">
-            <h1>Hello world</h1>
-            <img src="http://www.placebear.com/500/500"/>
+           <h1 align="center">Hi there.</h1>
+           <div align="center">
+              <img src="http://placebear.com/400/400" alt="" />
+           </div>
         </div>
     </body>
 </html>
@@ -120,7 +119,7 @@ Make sense? Let's get started.
 
 That's it as far as coding goes. The next step is to make the files you created available on a web
 server. The options for accomplishing this are many, but this example we'll serve the file locally,
-since our target application is operating locally as well.
+since our target application is also operating locally.
 
 In our case, we'll use a simple web server that ships with [Python](http://python.org) to serve the
 current directory containing your `atlassian-connect.json` and `helloworld.html` files. 
@@ -133,7 +132,7 @@ current directory containing your `atlassian-connect.json` and `helloworld.html`
     * <code data-lang="text"><a href="http://localhost:8000/atlassian-connect.json">http://localhost:8000/atlassian-connect.json</a></code>
     * <code data-lang="text"><a href="http://localhost:8000/helloworld.html">http://localhost:8000/helloworld.html</a></code>
 
-## <a name="runjira"></a>Start JIRA using the Atlassian SDK
+## <a name="runjira"></a>Start JIRA OnDemand using the Atlassian SDK
 
 You've created the essential components of a Connect add-on: You have an `atlassian-connect.json` descriptor file to communicate what your add-on does to JIRA, and a web application (`helloworld.html`) running on a local server. Now, you need to start up JIRA to install your add-on. 
 
@@ -170,7 +169,7 @@ You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud i
 
 This step is straightforward if you've ever used the [Universal Plugin Manager (UPM)](https://confluence.atlassian.com/x/8AJTE) before. You'll navigate to the admin section, and add a link to your descriptor file.
 
-When you install your add-on, JIRA retrieves and registers your `atlassian-connect.json` descriptor. The dance between JIRA and your web app (your add-on) looks a bit like this: 
+When you install your add-on, JIRA retrieves and registers your `atlassian-connect.json` descriptor. The interaction between JIRA and your web app (your add-on) looks like this: 
 
 <div class="diagram">
 participant User
@@ -186,7 +185,7 @@ Browser->User:Requested page\nrendered
 
 1. From JIRA, choose __Cog Menu > Add-ons__ from the top navigation menu. 
 
-    __Note:__ If you see a message about [base URL problems](https://confluence.atlassian.com/x/FgNTE), choose __System > General Configuration > Edit Configuration__ from the admin screen. Ensure your browser URL, base URL, and `helloworld.html` hostname all match.
+    __Note:__ If you see a message about [base URL problems](https://confluence.atlassian.com/x/FgNTE), choose __System > General Configuration > Edit Configuration__ from the admin screen. Ensure your browser URL, base URL, and `helloworld.html` hostname match.
     
 2. Click __Manage add-ons__ from the side menu. 
 
@@ -207,30 +206,32 @@ Browser->User:Requested page\nrendered
 
 9. Click __Greeting__ in the application header.  
     Your message appears on the page:  
-<img src="../assets/images/helloworld-addoninapp.jpeg" width="100%" style="border:1px solid #999;margin-top:10px;" />
+<img src="../assets/images/helloworld-inapp-final.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
 
-## 8. What's next?
+## What's next?
 
-For most Atlassian Connect add-ons, the next step is to add code that relies
-on the Atlassian application REST APIs. This requires implementing the
-[authentication](../concepts/authentication.html) used between Atlassian applications and Atlassian
-Connect add-ons. For an overview of authentication and authorization, take a look at our [security concepts](../concepts/security.html).
+This tutorial taught you the basic architecture of a Connect add-on, but the next step is to add some functionality and handle [authentication](../concepts/authentication.html).
 
-You can do this using any language or framework that you want, and many languages already provide
-libraries to help you with implement JWT authentication.
+You can add functionality using the [Atlassian REST APIs](https://developer.atlassian.com/x/K4BpAQ). [Authentication](../concepts/authentication.html) manages the handshake between your app and the Atlassian host application. You can also read about our [security concepts](../concepts/security.html) for more information.
 
-We've written two example implementations, one in Java and one in Javascript. These tools can help
-by generating some of the plumbing required.
+### Example add-ons
+
+We have a few [sample applications](../resources/samples.html) you can reference. These example add-ons demonstrate
+authentication and many other patterns you can use to develop your own add-ons.
+
+### Tools to help you develop
+
+We've written two example tools, one in Java and one in Javascript. These tools help generate some of the plumbing 
+required for your Connect add-on:
 
  * [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
  * [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express)
 
-Also, take a look at our [sample applications](../resources/samples.html). These samples demonstrate
-authentication and many other patterns you can use to develop your own Connect add-ons.
+### Connect communication channels
 
-##Tabled for now
-To find out about new version updates,
-subscribe to the Atlassian Connect [mailing
-list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev), and keep your eye
+Subscribe to the Atlassian Connect [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev), and keep your eye
 on Atlassian Connect [blog posts](https://developer.atlassian.com/display/AC/Atlassian+Connect).
+
+
+
