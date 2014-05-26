@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
@@ -21,25 +22,26 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 //TODO: Just delete this class
 @RunWith(AtlassianPluginsTestRunner.class)
 public class OAuthDeletionFailTest
 {
-    private static final Logger LOG = LoggerFactory.getLogger(OAuthDeletionFailTest.class);
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
-    private final ConnectAddonRegistry connectAddonRegistry;
-    private final AddonTestFilterResults testFilterResults;
+    private final ConnectApplinkManager applinkManager;
     private Plugin oAuthPlugin;
     private ConnectAddonBean oAuthAddOnBean;
 
-    public OAuthDeletionFailTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, ConnectAddonRegistry connectAddonRegistry, AddonTestFilterResults testFilterResults)
+    public OAuthDeletionFailTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
+                                 ConnectApplinkManager applinkManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
-        this.connectAddonRegistry = connectAddonRegistry;
-        this.testFilterResults = testFilterResults;
+        this.applinkManager = applinkManager;
     }
 
     @BeforeClass
@@ -47,20 +49,19 @@ public class OAuthDeletionFailTest
     {
         oAuthAddOnBean = createOAuthAddOnBean();
 
-        //you MUST login as admin before you can use the testPluginInstaler
+        //you MUST login as admin before you can use the testPluginInstaller
         testAuthenticator.authenticateUser("admin");
 
         oAuthPlugin = testPluginInstaller.installAddon(oAuthAddOnBean);
     }
 
     @Test
-    public void badData() throws Exception
+    public void testUninstallWhenUnauthenticated() throws Exception
     {
-        System.out.println("i installed something");
-
+        assertNotNull(applinkManager.getAppLink(oAuthAddOnBean.getKey()));
         testAuthenticator.unauthenticate();
         testPluginInstaller.uninstallPlugin(oAuthPlugin);
-
+        assertNull(applinkManager.getAppLink(oAuthAddOnBean.getKey()));
     }
 
     private ConnectAddonBean createOAuthAddOnBean()
