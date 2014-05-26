@@ -40,7 +40,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
-@JiraComponent
+@JiraComponent // Confluence is handled separately in FixedConfluenceApplinkManager
 public class DefaultConnectApplinkManager implements ConnectApplinkManager
 {
     public static final String PLUGIN_KEY_PROPERTY = JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME;

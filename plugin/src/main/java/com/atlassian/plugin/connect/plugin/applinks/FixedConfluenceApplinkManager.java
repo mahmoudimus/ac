@@ -25,12 +25,16 @@ import org.slf4j.LoggerFactory;
 public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager implements ConnectApplinkManager
 {
     private static final Logger log = LoggerFactory.getLogger(FixedConfluenceApplinkManager.class);
-    public static final String SYSADMIN = "sysadmin";
+    private final com.atlassian.confluence.security.PermissionManager confluencePermissionManager;
 
     @Inject
-    public FixedConfluenceApplinkManager(MutatingApplicationLinkService applicationLinkService, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager, TransactionTemplate transactionTemplate)
+    public FixedConfluenceApplinkManager(MutatingApplicationLinkService applicationLinkService, TypeAccessor typeAccessor,
+                                         PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager,
+                                         PermissionManager permissionManager, TransactionTemplate transactionTemplate,
+                                         com.atlassian.confluence.security.PermissionManager confluencePermissionManager)
     {
         super(applicationLinkService, typeAccessor, pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
+        this.confluencePermissionManager = confluencePermissionManager;
     }
 
     @Override
@@ -48,30 +52,16 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
                 {
                     log.info("Removing application link for {}", key);
 
-                    try
+                    confluencePermissionManager.withExemption(new Runnable()
                     {
-                        applicationLinkService.deleteApplicationLink(link);
-                        return null;
-                    }
-                    catch (IllegalArgumentException e)
-                    {
-                        //try again as sysadmin
-                        ConfluenceUser originalUser = null;
-                        try
+                        @Override
+                        public void run()
                         {
-                            originalUser = AuthenticatedUserThreadLocal.get();
-                            
-                            ConfluenceUser user = FindUserHelper.getUserByUsername(SYSADMIN);
-                            AuthenticatedUserThreadLocal.set(user);
                             applicationLinkService.deleteApplicationLink(link);
-                            
-                            return null;
                         }
-                        finally
-                        {
-                            AuthenticatedUserThreadLocal.set(originalUser);
-                        }
-                    }
+                    });
+
+                    return null;
                 }
 
             } );
