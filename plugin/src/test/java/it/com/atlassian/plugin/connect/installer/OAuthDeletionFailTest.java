@@ -8,18 +8,16 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import it.com.atlassian.plugin.connect.TestAuthenticator;
 
 //TODO: Just delete this class
 @RunWith(AtlassianPluginsTestRunner.class)
@@ -50,7 +48,7 @@ public class OAuthDeletionFailTest
         //you MUST login as admin before you can use the testPluginInstaler
         testAuthenticator.authenticateUser("admin");
 
-        oAuthPlugin = testPluginInstaller.installPlugin(oAuthAddOnBean);
+        oAuthPlugin = testPluginInstaller.installAddon(oAuthAddOnBean);
     }
 
     @Test
