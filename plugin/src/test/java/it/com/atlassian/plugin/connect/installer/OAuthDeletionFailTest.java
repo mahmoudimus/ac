@@ -6,8 +6,10 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
@@ -55,7 +57,7 @@ public class OAuthDeletionFailTest
     public void badData() throws Exception
     {
         System.out.println("i installed something");
-        
+
         testAuthenticator.unauthenticate();
         testPluginInstaller.uninstallPlugin(oAuthPlugin);
 
@@ -86,6 +88,12 @@ public class OAuthDeletionFailTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
                 .withAuthentication(authenticationBean)
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+                .withModule("generalPages", ConnectPageModuleBean.newPageBean()
+                                .withKey("foo")
+                                .withName(new I18nProperty("daName", "The Name"))
+                                .withUrl("/foo")
+                                .build()
+                )
                 .build();
     }
 }
