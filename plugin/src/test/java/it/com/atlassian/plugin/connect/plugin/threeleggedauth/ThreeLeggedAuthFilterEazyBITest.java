@@ -103,6 +103,82 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
         assertEquals(401, issueRequest(createUriForInactiveSubject()));
     }
 
+    // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
+    @Test
+    public void noSubjectIsOk() throws IOException, NoSuchAlgorithmException
+    {
+        assertEquals(200, issueRequest(createRequestUri(null)));
+    }
+
+    // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
+    @Test
+    public void noSubjectImpliesAddOnUser() throws IOException, NoSuchAlgorithmException
+    {
+        issueRequest(createRequestUri(null));
+        assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUserKey());
+    }
+
+    // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
+    @Test
+    public void noSubjectImpliesNoSubjectAttribute() throws IOException, NoSuchAlgorithmException
+    {
+        issueRequest(createRequestUri(null));
+        assertEquals(null, getSubjectFromRequestAttribute(getCapturedRequest()));
+    }
+
+    // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
+    @Test
+    public void noSubjectResultsInAddOnAttribute() throws IOException, NoSuchAlgorithmException
+    {
+        issueRequest(createRequestUri(null));
+        assertEquals(addOnBean.getKey(), getAddOnIdFromRequestAttribute(getCapturedRequest()));
+    }
+
+    // if this is not a request from a JWT add-on then the request proceeds through the filter chain
+    @Test
+    public void nonJwtRequestsAreOk() throws IOException
+    {
+        assertEquals(200, issueRequest(createRequestUriWithoutJwt()));
+    }
+
+    // if this is not a request from a JWT add-on then the request proceeds through the filter chain
+    @Test
+    public void nonJwtRequestsHasNoRemoteUser() throws IOException
+    {
+        issueRequest(createRequestUriWithoutJwt());
+        assertEquals(null, getCapturedRequest().getRemoteUserKey());
+    }
+
+    // if this is not a request from a JWT add-on then the request proceeds through the filter chain
+    @Test
+    public void nonJwtRequestsHaveNoSubjectAttribute() throws IOException
+    {
+        issueRequest(createRequestUriWithoutJwt());
+        assertEquals(null, getSubjectFromRequestAttribute(getCapturedRequest()));
+    }
+
+    // if this is not a request from a JWT add-on then the request proceeds through the filter chain
+    @Test
+    public void nonJwtRequestshaveNoAddOnAttribute() throws IOException
+    {
+        issueRequest(createRequestUriWithoutJwt());
+        assertEquals(null, getAddOnIdFromRequestAttribute(getCapturedRequest()));
+    }
+
+    // if the specified add-on does not exist then the request is rejected
+    @Test
+    public void aNonExistentAddOnIsRejected() throws IOException, NoSuchAlgorithmException
+    {
+        assertEquals(401, issueRequest(createRequestUri(SUBJECT_USERNAME, "non-existent add-on key")));
+    }
+
+    @Test
+    public void emptySubjectResultsInError() throws IOException, NoSuchAlgorithmException
+    {
+        assertEquals(400, issueRequest(createRequestUri("")));
+    }
+
+
     private void grant3LA()
     {
         // this doesn't work as system property only checked on start up so setting it here is too late
