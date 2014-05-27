@@ -53,8 +53,6 @@ public class WebItemModuleProviderTest
     public static final String BASE_URL = "https://my.connect.addon.com";
     public static final String VELOCITY_LABEL = "My $var is ${awesome}";
     public static final String VELOCITY_TOOLTIP = "My tooltip $var is ${awesome}";
-    public static final String VELOCITY_LABEL_KILLED = "My \\$var is \\${awesome}";
-    public static final String VELOCITY_TOOLTIP_KILLED = "My tooltip \\$var is \\${awesome}";
 
     private final WebItemModuleProvider webItemModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
@@ -434,9 +432,9 @@ public class WebItemModuleProviderTest
             String label = descriptor.getWebLabel().getDisplayableLabel(servletRequest,vars);
             String tooltip = descriptor.getTooltip().getDisplayableLabel(servletRequest,vars);
             
-            
-            assertEquals(VELOCITY_LABEL_KILLED, label);
-            assertEquals(VELOCITY_TOOLTIP_KILLED, descriptor.getTooltip().getDisplayableLabel(servletRequest,vars));
+            //by the time we get the displayable label, it's already gone through velocity and so we get the literal variables non-escaped.
+            assertEquals(VELOCITY_LABEL, label);
+            assertEquals(VELOCITY_TOOLTIP, descriptor.getTooltip().getDisplayableLabel(servletRequest,vars));
 
         }
         finally
