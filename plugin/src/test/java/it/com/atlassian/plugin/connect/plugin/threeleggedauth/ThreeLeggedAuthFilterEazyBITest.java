@@ -9,6 +9,7 @@ import com.atlassian.crowd.exception.InvalidUserException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
@@ -178,6 +179,95 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
         assertEquals(400, issueRequest(createRequestUri("")));
     }
 
+    @Test
+    public void impersonationSetAndNo3LAIsOk() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        assertEquals(200, issueRequest(createRequestUri(SUBJECT_USERNAME)));
+    }
+
+    @Test
+    public void impersonationSetAndNo3LAImpliesThatTheSubjectIsTheAssignedUser() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        issueRequest(createRequestUri(SUBJECT_USERNAME));
+        assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUserKey());
+    }
+
+    @Test
+    public void impersonationSetAndNo3LAImpliesThatTheSubjectAttributeIsSet() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        issueRequest(createRequestUri(SUBJECT_USERNAME));
+        assertEquals(SUBJECT_USERNAME, getSubjectFromRequestAttribute(getCapturedRequest()));
+    }
+
+    @Test
+    public void impersonationSetAndNo3LAImpliesThatTheAddOnAttributeIsSet() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        issueRequest(createRequestUri(SUBJECT_USERNAME));
+        assertEquals(addOnBean.getKey(), getAddOnIdFromRequestAttribute(getCapturedRequest()));
+    }
+
+    @Test
+    public void impersonationSetButNonExistentAddOnResultsInError() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        assertEquals(401, issueRequest(createRequestUri(SUBJECT_USERNAME, "non-existent-add-on")));
+    }
+
+    @Test
+    public void impersonationSetButNoSubjectIsOk() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        assertEquals(200, issueRequest(createRequestUri(null)));
+    }
+
+    @Test
+    public void impersonationSetButNoSubjectResultsInAssignmentToTheAddOnUser() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        issueRequest(createRequestUri(null));
+        assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUserKey());
+    }
+
+    @Test
+    public void impersonationSetButNoSubjectResultsInNoSubjectAttribute() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        issueRequest(createRequestUri(null));
+        assertEquals(null, getSubjectFromRequestAttribute(getCapturedRequest()));
+    }
+
+    @Test
+    public void impersonationSetButNoSubjectResultsInAddOnAttribute() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        issueRequest(createRequestUri(null));
+        assertEquals(addOnBean.getKey(), getAddOnIdFromRequestAttribute(getCapturedRequest()));
+    }
+
+    @Test
+    public void impersonationSetButEmptySubjectResultsInError() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        assertEquals(400, issueRequest(createRequestUri("")));
+    }
+
+    @Test
+    public void impersonationSetButNonExistentSubjectResultsInError() throws IOException, NoSuchAlgorithmException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        assertEquals(401, issueRequest(createRequestUri("non-existent-user")));
+    }
+
+    @Test
+    public void impersonationSetButInactiveSubjectResultsInError() throws IOException, NoSuchAlgorithmException, OperationFailedException, ApplicationPermissionException, InvalidCredentialException, InvalidUserException
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        assertEquals(401, issueRequest(createUriForInactiveSubject()));
+    }
 
     private void grant3LA()
     {
