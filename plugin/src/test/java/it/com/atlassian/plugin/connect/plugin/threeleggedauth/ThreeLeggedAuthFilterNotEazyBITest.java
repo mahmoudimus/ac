@@ -26,19 +26,19 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBase
+public class ThreeLeggedAuthFilterNotEazyBITest extends ThreeLeggedAuthFilterTestBase
 {
     private static final String ADD_ON_KEYS_SYS_PROP = "com.atlassian.connect.3la.authorised_add_on_keys";
 
-    public ThreeLeggedAuthFilterEazyBITest(TestPluginInstaller testPluginInstaller,
-                                           TestAuthenticator testAuthenticator,
-                                           AddonTestFilterResults testFilterResults,
-                                           JwtWriterFactory jwtWriterFactory,
-                                           ConnectAddonRegistry connectAddonRegistry,
-                                           ApplicationProperties applicationProperties,
-                                           ThreeLeggedAuthService threeLeggedAuthService,
-                                           ApplicationService applicationService,
-                                           ApplicationManager applicationManager)
+    public ThreeLeggedAuthFilterNotEazyBITest(TestPluginInstaller testPluginInstaller,
+                                              TestAuthenticator testAuthenticator,
+                                              AddonTestFilterResults testFilterResults,
+                                              JwtWriterFactory jwtWriterFactory,
+                                              ConnectAddonRegistry connectAddonRegistry,
+                                              ApplicationProperties applicationProperties,
+                                              ThreeLeggedAuthService threeLeggedAuthService,
+                                              ApplicationService applicationService,
+                                              ApplicationManager applicationManager)
     {
         super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationManager);
     }
@@ -68,18 +68,18 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     }
 
     @Test
-    public void authorisedUserAgencyIsAllowed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
+    public void specifyingSubjectIsAllowed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
         grant3LA();
         assertEquals(200, issueRequest(createRequestUri(SUBJECT_USERNAME)));
     }
 
     @Test
-    public void authorisedUserAgencyHasSubjectAsRemoteUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
+    public void specifiedSubjectIsIgnoredAndAddonUserIsUsed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
         grant3LA();
         issueRequest(createRequestUri(SUBJECT_USERNAME));
-        assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUserKey());
+        assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUserKey());
     }
 
     @Test
@@ -88,20 +88,6 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
         grant3LA();
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(SUBJECT_USERNAME, getSubjectFromRequestAttribute(getCapturedRequest()));
-    }
-
-    @Test
-    public void cannotActForANonExistentUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException, OperationFailedException, ApplicationPermissionException
-    {
-        ensureUserDoesNotExist(NON_EXISTENT_USERNAME);
-        assertEquals(401, issueRequest(createRequestUri(NON_EXISTENT_USERNAME)));
-    }
-
-    // if the add-on requests the USER_AGENCY scope, specifies a subject and the subject is inactive then the request is rejected
-    @Test
-    public void cannotActForAnInactiveUser() throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, IOException, NoSuchAlgorithmException
-    {
-        assertEquals(401, issueRequest(createUriForInactiveSubject()));
     }
 
     // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
@@ -179,105 +165,10 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
         assertEquals(400, issueRequest(createRequestUri("")));
     }
 
-    @Test
-    public void impersonationSetAndNo3LAIsOk() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        assertEquals(200, issueRequest(createRequestUri(SUBJECT_USERNAME)));
-    }
-
-    @Test
-    public void impersonationSetAndNo3LAImpliesThatTheSubjectIsTheAssignedUser() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        issueRequest(createRequestUri(SUBJECT_USERNAME));
-        assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUserKey());
-    }
-
-    @Test
-    public void impersonationSetAndNo3LAImpliesThatTheSubjectAttributeIsSet() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        issueRequest(createRequestUri(SUBJECT_USERNAME));
-        assertEquals(SUBJECT_USERNAME, getSubjectFromRequestAttribute(getCapturedRequest()));
-    }
-
-    @Test
-    public void impersonationSetAndNo3LAImpliesThatTheAddOnAttributeIsSet() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        issueRequest(createRequestUri(SUBJECT_USERNAME));
-        assertEquals(addOnBean.getKey(), getAddOnIdFromRequestAttribute(getCapturedRequest()));
-    }
-
-    @Test
-    public void impersonationSetButNonExistentAddOnResultsInError() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        assertEquals(401, issueRequest(createRequestUri(SUBJECT_USERNAME, "non-existent-add-on")));
-    }
-
-    @Test
-    public void impersonationSetButNoSubjectIsOk() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        assertEquals(200, issueRequest(createRequestUri(null)));
-    }
-
-    @Test
-    public void impersonationSetButNoSubjectResultsInAssignmentToTheAddOnUser() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        issueRequest(createRequestUri(null));
-        assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUserKey());
-    }
-
-    @Test
-    public void impersonationSetButNoSubjectResultsInNoSubjectAttribute() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        issueRequest(createRequestUri(null));
-        assertEquals(null, getSubjectFromRequestAttribute(getCapturedRequest()));
-    }
-
-    @Test
-    public void impersonationSetButNoSubjectResultsInAddOnAttribute() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        issueRequest(createRequestUri(null));
-        assertEquals(addOnBean.getKey(), getAddOnIdFromRequestAttribute(getCapturedRequest()));
-    }
-
-    @Test
-    public void impersonationSetButEmptySubjectResultsInError() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        assertEquals(400, issueRequest(createRequestUri("")));
-    }
-
-    @Test
-    public void impersonationSetButNonExistentSubjectResultsInError() throws IOException, NoSuchAlgorithmException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        assertEquals(401, issueRequest(createRequestUri("non-existent-user")));
-    }
-
-    @Test
-    public void impersonationSetButInactiveSubjectResultsInError() throws IOException, NoSuchAlgorithmException, OperationFailedException, ApplicationPermissionException, InvalidCredentialException, InvalidUserException
-    {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
-        assertEquals(401, issueRequest(createUriForInactiveSubject()));
-    }
-
     private void grant3LA()
     {
         // this doesn't work as system property only checked on start up so setting it here is too late
 //        System.setProperty(ADD_ON_KEYS_SYS_PROP, addOnBean.getKey());
     }
 
-    @Override
-    protected String getAddonKey()
-    {
-        return "com.eazybi.atlassian-connect.eazybi-jira";
-    }
 }

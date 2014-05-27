@@ -233,11 +233,10 @@ public abstract class ThreeLeggedAuthFilterTestBase
 
     private ConnectAddonBean createAddOnBean(ScopeName scope)
     {
-//        final String addOnKey = getClass().getSimpleName() + '-' + System.currentTimeMillis();
-        final String addOnKey = "com.eazybi.atlassian-connect.eazybi-jira";
+        final String addonKey = getAddonKey();
         return newConnectAddonBean()
-                .withKey(addOnKey)
-                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addOnKey))
+                .withKey(addonKey)
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .withName(getClass().getSimpleName())
                 .withScopes(ImmutableSet.of(scope))
                 .withAuthentication(newAuthenticationBean()
@@ -252,5 +251,10 @@ public abstract class ThreeLeggedAuthFilterTestBase
                         .withName(new I18nProperty("Greeting", "greeting"))
                         .build())
                 .build();
+    }
+
+    protected String getAddonKey()
+    {
+        return getClass().getSimpleName() + '-' + System.currentTimeMillis();
     }
 }
