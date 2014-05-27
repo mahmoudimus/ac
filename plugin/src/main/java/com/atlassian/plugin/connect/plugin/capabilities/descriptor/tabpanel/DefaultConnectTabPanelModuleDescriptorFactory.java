@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
-import com.atlassian.plugin.connect.modules.util.VelocityKiller;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;

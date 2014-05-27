@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
-import com.atlassian.plugin.connect.modules.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.module.websection.ProductSpecificWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;

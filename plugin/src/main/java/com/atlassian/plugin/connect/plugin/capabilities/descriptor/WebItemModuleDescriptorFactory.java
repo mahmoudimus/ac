@@ -4,7 +4,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.modules.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;

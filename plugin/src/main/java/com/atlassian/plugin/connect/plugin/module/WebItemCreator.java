@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
