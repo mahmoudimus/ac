@@ -44,7 +44,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
         return ScopeName.READ;
     }
 
-    @Test
+//    @Test
     public void pleaseImplementMe()
     {
         /* suggested tests:
@@ -87,7 +87,8 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
 
     private void grant3LA()
     {
-        System.setProperty(ADD_ON_KEYS_SYS_PROP, addOnBean.getKey());
+        // this doesn't work as system property only checked on start up so setting it here is too late
+//        System.setProperty(ADD_ON_KEYS_SYS_PROP, addOnBean.getKey());
     }
 
 
