@@ -3,6 +3,10 @@ package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.InvalidCredentialException;
+import com.atlassian.crowd.exception.InvalidUserException;
+import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.writer.JwtWriterFactory;
@@ -83,6 +87,20 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
         grant3LA();
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(SUBJECT_USERNAME, getSubjectFromRequestAttribute(getCapturedRequest()));
+    }
+
+    @Test
+    public void cannotActForANonExistentUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException, OperationFailedException, ApplicationPermissionException
+    {
+        ensureUserDoesNotExist(NON_EXISTENT_USERNAME);
+        assertEquals(401, issueRequest(createRequestUri(NON_EXISTENT_USERNAME)));
+    }
+
+    // if the add-on requests the USER_AGENCY scope, specifies a subject and the subject is inactive then the request is rejected
+    @Test
+    public void cannotActForAnInactiveUser() throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, IOException, NoSuchAlgorithmException
+    {
+        assertEquals(401, issueRequest(createUriForInactiveSubject()));
     }
 
     private void grant3LA()
