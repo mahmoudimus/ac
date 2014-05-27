@@ -58,7 +58,7 @@ Your `atlassian-connect.json` file will use a `generalPages` module, and add a l
     }
 ```
 4. Save and close the descriptor file.  
-   __ESC + `:wq`__ from your keyboard to exit and save the file.
+   __ESC + :wq__ from your keyboard to exit and save the file.
 
 ## <a name="webapp"></a>Create a simple web application to stand in as an add-on
 
@@ -75,19 +75,19 @@ You'll add two key pieces to an HTML file: a `script src` element, and an `ac-co
     </thead>
     <tbody>
         <tr>
-            <td>__`script src`__</td>
+            <td><strong><tt>script src</tt></strong></td>
             <td>
-                <p>
-                This element is comprised of 3 values pointing toward `all.js`, formatted as `"//HOSTNAME:PORT/CONTEXT/atlassian-connect/all.js"`. Let's look at the components:
+                <p>                
+                This element is comprised of 3 values pointing toward <tt>all.js</tt>, formatted as <tt>//HOSTNAME:PORT/CONTEXT/atlassian-connect/all.js</tt>. Let's look at the components:
                 </p>
                 <ul>
-                    <li>`HOSTNAME`: The hostname for the Atlassian application. Here, you'll use `localhost` for the sake of simplicity.</li>
-                    <li>`PORT`: The port number on which the Atlassian application serves its web interface. JIRA uses port 2990, and Confluence uses 1990.</li>
-                    <li>`CONTEXT`: The application context for the application, such as `/jira` or `/confluence`.</li>
-                    <li>`all.js`: This file is available in any Atlassian application that supports Connect. This [Javascript API library](../concepts/javascript-api.html) provides functions you can use for your add-on. In this case, it enables iframe resizing for the JIRA page that displays your add-on.</li>
+                    <li><tt>HOSTNAME</tt>: The hostname for the Atlassian application. Here, you'll use <tt>localhost</tt> for the sake of simplicity.</li>
+                    <li><tt>PORT</tt>: The port number on which the Atlassian application serves its web interface. JIRA uses port 2990, and Confluence uses 1990.</li>
+                    <li><tt>CONTEXT</tt>: The application context for the application, such as <tt>/jira</tt> or <tt>/confluence</tt>.</li>
+                    <li><tt>all.js</tt>: This file is available in any Atlassian application that supports Connect. This <a href="../concepts/javascript-api.html">Javascript API library</a> provides functions you can use for your add-on. In this case, it enables iframe resizing for the JIRA page that displays your add-on.</li>
         </tr>
         <tr>
-            <td>__`ac-content`__</td>
+            <td><strong><tt>ac-content</tt></strong></td>
             <td>This class wraps the content of your add-on, and dynamically resizes the iframe in JIRA. This keeps your add-on content visible without pesky scrollbars.</td>
         </tr>
     </tbody>
