@@ -1,17 +1,19 @@
 # Getting Started
 
-Add-ons are essentially web applications that integrate with your Atlassian applications. In this tutorial, you'll turn a simple HTML page (a web application, for the sake of illustration) into an Atlassian Connect add-on. You'll install it in a local running copy of JIRA in OnDemand mode. This Hello World tutorial shows you a basic preview of the Connect framework. Here's what you'll accomplish: 
+This Hello World tutorial shows you a basic preview of the Connect framework. Connect add-ons are essentially web applications that integrate with your Atlassian product. In this tutorial, you'll turn a simple web application into an Atlassian Connect add-on. You'll install it in a locally-running copy of JIRA in OnDemand mode, and access your add-on from a link in the header. Your add-on displays as an iframe of your web application. 
+
+Here's what you'll accomplish: 
 
 * [Create a basic `atlassian-connect.json` descriptor](#descriptor)  
 * [Build an add-on web application: A super simple HTML page](#webapp)  
 * [Start up a locally-running copy of JIRA in OnDemand mode](#runjira)  
 * [Install and test your add-on](#install)
 
-By the end, you'll see something like this:  
+By the end, you'll see your web application displayed in an iframe inside of JIRA:  
 
 <img src="../assets/images/helloworld-inapp.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
-__Note__: To complete this tutorial, you'll need the [Atlassian SDK](https://developer.atlassian.com/display/DOCS/Downloads) installed and ready to go. You can build this add-on even if you've never built one before.
+__Note__: This is a beginner tutorial. You can build this add-on even if you've never built one before. You'll need the [Atlassian SDK](https://developer.atlassian.com/display/DOCS/Downloads) installed and ready to go before you start.
 
 
 ## <a name="descriptor"></a>Create the add-on descriptor (`atlassian-connect.json`)
@@ -56,7 +58,7 @@ Your `atlassian-connect.json` file will use a `generalPages` module, and add a l
     }
 ```
 4. Save and close the descriptor file.  
-   You can click __ESC + `:wq`__ to exit and save the file.
+   __ESC + `:wq`__ from your keyboard to exit and save the file.
 
 ## <a name="webapp"></a>Create a simple web application to stand in as an add-on
 
@@ -118,8 +120,7 @@ From the same project directory:
 ## <a name="start-addon-host" id="start-addon-host"></a> Start your add-on
 
 That's it as far as coding goes. The next step is to make your files available on a web
-server. There are many ways to do this, but in this example we'll serve the file locally,
-since our target application is also operating locally.
+server. There are many ways to do this, but in this example you'll serve the file locally.
 
 You'll use a simple web server that ships with [Python](http://python.org) to serve the
 current directory containing your `atlassian-connect.json` and `helloworld.html` files. 
@@ -189,7 +190,7 @@ Browser->User:Requested page\nrendered
     
 2. Click __Manage add-ons__ from the side menu. 
 
-3. Click __Upload Add-on__ from the right side of the page.
+3. Click __Upload add-on__ from the right side of the page.
 
 4. Insert `http://localhost:8000/atlassian-connect.json`.  
      This URL should match the hosted location of your `atlassian-connect.json` descriptor file.
@@ -211,7 +212,7 @@ Browser->User:Requested page\nrendered
 
 ## What's next?
 
-This tutorial taught you the basic architecture of a Connect add-on, but the next step is to add some functionality and handle [authentication](../concepts/authentication.html).
+This tutorial taught you the basic architecture of a Connect add-on. The next step is to add some functionality and handle [authentication](../concepts/authentication.html).
 
 You can add functionality using the [Atlassian REST APIs](https://developer.atlassian.com/x/K4BpAQ). [Authentication](../concepts/authentication.html) manages the handshake between your app and the Atlassian host application. You can also read about our [security concepts](../concepts/security.html) for more information.
 
