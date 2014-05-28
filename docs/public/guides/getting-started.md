@@ -28,7 +28,6 @@ Your `atlassian-connect.json` file will use a `generalPages` module, and add a l
     </code></pre>
     You'll work in this directory for the duration of this tutorial.
 2. In your project directory, create a new file named `atlassian-connect.json`.
-    <pre><code data-lang="text">vi atlassian-connect.json</code></pre>
 3. Add the following text to the file:
 ```
     {
@@ -58,7 +57,6 @@ Your `atlassian-connect.json` file will use a `generalPages` module, and add a l
     }
 ```
 4. Save and close the descriptor file.  
-   __ESC + :wq__ from your keyboard to exit and save the file.
 
 ## <a name="webapp"></a>Create a simple web application to stand in as an add-on
 
@@ -206,7 +204,7 @@ Browser->User:Requested page\nrendered
 
 9. Click __Greeting__ in the application header.  
     Your message appears on the page:  
-<img src="../assets/images/helloworld-inapp-final.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
+<img src="../assets/images/helloworld-inapp.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
 
 ## What's next?
