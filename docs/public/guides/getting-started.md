@@ -24,7 +24,7 @@ Your `atlassian-connect.json` file will use a `generalPages` module, and add a l
 
 1. Create a project directory for your add-on source files.
     <pre><code data-lang="text">
-        mkdir connect && cd connect/
+        $ mkdir connect && cd connect/
     </code></pre>
     You'll work in this directory for the duration of this tutorial.
 2. In your project directory, create a new file named `atlassian-connect.json`.
@@ -62,7 +62,7 @@ Your `atlassian-connect.json` file will use a `generalPages` module, and add a l
 
 Now, you're ready to create the web app. You'll use a simple, old-fashioned HTML page as an "app" to demonstrate how Connect integrates with your application. While a static HTML page doesn't represent a typical add-on, it's not that far off either. Just a few components turn any web application into an Atlassian Connect add-on.
 
-You'll add two key pieces to an HTML file: a `script src` element, and an `ac-content` wrapper class. 
+You'll add two key pieces to an HTML file: a `script` tag, and an `ac-content` wrapper class. 
 
 <table class="aui">
     <thead>
@@ -73,9 +73,10 @@ You'll add two key pieces to an HTML file: a `script src` element, and an `ac-co
     </thead>
     <tbody>
         <tr>
-            <td><strong><tt>script src</tt></strong></td>
+            <td><strong><tt>script</tt></strong></td>
             <td>
-                <p>This element is comprised of 3 values pointing toward <tt>all.js</tt>, formatted as <tt>//HOSTNAME:PORT/CONTEXT/atlassian-connect/all.js</tt>. Let's look at the components:</p>
+                <p>This element is comprised of 3 values pointing toward <tt>all.js</tt>, formatted as <tt>//HOSTNAME:PORT/CONTEXT/atlassian-connect/all.js</tt>. These values are provided in the URL of the request for this resource.</p>
+                <p>Let's look at the components:</p>
                 <ul>
                     <li><tt>HOSTNAME</tt>: The hostname for the Atlassian application. Here, you'll use <tt>localhost</tt> for the sake of simplicity.</li>
                     <li><tt>PORT</tt>: The port number on which the Atlassian application serves its web interface. JIRA uses port 2990, and Confluence uses 1990.</li>
@@ -93,7 +94,6 @@ You'll add two key pieces to an HTML file: a `script src` element, and an `ac-co
 From the same project directory: 
 
 1. Create the page you referenced in the `url` element in your descriptor file, `helloworld.html`.
-    <pre><code data-lang="text">vi helloworld.html</code></pre>
 2. Add the following content:
 
     ```
@@ -104,10 +104,7 @@ From the same project directory:
     </head>
     <body>
         <div class="ac-content">
-           <h1 align="center">Hi there.</h1>
-           <div align="center">
-              <img src="http://placebear.com/400/400" alt="" />
-           </div>
+           <h1 align="center">Hello World</h1>
         </div>
     </body>
 </html>
@@ -228,8 +225,7 @@ required for your Connect add-on:
 
 ### Connect communication channels
 
-Subscribe to the Atlassian Connect [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev), and keep your eye
-on Atlassian Connect [blog posts](https://developer.atlassian.com/display/AC/Atlassian+Connect).
+You can explore [Atlassian Answers about the Connect framework here](https://answers.atlassian.com/tags/atlassian-connect). You can also subscribe to the Atlassian Connect [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev).
 
 
 
