@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
 
 /**
@@ -24,6 +25,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroMod
  * @schemaTitle Dynamic Content Macro
  * @since 1.0
  */
+@SchemaDefinition("dynamicContentMacro")
 public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
 {
     /**

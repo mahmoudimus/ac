@@ -40,4 +40,13 @@ public class TestDescriptorValidation
 
         assertFalse(result.isValid());
     }
+
+    @Test
+    public void emptyKey() throws Exception
+    {
+        String json = readAddonTestFile("emptyKey.json");
+        DescriptorValidationResult result = validator.validate(json, schemaLocator.getSchemaForCurrentProduct());
+
+        assertFalse(result.isValid());
+    }
 }

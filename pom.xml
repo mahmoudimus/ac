@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.1.0-alpha.01</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -24,7 +24,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>json-schemagen</module>
         <module>api-parent</module>
         <module>modules</module>
         <module>test-support-plugin</module>
@@ -707,6 +706,7 @@
         <ao.long.timeout>180000</ao.long.timeout>
         <ao.short.timeout>30000</ao.short.timeout>
         <skipUnits>${skipTests}</skipUnits>
+        <schema.generator.version>1.0.0-m4</schema.generator.version>
     </properties>
 
     <repositories>

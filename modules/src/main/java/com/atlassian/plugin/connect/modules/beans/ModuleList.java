@@ -275,7 +275,7 @@ public class ModuleList extends BaseModuleBean
      * itself. The add-on is responsible for generating the rendered XHTML in
      * [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
      *
-     * @schemaTitle Dynamic Content Macro
+     * @schemaTitle Static Content Macro
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.StaticContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<StaticContentMacroModuleBean> staticContentMacros;

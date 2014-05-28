@@ -3,6 +3,9 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.atlassian.json.schema.annotation.SchemaDefinition;
+
+@SchemaDefinition("addonScope")
 public class AddOnScopeBean
 {
     private String key; // set by gson

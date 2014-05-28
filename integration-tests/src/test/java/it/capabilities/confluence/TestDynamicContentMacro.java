@@ -63,7 +63,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 //            }
 //        }
 //    }
-    
+
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
@@ -75,6 +75,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         DynamicContentMacroModuleBean shortBodyMacro = createShortBodyMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean parameterMacro = createParameterMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean editorMacro = createEditorMacro(newDynamicContentMacroModuleBean());
+        DynamicContentMacroModuleBean customTitleEditorMacro = createCustomEditorTitleMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean hiddenMacro = createHiddenMacro(newDynamicContentMacroModuleBean());
 
         DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
@@ -98,6 +99,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         parameterMacro,
                         smallInlineMacro,
                         editorMacro,
+                        customTitleEditorMacro,
                         hiddenMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())

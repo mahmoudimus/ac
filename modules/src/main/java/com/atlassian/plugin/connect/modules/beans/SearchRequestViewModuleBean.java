@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.SearchRequestViewModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
@@ -35,6 +36,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.emp
  * @schemaTitle Search Request View
  * @since 1.0
  */
+@SchemaDefinition("searchRequestView")
 public class SearchRequestViewModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
