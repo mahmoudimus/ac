@@ -1,0 +1,30 @@
+{
+    "key": "my-plugin",
+    "name": "My Plugin",
+    "version": "1.0",
+    "vendor": {
+        "name": "Atlassian",
+        "url": "http://www.atlassian.com"
+    },
+    "baseUrl": "http://www.example.com",
+    "authentication" : {
+        "type" : "none"
+    },
+    "modules": {
+        "webItems": [{
+            "url": "/my-general-page",
+            "icon": {
+                "height": 16,
+                "width": 20,
+                "url": "http://lolcats.com/lol.gif"
+            },
+            "weight": 200,
+            "location": "system.preset.filters",
+            "name": {
+                "value": "My Web Item",
+                "i18n": "my.webItem"
+            },
+            "key":""
+        }]
+    }
+}
