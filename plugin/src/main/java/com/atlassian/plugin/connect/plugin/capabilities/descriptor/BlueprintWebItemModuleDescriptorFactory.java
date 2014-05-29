@@ -24,7 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ConfluenceComponent
 public class BlueprintWebItemModuleDescriptorFactory
-        implements ConnectModuleDescriptorFactory<BlueprintModuleBean, WebItemModuleDescriptor> {
+        implements ConnectModuleDescriptorFactory<BlueprintModuleBean, WebItemModuleDescriptor>
+{
 
     private static final Logger log = LoggerFactory.getLogger(BlueprintWebItemModuleDescriptorFactory.class);
 
@@ -37,7 +38,8 @@ public class BlueprintWebItemModuleDescriptorFactory
     }
 
     @Override
-    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, BlueprintModuleBean bean) {
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, BlueprintModuleBean bean)
+    {
         Element webItemElement = new DOMElement("web-item");
 
         String webItemKey = BlueprintUtils.getWebItemKey(addon, bean);
@@ -48,19 +50,22 @@ public class BlueprintWebItemModuleDescriptorFactory
         webItemElement.addAttribute("section", "system.create.dialog/content");
         webItemElement.addAttribute("i18n-name-key", i18nKeyOrName);
 
-        webItemElement.addElement("resource")
-                .addAttribute("name", "icon")
-                .addAttribute("type", "download")
-                .addAttribute("location", "web-item-icon-resource-location"); // TODO
+//      See: https://ecosystem.atlassian.net/browse/AC-1130
+//      Doesn't quite work yet, in the mean time don't create an icon entry so you at least get the default icon
+//      instead of a broken image
+//        webItemElement.addElement("resource")
+//                .addAttribute("name", "icon")
+//                .addAttribute("type", "download")
+//                .addAttribute("location", addon.getBaseUrl() + bean.getIcon().getUrl());
 
         webItemElement.addElement("param")
-                .addAttribute("name","blueprintKey")
+                .addAttribute("name", "blueprintKey")
                 .addAttribute("value", blueprintKey);
 
         webItemElement.addAttribute("system", "true");
 
-//        if(log.isDebugEnabled())
-        log.info(Dom4jUtils.printNode(webItemElement));
+        if (log.isDebugEnabled())
+            log.debug(Dom4jUtils.printNode(webItemElement));
 
         final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory
                 .createWebItemModuleDescriptor(null, addon.getKey(), webItemKey, true, null, true);

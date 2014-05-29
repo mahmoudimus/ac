@@ -23,9 +23,11 @@ public class BlueprintModuleBean extends RequiredKeyBean {
         return template;
     }
 
-    public static BlueprintModuleBeanBuilder newBlueprintModuleBean()
-    {
+    public static BlueprintModuleBeanBuilder newBlueprintModuleBean() {
         return new BlueprintModuleBeanBuilder();
     }
 
+    public IconBean getIcon() {
+        return icon;
+    }
 }

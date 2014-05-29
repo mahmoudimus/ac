@@ -6,7 +6,6 @@ import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.module.ConnectContentTemplateSupplier;
 import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -49,15 +48,16 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
         contentTemplateElement.addAttribute("key", contentTemplateKey);
         contentTemplateElement.addAttribute("i18n-name-key", i18nKeyOrName);
-        contentTemplateElement.addAttribute("resource-class", ConnectContentTemplateSupplier.class.getName());
 
-//        contentTemplateElement.addElement("context-provider")
-//                .addAttribute("class", "content-template-context-provider-class"); // TODO
+        contentTemplateElement.addElement("resource")
+                .addAttribute("name", "template")
+                .addAttribute("type", "download")
+                .addAttribute("location", addon.getBaseUrl() + bean.getBlueprintTemplate().getUrl());
 
-        //        if(log.isDebugEnabled())
-        log.info(Dom4jUtils.printNode(contentTemplateElement));
+        if (log.isDebugEnabled())
+            log.debug(Dom4jUtils.printNode(contentTemplateElement));
 
-        final ContentTemplateModuleDescriptor descriptor = new ConnectContentTemplateModuleDescriptor(moduleFactory, i18nBeanFactory, new DefaultLocaleManager());
+        final ContentTemplateModuleDescriptor descriptor = new ContentTemplateModuleDescriptor(moduleFactory, i18nBeanFactory, new DefaultLocaleManager());
         descriptor.init(plugin, contentTemplateElement);
         return descriptor;
     }

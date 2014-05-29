@@ -424,7 +424,7 @@
         <dependency>
             <groupId>com.atlassian.confluence.plugins</groupId>
             <artifactId>confluence-create-content-plugin</artifactId>
-            <version>4.0.13-SNAPSHOT</version>
+            <version>${bp.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -605,7 +605,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-create-content-plugin</artifactId>
-                                    <version>4.0.13-SNAPSHOT</version>
+                                    <version>${bp.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 
@@ -637,7 +637,7 @@
                                 <dependency>
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-create-content-plugin</artifactId>
-                                    <version>4.0.11-SNAPSHOT</version>
+                                    <version>${bp.version}</version>
                                 </dependency>
                             </bundledArtifacts>
                         </product>
@@ -1171,5 +1171,6 @@
         <mvnCommand>/usr/bin/mvn</mvnCommand>
         <debugSchemaGen>false</debugSchemaGen>
         <ao.version>0.25.2</ao.version>
+        <bp.version>4.0.15-SNAPSHOT</bp.version>
     </properties>
 </project>

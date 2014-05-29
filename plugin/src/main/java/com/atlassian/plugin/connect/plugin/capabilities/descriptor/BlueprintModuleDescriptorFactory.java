@@ -54,15 +54,12 @@ public class BlueprintModuleDescriptorFactory
         blueprintElement.addAttribute("key", blueprintKey);
         blueprintElement.addAttribute("section", "system.create.dialog/content");
         blueprintElement.addAttribute("i18n-name-key", i18nKeyOrName);
-//        blueprintElement.addAttribute("create-result", "view");
-        blueprintElement.addAttribute("index-key", blueprintKey);
-
+        blueprintElement.addAttribute("index-key", bean.getRawKey());
         blueprintElement.addAttribute("content-template-key",contentTemplateKey);
-
         blueprintElement.addAttribute("system", "true");
 
-        //        if(log.isDebugEnabled())
-        log.info(Dom4jUtils.printNode(blueprintElement));
+        if(log.isDebugEnabled())
+            log.debug(Dom4jUtils.printNode(blueprintElement));
 
         final BlueprintModuleDescriptor descriptor = new BlueprintModuleDescriptor(moduleFactory, documentationBeanFactory);
         descriptor.init(plugin, blueprintElement);
