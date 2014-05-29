@@ -193,7 +193,7 @@ Browser->User:Requested page\nrendered
 
 ## What's next?
 
-This tutorial taught you the basic architecture of a Connect add-on. The next step is to add some functionality and handle [authentication](../concepts/authentication.html).
+So far, you've learned the basic architecture of a Connect add-on. The next step is to add some functionality and handle [authentication](../concepts/authentication.html).
 
 You can add functionality using the [Atlassian REST APIs](https://developer.atlassian.com/x/K4BpAQ). [Authentication](../concepts/authentication.html) manages the handshake between your app and the Atlassian host application. You can also read about our [security concepts](../concepts/security.html) for more information.
 
