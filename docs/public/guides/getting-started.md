@@ -22,10 +22,7 @@ In this step you'll create a JSON descriptor file. This file describes your add-
 
 Your `atlassian-connect.json` file will use a `generalPages` module, and add a link to JIRA's top navigation element titled "Greeting".
 
-1. Create a project directory for your add-on source files.
-    <pre><code data-lang="text">
-        $ mkdir connect && cd connect/
-    </code></pre>
+1. Create a project directory for your add-on source files.  
     You'll work in this directory for the duration of this tutorial.
 2. In your project directory, create a new file named `atlassian-connect.json`.
 3. Add the following text to the file:
@@ -134,16 +131,6 @@ You've created the essential components of a Connect add-on: an `atlassian-conne
 You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud instances) of Atlassian products, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
 
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
-    <pre><code data-lang="text">$ atlas-version</code></pre>
-    You should see something like this:  
-
-    <tt>
-        ATLAS Version:    4.2.20  
-        ATLAS Home:       /usr/share/atlassian-plugin-sdk-4.2.20  
-        ATLAS Scripts:    /usr/share/atlassian-plugin-sdk-4.2.20/bin  
-        ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven
-        ...
-    </tt>
   
 2. From a new terminal window, start JIRA in OnDemand mode: 
     <pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-03-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
@@ -223,9 +210,6 @@ required for your Connect add-on:
  * [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
  * [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express)
 
-### Connect communication channels
+### Join the Connect community
 
-You can explore [Atlassian Answers about the Connect framework here](https://answers.atlassian.com/tags/atlassian-connect). You can also subscribe to the Atlassian Connect [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev).
-
-
-
+Explore Connect topics on [Atlassian Answers](https://answers.atlassian.com/tags/atlassian-connect). We also encourage you to join our [Connect mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev).
