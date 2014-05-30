@@ -131,6 +131,14 @@ You've created the essential components of a Connect add-on: an `atlassian-conne
 You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud instances) of Atlassian products, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
 
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
+    You'll need at least SDK version 4.2.20. If you run the <tt>atlas-version</tt> command, you should see something similar to this:  
+    
+    <tt>
+        ATLAS Version:    4.2.20  
+        ATLAS Home:       /usr/share/atlassian-plugin-sdk-4.2.20  
+        ATLAS Scripts:    /usr/share/atlassian-plugin-sdk-4.2.20/bin  
+        ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
+    </tt>
   
 2. From a new terminal window, start JIRA in OnDemand mode: 
     <pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-03-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
