@@ -149,7 +149,7 @@ You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud i
 
 ## <a name="install"></a>Install your add-on in JIRA
 
-This step is straightforward if you've ever used the [Universal Plugin Manager (UPM)](https://confluence.atlassian.com/x/8AJTE) before. You'll navigate to the admin section, and add a link to your descriptor file.
+Now you're ready to install your add-on in your local instance of JIRA. In this step, you'll navigate to the [Universal Plugin Manager (UPM)](https://confluence.atlassian.com/x/8AJTE) and add a link to your descriptor file.
 
 When you install your add-on, JIRA retrieves and registers your `atlassian-connect.json` descriptor. The interaction between JIRA and your web app (your add-on) looks like this: 
 
