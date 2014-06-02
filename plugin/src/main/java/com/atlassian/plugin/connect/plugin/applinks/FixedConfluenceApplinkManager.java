@@ -27,22 +27,18 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
 {
     private static final Logger log = LoggerFactory.getLogger(FixedConfluenceApplinkManager.class);
     public static final String SYSADMIN = "sysadmin";
-    private final com.atlassian.confluence.security.PermissionManager confluencePermissionManager;
 
     @Inject
     public FixedConfluenceApplinkManager(MutatingApplicationLinkService applicationLinkService, TypeAccessor typeAccessor,
                                          PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager,
-                                         PermissionManager permissionManager, TransactionTemplate transactionTemplate,
-                                         com.atlassian.confluence.security.PermissionManager confluencePermissionManager)
+                                         PermissionManager permissionManager, TransactionTemplate transactionTemplate)
     {
         super(applicationLinkService, typeAccessor, pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
-        this.confluencePermissionManager = confluencePermissionManager;
     }
 
     @Override
     public void deleteAppLink(final Plugin plugin) throws NotConnectAddonException
     {
-        log.info("**************** plugin " + plugin);
         final String key = plugin.getKey();
         final ApplicationLink link = getAppLink(key);
 
@@ -52,7 +48,6 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
     @Override
     public void deleteAppLink(ConnectAddonBean addon) throws NotConnectAddonException
     {
-        log.info("**************** addon: " + addon);
         final String key = addon.getKey();
         final ApplicationLink link = getAppLink(key);
 
@@ -72,13 +67,12 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
 
                     try
                     {
-                        log.info("**************** first try");
                         applicationLinkService.deleteApplicationLink(link);
                         return null;
                     }
                     catch (IllegalArgumentException e)
                     {
-                        log.info("**************** second try");
+                        log.debug("retrying deleteApplicationLink as sysadmin");
                         //try again as sysadmin
                         ConfluenceUser originalUser = null;
                         try
@@ -91,25 +85,8 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
 
                             return null;
                         }
-                        catch (IllegalArgumentException e2)
-                        {
-                            log.info("**************** third try");
-
-                            confluencePermissionManager.withExemption(new Runnable()
-                            {
-                                @Override
-                                public void run()
-                                {
-                                    applicationLinkService.deleteApplicationLink(link);
-                                }
-                            });
-
-                            return null;
-
-                        }
                         finally
                         {
-                            log.info("**************** finally");
                             AuthenticatedUserThreadLocal.set(originalUser);
                         }
                     }
