@@ -11,19 +11,12 @@ import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
-import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 //TODO: Just delete this class
 @RunWith(AtlassianPluginsTestRunner.class)
@@ -58,10 +51,8 @@ public class OAuthDeletionFailTest
     @Test
     public void testUninstallWhenUnauthenticated() throws Exception
     {
-        assertNotNull(applinkManager.getAppLink(oAuthAddOnBean.getKey()));
         testAuthenticator.unauthenticate();
-        testPluginInstaller.uninstallPlugin(oAuthPlugin);
-        assertNull(applinkManager.getAppLink(oAuthAddOnBean.getKey()));
+        testPluginInstaller.uninstallAddon(oAuthPlugin);
     }
 
     private ConnectAddonBean createOAuthAddOnBean()

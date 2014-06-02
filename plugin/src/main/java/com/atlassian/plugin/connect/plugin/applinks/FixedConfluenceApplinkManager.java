@@ -9,6 +9,7 @@ import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager implements ConnectApplinkManager
 {
     private static final Logger log = LoggerFactory.getLogger(FixedConfluenceApplinkManager.class);
+    public static final String SYSADMIN = "sysadmin";
     private final com.atlassian.confluence.security.PermissionManager confluencePermissionManager;
 
     @Inject
@@ -40,9 +42,25 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
     @Override
     public void deleteAppLink(final Plugin plugin) throws NotConnectAddonException
     {
+        log.info("**************** plugin " + plugin);
         final String key = plugin.getKey();
         final ApplicationLink link = getAppLink(key);
 
+        deleteApplink(key, link);
+    }
+
+    @Override
+    public void deleteAppLink(ConnectAddonBean addon) throws NotConnectAddonException
+    {
+        log.info("**************** addon: " + addon);
+        final String key = addon.getKey();
+        final ApplicationLink link = getAppLink(key);
+
+        deleteApplink(key, link);
+    }
+
+    private void deleteApplink(final String key, final ApplicationLink link)
+    {
         if (link != null)
         {
             transactionTemplate.execute(new TransactionCallback<Void>()
@@ -52,23 +70,56 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
                 {
                     log.info("Removing application link for {}", key);
 
-                    confluencePermissionManager.withExemption(new Runnable()
+                    try
                     {
-                        @Override
-                        public void run()
+                        log.info("**************** first try");
+                        applicationLinkService.deleteApplicationLink(link);
+                        return null;
+                    }
+                    catch (IllegalArgumentException e)
+                    {
+                        log.info("**************** second try");
+                        //try again as sysadmin
+                        ConfluenceUser originalUser = null;
+                        try
                         {
-                            applicationLinkService.deleteApplicationLink(link);
-                        }
-                    });
+                            originalUser = AuthenticatedUserThreadLocal.get();
 
-                    return null;
+                            ConfluenceUser user = FindUserHelper.getUserByUsername(SYSADMIN);
+                            AuthenticatedUserThreadLocal.set(user);
+                            applicationLinkService.deleteApplicationLink(link);
+
+                            return null;
+                        }
+                        catch (IllegalArgumentException e2)
+                        {
+                            log.info("**************** third try");
+
+                            confluencePermissionManager.withExemption(new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    applicationLinkService.deleteApplicationLink(link);
+                                }
+                            });
+
+                            return null;
+
+                        }
+                        finally
+                        {
+                            log.info("**************** finally");
+                            AuthenticatedUserThreadLocal.set(originalUser);
+                        }
+                    }
                 }
 
             } );
         }
         else
         {
-            log.debug("application link for {} does not exist", key);
+            log.debug("Could not remove application link for {}", key);
         }
     }
 }
