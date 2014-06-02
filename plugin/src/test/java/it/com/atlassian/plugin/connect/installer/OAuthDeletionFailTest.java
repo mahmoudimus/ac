@@ -25,16 +25,14 @@ public class OAuthDeletionFailTest
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
-    private final ConnectApplinkManager applinkManager;
     private Plugin oAuthPlugin;
     private ConnectAddonBean oAuthAddOnBean;
 
-    public OAuthDeletionFailTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-                                 ConnectApplinkManager applinkManager)
+    public OAuthDeletionFailTest(TestPluginInstaller testPluginInstaller,
+                                 TestAuthenticator testAuthenticator)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
-        this.applinkManager = applinkManager;
     }
 
     @BeforeClass
