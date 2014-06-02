@@ -21,6 +21,7 @@ import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -39,17 +40,17 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
-@Named
+@JiraComponent // Confluence is handled separately in FixedConfluenceApplinkManager
 public class DefaultConnectApplinkManager implements ConnectApplinkManager
 {
     public static final String PLUGIN_KEY_PROPERTY = JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME;
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectApplinkManager.class);
-    private final MutatingApplicationLinkService applicationLinkService;
+    protected final MutatingApplicationLinkService applicationLinkService;
     private final TypeAccessor typeAccessor;
     private final PluginSettingsFactory pluginSettingsFactory;
     private final OAuthLinkManager oAuthLinkManager;
     private final PermissionManager permissionManager;
-    private final TransactionTemplate transactionTemplate;
+    protected final TransactionTemplate transactionTemplate;
 
     @Inject
     public DefaultConnectApplinkManager(MutatingApplicationLinkService applicationLinkService, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager, TransactionTemplate transactionTemplate)
