@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.spi.permission;
 
+import com.atlassian.plugin.connect.spi.XmlDescriptor;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -7,6 +9,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 0.8
  */
+@XmlDescriptor
 public abstract class AbstractPermission implements Permission
 {
 

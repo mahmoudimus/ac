@@ -54,4 +54,7 @@
                class="it.com.atlassian.plugin.connect.ConfluenceTestAuthenticator"
                interface="it.com.atlassian.plugin.connect.TestAuthenticator"
                application="confluence" />
+    <component key="xmlDescriptorThrower"
+               class="com.atlassian.plugin.connect.XmlDescriptorThrowerImpl"
+               interface="com.atlassian.plugin.connect.XmlDescriptorThrower" />
 </atlassian-plugin>

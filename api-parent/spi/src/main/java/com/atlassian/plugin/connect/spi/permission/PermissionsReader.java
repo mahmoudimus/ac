@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.spi.permission;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.spi.XmlDescriptor;
 import org.dom4j.Document;
 
 import java.util.Set;
@@ -11,8 +12,10 @@ import java.util.Set;
  */
 public interface PermissionsReader
 {
+    @XmlDescriptor
     Set<String> getPermissionsForPlugin(Plugin plugin);
 
+    @XmlDescriptor
     Set<String> readPermissionsFromDescriptor(Document document);
 
     /**

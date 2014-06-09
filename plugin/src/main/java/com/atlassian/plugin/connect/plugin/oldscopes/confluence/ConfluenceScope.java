@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.oldscopes.confluence;
 
+import com.atlassian.plugin.connect.spi.XmlDescriptor;
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.*;
 import com.atlassian.sal.api.user.UserKey;
@@ -13,6 +14,7 @@ import java.util.Collections;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.concat;
 
+@XmlDescriptor
 abstract class ConfluenceScope extends AbstractPermission implements ApiScope
 {
     private final XmlRpcApiScopeHelper v2XmlRpcApiScopeHelper;

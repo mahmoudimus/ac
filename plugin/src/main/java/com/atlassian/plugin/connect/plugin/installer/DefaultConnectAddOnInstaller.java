@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.connect.spi.XmlDescriptor;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginInstallFailedEvent;
 import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
@@ -60,6 +61,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
     @Override
     @Deprecated
+    @XmlDescriptor
     public Plugin install(final String username, final Document document) throws PluginInstallException
     {
         String pluginKey = document.getRootElement().attributeValue("key");
