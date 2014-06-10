@@ -45,6 +45,7 @@ Your `atlassian-connect.json` file will use a [`generalPages` module](../modules
                 {
                     "url": "/helloworld.html",
                     "key": "hello-world",
+                    "location": "system.top.navigation.bar",
                     "name": {
                         "value": "Greeting"
                     }
