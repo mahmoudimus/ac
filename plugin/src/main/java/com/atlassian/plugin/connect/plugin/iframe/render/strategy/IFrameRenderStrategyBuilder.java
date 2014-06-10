@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionResource;
 import com.atlassian.plugin.web.Condition;
 
 
@@ -23,7 +24,7 @@ public interface IFrameRenderStrategyBuilder
         TemplatedBuilder genericBodyTemplate(boolean inline);
         TemplatedBuilder dialogTemplate();
         TemplatedBuilder projectAdminTabTemplate();
-        TemplatedBuilder workflowPostFunctionTemplate();
+        TemplatedBuilder workflowPostFunctionTemplate(WorkflowPostFunctionResource view);
     }
 
     interface TemplatedBuilder

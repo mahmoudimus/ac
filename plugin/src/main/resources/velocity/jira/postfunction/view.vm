@@ -1,0 +1,12 @@
+#set ($uuid = $contextParams.get('postFunction.id'))
+#set ($config = $contextParams.get('postFunction.config'))
+
+<span class="ap-postFunction">
+    <input id="postFunction-config-$uuid"
+           name="postFunction.config-$uuid"
+           value="$!config" class="module-$namespace" type="hidden"/>
+    <input name="postFunction.id" value="$uuid"
+           type="hidden" />
+
+    #parse("velocity/iframe-body.vm")
+</span>
