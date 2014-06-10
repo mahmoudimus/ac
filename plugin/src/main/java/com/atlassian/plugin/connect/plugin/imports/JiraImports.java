@@ -21,6 +21,7 @@ import com.atlassian.jira.issue.watchers.WatcherManager;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
+import com.atlassian.jira.rest.v2.issue.builder.BeanBuilderFactory;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.PermissionManager;
@@ -85,7 +86,8 @@ public class JiraImports
             @JiraImport WorklogService worklogService,
             @JiraImport ApplicationService applicationService,
             @JiraImport ApplicationManager applicationManager,
-            @JiraImport GlobalPermissionManager globalPermissionManager)
+            @JiraImport GlobalPermissionManager globalPermissionManager,
+            @JiraImport ("beanBuilderFactory") BeanBuilderFactory beanBuilderFactory)
     {
     }
 }
