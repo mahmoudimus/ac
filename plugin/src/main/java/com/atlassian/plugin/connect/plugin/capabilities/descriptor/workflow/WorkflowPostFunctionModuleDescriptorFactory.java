@@ -74,10 +74,10 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
         return element;
     }
 
-    private void addResource(Element element, WorkflowPostFunctionResource view, String url)
+    private void addResource(Element element, WorkflowPostFunctionResource resource, String url)
     {
         element.addElement("resource")
-                .addAttribute("name", view.getResource())
+                .addAttribute("name", resource.getResource())
                 .addAttribute("type", RESOURCE_TYPE_VELOCITY)
                 .addAttribute("location", url);
     }

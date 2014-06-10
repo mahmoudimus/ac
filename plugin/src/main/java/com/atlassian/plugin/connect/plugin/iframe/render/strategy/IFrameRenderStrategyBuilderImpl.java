@@ -134,11 +134,11 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public TemplatedBuilder workflowPostFunctionTemplate(WorkflowPostFunctionResource view)
+    public TemplatedBuilder workflowPostFunctionTemplate(WorkflowPostFunctionResource resource)
     {
         accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_GENERIC_BODY;
 
-        switch (view)
+        switch (resource)
         {
             case CREATE:
                 template = TEMPLATE_POSTFUNCTION_CREATE;

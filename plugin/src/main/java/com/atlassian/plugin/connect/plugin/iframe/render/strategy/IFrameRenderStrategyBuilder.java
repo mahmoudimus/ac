@@ -24,7 +24,7 @@ public interface IFrameRenderStrategyBuilder
         TemplatedBuilder genericBodyTemplate(boolean inline);
         TemplatedBuilder dialogTemplate();
         TemplatedBuilder projectAdminTabTemplate();
-        TemplatedBuilder workflowPostFunctionTemplate(WorkflowPostFunctionResource view);
+        TemplatedBuilder workflowPostFunctionTemplate(WorkflowPostFunctionResource resource);
     }
 
     interface TemplatedBuilder
