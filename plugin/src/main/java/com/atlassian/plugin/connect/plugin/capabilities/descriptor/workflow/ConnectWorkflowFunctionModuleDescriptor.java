@@ -42,6 +42,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     private URI triggeredUri;
+    private String addonKey;
 
     public ConnectWorkflowFunctionModuleDescriptor(
             final JiraAuthenticationContext authenticationContext,
@@ -60,6 +61,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     {
         super.init(plugin, element);
         this.triggeredUri = URI.create(element.attributeValue(TRIGGERED_URL));
+        this.addonKey = addonKeyOnly(getKey());
     }
 
     @Override
@@ -68,9 +70,10 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         super.enabled();
         webHookConsumerRegistry.register(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                plugin.getKey(),
+                addonKey,
                 triggeredUri,
-                new PluginModuleListenerParameters(addonKeyOnly(getKey()), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(),
+                        RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
     }
 
@@ -79,9 +82,10 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     {
         webHookConsumerRegistry.unregister(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                plugin.getKey(),
+                addonKey,
                 triggeredUri,
-                new PluginModuleListenerParameters(addonKeyOnly(getKey()), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(),
+                        RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
 
         super.disabled();
