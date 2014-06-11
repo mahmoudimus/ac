@@ -1,21 +1,22 @@
 package com.atlassian.plugin.connect.plugin.descriptor.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
+import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
 import org.dom4j.io.SAXReader;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 /**
  * XML utility methods need by all parts of Remotable Plugins
  */
+@XmlDescriptor
 public final class XmlUtils
 {
     private static InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));

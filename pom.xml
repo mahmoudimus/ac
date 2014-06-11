@@ -592,12 +592,6 @@
                 <scope>runtime</scope>
             </dependency>
 
-            <dependency>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections</artifactId>
-                <version>0.9.9-RC1</version>
-            </dependency>
-
             <!-- Only exists for qunit -->
             <dependency>
                 <groupId>com.atlassian.aui</groupId>

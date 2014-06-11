@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.oldscopes.jira;
 
-import com.atlassian.plugin.connect.spi.XmlDescriptor;
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.*;
+import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
 import com.atlassian.sal.api.user.UserKey;
 
 import javax.servlet.http.HttpServletRequest;

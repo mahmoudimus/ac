@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.spi.permission;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.XmlDescriptor;
+import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
 import org.dom4j.Document;
 
 import java.util.Set;

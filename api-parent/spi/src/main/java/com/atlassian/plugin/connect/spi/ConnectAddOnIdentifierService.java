@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.spi;
 
-import java.io.File;
-
 import com.atlassian.plugin.Plugin;
-
+import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
 import org.dom4j.Document;
 import org.osgi.framework.Bundle;
+
+import java.io.File;
 
 /**
  * A publicly accessible service to identify if a given plugin is a connect add on
@@ -22,6 +22,7 @@ public interface ConnectAddOnIdentifierService
 
     boolean isConnectAddOn(String pluginKey);
 
+    @XmlDescriptor
     boolean isConnectAddOn(Document pluginDescriptor);
 
     boolean isConnectAddOn(File descriptorFile);

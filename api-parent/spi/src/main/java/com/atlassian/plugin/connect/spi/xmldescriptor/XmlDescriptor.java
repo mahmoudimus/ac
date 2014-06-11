@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi;
+package com.atlassian.plugin.connect.spi.xmldescriptor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -4,6 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.spi.Permissions;
+import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.atlassian.plugin.connect.test.server.module.Module;
@@ -37,6 +38,7 @@ import static com.atlassian.plugin.connect.test.Utils.createSignedRequestHandler
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
+@XmlDescriptor
 public final class AtlassianConnectAddOnRunner
 {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

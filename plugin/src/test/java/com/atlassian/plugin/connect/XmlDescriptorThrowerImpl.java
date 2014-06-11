@@ -1,18 +1,16 @@
 package com.atlassian.plugin.connect;
 
-import com.atlassian.plugin.connect.modules.schema.ConnectDescriptorValidator;
-import com.atlassian.plugin.connect.spi.XmlDescriptor;
-import org.reflections.Reflections;
-import org.reflections.scanners.MethodAnnotationsScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
+import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.xmldescriptor.AnnotationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,11 +20,19 @@ import java.util.Set;
 public class XmlDescriptorThrowerImpl implements XmlDescriptorThrower
 {
     private static final Logger log = LoggerFactory.getLogger(XmlDescriptorThrowerImpl.class);
+    private static final String ANNOTATION_NAME = XmlDescriptor.class.getName();
 
-    public XmlDescriptorThrowerImpl(ConnectDescriptorValidator someClassInstanceFromThePluginClassLoader)
+    private final AnnotationService annotationService;
+
+    public XmlDescriptorThrowerImpl(AnnotationService annotationService)
     {
-        log.warn("Injecting dynamic proxies that prevent XML descriptor code from running.");
-        injectProxies(someClassInstanceFromThePluginClassLoader);
+        this.annotationService = annotationService;
+    }
+
+    @Override
+    public Set<Class> runAndGetProxyFailures()
+    {
+        return injectProxies();
     }
 
     private static interface MethodsMatcher
@@ -90,6 +96,7 @@ public class XmlDescriptorThrowerImpl implements XmlDescriptorThrower
             {
                 final String message = String.format("%s.%s() should not be called (it is marked as @%s)",
                         proxy.getClass().getSimpleName(), method.getName(), XmlDescriptor.class.getSimpleName());
+                log.warn(message);
                 throw new Error(message); // not RuntimeException because we don't want it caught
             }
             else
@@ -105,46 +112,133 @@ public class XmlDescriptorThrowerImpl implements XmlDescriptorThrower
     }
 
     // find types and methods annotated with @XmlDescriptor and cause them to throw
-    private static void injectProxies(Object someClassInstanceFromThePluginClassLoader)
+    private Set<Class> injectProxies()
     {
-        ThrowingProxy allMethodsProxy = new ThrowingProxy(new AllMethodsMatcher());
-
-        // TODO: is there an Atlassian spring scanner class that does this?
-        final Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(new FilterBuilder().includePackage("com.atlassian.plugin.connect"))
-                .setScanners(new TypeAnnotationsScanner(), new MethodAnnotationsScanner())
-                .addClassLoader(someClassInstanceFromThePluginClassLoader.getClass().getClassLoader())
-                .build());
+        log.warn("Injecting dynamic proxies that prevent XML descriptor code from running.");
         Map<Class, ThrowingProxy> proxiedClasses = new HashMap<Class, ThrowingProxy>();
+        Set<Class> proxyFailures = new HashSet<Class>(); // we can't proxy these classes (e.g. they don't implement interfaces)
 
-        // TODO: always returns an empty set
-        for (Class clazz : reflections.getTypesAnnotatedWith(XmlDescriptor.class, true))
+        injectProxies(proxiedClasses, proxyFailures);
+
+        log.debug("Injected dynamic proxies around this many classes: {}", proxiedClasses.size());
+        log.debug("Failed to proxy this many classes: {}", proxyFailures.size());
+        return proxyFailures;
+    }
+
+    private void injectProxies(final Map<Class, ThrowingProxy> proxiedClasses, final Set<Class> proxyFailures)
+    {
+        final ThrowingProxy allMethodsProxy = new ThrowingProxy(new AllMethodsMatcher());
+
+        // cd from "plugin/target/container/tomcat7x/cargo-jira-home/" to "plugin/target/classes/com/atlassian/plugin/connect/"
+        Path classFilesBasePath = FileSystems.getDefault().getPath("../../../classes/com/atlassian/plugin/connect");
+        try
         {
-            injectProxy(proxiedClasses, clazz, allMethodsProxy);
-        }
-
-        // TODO: always returns an empty set
-        for (Method method : reflections.getMethodsAnnotatedWith(XmlDescriptor.class))
-        {
-            // don't proxy a method if the whole class has been proxied
-            // TODO: I *think* that getDeclaringClass() would be wrong... should check this
-            final Class<? extends Method> clazz = method.getClass();
-
-            if (proxiedClasses.containsKey(clazz))
+            Files.walkFileTree(classFilesBasePath, new FileVisitor<Path>()
             {
-                proxiedClasses.get(clazz).addMethod(method);
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException
+                {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
+                {
+                    if (file.getFileName().toString().endsWith(".class"))
+                    {
+                        final String className = file.toString().replaceFirst(".*classes/(.+)\\.class", "$1").replace('/', '.');
+
+                        try
+                        {
+                            final Class clazz = annotationService.loadClass(className);
+
+                            if (annotationService.hasClassAnnotation(clazz, ANNOTATION_NAME))
+                            {
+                                injectProxy(clazz, allMethodsProxy, proxiedClasses, proxyFailures);
+                            }
+                            else
+                            {
+                                final Set<Method> methods = annotationService.getMethodsWithAnnotation(clazz, ANNOTATION_NAME);
+
+                                if (!methods.isEmpty())
+                                {
+                                    injectProxies(clazz, methods, proxiedClasses, proxyFailures);
+                                }
+                            }
+                        }
+                        catch (ClassNotFoundException e)
+                        {
+                            log.error("No such class: '{}'", className);
+                        }
+                        catch (NoClassDefFoundError e)
+                        {
+                            log.error("No such class: '{}'", className);
+                        }
+                    }
+
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException
+                {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
+                {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void injectProxy(Class clazz, ThrowingProxy proxy, Map<Class, ThrowingProxy> proxiedClasses, Set<Class> proxyFailures)
+    {
+        if (clazz.isInterface())
+        {
+            Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, proxy);
+            proxiedClasses.put(clazz, proxy);
+        }
+        else
+        {
+            Class[] interfaces = clazz.getInterfaces();
+
+            if (interfaces.length == 0)
+            {
+                proxyFailures.add(clazz);
             }
             else
             {
-                ThrowingProxy proxy = new ThrowingProxy(new SomeMethodsMatcher(method));
-                injectProxy(proxiedClasses, clazz, proxy);
+                for (Class interfaze : interfaces)
+                {
+                    injectProxy(interfaze, proxy, proxiedClasses, proxyFailures);
+                }
+
+                proxiedClasses.put(clazz, proxy);
             }
         }
     }
 
-    private static void injectProxy(Map<Class, ThrowingProxy> proxiedClasses, Class<? extends Method> clazz, ThrowingProxy proxy)
+    private static void injectProxies(Class clazz, Set<Method> methods, Map<Class, ThrowingProxy> proxiedClasses, Set<Class> proxyFailures)
     {
-        Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, proxy);
-        proxiedClasses.put(clazz, proxy);
+        for (Method method : methods)
+        {
+            ThrowingProxy proxy = proxiedClasses.get(clazz);
+
+            if (null == proxy)
+            {
+                injectProxy(clazz, new ThrowingProxy(new SomeMethodsMatcher(method)), proxiedClasses, proxyFailures);
+            }
+            else
+            {
+                proxy.addMethod(method);
+            }
+        }
     }
 }

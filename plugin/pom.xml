@@ -420,17 +420,6 @@
             <artifactId>gson</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>dom4j</groupId>
-                    <artifactId>dom4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-       
     </dependencies>
 
     <build>
@@ -472,7 +461,8 @@
                             com.atlassian.plugin.connect.modules*,
                             com.atlassian.plugin.connect.modules.*,
                             com.atlassian.plugin.connect.modules.beans*,
-                            com.atlassian.plugin.connect.modules.beans.*
+                            com.atlassian.plugin.connect.modules.beans.*,
+                            com.atlassian.plugin.connect.xmldescriptor
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>

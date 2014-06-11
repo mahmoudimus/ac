@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.spi.permission;
 
-import com.atlassian.plugin.connect.spi.XmlDescriptor;
+import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.schema.spi.SchemaDocumented;
 
 @XmlDescriptor
