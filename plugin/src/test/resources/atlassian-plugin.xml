@@ -33,6 +33,7 @@
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry" />
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
     <component-import key="annotationService" interface="com.atlassian.plugin.connect.xmldescriptor.AnnotationService" />
+    <component-import key="xmlDescriptorThrowerService" interface="com.atlassian.plugin.connect.xmldescriptor.XmlDescriptorThrowerService" />
 
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
@@ -55,7 +56,4 @@
                class="it.com.atlassian.plugin.connect.ConfluenceTestAuthenticator"
                interface="it.com.atlassian.plugin.connect.TestAuthenticator"
                application="confluence" />
-    <component key="xmlDescriptorThrower"
-               class="com.atlassian.plugin.connect.XmlDescriptorThrowerImpl"
-               interface="com.atlassian.plugin.connect.XmlDescriptorThrower" />
 </atlassian-plugin>

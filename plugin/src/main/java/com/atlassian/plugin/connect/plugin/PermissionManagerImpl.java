@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
@@ -17,7 +18,6 @@ import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.connect.spi.permission.scope.AbstractApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
-import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
@@ -180,6 +180,7 @@ public final class PermissionManagerImpl implements PermissionManager
      */
     @Deprecated
     @Override
+    @XmlDescriptor
     public void requirePermission(String pluginKey, String permissionKey) throws PermissionDeniedException
     {
         boolean isJsonAddon = jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey);

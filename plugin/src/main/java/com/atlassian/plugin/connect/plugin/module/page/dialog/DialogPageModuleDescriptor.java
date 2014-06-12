@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.page.dialog;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -23,12 +24,14 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     public static final String DIALOG_CLASSIFIER = "dialog";
     public static final String SIMPLE_DIALOG_CLASSIFIER = "simpleDialog";
 
+    @XmlDescriptor
     private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     private Element descriptor;
+    @XmlDescriptor
     private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public DialogPageModuleDescriptor(

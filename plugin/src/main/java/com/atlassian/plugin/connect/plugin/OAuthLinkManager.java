@@ -1,12 +1,5 @@
 package com.atlassian.plugin.connect.plugin;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.auth.types.OAuthAuthenticationProvider;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
@@ -15,21 +8,26 @@ import com.atlassian.oauth.Request;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.util.OAuthHelper;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-
+import net.oauth.*;
+import net.oauth.signature.RSA_SHA1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import net.oauth.*;
-import net.oauth.signature.RSA_SHA1;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
@@ -41,6 +39,7 @@ import static org.apache.commons.lang.Validate.notNull;
  * Manages oauth link operations
  */
 @Component
+@XmlDescriptor
 public class OAuthLinkManager
 {
 

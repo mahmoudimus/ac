@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.spi;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import org.dom4j.Document;
 import org.osgi.framework.Bundle;
 

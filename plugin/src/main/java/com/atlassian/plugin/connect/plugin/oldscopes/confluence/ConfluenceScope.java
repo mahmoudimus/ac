@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.oldscopes.confluence;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.*;
-import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;

@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.permission;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
@@ -149,6 +150,7 @@ public class ApiScopingFilter implements Filter
         chain.doFilter(inputConsumingRequest, res);
     }
 
+    @XmlDescriptor
     private void handleXdmRequest(String clientKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
     {
         // prevent all XDM requests made on behalf of system administrators

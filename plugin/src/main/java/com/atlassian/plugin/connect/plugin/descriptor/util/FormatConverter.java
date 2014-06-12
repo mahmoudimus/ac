@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.descriptor.util;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;

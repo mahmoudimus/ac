@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.xmldescriptor;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
@@ -13,7 +12,6 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 
-@Component
 @ExportAsDevService
 @Named("annotationService")
 public class AnnotationServiceImpl implements AnnotationService

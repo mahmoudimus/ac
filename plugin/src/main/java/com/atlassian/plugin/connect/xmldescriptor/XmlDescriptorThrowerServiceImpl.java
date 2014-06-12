@@ -1,10 +1,12 @@
-package com.atlassian.plugin.connect;
+package com.atlassian.plugin.connect.xmldescriptor;
 
-import com.atlassian.plugin.connect.spi.xmldescriptor.XmlDescriptor;
-import com.atlassian.plugin.connect.xmldescriptor.AnnotationService;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -16,21 +18,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@XmlDescriptor
-public class XmlDescriptorThrowerImpl implements XmlDescriptorThrower
+@ExportAsDevService
+@Named("xmlDescriptorThrowerService")
+public class XmlDescriptorThrowerServiceImpl implements XmlDescriptorThrowerService
 {
-    private static final Logger log = LoggerFactory.getLogger(XmlDescriptorThrowerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(XmlDescriptorThrowerServiceImpl.class);
     private static final String ANNOTATION_NAME = XmlDescriptor.class.getName();
 
     private final AnnotationService annotationService;
 
-    public XmlDescriptorThrowerImpl(AnnotationService annotationService)
+    @Inject
+    public XmlDescriptorThrowerServiceImpl(AnnotationService annotationService)
     {
         this.annotationService = annotationService;
     }
 
     @Override
-    public Set<Class> runAndGetProxyFailures()
+    public Set<String> runAndGetProxyFailures()
     {
         return injectProxies();
     }
@@ -112,20 +116,21 @@ public class XmlDescriptorThrowerImpl implements XmlDescriptorThrower
     }
 
     // find types and methods annotated with @XmlDescriptor and cause them to throw
-    private Set<Class> injectProxies()
+    private Set<String> injectProxies()
     {
         log.warn("Injecting dynamic proxies that prevent XML descriptor code from running.");
         Map<Class, ThrowingProxy> proxiedClasses = new HashMap<Class, ThrowingProxy>();
-        Set<Class> proxyFailures = new HashSet<Class>(); // we can't proxy these classes (e.g. they don't implement interfaces)
+        Set<String> proxyFailures = new HashSet<String>(); // we can't proxy these classes (e.g. they don't implement interfaces)
 
         injectProxies(proxiedClasses, proxyFailures);
 
         log.debug("Injected dynamic proxies around this many classes: {}", proxiedClasses.size());
+        log.debug(proxiedClasses.keySet().toString());
         log.debug("Failed to proxy this many classes: {}", proxyFailures.size());
         return proxyFailures;
     }
 
-    private void injectProxies(final Map<Class, ThrowingProxy> proxiedClasses, final Set<Class> proxyFailures)
+    private void injectProxies(final Map<Class, ThrowingProxy> proxiedClasses, final Set<String> proxyFailures)
     {
         final ThrowingProxy allMethodsProxy = new ThrowingProxy(new AllMethodsMatcher());
 
@@ -168,11 +173,13 @@ public class XmlDescriptorThrowerImpl implements XmlDescriptorThrower
                         }
                         catch (ClassNotFoundException e)
                         {
-                            log.error("No such class: '{}'", className);
+                            log.error("Class not found: '{}'", className);
+                            proxyFailures.add(className);
                         }
                         catch (NoClassDefFoundError e)
                         {
-                            log.error("No such class: '{}'", className);
+                            log.error("No class definition: '{}'", className);
+                            proxyFailures.add(className);
                         }
                     }
 
@@ -198,7 +205,7 @@ public class XmlDescriptorThrowerImpl implements XmlDescriptorThrower
         }
     }
 
-    private static void injectProxy(Class clazz, ThrowingProxy proxy, Map<Class, ThrowingProxy> proxiedClasses, Set<Class> proxyFailures)
+    private static void injectProxy(Class clazz, ThrowingProxy proxy, Map<Class, ThrowingProxy> proxiedClasses, Set<String> proxyFailures)
     {
         if (clazz.isInterface())
         {
@@ -211,7 +218,7 @@ public class XmlDescriptorThrowerImpl implements XmlDescriptorThrower
 
             if (interfaces.length == 0)
             {
-                proxyFailures.add(clazz);
+                proxyFailures.add(clazz.getName());
             }
             else
             {
@@ -225,7 +232,7 @@ public class XmlDescriptorThrowerImpl implements XmlDescriptorThrower
         }
     }
 
-    private static void injectProxies(Class clazz, Set<Method> methods, Map<Class, ThrowingProxy> proxiedClasses, Set<Class> proxyFailures)
+    private static void injectProxies(Class clazz, Set<Method> methods, Map<Class, ThrowingProxy> proxiedClasses, Set<String> proxyFailures)
     {
         for (Method method : methods)
         {
