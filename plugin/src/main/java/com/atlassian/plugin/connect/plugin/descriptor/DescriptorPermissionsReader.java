@@ -1,5 +1,15 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -11,25 +21,18 @@ import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.connect.spi.util.XmlUtils;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-import com.google.common.cache.Cache;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.opensymphony.util.FileUtils;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.google.common.collect.Sets.newHashSet;
@@ -42,15 +45,15 @@ import static com.google.common.collect.Sets.newHashSet;
 @Named
 public final class DescriptorPermissionsReader implements PermissionsReader
 {
-    private final Cache<Plugin,Set<String>> permissionsCache;
-    private final Cache<Plugin,Set<ScopeName>> scopesCache;
+    private final LoadingCache<Plugin, Set<String>> permissionsCache;
+    private final LoadingCache<Plugin, Set<ScopeName>> scopesCache;
     private final String productKey;
 
     @Inject
     public DescriptorPermissionsReader(final HostProperties hostProperties, final BundleLocator bundleLocator)
     {
         this.productKey = hostProperties.getKey();
-        this.permissionsCache = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<Plugin,Set<String>>()
+        this.permissionsCache = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<Plugin, Set<String>>()
         {
             @Override
             public Set<String> load(Plugin plugin) throws Exception
@@ -58,7 +61,7 @@ public final class DescriptorPermissionsReader implements PermissionsReader
                 return read(bundleLocator.getBundle(plugin.getKey()), productKey);
             }
         });
-        this.scopesCache = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<Plugin,Set<ScopeName>>()
+        this.scopesCache = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<Plugin, Set<ScopeName>>()
         {
             @Override
             public Set<ScopeName> load(Plugin plugin) throws Exception
@@ -139,14 +142,14 @@ public final class DescriptorPermissionsReader implements PermissionsReader
         if (permissionsElement != null)
         {
 
-            for (Element e : (List<Element>)permissionsElement.elements())
+            for (Element e : (List<Element>) permissionsElement.elements())
             {
                 String application = getOptionalAttribute(e, "application", productKey);
                 if (productKey.equals(application))
                 {
                     String targetInstallationMode = getOptionalAttribute(e, "installation-mode", null);
 
-                        permissions.add(e.getTextTrim());
+                    permissions.add(e.getTextTrim());
                 }
             }
         }
