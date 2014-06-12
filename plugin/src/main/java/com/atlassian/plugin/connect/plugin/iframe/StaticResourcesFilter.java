@@ -39,7 +39,6 @@ public class StaticResourcesFilter implements Filter
     private static Plugin plugin;
 
     private FilterConfig config;
-    //private Map<String, CacheEntry> cache;
     private LoadingCache<String, CacheEntry> loadingCache;
 
     public StaticResourcesFilter(PluginRetrievalService pluginRetreivalService)
@@ -51,15 +50,6 @@ public class StaticResourcesFilter implements Filter
     public void init(FilterConfig config) throws ServletException
     {
         this.config = config;
-//        cache = new MapMaker().makeComputingMap(new Function<String, CacheEntry>()
-//        {
-//            @Override
-//            public CacheEntry apply(String from)
-//            {
-//                return new CacheEntry(from);
-//            }
-//        });
-
         loadingCache = CacheBuilder.newBuilder()
                                    .build(new CacheLoader<String, CacheEntry>()
                                    {
