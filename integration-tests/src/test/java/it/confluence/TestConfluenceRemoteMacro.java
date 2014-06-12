@@ -2,6 +2,7 @@ package it.confluence;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Suppliers;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -34,6 +35,7 @@ import static it.confluence.ContextParameters.*;
 import static java.lang.String.format;
 import static org.junit.Assert.*;
 
+@XmlDescriptor
 public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
 {
     private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME));

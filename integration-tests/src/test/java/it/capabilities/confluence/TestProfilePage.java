@@ -1,16 +1,16 @@
 package it.capabilities.confluence;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.util.Map;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
-import it.capabilities.AbstractPageTst;
+import it.capabilities.AbstractPageTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 import static it.matcher.IsNotBlank.isNotBlank;
 import static org.hamcrest.Matchers.containsString;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of profile page in Confluence
  */
-public class TestProfilePage extends AbstractPageTst
+public class TestProfilePage extends AbstractPageTest
 {
     @BeforeClass
     public static void startConnectAddOn() throws Exception
