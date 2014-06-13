@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.plugin.threeleggedauth.jira;
+package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.exception.*;

@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.plugin.threeleggedauth.jira;
+package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -12,6 +12,7 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.threeleggedauth.AddOnSpecificThreeLeggedAuthService;
 import com.atlassian.plugin.connect.plugin.threeleggedauth.NoUserAgencyException;
 import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -25,7 +26,6 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 
-@Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBase
 {
@@ -51,6 +51,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void authorisedUserAgencyIsAllowed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
+        grant3LA();
         setGlobalImpersonationEnabled(false);
         assertEquals(200, issueRequest(createRequestUri(SUBJECT_USERNAME)));
     }
@@ -58,6 +59,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void authorisedUserAgencyHasSubjectAsRemoteUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
+        grant3LA();
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUserKey());
@@ -66,6 +68,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void authorisedUserAgencyHasSubjectAttribute() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
+        grant3LA();
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(SUBJECT_USERNAME, getSubjectFromRequestAttribute(getCapturedRequest()));
@@ -74,6 +77,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void cannotActForANonExistentUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException, OperationFailedException, ApplicationPermissionException
     {
+        grant3LA();
         setGlobalImpersonationEnabled(false);
         ensureUserDoesNotExist(NON_EXISTENT_USERNAME);
         assertEquals(401, issueRequest(createRequestUri(NON_EXISTENT_USERNAME)));
@@ -267,4 +271,11 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     {
         return "com.eazybi.atlassian-connect.eazybi-jira";
     }
+
+    private void grant3LA()
+    {
+        AddOnSpecificThreeLeggedAuthService.setAuthorisedAddOnKeys("com.eazybi.atlassian-connect.eazybi-jira");
+    }
+
+
 }
