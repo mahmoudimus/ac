@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
+package it.com.atlassian.plugin.connect.plugin.threeleggedauth.jira;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;

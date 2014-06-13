@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
+package it.com.atlassian.plugin.connect.plugin.threeleggedauth.jira;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.exception.*;
@@ -26,7 +26,6 @@ import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
-import com.atlassian.sal.api.user.UserKey;
 import com.google.common.collect.ImmutableSet;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.After;
@@ -70,7 +69,6 @@ public abstract class ThreeLeggedAuthFilterTestBase
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilterTestBase.class);
     private final static String ADMIN_USERNAME = "admin";
     protected final static String SUBJECT_USERNAME = "barney";
-    protected static final UserKey SUBJECT = new UserKey(SUBJECT_USERNAME);
     protected static final String INACTIVE_USERNAME = "inactive_user";
     protected static final String NON_EXISTENT_USERNAME = "non_existent_user";
     private static final String REQUEST_PATH = "/path";
