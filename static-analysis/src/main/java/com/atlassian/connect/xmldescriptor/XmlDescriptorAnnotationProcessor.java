@@ -17,6 +17,7 @@ import java.util.Set;
 public class XmlDescriptorAnnotationProcessor extends AbstractProcessor
 {
     private Filer filer;
+    private StringBuilder stringBuilder = new StringBuilder();
 
     @Override
     public synchronized void init(final ProcessingEnvironment processingEnv)
@@ -28,7 +29,13 @@ public class XmlDescriptorAnnotationProcessor extends AbstractProcessor
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)
     {
-        writeOutputToFile(generateOutput(roundEnv));
+        stringBuilder.append(generateOutput(roundEnv));
+
+        if (roundEnv.processingOver() && !roundEnv.errorRaised())
+        {
+            writeOutputToFile(stringBuilder.toString());
+            stringBuilder = new StringBuilder();
+        }
 
         return true;
     }
