@@ -1,4 +1,4 @@
-_AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], function($, dialog, uiParams) {
+_AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params", "_rpc"], function($, dialog, uiParams, rpc) {
 
     // When openCustomEditor is invoked, it will assign a function for saving the macro
     // being edited to this field. This simplifies the client's job of saving the macro
@@ -99,6 +99,22 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
         },
 
     };
+
+    rpc.extend(function () {
+        return {
+            internals: {
+                saveMacro: function (updatedParams) {
+                    module.saveMacro(updatedParams);
+                },
+                closeMacroEditor: function () {
+                    module.close();
+                },
+                getMacroData: function (callback) {
+                    module.getMacroData(callback);
+                }
+            }
+        };
+    });
 
     return module;
 
