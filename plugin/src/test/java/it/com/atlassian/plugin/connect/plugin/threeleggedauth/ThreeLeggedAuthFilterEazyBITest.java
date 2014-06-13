@@ -9,7 +9,6 @@ import com.atlassian.crowd.exception.InvalidUserException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
@@ -28,9 +27,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBase
 {
-    private static final String ADD_ON_KEYS_SYS_PROP = "com.atlassian.connect.3la.authorised_add_on_keys";
-
-    public ThreeLeggedAuthFilterEazyBITest(TestPluginInstaller testPluginInstaller,
+   public ThreeLeggedAuthFilterEazyBITest(TestPluginInstaller testPluginInstaller,
                                            TestAuthenticator testAuthenticator,
                                            AddonTestFilterResults testFilterResults,
                                            JwtWriterFactory jwtWriterFactory,
@@ -49,35 +46,17 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
         return ScopeName.READ;
     }
 
-//    @Test
-    public void pleaseImplementMe()
-    {
-        /* suggested tests:
-            - EazyBI can impersonate a valid user (200 response code, correct add-on and subject attributes, request is assigned to subject)
-            - EazyBI cannot impersonate a non-existent user (401 or 403 response code)
-            - EazyBI cannot impersonate an inactive user (same response code as above)
-            - EazyBI can omit the subject claim and the request goes through ok but without impersonation (200 response code, correct add-on and subject attributes, request is assigned to add-on user)
-                (for these see ThreeLeggedAuthFilterWithUserAgency in feature/ACDEV-1228-3-legged-auth)
-            - A random other add-on can specify a subject for impersonation and the request goes through ok but without impersonation
-            - A random other add-on can omit the subject claim and the request goes through ok but without impersonation (200 response code, correct add-on and subject attributes, request is assigned to add-on user)
-                (see ThreeLeggedAuthFilterWithoutUserAgency in feature/ACDEV-1228-3-legged-auth)
-
-            - only READ scope allowed
-         */
-        throw new RuntimeException("not implemented!");
-    }
-
     @Test
     public void authorisedUserAgencyIsAllowed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
-        grant3LA();
+        setGlobalImpersonationEnabled(false);
         assertEquals(200, issueRequest(createRequestUri(SUBJECT_USERNAME)));
     }
 
     @Test
     public void authorisedUserAgencyHasSubjectAsRemoteUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
-        grant3LA();
+        setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUserKey());
     }
@@ -85,7 +64,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void authorisedUserAgencyHasSubjectAttribute() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
-        grant3LA();
+        setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(SUBJECT_USERNAME, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
@@ -93,6 +72,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void cannotActForANonExistentUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException, OperationFailedException, ApplicationPermissionException
     {
+        setGlobalImpersonationEnabled(false);
         ensureUserDoesNotExist(NON_EXISTENT_USERNAME);
         assertEquals(401, issueRequest(createRequestUri(NON_EXISTENT_USERNAME)));
     }
@@ -101,6 +81,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void cannotActForAnInactiveUser() throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, IOException, NoSuchAlgorithmException
     {
+        setGlobalImpersonationEnabled(false);
         assertEquals(401, issueRequest(createUriForInactiveSubject()));
     }
 
@@ -108,6 +89,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void noSubjectIsOk() throws IOException, NoSuchAlgorithmException
     {
+        setGlobalImpersonationEnabled(false);
         assertEquals(200, issueRequest(createRequestUri(null)));
     }
 
@@ -115,6 +97,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void noSubjectImpliesAddOnUser() throws IOException, NoSuchAlgorithmException
     {
+        setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(null));
         assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUserKey());
     }
@@ -123,6 +106,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void noSubjectImpliesNoSubjectAttribute() throws IOException, NoSuchAlgorithmException
     {
+        setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(null));
         assertEquals(null, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
@@ -131,6 +115,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void noSubjectResultsInAddOnAttribute() throws IOException, NoSuchAlgorithmException
     {
+        setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(null));
         assertEquals(addOnBean.getKey(), getAddOnIdFromRequestAttribute(getCapturedRequest()));
     }
@@ -139,6 +124,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void nonJwtRequestsAreOk() throws IOException
     {
+        setGlobalImpersonationEnabled(false);
         assertEquals(200, issueRequest(createRequestUriWithoutJwt()));
     }
 
@@ -146,6 +132,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void nonJwtRequestsHasNoRemoteUser() throws IOException
     {
+        setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUriWithoutJwt());
         assertEquals(null, getCapturedRequest().getRemoteUserKey());
     }
@@ -154,14 +141,16 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void nonJwtRequestsHaveNoSubjectAttribute() throws IOException
     {
+        setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUriWithoutJwt());
         assertEquals(null, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
 
     // if this is not a request from a JWT add-on then the request proceeds through the filter chain
     @Test
-    public void nonJwtRequestshaveNoAddOnAttribute() throws IOException
+    public void nonJwtRequestsHaveNoAddOnAttribute() throws IOException
     {
+        setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUriWithoutJwt());
         assertEquals(null, getAddOnIdFromRequestAttribute(getCapturedRequest()));
     }
@@ -170,26 +159,28 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void aNonExistentAddOnIsRejected() throws IOException, NoSuchAlgorithmException
     {
+        setGlobalImpersonationEnabled(false);
         assertEquals(401, issueRequest(createRequestUri(SUBJECT_USERNAME, "non-existent add-on key")));
     }
 
     @Test
     public void emptySubjectResultsInError() throws IOException, NoSuchAlgorithmException
     {
+        setGlobalImpersonationEnabled(false);
         assertEquals(400, issueRequest(createRequestUri("")));
     }
 
     @Test
     public void impersonationSetAndNo3LAIsOk() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         assertEquals(200, issueRequest(createRequestUri(SUBJECT_USERNAME)));
     }
 
     @Test
     public void impersonationSetAndNo3LAImpliesThatTheSubjectIsTheAssignedUser() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUserKey());
     }
@@ -197,7 +188,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void impersonationSetAndNo3LAImpliesThatTheSubjectAttributeIsSet() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(SUBJECT_USERNAME, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
@@ -205,7 +196,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void impersonationSetAndNo3LAImpliesThatTheAddOnAttributeIsSet() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(addOnBean.getKey(), getAddOnIdFromRequestAttribute(getCapturedRequest()));
     }
@@ -213,21 +204,21 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void impersonationSetButNonExistentAddOnResultsInError() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         assertEquals(401, issueRequest(createRequestUri(SUBJECT_USERNAME, "non-existent-add-on")));
     }
 
     @Test
     public void impersonationSetButNoSubjectIsOk() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         assertEquals(200, issueRequest(createRequestUri(null)));
     }
 
     @Test
     public void impersonationSetButNoSubjectResultsInAssignmentToTheAddOnUser() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(null));
         assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUserKey());
     }
@@ -235,7 +226,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void impersonationSetButNoSubjectResultsInNoSubjectAttribute() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(null));
         assertEquals(null, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
@@ -243,7 +234,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void impersonationSetButNoSubjectResultsInAddOnAttribute() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(null));
         assertEquals(addOnBean.getKey(), getAddOnIdFromRequestAttribute(getCapturedRequest()));
     }
@@ -251,28 +242,22 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     @Test
     public void impersonationSetButEmptySubjectResultsInError() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         assertEquals(400, issueRequest(createRequestUri("")));
     }
 
     @Test
     public void impersonationSetButNonExistentSubjectResultsInError() throws IOException, NoSuchAlgorithmException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         assertEquals(401, issueRequest(createRequestUri("non-existent-user")));
     }
 
     @Test
     public void impersonationSetButInactiveSubjectResultsInError() throws IOException, NoSuchAlgorithmException, OperationFailedException, ApplicationPermissionException, InvalidCredentialException, InvalidUserException
     {
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, "true");
+        setGlobalImpersonationEnabled(true);
         assertEquals(401, issueRequest(createUriForInactiveSubject()));
-    }
-
-    private void grant3LA()
-    {
-        // this doesn't work as system property only checked on start up so setting it here is too late
-//        System.setProperty(ADD_ON_KEYS_SYS_PROP, addOnBean.getKey());
     }
 
     @Override

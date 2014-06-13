@@ -109,16 +109,23 @@ public abstract class ThreeLeggedAuthFilterTestBase
     @Before
     public void beforeEachTest()
     {
-        globalImpersonationWasEnabled = Boolean.getBoolean(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION);
-//        assertFalse(threeLeggedAuthService.hasGrant(SUBJECT, addOnBean));
+        globalImpersonationWasEnabled = isGlobalImpersonationEnabled();
     }
 
     @After
     public void afterEachTest()
     {
-//        threeLeggedAuthService.revokeAll(addOnBean.getKey());
-//        assertFalse(threeLeggedAuthService.hasGrant(SUBJECT, addOnBean));
-        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, Boolean.toString(globalImpersonationWasEnabled));
+        setGlobalImpersonationEnabled(globalImpersonationWasEnabled);
+    }
+
+    protected boolean isGlobalImpersonationEnabled()
+    {
+        return Boolean.getBoolean(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION);
+    }
+
+    protected void setGlobalImpersonationEnabled(boolean value)
+    {
+        System.setProperty(JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION, Boolean.toString(value));
     }
 
     @AfterClass

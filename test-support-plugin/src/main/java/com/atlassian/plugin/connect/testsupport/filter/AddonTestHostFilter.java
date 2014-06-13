@@ -67,7 +67,8 @@ public class AddonTestHostFilter extends AddonTestFilterBase
 
     private boolean jwtWasIssuedByHost(String issuer)
     {
-        return issuer.startsWith("jira"); // TODO: Not sure how to implement this properly w/o oauth
+        // TODO: Not sure how to implement this properly w/o oauth
+        return issuer.toLowerCase().startsWith("jira") || issuer.toLowerCase().startsWith("confluence");
 //        return consumerService.getConsumer().getKey().equals(issuer);
     }
 
