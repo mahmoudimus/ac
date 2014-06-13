@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.plugin.threeleggedauth.NoUserAgencyException
 import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
+import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 
+@Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ThreeLeggedAuthFilterNotEazyBITest extends ThreeLeggedAuthFilterTestBase
 {
