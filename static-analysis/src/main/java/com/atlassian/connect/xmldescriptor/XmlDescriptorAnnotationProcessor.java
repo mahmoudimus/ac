@@ -13,7 +13,7 @@ import java.io.Writer;
 import java.util.Set;
 
 @SupportedAnnotationTypes("com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor")
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class XmlDescriptorAnnotationProcessor extends AbstractProcessor
 {
     private Filer filer;
