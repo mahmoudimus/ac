@@ -103,6 +103,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-static-analysis</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>biz.aQute</groupId>
             <artifactId>bndlib</artifactId>
             <version>1.43.0-atlassian-1</version>
@@ -461,8 +467,7 @@
                             com.atlassian.plugin.connect.modules*,
                             com.atlassian.plugin.connect.modules.*,
                             com.atlassian.plugin.connect.modules.beans*,
-                            com.atlassian.plugin.connect.modules.beans.*,
-                            com.atlassian.plugin.connect.xmldescriptor
+                            com.atlassian.plugin.connect.modules.beans.*
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>

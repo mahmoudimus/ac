@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.xmldescriptor;
+package com.atlassian.connect.xmldescriptor;
 
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 
