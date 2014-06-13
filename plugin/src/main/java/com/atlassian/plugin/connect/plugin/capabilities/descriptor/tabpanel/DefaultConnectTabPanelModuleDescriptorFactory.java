@@ -56,7 +56,7 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
 
         element.addElement(LABEL)
                 .addAttribute(KEY, bean.getName().getI18n())
-                .setText(bean.getName().getValue());
+                                                 .setText(bean.getName().getValue());
 
         if (!bean.getConditions().isEmpty())
         {

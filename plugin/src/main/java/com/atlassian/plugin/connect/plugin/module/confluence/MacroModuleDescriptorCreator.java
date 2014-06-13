@@ -247,8 +247,8 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("section", "system.editor.featured.macros.default")
                     .addElement("label")
                     .addText(name).getParent()
-                    .addElement("link")
-                    .addAttribute("linkId", macroKey).getParent();
+                                           .addElement("link")
+                                           .addAttribute("linkId", macroKey).getParent();
 
             if (macroConfig.attribute("icon-url") != null)
             {
