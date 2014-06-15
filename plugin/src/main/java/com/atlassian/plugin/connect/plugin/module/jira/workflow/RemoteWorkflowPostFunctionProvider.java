@@ -43,7 +43,7 @@ public class RemoteWorkflowPostFunctionProvider extends AbstractJiraFunctionProv
     @Override
     public void execute(final Map transientVars, final Map args, final PropertySet propertySet) throws WorkflowException
     {
-        final String fullModuleKey = checkNotNull(args.get("full.module.key")).toString();
+        final String fullModuleKey = checkNotNull(args.get("full.module.key"), "Expected arg 'full.module.key' is not present").toString();
         final JSONObject postFunctionJSON = postFunctionJSON(transientVars, args);
         eventPublisher.publish(new RemoteWorkflowPostFunctionEvent(fullModuleKey, postFunctionJSON));
     }
