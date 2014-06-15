@@ -431,7 +431,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "host/_status_helper
     else {
       AJS.toInit(function(){
         // Load after confluence editor has finished loading content.
-        if(AJS.Confluence && AJS.Confluence.EditorLoader && AJS.Confluence.EditorLoader.load){
+        if(AJS.Confluence && AJS.Confluence.EditorLoader && AJS.Confluence.EditorLoader.load
+            // TODO(chrisw): This was added due to changes in confluence's editor-loader.js in 5.5
+            && AJS.Confluence.QuickEdit) {
          
           /*
           NOTE: for some reason, the confluence EditorLoader will 404 sometimes on create page.
