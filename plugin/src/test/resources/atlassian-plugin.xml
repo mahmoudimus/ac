@@ -55,6 +55,7 @@
                interface="it.com.atlassian.plugin.connect.TestAuthenticator"
                application="confluence" />
     <component key="jiraWorkflowImporter"
+               class="it.com.atlassian.plugin.connect.workflow.jira.DefaultWorkflowImporter"
                interface="it.com.atlassian.plugin.connect.workflow.jira.WorkflowImporter"
                application="jira" />
 </atlassian-plugin>
