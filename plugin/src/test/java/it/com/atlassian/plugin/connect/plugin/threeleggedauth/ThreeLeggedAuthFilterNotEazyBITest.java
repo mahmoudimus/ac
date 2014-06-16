@@ -5,7 +5,6 @@ import java.security.NoSuchAlgorithmException;
 
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
@@ -14,7 +13,6 @@ import com.atlassian.plugin.connect.plugin.threeleggedauth.NoUserAgencyException
 import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -59,7 +57,7 @@ public class ThreeLeggedAuthFilterNotEazyBITest extends ThreeLeggedAuthFilterTes
     {
         grant3LA();
         issueRequest(createRequestUri(SUBJECT_USERNAME));
-        assertEquals(lowerCase(getAddOnUsername()), lowerCase(getCapturedRequest().getRemoteUserKey()));
+        assertEquals(lowerCase(getAddOnUsername()), lowerCase(getCapturedRequest().getRemoteUsername()));
     }
 
     @Test
@@ -82,7 +80,7 @@ public class ThreeLeggedAuthFilterNotEazyBITest extends ThreeLeggedAuthFilterTes
     public void noSubjectImpliesAddOnUser() throws IOException, NoSuchAlgorithmException
     {
         issueRequest(createRequestUri(null));
-        assertEquals(lowerCase(getAddOnUsername()), lowerCase(getCapturedRequest().getRemoteUserKey()));
+        assertEquals(lowerCase(getAddOnUsername()), lowerCase(getCapturedRequest().getRemoteUsername()));
     }
 
     // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
@@ -113,7 +111,7 @@ public class ThreeLeggedAuthFilterNotEazyBITest extends ThreeLeggedAuthFilterTes
     public void nonJwtRequestsHasNoRemoteUser() throws IOException
     {
         issueRequest(createRequestUriWithoutJwt());
-        assertEquals(null, getCapturedRequest().getRemoteUserKey());
+        assertEquals(null, getCapturedRequest().getRemoteUsername());
     }
 
     // if this is not a request from a JWT add-on then the request proceeds through the filter chain

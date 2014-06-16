@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
-import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +24,7 @@ public class ServletRequestSnaphot
     private final String serverName;
     private final int serverPort;
     private final String entity;
-    private final String remoteUserKey;
+    private final String remoteUsername;
 
     public ServletRequestSnaphot(HttpServletRequest request, UserManager userManager)
     {
@@ -61,7 +60,7 @@ public class ServletRequestSnaphot
         
         this.entity = extractEntity(request);
         final UserProfile remoteUser = userManager.getRemoteUser(request);
-        this.remoteUserKey = null == remoteUser ? null : remoteUser.getUsername();
+        this.remoteUsername = null == remoteUser ? null : remoteUser.getUsername();
     }
 
     private static String extractEntity(HttpServletRequest request)
@@ -136,8 +135,8 @@ public class ServletRequestSnaphot
         return entity;
     }
 
-    public String getRemoteUserKey()
+    public String getRemoteUsername()
     {
-        return remoteUserKey;
+        return remoteUsername;
     }
 }

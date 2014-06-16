@@ -17,7 +17,6 @@ import com.atlassian.plugin.connect.plugin.threeleggedauth.NoUserAgencyException
 import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -62,7 +61,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
         grant3LA();
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(SUBJECT_USERNAME));
-        assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUserKey());
+        assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUsername());
     }
 
     @Test
@@ -105,7 +104,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     {
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(null));
-        assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUserKey());
+        assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUsername());
     }
 
     // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
@@ -140,7 +139,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     {
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUriWithoutJwt());
-        assertEquals(null, getCapturedRequest().getRemoteUserKey());
+        assertEquals(null, getCapturedRequest().getRemoteUsername());
     }
 
     // if this is not a request from a JWT add-on then the request proceeds through the filter chain
@@ -188,7 +187,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     {
         setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(SUBJECT_USERNAME));
-        assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUserKey());
+        assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUsername());
     }
 
     @Test
@@ -226,7 +225,7 @@ public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBa
     {
         setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(null));
-        assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUserKey());
+        assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUsername());
     }
 
     @Test
