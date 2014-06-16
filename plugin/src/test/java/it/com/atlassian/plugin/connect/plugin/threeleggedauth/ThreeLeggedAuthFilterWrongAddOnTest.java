@@ -1,8 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.writer.JwtWriterFactory;
@@ -19,22 +16,25 @@ import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 import static com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils.lowerCase;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ThreeLeggedAuthFilterNotEazyBITest extends ThreeLeggedAuthFilterTestBase
+public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTestBase
 {
 
-    public ThreeLeggedAuthFilterNotEazyBITest(TestPluginInstaller testPluginInstaller,
-                                              TestAuthenticator testAuthenticator,
-                                              AddonTestFilterResults testFilterResults,
-                                              JwtWriterFactory jwtWriterFactory,
-                                              ConnectAddonRegistry connectAddonRegistry,
-                                              ApplicationProperties applicationProperties,
-                                              ThreeLeggedAuthService threeLeggedAuthService,
-                                              ApplicationService applicationService,
-                                              ApplicationManager applicationManager)
+    public ThreeLeggedAuthFilterWrongAddOnTest(TestPluginInstaller testPluginInstaller,
+                                               TestAuthenticator testAuthenticator,
+                                               AddonTestFilterResults testFilterResults,
+                                               JwtWriterFactory jwtWriterFactory,
+                                               ConnectAddonRegistry connectAddonRegistry,
+                                               ApplicationProperties applicationProperties,
+                                               ThreeLeggedAuthService threeLeggedAuthService,
+                                               ApplicationService applicationService,
+                                               ApplicationManager applicationManager)
     {
         super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationManager);
     }

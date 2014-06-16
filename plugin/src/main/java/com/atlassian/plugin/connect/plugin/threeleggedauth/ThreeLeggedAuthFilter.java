@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
+import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -40,9 +41,9 @@ public class ThreeLeggedAuthFilter implements Filter
     private final AuthenticationListener authenticationListener;
     private final JwtApplinkFinder jwtApplinkFinder;
     private final CrowdService crowdService;
+    private final String badCredentialsMessage; // protect against phishing by not saying whether the add-on, user or secret was wrong
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilter.class);
-    private static final String BAD_CREDENTIALS_MESSAGE = "Your presented credentials do not provide access to this resource."; // protect against phishing by not saying whether the add-on, user or secret was wrong
     private static final String MSG_FORMAT_NOT_ALLOWING_IMPERSONATION = "NOT allowing add-on '%s' to impersonate user '%s'";
 
     @Autowired
@@ -51,7 +52,8 @@ public class ThreeLeggedAuthFilter implements Filter
                                  UserManager userManager,
                                  AuthenticationListener authenticationListener,
                                  JwtApplinkFinder jwtApplinkFinder,
-                                 CrowdService crowdService)
+                                 CrowdService crowdService,
+                                 I18nResolver i18nResolver)
     {
         this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService);
         this.connectAddonManager = checkNotNull(connectAddonManager);
@@ -59,6 +61,7 @@ public class ThreeLeggedAuthFilter implements Filter
         this.authenticationListener = checkNotNull(authenticationListener);
         this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder);
         this.crowdService = checkNotNull(crowdService);
+        this.badCredentialsMessage = i18nResolver.getText("connect.3la.bad_credentials");
     }
 
     @Override
@@ -82,6 +85,13 @@ public class ThreeLeggedAuthFilter implements Filter
 
         Object addOnKeyObject = servletRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
         String addOnKey = addOnKeyObject instanceof String ? (String)addOnKeyObject : null;
+
+        // warn if weird properties are set
+        if (null != addOnKeyObject && !(addOnKeyObject instanceof String))
+        {
+            log.warn("The value of the request attribute '{}' should be a string but instead it is a '{}': '{}'. This is a programming error in the code that sets this value.",
+                    new Object[]{JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME, addOnKeyObject.getClass().getSimpleName(), addOnKeyObject});
+        }
 
         // potentially reject only if the request comes from an add-on
         if (StringUtils.isEmpty(addOnKey))
@@ -157,8 +167,7 @@ public class ThreeLeggedAuthFilter implements Filter
                 // a valid grant must exist
                 if (threeLeggedAuthService.hasGrant(userKey, addOnBean))
                 {
-                    log.warn("Allowing add-on '{}' to impersonate user '{}' because there is an access-token showing that this user has authorised this add-on to act on their behalf.",
-                            new String[]{addOnKey, subject});
+                    log.info("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnKey, subject);
                     allowImpersonation = true;
                 }
                 else
@@ -192,7 +201,7 @@ public class ThreeLeggedAuthFilter implements Filter
         }
         catch (InvalidSubjectException e)
         {
-            createAndSendFailure(e, response, HttpServletResponse.SC_UNAUTHORIZED, BAD_CREDENTIALS_MESSAGE);
+            createAndSendFailure(e, response, HttpServletResponse.SC_UNAUTHORIZED, badCredentialsMessage);
         }
     }
 
@@ -205,7 +214,7 @@ public class ThreeLeggedAuthFilter implements Filter
         if (null == user)
         {
             String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnKey, subject);
-            log.debug("{} because the crowd service says that there is no user with this username.", externallyVisibleMessage);
+            log.warn("{} because the crowd service says that there is no user with this username.", externallyVisibleMessage);
             fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_UNAUTHORIZED);
             throw new InvalidSubjectException(subject);
         }

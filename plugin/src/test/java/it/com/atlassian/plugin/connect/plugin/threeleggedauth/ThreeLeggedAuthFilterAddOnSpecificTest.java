@@ -1,8 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.InvalidCredentialException;
 import com.atlassian.crowd.exception.InvalidUserException;
@@ -23,20 +20,23 @@ import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ThreeLeggedAuthFilterEazyBITest extends ThreeLeggedAuthFilterTestBase
+public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilterTestBase
 {
-   public ThreeLeggedAuthFilterEazyBITest(TestPluginInstaller testPluginInstaller,
-                                           TestAuthenticator testAuthenticator,
-                                           AddonTestFilterResults testFilterResults,
-                                           JwtWriterFactory jwtWriterFactory,
-                                           ConnectAddonRegistry connectAddonRegistry,
-                                           ApplicationProperties applicationProperties,
-                                           ThreeLeggedAuthService threeLeggedAuthService,
-                                           ApplicationService applicationService,
-                                           ApplicationManager applicationManager)
+   public ThreeLeggedAuthFilterAddOnSpecificTest(TestPluginInstaller testPluginInstaller,
+                                                 TestAuthenticator testAuthenticator,
+                                                 AddonTestFilterResults testFilterResults,
+                                                 JwtWriterFactory jwtWriterFactory,
+                                                 ConnectAddonRegistry connectAddonRegistry,
+                                                 ApplicationProperties applicationProperties,
+                                                 ThreeLeggedAuthService threeLeggedAuthService,
+                                                 ApplicationService applicationService,
+                                                 ApplicationManager applicationManager)
     {
         super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationManager);
     }
