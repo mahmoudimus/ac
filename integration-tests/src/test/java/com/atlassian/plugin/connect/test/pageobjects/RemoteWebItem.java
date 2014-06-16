@@ -84,6 +84,11 @@ public class RemoteWebItem
         return !webItem.getAttribute("href").contains("/plugins/servlet/ac/");
     }
 
+    public String getLinkText()
+    {
+        return webItem.getText();
+    }
+
     public void click()
     {
         if (dropDownLinkId.isPresent())
@@ -112,10 +117,10 @@ public class RemoteWebItem
         {
             return false;
         }
-        
+
         return webItem.isVisible();
     }
-    
+
     public String getFromQueryString(final String key)
     {
         return RemotePageUtil.findInContext(path, key);

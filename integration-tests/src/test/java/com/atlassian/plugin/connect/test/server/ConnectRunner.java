@@ -65,7 +65,7 @@ public class ConnectRunner
     private ToggleableConditionServlet toggleableConditionServlet;
     private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
-    
+
     private int port;
     private Server server;
     private final Map<String, HttpServlet> routes = newHashMap();
@@ -181,7 +181,7 @@ public class ConnectRunner
         addonBuilder.withAuthentication(AuthenticationBean.none());
         return this;
     }
-    
+
     public ConnectRunner addModule(String fieldName, ModuleBean bean)
     {
         addonBuilder.withModule(fieldName, bean);
@@ -212,6 +212,12 @@ public class ConnectRunner
         addonBuilder.withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString()).build());
 
         //return addPermission(Permissions.CREATE_OAUTH_LINK);
+        return this;
+    }
+
+    public ConnectRunner addAuth(AuthenticationBean authenticationBean)
+    {
+        addonBuilder.withAuthentication(authenticationBean);
         return this;
     }
 

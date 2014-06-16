@@ -27,7 +27,6 @@ public final class JiraAdminPage implements AdminPage
     @Inject
     private PageBinder pageBinder;
     private final String pageKey;
-    private final String linkText;
 
     private final Supplier<Option<WebElement>> link = new Supplier<Option<WebElement>>()
     {
@@ -38,10 +37,9 @@ public final class JiraAdminPage implements AdminPage
         }
     };
 
-    public JiraAdminPage(String pageKey, String linkText)
+    public JiraAdminPage(String pageKey)
     {
         this.pageKey = pageKey;
-        this.linkText = linkText;
     }
 
     @Override
@@ -53,54 +51,61 @@ public final class JiraAdminPage implements AdminPage
     @Override
     public RemotePluginTestPage clickRemotePluginLink()
     {
-        return link.get().fold(
-                new Supplier<RemotePluginTestPage>()
-                {
-                    @Override
-                    public RemotePluginTestPage get()
-                    {
-                        throw new IllegalStateException(format("Could not find link '%s'", link()));
-                    }
-                },
-                new Function<WebElement, RemotePluginTestPage>()
-                {
-                    @Override
-                    public RemotePluginTestPage apply(WebElement linkElement)
-                    {
-                        linkElement.click();
-                        logger.debug("Link '{}' was found and clicked.", linkElement);
-                        return pageBinder.bind(RemotePluginTestPage.class, pageKey);
-                    }
-                }
-        );
+        return withLinkElement(new Function<WebElement, RemotePluginTestPage>()
+        {
+            @Override
+            public RemotePluginTestPage apply(WebElement linkElement)
+            {
+                linkElement.click();
+                logger.debug("Link '{}' was found and clicked.", linkElement);
+                return pageBinder.bind(RemotePluginTestPage.class, pageKey);
+            }
+        });
     }
 
     @Override
     public String getRemotePluginLinkHref()
     {
+        return withLinkElement(new Function<WebElement, String>()
+        {
+            @Override
+            public String apply(WebElement linkElement)
+            {
+                return linkElement.getAttribute("href");
+            }
+        });
+    }
+
+    public String getRemotePluginLinkText()
+    {
+        return withLinkElement(new Function<WebElement, String>()
+        {
+            @Override
+            public String apply(WebElement linkElement)
+            {
+                return linkElement.getText();
+            }
+        });
+    }
+
+    private <T> T withLinkElement(Function<WebElement, T> function)
+    {
         return link.get().fold(
-                new Supplier<String>()
+                new Supplier<T>()
                 {
                     @Override
-                    public String get()
+                    public T get()
                     {
                         throw new IllegalStateException(format("Could not find link '%s'", link()));
                     }
                 },
-                new Function<WebElement, String>()
-                {
-                    @Override
-                    public String apply(WebElement linkElement)
-                    {
-                        return linkElement.getAttribute("href");
-                    }
-                }
+                function
         );
     }
 
     private By link()
     {
-        return By.linkText(linkText);
+        return By.id(pageKey);
     }
 
 }

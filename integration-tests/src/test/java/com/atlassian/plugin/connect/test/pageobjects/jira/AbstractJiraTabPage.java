@@ -56,14 +56,14 @@ public abstract class AbstractJiraTabPage extends AbstractJiraPage
         PageElement iframe = elementFinder.find(By.id(IframeUtils.iframeId(moduleKey)));
 
         iframe.timed().isPresent();
-        
+
         iframeSrc = iframe.getAttribute("src");
 
         System.out.println(iframeSrc);
-        
+
     }
 
-    private PageElement findAddOnTab()
+    public PageElement findAddOnTab()
     {
         if (tabField == null)
         {
