@@ -152,6 +152,7 @@ public class StaticResourcesFilter implements Filter
             }
             catch (Exception e)
             {
+                log.error("Error loading cache entry [" + localPath + "]", e);
                 // if not found, 404
                 send404(fullPath, res);
                 return;
