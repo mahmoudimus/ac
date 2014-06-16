@@ -64,7 +64,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
         return handler.installPlugin(descriptor, Option.<String>some("application/json")).getPlugin();
     }
 
-    @Deprecated
+    @Deprecated // @XmlDescriptor: I didn't feel like adding a dependency on the api module just to add a single annotation, so I used Deprecated instead of XmlDescriptor.
     @Override
     public Plugin installPlugin(File jarFile) throws IOException
     {

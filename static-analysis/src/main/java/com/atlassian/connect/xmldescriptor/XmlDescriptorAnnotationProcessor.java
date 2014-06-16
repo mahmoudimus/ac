@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Set;
 
+/**
+ * Find source code annotated with {@link com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor}.
+ * Include this module as a compile-time dependency of another module to get automatic compile-time generation of
+ * `target/classes/XmlDescriptor_annotations.txt`.
+ */
 @SupportedAnnotationTypes("com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class XmlDescriptorAnnotationProcessor extends AbstractProcessor
