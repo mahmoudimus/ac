@@ -11,6 +11,7 @@ import it.servlet.macro.SimpleMacroServlet;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
@@ -229,6 +230,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     }
 
     @Test
+    @Ignore
     public void testMacroCacheFlushes() throws Exception
     {
         final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(COUNTER_MACRO));
