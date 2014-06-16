@@ -4,7 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
-import it.capabilities.AbstractPageTest;
+import it.capabilities.AbstractPageTestBase;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of profile page in Confluence
  */
-public class TestProfilePage extends AbstractPageTest
+public class TestProfilePage extends AbstractPageTestBase
 {
     @BeforeClass
     public static void startConnectAddOn() throws Exception
