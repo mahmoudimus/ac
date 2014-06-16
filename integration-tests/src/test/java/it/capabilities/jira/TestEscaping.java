@@ -1,5 +1,10 @@
 package it.capabilities.jira;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
+import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
+import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
+import com.atlassian.jira.projects.pageobjects.page.BrowseProjectPage;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.Component;
 import com.atlassian.jira.testkit.client.restclient.ComponentClient;
@@ -10,6 +15,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
@@ -18,14 +25,19 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithR
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import it.servlet.ConnectAppServlets;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import java.net.MalformedURLException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean.newSearchRequestViewModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -33,14 +45,12 @@ import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newW
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.jira.TestJira.EXTRA_PREFIX;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 
 public class TestEscaping extends TestBase
 {
-    private static final String MODULE_NAME = "<b>$user</b>";
-    private static final String MODULE_NAME_JIRA_ESCAPED = "<b>\\$user</b>";
+    private static final String MODULE_NAME = "<b>${user}</b>";
+    private static final String MODULE_NAME_JIRA_ESCAPED = "<b>\\${user}</b>";
 
     private static final String GENERAL_PAGE_KEY = "general-page";
     private static final String WEB_ITEM_KEY_1 = "web-item-1";
@@ -61,6 +71,8 @@ public class TestEscaping extends TestBase
     private static final String PROJECT_KEY = RandomStringUtils.randomAlphabetic(4).toUpperCase();
 
     private static ConnectRunner runner;
+    private static ConnectPageOperations connectPageOperations = new ConnectPageOperations(jira().getPageBinder(),
+            jira().getTester().getDriver());
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -121,10 +133,11 @@ public class TestEscaping extends TestBase
                                 .build()
                 )
                 .addModule("jiraProjectAdminTabPanels",
-                        newTabPanelBean()
+                        newProjectAdminTabPanelBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(PROJECT_ADMIN_TAB_PANEL_KEY)
                                 .withUrl(MODULE_URL)
+                                .withLocation("projectgroup4")
                                 .build()
                 )
                 .addModule("jiraProjectTabPanels",
@@ -165,6 +178,7 @@ public class TestEscaping extends TestBase
                                 .withDescription(new I18nProperty(MODULE_NAME, null))
                                 .build()
                 )
+                .addRoute(MODULE_URL, ConnectAppServlets.helloWorldServlet())
                 .start();
 
         backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
@@ -185,7 +199,7 @@ public class TestEscaping extends TestBase
     {
         loginAsAdmin();
         RemoteWebItem webItem = findWebItem(GENERAL_PAGE_KEY);
-        assertEquals(MODULE_NAME, webItem.getLinkText());
+        assertIsEscaped(webItem.getLinkText());
     }
 
     @Test
@@ -193,7 +207,7 @@ public class TestEscaping extends TestBase
     {
         loginAsAdmin();
         RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY_1);
-        assertEquals(MODULE_NAME, webItem.getLinkText());
+        assertIsEscaped(webItem.getLinkText());
     }
 
     @Test
@@ -201,7 +215,7 @@ public class TestEscaping extends TestBase
     {
         loginAsAdmin();
         RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY_2);
-        assertEquals(MODULE_NAME, webItem.getLinkText());
+        assertIsEscaped(webItem.getLinkText());
     }
 
     @Test
@@ -210,7 +224,7 @@ public class TestEscaping extends TestBase
         loginAsAdmin();
         jira().visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
         JiraAdminPage adminPage = jira().getPageBinder().bind(JiraAdminPage.class, getModuleKey(ADMIN_PAGE_KEY));
-        assertEquals(MODULE_NAME, adminPage.getRemotePluginLinkText());
+        assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
 
     @Test
@@ -226,7 +240,7 @@ public class TestEscaping extends TestBase
         JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY,
                 component.id.toString(), ConnectPluginInfo.getPluginKey(), getModuleKey(COMPONENT_TAB_PANEL_KEY));
 
-        assertEquals(MODULE_NAME_JIRA_ESCAPED, componentTabPage.findAddOnTab().getText());
+        assertIsEscaped(componentTabPage.findAddOnTab().getText());
     }
 
     @Test
@@ -239,6 +253,51 @@ public class TestEscaping extends TestBase
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(JiraViewIssuePageWithRemotePluginIssueTab.class,
                 getModuleKey(ISSUE_TAB_PANEL_KEY), issue.key(), runner.getAddon().getKey(), ConnectPluginInfo.getPluginKey() + ":");
 
+        assertIsEscaped(page.getTabName());
+    }
+
+    @Test
+    public void testProfileTabPanel() throws MalformedURLException
+    {
+        jira().quickLoginAsAdmin(ViewProfilePage.class);
+        String moduleKey = getModuleKey(PROFILE_TAB_PANEL_KEY);
+        LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
+                Option.<String>none(), moduleKey);
+        assertIsEscaped(tabPanel.getWebItem().getLinkText());
+    }
+
+    @Test
+    public void testProjectAdminTabPanel() throws MalformedURLException
+    {
+        final String moduleKey = getModuleKey(PROJECT_ADMIN_TAB_PANEL_KEY);
+        ProjectSummaryPageTab page = jira().quickLoginAsAdmin(ProjectSummaryPageTab.class, PROJECT_KEY);
+        ProjectConfigTabs.Tab tab = Iterables.find(page.getTabs().getTabs(), new Predicate<ProjectConfigTabs.Tab>()
+        {
+            @Override
+            public boolean apply(@Nullable ProjectConfigTabs.Tab tab)
+            {
+                return moduleKey.equals(tab.getId());
+            }
+        });
+        assertIsEscaped(tab.getName());
+    }
+
+    @Test
+    public void testProjectTabPanel() throws MalformedURLException
+    {
+        jira().quickLoginAsAdmin(BrowseProjectPage.class, PROJECT_KEY);
+        String moduleKey = ConnectPluginInfo.getPluginKey() + ":" + getModuleKey(PROJECT_TAB_PANEL_KEY) + "-panel";
+        LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel(moduleKey, Option.<String>none(), moduleKey);
+        assertIsEscaped(tabPanel.getWebItem().getLinkText());
+    }
+
+    private void assertIsEscaped(String linkText)
+    {
+        // JIRA's own escaping leaves a '\' in front of the '$', which seems wrong
+        if (!MODULE_NAME.equals(linkText) && !MODULE_NAME_JIRA_ESCAPED.equals(linkText))
+        {
+            assertEquals(MODULE_NAME, linkText);
+        }
     }
 
     private void loginAsAdmin()
