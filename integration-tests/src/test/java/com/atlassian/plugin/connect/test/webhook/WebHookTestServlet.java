@@ -4,6 +4,7 @@ import cc.plural.jsonij.JPath;
 import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -49,6 +50,7 @@ public final class WebHookTestServlet extends HttpServlet
         runInRunner(baseUrl, webHookId, webHookId, pluginKey, tester);
     }
 
+    @XmlDescriptor
     public static void runInRunner(String baseUrl, String webHookId, String eventId, String pluginKey, WebHookTester tester) throws Exception
     {
         final String path = "/webhook";
@@ -186,6 +188,7 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stopAndUninstall();
     }
 
+    @XmlDescriptor
     public static void runSyncInRunner(String baseUrl, String eventId, String pluginKey, WebHookTester tester) throws Exception
     {
         final String path = "/webhook";

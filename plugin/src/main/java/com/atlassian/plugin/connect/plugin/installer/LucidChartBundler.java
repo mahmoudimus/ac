@@ -6,6 +6,7 @@ import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.PluginController;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
@@ -71,6 +72,7 @@ public final class LucidChartBundler implements InitializingBean, DisposableBean
         logger.debug("installed new lucid charts");
     }
 
+    @XmlDescriptor
     private PluginArtifact getArtifact()
     {
         return new JarPluginArtifact(ZipBuilder.buildZip("install-lucidchart-app", new ZipHandler()

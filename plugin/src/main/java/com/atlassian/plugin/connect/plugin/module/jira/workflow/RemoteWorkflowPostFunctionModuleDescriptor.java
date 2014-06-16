@@ -1,16 +1,15 @@
 package com.atlassian.plugin.connect.plugin.module.jira.workflow;
 
-import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow.ConnectWorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionResource;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import org.dom4j.Element;
@@ -20,6 +19,7 @@ import org.dom4j.Element;
  *
  * TODO delete this when we drop support for XML
  */
+@XmlDescriptor
 public class RemoteWorkflowPostFunctionModuleDescriptor extends ConnectWorkflowFunctionModuleDescriptor
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
@@ -28,12 +28,11 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends ConnectWorkflowF
     public RemoteWorkflowPostFunctionModuleDescriptor(final JiraAuthenticationContext authenticationContext,
             final ModuleFactory moduleFactory, final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            final JiraRestBeanMarshaler jiraRestBeanMarshaler,
-            final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry, final EventPublisher eventPublisher,
+            final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry,
             final DelegatingComponentAccessor componentAccessor)
     {
-        super(authenticationContext, moduleFactory, iFrameRenderStrategyRegistry, jiraRestBeanMarshaler,
-                webHookConsumerRegistry, eventPublisher, componentAccessor);
+        super(authenticationContext, moduleFactory, iFrameRenderStrategyRegistry,
+                webHookConsumerRegistry, componentAccessor);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
     }

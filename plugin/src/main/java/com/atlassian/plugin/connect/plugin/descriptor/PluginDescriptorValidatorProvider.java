@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
@@ -32,6 +33,7 @@ import static java.lang.String.format;
  * Provides information to support atlassian-plugin.xml validation
  */
 @Component
+@XmlDescriptor
 public class PluginDescriptorValidatorProvider implements DescriptorValidatorProvider
 {
     private final Plugin plugin;
