@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.SchemaIgnore;
 import com.atlassian.plugin.connect.modules.beans.builder.XWorkActionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.XWorkInterceptorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.XWorkResultBean;
@@ -13,6 +14,7 @@ import java.util.Map;
  *
  * Note that this bean is not publicly exposed, and thus does not contain user-facing javadocs.
  */
+@SchemaIgnore
 public class XWorkActionModuleBean extends RequiredKeyBean
 {
     private String namespace;

@@ -45,7 +45,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
     public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, ConnectAddonI18nManager connectAddonI18nManager)
+                                              HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, ConnectAddonI18nManager connectAddonI18nManager)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
@@ -183,11 +183,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
     private ModuleDescriptor createEditorWebResource(ConnectAddonBean addon, Plugin theConnectPlugin, T macroBean)
     {
-        MacroEditorBean editor = macroBean.getEditor();
-
         String macroKey = macroBean.getKey(addon);
-        String editTitle = editor.hasEditTitle() ? editor.getEditTitle().getValue() : macroBean.getDisplayName();
-        String insertTitle = editor.hasInsertTitle() ? editor.getInsertTitle().getValue() : macroBean.getDisplayName();
 
         Element webResource = new DOMElement("web-resource")
                 .addElement("web-resource")
@@ -207,7 +203,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         Element transformation = webResource.addElement("transformation")
                 .addAttribute("extension", "js");
 
-        transformation
+        Element transformer = transformation
                 .addElement("transformer")
                 .addAttribute("key", "confluence-macroVariableTransformer")
                 .addElement("var")
@@ -218,23 +214,52 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", ConnectIFrameServlet.iFrameServletPath(addon.getKey(), macroBean.getRawKey())).getParent()
                 .addElement("var")
                 .addAttribute("name", "WIDTH")
-                .addAttribute("value", editor.getWidth()).getParent()
+                .addAttribute("value", macroBean.getEditor().getWidth()).getParent()
                 .addElement("var")
                 .addAttribute("name", "HEIGHT")
-                .addAttribute("value", editor.getHeight()).getParent()
-                .addElement("var")
-                .addAttribute("name", "EDIT_TITLE")
-                .addAttribute("value", editTitle)
-                .addAttribute("i18n-key", "macro.browser.edit.macro.title").getParent()
-                .addElement("var")
-                .addAttribute("name", "INSERT_TITLE")
-                .addAttribute("value", insertTitle)
-                .addAttribute("i18n-key", "macro.browser.insert.macro.title").getParent();
+                .addAttribute("value", macroBean.getEditor().getHeight()).getParent();
+
+        createInsertTitle(macroBean, transformer);
+        createEditTitle(macroBean, transformer);
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
         jsDescriptor.init(theConnectPlugin, webResource);
 
         return jsDescriptor;
+    }
+
+    private void createInsertTitle(T macroBean, Element transformer)
+    {
+        MacroEditorBean editor = macroBean.getEditor();
+        Element insertTitleElement = transformer.addElement("var")
+                .addAttribute("name", "INSERT_TITLE");
+
+        if (editor.hasInsertTitle())
+        {
+            insertTitleElement.addAttribute("value", editor.getInsertTitle().getValue());
+        }
+        else
+        {
+            insertTitleElement.addAttribute("value", macroBean.getDisplayName());
+            insertTitleElement.addAttribute("i18n-key", "macro.browser.insert.macro.title");
+        }
+    }
+
+    private void createEditTitle(T macroBean, Element transformer)
+    {
+        MacroEditorBean editor = macroBean.getEditor();
+        Element editTitleElement = transformer.addElement("var")
+                .addAttribute("name", "EDIT_TITLE");
+
+        if (editor.hasEditTitle())
+        {
+            editTitleElement.addAttribute("value", editor.getEditTitle().getValue());
+        }
+        else
+        {
+            editTitleElement.addAttribute("value", macroBean.getDisplayName());
+            editTitleElement.addAttribute("i18n-key", "macro.browser.edit.macro.title");
+        }
     }
 
     private String getAbsoluteUrl(ConnectAddonBean addon, String url)

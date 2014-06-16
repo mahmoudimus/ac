@@ -49,6 +49,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
             )
     }
 )
+@SchemaDefinition("pageModule")
 public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**

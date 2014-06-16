@@ -2,6 +2,7 @@ package it.com.atlassian.plugin.connect.provider;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +51,8 @@ public class WebItemModuleProviderTest
     public static final String OTHER_MODULE_KEY = "my-other-web-item";
     public static final String CONTEXT_PATH = "http://ondemand.com/someProduct";
     public static final String BASE_URL = "https://my.connect.addon.com";
+    public static final String VELOCITY_LABEL = "My $var is ${awesome}";
+    public static final String VELOCITY_TOOLTIP = "My tooltip $var is ${awesome}";
 
     private final WebItemModuleProvider webItemModuleProvider;
     private final TestPluginInstaller testPluginInstaller;
@@ -385,6 +388,54 @@ public class WebItemModuleProviderTest
 
             assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
             assertTrue(descriptor2.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+        }
+        finally
+        {
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallAddon(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void velocityKiller() throws Exception
+    {
+        WebItemModuleBean bean = newWebItemBean()
+                .withName(new I18nProperty(VELOCITY_LABEL, ""))
+                .withKey(MODULE_KEY)
+                .withUrl("/my/addon")
+                .withLocation("system.top.navigation.bar")
+                .withTooltip(new I18nProperty(VELOCITY_TOOLTIP,""))
+                .build();
+
+        ConnectAddonBean addon = newConnectAddonBean()
+                .withName("JD Plugin")
+                .withKey(pluginKey)
+                .withBaseurl(BASE_URL)
+                .withAuthentication(AuthenticationBean.none())
+                .withModules("webItems", bean)
+                .build();
+
+        Plugin plugin = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installAddon(addon);
+
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) getConnectPlugin().getModuleDescriptor(addonAndModuleKey(pluginKey,MODULE_KEY));
+
+            Map<String,Object> vars = new HashMap<String, Object>();
+            vars.put("var","ooops");
+            vars.put("awesome","awesome-ooops");
+            
+            String label = descriptor.getWebLabel().getDisplayableLabel(servletRequest,vars);
+            String tooltip = descriptor.getTooltip().getDisplayableLabel(servletRequest,vars);
+            
+            //by the time we get the displayable label, it's already gone through velocity and so we get the literal variables non-escaped.
+            assertEquals(VELOCITY_LABEL, label);
+            assertEquals(VELOCITY_TOOLTIP, descriptor.getTooltip().getDisplayableLabel(servletRequest,vars));
+
         }
         finally
         {

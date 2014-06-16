@@ -31,6 +31,9 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
     @FindBy(className = "ap-dialog-cancel")
     protected WebElement cancelButton;
 
+    @FindBy(className = "aui-dialog2-header-main")
+    protected WebElement titleElement;
+
     private static final String DIALOG_CONTAINER = "ap-dialog-container";
 
     protected String getFrameId()
@@ -57,6 +60,10 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
     {
         cancelButton.click();
         return isDialogClosed();
+    }
+
+    public String getTitle() {
+        return titleElement.getText();
     }
 
     private boolean isDialogClosed()

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @schemaTitle Web Panel
  * @since 1.0
  */
+@SchemaDefinition("webPanel")
 public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**

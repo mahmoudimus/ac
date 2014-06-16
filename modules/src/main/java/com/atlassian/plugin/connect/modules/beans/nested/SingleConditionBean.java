@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.BeanWithParams;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
@@ -85,6 +86,7 @@ import com.google.common.base.Objects;
  * @schemaTitle Single Condition
  * @since 1.0
  */
+@SchemaDefinition("singleCondition")
 public class SingleConditionBean extends BeanWithParams implements ConditionalBean
 {
     @Required
