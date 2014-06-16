@@ -17,6 +17,7 @@ requirejs.config({
     'aui-atlassian': '../target/qunit/dependencies/js/atlassian/atlassian',
     'aui-soy': '//aui-cdn.atlassian.com/aui-adg/5.4.3/js/aui-soy',
     // host side
+    'iframe/host/_util': '../src/main/resources/js/iframe/host/_util',
     'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
     'iframe/host/_status_helper': '../src/main/resources/js/iframe/host/_status_helper',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
@@ -55,6 +56,12 @@ requirejs.config({
       deps: [
         'jquery',
         'aui-atlassian',
+        'iframe/_amd'
+      ]
+    },
+    'iframe/host/_util': {
+      deps: [
+        'iframe/host/_dollar',
         'iframe/_amd'
       ]
     },
@@ -172,7 +179,8 @@ requirejs.config({
     'iframe/_xdm': {
       deps: [
         'iframe/_uri',
-        'iframe/_events'
+        'iframe/_events',
+        'iframe/host/_util'
       ]
     },
     'iframe/host/analytics':{
