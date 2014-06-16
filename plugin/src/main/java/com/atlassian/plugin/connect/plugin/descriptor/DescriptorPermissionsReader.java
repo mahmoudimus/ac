@@ -12,6 +12,7 @@ import javax.inject.Named;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -42,6 +43,7 @@ import static com.google.common.collect.Sets.newHashSet;
  * by loading the document, but soon will read natively from Plugin
  */
 @ExportAsService(PermissionsReader.class)
+@XmlDescriptor
 @Named
 public final class DescriptorPermissionsReader implements PermissionsReader
 {
@@ -89,20 +91,6 @@ public final class DescriptorPermissionsReader implements PermissionsReader
     public Set<String> readPermissionsFromDescriptor(Document document)
     {
         return read(document, productKey);
-    }
-
-    @Override
-    public Set<ScopeName> readScopesForAddOn(Plugin plugin)
-    {
-        try
-        {
-            return scopesCache.get(plugin);
-        }
-        catch (ExecutionException e)
-        {
-            // should never happen
-            throw new RuntimeException(e);
-        }
     }
 
     private Set<String> read(Bundle bundle, String productKey)

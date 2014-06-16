@@ -5,6 +5,7 @@ import com.atlassian.jira.plugin.versionpanel.VersionTabPanelModuleDescriptorImp
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
@@ -33,6 +34,7 @@ public class VersionTabPageModuleDescriptor extends AbstractJiraTabPageModuleDes
     private final VersionSerializer versionSerializer;
     private final ProjectSerializer projectSerializer;
 
+    @XmlDescriptor
     public VersionTabPageModuleDescriptor(ModuleFactory moduleFactory, LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
             IFrameRendererImpl iFrameRenderer, UrlVariableSubstitutor urlVariableSubstitutor, JiraAuthenticationContext jiraAuthenticationContext,
             UrlValidator urlValidator, VersionSerializer versionSerializer, ProjectSerializer projectSerializer)

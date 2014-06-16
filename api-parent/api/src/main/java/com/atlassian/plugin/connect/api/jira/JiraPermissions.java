@@ -1,8 +1,11 @@
 package com.atlassian.plugin.connect.api.jira;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+
 /**
  * Permissions for JIRA.  Should all be declared as plugin-permission modules in atlassian-plugin-jira.xml
  */
+@XmlDescriptor
 public final class JiraPermissions
 {
     public static final String READ_USERS_AND_GROUPS = "read_users_and_groups";

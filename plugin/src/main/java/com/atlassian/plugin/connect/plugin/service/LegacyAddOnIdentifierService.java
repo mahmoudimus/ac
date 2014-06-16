@@ -1,27 +1,26 @@
 package com.atlassian.plugin.connect.plugin.service;
 
-import java.io.File;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
-import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.osgi.framework.Bundle;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.File;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
 /**
  * @since 1.0
  */
 @Named("legacyAddOnIdentifierService")
+@XmlDescriptor
 public class LegacyAddOnIdentifierService implements ConnectAddOnIdentifierService
 {
     private final PluginAccessor pluginAccessor;

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.*;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
@@ -25,6 +26,7 @@ import java.util.Set;
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 {
+    @XmlDescriptor
     private final RemotePluginArtifactFactory remotePluginArtifactFactory;
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
@@ -60,6 +62,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
     @Override
     @Deprecated
+    @XmlDescriptor
     public Plugin install(final String username, final Document document) throws PluginInstallException
     {
         String pluginKey = document.getRootElement().attributeValue("key");
@@ -145,6 +148,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         return addonPluginWrapper;
     }
 
+    @XmlDescriptor
     @Deprecated
     private Plugin installXmlPlugin(PluginArtifact pluginArtifact, String pluginKey, String username)
     {
@@ -244,6 +248,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     }
 
     @Deprecated
+    @XmlDescriptor
     private PluginArtifact getPluginArtifact(String username, Document document)
     {
         if (document.getRootElement().attribute("plugins-version") != null)

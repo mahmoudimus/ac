@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.webpanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
@@ -39,6 +40,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
 {
     public static final String REMOTE_WEB_PANEL_MODULE_PREFIX = "remote-web-panel-";
     private final IFrameRendererImpl iFrameRenderer;
+    @XmlDescriptor
     private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final HostContainer hostContainer;
     private final BundleContext bundleContext;

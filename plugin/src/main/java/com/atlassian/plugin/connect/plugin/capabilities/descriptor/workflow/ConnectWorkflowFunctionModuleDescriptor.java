@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow;
 
-import com.atlassian.event.api.EventPublisher;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
@@ -15,19 +14,12 @@ import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContext
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionEvent;
-import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
-import com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import com.opensymphony.workflow.FunctionProvider;
-import com.opensymphony.workflow.TypeResolver;
-import com.opensymphony.workflow.WorkflowException;
 import org.dom4j.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -44,90 +36,59 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionModuleDescriptor
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectWorkflowFunctionModuleDescriptor.class);
-
     public static final String TRIGGERED_URL = "triggeredUrl";
 
-    private final TypeResolver remoteWorkflowTypeResolver;
-    private final OSWorkflowConfigurator workflowConfigurator;
     private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private String addonKey;
-    private String moduleKey;
 
     private URI triggeredUri;
+    private String addonKey;
 
     public ConnectWorkflowFunctionModuleDescriptor(
             final JiraAuthenticationContext authenticationContext,
             final ModuleFactory moduleFactory,
             final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            final JiraRestBeanMarshaler jiraRestBeanMarshaler,
             final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry,
-            final EventPublisher eventPublisher,
             final DelegatingComponentAccessor componentAccessor)
     {
         super(authenticationContext, componentAccessor.getComponent(OSWorkflowConfigurator.class),
                 componentAccessor.getComponent(ComponentClassManager.class), moduleFactory);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.webHookConsumerRegistry = checkNotNull(webHookConsumerRegistry);
-        this.workflowConfigurator = checkNotNull(componentAccessor.getComponent(OSWorkflowConfigurator.class));
-
-        this.remoteWorkflowTypeResolver = new TypeResolver()
-        {
-            @Override
-            public FunctionProvider getFunction(final String type, final Map args) throws WorkflowException
-            {
-                return new RemoteWorkflowPostFunctionProvider(eventPublisher, jiraRestBeanMarshaler, addonKeyOnly(getKey()), getKey());
-            }
-        };
     }
 
     public void init(Plugin plugin, Element element) throws PluginParseException
     {
         super.init(plugin, element);
         this.triggeredUri = URI.create(element.attributeValue(TRIGGERED_URL));
+        this.addonKey = addonKeyOnly(getKey());
     }
 
     @Override
     public void enabled()
     {
         super.enabled();
-        //TODO: This should not be tied to the lifecycle of the add-on instance
-        workflowConfigurator.registerTypeResolver(RemoteWorkflowPostFunctionProvider.class.getName(), remoteWorkflowTypeResolver);
         webHookConsumerRegistry.register(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                plugin.getKey(),
+                addonKey,
                 triggeredUri,
-                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(),
+                        RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
     }
 
     @Override
     public void disabled()
     {
-        //TODO: This should not be tied to the lifecycle of the add-on instance
-        if(null != remoteWorkflowTypeResolver)
-        {
-            workflowConfigurator.unregisterTypeResolver(RemoteWorkflowPostFunctionProvider.class.getName(), remoteWorkflowTypeResolver);
-        }
-        
         webHookConsumerRegistry.unregister(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                plugin.getKey(),
+                addonKey,
                 triggeredUri,
-                new PluginModuleListenerParameters(addonKeyOnly(getKey()), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(),
+                        RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
-        
-        //need to wrap since the pluginTypeResolver may have already gone away
-        
-        try
-        {
-            super.disabled();
-        }
-        catch (Exception e)
-        {
-            //ignore
-        }
+
+        super.disabled();
     }
 
     @Override
@@ -153,11 +114,4 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
             renderStrategy.renderAccessDenied(writer);
         }
     }
-
-    @Override
-    public String getModuleClassName()
-    {
-        return super.getModuleClassName();
-    }
-
 }

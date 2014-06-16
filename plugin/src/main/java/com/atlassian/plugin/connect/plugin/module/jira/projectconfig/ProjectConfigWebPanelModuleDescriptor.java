@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.jira.projectconfig;
 
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
@@ -27,6 +28,7 @@ public final class ProjectConfigWebPanelModuleDescriptor extends RemoteWebPanelM
 {
     private static final String PROJECT_WEB_PANEL_LOCATION = "webpanels.admin.summary";
 
+    @XmlDescriptor
     public ProjectConfigWebPanelModuleDescriptor(
             ModuleFactory moduleFactory,
             IFrameRendererImpl iFrameRenderer,

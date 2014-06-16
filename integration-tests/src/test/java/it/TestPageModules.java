@@ -1,8 +1,6 @@
 package it;
 
-import com.atlassian.pageobjects.page.AdminHomePage;
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.OAuthUtils;
 import com.atlassian.plugin.connect.test.pageobjects.*;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -31,6 +29,7 @@ import static java.lang.String.valueOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
+@XmlDescriptor
 public class TestPageModules extends ConnectWebDriverTestBase
 {
     public static final String EXTRA_PREFIX = "servlet-";
