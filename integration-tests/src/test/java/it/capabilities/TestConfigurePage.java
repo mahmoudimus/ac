@@ -16,7 +16,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of addon configure page in Confluence
  */
-public class TestConfigurePage extends AbstractPageTest
+public class TestConfigurePage extends AbstractPageTestBase
 {
     @BeforeClass
     public static void startConnectAddOn() throws Exception
