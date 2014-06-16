@@ -1,8 +1,7 @@
 package it;
 
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import org.junit.Test;
 
@@ -14,26 +13,9 @@ import java.net.URL;
 import static com.atlassian.plugin.connect.test.RemotePluginUtils.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 
-@XmlDescriptor
+@OAuth
 public class TestOAuth extends AbstractBrowserlessTest
 {
-    @Test
-    public void testAuthorizeRequestWorksWithXmlDescriptor() throws Exception
-    {
-        AtlassianConnectAddOnRunner runner = null;
-        try
-        {
-            runner = new AtlassianConnectAddOnRunner(baseUrl)
-                    .addOAuth()
-                    .start();
-            assertCanRequestOAuthToken(runner.getSignedRequestHandler().get());
-        }
-        finally
-        {
-            AtlassianConnectAddOnRunner.stopAndUninstallQuietly(runner);
-        }
-    }
-
     @Test
     public void testAuthorizeRequestWorksWithJsonDescriptor() throws Exception
     {
