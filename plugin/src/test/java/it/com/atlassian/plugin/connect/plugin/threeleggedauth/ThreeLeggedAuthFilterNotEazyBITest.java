@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
+import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
@@ -20,6 +21,7 @@ import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils.lowerCase;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
@@ -57,7 +59,7 @@ public class ThreeLeggedAuthFilterNotEazyBITest extends ThreeLeggedAuthFilterTes
     {
         grant3LA();
         issueRequest(createRequestUri(SUBJECT_USERNAME));
-        assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUserKey());
+        assertEquals(lowerCase(getAddOnUsername()), lowerCase(getCapturedRequest().getRemoteUserKey()));
     }
 
     @Test
@@ -80,7 +82,7 @@ public class ThreeLeggedAuthFilterNotEazyBITest extends ThreeLeggedAuthFilterTes
     public void noSubjectImpliesAddOnUser() throws IOException, NoSuchAlgorithmException
     {
         issueRequest(createRequestUri(null));
-        assertEquals(getAddOnUsername(), getCapturedRequest().getRemoteUserKey());
+        assertEquals(lowerCase(getAddOnUsername()), lowerCase(getCapturedRequest().getRemoteUserKey()));
     }
 
     // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
