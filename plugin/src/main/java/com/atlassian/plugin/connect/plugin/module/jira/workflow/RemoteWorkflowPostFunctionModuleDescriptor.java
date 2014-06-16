@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.jira.workflow;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow.ConnectWorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionResource;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
@@ -18,6 +19,7 @@ import org.dom4j.Element;
  *
  * TODO delete this when we drop support for XML
  */
+@XmlDescriptor
 public class RemoteWorkflowPostFunctionModuleDescriptor extends ConnectWorkflowFunctionModuleDescriptor
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;

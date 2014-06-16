@@ -1,5 +1,6 @@
 package it.jira;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
@@ -15,6 +16,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+@XmlDescriptor
 public class TestDialogWithContext extends JiraWebDriverTestBase
 {
     public static final String EXTRA_PREFIX = "remote-web-panel-";
