@@ -4,5 +4,4 @@ import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean
 
 public interface WorkflowPostFunctionModuleProvider extends ConnectModuleProvider<WorkflowPostFunctionModuleBean>
 {
-
 }

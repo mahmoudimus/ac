@@ -1,5 +1,6 @@
 package it;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
 import com.atlassian.plugin.connect.test.LicenseUtils;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -10,13 +11,12 @@ import org.junit.Test;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @since 1.0
  */
+@XmlDescriptor
 public class TestLicenseRestResource extends ConnectWebDriverTestBase
 {
     @Test

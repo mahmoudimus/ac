@@ -25,6 +25,12 @@
             <artifactId>atlassian-connect-plugin</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-static-analysis</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>javax.inject</groupId>
@@ -272,6 +278,13 @@
             <version>1.8-atlassian-8</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+            <version>1.11</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -1,16 +1,18 @@
 package com.atlassian.plugin.connect.plugin.util.zip;
 
-import java.io.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.io.XMLWriter;
 
+import java.io.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 /**
 *
 */
+@XmlDescriptor
 public class ZipBuilder
 {
     public static final String KEY_SEPARATOR = "----remotableplugins-";

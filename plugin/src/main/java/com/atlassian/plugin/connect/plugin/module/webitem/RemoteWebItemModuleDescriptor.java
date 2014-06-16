@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
@@ -24,6 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
+    @XmlDescriptor
     private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator remotePageDescriptorCreator;
     private final WebItemCreator webItemCreator;
@@ -34,6 +36,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
 
     private Element descriptor;
     private Element link;
+    @XmlDescriptor
     private LegacyXmlDynamicDescriptorRegistration.Registration registration;
     private String url;
     private String moduleKey;

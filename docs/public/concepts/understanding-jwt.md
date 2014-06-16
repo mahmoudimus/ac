@@ -60,7 +60,7 @@ The JWT claims object contains security information about the message. For examp
 
 	{
 		"iss": "jira:1314039",
-		"iat": 1300819370
+		"iat": 1300819370,
 		"exp": 1300819380,
 		"qsh": "8063ff4ca1e41df7bc90c8ab6d0f6207d491cf6dad7c66ea797b4614b71922e9",
 		"sub": "a_user_key"

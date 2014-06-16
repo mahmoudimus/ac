@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
@@ -31,6 +32,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectUPMInstallHandler.class);
 
+    @XmlDescriptor
     private final LegacyAddOnIdentifierService connectIdentifier;
     private final ConnectAddOnInstaller connectInstaller;
     private final UserManager userManager;

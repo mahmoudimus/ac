@@ -1,6 +1,5 @@
 #set ($uuid = $contextParams.get('postFunction.id'))
 #set ($config = $contextParams.get('postFunction.config'))
-#set ($moduleKey = $contextParams.get('postFunction.config'))
 
 <input id="postFunction-config-$uuid"
        name="postFunction.config-$uuid"
@@ -9,3 +8,4 @@
        type="hidden" />
 
 #parse("velocity/iframe-body.vm")
+

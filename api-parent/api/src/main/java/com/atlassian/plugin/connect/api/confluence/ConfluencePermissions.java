@@ -1,8 +1,11 @@
 package com.atlassian.plugin.connect.api.confluence;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+
 /**
  * Permissions for Confluence.  Should all be declared as plugin-permission modules in atlassian-plugin-confluence.xml
  */
+@XmlDescriptor
 public final class ConfluencePermissions
 {
     public static final String MANAGE_INDEX = "manage_index";

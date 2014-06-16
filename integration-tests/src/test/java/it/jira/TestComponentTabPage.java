@@ -4,6 +4,7 @@ import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.testkit.client.restclient.Component;
 import com.atlassian.jira.testkit.client.restclient.ComponentClient;
 import com.atlassian.jira.tests.TestBase;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.module.jira.componenttab.ComponentTabPageModuleDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -17,6 +18,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of remote component tab panel in JIRA
  */
+@XmlDescriptor
 public class TestComponentTabPage extends TestBase
 {
     private static AtlassianConnectAddOnRunner remotePlugin;

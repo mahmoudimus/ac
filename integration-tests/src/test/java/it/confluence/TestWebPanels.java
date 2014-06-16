@@ -1,7 +1,6 @@
 package it.confluence;
 
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
@@ -25,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Test of remote web panels in Confluence.
  */
+@XmlDescriptor
 public class TestWebPanels extends ConfluenceWebDriverTestBase
 {
     private static AtlassianConnectAddOnRunner remotePlugin;

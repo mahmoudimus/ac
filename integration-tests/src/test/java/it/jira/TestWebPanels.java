@@ -1,6 +1,7 @@
 
 package it.jira;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
@@ -25,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Test of remote web panels in JIRA.
  */
+@XmlDescriptor
 public final class TestWebPanels extends JiraWebDriverTestBase
 {
     public static final String EXTRA_PREFIX = "remote-web-panel-";

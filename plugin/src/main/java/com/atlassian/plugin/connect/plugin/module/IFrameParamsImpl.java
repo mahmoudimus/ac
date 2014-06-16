@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.google.common.base.Objects;
 import org.dom4j.Element;
@@ -20,12 +21,15 @@ public class IFrameParamsImpl implements IFrameParams
     public IFrameParamsImpl()
     {
     }
-    
+
+    @XmlDescriptor
     public IFrameParamsImpl(Element module)
     {
         addToParams(module, "height");
         addToParams(module, "width");
     }
+
+    @XmlDescriptor
     public void addToParams(Element e, String key)
     {
         String val = e.attributeValue(key);

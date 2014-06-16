@@ -25,7 +25,7 @@ import static it.servlet.condition.ToggleableConditionServlet.toggleableConditio
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class AbstractPageTst extends ConnectWebDriverTestBase
+public class AbstractPageTestBase extends ConnectWebDriverTestBase
 {
     protected static final String MY_AWESOME_PAGE = "My Awesome Page";
     protected static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";

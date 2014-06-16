@@ -1,5 +1,6 @@
 package it;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -16,11 +17,9 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+@XmlDescriptor
 public final class TestWebHooks extends AbstractBrowserlessTest
 {
     private static final String WEB_HOOK_PLUGIN_ENABLED = "plugin_enabled";

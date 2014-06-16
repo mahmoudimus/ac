@@ -1,16 +1,16 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.io.IOException;
-
 import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.PluginArtifact;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.Filenames;
-
 import org.dom4j.Document;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 /**
  * Creates plugin artifacts for plugins installed in remote mode
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
  */
 @Deprecated
 @Component
+@XmlDescriptor
 public class RemotePluginArtifactFactory
 {
     private static final String ATLASSIAN_PLUGIN_KEY = "Atlassian-Plugin-Key";
