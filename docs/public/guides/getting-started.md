@@ -1,17 +1,29 @@
 # Getting Started
 
+This Hello World tutorial shows you a basic preview of the Connect framework. Connect add-ons are essentially web applications that integrate with your Atlassian product. In this tutorial, you'll turn a simple web application into an Atlassian Connect add-on. You'll install it in a locally-running copy of JIRA in OnDemand mode, and access your add-on from a link in the header. Your add-on displays as an iframe of your web application. 
 
-In this Hello World tutorial, we'll turn a simple HTML page into an Atlassian Connect add-on and
-install it into a local-running copy of JIRA.
+Here's what you'll accomplish: 
+
+* [Create a basic `atlassian-connect.json` descriptor](#descriptor)  
+* [Build an add-on web application: A super simple HTML page](#webapp)  
+* [Start up a locally-running copy of JIRA in OnDemand mode](#runjira)  
+* [Install and test your add-on](#install)
+
+By the end, you'll see your web application displayed in an iframe inside of JIRA:  
+
+<img src="../assets/images/helloworld-inapp.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
+
+__Note__: This is a beginner tutorial. You can build this add-on even if you've never built one before. You'll need the [Atlassian SDK](https://developer.atlassian.com/display/DOCS/Downloads) installed and ready to go before you start.
 
 
-## 1. Create the add-on descriptor (`atlassian-connect.json`)
+## <a name="descriptor"></a>Create the add-on descriptor (`atlassian-connect.json`)
 
-An add-on descriptor is an JSON file that describes the add-on to the Atlassian application. For
-example, it specifies the key and name of the add-on, lists the permissions it needs to operate, and
-the different integration modules that it provides.
+In this step you'll create a JSON descriptor file. This file describes your add-on to the Atlassian application, which in this case is JIRA OnDemand. Your descriptor specifies your add-on's key, name, permissions needed to operate, and the different modules it uses for integration. 
 
-1. Create a project directory for your add-on source files.
+Your `atlassian-connect.json` file will use a [`generalPages` module](../modules/jira/general-page.html), and add a link to JIRA's top navigation element titled "Greeting".
+
+1. Create a project directory for your add-on source files.  
+    You'll work in this directory for the duration of this tutorial.
 2. In your project directory, create a new file named `atlassian-connect.json`.
 3. Add the following text to the file:
 ```
@@ -33,6 +45,7 @@ the different integration modules that it provides.
                 {
                     "url": "/helloworld.html",
                     "key": "hello-world",
+                    "location": "system.top.navigation.bar",
                     "name": {
                         "value": "Greeting"
                     }
@@ -41,191 +54,171 @@ the different integration modules that it provides.
         }
     }
 ```
-4. Save and close the descriptor file.
+4. Save and close the descriptor file.  
 
-You're now ready to create the "web app", which in our case is just a simple, old-fashioned HTML
-page.
+## <a name="webapp"></a>Create a simple web application to stand in as an add-on
 
-## 2. Create the web page
-Now create the HTML page that serves as the add-on "web application." While a static HTML page does
-not represent what would be a typical add-on, it's not that far off either. Just a few components
-turn any web application into an Atlassian Connect add-on so this simple example will demonstrate
-the principles.
+Now, you're ready to create the web app. You'll use a simple, old-fashioned HTML page as an "app" to demonstrate how Connect integrates with your application. While a static HTML page doesn't represent a typical add-on, it's not that far off either. Just a few components turn any web application into an Atlassian Connect add-on.
 
-In the same folder as the descriptor file, create a new file with a name that matches the
-generalPages url attribute you set in the add-on descriptor, such as `helloworld.html`. Add the
-following content:
+You'll add two key pieces to an HTML file: a `script` tag, and an `ac-content` wrapper class. 
 
-```
+<table class="aui">
+    <thead>
+        <tr>
+            <th>Element</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><tt>script</tt></strong></td>
+            <td>
+                <p>This element is comprised of 3 values pointing toward <tt>all.js</tt>, formatted as <tt>//HOSTNAME:PORT/CONTEXT/atlassian-connect/all.js</tt>. These values are provided in the URL of the request for this resource.</p>
+                <p>Let's look at the components:</p>
+                <ul>
+                    <li><tt>HOSTNAME</tt>: The hostname for the Atlassian application. Here, you'll use <tt>localhost</tt> for the sake of simplicity.</li>
+                    <li><tt>PORT</tt>: The port number on which the Atlassian application serves its web interface. JIRA uses port 2990, and Confluence uses 1990.</li>
+                    <li><tt>CONTEXT</tt>: The application context for the application, such as <tt>/jira</tt> or <tt>/confluence</tt>.</li>
+                    <li><tt>all.js</tt>: This file is available in any Atlassian application that supports Connect. This <a href="../concepts/javascript-api.html">Javascript API library</a> provides functions you can use for your add-on. In this case, it enables iframe resizing for the JIRA page that displays your add-on.</li>
+                </ul>
+        </tr>
+        <tr>
+            <td><strong><tt>ac-content</tt></strong></td>
+            <td>This class wraps the content of your add-on, and dynamically resizes the iframe in JIRA. This keeps your add-on content visible without pesky scrollbars.</td>
+        </tr>
+    </tbody>
+</table>  
+
+From the same project directory: 
+
+1. Create the page you referenced in the `url` element in your descriptor file, `helloworld.html`.
+2. Add the following content:
+
+    ```
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <script src="//HOSTNAME:PORT/CONTEXT/atlassian-connect/all.js" type="text/javascript"></script>
+        <script src="//localhost:2990/jira/atlassian-connect/all.js" type="text/javascript"></script>
     </head>
     <body>
         <div class="ac-content">
-            <h1>Hello World!</h1>
+           <h1 align="center">Hello World</h1>
         </div>
     </body>
 </html>
-```
-
-Replace these values with ones appropriate for your environment:
-
- * `HOSTNAME`: The hostname for the Atlassian application.
- * `PORT`: The port number on which the Atlassian application serves its web interface.
- * `CONTEXT`: The application context for the application, such as `/jira` or `/confluence`.
-
-For this tutorial, these values will be either:
-
-<code data-lang="text">//localhost:2990/jira/</code>
-
-<code data-lang="text">//localhost:1990/confluence/</code>
-
-Nothing out of the ordinary here except for one thing: the script tag for `all.js`. This JavaScript
-file is a part of the Atlassian Connect library, and is available in any Atlassian application
-version that supports Atlassian Connect.
-
-The library supplies a number of functions you can use in your add-on, as described in the
-[Javascript API](../concepts/javascript-api.html). For our simple HTML file, this line is required
-because it enables the resizing of the iframe in which the page is to be embedded in the Atlassian
-application.
-
-### 2.1 Auto resizing your iframe
-In the example above, a div with the class name "ac-content" is wrapped around the contents of the page.
-This allows the dimensions of your iframe's content to be measured and the iframe to resize automatically.
-This keeps the add-on content visible without scroll bars.
-
-<a name="start-addon-host" id="start-addon-host"></a>
-## 3. Start the add-on
-
-That's it as far as coding goes. The next step is to make the files you created available on a web
-server. The options for accomplishing this are many, but this example we'll serve the file locally,
-since our target application is operating locally as well.
-
-In our case, we'll use a simple web server that ships with [Python](http://python.org) to serve the
-current directory containing your `atlassian-connect.json` and `helloworld.html` files. Navigate to
-that directory and run:
-
-````
-python -m SimpleHTTPServer 8000
-````
-
-After starting, the server should indicate it is serving HTTP at the current address and at the
-specified port, 8000.
-
-Confirm that you're serving the files we created in steps 1 and 2 by visiting:
-
-<code data-lang="text"><a href="http://localhost:8000/atlassian-connect.json">http://localhost:8000/atlassian-connect.json</a></code>
-
-<code data-lang="text"><a href="http://localhost:8000/helloworld.html">http://localhost:8000/helloworld.html</code>
-
-## 4. Start the target Atlassian application with the Atlassian SDK
-
-The next step in development is to start a copy of your target Atlassian application, so that you
-can install your add-on.
-
-The easiest way to get a local instance of the Atlassian application running is with the [Atlassian
-SDK](https://developer.atlassian.com/display/DOCS/Downloads). If you don't have the SDK installed,
-you should download and install it now.
-
-You can start JIRA or Confluence with Atlassian Connect as follows:
+```  
 
 
-#### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-03-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+## <a name="start-addon-host" id="start-addon-host"></a> Start your add-on
 
-#### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.5-OD-23-004 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+That's it as far as coding goes. The next step is to make your files available on a web
+server. There are many ways to do this, but in this example you'll serve the file locally.
 
-#### Note:
-We recommend you start the host application using the SDK command shown here. Atlassian Connect is
-only present in Atlassian OnDemand and not yet included with Download instances of our software.
-Therefore certain components, including the Atlassian Connect Framework itself, are included here in
-the startup command. Without these components present, Connect add-ons cannot be installed. If you
-are not using the commands below, you must ensure all of the components listed in the
-`--bundled-plugins` argument are present in your Atlassian application. These component versions
-will change as Atlassian Connect development continues. To find out about new version updates,
-subscribe to the Atlassian Connect [mailing
-list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev), and keep your eye
-on Atlassian Connect [blog posts](https://developer.atlassian.com/display/AC/Atlassian+Connect).
+You'll use a simple web server that ships with [Python](http://python.org) to serve the
+current directory containing your `atlassian-connect.json` and `helloworld.html` files. 
+
+1. From the same directory, start your server on port 8000:
+     <pre><code data-lang="text">python -m SimpleHTTPServer 8000</code></pre>
+    The server indicates that it's serving HTTP at the current address and port. You'll see something like this: 
+    <tt>Serving HTTP on 0.0.0.0 port 8000 ...</tt> 
+2. Confirm the files you created in steps 1 and 2 are served. Visit:
+    * <code data-lang="text"><a href="http://localhost:8000/atlassian-connect.json">http://localhost:8000/atlassian-connect.json</a></code>
+    * <code data-lang="text"><a href="http://localhost:8000/helloworld.html">http://localhost:8000/helloworld.html</a></code>
+
+## <a name="runjira"></a>Start JIRA OnDemand using the Atlassian SDK
+
+You've created the essential components of a Connect add-on: an `atlassian-connect.json` descriptor file to communicate what your add-on does to JIRA, and a web application (`helloworld.html`) running on a local server. Now, you need to start JIRA to install your add-on. 
+
+You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud instances) of Atlassian products, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
+
+1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
+    You'll need at least SDK version 4.2.20. If you run the <tt>atlas-version</tt> command, you should see something similar to this:  
+
+    <tt>
+        ATLAS Version:    4.2.20  
+        ATLAS Home:       /usr/share/atlassian-plugin-sdk-4.2.20  
+        ATLAS Scripts:    /usr/share/atlassian-plugin-sdk-4.2.20/bin  
+        ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
+    </tt>
+  
+2. From a new terminal window, start JIRA in OnDemand mode: 
+    <pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-03-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+    __Note:__ If you're not using the command above, ensure all components in the `--bundled-plugins` argument are present in your JIRA instances. These component versions will change as Connect development continues.  
+    
+    You'll see a lot of output. When finished, your terminal notifies you that the build was successful:  
+    <tt>[INFO] [talledLocalContainer] Tomcat 7.x started on port [2990]  
+        [INFO] jira started successfully in 217s at http://localhost:2990/jira  
+        [INFO] Type Ctrl-D to shutdown gracefully  
+        [INFO] Type Ctrl-C to exit
+    </tt>  
+
+3. Navigate to <code data-lang="text"><a href="http://localhost:2990/jira/">http://localhost:2990/jira/</a></code>.
+4. Sign in with `admin` for your username, and `admin` for your password.
 
 
-After the startup process completes, you can confirm that you application is running by visiting either:
+## <a name="install"></a>Install your add-on in JIRA
 
-<code data-lang="text"><a href="http://localhost:2990/jira/">http://localhost:2990/jira/</a></code>
+Now you're ready to install your add-on in your local instance of JIRA. In this step, you'll navigate to the [Universal Plugin Manager (UPM)](https://confluence.atlassian.com/x/8AJTE) and add a link to your descriptor file.
 
-<code data-lang="text"><a href="http://localhost:1990/confluence/">http://localhost:1990/confluence/</a></code>
-
-
-
-## 5. Register your add-on in the target application
-
-Now it's time to register your add-on with the target application.
-
-1. Visit the target application we started in step 4, at either:
-  * http://localhost:2990/jira/
-  * http://localhost:1990/confluence/
-1. Log in as the system administrator. The default username/password combination is admin/admin.
-2. Choose __Cog Menu > Add-ons__ from the menu. The Administration page will display.
-3. Choose the __Manage add-ons__ option from the side menu.
-6. Click the __Upload Add-on__ link
-7. Enter the URL to the hosted location of your add-on descriptor that we created in step 3. In this
-example, the URL is similar to the following:
-`http://localhost:8000/atlassian-connect.json`.
-8. Press __Upload__. The application will display the __Installed and ready to go__ dialog when
-installation is complete.
-9. Click __Close__
-10. Verify that your add-on appears in the list of __User installed add-ons__. For example, if you
-used Hello World for your add-on name, __Hello World__ will appears in the list.
-
-## 6. Put your add-on to work
-That's it! You can now see your Hello World greeting in the Atlassian application.
-
-1. Reload the page.
-2. Look for the __Greeting__ entry in the application header (in JIRA) or the __Question Mark__
-menu (in Confluence).
-3. Click __Greeting__. Your __Hello World__ message appears on the page:
-<img src="../assets/images/helloworld-addoninapp.jpeg" width="100%" style="border:1px solid #999;margin-top:10px;" />
-
-## 7. What just happened?
-
-When you register an add-on, the OnDemand instance retrieves the descriptor for the add-on
-(`atlassian-connect.json`) and registers it. This adds the declared `General Page` module to the
-target application and creates the "Greetings" link in the header.
-
-When you click on the link, the `helloworld.html` file you created is fetched and rendered inside an
-iframe provided by the target application.
+When you install your add-on, JIRA retrieves and registers your `atlassian-connect.json` descriptor. The interaction between JIRA and your web app (your add-on) looks like this: 
 
 <div class="diagram">
 participant User
 participant Browser
 participant Add_on_server
-participant OnDemand
-User->OnDemand: View your Hello World page
-OnDemand->Browser:OnDemand sends back page\nwith iframe to your addon
+participant JIRA
+User->JIRA: Click 'Greeting'
+JIRA->Browser:JIRA sends back your \nadd-on in an iframe
 Browser->Add_on_server:GET /helloworld.html?signed_request=*
 Add_on_server->Browser:Responds with contents of\n helloworld.html page
 Browser->User:Requested page\nrendered
 </div>
 
-## 8. What's next?
+1. From JIRA, choose __Cog Menu > Add-ons__ from the top navigation menu. 
 
-For most Atlassian Connect add-ons, the next step for the developer would be to add code that relies
-on the Atlassian application REST APIs. This requires implementing the
-[authentication](../concepts/authentication.html) used between Atlassian applications and Atlassian
-Connect add-ons. For an overview of authentication and authorisation you may wish to read about [security](../concepts/security.html).
+    __Note:__ If you see a message about [base URL problems](https://confluence.atlassian.com/x/FgNTE), choose __System > General Configuration > Edit Configuration__ from the admin screen. Ensure your browser URL, base URL, and `helloworld.html` hostname match.
+    
+2. Click __Manage add-ons__ from the side menu. 
 
-You can do this using any language or framework that you wish, and many languages already provide
-libraries to help you with implement JWT authentication.
+3. Click __Upload add-on__ from the right side of the page.
 
-We've written two example implementations, one in Java and one in Javascript. These tools can help
-by generating some of the plumbing required.
+4. Insert `http://localhost:8000/atlassian-connect.json`.  
+     This URL should match the hosted location of your `atlassian-connect.json` descriptor file.
+
+5. Click __Upload__.  
+    JIRA displays the *Installed and ready to go* dialog when installation is complete.
+    
+6. Click __Close__.
+
+7. Verify that your add-on appears in the list of *User installed add-ons*.   
+    For example, if you used Hello World for your add-on name, *Hello World* should appear in the list.
+    
+8. Reload the page.
+
+9. Click __Greeting__ in the application header.  
+    Your message appears on the page:  
+<img src="../assets/images/helloworld-inapp.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
+
+
+## What's next?
+
+So far, you've learned the basic architecture of a Connect add-on. The next step is to add some functionality and handle [authentication](../concepts/authentication.html).
+
+You can add functionality using the [Atlassian REST APIs](https://developer.atlassian.com/x/K4BpAQ). [Authentication](../concepts/authentication.html) manages the handshake between your app and the Atlassian host application. You can also read about our [security concepts](../concepts/security.html) for more information.
+
+### Example add-ons
+
+We have a few [sample applications](../resources/samples.html) you can reference. These example add-ons demonstrate
+authentication and many other patterns you can use to develop your own add-ons.
+
+### Tools to help you develop
+
+We've written two example tools, one in Java and one in Javascript. These tools help generate some of the plumbing 
+required for your Connect add-on:
 
  * [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
  * [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express)
 
-Also take a look at our [sample applications](../resources/samples.html). They demonstrate
-authentication and many other patterns you can use to develop Atlassian Connect add-ons.
+### Join the Connect community
 
-
+Explore Connect topics on [Atlassian Answers](https://answers.atlassian.com/tags/atlassian-connect). We also encourage you to join our [Connect mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev).
