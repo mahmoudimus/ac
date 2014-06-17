@@ -54,6 +54,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *#### Example
  *
+ * For a full add-on example, see the [workflow post function example add-on](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-workflow-post-function-example).
+ *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#POST_FUNCTION_EXAMPLE}
  * @schemaTitle Workflow Post Function
  * @since 1.0
