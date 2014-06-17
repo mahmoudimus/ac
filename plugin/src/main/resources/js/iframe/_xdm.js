@@ -1,4 +1,4 @@
-(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri",  "_ui-params", "host/analytics"], function (events, base64, uri, uiParams, analytics) {
+(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri",  "_ui-params", "host/analytics", "host/_util"], function (events, base64, uri, uiParams, analytics, util) {
 
   "use strict";
 
@@ -373,7 +373,7 @@
       $.extend(iframe, {id: id, name: windowName, frameBorder: "0"}, config.props);
       //$.extend will not add the attribute rel.
       iframe.setAttribute('rel', 'nofollow');
-      $("#" + config.container).append(iframe);
+      $("#" + util.escapeSelector(config.container)).append(iframe);
       iframe.src = config.remote;
       return iframe;
     }

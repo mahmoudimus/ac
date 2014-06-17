@@ -1,12 +1,12 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params", "analytics/analytics"], function ($, XdmRpc, addons, rpc, uiParams, analytics) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params", "analytics/analytics", "host/_util"], function ($, XdmRpc, addons, rpc, uiParams, analytics, util) {
 
   var defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); };
 
   function contentDiv(ns) {
-    return $("#embedded-" + ns);
+    return $("#embedded-" + util.escapeSelector(ns));
   }
 
   /**
@@ -35,8 +35,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
     $.extend(options, uiParams.fromUrl(options.src));
 
     var ns = options.ns,
-        homeId = "ap-" + ns,
-        $home = $("#" + homeId),
         $content = contentDiv(ns),
         contentId = $content.attr("id"),
         channelId = "channel-" + ns,
@@ -119,11 +117,19 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
           try {
             AJS.Confluence.EditorLoader.load(doCreate,doCreate);
           } catch(e) {
-            doCreate();
+            try {
+              doCreate();
+            } catch(error) {
+              AJS.log(error);
+            }
           }
 
         } else {
-          doCreate();
+          try {
+              doCreate();
+          } catch(error) {
+            AJS.log(error);
+          }
         }
       });
     }

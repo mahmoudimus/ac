@@ -101,6 +101,7 @@
     <web-resource key="iframe-host-js">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <resource type="download" name="_util.js" location="/js/iframe/host/_util.js" />
         <resource type="download" name="_rpc.js" location="/js/iframe/host/_rpc.js" />
         <resource type="download" name="env.js" location="/js/iframe/host/env.js" />
         <resource type="download" name="resize.js" location="/js/iframe/host/resize.js" />
