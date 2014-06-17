@@ -117,11 +117,19 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
           try {
             AJS.Confluence.EditorLoader.load(doCreate,doCreate);
           } catch(e) {
-            doCreate();
+            try {
+              doCreate();
+            } catch(error) {
+              AJS.log(error);
+            }
           }
 
         } else {
-          doCreate();
+          try {
+              doCreate();
+          } catch(error) {
+            AJS.log(error);
+          }
         }
       });
     }
