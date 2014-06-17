@@ -1,5 +1,6 @@
 package it.jira;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -10,8 +11,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+@XmlDescriptor
 public class TestXdmEvents extends JiraWebDriverTestBase
 {
     private static AtlassianConnectAddOnRunner remotePluginA;

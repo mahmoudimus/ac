@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.jira.issuepanel;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
@@ -19,6 +20,7 @@ import org.osgi.framework.BundleContext;
  * "atl.jira.view.issue.right.context" location instead.
  */
 @Deprecated
+@XmlDescriptor
 public final class IssuePanelPageModuleDescriptor extends RemoteWebPanelModuleDescriptor
 {
     public IssuePanelPageModuleDescriptor(

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
@@ -56,6 +57,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
  * Builds a schema and validates descriptors with it.  Supports remote plugin and plugin descriptors.
  */
 @Component
+@XmlDescriptor
 public final class DescriptorValidator
 {
     private final Plugin plugin;

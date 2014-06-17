@@ -1,8 +1,6 @@
 package it;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
 import it.servlet.ConnectAppServlets;
@@ -11,10 +9,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import static org.junit.Assert.assertEquals;
 
 // Tests the inverse of the Json test TestLegacyRedirect. i.e. that the redirect is not applied for xml descriptors
+@XmlDescriptor
 public class TestXMLDescriptorLegacyRedirect extends AbstractBrowserlessTest
 {
     private static final String ADDON_GENERALPAGE = "ac-general-page";

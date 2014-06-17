@@ -3,7 +3,7 @@
     {
       "key": "READ",
       "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "user", "filter", "myself", "groupsPicker", "auditing"],
-      "pathKeys": ["download attachments"],
+      "pathKeys": ["download attachments", "project avatars"],
       "methods": ["GET"]
     },
     {
@@ -299,6 +299,10 @@
         "key": "download attachments",
         "paths": ["/secure/attachment($|/.*)"],
         "public": true
+      },
+      {
+        "key": "project avatars",
+        "paths": ["/secure/projectavatar"]
       }
   ]
 }

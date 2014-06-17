@@ -2,6 +2,7 @@ package it.confluence;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Suppliers;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -11,6 +12,7 @@ import it.servlet.macro.SimpleMacroServlet;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
@@ -34,6 +36,7 @@ import static it.confluence.ContextParameters.*;
 import static java.lang.String.format;
 import static org.junit.Assert.*;
 
+@XmlDescriptor
 public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
 {
     private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME));
@@ -229,6 +232,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     }
 
     @Test
+    @Ignore
     public void testMacroCacheFlushes() throws Exception
     {
         final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(COUNTER_MACRO));

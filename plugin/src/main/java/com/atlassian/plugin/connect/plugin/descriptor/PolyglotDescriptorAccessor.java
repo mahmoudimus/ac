@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.descriptor.util.XmlUtils;
 import com.atlassian.plugin.connect.spi.Filenames;
@@ -18,6 +19,7 @@ import java.net.URL;
 /**
  * Descriptor accessor that supports json, xml, and yaml descriptors
  */
+@XmlDescriptor
 public final class PolyglotDescriptorAccessor implements DescriptorAccessor
 {
     private static final Iterable<DescriptorType> DESCRIPTOR_TYPES = ImmutableSet.of(

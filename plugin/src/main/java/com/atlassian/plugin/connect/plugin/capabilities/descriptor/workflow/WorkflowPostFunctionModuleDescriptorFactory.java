@@ -5,6 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionResource;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
@@ -60,23 +61,23 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
 
         if (bean.hasView())
         {
-            addResource(element, RESOURCE_NAME_VIEW, bean.getView().getUrl());
+            addResource(element, WorkflowPostFunctionResource.VIEW, bean.getView().getUrl());
         }
         if (bean.hasEdit())
         {
-            addResource(element, RESOURCE_NAME_EDIT_PARAMETERS, bean.getEdit().getUrl());
+            addResource(element, WorkflowPostFunctionResource.EDIT, bean.getEdit().getUrl());
         }
         if (bean.hasCreate())
         {
-            addResource(element, RESOURCE_NAME_INPUT_PARAMETERS, bean.getCreate().getUrl());
+            addResource(element, WorkflowPostFunctionResource.CREATE, bean.getCreate().getUrl());
         }
         return element;
     }
 
-    private void addResource(Element element, String resourceName, String url)
+    private void addResource(Element element, WorkflowPostFunctionResource resource, String url)
     {
         element.addElement("resource")
-                .addAttribute("name", resourceName)
+                .addAttribute("name", resource.getResource())
                 .addAttribute("type", RESOURCE_TYPE_VELOCITY)
                 .addAttribute("location", url);
     }

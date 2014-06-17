@@ -1,24 +1,18 @@
 package it;
 
 import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
 import it.servlet.ConnectAppServlets;
 import org.apache.http.client.HttpResponseException;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.util.List;
+import static org.junit.Assert.assertTrue;
 
-import static com.atlassian.plugin.connect.test.Utils.getXml;
-import static org.junit.Assert.*;
-
+@XmlDescriptor
 public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
 {
     public static final String EXTRA_PREFIX = "servlet-";

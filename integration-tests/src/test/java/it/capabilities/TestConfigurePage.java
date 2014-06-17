@@ -1,8 +1,5 @@
 package it.capabilities;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
@@ -10,13 +7,16 @@ import com.atlassian.upm.pageobjects.PluginManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 
 /**
  * Test of addon configure page in Confluence
  */
-public class TestConfigurePage extends AbstractPageTst
+public class TestConfigurePage extends AbstractPageTestBase
 {
     @BeforeClass
     public static void startConnectAddOn() throws Exception

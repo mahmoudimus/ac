@@ -71,7 +71,7 @@ public class WebItemModuleDescriptorFactory
 
         webItemElement.addElement("label")
                 .addAttribute("key", bean.getName().getI18n())
-                .setText(bean.getName().getValue());
+                                                   .setText(bean.getName().getValue());
 
         if (null != bean.getTooltip())
         {

@@ -1,6 +1,7 @@
 package it;
 
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import java.net.URL;
 import static com.atlassian.plugin.connect.test.RemotePluginUtils.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 
+@XmlDescriptor
 public class TestOAuth extends AbstractBrowserlessTest
 {
     @Test

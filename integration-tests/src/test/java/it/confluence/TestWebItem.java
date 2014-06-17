@@ -1,7 +1,6 @@
 package it.confluence;
 
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
@@ -18,13 +17,13 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 
 import static com.atlassian.fugue.Option.some;
-import static it.TestConstants.BETTY_USERNAME;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.*;
 
 /**
  * Test of remote web items in Confluence.
  */
+@XmlDescriptor
 public class TestWebItem extends ConfluenceWebDriverTestBase
 {
     private static final String GENERAL_WEBITEM = "system-web-item";
