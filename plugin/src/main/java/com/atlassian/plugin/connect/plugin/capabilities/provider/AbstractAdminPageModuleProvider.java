@@ -46,4 +46,9 @@ public abstract class AbstractAdminPageModuleProvider extends AbstractConnectPag
         return Collections.<Class<? extends Condition>>singletonList(UserIsAdminCondition.class);
     }
 
+    @Override
+    protected boolean needsEscaping()
+    {
+        return productAccessor.needsAdminPageNameEscaping();
+    }
 }

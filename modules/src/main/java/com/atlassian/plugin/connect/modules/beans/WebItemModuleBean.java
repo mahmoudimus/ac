@@ -60,12 +60,12 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * Places in the Atlassian UI are identified by what are known as "well-known locations".
      * For example, the `system.admin/globalsettings` location is in the administrative
      * menu on the left side of the Administration Console.
-     * <p/> 
+     * <p/>
      * Product location documentation:
-     * 
+     *
      * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
      * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
-     */ 
+     */
     @Required
     private String location;
 
@@ -118,6 +118,11 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      */
     private IconBean icon;
 
+    // Web items are handled very inconsistently in the products
+    // By default, the label of the web item is escaped to avoid markup injection,
+    // but this behavior can be overridden to avoid double-escaping markup
+    private transient boolean needsEscaping = true;
+
     public WebItemModuleBean()
     {
         this.url = "";
@@ -158,6 +163,8 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         {
             this.styleClasses = new ArrayList<String>();
         }
+
+        this.needsEscaping = builder.needsEscaping();
     }
 
     public String getUrl()
@@ -203,6 +210,11 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     public boolean isAbsolute()
     {
         return (null != getUrl() && getUrl().toLowerCase().startsWith("http"));
+    }
+
+    public boolean needsEscaping()
+    {
+        return needsEscaping;
     }
 
     public static WebItemModuleBeanBuilder newWebItemBean()
