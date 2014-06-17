@@ -215,12 +215,6 @@ public class ConnectRunner
         return this;
     }
 
-    public ConnectRunner addAuth(AuthenticationBean authenticationBean)
-    {
-        addonBuilder.withAuthentication(authenticationBean);
-        return this;
-    }
-
     public ConnectRunner addScope(ScopeName scopeName)
     {
         scopes.add(scopeName);

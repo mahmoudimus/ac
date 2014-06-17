@@ -4,6 +4,7 @@ import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
+import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Optional;
 import org.openqa.selenium.By;
 
@@ -16,7 +17,7 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
  */
 public class RemoteWebItem
 {
-    public static enum ItemMatchingMode { ID, LINK_TEXT }
+    public static enum ItemMatchingMode { ID, LINK_TEXT, JQUERY }
 
     private static final String INLINE_DIALOG_ACTIVE_CLASS = "active";
 
@@ -69,6 +70,9 @@ public class RemoteWebItem
                 break;
             case LINK_TEXT:
                 by = By.linkText(matchValue);
+                break;
+            case JQUERY:
+                by = ByJquery.$(matchValue);
                 break;
         }
         return elementFinder.find(by);

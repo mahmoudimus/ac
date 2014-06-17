@@ -94,7 +94,7 @@ public class TestEscaping extends TestBase
     public static void startConnectAddOn() throws Exception
     {
         runner = new ConnectRunner(jira().getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
-                .addAuth(AuthenticationBean.none())
+                .setAuthenticationToNone()
                 .addModule("generalPages",
                         newPageBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
