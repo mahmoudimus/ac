@@ -1,6 +1,6 @@
 (function(){
-    define(["iframe/host/history"], function() {
-        _AP.require(["host/history"], function(connectHistory){
+    define(["history/history"], function() {
+        _AP.require(["history/history"], function(connectHistory){
 
             module("History", {
                 setup: function() {

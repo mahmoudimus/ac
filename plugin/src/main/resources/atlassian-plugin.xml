@@ -26,8 +26,14 @@
         <url-pattern>/atlassian-connect/docs*</url-pattern>
     </servlet-filter>
 
+    <!-- the 3LA filter needs to run after the JWT filter (to read attributes on the request) and before the ApiScopingFilter (to set the principal) -->
+    <servlet-filter key="three-legged-auth-filter" class="com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthFilter"
+            location="after-encoding" weight="10000">
+        <url-pattern>/*</url-pattern>
+    </servlet-filter>
+
     <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
-            location="before-decoration">
+            location="before-decoration" weight="200">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
@@ -101,6 +107,14 @@
     <web-resource key="iframe-host-js">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <resource type="download" name="_util.js" location="/js/iframe/host/_util.js" />
+        <resource type="download" name="_rpc.js" location="/js/iframe/host/_rpc.js" />
+        <resource type="download" name="env.js" location="/js/iframe/host/env.js" />
+        <resource type="download" name="resize.js" location="/js/iframe/host/resize.js" />
+        <resource type="download" name="loading-indicator.js" location="/js/iframe/host/loading-indicator.js" />
+        <resource type="download" name="request.js" location="/js/iframe/host/request.js" />
+        <resource type="download" name="dialog-rpc.js" location="/js/dialog/dialog-rpc.js" />
+        <resource type="download" name="history-rpc.js" location="/js/history/history-rpc.js" />
         <resource type="download" name="_events.js" location="/js/iframe/_events.js" />
         <resource type="download" name="_xdm.js" location="/js/iframe/_xdm.js" />
         <resource type="download" name="_uri.js" location="/js/iframe/_uri.js" />
@@ -110,15 +124,10 @@
         <resource type="download" name="_ui-params.js" location="/js/iframe/_ui-params.js" />
         <resource type="download" name="content.js" location="/js/iframe/host/content.js" />
         <resource type="download" name="_status_helper.js" location="/js/iframe/host/_status_helper.js" />
-        <resource type="download" name="history.js" location="/js/iframe/host/history.js" />
-        <resource type="download" name="analytics.js" location="/js/iframe/host/analytics.js" />
+        <resource type="download" name="history.js" location="/js/history/history.js" />
+        <resource type="download" name="analytics.js" location="/js/analytics/analytics.js" />
     </web-resource>
 
-    <web-resource key="workflow-post-function">
-        <resource type="download" name="workflow-post-function.js" location="js/jira/workflow-post-function.js" />
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
-    </web-resource>
 
     <web-resource key="dialog">
         <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
@@ -139,15 +148,10 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
-    <web-resource key="confluence-macro">
-        <resource type="download" name="editor.js" location="js/confluence/macro/editor.js" />
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
-    </web-resource>
-
     <web-resource key="messages">
         <resource type="download" name="messages-main.css" location="css/messages/main.css" />
         <resource type="download" name="messages-main.js" location="js/messages/main.js" />
+        <resource type="download" name="messages-rpc.js" location="js/messages/messages-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
@@ -170,13 +174,6 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog</dependency>
     </web-resource>
 
-
-    <web-resource key="jira">
-        <resource type="download" name="jira-event.js" location="/js/jira/event.js" />
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
-    </web-resource>
-
     <web-resource key="schema-xsl">
         <resource type="download" content-type="application/xml" name="xs3p.xsl" location="/xsd/xs3p.xsl"/>
     </web-resource>
@@ -189,13 +186,10 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog-page-resource</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:remote-condition</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:inline-dialog</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:messages</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira</dependency>
     </web-resource>
 
     <web-resource key="atlassian-connect-mobile-resources" name="Connect resources for inclusion on every mobile page.">

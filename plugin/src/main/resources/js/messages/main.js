@@ -56,5 +56,5 @@ _AP.define("messages/main", ["_dollar"], function($) {
                 $('#' + id).remove();
             }
         }
-    }
+    };
 });
