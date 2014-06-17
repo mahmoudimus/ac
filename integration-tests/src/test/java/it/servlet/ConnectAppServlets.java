@@ -130,6 +130,15 @@ public class ConnectAppServlets
         return wrapContextAwareServlet(new MustacheServlet("iframe-close-dialog.mu"));
     }
 
+    /**
+     * @return a servlet that returns a button that opens an AUI message
+     */
+    public static HttpServlet openMessageServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-open-message.mu"));
+    }
+
+
     public static HttpServlet macroSimple()
     {
         return wrapContextAwareServlet(new SimpleMacroServlet());

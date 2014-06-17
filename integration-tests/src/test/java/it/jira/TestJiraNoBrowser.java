@@ -1,6 +1,7 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.SearchRequestViewModule;
@@ -16,6 +17,7 @@ import org.junit.Test;
 
 import java.rmi.RemoteException;
 
+@XmlDescriptor
 public class TestJiraNoBrowser extends AbstractBrowserlessTest
 {
     private RemoteProject project;

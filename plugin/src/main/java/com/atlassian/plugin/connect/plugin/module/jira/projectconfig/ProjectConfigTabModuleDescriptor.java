@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.jira.projectconfig;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
@@ -41,6 +42,7 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
+    @XmlDescriptor
     private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
 	private final ProjectConfigTabPageBuilder projectConfigTabPageBuilder;
 	private final BundleContext bundleContext;
@@ -51,6 +53,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
     private Element descriptor;
 
 	private WebItemCreator.Builder webItemCreatorBuilder;
+    @XmlDescriptor
 	private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 	private Condition condition;
 

@@ -1,21 +1,22 @@
 package com.atlassian.plugin.connect.plugin.module.jira.workflow;
 
-import com.atlassian.webhooks.spi.provider.*;
-
+import com.atlassian.webhooks.spi.provider.EventMatcher;
+import com.atlassian.webhooks.spi.provider.EventSerializationException;
+import com.atlassian.webhooks.spi.provider.EventSerializer;
+import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
+import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import org.json.JSONObject;
 
 public class RemoteWorkflowPostFunctionEvent
 {
     public static final String REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID = "remote_workflow_post_function";
 
-    private final String pluginKey;
-    private final String moduleKey;
+    private final String fullModuleKey;
     private final JSONObject jsonObject;
 
-    public RemoteWorkflowPostFunctionEvent(final String pluginKey, final String moduleKey, final JSONObject jsonObject)
+    public RemoteWorkflowPostFunctionEvent(final String fullModuleKey, final JSONObject jsonObject)
     {
-        this.pluginKey = pluginKey;
-        this.moduleKey = moduleKey;
+        this.fullModuleKey = fullModuleKey;
         this.jsonObject = jsonObject;
     }
 
@@ -26,8 +27,8 @@ public class RemoteWorkflowPostFunctionEvent
 
     public boolean matches(final PluginModuleListenerParameters consumerParams)
     {
-        return this.pluginKey.equals(consumerParams.getPluginKey())
-                && this.moduleKey.equals(consumerParams.getModuleKey().get());
+        String fullModuleKey = consumerParams.getPluginKey() + consumerParams.getModuleKey().get();
+        return this.fullModuleKey.equals(fullModuleKey);
     }
 
     public static final class FunctionEventMatcher implements EventMatcher<RemoteWorkflowPostFunctionEvent>

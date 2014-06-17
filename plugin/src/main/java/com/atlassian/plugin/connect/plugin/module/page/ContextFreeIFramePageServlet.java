@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
@@ -25,6 +26,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * TODO: Remove this class when support for XML Descriptors goes away
  */
 @Deprecated
+@XmlDescriptor
 public class ContextFreeIFramePageServlet extends HttpServlet
 {
     private final UserManager userManager;

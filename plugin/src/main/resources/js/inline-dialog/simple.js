@@ -1,4 +1,4 @@
-_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function($, statusHelper) {
+_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_util"], function($, statusHelper, util) {
     return function (contentUrl, options) {
         var $inlineDialog;
 
@@ -36,7 +36,7 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper"], function(
 
         var dialogElementIdentifier = "ap-inline-dialog-content-" + itemId;
 
-        $inlineDialog = $("#inline-dialog-" + dialogElementIdentifier);
+        $inlineDialog = $("#inline-dialog-" + util.escapeSelector(dialogElementIdentifier));
         if($inlineDialog.length === 0){
             //Create the AUI inline dialog with a unique ID.
             $inlineDialog = AJS.InlineDialog(

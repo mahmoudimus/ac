@@ -27,7 +27,7 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
     // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
     // Will be removed when XML descriptors are dropped - plugins should pass key of the <dialog-page>, NOT the url.
     // TODO: Remove this class when support for XML Descriptors goes away
-    function getIframeHtmlForUrl(pluginKey, remoteUrl, params) {
+    function getIframeHtmlForUrl(pluginKey, remoteUrl, productContext, params) {
         var contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
         return $.ajax(contentUrl, {
             dataType: "html",
@@ -35,6 +35,7 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
                 "dialog": true,
                 "ui-params": UiParams.encode(params),
                 "plugin-key": pluginKey,
+                "product-context": JSON.stringify(productContext),
                 "remote-url": remoteUrl,
                 "width": "100%",
                 "height": "100%",
@@ -43,15 +44,14 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
         });
     }
 
-
-    function getIframeHtmlForKey(pluginKey, productContextJson, capability, params) {
+    function getIframeHtmlForKey(pluginKey, productContext, capability, params) {
         var contentUrl = getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
                 "ui-params": UiParams.encode(params),
                 "plugin-key": pluginKey,
-                "product-context": productContextJson,
+                "product-context": JSON.stringify(productContext),
                 "key": capability.key,
                 "width": "100%",
                 "height": "100%",

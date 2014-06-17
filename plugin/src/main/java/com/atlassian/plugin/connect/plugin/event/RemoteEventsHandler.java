@@ -9,6 +9,7 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -52,6 +53,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * For handling legacy xml-descriptor add-ons. See {@link com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager} for JSON-descriptor add-ons.
  */
 @Component
+@XmlDescriptor
 public class RemoteEventsHandler implements InitializingBean, DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(RemoteEventsHandler.class);

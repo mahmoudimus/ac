@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.integration.plugins;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.StateAware;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -28,6 +29,7 @@ import static java.util.Arrays.asList;
  */
 @Deprecated
 @Component
+@XmlDescriptor
 public class LegacyXmlDynamicDescriptorRegistration
 {
     private final BundleContext bundleContext;
