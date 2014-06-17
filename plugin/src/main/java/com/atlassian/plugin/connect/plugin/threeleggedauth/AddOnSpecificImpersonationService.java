@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 @Component
 @ExportAsDevService
-public class AddOnSpecificThreeLeggedAuthService implements ThreeLeggedAuthService
+public class AddOnSpecificImpersonationService implements ThreeLeggedAuthService
 {
     private static String[] AUTHORISED_ADD_ON_KEYS;
     private static final String EAZYBI_ADD_ON_KEY = "com.eazybi.atlassian-connect.eazybi-jira";
@@ -22,8 +22,7 @@ public class AddOnSpecificThreeLeggedAuthService implements ThreeLeggedAuthServi
         setAuthorisedAddOnKeys(System.getProperty(ADD_ON_KEYS_SYS_PROP, EAZYBI_ADD_ON_KEY));
     }
 
-    @VisibleForTesting
-    public static void setAuthorisedAddOnKeys(String authorisedAddons)
+    private static void setAuthorisedAddOnKeys(String authorisedAddons)
     {
         AUTHORISED_ADD_ON_KEYS = StringUtils.split(authorisedAddons, ",");
         Arrays.sort(AUTHORISED_ADD_ON_KEYS);

@@ -5,7 +5,7 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.threeleggedauth.AddOnSpecificThreeLeggedAuthService;
+import com.atlassian.plugin.connect.plugin.threeleggedauth.AddOnSpecificImpersonationService;
 import com.atlassian.plugin.connect.plugin.threeleggedauth.NoUserAgencyException;
 import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -48,14 +48,12 @@ public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTe
     @Test
     public void specifyingSubjectIsAllowed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
-        grant3LA();
         assertEquals(200, issueRequest(createRequestUri(SUBJECT_USERNAME)));
     }
 
     @Test
     public void specifiedSubjectIsIgnoredAndAddonUserIsUsed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
-        grant3LA();
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(lowerCase(getAddOnUsername()), lowerCase(getCapturedRequest().getRemoteUsername()));
     }
@@ -63,7 +61,6 @@ public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTe
     @Test
     public void authorisedUserAgencyHasSubjectAttribute() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
-        grant3LA();
         issueRequest(createRequestUri(SUBJECT_USERNAME));
         assertEquals(SUBJECT_USERNAME, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
@@ -141,11 +138,6 @@ public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTe
     public void emptySubjectResultsInError() throws IOException, NoSuchAlgorithmException
     {
         assertEquals(400, issueRequest(createRequestUri("")));
-    }
-
-    private void grant3LA()
-    {
-        AddOnSpecificThreeLeggedAuthService.setAuthorisedAddOnKeys("com.eazybi.atlassian-connect.eazybi-jira");
     }
 
 }
