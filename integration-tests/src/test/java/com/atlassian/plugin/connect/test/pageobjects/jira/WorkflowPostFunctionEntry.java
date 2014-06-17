@@ -1,33 +1,30 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
-import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
-import com.atlassian.pageobjects.elements.PageElementFinder;
 import org.openqa.selenium.By;
-
-import javax.inject.Inject;
 
 public class WorkflowPostFunctionEntry
 {
-    private final String moduleKey;
     private PageElement entry;
 
-    @Inject
-    private PageElementFinder pageElementFinder;
-
-    public WorkflowPostFunctionEntry(String moduleKey)
+    public WorkflowPostFunctionEntry(PageElement pageElement)
     {
-        this.moduleKey = moduleKey;
+        this.entry = pageElement;
+
     }
 
-    @Init
-    public void init()
+    public String getId()
     {
-        entry = pageElementFinder.find(By.id(moduleKey)).find(By.);
+        return entry.find(By.tagName("input")).getAttribute("id");
     }
 
-    public String getTitle()
+    public String getName()
     {
-        return entry.find(By.tagName("h2")).getText();
+        return entry.findAll(By.tagName("td")).get(1).getText();
+    }
+
+    public String getDescription()
+    {
+        return entry.findAll(By.tagName("td")).get(1).getText();
     }
 }

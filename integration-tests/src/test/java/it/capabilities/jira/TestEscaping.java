@@ -1,6 +1,7 @@
 package it.capabilities.jira;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
@@ -21,6 +22,8 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAddWorkflowTransitionFunctionParamsPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAddWorkflowTransitionPostFunctionPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
@@ -29,8 +32,11 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraWorkflowTransitionPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.Section;
+import com.atlassian.plugin.connect.test.pageobjects.jira.WorkflowPostFunctionEntry;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -61,8 +67,7 @@ public class TestEscaping extends TestBase
     private static final String MODULE_NAME_JIRA_ESCAPED = "<b>\\${user}</b>";
 
     private static final String GENERAL_PAGE_KEY = "general-page";
-    private static final String WEB_ITEM_KEY_1 = "web-item-1";
-    private static final String WEB_ITEM_KEY_2 = "web-item-2";
+    private static final String WEB_ITEM_KEY = "web-item";
     private static final String ADMIN_PAGE_KEY = "admin-page";
     private static final String COMPONENT_TAB_PANEL_KEY = "component-tab-panel";
     private static final String ISSUE_TAB_PANEL_KEY = "issue-tab-panel";
@@ -78,8 +83,8 @@ public class TestEscaping extends TestBase
 
     private static final String PROJECT_KEY = RandomStringUtils.randomAlphabetic(4).toUpperCase();
     private static final String WORKFLOW_NAME = "classic default workflow";
-    private static final Integer WORKFLOW_STEP = 1;
-    private static final Integer WORKFLOW_TRANSITION = 5;
+    private static final String WORKFLOW_STEP = "3";
+    private static final String WORKFLOW_TRANSITION = "5";
 
     private static ConnectRunner runner;
     private static ConnectPageOperations connectPageOperations = new ConnectPageOperations(jira().getPageBinder(),
@@ -97,21 +102,13 @@ public class TestEscaping extends TestBase
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
-                .addModules("webItems",
+                .addModule("webItems",
                         newWebItemBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
-                                .withKey(WEB_ITEM_KEY_1)
+                                .withKey(WEB_ITEM_KEY)
                                 .withUrl(MODULE_URL)
                                 .withContext(AddOnUrlContext.addon)
                                 .withLocation("system.top.navigation.bar")
-                                .withTooltip(new I18nProperty(MODULE_NAME, null))
-                                .build(),
-                        newWebItemBean()
-                                .withName(new I18nProperty(MODULE_NAME, null))
-                                .withKey(WEB_ITEM_KEY_2)
-                                .withUrl(MODULE_URL)
-                                .withContext(AddOnUrlContext.addon)
-                                .withLocation("system.user.options/jira-help")
                                 .withTooltip(new I18nProperty(MODULE_NAME, null))
                                 .build()
                 )
@@ -214,19 +211,19 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testWebItemInGlobalNav() throws MalformedURLException
+    public void testWebItem() throws MalformedURLException
     {
         jira().quickLoginAsAdmin();
-        RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY_1);
+        RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY);
         assertIsEscaped(webItem.getLinkText());
     }
 
     @Test
-    public void testWebItemInHelpMenu() throws MalformedURLException
+    public void testWebItemTooltip() throws MalformedURLException
     {
         jira().quickLoginAsAdmin();
-        RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY_2);
-        assertIsEscaped(webItem.getLinkText());
+        RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY);
+        assertIsEscaped(webItem.getTitle());
     }
 
     @Test
@@ -331,7 +328,19 @@ public class TestEscaping extends TestBase
     @Test
     public void testWorkflowPostFunction() throws MalformedURLException
     {
+        final String id = ConnectPluginInfo.getPluginKey() + ":" + getModuleKey(WORKFLOW_POST_FUNCTION_KEY);
 
+        JiraAddWorkflowTransitionPostFunctionPage workflowTransitionPage = jira().quickLoginAsAdmin(JiraAddWorkflowTransitionPostFunctionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION);
+        WorkflowPostFunctionEntry entry = Iterables.find(workflowTransitionPage.getPostFunctions(), new Predicate<WorkflowPostFunctionEntry>()
+        {
+            @Override
+            public boolean apply(@Nullable WorkflowPostFunctionEntry workflowPostFunctionEntry)
+            {
+                return id.equals(workflowPostFunctionEntry.getId());
+            }
+        });
+        assertIsEscaped(entry.getName());
+        assertIsEscaped(entry.getDescription());
     }
 
     private void assertIsEscaped(String text)

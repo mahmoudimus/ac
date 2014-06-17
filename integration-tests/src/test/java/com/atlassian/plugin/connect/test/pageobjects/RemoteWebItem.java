@@ -89,6 +89,11 @@ public class RemoteWebItem
         return webItem.getText();
     }
 
+    public String getTitle()
+    {
+        return webItem.getAttribute("title");
+    }
+
     public void click()
     {
         if (dropDownLinkId.isPresent())
