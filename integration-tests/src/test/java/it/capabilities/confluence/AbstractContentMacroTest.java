@@ -477,14 +477,15 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroItem macro = macroBrowser.searchForFirst(macroName);
         final MacroForm macroForm = macro.select();
         macroForm.waitUntilVisible();
-        try
-        {
-            Thread.sleep(1000l);
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
+        //TODO: sleeping here makes the test pass but need a less dodgy way
+//        try
+//        {
+//            Thread.sleep(1000l);
+//        }
+//        catch (InterruptedException e)
+//        {
+//            e.printStackTrace();
+//        }
         macroBrowser.clickSave();
     }
 }
