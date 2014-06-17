@@ -18,10 +18,12 @@
                 equal($('#' + util.escapeSelector(id)).text(), text);
             });
 
+            test("all reserved characters are escaped", function() {
+                var reserved = "!\"#$%&'()*+,.\/:;<=>?@[\\]^`{|}~";
+                equal(util.escapeSelector(reserved), "\\!\\\"\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\`\\{\\|\\}\\~");
+            });
 
         });
-
-
 
     });
 
