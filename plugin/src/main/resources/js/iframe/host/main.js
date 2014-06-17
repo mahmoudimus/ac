@@ -87,7 +87,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
   }
 
   return function (options) {
-
+    // AC-765 if we are about to replace an old instance of the connect iframe. Destroy it.
     $content = contentDiv(options.ns);
     $contentIframe = $content.find("iframe");
     if($contentIframe.length){
