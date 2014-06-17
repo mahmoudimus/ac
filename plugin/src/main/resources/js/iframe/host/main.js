@@ -6,6 +6,9 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
   var defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); };
 
   function contentDiv(ns) {
+    if(!ns){
+      throw new Error("ns undefined");
+    }
     return $("#embedded-" + util.escapeSelector(ns));
   }
 
@@ -84,6 +87,14 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
   }
 
   return function (options) {
+
+    $content = contentDiv(options.ns);
+    $contentIframe = $content.find("iframe");
+    if($contentIframe.length){
+      $contentIframe.trigger('ra.iframe.destroy');
+      $content.remove();
+    }
+
     var attemptCounter = 0;
     function doCreate() {
         //If the element we are going to append the iframe to doesn't exist in the dom (yet). Wait for it to appear.
