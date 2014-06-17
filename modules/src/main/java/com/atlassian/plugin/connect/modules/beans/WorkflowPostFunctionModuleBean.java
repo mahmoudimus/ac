@@ -29,7 +29,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *All URLs are relative to the base URL that is declared in the connect-container element of the descriptor.
  *
- *### Creating and editing a Post Function
+ *#### Creating and editing a Post Function
  *
  *The create and edit urls will need to present a form with relevant configuration for the post function. In order to
  * persist this information with JIRA, the page needs to include a snippet of Javascript to facilitate saving this data.
@@ -72,6 +72,7 @@ public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
      * function.
      *
      * The view URL can contain the following context parameters:
+     *
      * - `postFunction.id`: The unique identifier of the post function
      * - `postFunction.config`: The configuration value saved to JIRA after calling `WorkflowConfiguration.onSave`
      */
@@ -81,6 +82,7 @@ public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
      * The relative URL to the add-on page that allows to configure the workflow post function once it exists.
      *
      * The edit URL can contain the following context parameters:
+     *
      * - `postFunction.id`: The unique identifier of the post function
      * - `postFunction.config`: The configuration value saved to JIRA after calling `WorkflowConfiguration.onSave`
      */
@@ -92,9 +94,10 @@ public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
     private UrlBean create;
 
     /**
-     * The relative URL to the add-on resource that will receive the HTTP POST after a workflow transition.
+     * The relative URL to the add-on resource that will receive the HTTP POST after a workflow transition. It will also
+     * include the authentication headers that allow the add-on to validate the authenticity of the request.
      *
-     *### Contents of the HTTP POST
+     *#### Contents of the HTTP POST
      *
      *To understand the type of content that is sent to the add-on after a state transition, you can use the webhook
      * inspector tool. The [Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) is a Connect add-on
@@ -125,8 +128,7 @@ public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
      *                    "avatarUrls": { },
      *                    "id": "10000",
      *                    "key": "TEST",
-     *                    "name": "Test",
-     *                    "self": "http://issues.example.com/jira/rest/api/2/project/10000"
+     *                    "name": "Test"
      *                },
      *                "reporter": { },
      *                "resolution": { },
