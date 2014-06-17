@@ -1,9 +1,14 @@
 package it.capabilities.confluence;
 
+import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
+import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
+import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesPage;
+import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
+import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -19,11 +24,15 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenc
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
@@ -36,10 +45,14 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class TestEscaping extends ConfluenceWebDriverTestBase
+public class TestEscaping extends AbstractConfluenceWebDriverTest
 {
-    private static final String MODULE_NAME = "<b>${user}</b>";
+    private static final String MODULE_NAME = "F1ND M3 <b>${user}</b>";
+    private static final String MODULE_NAME_CONF_ESCAPED = "F1ND M3 <b>\\${user}</b>";
+    private static final String MACRO_EDITOR_TITLE = "Insert ‘" + MODULE_NAME_CONF_ESCAPED + "’ Macro";
 
     private static final String GENERAL_PAGE_KEY = "general-page";
     private static final String WEB_ITEM_KEY = "web-item";
@@ -49,8 +62,6 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     private static final String SPACE_TOOLS_TAB_KEY = "space-tools-tab";
 
     private static final String MODULE_URL = "/page";
-
-    private static final String SPACE = "ds";
 
     private static ConnectRunner runner;
 
@@ -88,10 +99,10 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(MACRO_KEY)
                                 .withUrl(MODULE_URL)
-                                .withDescription(new I18nProperty(MODULE_NAME, null))
+                                .withDescription(new I18nProperty(MODULE_NAME, MODULE_NAME))
                                 .withParameters(newMacroParameterBean()
-                                        .withName(new I18nProperty(MODULE_NAME, null))
-                                        .withDescription(new I18nProperty(MODULE_NAME, null))
+                                        .withName(new I18nProperty(MODULE_NAME, MODULE_NAME))
+                                        .withDescription(new I18nProperty(MODULE_NAME, MODULE_NAME))
                                         .withIdentifier("test")
                                         .build())
                                 .build()
@@ -160,9 +171,60 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testMacro() throws Exception
+    public void testMacroTitle() throws Exception
     {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        try
+        {
+            MacroItem macro = macroBrowser.searchForFirst("F1ND M3");
+            assertNotNull(macro);
+            assertIsEscaped(macro.getTitle().byDefaultTimeout());
+        }
+        finally
+        {
+            macroBrowser.clickCancel();
+        }
+    }
 
+    @Test
+    public void testMacroEditorTitle() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        try
+        {
+            MacroItem macro = macroBrowser.searchForFirst("F1ND M3");
+            assertNotNull(macro);
+            MacroForm macroForm = macro.select();
+            assertEquals(MACRO_EDITOR_TITLE, macroForm.getTitle().byDefaultTimeout());
+        }
+        finally
+        {
+            macroBrowser.clickCancel();
+        }
+    }
+
+    @Ignore("Failing due to ACDEV-1286")
+    @Test
+    public void testMacroParameter() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        try
+        {
+            MacroItem macro = macroBrowser.searchForFirst("F1ND M3");
+            assertNotNull(macro);
+            MacroForm macroForm = macro.select();
+            assertTrue(macroForm.getField("test").isVisible());
+
+            WebElement label = product.getTester().getDriver().findElement(ByJquery.$("label[for='macro-param-test']"));
+            assertIsEscaped(label.getText());
+        }
+        finally
+        {
+            macroBrowser.clickCancel();
+        }
     }
 
     @Test
@@ -192,14 +254,18 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
         product.visit(SpaceTemplatesPage.class, "ts");
-        RemoteWebItem webItem =  connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
+        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
                 "li[data-web-item-key='" + getModuleKey(SPACE_TOOLS_TAB_KEY) + "'] > a", Optional.<String>absent());
         assertIsEscaped(webItem.getLinkText());
     }
 
     private void assertIsEscaped(String text)
     {
-        assertEquals(MODULE_NAME, text);
+        // Confluence's own escaping leaves a '\' in front of the '$', which seems wrong, so checking both flavours
+        if (!MODULE_NAME.equals(text) && !MODULE_NAME_CONF_ESCAPED.equals(text))
+        {
+            assertEquals(MODULE_NAME, text);
+        }
     }
 
     private RemoteWebItem findViewPageWebItem(String webItemId) throws Exception
@@ -213,16 +279,15 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
         return createAndVisitPage(ConfluenceViewPage.class);
     }
 
-
     private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = createPage();
-        return product.visit(pageClass, pageData.getId());
+        String pageId = Long.toString(createPage());
+        return product.visit(pageClass, pageId);
     }
 
-    private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
+    private long createPage() throws MalformedURLException, XmlRpcFault
     {
-        return confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), SPACE, "Page with webitem", "some page content");
+        return rpc.createPage(new com.atlassian.confluence.it.Page(TestSpace.DEMO, RandomStringUtils.randomAlphabetic(8), "some page content"));
     }
 
     private String getModuleKey(String module)
