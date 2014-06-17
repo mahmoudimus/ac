@@ -8,6 +8,8 @@ import com.atlassian.jira.projects.pageobjects.page.BrowseProjectPage;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.Component;
 import com.atlassian.jira.testkit.client.restclient.ComponentClient;
+import com.atlassian.jira.testkit.client.restclient.Version;
+import com.atlassian.jira.testkit.client.restclient.VersionClient;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
@@ -18,11 +20,16 @@ import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
+import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.Section;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -46,6 +53,7 @@ import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionMod
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.jira.TestJira.EXTRA_PREFIX;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestEscaping extends TestBase
 {
@@ -69,6 +77,9 @@ public class TestEscaping extends TestBase
     private static final String MODULE_URL = "/page";
 
     private static final String PROJECT_KEY = RandomStringUtils.randomAlphabetic(4).toUpperCase();
+    private static final String WORKFLOW_NAME = "classic default workflow";
+    private static final Integer WORKFLOW_STEP = 1;
+    private static final Integer WORKFLOW_TRANSITION = 5;
 
     private static ConnectRunner runner;
     private static ConnectPageOperations connectPageOperations = new ConnectPageOperations(jira().getPageBinder(),
@@ -197,7 +208,7 @@ public class TestEscaping extends TestBase
     @Test
     public void testGeneralPage() throws MalformedURLException
     {
-        loginAsAdmin();
+        jira().quickLoginAsAdmin();
         RemoteWebItem webItem = findWebItem(GENERAL_PAGE_KEY);
         assertIsEscaped(webItem.getLinkText());
     }
@@ -205,7 +216,7 @@ public class TestEscaping extends TestBase
     @Test
     public void testWebItemInGlobalNav() throws MalformedURLException
     {
-        loginAsAdmin();
+        jira().quickLoginAsAdmin();
         RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY_1);
         assertIsEscaped(webItem.getLinkText());
     }
@@ -213,7 +224,7 @@ public class TestEscaping extends TestBase
     @Test
     public void testWebItemInHelpMenu() throws MalformedURLException
     {
-        loginAsAdmin();
+        jira().quickLoginAsAdmin();
         RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY_2);
         assertIsEscaped(webItem.getLinkText());
     }
@@ -221,8 +232,7 @@ public class TestEscaping extends TestBase
     @Test
     public void testAdminPage() throws MalformedURLException
     {
-        loginAsAdmin();
-        jira().visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
+        jira().quickLoginAsAdmin(JiraAdministrationHomePage.class, EXTRA_PREFIX);
         JiraAdminPage adminPage = jira().getPageBinder().bind(JiraAdminPage.class, getModuleKey(ADMIN_PAGE_KEY));
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
@@ -230,14 +240,12 @@ public class TestEscaping extends TestBase
     @Test
     public void testComponentTabPanel() throws MalformedURLException
     {
-        loginAsAdmin();
-
         ComponentClient componentClient = new ComponentClient(jira().environmentData());
         Component component = componentClient.create(new Component()
                 .name("Component Tab Panel Test")
                 .project(PROJECT_KEY));
 
-        JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY,
+        JiraComponentTabPage componentTabPage = jira().quickLoginAsAdmin(JiraComponentTabPage.class, PROJECT_KEY,
                 component.id.toString(), ConnectPluginInfo.getPluginKey(), getModuleKey(COMPONENT_TAB_PANEL_KEY));
 
         assertIsEscaped(componentTabPage.findAddOnTab().getText());
@@ -246,13 +254,9 @@ public class TestEscaping extends TestBase
     @Test
     public void testIssueTabPanel() throws MalformedURLException
     {
-        loginAsAdmin();
-
         IssueCreateResponse issue = jira().backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
-
-        JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(JiraViewIssuePageWithRemotePluginIssueTab.class,
+        JiraViewIssuePageWithRemotePluginIssueTab page = jira().quickLoginAsAdmin(JiraViewIssuePageWithRemotePluginIssueTab.class,
                 getModuleKey(ISSUE_TAB_PANEL_KEY), issue.key(), runner.getAddon().getKey(), ConnectPluginInfo.getPluginKey() + ":");
-
         assertIsEscaped(page.getTabName());
     }
 
@@ -291,18 +295,52 @@ public class TestEscaping extends TestBase
         assertIsEscaped(tabPanel.getWebItem().getLinkText());
     }
 
-    private void assertIsEscaped(String linkText)
+    @Test
+    public void testVersionTabPanel() throws MalformedURLException
     {
-        // JIRA's own escaping leaves a '\' in front of the '$', which seems wrong
-        if (!MODULE_NAME.equals(linkText) && !MODULE_NAME_JIRA_ESCAPED.equals(linkText))
-        {
-            assertEquals(MODULE_NAME, linkText);
-        }
+        VersionClient versionClient = new VersionClient(jira().environmentData());
+        Version version = versionClient.create(new Version()
+                .name("Test Version Tab Panel")
+                .project(PROJECT_KEY));
+
+        JiraVersionTabPage versionTabPage = jira().quickLoginAsAdmin(JiraVersionTabPage.class, PROJECT_KEY,
+                version.id.toString(), ConnectPluginInfo.getPluginKey(), getModuleKey(VERSION_TAB_PANEL_KEY));
+
+        assertIsEscaped(versionTabPage.findAddOnTab().getText());
     }
 
-    private void loginAsAdmin()
+    @Test
+    public void testSearchRequestView() throws MalformedURLException
     {
-        jira().quickLoginAsAdmin();
+        JiraAdvancedSearchPage searchPage = jira().quickLoginAsAdmin(JiraAdvancedSearchPage.class);
+        searchPage.enterQuery("project = " + PROJECT_KEY).submit();
+        IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
+        IssueNavigatorViewsMenu.ViewEntry entry = viewsMenu.entryWithLabel(MODULE_NAME_JIRA_ESCAPED);
+        assertTrue(entry.isPresent());
+    }
+
+    @Test
+    public void testWebPanel() throws MalformedURLException
+    {
+        IssueCreateResponse issue = jira().backdoor().issues().createIssue(PROJECT_KEY, "test web panel");
+        JiraViewIssuePage page = jira().quickLoginAsAdmin(JiraViewIssuePage.class, issue.key());
+        Section section = page.getSection(getModuleKey(WEB_PANEL_KEY));
+        assertIsEscaped(section.getTitle());
+    }
+
+    @Test
+    public void testWorkflowPostFunction() throws MalformedURLException
+    {
+
+    }
+
+    private void assertIsEscaped(String text)
+    {
+        // JIRA's own escaping leaves a '\' in front of the '$', which seems wrong, so checking both flavours
+        if (!MODULE_NAME.equals(text) && !MODULE_NAME_JIRA_ESCAPED.equals(text))
+        {
+            assertEquals(MODULE_NAME, text);
+        }
     }
 
     private RemoteWebItem findWebItem(String moduleKey)
