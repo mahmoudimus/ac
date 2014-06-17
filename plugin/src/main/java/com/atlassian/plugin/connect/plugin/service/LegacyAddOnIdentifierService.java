@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.service;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import org.dom4j.Document;
@@ -36,7 +37,9 @@ public class LegacyAddOnIdentifierService implements ConnectAddOnIdentifierServi
     {
         try
         {
-            return (bundle.getHeaders() != null && (bundle.getHeaders().get(REMOTE_PLUGIN) != null));
+            Object key = getPluginKeyFromBundle(bundle);
+            XmlDescriptorExploder.notifyAndExplode(null == key ? null : key.toString());
+            return null != key;
         }
         catch (Exception e)
         {
@@ -47,6 +50,8 @@ public class LegacyAddOnIdentifierService implements ConnectAddOnIdentifierServi
     @Override
     public boolean isConnectAddOn(final Plugin plugin)
     {
+        XmlDescriptorExploder.notifyAndExplode(plugin.getKey());
+
         try
         {
             Manifest mf = new Manifest(plugin.getResourceAsStream("/META-INF/MANIFEST.MF"));
@@ -68,6 +73,8 @@ public class LegacyAddOnIdentifierService implements ConnectAddOnIdentifierServi
     @Override
     public boolean isConnectAddOn(final Document pluginDescriptor)
     {
+        XmlDescriptorExploder.notifyAndExplode(null == pluginDescriptor ? null : pluginDescriptor.getRootElement().attributeValue("key"));
+
         try
         {
             Element root = pluginDescriptor.getRootElement();
@@ -98,6 +105,9 @@ public class LegacyAddOnIdentifierService implements ConnectAddOnIdentifierServi
     @Override
     public String getInstallerUser(Bundle bundle)
     {
+        Object key = getPluginKeyFromBundle(bundle);
+        XmlDescriptorExploder.notifyAndExplode(null == key ? null : key.toString());
+
         String header = (String) bundle.getHeaders().get(REMOTE_PLUGIN);
         if (header != null)
         {
@@ -109,11 +119,19 @@ public class LegacyAddOnIdentifierService implements ConnectAddOnIdentifierServi
     @Override
     public String getRegistrationUrl(Bundle bundle)
     {
+        Object key = getPluginKeyFromBundle(bundle);
+        XmlDescriptorExploder.notifyAndExplode(null == key ? null : key.toString());
+
         String header = (String) bundle.getHeaders().get(REMOTE_PLUGIN);
         if (header != null)
         {
             return OsgiHeaderUtil.parseHeader(header).get("installer").get("registration-url");
         }
         return null;
+    }
+
+    private static Object getPluginKeyFromBundle(Bundle bundle)
+    {
+        return bundle.getHeaders() == null ? null : bundle.getHeaders().get(REMOTE_PLUGIN);
     }
 }

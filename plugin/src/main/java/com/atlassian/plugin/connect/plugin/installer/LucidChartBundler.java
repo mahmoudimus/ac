@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.Filenames;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.util.ClassLoaderUtils;
@@ -75,6 +76,8 @@ public final class LucidChartBundler implements InitializingBean, DisposableBean
     @XmlDescriptor
     private PluginArtifact getArtifact()
     {
+        XmlDescriptorExploder.notifyAndExplode("lucidchart");
+
         return new JarPluginArtifact(ZipBuilder.buildZip("install-lucidchart-app", new ZipHandler()
         {
             @Override
