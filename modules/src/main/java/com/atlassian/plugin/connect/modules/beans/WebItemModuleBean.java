@@ -118,9 +118,9 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      */
     private IconBean icon;
 
-    // Web items are handled very inconsistently in the products
-    // By default, the label of the web item is escaped to avoid markup injection,
-    // but this behavior can be overridden to avoid double-escaping markup
+    // Web items are handled very inconsistently in the products.
+    // We escape the label of the web item by default to avoid markup injection,
+    // but this behavior can be overridden to avoid double-escaping
     private transient boolean needsEscaping = true;
 
     public WebItemModuleBean()

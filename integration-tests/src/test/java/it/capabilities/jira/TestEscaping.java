@@ -354,8 +354,8 @@ public class TestEscaping extends TestBase
 
     private RemoteWebItem findWebItem(String moduleKey)
     {
-        JiraViewProjectPage viewProjectPage = jira().visit(JiraViewProjectPage.class, PROJECT_KEY);
-        return viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
+        jira().visit(JiraViewProjectPage.class, PROJECT_KEY);
+        return connectPageOperations.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
     }
 
     private String getModuleKey(String module)

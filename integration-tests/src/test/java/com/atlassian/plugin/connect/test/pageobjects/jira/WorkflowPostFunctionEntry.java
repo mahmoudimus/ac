@@ -10,7 +10,6 @@ public class WorkflowPostFunctionEntry
     public WorkflowPostFunctionEntry(PageElement pageElement)
     {
         this.entry = pageElement;
-
     }
 
     public String getId()
