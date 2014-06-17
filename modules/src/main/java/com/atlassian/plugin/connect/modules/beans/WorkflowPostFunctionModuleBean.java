@@ -62,18 +62,27 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
 {
     /**
-     * The description of the add-on's functionality that will show up in the *Manage add-ons* page.
+     * The description of the workflow post function. This will be presented to the user when they add a new post
+     * function to a JIRA workflow.
      */
     private I18nProperty description;
 
     /**
      * The relative URL to the add-on page that shows the read-only configuration or summary of the workflow post
      * function.
+     *
+     * The view URL can contain the following context parameters:
+     * - `postFunction.id`: The unique identifier of the post function
+     * - `postFunction.config`: The configuration value saved to JIRA after calling `WorkflowConfiguration.onSave`
      */
     private UrlBean view;
 
     /**
      * The relative URL to the add-on page that allows to configure the workflow post function once it exists.
+     *
+     * The edit URL can contain the following context parameters:
+     * - `postFunction.id`: The unique identifier of the post function
+     * - `postFunction.config`: The configuration value saved to JIRA after calling `WorkflowConfiguration.onSave`
      */
     private UrlBean edit;
 
