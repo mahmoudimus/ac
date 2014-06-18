@@ -65,7 +65,6 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
         this.layout = new WebPanelLayout();
         this.url = "";
         this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
-        this.tooltip = I18nProperty.empty();
     }
 
     public WebPanelModuleBean(WebPanelModuleBeanBuilder builder)
@@ -92,10 +91,6 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
             this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
         }
 
-        if (null == tooltip)
-        {
-            this.tooltip = I18nProperty.empty();
-        }
     }
 
     public String getLocation()

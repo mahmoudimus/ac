@@ -43,7 +43,6 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     private Element createDomElement(WebPanelModuleBean bean, String webPanelKey, ConnectAddonBean addon)
     {
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
-        String tooltipI18nKeyOrName = Strings.isNullOrEmpty(bean.getTooltip().getI18n()) ? bean.getTooltip().getValue() : bean.getTooltip().getI18n();
 
         Element webPanelElement = new DOMElement("remote-web-panel");
         webPanelElement.addAttribute("key", webPanelKey);
@@ -62,7 +61,11 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         }
 
         webPanelElement.addElement("label").addAttribute("key", i18nKeyOrName);
-        webPanelElement.addElement("tooltip").addAttribute("key", tooltipI18nKeyOrName);
+        if(null != bean.getTooltip()){
+            String tooltipI18nKeyOrName = Strings.isNullOrEmpty(bean.getTooltip().getI18n()) ? bean.getTooltip().getValue() : bean.getTooltip().getI18n();
+            webPanelElement.addElement("tooltip").addAttribute("key", tooltipI18nKeyOrName);
+        }
+
         webPanelElement.addAttribute("class", IFrameRemoteWebPanel.class.getName());
         webPanelElement.addAttribute("width", bean.getLayout().getWidth());
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
