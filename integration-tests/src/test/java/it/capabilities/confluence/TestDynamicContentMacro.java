@@ -4,11 +4,9 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
@@ -129,7 +127,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         selectMacro(editorPage, SIMPLE_MACRO_NAME);
 
         savedPage = editorPage.save();
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(getAddonAndMacroKey(SIMPLE_MACRO_KEY), 0);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
 
         assertThat(content, is("Hello world"));
@@ -147,7 +145,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         editorContent.setRichTextMacroBody("a short body");
 
         savedPage = editorPage.save();
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(getAddonAndMacroKey(SHORT_BODY_MACRO_KEY), 0);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SHORT_BODY_MACRO_KEY, 0);
         String body = renderedMacro.getFromQueryString("body");
 
         assertThat(body, is("<p>a short body</p>"));
@@ -167,7 +165,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         savedPage = editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(getAddonAndMacroKey(LONG_BODY_MACRO_KEY), 0);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(LONG_BODY_MACRO_KEY, 0);
         String hash = renderedMacro.getFromQueryString("hash");
 
         assertThat(hash, is(DigestUtils.md5Hex(body)));
@@ -188,7 +186,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         savedPage = editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(getAddonAndMacroKey(PARAMETER_MACRO_KEY));
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(PARAMETER_MACRO_KEY);
         String value = renderedMacro.getFromQueryString("param1");
 
         assertThat(value, is("param value"));
@@ -207,10 +205,10 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         connectPageOperations.waitUntilNConnectIFramesPresent(2); // preempt flakiness
 
-        RenderedMacro renderedMacro1 = connectPageOperations.findMacroWithIdPrefix(getAddonAndMacroKey(SIMPLE_MACRO_KEY), 0);
+        RenderedMacro renderedMacro1 = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         String content1 = renderedMacro1.getIFrameElementText("hello-world-message");
 
-        RenderedMacro renderedMacro2 = connectPageOperations.findMacroWithIdPrefix(getAddonAndMacroKey(SIMPLE_MACRO_KEY), 1);
+        RenderedMacro renderedMacro2 = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 1);
         String content2 = renderedMacro2.getIFrameElementText("hello-world-message");
 
         assertThat(content1, is("Hello world"));
@@ -227,7 +225,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         savedPage = editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(getAddonAndMacroKey(SMALL_INLINE_MACRO_KEY));
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SMALL_INLINE_MACRO_KEY);
 
         assertThat(renderedMacro.getIFrameSize(), both(hasProperty("width", is(60))).and(hasProperty("height", is(30))));
     }
@@ -242,11 +240,11 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
         macro.select();
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(getAddonAndMacroKey(EDITOR_MACRO_KEY));
+        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
         dialog.submit();
 
         savedPage = editorPage.save();
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(getAddonAndMacroKey(EDITOR_MACRO_KEY));
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(EDITOR_MACRO_KEY);
         String content = renderedMacro.getIFrameElementText("footy");
 
         assertThat(content, is("footy: American Football"));
@@ -258,9 +256,4 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         return remotePlugin.getAddon().getBaseUrl();
     }
 
-    @Override
-    protected ConnectAddonBean getCurrentAddon()
-    {
-        return remotePlugin.getAddon();
-    }
 }
