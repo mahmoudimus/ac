@@ -6,6 +6,30 @@
         <package>com.atlassian.plugin.connect.plugin.rest</package>
     </rest>
 
+    <!-- JIRA specific javascript modules -->
+    <web-resource key="workflow-post-function">
+        <resource type="download" name="workflow-post-function.js" location="js/jira/workflow-post-function/workflow-post-function.js" />
+
+        <resource type="download" name="workflow-post-function-rpc.js" location="js/jira/workflow-post-function/workflow-post-function-rpc.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+    </web-resource>
+
+    <web-resource key="events">
+        <resource type="download" name="jira-event.js" location="/js/jira/event.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+    </web-resource>
+
+    <web-resource key="atlassian-connect-resources" name="Connect resources for inclusion on every page.">
+        <context>atl.admin</context>
+        <context>atl.general</context>
+        <!-- workaround for AC-703, the 'preview' view does not include atl.general resources (CONF-30617) -->
+        <context>preview</context>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
+    </web-resource>
+
     <!-- plugin points -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.connect.plugin.module.jira.JiraProfileTabModuleDescriptor">
         <description>

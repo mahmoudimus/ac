@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponent
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -43,6 +44,7 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
     private final SearchRequestURLHandler urlHandler;
     private Element descriptor;
     private URI url;
+    @XmlDescriptor
     private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public RemoteSearchRequestViewModuleDescriptor(
@@ -95,12 +97,16 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
         desc.addAttribute("fileExtension", "html");
 
         SearchRequestViewModuleDescriptor moduleDescriptor = createDescriptor(desc);
+
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
 
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {

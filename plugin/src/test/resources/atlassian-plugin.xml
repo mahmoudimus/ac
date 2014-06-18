@@ -22,6 +22,8 @@
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
     <component-import key="crowdApplicationService" interface="com.atlassian.crowd.manager.application.ApplicationService" />
     <component-import key="crowdApplicationManager" interface="com.atlassian.crowd.manager.application.ApplicationManager" />
+    <component-import key="jwtWriterFactory" interface="com.atlassian.jwt.writer.JwtWriterFactory" />
+    <component-import key="httpClientFactory" interface="com.atlassian.httpclient.api.factory.HttpClientFactory" />
 
     <!-- CONNECT COMPONENTS -->
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager" />
@@ -32,6 +34,7 @@
     <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService" />
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry" />
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
+    <component-import key="threeLeggedAuthService" interface="com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService" />
 
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />

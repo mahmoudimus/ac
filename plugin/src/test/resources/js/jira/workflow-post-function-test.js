@@ -33,29 +33,25 @@
             });
 
             test("registerSubmissionButton triggers the callback on click", function(){
-                var rpc = {
-                    setWorkflowConfigurationMessage: sinon.spy()
-                };
-                workflowPostFunction.registerSubmissionButton(rpc, this.uuid);
+                var spy = sinon.spy();
+                workflowPostFunction.registerSubmissionButton(this.uuid, spy);
 
-                ok(!rpc.setWorkflowConfigurationMessage.called);
+                ok(!spy.called);
 
                 $("#add_submit").trigger('click');
 
-                ok(rpc.setWorkflowConfigurationMessage.calledOnce);
+                ok(spy.calledOnce);
             });
 
             test("registerSubmissionButton trigger causes the form fields value to update when valid", function(){
                 var WORKFLOW_CONFIG_MESSAGE = "workflow config message",
-                rpc = {
-                    setWorkflowConfigurationMessage: sinon.stub()
-                };
+                spy = sinon.spy();
 
-                workflowPostFunction.registerSubmissionButton(rpc, this.uuid);
+                workflowPostFunction.registerSubmissionButton(this.uuid, spy);
                 $("#add_submit").trigger('click');
 
                 //invoke the function passed to the mock.
-                rpc.setWorkflowConfigurationMessage.args[0][0]({
+                spy.args[0][0]({
                     valid: true,
                     value: WORKFLOW_CONFIG_MESSAGE
                 }); 
@@ -65,15 +61,13 @@
 
             test("registerSubmissionButton trigger does not udpate when invalid", function(){
                 var WORKFLOW_CONFIG_MESSAGE = "workflow config message",
-                rpc = {
-                    setWorkflowConfigurationMessage: sinon.stub()
-                };
+                spy = sinon.spy();
 
-                workflowPostFunction.registerSubmissionButton(rpc, this.uuid, true);
+                workflowPostFunction.registerSubmissionButton(this.uuid, spy, true);
                 $("#add_submit").trigger('click');
 
                 //invoke the function passed to the mock.
-                rpc.setWorkflowConfigurationMessage.args[0][0]({
+                spy.args[0][0]({
                     valid: false,
                     value: WORKFLOW_CONFIG_MESSAGE
                 }); 
@@ -83,20 +77,9 @@
 
             test("getWorkflowConfiguration returns the workflow configuration value", function(){
                 $('#postFunction-config-' + this.uuid).val("some workflow config");
-                var workflowconfig = workflowPostFunction.getWorkflowConfiguration(this.uuid);
+                var workflowconfig = workflowPostFunction.postFunctionConfigInput(this.uuid);
 
                 equal($('#postFunction-config-' + this.uuid).val(), workflowconfig);
-            });
-
-
-            test("getWorkflowConfiguration invokes the callback if provided", function(){
-                var WORKFLOW_VALUE = "some workflow",
-                callback = sinon.spy();
-
-                $('#postFunction-config-' + this.uuid).val(WORKFLOW_VALUE);
-                workflowPostFunction.getWorkflowConfiguration(this.uuid, callback);
-
-                equal(callback.args[0][0], WORKFLOW_VALUE);
             });
 
         });

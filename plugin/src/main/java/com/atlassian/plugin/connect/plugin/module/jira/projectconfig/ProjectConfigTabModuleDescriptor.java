@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -109,13 +110,17 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
                 ))
 				.setMetaTagContent("adminActiveTab", key)
 				.build(getPlugin(), descriptor);
-		this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), descriptors);
+
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+        this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), descriptors);
 	}
 
 	@Override
 	public void disabled()
 	{
-		super.disabled();
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
+        super.disabled();
 		if (registration != null)
 		{
 			registration.unregister();

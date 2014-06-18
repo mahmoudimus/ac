@@ -20,6 +20,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditor
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.MacroList;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -474,8 +475,10 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     protected void selectMacro(CreatePage editorPage, String macroName)
     {
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        ConnectMacroBrowserDialog connectMacroBrowserDialog = connectPageOperations.findConnectMacroBrowserDialog();
         MacroItem macro = macroBrowser.searchForFirst(macroName);
-        macro.select();
-        macroBrowser.clickSave();
+        final MacroForm macroForm = macro.select();
+        macroForm.waitUntilVisible();
+        connectMacroBrowserDialog.clickSave();
     }
 }

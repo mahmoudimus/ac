@@ -1,11 +1,9 @@
-(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri",  "_ui-params", "host/analytics"], function (events, base64, uri, uiParams, analytics) {
+(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri",  "_ui-params", "host/analytics", "host/_util"], function (events, base64, uri, uiParams, analytics, util) {
 
   "use strict";
 
   // Capture some common values and symbol aliases
-  var w = window,
-      loc = w.location.toString(),
-      count = 0;
+  var count = 0;
 
   /**
    * Sets up cross-iframe remote procedure calls.
@@ -37,6 +35,8 @@
 
     var self, id, target, remoteOrigin, channel, mixin,
         localKey, remoteKey, addonKey,
+        w = window,
+        loc = w.location.toString(),
         locals = bindings.local || {},
         remotes = bindings.remote || [],
         localOrigin = getBaseUrl(loc);
@@ -91,7 +91,7 @@
       // Host-side constructor branch
       var iframe = createIframe(config);
       target = iframe.contentWindow;
-      localKey = param(config.remote, "oauth_consumer_key");
+      localKey = param(config.remote, "oauth_consumer_key") || param(config.remote, "jwt");
       remoteKey = config.remoteKey;
       addonKey = remoteKey;
       remoteOrigin = getBaseUrl(config.remote);
@@ -100,6 +100,7 @@
       mixin = {
         isHost: true,
         iframe: iframe,
+        uiParams: config.uiParams,
         destroy: function () {
           // Unbind postMessage handler when destroyed
           unbind();
@@ -126,7 +127,7 @@
       // if the authentication method is "none" then it is valid to have no jwt and no oauth in the url
       // but equally we don't trust this iframe as far as we can throw it, so assign it a random id
       // in order to prevent it from talking to any other iframe
-      if (null == remoteKey) {
+      if (null === remoteKey) {
           remoteKey = Math.random(); // unpredictable and unsecured, like an oauth consumer key
       }
 
@@ -135,6 +136,7 @@
       channel = param(loc, "xdm_c");
       // Define the add-on-side mixin
       mixin = {
+        isHost: false,
         isActive: function () {
           // Add-on-side instances are always active, as they must always have a parent window peer
           return true;
@@ -148,7 +150,8 @@
     self = $.extend({
       id: id,
       remoteOrigin: remoteOrigin,
-      channel: channel
+      channel: channel,
+      addonKey: addonKey
     }, mixin);
 
     // Sends a message of a specific type to the remote peer via a post-message event
@@ -207,13 +210,22 @@
             // TODO: consider specifying args somehow in the remote stubs so that non-callback args can be
             //       verified before sending a request to fail fast at the callsite
             async = (args ? args.length : 0) < local.length;
+            var context = locals;
+            if(self.isHost === true){
+                context = self;
+                if(context.analytics){
+                  context.analytics.trackBridgeMethod(name);
+                }
+            } else {
+              context.isHost = false;
+            }
             try {
               if (async) {
                 // If async, apply the method with the responders added to the args list
-                local.apply(locals, args.concat([done, fail]));
+                local.apply(context, args.concat([done, fail]));
               } else {
                 // Otherwise, immediately respond with the result
-                done(local.apply(locals, args));
+                done(local.apply(context, args));
               }
             } catch (ex) {
               // If the invocation threw an error, invoke the fail responder callback with it
@@ -274,8 +286,8 @@
       // The actual event object is the last argument passed to any listener
       var event = arguments[arguments.length - 1];
       var trace = event.trace = event.trace || {};
-      var traceKey = id + "|xdm";
-      if ((self.isHost && !trace[traceKey] && event.source.channel !== id)
+      var traceKey = self.id + "|xdm";
+      if ((self.isHost && !trace[traceKey] && event.source.channel !== self.id)
           || (!self.isHost && event.source.key === localKey)) {
         // Only forward an event once in this listener
         trace[traceKey] = true;
@@ -290,17 +302,17 @@
     locals._event = function (event) {
       // Reset/ignore any tracing info that may have come across the bridge
       delete event.trace;
-      if (self.isHost) {
+      if (this.isHost) {
         // When the running on the host-side, forcibly reset the event's key and origin fields, to prevent spoofing by
         // untrusted add-ons; also include the host-side XdmRpc instance id to tag the event with this particular
         // instance of the host/add-on relationship
         event.source = {
-          channel: id, // Note: the term channel here != the deprecated xdm channel param
-          key: remoteKey,
-          origin: remoteOrigin
+          channel: this.id || id, // Note: the term channel here != the deprecated xdm channel param
+          key: this.addonKey,
+          origin: this.remoteOrigin || remoteOrigin
         };
       }
-      debug("Receiving " + (self.isHost ? "addon" : "host") + " event:", event);
+      debug("Receiving as " + (this.isHost ? "host" : "addon") + " event:", event);
       // Emit the event on the local bus
       bus._emitEvent(event);
     };
@@ -361,7 +373,7 @@
       $.extend(iframe, {id: id, name: windowName, frameBorder: "0"}, config.props);
       //$.extend will not add the attribute rel.
       iframe.setAttribute('rel', 'nofollow');
-      $("#" + config.container).append(iframe);
+      $("#" + util.escapeSelector(config.container)).append(iframe);
       iframe.src = config.remote;
       return iframe;
     }
@@ -385,7 +397,7 @@
 
     function parseJwtClaims(jwt) {
 
-      if (null == jwt || '' == jwt) {
+      if (null === jwt || '' === jwt) {
         throw('Invalid JWT: must be neither null nor empty-string.');
       }
 
@@ -398,7 +410,7 @@
 
       var encodedClaims = jwt.substring(firstPeriodIndex + 1, secondPeriodIndex);
 
-      if (null == encodedClaims || '' == encodedClaims) {
+      if (null === encodedClaims || '' === encodedClaims) {
         throw('Invalid JWT: encoded claims must be neither null nor empty-string.');
       }
 

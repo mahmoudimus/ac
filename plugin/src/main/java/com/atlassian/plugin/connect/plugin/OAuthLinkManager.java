@@ -9,7 +9,9 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.util.OAuthHelper;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -67,6 +69,8 @@ public class OAuthLinkManager
 
     public void associateConsumerWithLink(ApplicationLink link, Consumer consumer)
     {
+        XmlDescriptorExploder.notifyAndExplode(appLinkToAddOnKey(link));
+
         unassociateConsumer(consumer);
 
         // this logic was copied from ual
@@ -76,6 +80,8 @@ public class OAuthLinkManager
 
     public void unassociateConsumer(Consumer consumer)
     {
+        XmlDescriptorExploder.notifyAndExplode(null == consumer ? null : consumer.getKey());
+
         String key = consumer.getKey();
         if (serviceProviderConsumerStore.get(key) != null)
         {
@@ -85,11 +91,15 @@ public class OAuthLinkManager
 
     public boolean isAppAssociated(String appKey)
     {
+        XmlDescriptorExploder.notifyAndExplode(appKey);
+
         return serviceProviderConsumerStore.get(appKey) != null;
     }
 
     public void associateProviderWithLink(ApplicationLink link, String key, ServiceProvider serviceProvider)
     {
+        XmlDescriptorExploder.notifyAndExplode(appLinkToAddOnKey(link));
+
         unassociateProviderWithLink(link);
         authenticationConfigurationManager.registerProvider(link.getId(), OAuthAuthenticationProvider.class,
                 ImmutableMap.of(CONSUMER_KEY_OUTBOUND, key, SERVICE_PROVIDER_REQUEST_TOKEN_URL,
@@ -100,6 +110,8 @@ public class OAuthLinkManager
 
     public void unassociateProviderWithLink(ApplicationLink link)
     {
+        XmlDescriptorExploder.notifyAndExplode(appLinkToAddOnKey(link));
+
         if (authenticationConfigurationManager.isConfigured(link.getId(), OAuthAuthenticationProvider.class))
         {
             authenticationConfigurationManager.unregisterProvider(link.getId(), OAuthAuthenticationProvider.class);
@@ -108,6 +120,8 @@ public class OAuthLinkManager
 
     public void validateOAuth2LORequest(OAuthMessage message) throws IOException, URISyntaxException, OAuthException
     {
+        XmlDescriptorExploder.notifyAndExplode(null == message ? null : message.getConsumerKey());
+
         String consumerKey = message.getConsumerKey();
         Consumer consumer = serviceProviderConsumerStore.get(consumerKey);
         if (consumer == null)
@@ -133,6 +147,12 @@ public class OAuthLinkManager
         oauthValidator.validateMessage(message, accessor);
     }
 
+    private static String appLinkToAddOnKey(ApplicationLink link)
+    {
+        final Object addOnKeyProperty = link.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY);
+        return null == addOnKeyProperty ? null : addOnKeyProperty.toString();
+    }
+
     private void printMessageToDebug(OAuthMessage message) throws IOException
     {
         StringBuilder sb = new StringBuilder("Validating incoming OAuth 2LO request:\n");
@@ -150,7 +170,10 @@ public class OAuthLinkManager
                                               URI url,
                                               Map<String, List<String>> originalParams)
     {
+        XmlDescriptorExploder.notifyAndExplode(null == url ? null : url.getHost() + url.getPath()); // not the add-on key but we should be able to identify it, and it's not worth adding a dependency to up the add-on
+
         final OAuthMessage message = sign(serviceProvider, method, checkNotNull(url), originalParams);
+
         try
         {
             return message.getAuthorizationHeader(null);
@@ -167,6 +190,8 @@ public class OAuthLinkManager
                                                             Map<String, List<String>> originalParams
     )
     {
+        XmlDescriptorExploder.notifyAndExplode(null == url ? null : url.getHost() + url.getPath()); // not the add-on key but we should be able to identify it, and it's not worth adding a dependency to up the add-on
+
         OAuthMessage message = sign(serviceProvider, method, url, originalParams);
         if (message != null)
         {
@@ -200,6 +225,8 @@ public class OAuthLinkManager
                               Map<String, List<String>> originalParams
     )
     {
+        XmlDescriptorExploder.notifyAndExplode(null == url ? null : url.getHost() + url.getPath()); // not the add-on key but we should be able to identify it, and it's not worth adding a dependency to up the add-on
+
         notNull(serviceProvider);
         notNull(url);
         checkNormalized(url);

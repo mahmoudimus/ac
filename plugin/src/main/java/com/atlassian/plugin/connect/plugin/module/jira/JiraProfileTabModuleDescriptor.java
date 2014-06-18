@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicD
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.module.IFrameViewProfilePanel;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -67,6 +68,8 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
     @Override
     public void enabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.enabled();
 
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(
@@ -76,6 +79,8 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {

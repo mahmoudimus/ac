@@ -1,11 +1,13 @@
 package com.atlassian.plugin.connect.plugin.oldscopes.confluence;
 
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.*;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import net.oauth.OAuth;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -62,6 +64,8 @@ abstract class ConfluenceScope extends AbstractPermission implements ApiScope
     @Override
     public final boolean allow(HttpServletRequest request, UserKey user)
     {
+        XmlDescriptorExploder.notifyAndExplode(null == request ? null : request.getParameter(OAuth.OAUTH_CONSUMER_KEY)); // XML-descriptor add-ons should be using OAuth
+
         return v1XmlRpcApiScopeHelper.allow(request, user) ||
                 v2XmlRpcApiScopeHelper.allow(request, user) ||
                 v1JsonRpcScopeHelper.allow(request, user) ||
