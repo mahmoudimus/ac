@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPanel;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
@@ -97,14 +97,14 @@ public class TestComponentTabPanel extends TestBase
     public void testComponentTabPanel() throws Exception
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, ConnectPluginInfo.getPluginKey(), addonAndModuleKey(PLUGIN_KEY,MODULE_KEY));
+        final JiraComponentTabPanel jiraComponentTabPanel = jira().goTo(JiraComponentTabPanel.class, PROJECT_KEY, componentId, ConnectPluginInfo.getPluginKey(), addonAndModuleKey(PLUGIN_KEY,MODULE_KEY));
 
-        assertThat("The addon tab should be present", componentTabPage.isAddOnTabPresent(), is(true));
+        assertThat("The addon tab should be present", jiraComponentTabPanel.isAddOnTabPresent(), is(true));
 
-        componentTabPage.clickTab();
+        jiraComponentTabPanel.clickTab();
 
-        assertThat(componentTabPage.getComponentId(), equalTo(componentId));
-        assertThat(componentTabPage.getProjectKey(), equalTo(PROJECT_KEY));
+        assertThat(jiraComponentTabPanel.getComponentId(), equalTo(componentId));
+        assertThat(jiraComponentTabPanel.getProjectKey(), equalTo(PROJECT_KEY));
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
         assertThat(conditionRequestParams, hasEntry("component_id", componentId));
@@ -118,9 +118,9 @@ public class TestComponentTabPanel extends TestBase
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, ConnectPluginInfo.getPluginKey(), addonAndModuleKey(PLUGIN_KEY,MODULE_KEY));
+        final JiraComponentTabPanel jiraComponentTabPanel = jira().goTo(JiraComponentTabPanel.class, PROJECT_KEY, componentId, ConnectPluginInfo.getPluginKey(), addonAndModuleKey(PLUGIN_KEY,MODULE_KEY));
 
-        assertThat("The addon tab SHOULD NOT be present", componentTabPage.isAddOnTabPresent(), is(false));
+        assertThat("The addon tab SHOULD NOT be present", jiraComponentTabPanel.isAddOnTabPresent(), is(false));
     }
 
 }
