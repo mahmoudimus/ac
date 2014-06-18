@@ -57,7 +57,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         // If 'featured' is true, the web item needs the macro name as it's key...
         // So chose a different prefix for the macro itself
         element.setAttribute("key", "macro-" + fQModuleKey);
-        element.setAttribute("name", fQModuleKey);
+        element.setAttribute("name", bean.getRawKey());
         // due to issues with Confluence not reloading i18n properties, we have to use the raw name here
         // TODO use i18n when we fix Confluence to support reloading i18n
         element.setAttribute("i18n-name-key", bean.getName().getValue());

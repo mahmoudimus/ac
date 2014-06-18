@@ -92,13 +92,13 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     @Test
     public void verifyNameIsSet() throws Exception
     {
-        assertThat(descriptor.getName(), is(FULL_MACRO_KEY));
+        assertThat(descriptor.getName(), is(MACRO_NAME_KEY));
     }
 
     @Test
     public void verifyMacroNameIsSet() throws Exception
     {
-        assertThat(descriptor.getMacroMetadata().getMacroName(), is(FULL_MACRO_KEY));
+        assertThat(descriptor.getMacroMetadata().getMacroName(), is(MACRO_NAME_KEY));
     }
 
     @Test
@@ -111,7 +111,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     @Test
     public void verifyMacroDescriptionIsSet() throws Exception
     {
-        assertThat(descriptor.getMacroMetadata().getDescription().getKey(), is("my-plugin." + FULL_MACRO_KEY + ".desc"));
+        assertThat(descriptor.getMacroMetadata().getDescription().getKey(), is("my-plugin." + MACRO_NAME_KEY + ".desc"));
     }
 
     @Test
