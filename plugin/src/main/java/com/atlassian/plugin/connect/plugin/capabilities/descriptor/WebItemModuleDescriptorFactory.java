@@ -80,8 +80,8 @@ public class WebItemModuleDescriptorFactory
         if (null != bean.getTooltip())
         {
             webItemElement.addElement("tooltip")
-                    .addAttribute("key", bean.getTooltip().getI18n())
-                    .setText(bean.getTooltip().getValue());
+                    .addAttribute("key", i18nKey)
+                    .setText(webItemLabel);
         }
 
         String linkId = addon.getKey() + "-" + webItemKey;

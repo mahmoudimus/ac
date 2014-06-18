@@ -1,7 +1,6 @@
 package it.capabilities.jira;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
@@ -13,7 +12,6 @@ import com.atlassian.jira.testkit.client.restclient.Version;
 import com.atlassian.jira.testkit.client.restclient.VersionClient;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
@@ -22,7 +20,6 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAddWorkflowTransitionFunctionParamsPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAddWorkflowTransitionPostFunctionPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
@@ -32,11 +29,9 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraWorkflowTransitionPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.Section;
 import com.atlassian.plugin.connect.test.pageobjects.jira.WorkflowPostFunctionEntry;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -47,7 +42,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.annotation.Nullable;
-import java.net.MalformedURLException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
@@ -100,6 +94,7 @@ public class TestEscaping extends TestBase
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(GENERAL_PAGE_KEY)
                                 .withUrl(MODULE_URL)
+                                .withWeight(1) // avoid ending up in 'More' menu
                                 .build()
                 )
                 .addModule("webItems",
@@ -110,6 +105,7 @@ public class TestEscaping extends TestBase
                                 .withContext(AddOnUrlContext.addon)
                                 .withLocation("system.top.navigation.bar")
                                 .withTooltip(new I18nProperty(MODULE_NAME, null))
+                                .withWeight(1) // avoid ending up in 'More' menu
                                 .build()
                 )
                 .addModule("adminPages",
@@ -203,7 +199,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testGeneralPage() throws MalformedURLException
+    public void testGeneralPage() throws Exception
     {
         jira().quickLoginAsAdmin();
         RemoteWebItem webItem = findWebItem(GENERAL_PAGE_KEY);
@@ -211,7 +207,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testWebItem() throws MalformedURLException
+    public void testWebItem() throws Exception
     {
         jira().quickLoginAsAdmin();
         RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY);
@@ -219,7 +215,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testWebItemTooltip() throws MalformedURLException
+    public void testWebItemTooltip() throws Exception
     {
         jira().quickLoginAsAdmin();
         RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY);
@@ -227,7 +223,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testAdminPage() throws MalformedURLException
+    public void testAdminPage() throws Exception
     {
         jira().quickLoginAsAdmin(JiraAdministrationHomePage.class, EXTRA_PREFIX);
         JiraAdminPage adminPage = jira().getPageBinder().bind(JiraAdminPage.class, getModuleKey(ADMIN_PAGE_KEY));
@@ -235,7 +231,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testComponentTabPanel() throws MalformedURLException
+    public void testComponentTabPanel() throws Exception
     {
         ComponentClient componentClient = new ComponentClient(jira().environmentData());
         Component component = componentClient.create(new Component()
@@ -249,7 +245,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testIssueTabPanel() throws MalformedURLException
+    public void testIssueTabPanel() throws Exception
     {
         IssueCreateResponse issue = jira().backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().quickLoginAsAdmin(JiraViewIssuePageWithRemotePluginIssueTab.class,
@@ -258,7 +254,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testProfileTabPanel() throws MalformedURLException
+    public void testProfileTabPanel() throws Exception
     {
         jira().quickLoginAsAdmin(ViewProfilePage.class);
         String moduleKey = getModuleKey(PROFILE_TAB_PANEL_KEY);
@@ -268,7 +264,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testProjectAdminTabPanel() throws MalformedURLException
+    public void testProjectAdminTabPanel() throws Exception
     {
         final String moduleKey = getModuleKey(PROJECT_ADMIN_TAB_PANEL_KEY);
         ProjectSummaryPageTab page = jira().quickLoginAsAdmin(ProjectSummaryPageTab.class, PROJECT_KEY);
@@ -284,7 +280,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testProjectTabPanel() throws MalformedURLException
+    public void testProjectTabPanel() throws Exception
     {
         jira().quickLoginAsAdmin(BrowseProjectPage.class, PROJECT_KEY);
         String moduleKey = ConnectPluginInfo.getPluginKey() + ":" + getModuleKey(PROJECT_TAB_PANEL_KEY) + "-panel";
@@ -293,7 +289,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testVersionTabPanel() throws MalformedURLException
+    public void testVersionTabPanel() throws Exception
     {
         VersionClient versionClient = new VersionClient(jira().environmentData());
         Version version = versionClient.create(new Version()
@@ -307,7 +303,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testSearchRequestView() throws MalformedURLException
+    public void testSearchRequestView() throws Exception
     {
         JiraAdvancedSearchPage searchPage = jira().quickLoginAsAdmin(JiraAdvancedSearchPage.class);
         searchPage.enterQuery("project = " + PROJECT_KEY).submit();
@@ -317,7 +313,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testWebPanel() throws MalformedURLException
+    public void testWebPanel() throws Exception
     {
         IssueCreateResponse issue = jira().backdoor().issues().createIssue(PROJECT_KEY, "test web panel");
         JiraViewIssuePage page = jira().quickLoginAsAdmin(JiraViewIssuePage.class, issue.key());
@@ -326,7 +322,7 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testWorkflowPostFunction() throws MalformedURLException
+    public void testWorkflowPostFunction() throws Exception
     {
         final String id = ConnectPluginInfo.getPluginKey() + ":" + getModuleKey(WORKFLOW_POST_FUNCTION_KEY);
 
