@@ -50,7 +50,7 @@ public class LegacyAddOnIdentifierService implements ConnectAddOnIdentifierServi
     @Override
     public boolean isConnectAddOn(final Plugin plugin)
     {
-        XmlDescriptorExploder.notifyAndExplode(plugin.getKey());
+        XmlDescriptorExploder.notifyAndExplode(null == plugin ? null : plugin.getKey());
 
         try
         {
