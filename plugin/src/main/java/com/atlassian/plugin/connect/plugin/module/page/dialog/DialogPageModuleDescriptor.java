@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
@@ -65,6 +66,8 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     @Override
     public void enabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.enabled();
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
                 remotePageDescriptorBuilder.build(getPlugin(), descriptor));
@@ -101,6 +104,8 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {

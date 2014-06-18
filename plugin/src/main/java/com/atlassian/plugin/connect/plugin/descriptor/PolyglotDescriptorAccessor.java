@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.descriptor.util.XmlUtils;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.Filenames;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.io.IOUtils;
@@ -71,18 +72,24 @@ public final class PolyglotDescriptorAccessor implements DescriptorAccessor
     @Override
     public Document getDescriptor()
     {
+        XmlDescriptorExploder.notifyAndExplode(getKey());
+
         return loadDescriptor(urlProvider, descriptorType.path, descriptorType.contentType, descriptorType.convert);
     }
 
     @Override
     public String getKey()
     {
-        return getDescriptor().getRootElement().attributeValue("key");
+        final String key = getDescriptor().getRootElement().attributeValue("key");
+        XmlDescriptorExploder.notifyAndExplode(key);
+        return key;
     }
 
     @Override
     public URL getDescriptorUrl()
     {
+        XmlDescriptorExploder.notifyAndExplode(getKey());
+
         return urlProvider.getResource(descriptorType.path);
     }
 

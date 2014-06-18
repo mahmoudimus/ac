@@ -11,6 +11,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
@@ -95,6 +96,8 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
 
     public void pluginInstalled(String pluginKey)
     {
+        XmlDescriptorExploder.notifyAndExplode(pluginKey);
+
         //if we have an "install-handler" in plugin info, do a sync call, otherwise fallback to the webhook
         if (!callSyncHandler(pluginKey))
         {
@@ -185,6 +188,8 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         final Plugin plugin = pluginEnabledEvent.getPlugin();
         if (connectIdentifier.isConnectAddOn(plugin))
         {
+            XmlDescriptorExploder.notifyAndExplode(null == plugin ? null : plugin.getKey());
+
             eventPublisher.publish(new RemotePluginEnabledEvent(plugin.getKey(), newRemotePluginEventData()));
         }
     }
@@ -202,6 +207,8 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
     @VisibleForTesting
     Map<String, Object> newRemotePluginEventData()
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         final Consumer consumer = consumerService.getConsumer();
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()

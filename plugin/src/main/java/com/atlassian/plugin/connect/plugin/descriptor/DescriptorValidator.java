@@ -4,6 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
@@ -82,6 +83,8 @@ public final class DescriptorValidator
 
     public void validate(URI url, Document document)
     {
+        XmlDescriptorExploder.notifyAndExplode(null == document ? null : document.getRootElement().attributeValue("key"));
+
         final boolean useNamespace = document.getRootElement().getNamespaceURI().equals(pluginDescriptorValidatorProvider.getSchemaNamespace());
 
         final String builtSchema = buildSchema(pluginDescriptorValidatorProvider, useNamespace);
@@ -107,6 +110,8 @@ public final class DescriptorValidator
 
     static javax.xml.validation.Schema getSchema(InputSupplier<? extends Reader> schemaInput, LSResourceResolver resourceResolver) throws IOException
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Reader schemaReader = null;
         try
@@ -133,6 +138,8 @@ public final class DescriptorValidator
 
     public String getPluginSchema()
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         try
         {
             return buildSchema(pluginDescriptorValidatorProvider, true);
@@ -197,6 +204,8 @@ public final class DescriptorValidator
     @VisibleForTesting
     static void addPermissionDocumentation(Element moduleDocumentation, Schema moduleSchema)
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         addPermissionDocumentation(moduleDocumentation, "required-permissions", moduleSchema.getRequiredPermissions());
         addPermissionDocumentation(moduleDocumentation, "optional-permissions", moduleSchema.getOptionalPermissions());
     }

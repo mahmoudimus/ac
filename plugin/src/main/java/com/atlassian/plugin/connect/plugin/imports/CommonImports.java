@@ -25,6 +25,7 @@ import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.AuthenticationListener;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.sal.api.net.RequestFactory;
@@ -82,7 +83,8 @@ public class CommonImports
             @ComponentImport JwtService jwtService,
             @ComponentImport JwtApplinkFinder jwtApplinkFinder,
             @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
-            @ComponentImport CrowdService crowdService)
+            @ComponentImport CrowdService crowdService,
+            @ComponentImport DarkFeatureManager darkFeatureManager)
     {
     }
 }

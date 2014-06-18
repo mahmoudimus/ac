@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
 import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -97,6 +98,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
             DescriptorToRegister servletDescriptor = containerPageBuilder.createServletDescriptor(plugin, desc, moduleKey, url, localUrl, webItemBuilder.getContextParams());
             DescriptorToRegister webItemModuleDescriptor = new DescriptorToRegister(webItemBuilder.build(plugin, moduleKey, localUrl, desc));
 
+            XmlDescriptorExploder.notifyAndExplode(getPluginKey());
             this.registration = dynamicDescriptorRegistration.registerDescriptors(
                     conditionProcessor.getLoadablePlugin(getPlugin()), servletDescriptor, webItemModuleDescriptor);
         }
@@ -123,6 +125,8 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {
