@@ -3,26 +3,26 @@ package com.atlassian.plugin.connect.plugin.xmldescriptor;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.spi.event.XmlDescriptorCodeInvokedEvent;
 import com.atlassian.sal.api.features.DarkFeatureManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Component
-@Singleton
 public class XmlDescriptorExploder
 {
     private static final AtomicReference<XmlDescriptorExploder> instanceRef = new AtomicReference<XmlDescriptorExploder>();
     private static final String DARK_FEATURE_PREFIX = "connect.xmldescriptor.";
     private static final String DARK_FEATURE_NOTIFY = DARK_FEATURE_PREFIX + "notify";
     private static final String DARK_FEATURE_EXPLODE = DARK_FEATURE_PREFIX + "explode";
+    private static final Logger log = LoggerFactory.getLogger(XmlDescriptorExploder.class);
 
     private final DarkFeatureManager darkFeatureManager;
     private final EventPublisher eventPublisher;
 
     @Inject
-    @Singleton
     public XmlDescriptorExploder(DarkFeatureManager darkFeatureManager, EventPublisher eventPublisher)
     {
         this.darkFeatureManager = darkFeatureManager;
@@ -30,7 +30,7 @@ public class XmlDescriptorExploder
 
         if (!instanceRef.compareAndSet(null, this))
         {
-            throw new IllegalStateException(getClass().getSimpleName() + " must not have more than one instance.");
+            log.warn(getClass().getSimpleName() + " would ideally not be instantiated more than once. This is at least the second instantiation.");
         }
     }
 
