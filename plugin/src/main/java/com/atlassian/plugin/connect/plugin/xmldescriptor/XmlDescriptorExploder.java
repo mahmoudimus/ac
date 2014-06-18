@@ -22,6 +22,7 @@ public class XmlDescriptorExploder
     private final EventPublisher eventPublisher;
 
     @Inject
+    @Singleton
     public XmlDescriptorExploder(DarkFeatureManager darkFeatureManager, EventPublisher eventPublisher)
     {
         this.darkFeatureManager = darkFeatureManager;
