@@ -20,141 +20,41 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *Often, the workflow post function will allow some degree of configuration of its behavior. As an example:
  * You may want to react to a state transition only if the issue has a particular label, and you want the project
- * administrator to configure that label. For this purpose, three additional (optional) URLs in the descriptor
+ * administrator to configure that label. For this purpose, three additional URLs in the descriptor
  * allow you to declare the pages that will show:
  *
- * * The read-only view or summary of the configuration
  * * The form that is shown when a workflow post function is first created
  * * The form that is shown when a workflow post function is edited
+ * * The read-only view or summary of the configuration
  *
  *All URLs are relative to the base URL that is declared in the connect-container element of the descriptor.
  *
- *## Contents of the HTTP POST
+ *#### Creating and editing a Post Function
  *
- *To understand the type of content that is sent to the add-on after a state transition, you can use the webhook
- * inspector tool. The [Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) is a Connect add-on
- * that you can install in your development environment to inspect the content of event messages.
+ *The create and edit urls will need to present a form with relevant configuration for the post function. In order to
+ * persist this information with JIRA, the page needs to include a snippet of Javascript to facilitate saving this data.
  *
- *Here is an example POST body:
+ *      AP.require(["jira"], function(jira) {
+ *          // When the configuration is saved, this method is called. Return the values for your input elements.
+ *          jira.WorkflowConfiguration.onSave(function() {
+ *              var config = {
+ *                  "key": "val"
+ *              };
+ *              return JSON.stringify(config);
+ *          });
  *
+ *          // Validate any appropriate input and return true/false
+ *          jira.WorkflowConfiguration.onSaveValidation(function() {
+ *              return true;
+ *          });
+ *      });
  *
- *      {
- *          "configuration": {
- *              "value": "Configuration from the post function edit page"
- *          },
- *          "issue": {
- *              "fields": {
- *                  "assignee": {
- *                      "active": true,
- *                      "avatarUrls": {
- *                          "16x16": "http://issues.example.com/jira/secure/useravatar?size=xsmall&avatarId=10062",
- *                          "24x24": "http://issues.example.com/jira/secure/useravatar?size=small&avatarId=10062",
- *                          "32x32": "http://issues.example.com/jira/secure/useravatar?size=medium&avatarId=10062",
- *                          "48x48": "http://issues.example.com/jira/secure/useravatar?avatarId=10062"
- *                      },
- *                      "displayName": "A. D. Ministrator (Sysadmin)",
- *                      "emailAddress": "admin@example.com",
- *                      "name": "admin",
- *                      "self": "http://issues.example.com/jira/rest/api/2/user?username=admin"
- *                  },
- *                  "attachment": [],
- *                  "comment": {
- *                      "comments": [],
- *                      "maxResults": 0,
- *                      "startAt": 0,
- *                      "total": 0
- *                  },
- *                  "components": [],
- *                  "created": "2013-11-18T17:56:23.864+1100",
- *                  "description": null,
- *                  "duedate": null,
- *                  "environment": null,
- *                  "fixVersions": [],
- *                  "issuetype": {
- *                      "description": "A problem which impairs or prevents the functions of the product.",
- *                      "iconUrl": "http://issues.example.com/jira/images/icons/issuetypes/bug.png",
- *                      "id": "1",
- *                      "name": "Bug",
- *                      "self": "http://issues.example.com/jira/rest/api/2/issuetype/1",
- *                      "subtask": false
- *                  },
- *                  "labels": [],
- *                  "lastViewed": "2013-11-18T17:56:31.793+1100",
- *                  "priority": {
- *                      "iconUrl": "http://issues.example.com/jira/images/icons/priorities/major.png",
- *                      "id": "3",
- *                      "name": "Major",
- *                      "self": "http://issues.example.com/jira/rest/api/2/priority/3"
- *                  },
- *                  "project": {
- *                      "avatarUrls": {
- *                          "16x16": "http://issues.example.com/jira/secure/projectavatar?size=xsmall&pid=10000&avatarId=10011",
- *                          "24x24": "http://issues.example.com/jira/secure/projectavatar?size=small&pid=10000&avatarId=10011",
- *                          "32x32": "http://issues.example.com/jira/secure/projectavatar?size=medium&pid=10000&avatarId=10011",
- *                          "48x48": "http://issues.example.com/jira/secure/projectavatar?pid=10000&avatarId=10011"
- *                      },
- *                      "id": "10000",
- *                      "key": "TEST",
- *                      "name": "Test",
- *                      "self": "http://issues.example.com/jira/rest/api/2/project/10000"
- *                  },
- *                  "reporter": {
- *                      "active": true,
- *                      "avatarUrls": {
- *                          "16x16": "http://issues.example.com/jira/secure/useravatar?size=xsmall&avatarId=10062",
- *                          "24x24": "http://issues.example.com/jira/secure/useravatar?size=small&avatarId=10062",
- *                          "32x32": "http://issues.example.com/jira/secure/useravatar?size=medium&avatarId=10062",
- *                          "48x48": "http://issues.example.com/jira/secure/useravatar?avatarId=10062"
- *                      },
- *                      "displayName": "A. D. Ministrator (Sysadmin)",
- *                      "emailAddress": "admin@example.com",
- *                      "name": "admin",
- *                      "self": "http://issues.example.com/jira/rest/api/2/user?username=admin"
- *                  },
- *                  "resolution": {
- *                      "description": "A fix for this issue is checked into the tree and tested.",
- *                      "id": "1",
- *                      "name": "Fixed",
- *                      "self": "http://issues.example.com/jira/rest/api/2/resolution/1"
- *                  },
- *                  "resolutiondate": "2013-11-18T17:56:31.799+1100",
- *                  "status": {
- *                      "description": "The issue is open and ready for the assignee to start work on it.",
- *                      "iconUrl": "http://issues.example.com/jira/images/icons/statuses/open.png",
- *                      "id": "1",
- *                      "name": "Open",
- *                      "self": "http://issues.example.com/jira/rest/api/2/status/1"
- *                  },
- *                  "summary": "The issue summary",
- *                  "updated": "2013-11-18T17:56:23.864+1100",
- *                  "versions": [],
- *                  "votes": {
- *                      "hasVoted": false,
- *                      "self": "http://issues.example.com/jira/rest/api/2/issue/TEST-1/votes",
- *                      "votes": 0
- *                  },
- *                  "watches": {
- *                      "isWatching": true,
- *                      "self": "http://issues.example.com/jira/rest/api/2/issue/TEST-1/watchers",
- *                      "watchCount": 1
- *                  },
- *                  "workratio": -1
- *              },
- *              "id": "10000",
- *              "key": "TEST-1",
- *              "self": "http://issues.example.com/jira/issue/10000"
- *          },
- *          "transition": {
- *              "from_status": "Open",
- *              "to_status": "Resolved",
- *              "transitionId": 5,
- *              "transitionName": "Resolve Issue",
- *              "workflowId": 10000,
- *              "workflowName": "classic default workflow"
- *          }
- *      }
+ * For more information, see the [javascript API](../../javascript/WorkflowConfiguration.html).
+ *
  *
  *#### Example
+ *
+ * For a full add-on example, see the [workflow post function example add-on](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-workflow-post-function-example).
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#POST_FUNCTION_EXAMPLE}
  * @schemaTitle Workflow Post Function
@@ -164,18 +64,29 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
 {
     /**
-     * The description of the add-on's functionality that will show up in the *Manage add-ons* page.
+     * The description of the workflow post function. This will be presented to the user when they add a new post
+     * function to a JIRA workflow.
      */
     private I18nProperty description;
 
     /**
      * The relative URL to the add-on page that shows the read-only configuration or summary of the workflow post
      * function.
+     *
+     * The view URL can contain the following context parameters:
+     *
+     * - `postFunction.id`: The unique identifier of the post function
+     * - `postFunction.config`: The configuration value saved to JIRA after calling `WorkflowConfiguration.onSave`
      */
     private UrlBean view;
 
     /**
      * The relative URL to the add-on page that allows to configure the workflow post function once it exists.
+     *
+     * The edit URL can contain the following context parameters:
+     *
+     * - `postFunction.id`: The unique identifier of the post function
+     * - `postFunction.config`: The configuration value saved to JIRA after calling `WorkflowConfiguration.onSave`
      */
     private UrlBean edit;
 
@@ -185,7 +96,66 @@ public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
     private UrlBean create;
 
     /**
-     * The relative URL to the add-on resource that will receive the HTTP POST after a workflow transition.
+     * The relative URL to the add-on resource that will receive the HTTP POST after a workflow transition. It will also
+     * include the authentication headers that allow the add-on to validate the authenticity of the request.
+     *
+     *#### Contents of the HTTP POST
+     *
+     *To understand the type of content that is sent to the add-on after a state transition, you can use the webhook
+     * inspector tool. The [Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) is a Connect add-on
+     * that you can install in your development environment to inspect the content of event messages.
+     *
+     *Here is an example POST body. For brevity, some fields have been removed or truncated.
+     *
+     *    {
+     *        "configuration": {
+     *            "value": "Configuration from the post function edit page"
+     *        },
+     *        "issue": {
+     *            "fields": {
+     *                "assignee": { },
+     *                "attachment": [],
+     *                "comment": { },
+     *                "components": [],
+     *                "created": "2013-11-18T17:56:23.864+1100",
+     *                "description": null,
+     *                "duedate": null,
+     *                "environment": null,
+     *                "fixVersions": [],
+     *                "issuetype": { },
+     *                "labels": [],
+     *                "lastViewed": "2013-11-18T17:56:31.793+1100",
+     *                "priority": { },
+     *                "project": {
+     *                    "avatarUrls": { },
+     *                    "id": "10000",
+     *                    "key": "TEST",
+     *                    "name": "Test"
+     *                },
+     *                "reporter": { },
+     *                "resolution": { },
+     *                "resolutiondate": "2013-11-18T17:56:31.799+1100",
+     *                "status": { },
+     *                "summary": "The issue summary",
+     *                "updated": "2013-11-18T17:56:23.864+1100",
+     *                "versions": [],
+     *                "votes": { },
+     *                "watches": { },
+     *                "workratio": -1
+     *            },
+     *            "id": "10000",
+     *            "key": "TEST-1",
+     *            "self": "http://issues.example.com/jira/issue/10000"
+     *        },
+     *        "transition": {
+     *            "from_status": "Open",
+     *            "to_status": "Resolved",
+     *            "transitionId": 5,
+     *            "transitionName": "Resolve Issue",
+     *            "workflowId": 10000,
+     *            "workflowName": "classic default workflow"
+     *        }
+     *    }
      */
     @Required
     private UrlBean triggered;

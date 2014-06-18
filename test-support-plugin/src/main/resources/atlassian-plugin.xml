@@ -29,7 +29,12 @@
     <component-import key="salLicenseHandler" interface="com.atlassian.sal.api.license.LicenseHandler"/>
     
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
-    <component key="testPluginInstaller" 
+
+    <component-import key="jwtReaderFactory" interface="com.atlassian.jwt.reader.JwtReaderFactory"/>
+
+    <component-import key="consumerService" interface="com.atlassian.oauth.consumer.ConsumerService"/>
+
+    <component key="testPluginInstaller"
                class="com.atlassian.plugin.connect.testsupport.DefaultTestPluginInstaller" 
                interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller"
                public="true"
@@ -43,8 +48,12 @@
     
     <component key="jiraLicenseUpdater" class="com.atlassian.plugin.connect.testsupport.LicenseUpdater"/>
     
-    <servlet-filter key="connect-test-addon" class="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilter"
+    <servlet-filter key="connect-test-addon-from-host" class="com.atlassian.plugin.connect.testsupport.filter.AddonTestHostFilter"
                     location="after-encoding" weight="1">
+        <url-pattern>/ac-test-addon/*</url-pattern>
+    </servlet-filter>
+    <servlet-filter key="connect-test-addon-from-addons" class="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilter"
+                    location="before-decoration" weight="1">
         <url-pattern>/ac-test-addon/*</url-pattern>
     </servlet-filter>
 </atlassian-plugin>
