@@ -24,6 +24,6 @@ public class WorkflowPostFunctionEntry
 
     public String getDescription()
     {
-        return entry.findAll(By.tagName("td")).get(1).getText();
+        return entry.findAll(By.tagName("td")).get(2).getText();
     }
 }
