@@ -24,12 +24,7 @@ public class ConnectMacroBrowserDialog extends MacroBrowserDialog {
                 if(okButton.isVisible()){
                     okButton.click();
                 }
-
-                if(getDialog().isVisible()){
-                    return false;
-                } else {
-                    return true;
-                }
+                return !getDialog().isVisible();
             }
         });
 
