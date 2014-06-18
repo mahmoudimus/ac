@@ -16,15 +16,13 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class RequiredKeyBean extends NamedBean
 {
-    
-    
     /**
      * A key to identify this module.
-     * This key must be unique relative to the add on.
      *
-     * All specified keys will have all special characters and spaces replaced with dashes and will be lower cased.
+     * This key must be unique relative to the add on, with the exception of Confluence macros: Their keys need to be
+     * globally unique.
      *
-     * example: "My Addon Key" will become "my-addon-key"
+     * Keys must only contain alphanumeric characters and dashes.
      *
      * The key is used to generate the url to your add-on's module. The url is generated as a combination of your add-on
      * key and module key. For example, an add-on which looks like:
@@ -58,6 +56,10 @@ public class RequiredKeyBean extends NamedBean
         if (null == key)
         {
             this.key = "";
+        }
+        if (builder.useKeyAsIs())
+        {
+            this.calculatedKey = this.key;
         }
     }
 
