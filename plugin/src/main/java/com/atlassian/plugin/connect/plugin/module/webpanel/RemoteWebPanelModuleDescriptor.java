@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerialize
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
@@ -55,6 +56,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     private String location;
 
     private Element descriptor;
+    @XmlDescriptor
     private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public RemoteWebPanelModuleDescriptor(
@@ -113,12 +115,15 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
 
         ModuleDescriptor<WebPanel> moduleDescriptor = createWebPanelModuleDescriptor(moduleKey, desc, condition, new IFrameParamsImpl(descriptor));
 
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
 
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         if (registration != null)
         {
             registration.unregister();

@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPathBuilder;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploderUnitTestHelper;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.permission.Permission;
@@ -25,6 +26,7 @@ import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserKey;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -66,6 +68,12 @@ public class PermissionManagerImplTest
     @Mock private Plugin plugin;
 
     private UserKey userKey = new UserKey("a_user_key");
+
+    @BeforeClass
+    public static void beforeAnyTest()
+    {
+        XmlDescriptorExploderUnitTestHelper.runBeforeTests();
+    }
 
     @Before
     public void beforeEachTest() throws IOException

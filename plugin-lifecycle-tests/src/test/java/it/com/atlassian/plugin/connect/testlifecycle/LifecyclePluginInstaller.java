@@ -198,12 +198,17 @@ public class LifecyclePluginInstaller implements DisposableBean
         }
 
         checkNotNull(controlServiceTracker);
-        for (ServiceReference ref : controlServiceTracker.getServiceReferences())
+        ServiceReference[] serviceReferences = controlServiceTracker.getServiceReferences();
+
+        if (null != serviceReferences)
         {
-            Object service = controlServiceTracker.getService(ref);
-            if (service.getClass().getName().contains("ConnectUPMControlHandler"))
+            for (ServiceReference ref : serviceReferences)
             {
-                return (PluginControlHandler) service;
+                Object service = controlServiceTracker.getService(ref);
+                if (service.getClass().getName().contains("ConnectUPMControlHandler"))
+                {
+                    return (PluginControlHandler) service;
+                }
             }
         }
 
