@@ -35,6 +35,4 @@ public class ConnectMacroBrowserDialog extends MacroBrowserDialog {
 
     }
 
-
-
 }

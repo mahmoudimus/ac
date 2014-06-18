@@ -476,7 +476,6 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         ConnectMacroBrowserDialog connectMacroBrowserDialog = connectPageOperations.findConnectMacroBrowserDialog();
-
         MacroItem macro = macroBrowser.searchForFirst(macroName);
         final MacroForm macroForm = macro.select();
         macroForm.waitUntilVisible();
