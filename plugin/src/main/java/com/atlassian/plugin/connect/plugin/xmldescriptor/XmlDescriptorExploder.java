@@ -6,9 +6,11 @@ import com.atlassian.sal.api.features.DarkFeatureManager;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Component
+@Singleton
 public class XmlDescriptorExploder
 {
     private static final AtomicReference<XmlDescriptorExploder> instanceRef = new AtomicReference<XmlDescriptorExploder>();
