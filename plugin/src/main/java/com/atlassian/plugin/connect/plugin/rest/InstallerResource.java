@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.rest;
 
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.descriptor.DescriptorValidator;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.GET;
@@ -31,6 +32,8 @@ public class InstallerResource
     @AnonymousAllowed
     public Response getRemotePluginSchema()
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         return Response.ok().entity(descriptorValidator.getPluginSchema()).build();
     }
 }

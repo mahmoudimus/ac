@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.descriptor.util;
 
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import org.dom4j.io.SAXReader;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -36,6 +37,8 @@ public final class XmlUtils
 
     private static SAXReader createReader(boolean validating)
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         XMLReader xmlReader;
         try
         {

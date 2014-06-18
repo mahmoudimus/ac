@@ -2,13 +2,12 @@ package com.atlassian.plugin.connect.plugin.descriptor.util;
 
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import org.dom4j.*;
-import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
 import org.dom4j.tree.DefaultElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +15,7 @@ import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @XmlDescriptor
@@ -53,6 +48,9 @@ public final class FormatConverter
             InputSource source = new InputSource(Files.newReader(file, Charsets.UTF_8));
             source.setEncoding("UTF-8");
             Document document = reader.read(file);
+
+            XmlDescriptorExploder.notifyAndExplode(null == document ? null : document.getRootElement().attributeValue("key"));
+
             document.accept(new NamespaceCleaner());
             return document;
         }
@@ -71,6 +69,9 @@ public final class FormatConverter
             source.setSystemId(id);
             source.setEncoding("UTF-8");
             Document document = reader.read(source);
+
+            XmlDescriptorExploder.notifyAndExplode(null == document ? null : document.getRootElement().attributeValue("key"));
+
             document.accept(new NamespaceCleaner());
             return document;
         }
@@ -78,49 +79,6 @@ public final class FormatConverter
         {
             throw new InvalidDescriptorException("Unable to parse the descriptor: " + e.getMessage(), e);
         }
-    }
-
-    private void processObject(String name, Object object, Element parent)
-    {
-        if (object instanceof Map)
-        {
-            Element self = parent.addElement(name);
-            for (Map.Entry<String,Object> entry : ((Map<String,Object>)object).entrySet())
-            {
-                processObject(entry.getKey(), entry.getValue(), self);
-            }
-        }
-        else if (object instanceof List)
-        {
-
-            for (Object entry : (List)object)
-            {
-                processObject(name, entry, parent);
-            }
-        }
-        else if (name.equals("description") || name.equals("public-key"))
-        {
-            parent.addElement(name).setText(object.toString());
-        }
-        else
-        {
-            parent.addAttribute(name, object.toString());
-        }
-    }
-
-    private static String printNode(Node document)
-    {
-        StringWriter writer = new StringWriter();
-        XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
-        try
-        {
-            xmlWriter.write(document);
-        }
-        catch (IOException e)
-        {
-            throw new IllegalArgumentException("Unable to write node", e);
-        }
-        return writer.toString();
     }
 
     private static class NamespaceCleaner extends VisitorSupport
