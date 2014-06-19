@@ -52,7 +52,9 @@ import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newW
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.jira.TestJira.EXTRA_PREFIX;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class TestEscaping extends TestBase
@@ -341,11 +343,10 @@ public class TestEscaping extends TestBase
 
     private void assertIsEscaped(String text)
     {
-        // JIRA's own escaping leaves a '\' in front of the '$', which seems wrong, so checking both flavours
-        if (!MODULE_NAME.equals(text) && !MODULE_NAME_JIRA_ESCAPED.equals(text))
-        {
-            assertEquals(MODULE_NAME, text);
-        }
+        // Jira's own escaping leaves a '\' in front of the '$', which seems wrong, so checking both flavours
+        // Note that we're checking against the original name, not an escaped version, as getText() returns the
+        // unescaped text. If markup was interpreted, the tags would be missing in the text.
+        assertThat(text, anyOf(is(MODULE_NAME), is(MODULE_NAME_JIRA_ESCAPED)));
     }
 
     private RemoteWebItem findWebItem(String moduleKey)

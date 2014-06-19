@@ -8,7 +8,6 @@ import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesP
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -17,15 +16,12 @@ import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
-import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
@@ -37,15 +33,16 @@ import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
 
-import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class TestEscaping extends AbstractConfluenceWebDriverTest
@@ -262,10 +259,9 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     private void assertIsEscaped(String text)
     {
         // Confluence's own escaping leaves a '\' in front of the '$', which seems wrong, so checking both flavours
-        if (!MODULE_NAME.equals(text) && !MODULE_NAME_CONF_ESCAPED.equals(text))
-        {
-            assertEquals(MODULE_NAME, text);
-        }
+        // Note that we're checking against the original name, not an escaped version, as getText() returns the
+        // unescaped text. If markup was interpreted, the tags would be missing in the text.
+        assertThat(text, anyOf(is(MODULE_NAME), is(MODULE_NAME_CONF_ESCAPED)));
     }
 
     private RemoteWebItem findViewPageWebItem(String webItemId) throws Exception
