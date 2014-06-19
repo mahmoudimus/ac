@@ -5,6 +5,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.DefaultWebItemContext;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.module.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
@@ -68,6 +69,7 @@ public final class AdminPageModuleDescriptor extends AbstractModuleDescriptor<Vo
             .setDecorator("atl.admin")
             .setCondition(userIsAdminCondition);
 
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
                 remotePageDescriptorBuilder.build(getPlugin(), descriptor));
     }
@@ -75,6 +77,8 @@ public final class AdminPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {

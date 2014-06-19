@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.page;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
@@ -65,6 +66,8 @@ public class ContextFreeIFramePageServlet extends HttpServlet
 
         String pluginKey = pluginKeys[0];
         String remoteUrl = remoteUrls[0];
+
+        XmlDescriptorExploder.notifyAndExplode(pluginKey);
 
         if (jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey))
         {

@@ -185,9 +185,4 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         return remotePlugin.getAddon().getBaseUrl();
     }
 
-    @Override
-    protected ConnectAddonBean getCurrentAddon()
-    {
-        return remotePlugin.getAddon();
-    }
 }

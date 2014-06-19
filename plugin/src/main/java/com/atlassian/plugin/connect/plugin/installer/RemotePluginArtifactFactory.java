@@ -5,6 +5,7 @@ import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.Filenames;
 import org.dom4j.Document;
@@ -22,13 +23,12 @@ import java.io.IOException;
 @XmlDescriptor
 public class RemotePluginArtifactFactory
 {
-    private static final String ATLASSIAN_PLUGIN_KEY = "Atlassian-Plugin-Key";
-    public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<> _]";
-
-
     public PluginArtifact create(final Document document, String username)
     {
         String pluginKey = document.getRootElement().attributeValue("key");
+
+        XmlDescriptorExploder.notifyAndExplode(pluginKey);
+
         changeDescriptorToIncludeRemotePluginHeader(document, username);
 
         return new JarPluginArtifact(ZipBuilder.buildZip("install-" + pluginKey, new ZipHandler()

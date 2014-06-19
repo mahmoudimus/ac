@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicD
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
@@ -77,6 +78,8 @@ public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     @Override
     public void enabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.enabled();
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
                 macroModuleDescriptorCreatorBuilder.build(getPlugin(), descriptor));
@@ -85,6 +88,8 @@ public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {

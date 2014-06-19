@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.ContainingRemoteCondition;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -112,12 +113,16 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
 
         final JiraResourcedModuleDescriptor moduleDescriptor = createDescriptor(moduleKey,
                 desc, new IFrameParamsImpl(descriptor), condition);
+
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
 
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {

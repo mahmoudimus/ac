@@ -669,7 +669,7 @@
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
 
         <!-- TODO: remove "connect1" after 2.16 is officially released -->
-        <atlassian.upm.version>2.16</atlassian.upm.version>
+        <atlassian.upm.version>2.16.5</atlassian.upm.version>
         
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>

@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleUiParamParser;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -107,6 +108,8 @@ public class ConnectIFrameServlet extends HttpServlet
     @XmlDescriptor
     private IFrameRenderStrategy getiFrameRenderStrategyForXMLModule(final HttpServletRequest req, final String addOnKey, final String moduleKey)
     {
+        XmlDescriptorExploder.notifyAndExplode(addOnKey);
+
         final IFrameRenderStrategy renderStrategy;
         if (req.getParameter("simpleDialog") != null)
         {

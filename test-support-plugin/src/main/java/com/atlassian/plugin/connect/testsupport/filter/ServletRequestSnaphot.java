@@ -1,13 +1,14 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+import org.apache.commons.io.IOUtils;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.io.IOUtils;
 
 public class ServletRequestSnaphot
 {
@@ -22,9 +23,10 @@ public class ServletRequestSnaphot
     private final String method;
     private final String serverName;
     private final int serverPort;
-    private String entity;
+    private final String entity;
+    private final String remoteUsername;
 
-    public ServletRequestSnaphot(HttpServletRequest request)
+    public ServletRequestSnaphot(HttpServletRequest request, UserManager userManager)
     {
         this.contextPath = request.getContextPath();
         this.servletPath = request.getServletPath();
@@ -56,13 +58,20 @@ public class ServletRequestSnaphot
             parameters.put(paramName,request.getParameterValues(paramName));
         }
         
+        this.entity = extractEntity(request);
+        final UserProfile remoteUser = userManager.getRemoteUser(request);
+        this.remoteUsername = null == remoteUser ? null : remoteUser.getUsername();
+    }
+
+    private static String extractEntity(HttpServletRequest request)
+    {
         try
         {
-            this.entity = IOUtils.toString(request.getInputStream());
+            return IOUtils.toString(request.getInputStream());
         }
         catch (IOException e)
         {
-            this.entity = "";
+            return "";
         }
     }
 
@@ -124,5 +133,10 @@ public class ServletRequestSnaphot
     public String getEntity()
     {
         return entity;
+    }
+
+    public String getRemoteUsername()
+    {
+        return remoteUsername;
     }
 }

@@ -46,7 +46,7 @@ public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMa
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
                 StaticContentMacro macro = new StaticContentMacro(
-                        addon.getKey(), bean.getKey(addon), bean.getUrl(),
+                        addon.getKey(), bean.getRawKey(), bean.getUrl(),
                         MacroEnumMapper.map(bean.getBodyType()), MacroEnumMapper.map(bean.getOutputType()),
                         iFrameUriBuilderFactory, macroModuleContextExtractor, macroContentManager,
                         remotablePluginAccessorFactory);
