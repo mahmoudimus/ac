@@ -142,7 +142,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testAdminPageInJiraSpecificLocation() throws Exception
     {
         loginAsAdmin();
-        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
+        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX, remotePlugin.getAddon().getKey());
         assertTrue(adminPage.hasJiraRemotableAdminPageLink());
         assertEquals(ADMIN_FULL_NAME, adminPage.clickJiraRemotableAdminPage().getFullName());
     }
@@ -151,7 +151,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testGeneralAdminPage() throws Exception
     {
         loginAsAdmin();
-        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
+        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX, remotePlugin.getAddon().getKey());
         assertTrue(adminPage.hasGeneralRemotableAdminPage());
         assertEquals(ADMIN_FULL_NAME, adminPage.clickGeneralRemotableAdminPage().getFullName());
     }

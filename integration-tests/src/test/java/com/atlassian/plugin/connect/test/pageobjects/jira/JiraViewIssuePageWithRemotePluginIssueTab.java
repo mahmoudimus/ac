@@ -1,15 +1,12 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 
-public class JiraViewIssuePageWithRemotePluginIssueTab extends RemotePluginEmbeddedTestPage implements Page
+public class JiraViewIssuePageWithRemotePluginIssueTab extends ConnectAddOnEmbeddedTestPage implements Page
 {
     public static final String DEFAULT_PAGE_KEY = "issue-tab-page-jira-remotePluginIssueTabPage";
     private final String issueKey;
-    private final String pluginKey;
     private final String pagePrefix;
 
     public JiraViewIssuePageWithRemotePluginIssueTab(String issueKey, String pluginKey)
@@ -24,16 +21,15 @@ public class JiraViewIssuePageWithRemotePluginIssueTab extends RemotePluginEmbed
 
     public JiraViewIssuePageWithRemotePluginIssueTab(String pageKey, String issueKey, String pluginKey, String pagePrefix)
     {
-        super(pageKey);
+        super(pageKey, pluginKey);
         this.issueKey = issueKey;
-        this.pluginKey = pluginKey;
         this.pagePrefix = pagePrefix;
     }
 
     @Override
     public String getUrl()
     {
-        return "/browse/" + issueKey + "?page=" + pagePrefix + key;
+        return "/browse/" + issueKey + "?page=" + pagePrefix + pageElementKey;
     }
 
 
