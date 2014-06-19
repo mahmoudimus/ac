@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 
 /**
  * Find source code annotated with {@link com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor}.
@@ -18,5 +19,11 @@ public class XmlDescriptorAnnotationProcessor extends CollectingAnnotationProces
     public XmlDescriptorAnnotationProcessor()
     {
         super(XmlDescriptor.class);
+    }
+
+    @Override
+    protected String getExtraDetails(Element element)
+    {
+        return element.getAnnotation(XmlDescriptor.class).comment();
     }
 }

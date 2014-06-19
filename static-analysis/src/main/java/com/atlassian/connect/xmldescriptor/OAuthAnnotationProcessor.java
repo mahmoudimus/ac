@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 
 /**
  * Find source code annotated with {@link com.atlassian.plugin.connect.api.xmldescriptor.OAuth}.
@@ -18,5 +19,11 @@ public class OAuthAnnotationProcessor extends CollectingAnnotationProcessor
     public OAuthAnnotationProcessor()
     {
         super(OAuth.class);
+    }
+
+    @Override
+    protected String getExtraDetails(Element element)
+    {
+        return null;
     }
 }

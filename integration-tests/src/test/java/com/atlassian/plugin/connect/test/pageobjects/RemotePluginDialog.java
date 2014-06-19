@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 public class RemotePluginDialog extends RemoteDialog
 {
     // The Remotable Plugin iFrame page embedded within the dialog.
-    @XmlDescriptor // migrate to the new embeddedConnectPage data member
+    @XmlDescriptor(comment="migrate to the new embeddedConnectPage data member")
     private final RemotePluginTestPage embeddedPage;
 
     private final ConnectAddOnTestPage embeddedConnectPage;

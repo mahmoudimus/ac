@@ -48,6 +48,13 @@ public abstract class CollectingAnnotationProcessor extends AbstractProcessor
         return true;
     }
 
+    /**
+     * Get implementation-specific details of this annotation instance (e.g. args like "foo" in @SomeAnnotation("foo")).
+     * @param element {@link Element} on which the annotation appears
+     * @return {@link String} with additional details to be reported, else null or "" if there are none
+     */
+    protected abstract String getExtraDetails(Element element);
+
     private void writeOutputToFile(String outputString)
     {
         try
@@ -76,10 +83,17 @@ public abstract class CollectingAnnotationProcessor extends AbstractProcessor
 
         for (Element element : roundEnv.getElementsAnnotatedWith(annotationType))
         {
-            sb.append(String.format("%11s %s\n", element.getKind(), getName(element)));
+            sb.append(String.format("%11s %s %s\n", element.getKind(), getName(element), formatExtraDetails(getExtraDetails(element))));
         }
 
         return sb.toString();
+    }
+
+    private String formatExtraDetails(String s)
+    {
+        return null == s || "".equals(s)
+                ? ""
+                : String.format("(%s)", s);
     }
 
     private String getName(Element element)
