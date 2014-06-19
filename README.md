@@ -1,3 +1,8 @@
+# Important
+
+This branch exists as a "never changing" ref for Bamboo, otherwise too many builds run.
+
+
 # Atlassian Connect
 
 This is the core repository behind [Atlassian Connect](https://developer.atlassian.com/display/AC/).
