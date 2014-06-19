@@ -48,7 +48,6 @@ import static com.google.common.collect.Sets.newHashSet;
 public final class DescriptorPermissionsReader implements PermissionsReader
 {
     private final LoadingCache<Plugin, Set<String>> permissionsCache;
-    private final LoadingCache<Plugin, Set<ScopeName>> scopesCache;
     private final String productKey;
 
     @Inject
@@ -61,14 +60,6 @@ public final class DescriptorPermissionsReader implements PermissionsReader
             public Set<String> load(Plugin plugin) throws Exception
             {
                 return read(bundleLocator.getBundle(plugin.getKey()), productKey);
-            }
-        });
-        this.scopesCache = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<Plugin, Set<ScopeName>>()
-        {
-            @Override
-            public Set<ScopeName> load(Plugin plugin) throws Exception
-            {
-                return readScopes(bundleLocator.getBundle(plugin.getKey()), productKey);
             }
         });
     }
