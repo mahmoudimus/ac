@@ -90,6 +90,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                         .withWeight(weight)
                         .withIcon(bean.getIcon())
                         .withConditions(bean.getConditions())
+                        .setNeedsEscaping(needsEscaping())
                         .build();
 
                 builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, webItemBean, getConditionClasses()));
@@ -97,6 +98,11 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         }
 
         return builder.build();
+    }
+
+    protected boolean needsEscaping()
+    {
+        return true;
     }
 
     protected Iterable<Class<? extends Condition>> getConditionClasses()

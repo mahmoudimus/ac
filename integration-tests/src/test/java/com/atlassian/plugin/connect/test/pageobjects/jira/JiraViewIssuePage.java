@@ -76,4 +76,8 @@ public class JiraViewIssuePage implements Page
         return pageElementFinder.find(By.id(id)).timed().isPresent().byDefaultTimeout();
     }
 
+    public Section getSection(String moduleKey)
+    {
+        return pageBinder.bind(Section.class, moduleKey);
+    }
 }
