@@ -27,7 +27,7 @@ public class MacroI18nBuilder
 
     public void add(BaseContentMacroModuleBean bean, final ConnectAddonBean addon)
     {
-        addName(bean.getKey(addon), bean.getName());
+        addName(bean.getRawKey(), bean.getName());
         addDescription(bean.getRawKey(), bean.getDescription());
 
         for (MacroParameterBean parameterBean : bean.getParameters())

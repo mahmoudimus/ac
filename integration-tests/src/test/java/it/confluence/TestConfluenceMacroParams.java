@@ -1,25 +1,23 @@
 package it.confluence;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroTestSuitePage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.*;
-
+import it.servlet.ConnectAppServlets;
 import org.junit.After;
 import org.junit.Test;
 
-import it.servlet.ConnectAppServlets;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
@@ -28,6 +26,7 @@ import static it.TestConstants.BETTY_USERNAME;
 import static it.servlet.ConnectAppServlets.macroExtended;
 import static org.junit.Assert.*;
 
+@XmlDescriptor
 public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
 {
     private AtlassianConnectAddOnRunner remotePlugin;

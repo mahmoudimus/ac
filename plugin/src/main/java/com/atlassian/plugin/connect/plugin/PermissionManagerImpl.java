@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
@@ -9,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.permission.Permission;
@@ -125,24 +127,33 @@ public final class PermissionManagerImpl implements PermissionManager
     {
         return jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey)
                 ? StaticAddOnScopes.dereference(allScopes, getScopeReferences(pluginKey))
-                : Iterables.concat(DEFAULT_OLD_API_SCOPES, getApiScopesForPermissions(getOldStylePermissionsForPlugin(pluginKey)));
+                : Iterables.concat(DEFAULT_OLD_API_SCOPES, getApiScopesForPermissions(getOldStylePermissionsForPlugin(pluginKey), pluginKey));
     }
 
+    @XmlDescriptor
     @Deprecated
-    private Iterable<ApiScope> getApiScopesForPermissions(final Set<String> permissions)
+    private Iterable<ApiScope> getApiScopesForPermissions(final Set<String> permissions, String addOnKey)
     {
-        return castToApiScopes(getApiScopesForPermissionsAsPermissions(permissions));
+        XmlDescriptorExploder.notifyAndExplode(addOnKey);
+
+        return castToApiScopes(getApiScopesForPermissionsAsPermissions(permissions, addOnKey), addOnKey);
     }
 
+    @XmlDescriptor
     @Deprecated
-    private static Iterable<ApiScope> castToApiScopes(Iterable<Permission> permissions)
+    private static Iterable<ApiScope> castToApiScopes(Iterable<Permission> permissions, String addOnKey)
     {
+        XmlDescriptorExploder.notifyAndExplode(addOnKey);
+
         return transform(permissions, new CastPermissionApiScope());
     }
 
+    @XmlDescriptor
     @Deprecated
-    private Iterable<Permission> getApiScopesForPermissionsAsPermissions(Set<String> permissions)
+    private Iterable<Permission> getApiScopesForPermissionsAsPermissions(Set<String> permissions, String addOnKey)
     {
+        XmlDescriptorExploder.notifyAndExplode(addOnKey);
+
         return filter(permissionTracker.getModules(), Predicates.and(new IsApiScope(), new IsInPermissions(permissions)));
     }
 
@@ -158,6 +169,7 @@ public final class PermissionManagerImpl implements PermissionManager
         return connectAddonBeanFactory.fromJsonSkipValidation(descriptor).getScopes();
     }
 
+    @XmlDescriptor
     @Deprecated
     private Set<String> getOldStylePermissionsForPlugin(String pluginKey)
     {
@@ -175,8 +187,11 @@ public final class PermissionManagerImpl implements PermissionManager
      */
     @Deprecated
     @Override
+    @XmlDescriptor
     public void requirePermission(String pluginKey, String permissionKey) throws PermissionDeniedException
     {
+        XmlDescriptorExploder.notifyAndExplode(pluginKey);
+
         boolean isJsonAddon = jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey);
         boolean skipCheck = isJsonAddon && Permissions.CREATE_OAUTH_LINK.equals(permissionKey);
 
@@ -218,6 +233,7 @@ public final class PermissionManagerImpl implements PermissionManager
         }
     }
 
+    @XmlDescriptor
     @Deprecated
     private static final class IsInPermissions implements Predicate<Permission>
     {
@@ -235,6 +251,7 @@ public final class PermissionManagerImpl implements PermissionManager
         }
     }
 
+    @XmlDescriptor
     @Deprecated
     private static final class CastPermissionApiScope implements Function<Permission, ApiScope>
     {
@@ -245,6 +262,7 @@ public final class PermissionManagerImpl implements PermissionManager
         }
     }
 
+    @XmlDescriptor
     private static final class MacroCacheApiScope extends AbstractApiScope
     {
         public MacroCacheApiScope()

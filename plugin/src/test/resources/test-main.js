@@ -17,12 +17,13 @@ requirejs.config({
     'aui-atlassian': '../target/qunit/dependencies/js/atlassian/atlassian',
     'aui-soy': '//aui-cdn.atlassian.com/aui-adg/5.4.3/js/aui-soy',
     // host side
+    'iframe/host/_util': '../src/main/resources/js/iframe/host/_util',
     'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
     'iframe/host/_status_helper': '../src/main/resources/js/iframe/host/_status_helper',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'iframe/host/content': '../src/main/resources/js/iframe/host/content',
-    'iframe/host/analytics': '../src/main/resources/js/iframe/host/analytics',
-    'iframe/host/history': '../src/main/resources/js/iframe/host/history',
+    'analytics/analytics': '../src/main/resources/js/analytics/analytics',
+    'history/history': '../src/main/resources/js/history/history',
     'dialog/main': '../src/main/resources/js/dialog/main',
     'dialog/button': '../src/main/resources/js/dialog/button',
     'dialog/dialog-factory': '../src/main/resources/js/dialog/dialog-factory',
@@ -30,7 +31,7 @@ requirejs.config({
     'inline-dialog/simple': '../src/main/resources/js/inline-dialog/simple',
     'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
     'jira/event': '../src/main/resources/js/jira/event',
-    'jira/workflow-post-function': '../src/main/resources/js/jira/workflow-post-function',
+    'jira/workflow-post-function': '../src/main/resources/js/jira/workflow-post-function/workflow-post-function',
     'messages/main': '../src/main/resources/js/messages/main',
     // shared
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
@@ -58,6 +59,12 @@ requirejs.config({
         'iframe/_amd'
       ]
     },
+    'iframe/host/_util': {
+      deps: [
+        'iframe/host/_dollar',
+        'iframe/_amd'
+      ]
+    },
     'iframe/host/content': {
         deps: [
         'jquery',
@@ -66,7 +73,7 @@ requirejs.config({
         'iframe/_ui-params'
         ]
     },
-    'iframe/host/history': {
+    'history/history': {
         deps: [
         'iframe/host/_dollar',
         'iframe/_uri'
@@ -139,7 +146,7 @@ requirejs.config({
         'iframe/host/_dollar'
         ]
     },
-    'iframe/host/analytics': {
+    'analytics/analytics': {
         deps: [
         'iframe/host/_dollar'
         ]
@@ -173,7 +180,7 @@ requirejs.config({
       deps: [
         'iframe/_uri',
         'iframe/_events',
-        'iframe/host/analytics'
+        'iframe/host/_util'
       ]
     },
     'iframe/host/analytics':{

@@ -41,7 +41,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
-                .module(macroBean.getKey(addon))
+                .module(macroBean.getRawKey())
                 .genericBodyTemplate(macroBean.getOutputType() == MacroOutputType.INLINE)
                 .urlTemplate(macroBean.getUrl())
                 .dimensions(macroBean.getWidth(), macroBean.getHeight())

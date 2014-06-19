@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.imports;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
+import com.atlassian.crowd.embedded.api.CrowdService;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
@@ -10,13 +11,13 @@ import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
+import com.atlassian.oauth.serviceprovider.ServiceProviderTokenStore;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
-import com.atlassian.plugin.spring.scanner.annotation.component.ClasspathComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.webresource.WebResourceManager;
@@ -24,12 +25,14 @@ import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.AuthenticationListener;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.sal.api.net.RequestFactory;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.soy.renderer.SoyTemplateRenderer;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
@@ -49,6 +52,7 @@ public class CommonImports
     public CommonImports(
             @ComponentImport PluginController pluginController,
             @ComponentImport TemplateRenderer templateRenderer,
+            @ComponentImport SoyTemplateRenderer soyTemplateRenderer,
             @ComponentImport ServletModuleManager servletModuleManager,
             @ComponentImport WebInterfaceManager webInterfaceManager,
             @ComponentImport PluginRetrievalService pluginRetrievalService,
@@ -77,7 +81,10 @@ public class CommonImports
             @ComponentImport ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry,
             @ComponentImport RemotePluginLicenseService remotePluginLicenseService,
             @ComponentImport JwtService jwtService,
-            @ComponentImport JwtApplinkFinder jwtApplinkFinder)
+            @ComponentImport JwtApplinkFinder jwtApplinkFinder,
+            @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
+            @ComponentImport CrowdService crowdService,
+            @ComponentImport DarkFeatureManager darkFeatureManager)
     {
     }
 }

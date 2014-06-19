@@ -17,6 +17,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * When an issue is created or closed in JIRA
  * * When a page is created or updated in Confluence
  *
+ * If your add-on uses webhooks, declare the ["read" scope](../../scopes/scopes.html)
+ * in your [`atlassian-connect.json` descriptor](../).
  *
  *### Handling the webhook event
  *

@@ -1,5 +1,6 @@
 package it;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
 import org.apache.commons.io.IOUtils;
@@ -17,6 +18,7 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
+@XmlDescriptor
 public class TestRedirects extends AbstractBrowserlessTest
 {
     @BeforeClass

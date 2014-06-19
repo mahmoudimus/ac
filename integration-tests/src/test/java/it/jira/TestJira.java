@@ -2,6 +2,7 @@ package it.jira;
 
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
@@ -22,6 +23,7 @@ import java.util.concurrent.Callable;
 import static it.TestConstants.ADMIN_FULL_NAME;
 import static org.junit.Assert.*;
 
+@XmlDescriptor
 public class TestJira extends JiraWebDriverTestBase
 {
     public static final String EXTRA_PREFIX = "servlet-";

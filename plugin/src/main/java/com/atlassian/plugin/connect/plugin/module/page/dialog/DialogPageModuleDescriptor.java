@@ -2,11 +2,13 @@ package com.atlassian.plugin.connect.plugin.module.page.dialog;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
@@ -23,12 +25,14 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     public static final String DIALOG_CLASSIFIER = "dialog";
     public static final String SIMPLE_DIALOG_CLASSIFIER = "simpleDialog";
 
+    @XmlDescriptor
     private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     private Element descriptor;
+    @XmlDescriptor
     private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public DialogPageModuleDescriptor(
@@ -62,6 +66,8 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     @Override
     public void enabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.enabled();
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
                 remotePageDescriptorBuilder.build(getPlugin(), descriptor));
@@ -98,6 +104,8 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
@@ -9,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
 import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -24,6 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
+    @XmlDescriptor
     private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator remotePageDescriptorCreator;
     private final WebItemCreator webItemCreator;
@@ -34,6 +37,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
 
     private Element descriptor;
     private Element link;
+    @XmlDescriptor
     private LegacyXmlDynamicDescriptorRegistration.Registration registration;
     private String url;
     private String moduleKey;
@@ -94,6 +98,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
             DescriptorToRegister servletDescriptor = containerPageBuilder.createServletDescriptor(plugin, desc, moduleKey, url, localUrl, webItemBuilder.getContextParams());
             DescriptorToRegister webItemModuleDescriptor = new DescriptorToRegister(webItemBuilder.build(plugin, moduleKey, localUrl, desc));
 
+            XmlDescriptorExploder.notifyAndExplode(getPluginKey());
             this.registration = dynamicDescriptorRegistration.registerDescriptors(
                     conditionProcessor.getLoadablePlugin(getPlugin()), servletDescriptor, webItemModuleDescriptor);
         }
@@ -120,6 +125,8 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {

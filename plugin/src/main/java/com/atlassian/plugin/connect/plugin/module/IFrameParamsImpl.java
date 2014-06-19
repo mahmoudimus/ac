@@ -20,12 +20,13 @@ public class IFrameParamsImpl implements IFrameParams
     public IFrameParamsImpl()
     {
     }
-    
+
     public IFrameParamsImpl(Element module)
     {
         addToParams(module, "height");
         addToParams(module, "width");
     }
+
     public void addToParams(Element e, String key)
     {
         String val = e.attributeValue(key);

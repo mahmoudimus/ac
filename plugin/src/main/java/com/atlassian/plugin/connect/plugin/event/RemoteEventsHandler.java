@@ -9,7 +9,9 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
@@ -52,6 +54,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * For handling legacy xml-descriptor add-ons. See {@link com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager} for JSON-descriptor add-ons.
  */
 @Component
+@XmlDescriptor
 public class RemoteEventsHandler implements InitializingBean, DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(RemoteEventsHandler.class);
@@ -93,6 +96,8 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
 
     public void pluginInstalled(String pluginKey)
     {
+        XmlDescriptorExploder.notifyAndExplode(pluginKey);
+
         //if we have an "install-handler" in plugin info, do a sync call, otherwise fallback to the webhook
         if (!callSyncHandler(pluginKey))
         {
@@ -183,6 +188,8 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         final Plugin plugin = pluginEnabledEvent.getPlugin();
         if (connectIdentifier.isConnectAddOn(plugin))
         {
+            XmlDescriptorExploder.notifyAndExplode(null == plugin ? null : plugin.getKey());
+
             eventPublisher.publish(new RemotePluginEnabledEvent(plugin.getKey(), newRemotePluginEventData()));
         }
     }
@@ -200,6 +207,8 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
     @VisibleForTesting
     Map<String, Object> newRemotePluginEventData()
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         final Consumer consumer = consumerService.getConsumer();
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()

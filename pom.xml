@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.0-beta.1</version>
+    <version>1.1.0-beta.2</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -28,6 +28,7 @@
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>
+        <module>static-analysis</module>
     </modules>
 
     <profiles>
@@ -657,7 +658,7 @@
         <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.4.1</atlassian.mail.version>
         <atlassian.oauth.version>1.3.0</atlassian.oauth.version>
-        <atlassian.jwt.version>1.0.1</atlassian.jwt.version>
+        <atlassian.jwt.version>1.1.0</atlassian.jwt.version>
         <atlassian.json.schema.validator.version>1.0-m0</atlassian.json.schema.validator.version>
         <atlassian.plugins.version>3.0.7</atlassian.plugins.version>
         <atlassian.plugins.api.version>2.10</atlassian.plugins.api.version>
@@ -667,7 +668,7 @@
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
 
         <!-- TODO: remove "connect1" after 2.16 is officially released -->
-        <atlassian.upm.version>2.16</atlassian.upm.version>
+        <atlassian.upm.version>2.16.5</atlassian.upm.version>
         
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>

@@ -11,6 +11,7 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
@@ -18,6 +19,7 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -240,22 +242,9 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         {
             addonBaseUrl = connectAddonRegistry.getBaseUrl(pluginKey);
         }
-        
-        //TODO: remove this once xml addons are gone
         else
         {
-            Plugin plugin = pluginAccessor.getPlugin(pluginKey);
-            
-            if(null != plugin)
-            {
-                for(ModuleDescriptor descriptor : plugin.getModuleDescriptors())
-                {
-                    if(RemotePluginContainerModuleDescriptor.class.isAssignableFrom(descriptor.getClass()))
-                    {
-                        addonBaseUrl = ((RemotePluginContainerModuleDescriptor) descriptor).getAddonBaseUrl();
-                    }
-                }
-            }
+            addonBaseUrl = getBaseUrlForXmlDescriptorAddOn(pluginKey);
         }
         
         final String storedBaseUrl = addonBaseUrl;
@@ -286,6 +275,28 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
                     }
             );
         }
+    }
+
+    @XmlDescriptor
+    private String getBaseUrlForXmlDescriptorAddOn(String pluginKey)
+    {
+        XmlDescriptorExploder.notifyAndExplode(pluginKey);
+
+        String addonBaseUrl = null;
+        Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+
+        if(null != plugin)
+        {
+            for(ModuleDescriptor descriptor : plugin.getModuleDescriptors())
+            {
+                if(RemotePluginContainerModuleDescriptor.class.isAssignableFrom(descriptor.getClass()))
+                {
+                    addonBaseUrl = ((RemotePluginContainerModuleDescriptor) descriptor).getAddonBaseUrl();
+                }
+            }
+        }
+
+        return addonBaseUrl;
     }
 
     /**

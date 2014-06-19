@@ -2,10 +2,9 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.util.BundleLocator;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.Filenames;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
@@ -14,8 +13,6 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import com.opensymphony.util.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -24,9 +21,7 @@ import org.osgi.framework.Bundle;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -39,11 +34,11 @@ import static com.google.common.collect.Sets.newHashSet;
  * by loading the document, but soon will read natively from Plugin
  */
 @ExportAsService(PermissionsReader.class)
+@XmlDescriptor
 @Named
 public final class DescriptorPermissionsReader implements PermissionsReader
 {
     private final Cache<Plugin,Set<String>> permissionsCache;
-    private final Cache<Plugin,Set<ScopeName>> scopesCache;
     private final String productKey;
 
     @Inject
@@ -58,19 +53,13 @@ public final class DescriptorPermissionsReader implements PermissionsReader
                 return read(bundleLocator.getBundle(plugin.getKey()), productKey);
             }
         });
-        this.scopesCache = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<Plugin,Set<ScopeName>>()
-        {
-            @Override
-            public Set<ScopeName> load(Plugin plugin) throws Exception
-            {
-                return readScopes(bundleLocator.getBundle(plugin.getKey()), productKey);
-            }
-        });
     }
 
     @Override
     public Set<String> getPermissionsForPlugin(Plugin plugin)
     {
+        XmlDescriptorExploder.notifyAndExplode(null == plugin ? null : plugin.getKey());
+
         try
         {
             return permissionsCache.get(plugin);
@@ -88,20 +77,6 @@ public final class DescriptorPermissionsReader implements PermissionsReader
         return read(document, productKey);
     }
 
-    @Override
-    public Set<ScopeName> readScopesForAddOn(Plugin plugin)
-    {
-        try
-        {
-            return scopesCache.get(plugin);
-        }
-        catch (ExecutionException e)
-        {
-            // should never happen
-            throw new RuntimeException(e);
-        }
-    }
-
     private Set<String> read(Bundle bundle, String productKey)
     {
         try
@@ -117,22 +92,10 @@ public final class DescriptorPermissionsReader implements PermissionsReader
         }
     }
 
-    private Set<ScopeName> readScopes(Bundle bundle, String productKey) throws IOException
-    {
-        URL sourceUrl = bundle.getEntry(Filenames.ATLASSIAN_ADD_ON_JSON);
-
-        if (null == sourceUrl)
-        {
-            return Collections.emptySet();
-        }
-
-        String json = IOUtils.toString(FileUtils.getResource(sourceUrl.toString()), "UTF-8");
-        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
-        return addOn.getScopes();
-    }
-
     private Set<String> read(Document source, String productKey)
     {
+        XmlDescriptorExploder.notifyAndExplode(null == source ? null : source.getRootElement().attributeValue("key"));
+
         Set<String> permissions = newHashSet();
         Element permissionsElement = source.getRootElement().element("plugin-info").element(
                 "permissions");

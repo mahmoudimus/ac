@@ -2,7 +2,7 @@
  * Methods for showing the status of a connect-addon (loading, time'd-out etc)
  */
 
-_AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
+_AP.define("history/history", ["_dollar", "_uri"], function ($, Uri) {
     "use strict";
 
     var lastAdded,
@@ -54,13 +54,13 @@ _AP.define("host/history", ["_dollar", "_uri"], function ($, Uri) {
         history.go(delta);
     }
 
-    function hashChange (event, rpcCallback) {
+    function hashChange (event, historyMessage) {
         var newUrlObj = new Uri.init(event.newURL);
         var oldUrlObj = new Uri.init(event.oldURL);
         if( ( newUrlObj.anchor() !== oldUrlObj.anchor() ) && // if the url has changed
             ( lastAdded !== newUrlObj.anchor() ) //  and it's not the page we just pushed.
          ){
-            rpcCallback(sanitizeHashChangeEvent(event));
+            historyMessage(sanitizeHashChangeEvent(event));
         }
         lastAdded = null;
     }

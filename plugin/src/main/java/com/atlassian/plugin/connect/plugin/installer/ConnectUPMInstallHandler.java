@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -31,6 +33,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectUPMInstallHandler.class);
 
+    @XmlDescriptor
     private final LegacyAddOnIdentifierService connectIdentifier;
     private final ConnectAddOnInstaller connectInstaller;
     private final UserManager userManager;
@@ -116,6 +119,8 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
                 Document doc = formatConverter.readFileToDoc(descriptorFile);
 
                 plugin = connectInstaller.install(username, doc);
+
+                XmlDescriptorExploder.notifyAndExplode(null == plugin ? null : plugin.getKey());
             }
             else
             {
