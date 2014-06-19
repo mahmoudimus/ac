@@ -19,6 +19,7 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -279,6 +280,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     @XmlDescriptor
     private String getBaseUrlForXmlDescriptorAddOn(String pluginKey)
     {
+        XmlDescriptorExploder.notifyAndExplode(pluginKey);
+
         String addonBaseUrl = null;
         Plugin plugin = pluginAccessor.getPlugin(pluginKey);
 

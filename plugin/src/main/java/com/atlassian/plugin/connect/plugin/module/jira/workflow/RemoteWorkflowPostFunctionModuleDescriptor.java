@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponent
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import org.dom4j.Element;
@@ -40,6 +41,8 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends ConnectWorkflowF
     @Override
     public void init(final Plugin plugin, final Element element) throws PluginParseException
     {
+        XmlDescriptorExploder.notifyAndExplode(null == plugin ? null : plugin.getKey());
+
         super.init(plugin, element);
 
         registerStrategy(WorkflowPostFunctionResource.VIEW, element.element("view"));
@@ -67,6 +70,8 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends ConnectWorkflowF
     @Override
     public String getModuleClassName()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         return super.getModuleClassName();
     }
 

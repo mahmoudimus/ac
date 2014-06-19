@@ -1,21 +1,22 @@
 package com.atlassian.plugin.connect.test.plugin.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.util.Dictionary;
-import java.util.Hashtable;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploderUnitTestHelper;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
-
 import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.junit.After;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -68,6 +69,12 @@ public class TestConnectAddOnIdentifier
             "<atlassian-plugin key=\"1msz5edwyfu0zeo2fs1e\" name=\"1msz5edwyfu0zeo2fs1e\" plugins-version=\"2\"><plugin-info><version>1</version><permissions><permission>create_oauth_link</permission></permissions></plugin-info></atlassian-plugin>";
 
     private File xml = null;
+
+    @BeforeClass
+    public static void beforeAnyTest()
+    {
+        XmlDescriptorExploderUnitTestHelper.runBeforeTests();
+    }
 
     @After
     public void afterEachTest()
