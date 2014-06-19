@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
@@ -61,8 +62,11 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         }
 
         webPanelElement.addElement("label").addAttribute("key", i18nKeyOrName);
-        if(null != bean.getTooltip()){
-            String tooltipI18nKeyOrName = Strings.isNullOrEmpty(bean.getTooltip().getI18n()) ? bean.getTooltip().getValue() : bean.getTooltip().getI18n();
+        I18nProperty toolTip = bean.getTooltip();
+
+        if (null != toolTip)
+        {
+            String tooltipI18nKeyOrName = Strings.isNullOrEmpty(toolTip.getI18n()) ? toolTip.getValue() : toolTip.getI18n();
             webPanelElement.addElement("tooltip").addAttribute("key", tooltipI18nKeyOrName);
         }
 
