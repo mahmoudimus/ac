@@ -27,10 +27,10 @@ listed in the `--bundled-plugins` argument are present in your Atlassian applica
 You can start JIRA or Confluence with Atlassian Connect as follows:
 
 #### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-06-017 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.2,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.0-m4 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-06-017 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.2,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.1 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.5-OD-24-011 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.2,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.0-m4 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.5-OD-24-011 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.2,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.1 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This
 includes the version of Atlassian Connect framework. Those component versions will change as Atlassian Connect
