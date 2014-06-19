@@ -53,6 +53,11 @@ public class ConfluenceAdminPage implements AdminPage
         return findLinkElement().getAttribute("href");
     }
 
+    public String getRemotePluginLinkText()
+    {
+        return findLinkElement().getText();
+    }
+
     private PageElement findLinkElement()
     {
         if (linkElement == null)

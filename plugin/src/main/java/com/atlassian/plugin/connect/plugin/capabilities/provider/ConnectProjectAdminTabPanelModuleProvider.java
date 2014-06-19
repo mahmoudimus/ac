@@ -64,6 +64,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())
                     .withConditions(bean.getConditions())
+                    .setNeedsEscaping(false)
                     .build();
 
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin,

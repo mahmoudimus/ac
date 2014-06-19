@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItem
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.base.Joiner;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -38,9 +39,9 @@ public class WebItemModuleDescriptorFactory
 
     @Autowired
     public WebItemModuleDescriptorFactory(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory,
-            IconModuleFragmentFactory iconModuleFragmentFactory,
-            ConditionModuleFragmentFactory conditionModuleFragmentFactory,
-            ParamsModuleFragmentFactory paramsModuleFragmentFactory)
+                                          IconModuleFragmentFactory iconModuleFragmentFactory,
+                                          ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+                                          ParamsModuleFragmentFactory paramsModuleFragmentFactory)
     {
         this.productWebItemDescriptorFactory = productWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
@@ -65,13 +66,16 @@ public class WebItemModuleDescriptorFactory
 
         String webItemKey = bean.getKey(addon);
 
+        String webItemLabel = bean.needsEscaping() ? StringEscapeUtils.escapeHtml(bean.getName().getValue()) : bean.getName().getValue();
+        String i18nKey = bean.needsEscaping() ? StringEscapeUtils.escapeHtml(bean.getName().getI18n()) : bean.getName().getI18n();
+
         webItemElement.addAttribute("key", webItemKey);
         webItemElement.addAttribute("section", bean.getLocation());
         webItemElement.addAttribute("weight", Integer.toString(bean.getWeight()));
 
         webItemElement.addElement("label")
-                .addAttribute("key", bean.getName().getI18n())
-                                                   .setText(bean.getName().getValue());
+                .addAttribute("key", i18nKey)
+                .setText(webItemLabel);
 
         if (null != bean.getTooltip())
         {
@@ -127,7 +131,7 @@ public class WebItemModuleDescriptorFactory
 
         final boolean isDialog = bean.getTarget().isDialogTarget();
 
-        paramsModuleFragmentFactory.addParamsToElement(webItemElement,bean.getParams());
+        paramsModuleFragmentFactory.addParamsToElement(webItemElement, bean.getParams());
 
         if (!styles.isEmpty())
         {
