@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+
+@XmlDescriptor // migrate to ConnectAddOnTestPage
 public class RemotePluginTestPage extends RemotePluginEmbeddedTestPage
 {
     public RemotePluginTestPage(String pageKey)

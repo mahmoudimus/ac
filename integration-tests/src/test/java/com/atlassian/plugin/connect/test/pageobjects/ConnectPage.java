@@ -4,13 +4,14 @@ import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.WebDriverElement;
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -20,8 +21,7 @@ import java.util.concurrent.Callable;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
-@XmlDescriptor // migrate to ConnectPage
-public class RemotePage
+public class ConnectPage
 {
     @Inject
     protected AtlassianWebDriver driver;
@@ -30,35 +30,43 @@ public class RemotePage
     private PageElementFinder elementFinder;
 
 
-    protected final String key;
-    protected final String extraPrefix;
+    protected final String pageElementKey;
+    protected final String addOnKey;
     protected WebElement containerDiv;
 
-    public RemotePage(String contextKey)
-    {
-        this(contextKey,"");
-    }
+    private static final Logger log = LoggerFactory.getLogger(ConnectPage.class);
 
-    public RemotePage(String contextKey, String extraPrefix)
+    public ConnectPage(String pageElementKey, String addOnKey)
     {
-        this.key = contextKey;
-        this.extraPrefix = extraPrefix;
+        this.pageElementKey = pageElementKey;
+        this.addOnKey = addOnKey;
     }
 
     @WaitUntil
     public void waitForInit()
     {
-        PageElement containerDivElement = elementFinder.find(ByJquery.$("#embedded-" + extraPrefix + key + ".iframe-init"));
-        waitUntilTrue(containerDivElement.timed().isPresent());
+        final String jquerySelector = "#embedded-" + addOnKey + "__" + pageElementKey;
+        PageElement containerDivElement = elementFinder.find(ByJquery.$(jquerySelector));
+
+        try
+        {
+            waitUntilTrue(containerDivElement.timed().isPresent());
+        }
+        catch (AssertionError e)
+        {
+            // log the failed selector so that you don't have to open the debugger to find it
+            log.error("Failed to find page element using jquery selector '{}'.", jquerySelector);
+            throw e;
+        }
 
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
     }
 
     public boolean isLoaded()
     {
-        return driver.elementExists(By.cssSelector("#ap-" + extraPrefix + key + " .ap-loading.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-" + extraPrefix + key + " .ap-load-timeout.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-" + extraPrefix+ key + " .ap-load-error.ap-status.hidden"));
+        return driver.elementExists(By.cssSelector("#ap-" + addOnKey + pageElementKey + " .ap-loading.ap-status.hidden")) &&
+                driver.elementExists(By.cssSelector("#ap-" + addOnKey + pageElementKey + " .ap-load-timeout.ap-status.hidden")) &&
+                driver.elementExists(By.cssSelector("#ap-" + addOnKey + pageElementKey + " .ap-load-error.ap-status.hidden"));
     }
 
     public Map<String, String> getIframeQueryParams()
@@ -115,7 +123,7 @@ public class RemotePage
 
     private WebElement iframe()
     {
-        driver.waitUntilElementIsLocated(By.cssSelector("#embedded-" + extraPrefix + key + " iframe"));
+        driver.waitUntilElementIsLocated(By.cssSelector("#embedded-" + addOnKey + pageElementKey + " iframe"));
         return containerDiv.findElement(By.tagName("iframe"));
     }
 }

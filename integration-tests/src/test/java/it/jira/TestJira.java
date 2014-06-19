@@ -5,8 +5,8 @@ import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.PlainTextView;
@@ -35,7 +35,7 @@ public class TestJira extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
-                .addOAuth()
+                .setAuthenticationToNone()
                 .addModules("adminPages",
                         newPageBean()
                                 .withKey("remotePluginAdmin")
@@ -85,11 +85,11 @@ public class TestJira extends JiraWebDriverTestBase
         // ensure one issue
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
 
-        RemotePluginTestPage page = product.getPageBinder()
+        ConnectAddOnTestPage page = product.getPageBinder()
                                            .navigateToAndBind(IssueDetailPage.class, issue.getKey())
                                            .details()
                                            .openFocusShifter()
-                                           .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
+                                           .queryAndSelect("Test Issue Action", ConnectAddOnTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey());
 
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
 
@@ -108,9 +108,9 @@ public class TestJira extends JiraWebDriverTestBase
             public Object call() throws Exception
             {
                 RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
-                String key = remotePlugin.getAddon().getKey();
+                String addOnKey = remotePlugin.getAddon().getKey();
                 JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
-                        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey(), key, key + ":");
+                        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey(), addOnKey, addOnKey + ":");
                 Assert.assertEquals("Success", page.getMessage());
                 return null;
             }

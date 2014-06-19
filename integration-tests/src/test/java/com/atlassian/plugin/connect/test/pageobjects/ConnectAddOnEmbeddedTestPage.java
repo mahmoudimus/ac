@@ -1,19 +1,17 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import org.openqa.selenium.By;
 
 import java.util.concurrent.Callable;
 
-@XmlDescriptor // migrate to ConnectAddOnEmbeddedTestPage
-public class RemotePluginEmbeddedTestPage extends RemotePage
+public class ConnectAddOnEmbeddedTestPage extends ConnectPage
 {
-    public RemotePluginEmbeddedTestPage(String pageKey)
+    public ConnectAddOnEmbeddedTestPage(String pageKey)
     {
         this(pageKey, "");
     }
 
-    public RemotePluginEmbeddedTestPage(String pageKey, String extraPrefix)
+    public ConnectAddOnEmbeddedTestPage(String pageKey, String extraPrefix)
     {
         super(pageKey, extraPrefix);
     }
