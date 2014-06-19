@@ -32,20 +32,24 @@ public class ConnectPage
 
     protected final String pageElementKey;
     protected final String addOnKey;
+    private final  boolean includedEmbeddedPrefix;
+
     protected WebElement containerDiv;
 
     private static final Logger log = LoggerFactory.getLogger(ConnectPage.class);
 
-    public ConnectPage(String pageElementKey, String addOnKey)
+    public ConnectPage(String pageElementKey, String addOnKey, boolean includedEmbeddedPrefix)
     {
         this.pageElementKey = pageElementKey;
         this.addOnKey = addOnKey;
+        this.includedEmbeddedPrefix = includedEmbeddedPrefix;
     }
 
     @WaitUntil
     public void waitForInit()
     {
-        final String jquerySelector = "#embedded-" + addOnKey + "__" + pageElementKey;
+        final String prefix = includedEmbeddedPrefix ? "embedded-" : "";
+        final String jquerySelector = "#" + prefix + addOnKey + "__" + pageElementKey;
         PageElement containerDivElement = elementFinder.find(ByJquery.$(jquerySelector));
 
         try

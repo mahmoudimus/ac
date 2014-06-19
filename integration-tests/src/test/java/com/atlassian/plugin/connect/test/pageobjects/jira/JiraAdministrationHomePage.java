@@ -76,7 +76,7 @@ public class JiraAdministrationHomePage extends AbstractJiraPage
     private ConnectAddOnEmbeddedTestPage bindAdminPage(final String adminPageWebItemKey, final String adminPageServletKey)
     {
         findAdminPageLink(constructAddOnAdminPageLinkId(adminPageWebItemKey)).click();
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, adminPageServletKey, extraPrefix);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, adminPageServletKey, addOnKey, true);
     }
 
     private String constructAddOnAdminPageLinkId(String adminPageWebItemKey)

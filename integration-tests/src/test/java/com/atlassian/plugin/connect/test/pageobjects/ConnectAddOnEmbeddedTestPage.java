@@ -6,14 +6,14 @@ import java.util.concurrent.Callable;
 
 public class ConnectAddOnEmbeddedTestPage extends ConnectPage
 {
-    public ConnectAddOnEmbeddedTestPage(String pageKey)
+    public ConnectAddOnEmbeddedTestPage(String pageKey, boolean includeEmbeddedPrefix)
     {
-        this(pageKey, "");
+        this(pageKey, "", includeEmbeddedPrefix);
     }
 
-    public ConnectAddOnEmbeddedTestPage(String pageKey, String extraPrefix)
+    public ConnectAddOnEmbeddedTestPage(String pageKey, String extraPrefix, boolean includeEmbeddedPrefix)
     {
-        super(pageKey, extraPrefix);
+        super(pageKey, extraPrefix, includeEmbeddedPrefix);
     }
 
     public String getFullName()
