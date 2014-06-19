@@ -11,22 +11,64 @@ the change. When you change your [descriptor file](../modules/), we automaticall
 in the Marketplace.
 
 ##Automatic add-on polling & versioning  
-
-We automatically detect updates to Atlassian Connect add-ons with a polling service. This way, you can easily release
+We automatically detect updates to Atlassian Connect add-on descriptors with a polling service. This way, you can easily release
 fixes and new features without having to manually create new version entries in the Marketplace. We want to ensure that
 customers get the latest version of your add-on with as little delay as possible – Connect add-ons should seem like web
 services, not versioned software.
 
-We poll the add-on descriptor URL that you included when you submitted your listing. When we detect a change, we
-automatically update your add-on in the Atlassian Marketplace with a new version. The way we increment your version
-number depends on the changes made to your descriptor.
+When you change your add-on descriptor, these changes are automatically deployed to customer instances within a few hours 
+- unless they [require manual customer approval](#manual-approval). Here's how it works:
+<img src="../assets/images/addon-upgrades.png" width="100%" style="border:0px" />
+
+###Automatic updates
+
+If the changes do not require manual customer approval, they are automatically deployed to all customer instances 
+**within 10 hours**: 
+
+* We poll the add-on descriptor URL that you included when you submitted your listing. When we detect a change, we 
+automatically update your add-on in the Atlassian Marketplace with a new version. Updates are published to the Marketplace 
+within a few minutes of you publishing changes to your [descriptor file](../modules/). 
+* Each customer instance polls the Atlassian Marketplace periodically (currently every 6 hours) and automatically 
+updates to the latest version of your add-on. 
+* If you change your add-on during the 
+[Atlassian OnDemand maintenance windows](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+maintenance+windows), 
+the upgrade of your add-on on customer instances could be further delayed by 4 hours. We use the 
+[Atlassian OnDemand blog](https://confluence.atlassian.com/pages/viewrecentblogposts.action?key=AOD) 
+to announce upcoming upgrades and their completion. 
 
 **Note**: Our polling service uses user-agent **`Marketplacebot`**. You can search for this user-agent in your access logs to
 distinguish normal traffic from our polling service.
+<a name="manual-approval"></a>
+### Changes that require manual customer approval  
+
+Even though your add-on is automatically updated in the Marketplace, certain scenarios require customers to manually
+approve your add-on's update in the [UPM](https://confluence.atlassian.com/x/_AJTE). We automatically send emails to the
+product administrator so they can approve and update the add-on.
+
+These scenarios require manual customer approval:  
+
+* Your listing changes from __free to paid__: Your change triggers a Marketplace approval. Existing customers need to
+approve the change to start paying for your add-on, otherwise they will need to uninstall it. 
+* Your listing involves __additional [scopes](../scopes/scopes.html)__: Marketplace updates happen automatically, 
+but customers need to approve the changes before the add-on is updated. 
+
+In both cases, customers continue using the old version of the add-on until administrators approve the changes, or 
+rejects them.
+
+### What this means for your add-on
+
+If the new version of your add-on is backward compatible, in other words if it is able to handle requests from instances who
+have an older version of the descriptor, the upgrade will be transparent. All customer instances will be upgraded over a 
+period of **up to 10 hours**.
+
+However if the new version of your add-on is not backward compatible, you should make sure that your solution caters for 
+supporting both the old and the new version of the add-on:
+
+* For up to 10 hours (or a day to be safe) if the changes do not require manual customer approval.
+* If the changes require customer approval, until administrators for all instances have approved/rejected the changes, or 
+you decide to retire the old version of your add-on.
 
 ##Major, minor, and micro version update definitions  
-
-Updates are published to the Marketplace within a few minutes of detecting changes from your [descriptor file](../modules/). 
 
 We automatically build a version identifier for your add-on. How we increment your version number depends on the changes
 detected in your descriptor file. For example:
@@ -36,20 +78,6 @@ major version matches the API version listed in your descriptor.
 * __Minor version__ (`1.2.3` to `1.3.0`): Increase or changes in scope, _and/or_ a transition from a free to paid model.
 Customers must manually approve updates for minor version updates.
 * __Micro version__ (`1.2.3` to `1.2.4`): Any descriptor changes not included above that do _not_ require manual approval.
-
-## Changes that require manual customer approval  
-
-Even though your add-on is automatically updated in the Marketplace, certain scenarios require customers to manually
-approve your add-on's update in the [UPM](https://confluence.atlassian.com/x/_AJTE). We automatically send emails to the
-product administrator so they can approve and update the add-on.
-
-These scenarios require manual customer approval:  
-
-* Your listing changes from __free to paid__: Your change triggers a Marketplace approval. Existing customers need to
-approve the change to start paying for your add-on, otherwise they will need to uninstall it.
-* Your listing involves __additional [scopes](../scopes/scopes.html)__: Marketplace updates happen automatically (no
-approval necessary), but customers need to approve the changes to continue using your add-on.
-
 
 ## Viewing automatically added versions  
 
