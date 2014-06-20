@@ -29,7 +29,7 @@ public class JiraViewIssuePageWithRemotePluginIssueTab extends ConnectAddOnEmbed
     @Override
     public String getUrl()
     {
-        return "/browse/" + issueKey + "?page=" + pagePrefix + pageElementKey;
+        return "/browse/" + issueKey + "?page=" + pagePrefix + addOnKey + "__" + pageElementKey; // com.atlassian.plugins.atlassian-connect-plugin:2tnm4dbyoxfktboogbmo__issue-tab-panel
     }
 
 

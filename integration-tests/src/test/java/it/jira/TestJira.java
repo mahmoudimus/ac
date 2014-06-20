@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
@@ -125,8 +126,10 @@ public class TestJira extends JiraWebDriverTestBase
                 // TODO: click the link with id="<add-on key>__jira-remote-plugin-issue-tab-page",
                 // which loads the iframe contained in the div with id="embedded-<add-on key>__jira-remote-plugin-issue-tab-page",
                 // and then look for iframe content with JiraViewIssuePageWithRemotePluginIssueTab.getMessage()
+                //JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
+                //        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey(), addOnKey, addOnKey + ":");
                 JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
-                        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey(), addOnKey, addOnKey + ":");
+                        JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issue.getKey(), addOnKey, ConnectPluginInfo.getPluginKey() + ":");
                 Assert.assertEquals("Success", page.getMessage());
                 return null;
             }
