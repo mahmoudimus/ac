@@ -3,6 +3,7 @@ package it.capabilities.jira;
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
@@ -61,6 +62,7 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
                 )
                 .addRoute("/ippd", ConnectAppServlets.openDialogServlet())
                 .addRoute("/my-dialog-url", ConnectAppServlets.closeDialogServlet())
+                .addScope(ScopeName.READ)
                 .start();
     }
 
@@ -92,7 +94,7 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG), issueKey, PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
+                JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_W_DIALOG, issueKey, PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
 
         RemoteDialogOpeningPage dialogOpeningPage = jira().getPageBinder().bind(RemoteDialogOpeningPage.class, null, addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG), remotePlugin.getAddon().getKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(PLUGIN_KEY,ADDON_DIALOG));
