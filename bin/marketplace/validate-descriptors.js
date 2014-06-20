@@ -39,6 +39,7 @@ function validate(opts, addonKey, descriptorFilename, descriptor, schema, callba
         var r = {
             "addon": addonKey,
             "descriptorUrl": descriptorFilename,
+            "version": descriptor.version,
             "errors": errors || []
         };
         if (errors) {
