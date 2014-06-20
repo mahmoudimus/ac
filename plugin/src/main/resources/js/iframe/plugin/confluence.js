@@ -17,8 +17,8 @@ AP.define("confluence", ["_dollar", "_rpc"],
                 *   confluence.saveMacro({foo: 'bar'});
                 * });
                 */
-                saveMacro: function (macroParameters) {
-                    remote.saveMacro(macroParameters);
+                saveMacro: function (macroParameters, macroBody) {
+                    remote.saveMacro(macroParameters, macroBody);
                 },
                 /**
                 * Get the data saved in the saveMacro method.
@@ -32,6 +32,20 @@ AP.define("confluence", ["_dollar", "_rpc"],
                 */
                 getMacroData: function (callback) {
                     remote.getMacroData(callback);
+                },
+
+                /**
+                 * Get the body saved in the saveMacro method.
+                 * @param {Function} callback to be passed the macro data.
+                 * @example
+                 * AP.require('confluence', function(confluence){
+                  *   var macroBody = confluence.getMacroBody(function(body){
+                  *       alert(body);
+                  *   });
+                  * });
+                 */
+                getMacroBody: function (callback) {
+                  remote.getMacroBody(callback);
                 },
 
                 /**

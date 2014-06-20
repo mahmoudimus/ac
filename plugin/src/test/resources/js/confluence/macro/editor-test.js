@@ -139,5 +139,14 @@ define(['confluence/macro/editor'], function() {
         equal(spy.args[0][0], MacroData.params, 'getMacroData passes the macro data to the callback function');
     });
 
+    test("getMacroBody returns the macro body", function () {
+      MacroData.body = "<p>macro body</p>";
+      MacroEditorOpts.url = '/servlet/atlassian-connect/modulekey/pluginkey/';
+      confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
+      var spy = sinon.spy();
+      confluenceMacroEditor.getMacroBody(spy);
+      equal(spy.args[0][0], MacroData.body, 'getMacroBody passes the macro body to the callback function');
+    });
+
   });
 });
