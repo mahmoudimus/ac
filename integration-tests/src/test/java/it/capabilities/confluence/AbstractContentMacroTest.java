@@ -14,7 +14,10 @@ import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.*;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.MacroList;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -342,7 +345,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         try
         {
             dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
-            String content = dialog.getEmbeddedPage().getValueById("description");
+            String content = dialog.getValueById("description");
 
             assertThat(content, is("Select from:"));
         }

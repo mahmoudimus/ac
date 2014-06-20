@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.connect.spi.util.XmlUtils;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;

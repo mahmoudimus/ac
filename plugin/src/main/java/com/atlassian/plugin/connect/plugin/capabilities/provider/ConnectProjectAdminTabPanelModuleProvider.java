@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -14,10 +12,10 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
 import com.google.common.collect.ImmutableList;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.iFrameServletPath;
