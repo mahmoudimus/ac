@@ -4,16 +4,13 @@ import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.testkit.client.restclient.Version;
 import com.atlassian.jira.testkit.client.restclient.VersionClient;
 import com.atlassian.jira.tests.TestBase;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.module.jira.versiontab.VersionTabPageModuleDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.VersionTabPageModule;
 import it.servlet.ConnectAppServlets;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.rmi.RemoteException;
 
@@ -23,6 +20,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of remote version tab panel in JIRA
  */
+@XmlDescriptor
 public class TestVersionTabPage extends TestBase
 {
     private static AtlassianConnectAddOnRunner remotePlugin;

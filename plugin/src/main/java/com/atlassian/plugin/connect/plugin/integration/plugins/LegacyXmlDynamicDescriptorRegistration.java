@@ -3,7 +3,9 @@ package com.atlassian.plugin.connect.plugin.integration.plugins;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.StateAware;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -28,6 +30,7 @@ import static java.util.Arrays.asList;
  */
 @Deprecated
 @Component
+@XmlDescriptor
 public class LegacyXmlDynamicDescriptorRegistration
 {
     private final BundleContext bundleContext;
@@ -74,6 +77,8 @@ public class LegacyXmlDynamicDescriptorRegistration
      */
     public Registration registerDescriptors(final Plugin plugin, Iterable<DescriptorToRegister> descriptors)
     {
+        XmlDescriptorExploder.notifyAndExplode(null == plugin ? null : plugin.getKey());
+
         Bundle bundle = BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey());
         BundleContext targetBundleContext = bundle.getBundleContext();
         final List<ServiceRegistration> registrations = newArrayList();

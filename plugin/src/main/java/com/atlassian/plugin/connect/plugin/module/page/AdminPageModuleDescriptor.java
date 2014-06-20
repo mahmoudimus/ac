@@ -2,8 +2,10 @@ package com.atlassian.plugin.connect.plugin.module.page;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.DefaultWebItemContext;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.module.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
@@ -19,11 +21,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class AdminPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
+    @XmlDescriptor
     private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator remotePageDescriptorCreator;
     private final ProductAccessor productAccessor;
     private final UserIsAdminCondition userIsAdminCondition;
     private Element descriptor;
+    @XmlDescriptor
     private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public AdminPageModuleDescriptor(
@@ -65,6 +69,7 @@ public final class AdminPageModuleDescriptor extends AbstractModuleDescriptor<Vo
             .setDecorator("atl.admin")
             .setCondition(userIsAdminCondition);
 
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
                 remotePageDescriptorBuilder.build(getPlugin(), descriptor));
     }
@@ -72,6 +77,8 @@ public final class AdminPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {

@@ -1,6 +1,7 @@
 package it.confluence;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.OAuthUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageMacroPage;
@@ -12,22 +13,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.test.HttpUtils.renderHtml;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
 import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+@XmlDescriptor
 public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
 {
     private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME));

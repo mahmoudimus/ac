@@ -117,7 +117,8 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 // TODO use i18n key when we fix Confluence to support reloading i18n
                 .withName(new I18nProperty(bean.getName().getValue(), bean.getName().getValue()))
                 .withKey(bean.getRawKey())
-                .withLocation("system.editor.featured.macros.default");
+                .withLocation("system.editor.featured.macros.default")
+                .useKeyAsIs(true);
 
         if (bean.hasIcon())
         {
@@ -133,7 +134,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     // No web-resource beans/builders/descriptors/providers, so falling back to XML
     private ModuleDescriptor createFeaturedIconWebResource(ConnectAddonBean addon, Plugin theConnectPlugin, T bean)
     {
-        String macroKey = bean.getKey(addon);
+        String macroKey = bean.getRawKey();
 
         Element webResource = new DOMElement("web-resource")
                 .addAttribute("key", macroKey + "-featured-macro-resources");
@@ -170,7 +171,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
-                .module(macroBean.getKey(addon))
+                .module(macroBean.getRawKey())
                 .dialogTemplate()
                 .urlTemplate(editor.getUrl())
                 .title(macroBean.getDisplayName())
@@ -183,7 +184,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
     private ModuleDescriptor createEditorWebResource(ConnectAddonBean addon, Plugin theConnectPlugin, T macroBean)
     {
-        String macroKey = macroBean.getKey(addon);
+        String macroKey = macroBean.getRawKey();
 
         Element webResource = new DOMElement("web-resource")
                 .addElement("web-resource")

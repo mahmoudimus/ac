@@ -2,7 +2,9 @@ package com.atlassian.plugin.connect.plugin.module.page;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
@@ -17,9 +19,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
+    @XmlDescriptor
     private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;
     private Element descriptor;
+    @XmlDescriptor
     private LegacyXmlDynamicDescriptorRegistration.Registration registration;
     private static final Logger log = LoggerFactory.getLogger(GeneralPageModuleDescriptor.class);
 
@@ -50,6 +54,8 @@ public final class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<
     @Override
     public void enabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.enabled();
         log.debug("Enabling general page {} instance {}", getKey(), System.identityHashCode(this));
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
@@ -59,6 +65,8 @@ public final class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         log.debug("Disabling general page {} instance {}" , getKey(), System.identityHashCode(this));
         super.disabled();
         if (registration != null)

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -55,6 +56,11 @@ public class ConnectPageOperations
     public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownLinkId)
     {
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownLinkId);
+    }
+
+    public RemoteWebItem findWebItem(ItemMatchingMode mode, String matchValue, Optional<String> dropDownLinkId)
+    {
+        return pageBinder.bind(RemoteWebItem.class, mode, matchValue, dropDownLinkId);
     }
 
     public RenderedMacro findMacroWithIdPrefix(String idPrefix)
@@ -130,6 +136,12 @@ public class ConnectPageOperations
     public LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
+    }
+
+
+    public ConnectMacroBrowserDialog findConnectMacroBrowserDialog()
+    {
+        return pageBinder.bind(ConnectMacroBrowserDialog.class);
     }
 
     @Deprecated

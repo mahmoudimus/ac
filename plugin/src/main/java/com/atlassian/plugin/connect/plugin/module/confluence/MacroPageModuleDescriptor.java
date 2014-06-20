@@ -2,11 +2,13 @@ package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
@@ -22,10 +24,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
+    @XmlDescriptor
     private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final MacroModuleDescriptorCreator.Builder macroModuleDescriptorCreatorBuilder;
 
     private Element descriptor;
+    @XmlDescriptor
     private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public MacroPageModuleDescriptor(
@@ -74,6 +78,8 @@ public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     @Override
     public void enabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.enabled();
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
                 macroModuleDescriptorCreatorBuilder.build(getPlugin(), descriptor));
@@ -82,6 +88,8 @@ public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         super.disabled();
         if (registration != null)
         {

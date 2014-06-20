@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.webpanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.util.VelocityKiller;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.LegacyXmlDynamicDescriptorRegistration;
@@ -13,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerialize
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
@@ -39,6 +41,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
 {
     public static final String REMOTE_WEB_PANEL_MODULE_PREFIX = "remote-web-panel-";
     private final IFrameRendererImpl iFrameRenderer;
+    @XmlDescriptor
     private final LegacyXmlDynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final HostContainer hostContainer;
     private final BundleContext bundleContext;
@@ -53,6 +56,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     private String location;
 
     private Element descriptor;
+    @XmlDescriptor
     private LegacyXmlDynamicDescriptorRegistration.Registration registration;
 
     public RemoteWebPanelModuleDescriptor(
@@ -111,12 +115,15 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
 
         ModuleDescriptor<WebPanel> moduleDescriptor = createWebPanelModuleDescriptor(moduleKey, desc, condition, new IFrameParamsImpl(descriptor));
 
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
 
     @Override
     public void disabled()
     {
+        XmlDescriptorExploder.notifyAndExplode(getPluginKey());
+
         if (registration != null)
         {
             registration.unregister();

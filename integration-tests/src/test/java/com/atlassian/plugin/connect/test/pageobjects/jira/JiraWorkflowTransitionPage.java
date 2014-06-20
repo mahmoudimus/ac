@@ -97,6 +97,7 @@ public class JiraWorkflowTransitionPage extends AbstractJiraPage {
     {
         poller.waitUntil(isPresent(By.id("view_post_functions")), 5);
         driver.findElement(By.id("view_post_functions")).click();
+        poller.waitUntil(isPresent(By.className("criteria-post-function-edit")), 5);
         driver.findElement(By.className("criteria-post-function-edit")).click();
         return pageBinder.bind(JiraAddWorkflowTransitionFunctionParamsPage.class, addonKey, moduleKey);
 

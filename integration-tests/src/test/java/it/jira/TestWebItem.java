@@ -1,6 +1,7 @@
 package it.jira;
 
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -19,6 +20,7 @@ import static org.junit.Assert.*;
 /**
  * Test of remote web items in JIRA.
  */
+@XmlDescriptor
 public class TestWebItem extends JiraWebDriverTestBase
 {
     private static final String GENERAL_WEBITEM = "system-web-item";

@@ -86,4 +86,10 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     {
         return confluenceConditions.getConditions();
     }
+
+    @Override
+    public boolean needsAdminPageNameEscaping()
+    {
+        return true;
+    }
 }

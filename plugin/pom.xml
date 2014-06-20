@@ -103,6 +103,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-static-analysis</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>biz.aQute</groupId>
             <artifactId>bndlib</artifactId>
             <version>1.43.0-atlassian-1</version>
@@ -1171,6 +1177,6 @@
         <mvnCommand>/usr/bin/mvn</mvnCommand>
         <debugSchemaGen>false</debugSchemaGen>
         <ao.version>0.25.2</ao.version>
-        <bp.version>4.0.15-SNAPSHOT</bp.version>
+        <bp.version>4.0.17-SNAPSHOT</bp.version>
     </properties>
 </project>

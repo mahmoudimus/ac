@@ -12,7 +12,12 @@ import com.atlassian.confluence.it.plugin.WebTestPluginHelper;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.it.rpc.StartOfTestLogger;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
+import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
+import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
+import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.util.concurrent.LazyReference;
 import it.ConnectWebDriverTestBase;
 import org.junit.AfterClass;
@@ -134,5 +139,15 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         return new MavenUploadablePlugin("com.atlassian.confluence.plugins.confluence-scriptsfinished-plugin",
                 "Confluence Scripts Finished Plugin",
                 MavenDependencyHelper.resolve("com.atlassian.confluence.plugins", "confluence-scriptsfinished-plugin"));
+    }
+
+    protected void selectMacro(CreatePage editorPage, String macroName)
+    {
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        ConnectMacroBrowserDialog connectMacroBrowserDialog = connectPageOperations.findConnectMacroBrowserDialog();
+        MacroItem macro = macroBrowser.searchForFirst(macroName);
+        MacroForm macroForm = macro.select();
+        macroForm.waitUntilVisible();
+        connectMacroBrowserDialog.clickSave();
     }
 }

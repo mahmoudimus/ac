@@ -25,4 +25,6 @@ public interface ProductAccessor extends HostProperties
     Map<String, String> getLinkContextParams();
 
     Map<String, Class<? extends Condition>> getConditions();
+
+    boolean needsAdminPageNameEscaping();
 }

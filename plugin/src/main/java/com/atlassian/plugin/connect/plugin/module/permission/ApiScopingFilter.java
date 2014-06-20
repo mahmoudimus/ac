@@ -3,10 +3,12 @@ package com.atlassian.plugin.connect.plugin.module.permission;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestDeniedEvent;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
@@ -149,8 +151,11 @@ public class ApiScopingFilter implements Filter
         chain.doFilter(inputConsumingRequest, res);
     }
 
+    @XmlDescriptor
     private void handleXdmRequest(String clientKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
     {
+        XmlDescriptorExploder.notifyAndExplode(clientKey);
+
         // prevent all XDM requests made on behalf of system administrators
         UserKey userKey = userManager.getRemoteUserKey(req);
         if (!DEV_MODE_ENABLED && userKey != null && userManager.isSystemAdmin(userKey))

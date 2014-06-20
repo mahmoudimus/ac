@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -32,6 +34,7 @@ import static java.lang.String.format;
  * Provides information to support atlassian-plugin.xml validation
  */
 @Component
+@XmlDescriptor
 public class PluginDescriptorValidatorProvider implements DescriptorValidatorProvider
 {
     private final Plugin plugin;
@@ -56,6 +59,8 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
     @Override
     public String getSchemaNamespace()
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         return format("%s/rest/atlassian-connect/1%s%s",
                 applicationProperties.getBaseUrl(UrlMode.CANONICAL),
                 INSTALLER_RESOURCE_PATH,
@@ -65,12 +70,16 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
     @Override
     public String getRootElementName()
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         return "AtlassianPluginType";
     }
 
     @Override
     public Iterable<Schema> getModuleSchemas()
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         return filter(concat(transform(describedModuleDescriptorFactoryAccessor.getDescribedModuleDescriptorFactories(),
                 new Function<DescribedModuleDescriptorFactory, Iterable<Schema>>()
                 {
@@ -122,6 +131,8 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
     @Override
     public void performSecondaryValidations(Document document) throws InstallationFailedException
     {
+        XmlDescriptorExploder.notifyAndExplode(null == document ? null : document.getRootElement().attributeValue("key"));
+
         Set<String> permissions = permissionsReader.readPermissionsFromDescriptor(document);
         @SuppressWarnings("unchecked")
         Collection<String> moduleTypes = Collections2.transform((Collection<Element>) document.getRootElement().elements(), new Function<Element, String>()
@@ -156,6 +167,8 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
     @Override
     public URL getSchemaUrl()
     {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
         return plugin.getResource("/xsd/atlassian-plugin.xsd");
     }
 }

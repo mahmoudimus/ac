@@ -1,8 +1,11 @@
 package com.atlassian.plugin.connect.plugin.oldscopes.jira;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.*;
 import com.atlassian.sal.api.user.UserKey;
+import net.oauth.OAuth;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -10,6 +13,7 @@ import java.util.Collection;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.concat;
 
+@XmlDescriptor
 abstract class JiraScope extends AbstractPermission implements ApiScope
 {
     private final RpcEncodedSoapApiScopeHelper soapScopeHelper;
@@ -29,6 +33,8 @@ abstract class JiraScope extends AbstractPermission implements ApiScope
     @Override
     public final boolean allow(HttpServletRequest request, UserKey user)
     {
+        XmlDescriptorExploder.notifyAndExplode(null == request ? null : request.getParameter(OAuth.OAUTH_CONSUMER_KEY)); // XML-descriptor add-ons should be using OAuth
+
         return soapScopeHelper.allow(request, user) || jsonRpcScopeHelper.allow(request, user) || restApiScopeHelper.allow(request, user);
     }
 

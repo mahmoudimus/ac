@@ -1,6 +1,10 @@
 package com.atlassian.plugin.connect.plugin.webhooks;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.modules.beans.XmlDescriptorCodeInvokedEventBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectAddonEventSerializer;
+import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.event.*;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.*;
@@ -26,12 +30,7 @@ public final class PluginsWebHookProvider implements WebHookProvider
     public void provide(WebHookRegistrar registrar)
     {
         /* Legacy XML Stuff */
-        final EventSerializerFactory serializerFactory = new RemotePluginEventSerializerFactory();
-        final RemotePluginEventMatcher eventTypeMatcher = new RemotePluginEventMatcher();
-
-        registrar.webhook(REMOTE_PLUGIN_INSTALLED).whenFired(RemotePluginInstalledEvent.class).matchedBy(eventTypeMatcher).serializedWith(serializerFactory);
-        registrar.webhook(REMOTE_PLUGIN_ENABLED).whenFired(RemotePluginEnabledEvent.class).matchedBy(eventTypeMatcher).serializedWith(serializerFactory);
-        registrar.webhook(REMOTE_PLUGIN_DISABLED).whenFired(RemotePluginDisabledEvent.class).matchedBy(eventTypeMatcher).serializedWith(serializerFactory);
+        provideLegacyXmlSerializers(registrar);
         
         /* New Json Stuff */
         final EventSerializerFactory connectAddonEventSerializerFactory = new ConnectAddonEventSerializerFactory();
@@ -39,6 +38,22 @@ public final class PluginsWebHookProvider implements WebHookProvider
         registrar.webhook(CONNECT_ADDON_ENABLED).whenFired(ConnectAddonEnabledEvent.class).matchedBy(connectAddonEventMatcher).serializedWith(connectAddonEventSerializerFactory);
         registrar.webhook(CONNECT_ADDON_DISABLED).whenFired(ConnectAddonDisabledEvent.class).matchedBy(connectAddonEventMatcher).serializedWith(connectAddonEventSerializerFactory);
         //registrar.webhook(CONNECT_ADDON_UNINSTALLED).whenFired(ConnectAddonUninstalledEvent.class).matchedBy(connectAddonEventMatcher).serializedWith(connectAddonEventSerializerFactory);
+
+        // XML descriptor code invocations
+        registrar.webhook("connect.xmldescriptor.code.invoked").whenFired(XmlDescriptorCodeInvokedEvent.class).matchedBy(new XmlDescriptorCodeInvokedEventMatcher()).serializedWith(new XmlDescriptorCodeInvokedEventSerializerFactory());
+    }
+
+    @XmlDescriptor
+    private static void provideLegacyXmlSerializers(WebHookRegistrar registrar)
+    {
+        XmlDescriptorExploder.notifyAndExplode(null);
+
+        final EventSerializerFactory serializerFactory = new RemotePluginEventSerializerFactory();
+        final RemotePluginEventMatcher eventTypeMatcher = new RemotePluginEventMatcher();
+
+        registrar.webhook(REMOTE_PLUGIN_INSTALLED).whenFired(RemotePluginInstalledEvent.class).matchedBy(eventTypeMatcher).serializedWith(serializerFactory);
+        registrar.webhook(REMOTE_PLUGIN_ENABLED).whenFired(RemotePluginEnabledEvent.class).matchedBy(eventTypeMatcher).serializedWith(serializerFactory);
+        registrar.webhook(REMOTE_PLUGIN_DISABLED).whenFired(RemotePluginDisabledEvent.class).matchedBy(eventTypeMatcher).serializedWith(serializerFactory);
     }
 
     private static final class RemotePluginEventMatcher<E extends RemotePluginEvent> implements EventMatcher<E>
@@ -81,6 +96,47 @@ public final class PluginsWebHookProvider implements WebHookProvider
                 data = ((ConnectAddonLifecycleWithDataEvent) event).getData();
             }
             return new ConnectAddonEventSerializer(event, data);
+        }
+    }
+
+    private static final class XmlDescriptorCodeInvokedEventMatcher implements EventMatcher<XmlDescriptorCodeInvokedEvent>
+    {
+        @Override
+        public boolean matches(XmlDescriptorCodeInvokedEvent event, Object consumerParams)
+        {
+            return consumerParams instanceof PluginModuleListenerParameters
+                    && ((PluginModuleListenerParameters) consumerParams).getPluginKey().equals(event.getAddOnKey());
+        }
+    }
+
+    private static final class XmlDescriptorCodeInvokedEventSerializerFactory implements EventSerializerFactory<XmlDescriptorCodeInvokedEvent>
+    {
+        @Override
+        public EventSerializer create(XmlDescriptorCodeInvokedEvent event)
+        {
+            return new XmlDescriptorCodeInvokedEventSerializer(event);
+        }
+    }
+
+    private static final class XmlDescriptorCodeInvokedEventSerializer implements EventSerializer
+    {
+        private final XmlDescriptorCodeInvokedEvent event;
+
+        private XmlDescriptorCodeInvokedEventSerializer(XmlDescriptorCodeInvokedEvent event)
+        {
+            this.event = event;
+        }
+
+        @Override
+        public Object getEvent()
+        {
+            return event;
+        }
+
+        @Override
+        public String getWebHookBody() throws EventSerializationException
+        {
+            return ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create().toJson(new XmlDescriptorCodeInvokedEventBean(event.getAddOnKey(), event.getStackTrace()));
         }
     }
 }

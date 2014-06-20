@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder
  * URL to a page in your add-on which will be shown in the dialog iFrame.
  *
  * In order to persist custom data in your macro editor, use the Javascript
- * [Confluence API](../../javascript/module-confluence.html) and the [Dialog API](../../javascript/module-dialog.html).
+ * [Confluence API](../../javascript/module-confluence.html) and the [Dialog API](../../javascript/module-Dialog.html).
  * For example:
  *
  *

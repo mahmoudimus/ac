@@ -78,7 +78,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
         loginAsAdmin();
         product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
 
-        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY), PAGE_NAME);
+        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY));
 
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
@@ -95,10 +95,10 @@ public class TestAdminPage extends JiraWebDriverTestBase
         loginAsAdmin();
         product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
 
-        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY), PAGE_NAME);
+        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY));
 
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
-        
+
         RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
         assertTrue("Addon is full size", addonContentsPage.isFullSize());
     }
