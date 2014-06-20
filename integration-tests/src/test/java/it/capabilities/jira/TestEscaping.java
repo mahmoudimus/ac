@@ -19,18 +19,7 @@ import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAddWorkflowTransitionPostFunctionPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.Section;
-import com.atlassian.plugin.connect.test.pageobjects.jira.WorkflowPostFunctionEntry;
+import com.atlassian.plugin.connect.test.pageobjects.jira.*;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -240,7 +229,7 @@ public class TestEscaping extends TestBase
                 .name("Component Tab Panel Test")
                 .project(PROJECT_KEY));
 
-        JiraComponentTabPage componentTabPage = jira().quickLoginAsAdmin(JiraComponentTabPage.class, PROJECT_KEY,
+        JiraComponentTabPanel componentTabPage = jira().quickLoginAsAdmin(JiraComponentTabPanel.class, PROJECT_KEY,
                 component.id.toString(), ConnectPluginInfo.getPluginKey(), getModuleKey(COMPONENT_TAB_PANEL_KEY));
 
         assertIsEscaped(componentTabPage.findAddOnTab().getText());
@@ -251,7 +240,7 @@ public class TestEscaping extends TestBase
     {
         IssueCreateResponse issue = jira().backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().quickLoginAsAdmin(JiraViewIssuePageWithRemotePluginIssueTab.class,
-                getModuleKey(ISSUE_TAB_PANEL_KEY), issue.key(), runner.getAddon().getKey(), ConnectPluginInfo.getPluginKey() + ":");
+                ISSUE_TAB_PANEL_KEY, issue.key(), runner.getAddon().getKey(), ConnectPluginInfo.getPluginKey() + ":");
         assertIsEscaped(page.getTabName());
     }
 

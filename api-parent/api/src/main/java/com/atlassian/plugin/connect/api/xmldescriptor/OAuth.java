@@ -6,12 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Label code that is specific to the XML descriptors and should therefore be ported or retried with the
- * retirement of the XML descriptor. Allows such code to be more easily found, for example by XmlDescriptorAnnotationProcessor.
+ * Label code that is specific to OAuth authentication and should therefore be ported or retired with support for this authentication method.
+ * Allows such code to be more easily found.
  */
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR})
-public @interface XmlDescriptor
+public @interface OAuth
 {
-    String comment() default "";
 }

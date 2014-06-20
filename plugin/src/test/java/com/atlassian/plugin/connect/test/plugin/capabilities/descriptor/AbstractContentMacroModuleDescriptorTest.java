@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.spring.container.ContainerContext;

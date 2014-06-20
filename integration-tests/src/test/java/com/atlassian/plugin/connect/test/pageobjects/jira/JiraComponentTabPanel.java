@@ -5,9 +5,9 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil;
 /**
  * Describes JIRA component tab
  */
-public class JiraComponentTabPage extends AbstractJiraTabPage
+public class JiraComponentTabPanel extends AbstractJiraTabPage
 {
-    public JiraComponentTabPage(String projectKey, String componentId, String pluginKey, String moduleKey)
+    public JiraComponentTabPanel(String projectKey, String componentId, String pluginKey, String moduleKey)
     {
         super(projectKey, componentId, pluginKey, moduleKey);
     }

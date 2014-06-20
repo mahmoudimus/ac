@@ -1,7 +1,6 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
@@ -15,14 +14,13 @@ import it.AbstractBrowserlessTest;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInRunner;
+import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
 import static org.junit.Assert.*;
 
 /**
  * Though jira-webhooks-plugin is a separate component the following test executes a quick smoke test
  * which verifies if jira webhooks are available for AC plugins.
  */
-@XmlDescriptor
 public class TestJiraWebHooks extends AbstractBrowserlessTest
 {
     private final JiraOps jiraOps;
@@ -36,8 +34,7 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
     @Test
     public void testWebHookOnIssueCreated() throws Exception
     {
-        final String pluginKey = RemotePluginUtils.randomPluginKey();
-        runInRunner(baseUrl, "issue_created", "jira:issue_created", pluginKey, new WebHookTester()
+        runInJsonRunner(baseUrl, RemotePluginUtils.randomPluginKey(), "jira:issue_created", new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
@@ -55,9 +52,7 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
     @Test
     public void testWebHookOnIssueUpdated() throws Exception
     {
-        final String pluginKey = RemotePluginUtils.randomPluginKey();
-        
-        runInRunner(baseUrl, "issue_updated", "jira:issue_updated", pluginKey, new WebHookTester()
+        runInJsonRunner(baseUrl, RemotePluginUtils.randomPluginKey(), "jira:issue_updated", new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
@@ -76,9 +71,7 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
     @Test
     public void testWebHookOnIssueTransitioned() throws Exception
     {
-        final String pluginKey = RemotePluginUtils.randomPluginKey();
-        
-        runInRunner(baseUrl, "issue_transitioned", "jira:issue_updated", pluginKey, new WebHookTester()
+        runInJsonRunner(baseUrl, RemotePluginUtils.randomPluginKey(), "jira:issue_updated", new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
