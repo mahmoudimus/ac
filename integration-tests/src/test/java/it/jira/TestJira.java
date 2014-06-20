@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
@@ -168,6 +169,7 @@ public class TestJira extends JiraWebDriverTestBase
         loginAsAdmin();
         final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX, remotePlugin.getAddon().getKey());
         assertTrue(adminPage.hasGeneralRemotableAdminPage());
-        assertEquals(ADMIN_FULL_NAME, adminPage.clickGeneralRemotableAdminPage().getFullName());
+        final ConnectAddOnEmbeddedTestPage nextPage = adminPage.clickGeneralRemotableAdminPage();
+        assertEquals(ADMIN_FULL_NAME, nextPage.getFullName());
     }
 }
