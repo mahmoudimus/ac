@@ -1,12 +1,9 @@
 package it.com.atlassian.plugin.connect.installer;
 
-import java.io.StringWriter;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -16,30 +13,23 @@ import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.google.gson.JsonParser;
-
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.bouncycastle.openssl.PEMWriter;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+import java.io.StringWriter;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
-import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.AdditionalMatchers.not;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
+@Ignore("not needed now that OAuth is deprecated and failing with 'NoClassDefFoundError: org/bouncycastle/openssl/PEMWriter' @ new PEMWriter() invocation")
+@OAuth
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 {
