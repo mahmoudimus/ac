@@ -96,7 +96,7 @@ public class TestIssueTabPanel extends TestBase
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-page-jira-remotePluginIssueTabPage", addonAndModuleKey(PLUGIN_KEY,"issue-tab-panel"), issue.getKey(), PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
+                JiraViewIssuePageWithRemotePluginIssueTab.class, addonAndModuleKey(PLUGIN_KEY,"issue-tab-panel"), issue.getKey(), PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
         assertThat(page.getMessage(), is("Success"));
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();

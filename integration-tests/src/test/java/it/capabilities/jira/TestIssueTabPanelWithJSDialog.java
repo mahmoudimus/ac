@@ -92,7 +92,7 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-page-jira-remotePluginIssueTabPage", addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG), issueKey, PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
+                JiraViewIssuePageWithRemotePluginIssueTab.class, addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG), issueKey, PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
 
         RemoteDialogOpeningPage dialogOpeningPage = jira().getPageBinder().bind(RemoteDialogOpeningPage.class, null, addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG), remotePlugin.getAddon().getKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(PLUGIN_KEY,ADDON_DIALOG));
