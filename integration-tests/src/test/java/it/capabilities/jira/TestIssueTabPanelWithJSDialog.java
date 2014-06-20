@@ -1,7 +1,5 @@
 package it.capabilities.jira;
 
-import java.rmi.RemoteException;
-
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -14,18 +12,14 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+
+import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
@@ -98,7 +92,7 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG), issueKey, PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
+                JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-page-jira-remotePluginIssueTabPage", addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG), issueKey, PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
 
         RemoteDialogOpeningPage dialogOpeningPage = jira().getPageBinder().bind(RemoteDialogOpeningPage.class, null, addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG), remotePlugin.getAddon().getKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(PLUGIN_KEY,ADDON_DIALOG));

@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 
 public class JiraViewIssuePageWithRemotePluginIssueTab extends ConnectAddOnEmbeddedTestPage implements Page
 {
-    public static final String DEFAULT_PAGE_KEY = "jira-remote-plugin-issue-tab-page";
+    private static final String DEFAULT_PAGE_KEY = "jira-remote-plugin-issue-tab-page";
     private final String issueKey;
     private final String pagePrefix;
 
