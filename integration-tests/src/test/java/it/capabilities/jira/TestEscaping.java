@@ -229,7 +229,7 @@ public class TestEscaping extends TestBase
                 .name("Component Tab Panel Test")
                 .project(PROJECT_KEY));
 
-        JiraComponentTabPage componentTabPage = jira().quickLoginAsAdmin(JiraComponentTabPage.class, PROJECT_KEY,
+        JiraComponentTabPanel componentTabPage = jira().quickLoginAsAdmin(JiraComponentTabPanel.class, PROJECT_KEY,
                 component.id.toString(), ConnectPluginInfo.getPluginKey(), getModuleKey(COMPONENT_TAB_PANEL_KEY));
 
         assertIsEscaped(componentTabPage.findAddOnTab().getText());
