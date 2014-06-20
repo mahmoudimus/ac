@@ -77,4 +77,10 @@ public final class JiraProductAccessor implements ProductAccessor
     {
         return jiraConditions.getConditions();
     }
+
+    @Override
+    public boolean needsAdminPageNameEscaping()
+    {
+        return false;
+    }
 }

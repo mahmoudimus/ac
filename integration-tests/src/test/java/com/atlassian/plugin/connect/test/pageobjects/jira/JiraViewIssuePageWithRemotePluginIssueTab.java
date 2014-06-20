@@ -2,11 +2,14 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 public class JiraViewIssuePageWithRemotePluginIssueTab extends ConnectAddOnEmbeddedTestPage implements Page
 {
     private static final String DEFAULT_PAGE_KEY = "jira-remote-plugin-issue-tab-page";
     private final String issueKey;
+    private final String pluginKey;
     private final String pagePrefix;
 
     public JiraViewIssuePageWithRemotePluginIssueTab(String issueKey, String pluginKey)
@@ -23,14 +26,24 @@ public class JiraViewIssuePageWithRemotePluginIssueTab extends ConnectAddOnEmbed
     {
         super(pageKey, pluginKey, true);
         this.issueKey = issueKey;
+        this.pluginKey = pluginKey;
         this.pagePrefix = pagePrefix;
     }
 
     @Override
     public String getUrl()
     {
-        return "/browse/" + issueKey + "?page=" + pagePrefix + addOnKey + "__" + pageElementKey; // com.atlassian.plugins.atlassian-connect-plugin:2tnm4dbyoxfktboogbmo__issue-tab-panel
+        return "/browse/" + issueKey + "?page=" + pagePrefix + getTabLinkId(); // com.atlassian.plugins.atlassian-connect-plugin:2tnm4dbyoxfktboogbmo__issue-tab-panel
     }
 
+    public String getTabName()
+    {
+        WebElement tab = driver.findElement(By.id(getTabLinkId()));
+        return tab.getText();
+    }
 
+    private String getTabLinkId()
+    {
+        return addOnKey + "__" + pageElementKey;
+    }
 }

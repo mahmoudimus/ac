@@ -1,7 +1,7 @@
 
 # Release Notes
 
-## [1.1.0](../release-notes/1-1-rc.html)
+## [1.1.0-beta.2](../release-notes/1-1-0.html)
 * Support for managing cookies through javascript. Check out the [cookie api](../javascript/module-cookie.html)
 * Support for managing browser history through javascript. Check out the [history api](../javascript/module-history.html)
 * Update dialogs to allow the chrome flag

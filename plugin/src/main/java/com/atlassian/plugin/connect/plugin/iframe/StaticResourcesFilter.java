@@ -1,24 +1,27 @@
 package com.atlassian.plugin.connect.plugin.iframe;
 
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENABLED;
 
@@ -28,15 +31,15 @@ import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENAB
 public class StaticResourcesFilter implements Filter
 {
     public static final String HOST_RESOURCE_PATH = "/atlassian-connect";
-    public static final int PLUGIN_TTL_NEAR_FUTURE  = 60 * 30;               // 30 min
-    public static final int AUI_TTL_FAR_FUTURE      = 60 * 60 * 24 * 365;    // 1 year
+    public static final int PLUGIN_TTL_NEAR_FUTURE = 60 * 30;               // 30 min
+    public static final int AUI_TTL_FAR_FUTURE = 60 * 60 * 24 * 365;    // 1 year
 
     private static final Pattern RESOURCE_PATTERN = Pattern.compile("(all(-debug)?\\.(js|css))|(aui/.*)");
     private static final Logger log = LoggerFactory.getLogger(StaticResourcesFilter.class);
     private static Plugin plugin;
 
     private FilterConfig config;
-    private Map<String, CacheEntry> cache;
+    private LoadingCache<String, CacheEntry> loadingCache;
 
     public StaticResourcesFilter(PluginRetrievalService pluginRetreivalService)
     {
@@ -47,14 +50,15 @@ public class StaticResourcesFilter implements Filter
     public void init(FilterConfig config) throws ServletException
     {
         this.config = config;
-        cache = new MapMaker().makeComputingMap(new Function<String, CacheEntry>()
-        {
-            @Override
-            public CacheEntry apply(String from)
-            {
-                return new CacheEntry(from);
-            }
-        });
+        loadingCache = CacheBuilder.newBuilder()
+                                   .build(new CacheLoader<String, CacheEntry>()
+                                   {
+                                       @Override
+                                       public CacheEntry load(String s) throws Exception
+                                       {
+                                           return new CacheEntry(s);
+                                       }
+                                   });
     }
 
     @Override
@@ -95,27 +99,27 @@ public class StaticResourcesFilter implements Filter
             final String moduleDir = "js/iframe/";
             // note: any changes here must also be made in plugin/pom.xml!
             final String[] modules = {
-                "_amd.js",
-                "plugin/_util.js",
-                "plugin/_dollar.js",
-                "_base64.js",
-                "_events.js",
-                "_uri.js",
-                "_xdm.js",
-                "_ui-params.js",
-                "plugin/_rpc.js",
-                "plugin/events.js",
-                "plugin/env.js",
-                "plugin/request.js",
-                "plugin/dialog.js",
-                "plugin/inline-dialog.js",
-                "plugin/history.js",
-                "plugin/messages.js",
-                "plugin/cookie.js",
-                "plugin/_resize_listener.js",
-                "plugin/jira.js",
-                "plugin/confluence.js",
-                "plugin/_init.js"
+                    "_amd.js",
+                    "plugin/_util.js",
+                    "plugin/_dollar.js",
+                    "_base64.js",
+                    "_events.js",
+                    "_uri.js",
+                    "_xdm.js",
+                    "_ui-params.js",
+                    "plugin/_rpc.js",
+                    "plugin/events.js",
+                    "plugin/env.js",
+                    "plugin/request.js",
+                    "plugin/dialog.js",
+                    "plugin/inline-dialog.js",
+                    "plugin/history.js",
+                    "plugin/messages.js",
+                    "plugin/cookie.js",
+                    "plugin/_resize_listener.js",
+                    "plugin/jira.js",
+                    "plugin/confluence.js",
+                    "plugin/_init.js"
             };
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             for (String module : modules)
@@ -142,7 +146,17 @@ public class StaticResourcesFilter implements Filter
             }
 
             // ask the cache for an entry for the named resource
-            entry = cache.get(localPath);
+            try
+            {
+                entry = loadingCache.get(localPath);
+            }
+            catch (Exception e)
+            {
+                log.error("Error loading cache entry [" + localPath + "]", e);
+                // if not found, 404
+                send404(fullPath, res);
+                return;
+            }
 
             // the entry's data will be empty if the resource was not found
             if (entry.getData().length == 0)
@@ -177,7 +191,7 @@ public class StaticResourcesFilter implements Filter
 
         if (DEV_MODE_ENABLED)
         {
-            cache.remove(localPath);
+            loadingCache.invalidate(localPath);
         }
     }
 
@@ -199,7 +213,7 @@ public class StaticResourcesFilter implements Filter
     @Override
     public void destroy()
     {
-        cache.clear();
+        loadingCache.invalidateAll();
     }
 
     private class CacheEntry

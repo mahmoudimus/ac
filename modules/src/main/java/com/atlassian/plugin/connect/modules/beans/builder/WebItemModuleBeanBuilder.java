@@ -20,6 +20,7 @@ public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuil
     private I18nProperty tooltip;
     private IconBean icon;
     private WebItemTargetBean target;
+    private boolean needsEscaping = true;
 
     public WebItemModuleBeanBuilder()
     {
@@ -92,6 +93,17 @@ public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuil
     {
         this.icon = icon;
         return this;
+    }
+
+    public WebItemModuleBeanBuilder setNeedsEscaping(boolean needsEscaping)
+    {
+        this.needsEscaping = needsEscaping;
+        return this;
+    }
+
+    public boolean needsEscaping()
+    {
+        return needsEscaping;
     }
 
     @Override

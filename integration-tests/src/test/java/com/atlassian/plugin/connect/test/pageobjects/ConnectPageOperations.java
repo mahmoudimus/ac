@@ -58,6 +58,11 @@ public class ConnectPageOperations
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownLinkId);
     }
 
+    public RemoteWebItem findWebItem(ItemMatchingMode mode, String matchValue, Optional<String> dropDownLinkId)
+    {
+        return pageBinder.bind(RemoteWebItem.class, mode, matchValue, dropDownLinkId);
+    }
+
     public RenderedMacro findMacroWithIdPrefix(String idPrefix)
     {
         return pageBinder.bind(RenderedMacro.class, idPrefix);

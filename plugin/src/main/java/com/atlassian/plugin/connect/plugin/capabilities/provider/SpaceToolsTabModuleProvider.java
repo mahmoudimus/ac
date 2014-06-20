@@ -141,6 +141,7 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
                 .withConditions(newSingleConditionBean()
                         .withCondition(ConfluenceConditions.SPACE_SIDEBAR)
                         .build())
+                .setNeedsEscaping(false)
                 .build();
 
         WebItemModuleBean spaceAdminWebItemBean = newWebItemBean(baseWebItemBean)
