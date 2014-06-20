@@ -81,7 +81,7 @@
             </exclusions>
             <scope>test</scope>
         </dependency>
-
+        <!-- Only required for oAuth -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk16</artifactId>
