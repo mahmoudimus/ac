@@ -4,6 +4,7 @@ import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
@@ -66,6 +67,7 @@ public class TestJira extends JiraWebDriverTestBase
                                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                                 .build())
                 .addRoute("/jia", ConnectAppServlets.dialogServlet())
+                .addScope(ScopeName.READ)
                 .start();
     }
 
@@ -89,7 +91,7 @@ public class TestJira extends JiraWebDriverTestBase
                                            .navigateToAndBind(IssueDetailPage.class, issue.getKey())
                                            .details()
                                            .openFocusShifter()
-                                           .queryAndSelect("Test Issue Action", ConnectAddOnTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey());
+                                           .queryAndSelect("Test Issue Action", ConnectAddOnTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey(), false);
 
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
 
