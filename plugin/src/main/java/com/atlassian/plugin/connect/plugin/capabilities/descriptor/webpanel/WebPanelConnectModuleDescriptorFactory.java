@@ -75,9 +75,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
         webPanelElement.addAttribute("url", bean.getUrl());
 
-        webPanelElement.addElement("param")
-                .addAttribute("name", "iconFont")
-                .addAttribute("value", "none");
+        WebPanelElementEnhancer.enhance(bean, webPanelElement);
 
         return webPanelElement;
     }
