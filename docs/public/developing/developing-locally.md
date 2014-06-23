@@ -103,7 +103,7 @@ The following tools can be of great help when implementing add-ons!
 	</thead>
 	<tr>
 		<td>[JSON descriptor validator](https://atlassian-connect-validator.herokuapp.com/validate)</td>
-		<td>This validator will check that your descriptor is synctatically correct. Just paste the JSON content 
+		<td>This validator will check that your descriptor is syntactically correct. Just paste the JSON content 
 			of your descriptor in the "descriptor" field, and select the Atlassian product you want to validate 
 			against.</td>
 	</tr>
