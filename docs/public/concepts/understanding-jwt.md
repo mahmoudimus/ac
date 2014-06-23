@@ -323,7 +323,6 @@ The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded 
 
 * Each section is separated from the others by a period character (```.```).
 * Each section is base-64 encoded, so you will need to decode each one to make them human-readable. 
-There is a [handy JWT decoder from Heroku](http://jwt-decoder.herokuapp.com/jwt/decode).
 * The header specifies a very small amount of information that the receiver needs in order to parse and verify the JWT token.
  * All JWT token headers state that the type is "JWT".
  * The algorithm used to sign the JWT token is needed so that the receiver can verify the signature.
