@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.Properties;
-
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-
 import org.apache.commons.lang.StringUtils;
+
+import java.util.Properties;
 
 public class MacroI18nBuilder
 {

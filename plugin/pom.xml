@@ -81,6 +81,13 @@
             </exclusions>
             <scope>test</scope>
         </dependency>
+        <!-- Only required for oAuth -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk16</artifactId>
+            <version>1.46</version>
+        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-modules</artifactId>
