@@ -64,7 +64,9 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
         SpaceTemplatesPage page = product.visit(SpaceTemplatesPage.class, "ds");
 
-        LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY) + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX, Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
+        String pageKey = AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
+        String webItemId = pageKey + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX;
+        LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(webItemId, Option.<String>none(), pageKey);
 
         RemotePluginEmbeddedTestPage addonContentsPage = addonPage.click();
 

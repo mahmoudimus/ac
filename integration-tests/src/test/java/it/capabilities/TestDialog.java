@@ -100,11 +100,12 @@ public class TestDialog extends ConnectWebDriverTestBase
     public void testOpenCloseDialogKey() throws Exception
     {
         loginAsAdmin();
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_GENERALPAGE), ADDON_GENERALPAGE_NAME);
+        String escapedAddonAndModuleKey = AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE);
+        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, escapedAddonAndModuleKey, ADDON_GENERALPAGE_NAME);
         remotePage.clickRemotePluginLink();
 
-        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_GENERALPAGE), remotePlugin.getAddon().getKey());
-        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_DIALOG));
+        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, escapedAddonAndModuleKey, remotePlugin.getAddon().getKey());
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_DIALOG));
 
         // check the dimensions are the same as those in the js (mustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));

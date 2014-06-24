@@ -2,7 +2,10 @@ package com.atlassian.plugin.connect.test;
 
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import org.apache.commons.lang.RandomStringUtils;
+
+import java.util.regex.Pattern;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 
@@ -27,5 +30,25 @@ public class AddonTestUtils
                 .withLocation("system.nowhere")
                 .withUrl("/nowhere")
                 .build();
+    }
+
+    public static String escapedAddonKey(String addonKey)
+    {
+        return escapeJQuerySelector(addonKey);
+    }
+
+    public static String escapedAddonAndModuleKey(String addonKey, String moduleKey)
+    {
+        return escapeJQuerySelector(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
+    }
+
+    private static Pattern regex = Pattern.compile("[(!\"#$%&'\\(\\)*+,./:;<=>?@\\[\\\\\\]^`{|}~)]");
+    public static String escapeJQuerySelector(String selector)
+    {
+        if (selector == null)
+        {
+            return null;
+        }
+        return regex.matcher(selector).replaceAll("\\\\$0");
     }
 }
