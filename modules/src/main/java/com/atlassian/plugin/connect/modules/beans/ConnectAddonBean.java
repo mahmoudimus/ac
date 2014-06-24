@@ -66,7 +66,7 @@ public class ConnectAddonBean extends BaseModuleBean
      * A unique key to identify the add-on.
      * This key must be <= 80 characters.
      */
-    @StringSchemaAttributes(maxLength = 80)
+    @StringSchemaAttributes(maxLength = 80, pattern = "^[a-zA-Z0-9-._]+$")
     @Required
     private String key;
 
