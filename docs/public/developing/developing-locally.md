@@ -92,10 +92,28 @@ declarations, scopes or changing the plugin-info details. Simply repeat step 3.
 
 You should not need to restart the Atlassian application while developing.
 
+<a name='utilities'></a>
+## Handy tools
 
-
-
-
+The following tools can be of great help when implementing add-ons!
+<table class='aui'>
+	<thead>
+		<th>Tool</th>
+		<th>Description</th>
+	</thead>
+	<tr>
+		<td>[JSON descriptor validator](https://atlassian-connect-validator.herokuapp.com/validate)</td>
+		<td>This validator will check that your descriptor is syntactically correct. Just paste the JSON content 
+			of your descriptor in the "descriptor" field, and select the Atlassian product you want to validate 
+			against.</td>
+	</tr>
+	<tr>
+		<td>[JWT decoder](http://jwt-decoder.herokuapp.com/jwt/decode)</td>
+		<td>An encoded JWT token can be quite opaque. You can use this handy tool to decode JWT tokens and inspect 
+			their content. Just paste the full URL of the resource you are trying to access, including the JWT
+			token, in the URL field. E.g. http://localhost:2990/jira/path/to/rest/endpoint?jwt=token</td>
+	</tr>
+</table>
 
 
 
