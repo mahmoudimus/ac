@@ -7,7 +7,7 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
@@ -85,7 +85,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .withHeight("30px")
                 .build();
 
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("dynamicContentMacros",
                         simpleMacro,

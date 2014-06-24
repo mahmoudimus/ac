@@ -1,11 +1,9 @@
 package it.capabilities;
 
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
@@ -46,7 +44,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("generalPages",
                         newPageBean()

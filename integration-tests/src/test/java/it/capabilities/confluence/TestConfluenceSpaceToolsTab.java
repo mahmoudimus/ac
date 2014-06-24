@@ -4,7 +4,7 @@ import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesP
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
@@ -33,7 +33,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("spaceToolsTabs", newSpaceToolsTabBean()
                         .withName(new I18nProperty("AC Space Tab", null))

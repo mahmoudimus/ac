@@ -5,7 +5,7 @@ import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
@@ -43,7 +43,7 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
     public static void startConnectAddOn() throws Exception
     {
         confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("dynamicContentMacros",
                         newDynamicContentMacroModuleBean()

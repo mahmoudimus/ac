@@ -11,7 +11,7 @@ import java.security.SecureRandom;
  */
 public class ModuleKeyUtils
 {
-    public static final String ADDON_MODULE_SEPARATOR = "$_$";
+    public static final String ADDON_MODULE_SEPARATOR = "__";
     private static final SecureRandom random = new SecureRandom();
 
     /**

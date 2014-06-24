@@ -2,7 +2,7 @@ package it;
 
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.WebhookModule;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
@@ -27,7 +27,7 @@ public final class TestWebHooks extends AbstractBrowserlessTest
     @Test
     public void testPluginEnabledWebHookFired() throws Exception
     {
-        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        final String pluginKey = AddonTestUtils.randomAddOnKey();
         
         WebHookTestServlet.runInRunner(baseUrl, WEB_HOOK_PLUGIN_ENABLED, pluginKey, new WebHookTester()
         {
@@ -133,7 +133,7 @@ public final class TestWebHooks extends AbstractBrowserlessTest
 
     private void testRemotePluginWebHookFired(final String webHookId) throws Exception
     {
-        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        final String pluginKey = AddonTestUtils.randomAddOnKey();
         
         WebHookTestServlet.runInRunner(baseUrl, webHookId, pluginKey, new WebHookTester()
         {
@@ -148,7 +148,7 @@ public final class TestWebHooks extends AbstractBrowserlessTest
 
     private void testRemotePluginSyncCallFired(final String eventId) throws Exception
     {
-        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        final String pluginKey = AddonTestUtils.randomAddOnKey();
         
         WebHookTestServlet.runSyncInRunner(baseUrl, eventId, pluginKey, new WebHookTester()
         {
