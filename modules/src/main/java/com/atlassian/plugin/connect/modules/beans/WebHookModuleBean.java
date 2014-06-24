@@ -67,6 +67,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `comment_created`
  * * `comment_removed`
  * * `comment_updated`
+ * * `content_permissions_updated`
  * * `connect_addon_disabled`
  * * `connect_addon_enabled`
  * * `group_created`
