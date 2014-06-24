@@ -11,7 +11,7 @@ import java.security.SecureRandom;
  */
 public class ModuleKeyUtils
 {
-    public static final String ADDON_MODULE_SEPARATOR = "__";
+    public static final String ADDON_MODULE_SEPARATOR = "$_$";
     private static final SecureRandom random = new SecureRandom();
 
     /**
@@ -49,12 +49,12 @@ public class ModuleKeyUtils
 
     public static String moduleKeyOnly(String moduleKey)
     {
-        return StringUtils.substringAfterLast(moduleKey,ADDON_MODULE_SEPARATOR);
+        return StringUtils.substringAfterLast(moduleKey, ADDON_MODULE_SEPARATOR);
     }
 
     public static String addonKeyOnly(String moduleKey)
     {
-        return StringUtils.substringBeforeLast(moduleKey,ADDON_MODULE_SEPARATOR);
+        return StringUtils.substringBeforeLast(moduleKey, ADDON_MODULE_SEPARATOR);
     }
     
     public static String toCompleteKey(String moduleKey)
