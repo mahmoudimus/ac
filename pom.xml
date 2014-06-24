@@ -184,8 +184,8 @@
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
             </plugin>
             <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-jgitflow-plugin</artifactId>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
                 <version>${jgitflow.version}</version>
                 <configuration>
                     <allowSnapshots>true</allowSnapshots>
@@ -696,7 +696,7 @@
         <plugin.testrunner.version>1.2.0</plugin.testrunner.version>
 
         <!-- BUILD STUFF -->
-        <jgitflow.version>1.0-internal8</jgitflow.version>
+        <jgitflow.version>1.0-m3</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
