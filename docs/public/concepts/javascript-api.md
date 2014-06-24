@@ -20,8 +20,8 @@ Atlassian Connect transparently enables cross-domain messaging in its page modul
 is that your add-on's page modules are automatically resized based on its content when loaded on the page.
 
 Only content within an element with the class `ac-content` or the id `content` will be resized automatically. 
-Without an element with either of those identifiers, the size of the body is used
-without any automatic resizing. 
+Content without these identifiers is sized according to the `body` element, and 
+is *not* dynamically resized. 
 ```
 <div class="ac-content">
     <p>Hello World</p>
