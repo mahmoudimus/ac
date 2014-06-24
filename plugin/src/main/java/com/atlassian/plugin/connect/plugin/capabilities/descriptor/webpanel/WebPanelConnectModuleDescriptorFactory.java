@@ -66,8 +66,12 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
 
         if (null != toolTip)
         {
-            String tooltipI18nKeyOrName = Strings.isNullOrEmpty(toolTip.getI18n()) ? toolTip.getValue() : toolTip.getI18n();
-            webPanelElement.addElement("tooltip").addAttribute("key", tooltipI18nKeyOrName);
+            Element tooltipElement = webPanelElement.addElement("tooltip");
+            if (toolTip.getI18n() != null)
+            {
+                tooltipElement.addAttribute("key", toolTip.getI18n());
+            }
+            tooltipElement.setText(toolTip.getValue());
         }
 
         webPanelElement.addAttribute("class", IFrameRemoteWebPanel.class.getName());
