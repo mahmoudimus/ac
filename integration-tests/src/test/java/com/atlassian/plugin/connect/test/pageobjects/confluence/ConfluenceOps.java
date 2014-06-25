@@ -92,6 +92,7 @@ public final class ConfluenceOps
 
     public static final class ConfluenceUser
     {
+        public static final ConfluenceUser ADMIN = new ConfluenceUser("admin", "admin");
         final public String username;
         final public String password;
 
