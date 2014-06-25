@@ -47,6 +47,7 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
                 new SpaceEventMapper(userManager, confluenceSettingsManager),
                 new CommentEventMapper(userManager, confluenceSettingsManager),
                 new SecurityEventMapper(userManager, confluenceSettingsManager),
+                new ContentEventMapper(userManager, confluenceSettingsManager),
                 new ConfluenceEventMapper(userManager, confluenceSettingsManager)
         );
     }
