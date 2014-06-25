@@ -1,23 +1,33 @@
 ##Tutorial: Build a Connect add-on for your JIRA projects
 
-(intro draft) In this tutorial, you'll build a static Connect add-on that 
-displays your JIRA projects. We affectionately call this add-on 'Geiger'. 
-Geiger is a node.js app that interfaces with JIRA. To do for this section:
+In this tutorial, you'll build a static Connect add-on that displays your
+JIRA projects in a chart. You'll use the [Node.js](http://nodejs.org/) framework 
+and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
+to interface with JIRA. 
 
-* Explain the concepts we'll go over  
-* Explan how to access the add-on from inside the JIRA interface  
-* Show screenshot and TOC  
+You'll add a _Stats_ link in the JIRA header to access your add-on, which 
+appears as a static page in JIRA. Your page uses the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
+to retrieve information about prjects in your JIRA instance. You'll style 
+your page using [D3.js](http://d3js.org/) to build a table, which you'll later 
+leverage to build a data-driven, dynamically updating chart in a later tutorial. 
 
-Here's what's here: (placeholder for TOC)  
+At completion, your add-on will look a lot like this: 
 
-* [Configure your development environment](#environment)  
-* [Trim the plugin skeleton](#trimming)  
-* [Add a link in the header for stats](#stats-header)  
+<img src="../assets/images/geiger-1-6.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
+
+Here's what's included in this tutorial:
+
+* [Prerequisites & configuring your development environment](#environment)  
+* [Trimming the plugin skeleton](#trimming)  
+* [Adding a _Stats_ link in the navigation header](#stats-header)  
+* [Creating the D3.js table to display your projects](#architect-stats-page)
+* [Adding data and verifying your add-on works](#check)
 
 ## <a name="environment"></a> Configure your development environment  
 
 In this step, you'll confirm you have node.js installed, and install the 
-[Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) framework. The ACE framework is a toolkit for creating Connect add-ons using node.js.
+[Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
+framework. The ACE framework is a toolkit for creating Connect add-ons using node.js.
 
 You'll use ACE to create a new node.js project called `tut`.
 
@@ -83,6 +93,48 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
             }]
          }]
     ````
+    Your descriptor file should look like this: 
+    ````
+	{
+	    "key": "my-add-on",
+	    "name": "Ping Pong",
+	    "description": "My very first add-on",
+	    "vendor": {
+	        "name": "Angry Nerds",
+	        "url": "https://www.atlassian.com/angrynerds"
+	    },
+	    "baseUrl": "{{localBaseUrl}}",
+	    "links": {
+	        "self": "{{localBaseUrl}}/atlassian-connect.json",
+	        "homepage": "{{localBaseUrl}}/atlassian-connect.json"
+	    },
+	    "authentication": {
+	        "type": "jwt"
+	    },
+	    "lifecycle": {
+	        "installed": "/installed"
+	    },
+	    "modules": {
+	        "generalPages": [
+
+	            {
+	                "key": "hello-world-page-jira",
+	                "location": "system.top.navigation.bar",
+	                "name": {
+	                    "value": "Hello World"
+	                },
+	                "url": "/hello-world",
+	                "conditions": [
+	                    {
+	                        "condition": "user_is_logged_in"
+	                    }
+	                ]
+	            }
+	        ]
+	    }
+	}
+
+	````
 1. From your project root, run the `app.js` file:
 	<pre><code data-lang="text">$ node app.js</code></pre> 
 	Your add-on is automatically registered in JIRA for you. 
@@ -117,151 +169,269 @@ Explain `location`, `name` & `value`, and how it works with the `condition`.
 	}
 	````
     
-1. Also include the READ scope somewhere in the root object
+1. Add a `read` scope inside the main object:
+	````
+	"scopes": [
+	    "read"
+	]
+	````
+	This enables your Connect add-on to read your JIRA project data.  
+	At this point, your descriptor file should look like this:  
+	````
+	{
+	    "key": "my-add-on",
+	    "name": "Ping Pong",
+	    "description": "My very first add-on",
+	    "vendor": {
+	        "name": "Angry Nerds",
+	        "url": "https://www.atlassian.com/angrynerds"
+	    },
+	    "baseUrl": "{{localBaseUrl}}",
+	    "links": {
+	        "self": "{{localBaseUrl}}/atlassian-connect.json",
+	        "homepage": "{{localBaseUrl}}/atlassian-connect.json"
+	    },
+	    "authentication": {
+	        "type": "jwt"
+	    },
+	    "lifecycle": {
+	        "installed": "/installed"
+	    },
+	    "modules": {
+	        "generalPages": [
 
-````
-"scopes": [
-    "read"
-]
-````
-    
-1. We need to add the `/stats` route to our app, open up `routes/index.js` and 
-   add after the `/hello-world` route is registered. 
+	            {
+	                "key": "hello-world-page-jira",
+	                "location": "system.top.navigation.bar",
+	                "name": {
+	                    "value": "Hello World"
+	                },
+	                "url": "/hello-world",
+	                "conditions": [
+	                    {
+	                        "condition": "user_is_logged_in"
+	                    }
+	                ]
+	            },
+	            {
+	                "key": "stats",
+	                "location": "system.top.navigation.bar",
+	                "name": {
+	                    "value": "Stats"
+	                },
+	                "url": "/stats",
+	                "conditions": [{
+	                    "condition": "user_is_logged_in"
+	                }]
+	            }
+	        ]
+	    },
+	    "scopes": [
+	        "read"
+	    ]
+	}
+	````
+1. Open `routes/index.js`.
+	From here, you'll add the `/stats` route to your app.
+1. After the `/hello-world` route is registered, add the following code:  
+	````
+	app.get('/stats', addon.authenticate(), function(req, res) {
+	    res.render('stats', { title: "The Stats" });
+	});
+	````  
+	Your `routes/index.js` file should resemble the following:  
+	````
+	module.exports = function (app, addon) {
 
-````
-app.get('/stats', addon.authenticate(), function(req, res) {
-    res.render('stats', { title: "The Stats" });
-});
-````
-    
-1. To support the charting, we need to add one line to the `views/layout.hbs`
-   file, right after the 
-   `<script src="{{hostScriptUrl}}" type="text/javascript"></script>` 
-   line.
-   
-````
-<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-````
+	    // Root route. This route will serve the `atlassian-connect.json` unless the
+	    // documentation url inside `atlassian-connect.json` is set
+	    app.get('/', function (req, res) {
+	        res.format({
+	            // If the request content-type is text-html, it will decide which to serve up
+	            'text/html': function () {
+	                res.redirect('/atlassian-connect.json');
+	            },
+	            // This logic is here to make sure that the `atlassian-connect.json` is always
+	            // served up when requested by the host
+	            'application/json': function () {
+	                res.redirect('/atlassian-connect.json');
+	            }
+	        });
+	    });
 
-1. Then create a `views/stats.hbs` with
+	    // This is an example route that's used by the default "generalPage" module.
+	    // Verify that the incoming request is authenticated with Atlassian Connect
+	    app.get('/hello-world', addon.authenticate(), function (req, res) {
+	            // Rendering a template is easy; the `render()` method takes two params: name of template
+	            // and a json object to pass the context in
+	            res.render('hello-world', {
+	                title: 'Atlassian Connect'
+	                //issueId: req.query('issueId')
+	            });
+	        }
+	    );
 
-````
-{{!< layout}}
-<header class="aui-page-header">
-    <div class="aui-page-header-inner">
-        <div class="aui-page-header-main intro-header">
-            <h1>{{title}}</h1>
-        </div>
-    </div>
-</header>
+	    // Add any additional route handlers you need for views or REST resources here...
+	    app.get('/stats', addon.authenticate(), function(req, res) {
+	        res.render('stats', { title: "The Stats" });
+	    });
+	};
+	````
+	This route titles your __Stats__ page "The Stats", and ensures that your add-on
+	 is authenticated. Etc.  
+	If you refresh JIRA, you'll see your __Stats__ link in the header:  
+	<img src="../assets/images/geiger-1-3.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
+1. Close and save your `atlassian-connect.json` and `routes/index.js` files.  
 
-<div class="aui-page-panel main-panel">
-    <div class="aui-page-panel-inner">
-        <section class="aui-page-panel-item">
-            <div class="aui-group">
-                <div class="aui-item">
-                    <div class="projects">
-                    </div> 
-                </div>
-            </div>
-        </section>
-    </div>
-</div>
-<script type="text/javascript">
-    $(function() {
-        AG.initInstanceStats();
-    });
-</script>
-````
-  
-1. Modify 'public/js/addon.js' with the following. This leverages
-   d3.js to build data driven tables. We'll be using d3.js later for charting.
+## <a name="architect-stats-page"></a> Build the underlying stats page  
 
+You've added a link in the JIRA header, but your page doesn't have anything 
+except a title right now. In this step, you'll add the capability for your add-on 
+to use d3.js, and define how the page should look. 
 
-````
-(function() {
-    function getQueryParams(qs) {
-        qs = qs.split("+").join(" ");
+1. Open `views/layout.hbs`.
+1. Add the following to the `views/layout.hbs` file following the `hostScriptUrl` 
+	line: 
+	````
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	````
+	This lets you to use d3 for your chart.  
+1. Create a new file called `views/stats.hbs`.  
+1. Add the following content: 
+	````
+	{{!< layout}}
+	<header class="aui-page-header">
+	    <div class="aui-page-header-inner">
+	        <div class="aui-page-header-main intro-header">
+	            <h1>{{title}}</h1>
+	        </div>
+	    </div>
+	</header>
 
-        var params = {}, tokens,
-        re = /[?&]?([^=]+)=([^&]*)/g;
+	<div class="aui-page-panel main-panel">
+	    <div class="aui-page-panel-inner">
+	        <section class="aui-page-panel-item">
+	            <div class="aui-group">
+	                <div class="aui-item">
+	                    <div class="projects">
+	                    </div> 
+	                </div>
+	            </div>
+	        </section>
+	    </div>
+	</div>
+	<script type="text/javascript">
+	    $(function() {
+	        AG.initInstanceStats();
+	    });
+	</script>
+	````
+1. Save and close all files. 
+1. Refresh JIRA, and click __Stats__ in the header.  
+	You'll see a page like this:  
+	<img src="../assets/images/geiger-1-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
+1. Open `public/js/addon.js`.  
+1. Add the following content:  
+	````
+	(function() {
+	    function getQueryParams(qs) {
+	        qs = qs.split("+").join(" ");
 
-        while (tokens = re.exec(qs)) {
-            params[decodeURIComponent(tokens[1])] = 
-                decodeURIComponent(tokens[2]);
-        }
+	        var params = {}, tokens,
+	        re = /[?&]?([^=]+)=([^&]*)/g;
 
-        return params;
-    }
+	        while (tokens = re.exec(qs)) {
+	            params[decodeURIComponent(tokens[1])] = 
+	                decodeURIComponent(tokens[2]);
+	        }
 
-    /* add-on script */
-    window.AG = {};
+	        return params;
+	    }
 
-    window.AG.apiCall = function(uri, callback) {
-        AP.require('request', function(request) {
-            request({
-                url: uri,
-                success: function(response) {
-                    callback(response);
-                },
-                error: function(response) {
-                    console.log("Error loading API (" + uri + ")");
-                    console.log(arguments);
-                },
-                contentType: "application/json"
-            });
-        });
-    };
+	    /* add-on script */
+	    window.AG = {};
 
-    window.AG.initInstanceStats = function() {
-        var params = getQueryParams(document.location.search);
-        var baseUrl = params.xdm_e + params.cp + "/browse/";
+	    window.AG.apiCall = function(uri, callback) {
+	        AP.require('request', function(request) {
+	            request({
+	                url: uri,
+	                success: function(response) {
+	                    callback(response);
+	                },
+	                error: function(response) {
+	                    console.log("Error loading API (" + uri + ")");
+	                    console.log(arguments);
+	                },
+	                contentType: "application/json"
+	            });
+	        });
+	    };
 
-        AG.apiCall('/rest/api/2/project', function(response) {
-            // convert the string response to JSON
-            response = JSON.parse(response);
+	    window.AG.initInstanceStats = function() {
+	        var params = getQueryParams(document.location.search);
+	        var baseUrl = params.xdm_e + params.cp + "/browse/";
 
-            var d = d3.select(".projects")
+	        AG.apiCall('/rest/api/2/project', function(response) {
+	            // convert the string response to JSON
+	            response = JSON.parse(response);
 
-            var projTable = d.append('table')
-                .classed({'project': true, 'aui': true});
+	            var d = d3.select(".projects")
 
-            var projHeadRow = projTable.append("thead").append("tr");
-            projHeadRow.append("th");
-            projHeadRow.append("th").text("Key");
-            projHeadRow.append("th").text("Name");
+	            var projTable = d.append('table')
+	                .classed({'project': true, 'aui': true});
 
-            var projBody = projTable.append("tbody");
+	            var projHeadRow = projTable.append("thead").append("tr");
+	            projHeadRow.append("th");
+	            projHeadRow.append("th").text("Key");
+	            projHeadRow.append("th").text("Name");
 
-            var row = projBody.selectAll("tr")
-                .data(response)
-                .enter()
-                .append("tr");
+	            var projBody = projTable.append("tbody");
 
-            row.append("td").append('span')
-                .classed({'aui-avatar': true, 'aui-avatar-xsmall': true})
-                .append('span')
-                .classed({'aui-avatar-inner': true})
-                .append('img')
-                .attr('src', function(item) { return item.avatarUrls["16x16"] });
+	            var row = projBody.selectAll("tr")
+	                .data(response)
+	                .enter()
+	                .append("tr");
 
-            row.append("td").append('span')
-                .classed({'project-key': true, 'aui-label': true})
-                .text(function(item) { return item.key; });
+	            row.append("td").append('span')
+	                .classed({'aui-avatar': true, 'aui-avatar-xsmall': true})
+	                .append('span')
+	                .classed({'aui-avatar-inner': true})
+	                .append('img')
+	                .attr('src', function(item) { return item.avatarUrls["16x16"] });
 
-            row.append("td").append('span')
-                .classed({'project-name': true})
-                .append("a")
-                .attr('href', function(item) { return baseUrl + item.key; })
-                .attr('target', "_top")
-                .text(function(item) { return item.name; });
-        });
-    };
-})();
-````
+	            row.append("td").append('span')
+	                .classed({'project-key': true, 'aui-label': true})
+	                .text(function(item) { return item.key; });
 
-1. CTRL+C the node app and restart with `node app.js`
-1. Create a couple projects in JIRA
+	            row.append("td").append('span')
+	                .classed({'project-name': true})
+	                .append("a")
+	                .attr('href', function(item) { return baseUrl + item.key; })
+	                .attr('target', "_top")
+	                .text(function(item) { return item.name; });
+	        });
+	    };
+	})();
+	````
+	This leverages d3.js to build data-driven tables. 
+1. Restart the node app. 
+	You can shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
+	command.
+
+## <a name="check"></a> Add some data, and verify your add-on works
+
+Your add-on is essentially done, but you don't have any data to validate 
+how your chart works. In this step, you'll manually add a few projects and 
+issues, and validate that your chart reflects the changes.  
+
+1. Click __Projects__ > __Create Project__ in the header.  
+	Run through the prompts and create a project.  
+1. Repeat as desired.  
+1. Check your add-on between adding data.  
+	You should see your __Stats__ table update accordingly, each time you click the 
+	link.  
+	Here's an example what you'll see (using two projects, "Test" and "Another test"): 
+	<img src="../assets/images/geiger-1-5.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
 
 
 
