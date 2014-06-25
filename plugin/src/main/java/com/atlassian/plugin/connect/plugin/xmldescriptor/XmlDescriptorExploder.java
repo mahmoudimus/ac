@@ -52,7 +52,7 @@ public class XmlDescriptorExploder
     {
         boolean shouldThrow = false;
 
-        // this code runs in prod and does not provide a feature to the users so we should take extra care to cause exceptions
+        // this code runs in prod and does not provide a feature to the users so we should take extra care to not cause exceptions
         try
         {
             if (darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_NOTIFY))
