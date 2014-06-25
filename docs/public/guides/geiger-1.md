@@ -1,4 +1,4 @@
-##Tutorial: Build a Connect add-on for your JIRA projects
+##Tutorial: Display your JIRA project stats
 
 In this tutorial, you'll build a static Connect add-on that displays your
 JIRA projects in a chart. You'll use the [Node.js](http://nodejs.org/) framework 
@@ -13,25 +13,38 @@ leverage to build a data-driven, dynamically updating chart in a later tutorial.
 
 At completion, your add-on will look a lot like this: 
 
-<img src="../assets/images/geiger-1-6.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
+<img src="../assets/images/geiger-1-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
 
-Here's what's included in this tutorial:
+Here's you'll learn about in this tutorial:
 
 * [Prerequisites & configuring your development environment](#environment)  
-* [Trimming the plugin skeleton](#trimming)  
 * [Adding a _Stats_ link in the navigation header](#stats-header)  
 * [Creating the D3.js table to display your projects](#architect-stats-page)
 * [Adding data and verifying your add-on works](#check)
 
-## <a name="environment"></a> Configure your development environment  
+<div class="aui-message">
+	    <p class="title">
+	        <span class="aui-icon icon-info"></span>
+	        <strong>Who this tutorial is for</strong>
+	    </p>
+	    You can complete this tutorial even if you've never built an Atlassian add-on before. You 
+	    will need at least version 4.2.20 of the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads)
+		, and [Node.js](http://www.nodejs.org/). 
+</div>
+
+## <a name="environment"></a> Tutorial prerequisites & configuring your development environment  
 
 In this step, you'll confirm you have node.js installed, and install the 
-[Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
-framework. The ACE framework is a toolkit for creating Connect add-ons using node.js.
+[Atlassian Connect Express](https://bitbucket.org/atlassian/atlassian-connect-express/) framework, otherwise known as ACE. The ACE framework is a 
+toolkit for creating Connect add-ons using node.js. ACE handles registration in JIRA for you. 
+It also detects changes made to your [`atlassian-connect.json` descriptor](../modules/) 
+file, so you don't need to continually restart your add-on as you develop. Perhaps most 
+importantly, ACE handles [JWT authentication](../concepts/understanding-jwt.html), 
+so that requests betwen your add-on and the JIRA application are signed and authenticated. 
 
-You'll use ACE to create a new node.js project called `tut`.
+Let's get started:
 
-1. Install [node.js](http://www.nodejs.org/).
+1. Install [node.js](http://www.nodejs.org/).  
 	If you use [Homebrew](http://brew.sh/), you can use the following command:
 	<pre><code data-lang="text">$ brew install node</code></pre>
 	Otherwise, you can [download and install node directly](http://nodejs.org/download/).
@@ -44,21 +57,16 @@ You'll use ACE to create a new node.js project called `tut`.
 1. Install node.js dependencies for your project.  
 	<pre><code data-lang="text">$ npm install</code></pre>
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
-    You'll need at least SDK version 4.2.20. If you run the <tt>atlas-version</tt> command, 
-    you should see something similar to this:  
-
+    You'll need at least SDK version 4.2.20.  
+    If you run the <tt>atlas-version</tt> command, you should see something similar to this:  
     <tt>
         ATLAS Version:    4.2.20  
         ATLAS Home:       /usr/share/atlassian-plugin-sdk-4.2.20  
         ATLAS Scripts:    /usr/share/atlassian-plugin-sdk-4.2.20/bin  
         ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
     </tt>
-1. Start JIRA in OnDemand mode with the following command:
+1. Start JIRA in OnDemand mode:
 	<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-07-010 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0  --jvmargs -Datlassian.upm.on.demand=true</code></pre>
-
-    __Note:__ If you're not using the command above, ensure all components in the 
-    `--bundled-plugins` argument are present in your JIRA instances. These component 
-    versions will change as Connect development continues.  
     
     You'll see a lot of output. When finished, your terminal notifies you that the build 
     was successful:  
@@ -69,106 +77,35 @@ You'll use ACE to create a new node.js project called `tut`.
     </tt>  
 1. Log in with `admin/admin`. 
 
-## <a name="trimming"></a>Trim the add-on skeleton 
+## <a name="stats-header"></a> Install your add-on and add a _Stats_ link
 
 You now have the basic architecture for your plugin. If you open your new `tut` project, 
 you'll see essentials like the [`atlassian-connect.json` descriptor](../modules/) in the 
-project root. You'll also see an `app.js` file. (flesh out)  
+project root. You'll also see an `app.js` file. 
 
-In this step, you'll prune some of the stub code, and install your add-on in JIRA.
+In this step, you'll prune some of the stub code, and install your add-on in JIRA using ACE. 
 
 1. Open the [`atlassian-connect.json` descriptor](../modules/) file.
-1. Remove the following section:  
+1. Replace the [`generalPages` module](../modules/jira/general-page.html) with the following:  
 	````
-	 // Confluence - Add a Hello World menu item to the navigation bar
-            {
-                "key": "hello-world-page-confluence",
-                "location": "system.header/left",
-                "name": {
-                    "value": "Hello World"
-                },
-                "url": "/hello-world",
-                "conditions": [{
-                    "condition": "user_is_logged_in"
-            }]
-         }]
-    ````
-    Your descriptor file should look like this: 
-    ````
-	{
-	    "key": "my-add-on",
-	    "name": "Ping Pong",
-	    "description": "My very first add-on",
-	    "vendor": {
-	        "name": "Angry Nerds",
-	        "url": "https://www.atlassian.com/angrynerds"
-	    },
-	    "baseUrl": "{{localBaseUrl}}",
-	    "links": {
-	        "self": "{{localBaseUrl}}/atlassian-connect.json",
-	        "homepage": "{{localBaseUrl}}/atlassian-connect.json"
-	    },
-	    "authentication": {
-	        "type": "jwt"
-	    },
-	    "lifecycle": {
-	        "installed": "/installed"
-	    },
-	    "modules": {
-	        "generalPages": [
+     "generalPages": [
 
-	            {
-	                "key": "hello-world-page-jira",
-	                "location": "system.top.navigation.bar",
-	                "name": {
-	                    "value": "Hello World"
-	                },
-	                "url": "/hello-world",
-	                "conditions": [
-	                    {
-	                        "condition": "user_is_logged_in"
-	                    }
-	                ]
-	            }
-	        ]
+	    {
+	        "key": "stats",
+	        "location": "system.top.navigation.bar",
+	        "name": {
+	            "value": "Stats"
+	        },
+	        "url": "/stats",
+	        "conditions": [{
+	            "condition": "user_is_logged_in"
+	        }]
 	    }
-	}
-
-	````
-1. From your project root, run the `app.js` file:
-	<pre><code data-lang="text">$ node app.js</code></pre> 
-	Your add-on is automatically registered in JIRA for you. 
-1. Refresh JIRA.  
-	You'll see the Hello World label in the header: 
-	<img src="../assets/images/geiger-1-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
-1. Click __Hello World__ in the header.  
-	Your page should look like this: 
-	<img src="../assets/images/geiger-1-2.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
-
-
-## <a name="stats-header"></a>Add a navigation link to the Stats page  
-
-You have your add-on running and installed in JIRA. Now, you'll add a navigation 
-link in the header. You'll also do blah blah blah.  
-
-Explain `location`, `name` & `value`, and how it works with the `condition`.
-
-1. Add a 'Stats' label to the header of your instance.  
-	This code should be placed inside the [`generalPages` module](../modules/jira/general-page.html).
-	````
-	{
-	    "key": "stats",
-	    "location": "system.top.navigation.bar",
-	    "name": {
-	        "value": "Stats"
-	    },
-	    "url": "/stats",
-	    "conditions": [{ 
-	        "condition": "user_is_logged_in"
-	    }]
-	}
-	````
-    
+    ]
+   ````
+   This adds a _Stats_ link in the `system.top.navigation.bar`, or in other words, the JIRA 
+   header. It also provides a condition that the link only appears to authenticated users, 
+   and sets a URL for your add-on to use under `/stats`.
 1. Add a `read` scope inside the main object:
 	````
 	"scopes": [
@@ -201,19 +138,6 @@ Explain `location`, `name` & `value`, and how it works with the `condition`.
 	        "generalPages": [
 
 	            {
-	                "key": "hello-world-page-jira",
-	                "location": "system.top.navigation.bar",
-	                "name": {
-	                    "value": "Hello World"
-	                },
-	                "url": "/hello-world",
-	                "conditions": [
-	                    {
-	                        "condition": "user_is_logged_in"
-	                    }
-	                ]
-	            },
-	            {
 	                "key": "stats",
 	                "location": "system.top.navigation.bar",
 	                "name": {
@@ -231,15 +155,22 @@ Explain `location`, `name` & `value`, and how it works with the `condition`.
 	    ]
 	}
 	````
+ 
+1. From your project root, run the `app.js` file:
+	<pre><code data-lang="text">$ node app.js</code></pre> 
+	Your add-on is automatically registered in JIRA for you. 
+1. Refresh JIRA.  
+	You'll see the _Stats_ label in the header: 
+	<img src="../assets/images/geiger-1-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
 1. Open `routes/index.js`.
 	From here, you'll add the `/stats` route to your app.
-1. After the `/hello-world` route is registered, add the following code:  
+1. After the `/hello-world` stub code, add:  
 	````
 	app.get('/stats', addon.authenticate(), function(req, res) {
 	    res.render('stats', { title: "The Stats" });
 	});
 	````  
-	Your `routes/index.js` file should resemble the following:  
+	Your `routes/index.js` file should resemble this:  
 	````
 	module.exports = function (app, addon) {
 
@@ -273,21 +204,20 @@ Explain `location`, `name` & `value`, and how it works with the `condition`.
 
 	    // Add any additional route handlers you need for views or REST resources here...
 	    app.get('/stats', addon.authenticate(), function(req, res) {
-	        res.render('stats', { title: "The Stats" });
+	        res.render('stats', { title: "Project stats" });
 	    });
 	};
 	````
-	This route titles your __Stats__ page "The Stats", and ensures that your add-on
-	 is authenticated. Etc.  
-	If you refresh JIRA, you'll see your __Stats__ link in the header:  
-	<img src="../assets/images/geiger-1-3.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
+	This route titles your __Stats__ page "Project stats", and ensures that your add-on 
+	is authenticated.  
 1. Close and save your `atlassian-connect.json` and `routes/index.js` files.  
+ 
 
-## <a name="architect-stats-page"></a> Build the underlying stats page  
+## <a name="architect-stats-page"></a> Build the static _Stats_ page  
 
 You've added a link in the JIRA header, but your page doesn't have anything 
 except a title right now. In this step, you'll add the capability for your add-on 
-to use d3.js, and define how the page should look. 
+to use D3.js, and define how the page should look. 
 
 1. Open `views/layout.hbs`.
 1. Add the following to the `views/layout.hbs` file following the `hostScriptUrl` 
@@ -326,10 +256,6 @@ to use d3.js, and define how the page should look.
 	    });
 	</script>
 	````
-1. Save and close all files. 
-1. Refresh JIRA, and click __Stats__ in the header.  
-	You'll see a page like this:  
-	<img src="../assets/images/geiger-1-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
 1. Open `public/js/addon.js`.  
 1. Add the following content:  
 	````
@@ -414,9 +340,16 @@ to use d3.js, and define how the page should look.
 	})();
 	````
 	This leverages d3.js to build data-driven tables. 
+	(!) Explain how D3.js builds the table.
+1. Save and close all files. 
 1. Restart the node app. 
 	You can shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
 	command.
+1. Click __Stats__ in the header.  
+	You'll see an empty page with your "Project stats" title:  
+	<img src="../assets/images/geiger-1-2.png" width="80%" style="border:1px solid #999;margin-top:10px;" />   
+	Your page is blank since your JIRA instance doesn't yet have any data, but you'll 
+	fix that in the next step!  
 
 ## <a name="check"></a> Add some data, and verify your add-on works
 
@@ -431,7 +364,7 @@ issues, and validate that your chart reflects the changes.
 	You should see your __Stats__ table update accordingly, each time you click the 
 	link.  
 	Here's an example what you'll see (using two projects, "Test" and "Another test"): 
-	<img src="../assets/images/geiger-1-5.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
+	<img src="../assets/images/geiger-1-3.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
 
 
 
