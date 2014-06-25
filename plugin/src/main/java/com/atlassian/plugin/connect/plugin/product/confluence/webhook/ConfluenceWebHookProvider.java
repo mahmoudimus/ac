@@ -31,6 +31,9 @@ import com.atlassian.confluence.event.events.user.UserRemoveEvent;
 import com.atlassian.confluence.event.events.userstatus.StatusClearedEvent;
 import com.atlassian.confluence.event.events.userstatus.StatusCreateEvent;
 import com.atlassian.confluence.event.events.userstatus.StatusRemoveEvent;
+import com.atlassian.confluence.security.PermissionManager;
+import com.atlassian.confluence.user.UserAccessor;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.WebHookProvider;
@@ -44,11 +47,13 @@ import com.atlassian.webhooks.spi.provider.WebHookRegistrar;
 public class ConfluenceWebHookProvider implements WebHookProvider
 {
     private final ConfluenceEventSerializerFactory serializer;
+    private final ContentViewPermissionEventMatcher contentViewPermissionEventMatcher;
 
     @Inject
-    public ConfluenceWebHookProvider(ConfluenceEventSerializerFactory serializer)
+    public ConfluenceWebHookProvider(ConfluenceEventSerializerFactory serializer, UserAccessor userAccessor, PermissionManager confluencePermissionManager, ConnectAddonRegistry addonRegistry)
     {
         this.serializer = serializer;
+        this.contentViewPermissionEventMatcher = new ContentViewPermissionEventMatcher(userAccessor, confluencePermissionManager, addonRegistry);
     }
 
     @Override
@@ -90,13 +95,13 @@ public class ConfluenceWebHookProvider implements WebHookProvider
         publish.webhook("blog_restored").whenFired(BlogPostRestoreEvent.class).serializedWith(serializer);
         publish.webhook("blog_updated").whenFired(BlogPostUpdateEvent.class).serializedWith(serializer);
         publish.webhook("blog_viewed").whenFired(BlogPostViewEvent.class).serializedWith(serializer);
-        publish.webhook("page_updated").whenFired(PageUpdateEvent.class).serializedWith(serializer);
-        publish.webhook("page_created").whenFired(PageCreateEvent.class).serializedWith(serializer);
-        publish.webhook("page_removed").whenFired(PageRemoveEvent.class).serializedWith(serializer);
-        publish.webhook("page_trashed").whenFired(PageTrashedEvent.class).serializedWith(serializer);
-        publish.webhook("page_restored").whenFired(PageRestoreEvent.class).serializedWith(serializer);
-        publish.webhook("page_moved").whenFired(PageMoveEvent.class).serializedWith(serializer);
-        publish.webhook("page_viewed").whenFired(PageViewEvent.class).serializedWith(serializer);
+        publish.webhook("page_updated").whenFired(PageUpdateEvent.class).matchedBy(contentViewPermissionEventMatcher).serializedWith(serializer);
+        publish.webhook("page_created").whenFired(PageCreateEvent.class).matchedBy(contentViewPermissionEventMatcher).serializedWith(serializer);
+        publish.webhook("page_removed").whenFired(PageRemoveEvent.class).matchedBy(contentViewPermissionEventMatcher).serializedWith(serializer);
+        publish.webhook("page_trashed").whenFired(PageTrashedEvent.class).matchedBy(contentViewPermissionEventMatcher).serializedWith(serializer);
+        publish.webhook("page_restored").whenFired(PageRestoreEvent.class).matchedBy(contentViewPermissionEventMatcher).serializedWith(serializer);
+        publish.webhook("page_moved").whenFired(PageMoveEvent.class).matchedBy(contentViewPermissionEventMatcher).serializedWith(serializer);
+        publish.webhook("page_viewed").whenFired(PageViewEvent.class).matchedBy(contentViewPermissionEventMatcher).serializedWith(serializer);
         publish.webhook("page_children_reordered").whenFired(PageChildrenReorderEvent.class).serializedWith(serializer);
         publish.webhook("content_permissions_updated").whenFired(ContentPermissionEvent.class).matchedBy(new NonEmptyContentPermissionEventMatcher()).serializedWith(serializer);
     }
