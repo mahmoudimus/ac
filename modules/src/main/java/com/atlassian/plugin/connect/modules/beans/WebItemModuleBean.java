@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.json.schema.annotation.ArraySchemaAttributes;
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
