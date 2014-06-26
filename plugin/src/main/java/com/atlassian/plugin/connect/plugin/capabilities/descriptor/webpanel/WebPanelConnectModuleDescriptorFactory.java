@@ -16,6 +16,7 @@ import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.StringUtils;
 
 
 @Component
@@ -67,7 +68,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         if (null != toolTip)
         {
             Element tooltipElement = webPanelElement.addElement("tooltip");
-            if (toolTip.getI18n().length() > 0)
+            if (StringUtils.isNotBlank(toolTip.getI18n()))
             {
                 tooltipElement.addAttribute("key", toolTip.getI18n());
             }
