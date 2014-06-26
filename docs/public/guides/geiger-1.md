@@ -7,7 +7,7 @@ to interface with JIRA.
 
 You'll add a _Stats_ link in the JIRA header to access your add-on, which 
 appears as a static page in JIRA. Your page uses the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
-to retrieve information about prjects in your JIRA instance. You'll style 
+to retrieve information about projects in your JIRA instance. You'll style 
 your page using [D3.js](http://d3js.org/) to build a table, which you'll later 
 leverage to build a data-driven, dynamically updating chart in a later tutorial. 
 
