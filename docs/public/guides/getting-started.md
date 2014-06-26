@@ -56,6 +56,8 @@ Your `atlassian-connect.json` file will use a [`generalPages` module](../modules
 ```
 4. Save and close the descriptor file.  
 
+Note: you can validate your descriptor using this [handy tool](https://atlassian-connect-validator.herokuapp.com/validate).
+
 ## <a name="webapp"></a>Create a simple web application to stand in as an add-on
 
 Now, you're ready to create the web app. You'll use a simple, old-fashioned HTML page as an "app" to demonstrate how Connect integrates with your application. While a static HTML page doesn't represent a typical add-on, it's not that far off either. Just a few components turn any web application into an Atlassian Connect add-on.
@@ -98,6 +100,7 @@ From the same project directory:
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.4.3/css/aui.css" media="all">
         <script src="//localhost:2990/jira/atlassian-connect/all.js" type="text/javascript"></script>
     </head>
     <body>

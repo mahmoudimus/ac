@@ -132,6 +132,18 @@ public class ConfluenceEventMapper implements EventMapper<ConfluenceEvent>
         return builder.build();
     }
 
+    protected Map<String, Object> userProfileToMap(UserProfile userProfile)
+    {
+        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+
+        builder.put("userKey", userProfile.getUserKey().getStringValue());
+        builder.put("username", userProfile.getUsername());
+        builder.put("email", userProfile.getEmail());
+        builder.put("fullName", userProfile.getFullName());
+
+        return builder.build();
+    }
+
     protected Map<String, Object> contentEntityObjectToMap(ContentEntityObject ceo, boolean idOnly)
     {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
