@@ -22,6 +22,7 @@ requirejs.config({
     'iframe/host/_status_helper': '../src/main/resources/js/iframe/host/_status_helper',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'iframe/host/content': '../src/main/resources/js/iframe/host/content',
+    'iframe/host/_rpc': '../src/main/resources/js/iframe/host/_rpc',
     'analytics/analytics': '../src/main/resources/js/analytics/analytics',
     'history/history': '../src/main/resources/js/history/history',
     'dialog/main': '../src/main/resources/js/dialog/main',
@@ -131,9 +132,16 @@ requirejs.config({
         'dialog/main'
         ]
     },
+    'iframe/host/_rpc': {
+      deps: [
+        'iframe/host/_dollar',
+        'iframe/_xdm'
+      ]
+    },
     'jira/events': {
         deps: [
-        'iframe/host/_dollar'
+        'iframe/host/_dollar',
+        'iframe/host/_rpc'
         ]
     },
     'jira/workflow-post-function': {
