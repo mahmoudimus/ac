@@ -16,7 +16,7 @@
     </web-resource>
 
     <web-resource key="events">
-        <resource type="download" name="jira-event.js" location="/js/jira/event.js" />
+        <resource type="download" name="jira-events.js" location="/js/jira/events.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
