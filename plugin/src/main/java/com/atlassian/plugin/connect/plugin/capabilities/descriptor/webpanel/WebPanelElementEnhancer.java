@@ -16,7 +16,7 @@ public class WebPanelElementEnhancer
         /**
          * AC-765 Jira Agile requires icon font and value to render a webPanel
          */
-        if (bean.getLocation().equals("atl.gh.issue.details.tab"))
+        if ("atl.gh.issue.details.tab".equals(bean.getLocation()))
         {
             webPanelElement.addElement("param")
                     .addAttribute("name", "iconFont")
