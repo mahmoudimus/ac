@@ -115,6 +115,7 @@
           return $.contains(document.documentElement, self.iframe);
         }
       };
+      $(iframe).on('ra.iframe.destroy', mixin.destroy);
     } else {
       // Add-on-side constructor branch
       target = w.parent;
@@ -363,6 +364,9 @@
     //  - props:      a map of additional HTML attributes for the new iframe
     //  - channel:    deprecated
     function createIframe(config) {
+      if(!config.container){
+        throw new Error("config.container must be defined");
+      }
       var iframe = document.createElement("iframe"),
         id = "easyXDM_" + config.container + "_provider",
         windowName = "";

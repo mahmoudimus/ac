@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
@@ -15,6 +16,7 @@ import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.StringUtils;
 
 
 @Component
@@ -35,7 +37,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     {
         Element domElement = createDomElement(bean, bean.getKey(addon), addon);
         final WebPanelModuleDescriptor descriptor = connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class);
-        
+
         descriptor.init(theConnectPlugin, domElement);
         return descriptor;
     }
@@ -43,6 +45,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     private Element createDomElement(WebPanelModuleBean bean, String webPanelKey, ConnectAddonBean addon)
     {
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
+
         Element webPanelElement = new DOMElement("remote-web-panel");
         webPanelElement.addAttribute("key", webPanelKey);
         webPanelElement.addAttribute("i18n-name-key", i18nKeyOrName);
@@ -60,10 +63,24 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         }
 
         webPanelElement.addElement("label").addAttribute("key", i18nKeyOrName);
+        I18nProperty toolTip = bean.getTooltip();
+
+        if (null != toolTip)
+        {
+            Element tooltipElement = webPanelElement.addElement("tooltip");
+            if (StringUtils.isNotBlank(toolTip.getI18n()))
+            {
+                tooltipElement.addAttribute("key", toolTip.getI18n());
+            }
+            tooltipElement.setText(toolTip.getValue());
+        }
+
         webPanelElement.addAttribute("class", IFrameRemoteWebPanel.class.getName());
         webPanelElement.addAttribute("width", bean.getLayout().getWidth());
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
         webPanelElement.addAttribute("url", bean.getUrl());
+
+        WebPanelElementEnhancer.enhance(bean, webPanelElement);
 
         return webPanelElement;
     }

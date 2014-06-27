@@ -4,6 +4,7 @@ import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -33,7 +34,7 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
      * Location in the application interface for this panel.
      * <p/>
      * Product location documentation:
-     * 
+     *
      * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
      * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
      */
@@ -52,6 +53,11 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
      * weight is incremented by 10 for each in sequence to leave room for custom panels.
      */
     private Integer weight;
+
+    /**
+     * Information about the web panel that will be shown when hovering over its header
+     */
+    private I18nProperty tooltip;
 
     public WebPanelModuleBean()
     {
@@ -84,6 +90,7 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
         {
             this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
         }
+
     }
 
     public String getLocation()
@@ -104,6 +111,11 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
     public Integer getWeight()
     {
         return weight;
+    }
+
+    public I18nProperty getTooltip()
+    {
+        return tooltip;
     }
 
     public boolean isAbsolute()
