@@ -11,17 +11,21 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.message.I18nResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map;
 
+import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
+
 /**
  *
  */
 @Component
-public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
+public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, DisposableBean, InitializingBean
 {
     private static final Logger log = LoggerFactory.getLogger(GsonConnectAddonBeanFactory.class);
 
@@ -101,5 +105,18 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
             String i18nMessage = i18nResolver.getText("connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
             throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
         }    
+    }
+
+    @Override
+    public void destroy() throws Exception
+    {
+        //JDEV-29184 -  we need to explicitly clean up threads in the underlying msg-simple library provided by the json-schema-validator
+        LoadingMessageSourceProvider.shutdown();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception
+    {
+        LoadingMessageSourceProvider.restartIfNeeded();
     }
 }
