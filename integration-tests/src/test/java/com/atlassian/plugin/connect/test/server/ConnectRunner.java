@@ -197,6 +197,14 @@ public class ConnectRunner
         return this;
     }
 
+    public ConnectRunner addJWT()
+    {
+        addonBuilder.withAuthentication(AuthenticationBean.newAuthenticationBean()
+                .withType(AuthenticationType.JWT)
+                .build());
+        return this;
+    }
+
     @OAuth
     public ConnectRunner addOAuth() throws NoSuchAlgorithmException, IOException
     {

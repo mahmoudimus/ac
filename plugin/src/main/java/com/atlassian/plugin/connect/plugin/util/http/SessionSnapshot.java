@@ -8,7 +8,7 @@ import java.util.Enumeration;
 import java.util.Map;
 
 /**
- * Allows to take a snaphot of the session state and restore it later on
+ * Allows to take a snapshot of the session state and restore it later on
  */
 public class SessionSnapshot
 {
@@ -21,15 +21,15 @@ public class SessionSnapshot
 
     public static SessionSnapshot take(@Nonnull HttpSession session)
     {
-        Map<String, Object> snapShot = Maps.newHashMap();
+        Map<String, Object> snapshot = Maps.newHashMap();
         Enumeration attributeNames = session.getAttributeNames();
         while (attributeNames.hasMoreElements())
         {
             String name = attributeNames.nextElement().toString();
             Object value = session.getAttribute(name);
-            snapShot.put(name, value);
+            snapshot.put(name, value);
         }
-        return new SessionSnapshot(snapShot);
+        return new SessionSnapshot(snapshot);
     }
 
     public void restore(@Nonnull HttpSession session)
