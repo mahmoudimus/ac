@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.OAuthUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageMacroPage;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.MacroPageModule;
 import it.servlet.ConnectAppServlets;
@@ -29,6 +30,11 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
 
     private static AtlassianConnectAddOnRunner remotePlugin;
 
+    private static final String TABLE_MACRO = "table-macro";
+    private static final String TABLE_MACRO_NAME = "Tabled Macro";
+    private static final String TABLE_MACRO_PATH = "/table-macro";
+
+
     @BeforeClass
     public static void setupConfluenceAndStartConnectAddOn() throws Exception
     {
@@ -43,6 +49,12 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
                                     .outputType("block")
                                     .bodyType("none")
                                     .resource(ConnectAppServlets.apRequestServlet()))
+                .add(MacroPageModule.key(TABLE_MACRO)
+                                    .name(TABLE_MACRO_NAME)
+                                    .path(TABLE_MACRO_PATH)
+                                    .outputType("block")
+                                    .bodyType("none")
+                                    .resource(ConnectAppServlets.apRequestServlet()))
                 .start();
     }
 
@@ -54,6 +66,21 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
             remotePlugin.stopAndUninstall();
         }
     }
+
+
+    @Test
+    public void testPageMacroInOrderedTable() throws XmlRpcFault, IOException
+    {
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "testPageMacro", loadResourceAsString("confluence/test-page-table-macro.xhtml"));
+        loginAsBetty();
+        ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "table-macro-0");
+        assertEquals("200", page.getClientHttpStatus());
+        page.ReorderTableOnPage();
+        RenderedMacro refreshedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO);
+        refreshedMacro.waitUntilContentLoaded();
+        assertEquals("200", page.getClientHttpStatus());
+    }
+
 
     @Test
     public void testPageMacro() throws XmlRpcFault, IOException
