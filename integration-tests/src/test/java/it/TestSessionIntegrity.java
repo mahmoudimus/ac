@@ -91,7 +91,7 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
         driver.get(baseUrl + "/rest/remoteplugintest/1/user");
 
         // Must be 'admin', not the add-on user
-        assertTrue(driver.getPageSource().contains("<user><name>admin</name></user>"));
+        assertTrue(driver.getPageSource().contains("<user><name>" + TestConstants.ADMIN_USERNAME + "</name></user>"));
     }
 
 }

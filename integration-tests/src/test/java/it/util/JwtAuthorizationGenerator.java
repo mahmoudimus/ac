@@ -8,7 +8,6 @@ import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
 import com.atlassian.jwt.exception.JwtSigningException;
 import com.atlassian.jwt.exception.JwtUnknownIssuerException;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
-import com.atlassian.jwt.httpclient.CanonicalRequestUtil;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.jwt.writer.JwtWriter;
 import com.atlassian.jwt.writer.JwtWriterFactory;
@@ -115,8 +114,6 @@ public class JwtAuthorizationGenerator
 
             CanonicalHttpUriRequest canonicalHttpUriRequest = new CanonicalHttpUriRequest(httpMethod.toString(),
                     targetPath.getPath(), "", completeParams);
-
-            System.out.println("Canonical request is: " + CanonicalRequestUtil.toVerboseString(canonicalHttpUriRequest));
 
             JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, canonicalHttpUriRequest);
         }
