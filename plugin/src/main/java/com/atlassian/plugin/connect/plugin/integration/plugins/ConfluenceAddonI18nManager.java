@@ -34,6 +34,7 @@ public class ConfluenceAddonI18nManager implements InitializingBean, ConnectAddo
 
     public static final String CACHES_DIR = "connect";
     public static final String I18N_FILE = "connect-addons.properties";
+    public static final String ATLASSIAN_CONNECT_I18N_RELOADER = "confluence-atlassian-connect-i18n-reloader";
 
     private final ApplicationProperties applicationProperties;
     private final Plugin theConnectPlugin;
@@ -91,13 +92,13 @@ public class ConfluenceAddonI18nManager implements InitializingBean, ConnectAddo
 
     private void triggerI18nReload()
     {
-        ModuleDescriptor moduleDescriptor = theConnectPlugin.getModuleDescriptor("docs");
+        ModuleDescriptor moduleDescriptor = theConnectPlugin.getModuleDescriptor(ATLASSIAN_CONNECT_I18N_RELOADER);
         if (moduleDescriptor != null)
         {
             String moduleKey = moduleDescriptor.getCompleteKey();
             pluginController.disablePluginModule(moduleKey);
             pluginController.enablePluginModule(moduleKey);
-            log.info("Confluence i18n reload triggered");
+            log.debug("Confluence i18n reload triggered");
         }
         else
         {

@@ -60,7 +60,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<T> beans)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
-        MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(addon.getKey());
+        MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(theConnectPlugin.getKey());
 
         for (T bean : beans)
         {
