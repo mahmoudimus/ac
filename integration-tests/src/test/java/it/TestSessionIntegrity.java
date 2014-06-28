@@ -20,9 +20,9 @@ import java.net.URL;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestSessionIntegrity extends ConnectWebDriverTestBase
 {
@@ -91,7 +91,7 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
         driver.get(baseUrl + "/rest/remoteplugintest/1/user");
 
         // Must be 'admin', not the add-on user
-        assertEquals("<user><name>admin</name></user>", driver.getPageSource());
+        assertTrue(driver.getPageSource().contains("<user><name>admin</name></user>"));
     }
 
 }
