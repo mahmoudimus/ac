@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.context.confluence;
 
+import com.atlassian.confluence.core.ContentEntityManager;
+import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.BlogPost;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.PageManager;
@@ -43,6 +45,7 @@ public class ConfluenceModuleContextFilterTest
     @Mock private UserManager userManager;
     @Mock private SpaceManager spaceManager;
     @Mock private PageManager pageManager;
+    @Mock private ContentEntityManager contentEntityManager;
 
     @InjectMocks private ConfluenceModuleContextFilter filter;
 
@@ -241,5 +244,48 @@ public class ConfluenceModuleContextFilterTest
         assertThat(filtered, not(hasEntry(is("profileUser.key"), is("defaced"))));
 
         assertTrue("Filtered context should be empty", filtered.isEmpty());
+    }
+
+    @Test
+    public void testFilterForbiddenContent()
+    {
+        ContentEntityObject content = mock(ContentEntityObject.class);
+        when(contentEntityManager.getById(anyLong())).thenReturn(content);
+        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(content))).thenReturn(false);
+
+        ModuleContextParameters params = new HashMapModuleContextParameters();
+        params.put("content.id", "1234");
+        params.put("content.version", "1");
+        params.put("content.type", "custom");
+        params.put("content.plugin", "plugin:foo");
+
+        ModuleContextParameters filtered = filter.filter(params);
+        assertFalse(filtered.containsKey("content.id"));
+
+        // version/type/plugin are not protected information
+        assertTrue(filtered.containsKey("content.version"));
+        assertTrue(filtered.containsKey("content.type"));
+        assertTrue(filtered.containsKey("content.plugin"));
+    }
+
+    @Test
+    public void testFilterAllowedContent()
+    {
+        ContentEntityObject content = mock(ContentEntityObject.class);
+        when(contentEntityManager.getById(anyLong())).thenReturn(content);
+        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(content))).thenReturn(true);
+
+        ModuleContextParameters params = new HashMapModuleContextParameters();
+        params.put("content.id", "1234");
+        params.put("content.version", "1");
+        params.put("content.type", "custom");
+        params.put("content.plugin", "plugin:foo");
+
+        ModuleContextParameters filtered = filter.filter(params);
+
+        assertEquals("1234", filtered.get("content.id"));
+        assertEquals("1", filtered.get("content.version"));
+        assertEquals("custom", filtered.get("content.type"));
+        assertEquals("plugin:foo", filtered.get("content.plugin"));
     }
 }
