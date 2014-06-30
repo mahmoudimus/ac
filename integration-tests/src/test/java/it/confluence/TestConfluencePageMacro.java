@@ -77,8 +77,7 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
         assertEquals("200", page.getClientHttpStatus());
         page.ReorderTableOnPage();
         RenderedMacro refreshedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO);
-        refreshedMacro.waitUntilContentLoaded();
-        assertEquals("200", page.getClientHttpStatus());
+        assertEquals("200",refreshedMacro.getIFrameElementText("client-http-status"));
     }
 
 
