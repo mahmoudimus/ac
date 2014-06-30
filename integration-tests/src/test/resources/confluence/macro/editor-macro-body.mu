@@ -20,7 +20,7 @@
           });
 
           function onSubmit() {
-            confluence.saveMacro({}, "cat pictures and more");
+            confluence.saveMacro({}, "{{{newMacroBody}}}");
             confluence.closeMacroEditor();
             return true;
           }

@@ -154,9 +154,11 @@ public class ConnectAppServlets
         return wrapContextAwareServlet(new MustacheServlet("confluence/macro/editor.mu"));
     }
 
-    public static HttpServlet macroBodyEditor()
+    public static HttpServlet macroBodyEditor(String newMacroBody)
     {
-        return wrapContextAwareServlet(new MustacheServlet("confluence/macro/editor-macro-body.mu"));
+        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("confluence/macro/editor-macro-body.mu"));
+        contextServlet.getBaseContext().put("newMacroBody", newMacroBody);
+        return contextServlet;
     }
 
     public static HttpServlet wrapContextAwareServlet(ContextServlet servlet)
