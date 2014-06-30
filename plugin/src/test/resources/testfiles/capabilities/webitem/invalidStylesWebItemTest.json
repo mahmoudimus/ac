@@ -1,0 +1,34 @@
+{
+    "key": "my-plugin",
+    "name": "My Plugin",
+    "version": "1.0",
+    "vendor": {
+        "name": "Atlassian",
+        "url": "http://www.atlassian.com"
+    },
+    "links": {
+        "self": "http://www.example.com/capabilities",
+        "homepage": "http://www.example.com"
+    },
+    "baseUrl": "http://www.example.com",
+    "authentication" : {
+        "type" : "oauth",
+        "publicKey": "S0m3Publ1cK3y"
+    },
+    "modules": {
+        "webItems": [{
+            "url": "/my-general-page",
+            "location": "system.preset.filters",
+            "name": {
+                "value": "My Web Item",
+                "i18n": "my.webItem"
+            },
+            "key":"my-web-item",
+            "styleClasses": [
+                "webit%22\" ><script>alert(1);</script>",
+                "webit%22%20onerror%22javascript:alert(1);%20",
+                "system-present-webitem"
+            ]
+        }]
+    }
+}

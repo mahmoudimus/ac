@@ -27,10 +27,10 @@ listed in the `--bundled-plugins` argument are present in your Atlassian applica
 You can start JIRA or Confluence with Atlassian Connect as follows:
 
 #### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-07-011 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.3,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.1 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-07-013 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.16.5,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.5 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.5-OD-25-013 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.3,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.1 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.5-OD-27-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.16.5,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.5 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This
 includes the version of Atlassian Connect framework. Those component versions will change as Atlassian Connect
@@ -92,10 +92,28 @@ declarations, scopes or changing the plugin-info details. Simply repeat step 3.
 
 You should not need to restart the Atlassian application while developing.
 
+<a name='utilities'></a>
+## Handy tools
 
-
-
-
+The following tools can be of great help when implementing add-ons!
+<table class='aui'>
+	<thead>
+		<th>Tool</th>
+		<th>Description</th>
+	</thead>
+	<tr>
+		<td>[JSON descriptor validator](https://atlassian-connect-validator.herokuapp.com/validate)</td>
+		<td>This validator will check that your descriptor is syntactically correct. Just paste the JSON content 
+			of your descriptor in the "descriptor" field, and select the Atlassian product you want to validate 
+			against.</td>
+	</tr>
+	<tr>
+		<td>[JWT decoder](http://jwt-decoder.herokuapp.com/jwt/decode)</td>
+		<td>An encoded JWT token can be quite opaque. You can use this handy tool to decode JWT tokens and inspect 
+			their content. Just paste the full URL of the resource you are trying to access, including the JWT
+			token, in the URL field. E.g. http://localhost:2990/jira/path/to/rest/endpoint?jwt=token</td>
+	</tr>
+</table>
 
 
 

@@ -67,4 +67,24 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
             }
         });
     }
+
+    @Test
+    public void testContentPermissionsUpdatedWebHookFired() throws Exception
+    {
+        final String pluginKey = RemotePluginUtils.randomPluginKey();
+
+        runInRunner(baseUrl, "content_permissions_updated", pluginKey, new WebHookTester()
+        {
+            @Override
+            public void test(WebHookWaiter waiter) throws Exception
+            {
+                String content = "<h1>Love me</h1>";
+                ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(admin), "ds", "testxmlWebhooks", content);
+                confluenceOps.addEditRestrictionToPage(some(admin), pageData.getId());
+                final WebHookBody body = waiter.waitForHook();
+                assertNotNull(body);
+                Assert.assertEquals(pageData.getId(), body.find("content/id"));
+            }
+        });
+    }
 }

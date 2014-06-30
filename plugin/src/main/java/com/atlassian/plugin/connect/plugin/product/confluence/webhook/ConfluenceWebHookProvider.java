@@ -19,6 +19,7 @@ import com.atlassian.confluence.event.events.label.LabelCreateEvent;
 import com.atlassian.confluence.event.events.label.LabelDeleteEvent;
 import com.atlassian.confluence.event.events.label.LabelRemoveEvent;
 import com.atlassian.confluence.event.events.search.SearchPerformedEvent;
+import com.atlassian.confluence.event.events.security.ContentPermissionEvent;
 import com.atlassian.confluence.event.events.security.LoginEvent;
 import com.atlassian.confluence.event.events.security.LoginFailedEvent;
 import com.atlassian.confluence.event.events.security.LogoutEvent;
@@ -97,6 +98,7 @@ public class ConfluenceWebHookProvider implements WebHookProvider
         publish.webhook("page_moved").whenFired(PageMoveEvent.class).serializedWith(serializer);
         publish.webhook("page_viewed").whenFired(PageViewEvent.class).serializedWith(serializer);
         publish.webhook("page_children_reordered").whenFired(PageChildrenReorderEvent.class).serializedWith(serializer);
+        publish.webhook("content_permissions_updated").whenFired(ContentPermissionEvent.class).matchedBy(new NonEmptyContentPermissionEventMatcher()).serializedWith(serializer);
     }
 
     
