@@ -155,8 +155,4 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         connectMacroBrowserDialog.clickSave();
     }
 
-    protected String unique(String name)
-    {
-        return name + " - " + RandomStringUtils.randomAlphanumeric(6);
-    }
 }

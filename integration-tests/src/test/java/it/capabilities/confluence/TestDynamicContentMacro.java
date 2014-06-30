@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
@@ -137,7 +138,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMacroIsRendered() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle(unique("Simple Macro on Page"));
+        editorPage.setTitle(randomName("Simple Macro on Page"));
 
         selectMacro(editorPage, SIMPLE_MACRO_NAME);
 
@@ -152,7 +153,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testBodyInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle(unique("Short Body Macro"));
+        editorPage.setTitle(randomName("Short Body Macro"));
 
         selectMacro(editorPage, SHORT_BODY_MACRO_NAME);
 
@@ -170,7 +171,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testBodyHashInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle(unique("Long Body Macro"));
+        editorPage.setTitle(randomName("Long Body Macro"));
 
         selectMacro(editorPage, LONG_BODY_MACRO_NAME);
 
@@ -190,7 +191,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testParameterInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle(unique("Parameter Page"));
+        editorPage.setTitle(randomName("Parameter Page"));
 
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);
@@ -211,7 +212,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMultipleMacrosOnPage() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle(unique("Multiple Macros"));
+        editorPage.setTitle(randomName("Multiple Macros"));
 
         selectMacro(editorPage, SIMPLE_MACRO_NAME);
         selectMacro(editorPage, SIMPLE_MACRO_NAME);
@@ -234,7 +235,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMacroDimensions() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle(unique("Small Inline Macro"));
+        editorPage.setTitle(randomName("Small Inline Macro"));
 
         selectMacro(editorPage, SMALL_INLINE_MACRO_NAME);
 
@@ -249,7 +250,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMacroEditorSavesParameters() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle(unique("Macro Editor"));
+        editorPage.setTitle(randomName("Macro Editor"));
 
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);

@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -347,7 +348,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testImagePlaceholder() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle(unique("Image Placeholder Macro"));
+        editorPage.setTitle(randomName("Image Placeholder Macro"));
 
         selectMacro(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
 

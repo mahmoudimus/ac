@@ -30,7 +30,7 @@ AP.define("confluence", ["_dollar", "_rpc"],
                 * @param {Function} callback to be passed the macro data.
                 * @example
                 * AP.require('confluence', function(confluence){
-                *   var macroData = confluence.getMacroData(function(data){
+                *   confluence.getMacroData(function(data){
                 *       alert(data);
                 *   });
                 * });
@@ -44,7 +44,7 @@ AP.define("confluence", ["_dollar", "_rpc"],
                  * @param {Function} callback to be passed the macro data.
                  * @example
                  * AP.require('confluence', function(confluence){
-                  *   var macroBody = confluence.getMacroBody(function(body){
+                  *   confluence.getMacroBody(function(body){
                   *       alert(body);
                   *   });
                   * });

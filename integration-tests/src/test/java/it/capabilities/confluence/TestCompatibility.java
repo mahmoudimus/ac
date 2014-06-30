@@ -13,6 +13,9 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -89,7 +92,7 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
         assertEquals("<p><ac:structured-macro ac:name=\"something-else\" /></p>", content);
     }
 
-    private void createAndVisitPage(String pageContent) throws Exception
+    private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault
     {
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConfluenceOps.ConfluenceUser.ADMIN),
                 TestSpace.DEMO.getKey(), "macro page", pageContent);
