@@ -1,7 +1,22 @@
-##Tutorial: Display your JIRA project stats
+##Tutorial: Build a Geiger counter for JIRA
+
+<div class="aui-message">
+	    <p class="title">
+	        <span class="aui-icon icon-info"></span>
+	        <strong>Who this tutorial is for</strong>
+	    </p>
+	    You can complete this tutorial even if you've never built an Atlassian add-on before. You 
+	    will need at least version 4.2.20 of the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads)
+		, and [Node.js](http://www.nodejs.org/). 
+</div>
 
 In this tutorial, you'll build a static Connect add-on that displays your
-JIRA projects in a chart. You'll use the [Node.js](http://nodejs.org/) framework 
+JIRA projects in a chart. We've affectionately dubbed this add-on 'Geiger,' 
+since it acts like a [Geiger counter](http://en.wikipedia.org/wiki/Geiger_counter). 
+Geiger measures the 'radiation' in your JIRA instance – the flux of activity 
+for bugs.   d
+
+You'll use the [Node.js](http://nodejs.org/) framework 
 and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
 to interface with JIRA. 
 
@@ -22,16 +37,6 @@ Here's you'll learn about in this tutorial:
 * [Creating the D3.js table to display your projects](#architect-stats-page)
 * [Adding data and verifying your add-on works](#check)
 
-<div class="aui-message">
-	    <p class="title">
-	        <span class="aui-icon icon-info"></span>
-	        <strong>Who this tutorial is for</strong>
-	    </p>
-	    You can complete this tutorial even if you've never built an Atlassian add-on before. You 
-	    will need at least version 4.2.20 of the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads)
-		, and [Node.js](http://www.nodejs.org/). 
-</div>
-
 ## <a name="environment"></a> Tutorial prerequisites & configuring your development environment  
 
 In this step, you'll confirm you have node.js installed, and install the 
@@ -42,23 +47,23 @@ file, so you don't need to continually restart your add-on as you develop. Perha
 importantly, ACE handles [JWT authentication](../concepts/understanding-jwt.html), 
 so that requests betwen your add-on and the JIRA application are signed and authenticated. 
 
-Let's get started:
+For these steps, you might need to enter sudo mode in your terminal. Let's get started.
 
 1. Install [node.js](http://www.nodejs.org/).  
 	If you use [Homebrew](http://brew.sh/), you can use the following command:
 	<pre><code data-lang="text">$ brew install node</code></pre>
-	Otherwise, you can [download and install node directly](http://nodejs.org/download/).
+	Otherwise, you can [download and install node directly](http://nodejs.org/download/).  
 1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
 	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
-1. Create a new ACE project called `tut`.
-	<pre><code data-lang="text">$ atlas-connect new tut</code></pre>
-1. Change to your new `tut` directory.
-	<pre><code data-lang="text">$ cd tut</code></pre>
+1. Create a new ACE project called `geiger`.
+	<pre><code data-lang="text">$ atlas-connect new geiger</code></pre>
+1. Change to your new `geiger` directory.
+	<pre><code data-lang="text">$ cd geiger/</code></pre>
 1. Install node.js dependencies for your project.  
 	<pre><code data-lang="text">$ npm install</code></pre>
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
-    You'll need at least SDK version 4.2.20.  
-    If you run the <tt>atlas-version</tt> command, you should see something similar to this:  
+    You'll need SDK version 4.2.20 or higher.  
+    If you run the <tt>atlas-version</tt> command, you should see 4.2.20 or higher:  
     <tt>
         ATLAS Version:    4.2.20  
         ATLAS Home:       /usr/share/atlassian-plugin-sdk-4.2.20  
@@ -79,7 +84,7 @@ Let's get started:
 
 ## <a name="stats-header"></a> Install your add-on and add a _Stats_ link
 
-You now have the basic architecture for your plugin. If you open your new `tut` project, 
+You now have the basic architecture for your plugin. If you open your new `geiger` project, 
 you'll see essentials like the [`atlassian-connect.json` descriptor](../modules/) in the 
 project root. You'll also see an `app.js` file. 
 
@@ -156,7 +161,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	}
 	````
  
-1. From your project root, run the `app.js` file:
+1. From your `geiger` project root, run the `app.js` file:
 	<pre><code data-lang="text">$ node app.js</code></pre> 
 	Your add-on is automatically registered in JIRA for you. 
 1. Refresh JIRA.  
