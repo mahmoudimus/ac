@@ -14,7 +14,7 @@ public class AddonTestUtils
     public static String randomAddOnKey()
     {
         // include underscores in add-on key: used in the separator at ModuleKeyUtils
-        return "com.atlassian.test_addon__" + RandomStringUtils.randomAlphanumeric(8).replaceAll("3", "4").toLowerCase();
+        return "test_addon__" + RandomStringUtils.randomAlphanumeric(8).replaceAll("3", "4").toLowerCase();
     }
 
     public static String randomModuleKey()
