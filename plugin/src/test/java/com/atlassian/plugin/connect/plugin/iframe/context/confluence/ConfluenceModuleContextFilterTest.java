@@ -47,11 +47,12 @@ public class ConfluenceModuleContextFilterTest
     @Mock private PageManager pageManager;
     @Mock private ContentEntityManager contentEntityManager;
 
-    @InjectMocks private ConfluenceModuleContextFilter filter;
+    private ConfluenceModuleContextFilter filter;
 
     @Before
     public void setup()
     {
+        this.filter = new ConfluenceModuleContextFilter(permissionManager, userAccessor, userManager, spaceManager, pageManager, contentEntityManager);
         when(userAccessor.getExistingUserByKey(any(UserKey.class))).thenReturn(mock(ConfluenceUser.class));
     }
 
