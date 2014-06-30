@@ -36,7 +36,7 @@ The information contained in the two descriptors below is identical. It shows th
         "name": "My Organization, Inc",
         "url": "https://developer.atlassian.com"
     },
-    "version": "1.0"
+    "apiVersion": "1.0"
 }
 ```
 

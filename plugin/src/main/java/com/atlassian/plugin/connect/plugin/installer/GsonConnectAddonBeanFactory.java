@@ -12,6 +12,7 @@ import com.atlassian.sal.api.message.I18nResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
  *
  */
 @Component
-public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, DisposableBean
+public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, DisposableBean, InitializingBean
 {
     private static final Logger log = LoggerFactory.getLogger(GsonConnectAddonBeanFactory.class);
 
@@ -111,5 +112,11 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     {
         //JDEV-29184 -  we need to explicitly clean up threads in the underlying msg-simple library provided by the json-schema-validator
         LoadingMessageSourceProvider.shutdown();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception
+    {
+        LoadingMessageSourceProvider.restartIfNeeded();
     }
 }
