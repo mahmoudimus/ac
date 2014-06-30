@@ -5,7 +5,7 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
     // values - they only need to pass back the updated values - and works because only
     // a single macro editor can be open at a time.
     var saveMacro,
-        macroEditorDialog,
+        openEditorMacroBody,
         openEditorMacroData;
 
 
@@ -14,14 +14,16 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
          * Saves the macro currently being edited. Relies on openCustomEditor() first being invoked by MacroBrowser.
          *
          * @param {Object} updatedMacroParameters the updated parameters for the macro being edited.
+         * @param {String} updatedMacroBody the (optional) body of the macro
          */
-        saveMacro: function(updatedMacroParameters) {
+        saveMacro: function(updatedMacroParameters, updatedMacroBody) {
             if (!saveMacro) {
                 $.handleError("Illegal state: no macro currently being edited!");
             }
-            saveMacro(updatedMacroParameters);
+            saveMacro(updatedMacroParameters, updatedMacroBody);
             saveMacro = undefined;
         },
+
         /**
          * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>saveMacro</code>
          * before closing the editor.
@@ -29,8 +31,21 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
         close: function() {
             dialog.close();
         },
+
+        /**
+         * Returns the macro parameters of the macro being edited in the macro editor
+         * @param callback the callback function which will be called with the parameter object
+         */
         getMacroData: function(callback){
             return callback(openEditorMacroData);
+        },
+
+        /**
+         * Returns the macro body of the macro being edited in the macro editor
+         * @param callback the callback function which will be called with the macro body
+         */
+        getMacroBody: function(callback){
+            return callback(openEditorMacroBody);
         },
 
         /**
@@ -51,6 +66,7 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
         openCustomEditor: function(macroData, opts) {
             AJS.Rte.BookmarkManager.storeBookmark();
             openEditorMacroData = macroData.params;
+            openEditorMacroBody = macroData.body;
 
             function getIframeHtmlForMacro(url) {
                 var data = {
@@ -64,7 +80,7 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
                 });
             }
 
-            saveMacro = function(updatedParameters) {
+            saveMacro = function(updatedParameters, updatedMacroBody) {
                 // Render the macro
                 var macroRenderRequest = {
                     contentId: Confluence.Editor.getContentId(),
@@ -73,7 +89,7 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
                         params: updatedParameters,
                         // AC-741: MacroUtils clients in Confluence core set a non-existent macro body to the empty string.
                         // In the absence of a public API, let's do the same to minimize the chance of breakage in the future.
-                        body: macroData.body ? macroData.body : ""
+                        body: updatedMacroBody || (macroData.body ? macroData.body : "")
                     }
                 };
                 tinymce.confluence.MacroUtils.insertMacro(macroRenderRequest);
@@ -96,8 +112,7 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
                 $('.ap-dialog-container').replaceWith(dialogHtml);
             });
 
-        },
-
+        }
     };
 
     return module;
