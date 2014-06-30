@@ -196,7 +196,14 @@
         var payload = JSON.parse(e.data),
             pid = payload.i, pchannel = payload.c, ptype = payload.t, pmessage = payload.m;
         // If the payload doesn't match our expected event signature, assume its not part of the xdm-rpc protocol
-        if (e.source !== target || e.origin !== remoteOrigin || pchannel !== channel) return;
+        if (e.source !== target || e.origin !== remoteOrigin || pchannel !== channel){
+          // try to recover bridge based on channel
+          if(payload.c === self.channel && e.origin !== remoteOrigin || pchannel !== channel){
+            target = e.source;
+            receive(e);
+          }
+          return;
+        }
         if (ptype === "request") {
           // If the payload type is request, this is an incoming method invocation
           var name = pmessage.n, args = pmessage.a,
