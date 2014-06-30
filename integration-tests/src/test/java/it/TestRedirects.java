@@ -1,8 +1,8 @@
 package it;
 
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.junit.BeforeClass;
@@ -16,9 +16,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
 
-@XmlDescriptor
 public class TestRedirects extends AbstractBrowserlessTest
 {
     @BeforeClass
@@ -30,14 +30,17 @@ public class TestRedirects extends AbstractBrowserlessTest
     @Test
     public void testPermanentRedirect() throws Exception
     {
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl)
-                .add(GeneralPageModule.key("page")
-                                      .name("Page")
-                                      .path("/page")
-                                      .resource(new MessageServlet()))
+        ConnectRunner runner = new ConnectRunner(baseUrl, RemotePluginUtils.randomPluginKey())
+                .addModule("generalPages", newPageBean()
+                        .withKey("page")
+                        .withName(new I18nProperty("Page", null))
+                        .withUrl("/page")
+                        .build())
+                .addRoute("/page", new MessageServlet())
+                .setAuthenticationToNone()
                 .start();
 
-        URL url = new URL(baseUrl + "/plugins/servlet/redirect/permanent?app_key=" + runner.getPluginKey() + "&app_url=/page&message=bar");
+        URL url = new URL(baseUrl + "/plugins/servlet/redirect/permanent?app_key=" + runner.getAddon().getKey() + "&app_url=/page&message=bar");
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
         assertEquals(HttpStatus.SC_MOVED_PERMANENTLY, yc.getResponseCode());
 

@@ -70,6 +70,10 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 /**
                 * Refresh an issue page without reloading the browser.
                 * This is helpful when your add-on updates information about an issue in the background.
+                * @example
+                * AP.require('jira', function(jira){
+                *   jira.refreshIssuePage();
+                * });
                 */
                 refreshIssuePage: function () {
                     remote.triggerJiraEvent('refreshIssuePage');

@@ -39,12 +39,15 @@ function validate(opts, addonKey, descriptorFilename, descriptor, schema, callba
         var r = {
             "addon": addonKey,
             "descriptorUrl": descriptorFilename,
+            "version": descriptor.version,
             "errors": errors || []
         };
         if (errors) {
             if (!opts.quiet && !opts.testReport) {
                 console.log(util.inspect(r, {colors: true, depth: 5}));
             }
+        } else if (opts.debug) {
+            console.log("Validated add-on " + descriptor.key);
         }
         if (opts.testReport) {
             validationResults.push(r);

@@ -1,18 +1,22 @@
 package it.jira;
 
+import com.atlassian.jira.pageobjects.dialogs.ShifterDialog;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
+import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.PlainTextView;
 import com.atlassian.plugin.connect.test.pageobjects.jira.ViewChangingSearchResult;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.module.AdminPageModule;
-import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
-import com.atlassian.plugin.connect.test.server.module.IssueTabPageModule;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.servlet.ConnectAppServlets;
 import org.junit.*;
@@ -20,38 +24,54 @@ import org.junit.*;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static it.TestConstants.ADMIN_FULL_NAME;
 import static org.junit.Assert.*;
 
-@XmlDescriptor
 public class TestJira extends JiraWebDriverTestBase
 {
     public static final String EXTRA_PREFIX = "servlet-";
-    private static AtlassianConnectAddOnRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
-                .addOAuth()
-                .add(AdminPageModule.key("remotePluginAdmin")
-                                    .name("Remotable Plugin app1 Admin")
-                                    .path("/ap")
-                                    .resource(ConnectAppServlets.apRequestServlet()))
-                .add(AdminPageModule.key("jira-admin-page")
-                                    .name("Remotable Admin Page")
-                                    .path("/jap")
-                                    .section("advanced_menu_section/advanced_section")
-                                    .resource(ConnectAppServlets.apRequestServlet()))
-                .add(IssueTabPageModule.key("jira-remotePluginIssueTabPage")
-                                       .name("AC Play Issue Tab Page")
-                                       .path("/itp")
-                                       .resource(ConnectAppServlets.apRequestServlet()))
-                .add(DialogPageModule.key("jira-issueAction")
-                                     .name("Test Issue Action")
-                                     .path("/jia")
-                                     .section("operations-subtasks")
-                                     .resource(ConnectAppServlets.dialogServlet()))
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+                .setAuthenticationToNone()
+                .addModules("adminPages",
+                        newPageBean()
+                                .withKey("remotePluginAdmin")
+                                .withName(new I18nProperty("Remotable Plugin app1 Admin", "admin.page.app1"))
+                                .withUrl("/ap")
+                                .build(),
+                        newPageBean()
+                                .withKey("jira-admin-page")
+                                .withName(new I18nProperty("Remotable Admin Page", "admin.page"))
+                                .withUrl("/jap")
+                                .withLocation("advanced_menu_section/advanced_section")
+                                .build())
+                .addRoute("/ap", ConnectAppServlets.apRequestServlet())
+                .addRoute("/jap", ConnectAppServlets.apRequestServlet())
+                .addModule("jiraIssueTabPanels",
+                        newTabPanelBean()
+                                .withKey("jira-remotePluginIssueTabPage")
+                                .withName(new I18nProperty("AC Play Issue Tab Page", "issue.tab"))
+                                .withUrl("/itp")
+                                .build())
+                .addRoute("/itp", ConnectAppServlets.apRequestServlet())
+                .addModule("webItems",
+                        newWebItemBean()
+                                .withKey("jira-issueAction")
+                                .withName(new I18nProperty("Test Issue Action", "issue.action"))
+                                .withUrl("/jia")
+                                .withLocation("operations-subtasks")
+                                .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
+                                .build())
+                .addRoute("/jia", ConnectAppServlets.dialogServlet())
+                .addScope(ScopeName.READ)
                 .start();
     }
 
@@ -65,19 +85,25 @@ public class TestJira extends JiraWebDriverTestBase
     }
 
     @Test
+    @Ignore("partly ported from xml to json: see comments")
+    @XmlDescriptor(comment="partly ported from xml to json: see comments")
     public void testLoadDialogFromIssueNavigatorActionCog() throws RemoteException
     {
         loginAsAdmin();
         // ensure one issue
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
 
-        RemotePluginTestPage page = product.getPageBinder()
-                                           .navigateToAndBind(IssueDetailPage.class, issue.getKey())
-                                           .details()
-                                           .openFocusShifter()
-                                           .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
+        final ShifterDialog shifterDialog = product.getPageBinder()
+                .navigateToAndBind(IssueDetailPage.class, issue.getKey())
+                .details()
+                .openFocusShifter();
+        // TODO: select the "Test Issue Action" text (a link with id="<add-on key>__jira-issue-action"),
+        // which causes the iframe to be loaded inside a container div with id="embedded-<add-on key>__jira-issue-action",
+        // and then look for iframe content by binding to the iframe and calling RemotePluginDialog.wasSubmitted() etc
+        ConnectAddOnTestPage page1 = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey(), false);
+        ConnectAddOnTestPage page2 = product.getPageBinder().bind(ConnectAddOnTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey(), true);
 
-        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page2);
 
         assertFalse(dialog.wasSubmitted());
         assertEquals(false, dialog.submit());
@@ -86,6 +112,8 @@ public class TestJira extends JiraWebDriverTestBase
     }
 
     @Test
+    @Ignore("partly ported from xml to json: see comments")
+    @XmlDescriptor(comment="partly ported from xml to json: see comments")
     public void testViewIssueTab() throws Exception
     {
         testLoggedInAndAnonymous(new Callable()
@@ -94,8 +122,14 @@ public class TestJira extends JiraWebDriverTestBase
             public Object call() throws Exception
             {
                 RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
+                String addOnKey = remotePlugin.getAddon().getKey();
+                // TODO: click the link with id="<add-on key>__jira-remote-plugin-issue-tab-page",
+                // which loads the iframe contained in the div with id="embedded-<add-on key>__jira-remote-plugin-issue-tab-page",
+                // and then look for iframe content with JiraViewIssuePageWithRemotePluginIssueTab.getMessage()
+                //JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
+                //        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey(), addOnKey, addOnKey + ":");
                 JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
-                        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey(), remotePlugin.getPluginKey(), remotePlugin.getPluginKey() + ":");
+                        JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issue.getKey(), addOnKey, ConnectPluginInfo.getPluginKey() + ":");
                 Assert.assertEquals("Success", page.getMessage());
                 return null;
             }
@@ -127,7 +161,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testAdminPageInJiraSpecificLocation() throws Exception
     {
         loginAsAdmin();
-        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
+        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX, remotePlugin.getAddon().getKey());
         assertTrue(adminPage.hasJiraRemotableAdminPageLink());
         assertEquals(ADMIN_FULL_NAME, adminPage.clickJiraRemotableAdminPage().getFullName());
     }
@@ -136,8 +170,9 @@ public class TestJira extends JiraWebDriverTestBase
     public void testGeneralAdminPage() throws Exception
     {
         loginAsAdmin();
-        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
+        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX, remotePlugin.getAddon().getKey());
         assertTrue(adminPage.hasGeneralRemotableAdminPage());
-        assertEquals(ADMIN_FULL_NAME, adminPage.clickGeneralRemotableAdminPage().getFullName());
+        final ConnectAddOnEmbeddedTestPage nextPage = adminPage.clickGeneralRemotableAdminPage();
+        assertEquals(ADMIN_FULL_NAME, nextPage.getFullName());
     }
 }

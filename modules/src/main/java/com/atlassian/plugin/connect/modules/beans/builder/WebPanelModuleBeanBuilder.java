@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 
 public class WebPanelModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<WebPanelModuleBeanBuilder, WebPanelModuleBean>
@@ -9,10 +10,10 @@ public class WebPanelModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBui
     private WebPanelLayout layout;
     private String url;
     private Integer weight;
+    private I18nProperty tooltip;
 
     public WebPanelModuleBeanBuilder()
     {
-
     }
 
     public WebPanelModuleBeanBuilder(WebPanelModuleBean webPanelBean)
@@ -23,6 +24,7 @@ public class WebPanelModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBui
         this.layout = webPanelBean.getLayout();
         this.url = webPanelBean.getUrl();
         this.weight = webPanelBean.getWeight();
+        this.tooltip = webPanelBean.getTooltip();
     }
 
 
@@ -51,6 +53,11 @@ public class WebPanelModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBui
         return this;
     }
 
+    public WebPanelModuleBeanBuilder withTooltip(I18nProperty tooltip)
+    {
+        this.tooltip = tooltip;
+        return this;
+    }
 
     @Override
     public WebPanelModuleBean build()

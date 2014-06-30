@@ -4,11 +4,11 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.jsonschema.core.report.ListProcessingReport;
 import com.github.fge.jsonschema.core.report.ListReportProvider;
 import com.github.fge.jsonschema.core.report.LogLevel;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,9 +18,14 @@ import java.io.IOException;
 
 public class JsonDescriptorValidator implements ConnectDescriptorValidator
 {
-    private static final JsonSchemaFactory factory = createSchemaFactory();
+    private final JsonSchemaFactory factory;
 
-    private static JsonSchemaFactory createSchemaFactory()
+    public JsonDescriptorValidator()
+    {
+        this.factory =  createSchemaFactory();
+    }
+
+    private JsonSchemaFactory createSchemaFactory()
     {
         return JsonSchemaFactory.newBuilder().setReportProvider(new ListReportProvider(LogLevel.ERROR, LogLevel.FATAL)).freeze();
     }

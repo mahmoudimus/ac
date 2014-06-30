@@ -49,4 +49,13 @@ public class TestDescriptorValidation
 
         assertFalse(result.isValid());
     }
+
+    @Test
+    public void invalidWebitemStyles() throws Exception
+    {
+        String json = readAddonTestFile("webitem/invalidStylesWebItemTest.json");
+        DescriptorValidationResult result = validator.validate(json, schemaLocator.getSchemaForCurrentProduct());
+
+        assertFalse(result.isValid());
+    }
 }
