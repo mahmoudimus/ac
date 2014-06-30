@@ -45,6 +45,9 @@ import static com.google.common.collect.Maps.newHashMap;
  * of the add-on in its Marketplace listing. The Marketplace will take care of the rest: informing administrators
  * and automatically installing the available update. See [Upgrades](../developing/upgrades.html) for more details.
  * <p/>
+ * <div class="aui-message"><p class="title"><span class="aui-icon icon-info"></span><strong>Validating your descriptor
+ * </strong></p><p>You can validate your descriptor using this
+ * <a href="https://atlassian-connect-validator.herokuapp.com/validate">handy tool</a>.</p></div>
  * <p/>
  *#### Example
  *
@@ -63,7 +66,7 @@ public class ConnectAddonBean extends BaseModuleBean
      * A unique key to identify the add-on.
      * This key must be <= 80 characters.
      */
-    @StringSchemaAttributes(maxLength = 80)
+    @StringSchemaAttributes(maxLength = 80, pattern = "^[a-zA-Z0-9-._]+$")
     @Required
     private String key;
 

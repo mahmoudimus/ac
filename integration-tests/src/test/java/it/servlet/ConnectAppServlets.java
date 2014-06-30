@@ -175,4 +175,9 @@ public class ConnectAppServlets
     {
         return wrapContextAwareServlet(new ResourceServlet(resourcePath, contentType));
     }
+
+    public static InstallHandlerServlet installHandlerServlet()
+    {
+        return new InstallHandlerServlet();
+    }
 }

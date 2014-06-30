@@ -67,7 +67,10 @@ private, even if they were previously published as public versions.
 	- **My add-on version is a beta release**: Indicates that the add-on version is in the testing
 stage only. Select this option if you intend to list the add-on publicly, but it isn't ready yet.
 	- **Compatible application**: For an Atlassian Connect add-on, after you choose the product you
-are targeting and the minimum version, the **Compatible to** version is uneditable (that is, it defaults to **Any**). Because Atlassian Connect add-ons use stable, forward-compatible web APIs and OnDemand versions are frequently updated, the notion of a latest-compatible version is absent for Atlassian Connect add-ons. It is applicable, however, to downloadable Java add-ons.
+are targeting and the minimum version, the **Compatible to** version is uneditable (that is, it defaults to **Any**). 
+Because Atlassian Connect add-ons use stable, forward-compatible web APIs and OnDemand versions are frequently updated, 
+the notion of a latest-compatible version is absent for Atlassian Connect add-ons. It is applicable, however, 
+to downloadable Java add-ons.
 8. Click Submit when done.
 
 You can now generate test license tokens for your add-on and install it in OnDemand instances,

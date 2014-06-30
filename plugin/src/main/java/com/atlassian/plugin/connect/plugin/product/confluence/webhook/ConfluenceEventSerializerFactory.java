@@ -37,6 +37,7 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
         mappers = ImmutableList.<EventMapper<ConfluenceEvent>>of(
                 new LabelEventMapper(userManager, confluenceSettingsManager),
                 new UserStatusEventMapper(userManager, confluenceSettingsManager),
+                new UserEventMapper(userManager, confluenceSettingsManager),
                 new SearchPerformedEventMapper(userManager, confluenceSettingsManager),
                 new AttachmentEventMapper(userManager, confluenceSettingsManager),
                 new PageChildrenReorderEventMapper(userManager, confluenceSettingsManager),
@@ -46,6 +47,7 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
                 new SpaceEventMapper(userManager, confluenceSettingsManager),
                 new CommentEventMapper(userManager, confluenceSettingsManager),
                 new SecurityEventMapper(userManager, confluenceSettingsManager),
+                new ContentEventMapper(userManager, confluenceSettingsManager),
                 new ConfluenceEventMapper(userManager, confluenceSettingsManager)
         );
     }

@@ -45,9 +45,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `plugin_enabled`
  * * `plugins_upgraded`
  * * `remote_issue_link_aggregate_cleared_event`
- * * `remote_plugin_disabled`
- * * `remote_plugin_enabled`
- * * `remote_plugin_installed`
  * * `remote_workflow_post_function`
  * * `server_upgraded`
  *
@@ -69,6 +66,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `comment_updated`
  * * `connect_addon_disabled`
  * * `connect_addon_enabled`
+ * * `content_permissions_updated`
  * * `group_created`
  * * `group_removed`
  * * `label_added`
@@ -88,9 +86,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `page_viewed`
  * * `plugin_enabled`
  * * `plugins_upgraded`
- * * `remote_plugin_disabled`
- * * `remote_plugin_enabled`
- * * `remote_plugin_installed`
  * * `search_performed`
  * * `server_upgraded`
  * * `space_created`

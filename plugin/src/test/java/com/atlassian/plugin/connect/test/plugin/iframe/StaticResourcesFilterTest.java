@@ -1,27 +1,33 @@
 package com.atlassian.plugin.connect.test.plugin.iframe;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.zip.GZIPOutputStream;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class StaticResourcesFilterTest
 {
@@ -65,50 +71,21 @@ public class StaticResourcesFilterTest
         {
             fail(e.getMessage());
         }
-        byte [] jsBytes = JS_DATA;
-        verify(response).setHeader("Content-Encoding", "identity");
         verify(response).setStatus(200);
-        verify(response).setContentLength(jsBytes.length);
+        verify(response).setContentLength(JS_DATA.length);
         verify(response).setContentType("text/javascript");
-        verify(response).setHeader("ETag", etag(jsBytes));
+        verify(response).setHeader("ETag", etag(JS_DATA));
         verify(response).setHeader("Vary", "Accept-Encoding");
         verify(response).setHeader("Connection", "keep-alive");
-        verify(sos).write(jsBytes);
-    }
-
-    @Test
-    public void testGzip() throws IOException
-    {
-        HttpServletRequest request = mockRequest(JS_FILE);
-        when(request.getHeader("Accept-Encoding")).thenReturn("gzip");
-        ServletOutputStream sos = mock(ServletOutputStream.class);
-        HttpServletResponse response = mockResponse(sos);
-        FilterChain chain = mock(FilterChain.class);
-        try
-        {
-            filter.doFilter(request, response, chain);
-        }
-        catch (Exception e)
-        {
-            fail(e.getMessage());
-        }
-        byte [] jsBytes = gzip(JS_DATA);
-        verify(response).setHeader("Content-Encoding", "gzip");
-        verify(response).setStatus(200);
-        verify(response).setContentLength(jsBytes.length);
-        verify(response).setContentType("text/javascript");
-        verify(response).setHeader("ETag", etag(jsBytes));
-        verify(response).setHeader("Vary", "Accept-Encoding");
-        verify(response).setHeader("Connection", "keep-alive");
-        verify(sos).write(jsBytes);
+        verify(sos).write(JS_DATA);
     }
 
     @Test
     public void testNotModified() throws IOException
     {
+        String etag = etag(JS_DATA);
         HttpServletRequest request = mockRequest(JS_FILE);
-        when(request.getHeader("Accept-Encoding")).thenReturn("gzip");
-        when(request.getHeader("If-None-Match")).thenReturn("4a3b8c014d4776ad51fb57b4bebe4f20");
+        when(request.getHeader("If-None-Match")).thenReturn(etag);
         ServletOutputStream sos = mock(ServletOutputStream.class);
         HttpServletResponse response = mockResponse(sos);
         FilterChain chain = mock(FilterChain.class);
@@ -120,12 +97,10 @@ public class StaticResourcesFilterTest
         {
             fail(e.getMessage());
         }
-        byte [] jsBytes = gzip(JS_DATA);
-        verify(response, never()).setHeader(eq("Content-Encoding"), anyString());
         verify(response).setStatus(304);
         verify(response, never()).setContentLength(anyInt());
         verify(response).setContentType("text/javascript");
-        verify(response).setHeader("ETag", etag(jsBytes));
+        verify(response).setHeader("ETag", etag);
         verify(response).setHeader("Vary", "Accept-Encoding");
         verify(response).setHeader("Connection", "keep-alive");
         verify(sos, never()).write((byte[]) anyObject());
@@ -135,7 +110,6 @@ public class StaticResourcesFilterTest
     public void testModified() throws IOException
     {
         HttpServletRequest request = mockRequest(JS_FILE);
-        when(request.getHeader("Accept-Encoding")).thenReturn("gzip");
         when(request.getHeader("If-None-Match")).thenReturn("stale-value");
         ServletOutputStream sos = mock(ServletOutputStream.class);
         HttpServletResponse response = mockResponse(sos);
@@ -148,15 +122,13 @@ public class StaticResourcesFilterTest
         {
             fail(e.getMessage());
         }
-        byte [] jsBytes = gzip(JS_DATA);
-        verify(response).setHeader("Content-Encoding", "gzip");
         verify(response).setStatus(200);
-        verify(response).setContentLength(jsBytes.length);
+        verify(response).setContentLength(JS_DATA.length);
         verify(response).setContentType("text/javascript");
-        verify(response).setHeader("ETag", etag(jsBytes));
+        verify(response).setHeader("ETag", etag(JS_DATA));
         verify(response).setHeader("Vary", "Accept-Encoding");
         verify(response).setHeader("Connection", "keep-alive");
-        verify(sos).write(jsBytes);
+        verify(sos).write(JS_DATA);
     }
 
     @Test
@@ -164,7 +136,6 @@ public class StaticResourcesFilterTest
     {
         // plugin actually knows about other.js, but the filter pattern should hide it
         HttpServletRequest request = mockRequest(OTHER_JS_FILE);
-        when(request.getHeader("Accept-Encoding")).thenReturn("gzip");
         ServletOutputStream sos = mock(ServletOutputStream.class);
         HttpServletResponse response = mockResponse(sos);
         FilterChain chain = mock(FilterChain.class);
@@ -176,7 +147,6 @@ public class StaticResourcesFilterTest
         {
             fail(e.getMessage());
         }
-        verify(response, never()).setHeader(eq("Content-Encoding"), anyString());
         verify(response).sendError(eq(404), anyString());
         verify(response, never()).setContentLength(anyInt());
         verify(response, never()).setContentType(anyString());
@@ -191,7 +161,6 @@ public class StaticResourcesFilterTest
     {
         // plugin doesn't know about other2.js
         HttpServletRequest request = mockRequest("other2.js");
-        when(request.getHeader("Accept-Encoding")).thenReturn("gzip");
         ServletOutputStream sos = mock(ServletOutputStream.class);
         HttpServletResponse response = mockResponse(sos);
         FilterChain chain = mock(FilterChain.class);
@@ -203,7 +172,6 @@ public class StaticResourcesFilterTest
         {
             fail(e.getMessage());
         }
-        verify(response, never()).setHeader(eq("Content-Encoding"), anyString());
         verify(response).sendError(eq(404), anyString());
         verify(response, never()).setContentLength(anyInt());
         verify(response, never()).setContentType(anyString());
@@ -227,16 +195,6 @@ public class StaticResourcesFilterTest
         HttpServletResponse response = mock(HttpServletResponse.class);
         when(response.getOutputStream()).thenReturn(sos);
         return response;
-    }
-
-    private byte[] gzip(byte[] data) throws IOException
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        GZIPOutputStream out = new GZIPOutputStream(bytes);
-        IOUtils.copy(new ByteArrayInputStream(data), out);
-        out.finish();
-        out.close();
-        return bytes.toByteArray();
     }
 
     private String etag(byte[] data)

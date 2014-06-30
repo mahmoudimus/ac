@@ -1,13 +1,21 @@
 
 # Release Notes
 
-## [1.1.0-beta.2](../release-notes/1-1-0.html)
-* Support for managing cookies through javascript. Check out the [cookie api](../javascript/module-cookie.html)
-* Support for managing browser history through javascript. Check out the [history api](../javascript/module-history.html)
-* Update dialogs to allow the chrome flag
-* Dialog height is now always the height of the iframe.
-* API clarification: when targeting HTTP requests to an add-on the `baseUrl` of an add-on is not included in the canonical query for query hash computation.
-* Security improvement: when computing a canonical request (and therefore a `qsh` claim value) any `'&'` characters in the request path must be url-encoded (updated via the `atlassian-jwt` dependency version `1.0.1`).
+## [1.1.0-beta.4](../release-notes/1-1-0.html)
+* __If you read one thing, read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
+* XML descriptor servlet paths redirect to new JSON descriptor paths
+* Manage cookies through the [javascript cookie api](http://localhost:9000/javascript/module-cookie.html)
+* Manage browser history through the [javascript history api](http://localhost:9000/javascript/module-history.html)
+* Improve modal dialog, to introduce the chrome flag
+* Dialog height is now always the height of the iframe
+* Refresh a JIRA issue without reloading the page
+* Fixed bug that allowed content to appear in wrong iframe
+* Big speed improvements on addon install, enable, disable, uninstall etc.
+* Additional REST paths added to scopes and whitelists
+* Add-on keys and add-on module keys have stricter restrictions
+* Fixed numerous workflow post function bugs
+* Improved documentation for workflow post functions
+* Remote web panels fixed in JIRA Agile
 
 ## [1.0.1](../release-notes/1-0-1.html)
 * Allow POST method for "screens/addToDefault/{fieldId}"
@@ -29,7 +37,6 @@
 * Fixes issue where `user_is_logged_in` condition caused general pages to not be viewable
 * Fixes numerous issues with context parameters not being sent through to conditions and pages
 * Removes page header from Confluence general pages
-
 
 ## [1.0-m31](../release-notes/1-0-m31.html)
 * Support for Inline Dialogs

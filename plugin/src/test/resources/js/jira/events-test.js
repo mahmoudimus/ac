@@ -1,9 +1,9 @@
 (function(){
-    define(['jira/event'], function() {
+    define(['jira/events'], function() {
 
-        _AP.require(["jira/event"], function(jiraEvent) {
+        _AP.require(["jira/events"], function(jiraEvent) {
 
-            module("JIRA event", {
+            module("JIRA events", {
                 setup: function() {
                     window.JIRA = {
                         trigger: sinon.spy(),

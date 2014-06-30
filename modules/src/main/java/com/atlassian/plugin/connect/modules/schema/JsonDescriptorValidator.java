@@ -18,9 +18,14 @@ import java.io.IOException;
 
 public class JsonDescriptorValidator implements ConnectDescriptorValidator
 {
-    private static final JsonSchemaFactory factory = createSchemaFactory();
+    private final JsonSchemaFactory factory;
 
-    private static JsonSchemaFactory createSchemaFactory()
+    public JsonDescriptorValidator()
+    {
+        this.factory =  createSchemaFactory();
+    }
+
+    private JsonSchemaFactory createSchemaFactory()
     {
         return JsonSchemaFactory.newBuilder().setReportProvider(new ListReportProvider(LogLevel.ERROR, LogLevel.FATAL)).freeze();
     }

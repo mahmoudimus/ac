@@ -10,7 +10,13 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
@@ -18,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPOutputStream;
 
 import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENABLED;
 
@@ -38,9 +43,9 @@ public class StaticResourcesFilter implements Filter
     private FilterConfig config;
     private LoadingCache<String, CacheEntry> loadingCache;
 
-    public StaticResourcesFilter(PluginRetrievalService pluginRetreivalService)
+    public StaticResourcesFilter(PluginRetrievalService pluginRetrievalService)
     {
-        plugin = pluginRetreivalService.getPlugin();
+        plugin = pluginRetrievalService.getPlugin();
     }
 
     @Override
@@ -48,14 +53,14 @@ public class StaticResourcesFilter implements Filter
     {
         this.config = config;
         loadingCache = CacheBuilder.newBuilder()
-                                   .build(new CacheLoader<String, CacheEntry>()
-                                   {
-                                       @Override
-                                       public CacheEntry load(String s) throws Exception
-                                       {
-                                           return new CacheEntry(s);
-                                       }
-                                   });
+                .build(new CacheLoader<String, CacheEntry>()
+                {
+                    @Override
+                    public CacheEntry load(String s) throws Exception
+                    {
+                        return new CacheEntry(s);
+                    }
+                });
     }
 
     @Override
@@ -86,13 +91,10 @@ public class StaticResourcesFilter implements Filter
         }
 
         // special dev mode case to make developing on all-debug.js not suck
-        String encoding;
         CacheEntry entry;
         final String allDebugJsPath = "all-debug.js";
         if (allDebugJsPath.equals(localPath))
         {
-            encoding = "identity";
-
             final String moduleDir = "js/iframe/";
             // note: any changes here must also be made in plugin/pom.xml!
             final String[] modules = {
@@ -131,17 +133,6 @@ public class StaticResourcesFilter implements Filter
         }
         else
         {
-            if (req.getHeader("Accept-Encoding").contains("gzip"))
-            {
-                // check if the request accepts gzip, then get a gzipped version of the resource from the cache
-                localPath += ".gz";
-                encoding = "gzip";
-            }
-            else
-            {
-                encoding = "identity";
-            }
-
             // ask the cache for an entry for the named resource
             try
             {
@@ -179,7 +170,6 @@ public class StaticResourcesFilter implements Filter
         {
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentLength(entry.getData().length);
-            res.setHeader("Content-Encoding", encoding);
             ServletOutputStream sos = res.getOutputStream();
             sos.write(entry.getData());
             sos.flush();
@@ -228,12 +218,6 @@ public class StaticResourcesFilter implements Filter
 
         public CacheEntry(String path)
         {
-            boolean gzip = path.endsWith(".gz");
-            if (gzip)
-            {
-                path = path.substring(0, path.length() - 3);
-            }
-
             setContentType(path);
 
             InputStream in;
@@ -246,19 +230,7 @@ public class StaticResourcesFilter implements Filter
                 }
                 else
                 {
-                    if (gzip)
-                    {
-                        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                        GZIPOutputStream out = new GZIPOutputStream(bytes);
-                        IOUtils.copy(in, out);
-                        out.finish();
-                        out.close();
-                        setData(bytes.toByteArray());
-                    }
-                    else
-                    {
-                        setData(IOUtils.toByteArray(in));
-                    }
+                    setData(IOUtils.toByteArray(in));
                 }
             }
             catch (IOException e)
