@@ -6,4 +6,5 @@ public class TestConstants
     public static final String ADMIN_USERNAME = "admin";
     public static final String BETTY_USERNAME = "betty";
     public static final String BARNEY_USERNAME = "barney";
+    public static final String ANONYMOUS = "anonymous";
 }

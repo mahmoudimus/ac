@@ -9,7 +9,6 @@ import com.atlassian.jwt.core.http.auth.SimplePrincipal;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
-import com.atlassian.plugin.connect.plugin.util.http.SessionSnapshot;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
 import com.atlassian.sal.api.message.I18nResolver;
@@ -119,9 +118,7 @@ public class ThreeLeggedAuthFilter implements Filter
         else
         {
             // ACDEV-1304: Ensure that any add-on requests have no effect on a session that may already exist.
-            // We could also invalidate the session, but restoring to the previous state is more graceful.
             HttpSession session = request.getSession(false); // don't create a session if there is none
-            SessionSnapshot sessionSnapshot = session != null ? SessionSnapshot.take(session) : null;
             try
             {
                 if (null != subject && shouldAllowImpersonation(request, response, addOnKey, subject))
@@ -139,9 +136,9 @@ public class ThreeLeggedAuthFilter implements Filter
             }
             finally
             {
-                if (sessionSnapshot != null)
+                if (session != null)
                 {
-                    sessionSnapshot.restore(session);
+                    session.invalidate();
                 }
             }
         }

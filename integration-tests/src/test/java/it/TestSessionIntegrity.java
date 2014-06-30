@@ -2,6 +2,7 @@ package it;
 
 import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
@@ -20,6 +21,7 @@ import java.net.URL;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -44,6 +46,7 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
                         .withUrl("/page")
                         .build())
                 .addJWT()
+                .addScope(ScopeName.READ)
                 .addInstallLifecycle()
                 .addRoute("/page", ConnectAppServlets.helloWorldServlet())
                 .addRoute(ConnectRunner.INSTALLED_PATH, installHandler)
@@ -80,8 +83,12 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(HTTP_GET);
 
-        assertNotNull(connection.getResponseCode());
-        assertNotEquals(401, connection.getResponseCode());
+        // This resource only works with JWT (which makes it a good candidate for this test)
+        // It returns a 404 if the call succeeded but no license is present
+        // It returns a 401 if JWT auth failed
+        // It returns 400 if no JWT token was provided
+        // The main assertion is that there is no 401, i.e. the call went through the JWT auth filter
+        assertEquals(404, connection.getResponseCode());
 
         // Now hit the same URL within the browser session
         WebDriver driver = product.getTester().getDriver().getDriver();
@@ -90,8 +97,8 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
         // Then get the current session user
         driver.get(baseUrl + "/rest/remoteplugintest/1/user");
 
-        // Must be 'admin', not the add-on user
-        assertTrue(driver.getPageSource().contains("<user><name>" + TestConstants.ADMIN_USERNAME + "</name></user>"));
+        // We destroy the session, so 'anonymous' is expected, not the add-on user
+        assertTrue(driver.getPageSource().contains("<user><name>" + TestConstants.ANONYMOUS + "</name></user>"));
     }
 
 }
