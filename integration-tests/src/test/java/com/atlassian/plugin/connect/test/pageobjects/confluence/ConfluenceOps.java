@@ -11,6 +11,7 @@ import com.google.common.base.Function;
 
 import org.apache.commons.codec.binary.Base64;
 
+import redstone.xmlrpc.XmlRpcArray;
 import redstone.xmlrpc.XmlRpcClient;
 import redstone.xmlrpc.XmlRpcFault;
 import redstone.xmlrpc.XmlRpcStruct;
@@ -33,6 +34,19 @@ public final class ConfluenceOps
         struct.put("space", spaceKey);
         struct.put("content", content);
         return new ConfluencePageData(asMap(getClient(user).invoke("confluence2.storePage", new Object[]{"", struct})));
+    }
+
+    public void addEditRestrictionToPage(Option<ConfluenceUser> user, String pageId) throws MalformedURLException, XmlRpcFault
+    {
+        List<Object> permissions = newXmlRpcArray();
+
+        Map<String, Object> permission = newXmlRpcStruct();
+        permission.put("type", "Edit");
+        permission.put("userName", user.get().username);
+
+        permissions.add(permission);
+
+        getClient(user).invoke("confluence2.setContentPermissions", new Object[]{"", pageId, "Edit", permissions});
     }
 
     public ConfluenceCommentData addComment(Option<ConfluenceUser> user, String pageId, String content) throws MalformedURLException, XmlRpcFault
@@ -73,6 +87,11 @@ public final class ConfluenceOps
         });
     }
 
+    private static List<Object> newXmlRpcArray()
+    {
+        return asList(new XmlRpcArray());
+    }
+
     private static Map<String, Object> newXmlRpcStruct()
     {
         return asMap(new XmlRpcStruct());
@@ -92,6 +111,7 @@ public final class ConfluenceOps
 
     public static final class ConfluenceUser
     {
+        public static final ConfluenceUser ADMIN = new ConfluenceUser("admin", "admin");
         final public String username;
         final public String password;
 

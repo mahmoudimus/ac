@@ -2,7 +2,6 @@ package it.capabilities.confluence;
 
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
@@ -20,29 +19,24 @@ import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
-import static it.TestConstants.ADMIN_USERNAME;
 import static it.servlet.ConnectAppServlets.echoQueryParametersServlet;
 import static org.junit.Assert.assertEquals;
 
 public class TestCompatibility extends AbstractConfluenceWebDriverTest
 {
-    private static final Option<ConfluenceOps.ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceOps.ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME));
     private static final String STORAGE_FORMAT = "<p>\n" +
             "<ac:structured-macro ac:name=\"map\"><ac:parameter ac:name=\"data\">macro data</ac:parameter></ac:structured-macro>\n" +
             "</p>";
 
-    private static final String TEST_SPACE = "ds";
     private static final String MACRO_KEY = "map";
     private static final String MACRO_KEY_2 = "something-else";
     private static final String MACRO_NAME_2 = "Something Else";
 
     private static ConnectRunner runner;
-    private static ConfluenceOps confluenceOps;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
                 .setAuthenticationToNone()
                 .addModules("dynamicContentMacros",
@@ -100,8 +94,8 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, TEST_SPACE,
-                "macro page", pageContent);
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConfluenceOps.ConfluenceUser.ADMIN),
+                TestSpace.DEMO.getKey(), "macro page", pageContent);
         product.visit(ConfluenceViewPage.class, pageData.getId());
     }
 

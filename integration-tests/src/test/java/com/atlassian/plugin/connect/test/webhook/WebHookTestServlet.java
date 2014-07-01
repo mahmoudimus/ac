@@ -164,11 +164,11 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stopAndUninstall();
     }
 
-    public static void runInJsonRunner(String baseUrl, String webHookId, String eventId, WebHookTester tester) throws Exception
+    public static void runInJsonRunner(String baseUrl, String addOnKey, String eventId, WebHookTester tester) throws Exception
     {
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, webHookId)
+        ConnectRunner runner = new ConnectRunner(baseUrl, addOnKey)
                 .setAuthenticationToNone()
                 .addModule("webhooks", WebHookModuleBean.newWebHookBean().withEvent(eventId).withUrl(path).build())
                 .addRoute(path, servlet)

@@ -13,4 +13,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR})
 public @interface XmlDescriptor
 {
+    String comment() default "";
 }

@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.test.server;
 
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -200,11 +197,21 @@ public class ConnectRunner
         return this;
     }
 
+    public ConnectRunner addJWT()
+    {
+        addonBuilder.withAuthentication(AuthenticationBean.newAuthenticationBean()
+                .withType(AuthenticationType.JWT)
+                .build());
+        return this;
+    }
+
+    @OAuth
     public ConnectRunner addOAuth() throws NoSuchAlgorithmException, IOException
     {
         return addOAuth(createSignedRequestHandler(pluginKey));
     }
 
+    @OAuth
     public ConnectRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
     {
         this.signedRequestHandler = signedRequestHandler;
@@ -226,6 +233,7 @@ public class ConnectRunner
         return signedRequestHandler;
     }
 
+    @OAuth
     public static RunnerSignedRequestHandler createSignedRequestHandler(String appKey) throws NoSuchAlgorithmException, IOException
     {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");

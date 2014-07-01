@@ -104,6 +104,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * Specifies custom styles for the web item target page, if desired. By default, the web item content gets
      * styled in the default style of the target application.
      */
+    @StringSchemaAttributes(pattern = "^[_a-zA-Z]+[_a-zA-Z0-9-]*$")
     private List<String> styleClasses;
 
     /**

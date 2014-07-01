@@ -15,7 +15,8 @@ var xdmMockJira;
 
     xdmMockJira = {
         init: function() {},
-        getWorkflowConfiguration: sinon.spy()
+        getWorkflowConfiguration: sinon.spy(),
+        triggerJiraEvent: sinon.spy()
     };
 
     context(["_rpc", "jira"], function(_rpc, jira) {
@@ -24,6 +25,7 @@ var xdmMockJira;
         module("Jira plugin", {
             setup: function(){
                 xdmMockJira.getWorkflowConfiguration.reset();
+                xdmMockJira.triggerJiraEvent.reset();
             }
         });
 
@@ -69,6 +71,16 @@ var xdmMockJira;
             jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(false));
 
             ok(!jira.WorkflowConfiguration.trigger().valid);
+        });
+
+        test('refreshIssuePage calls remote triggerJiraEvent', function(){
+            jira.refreshIssuePage();
+            ok(xdmMockJira.triggerJiraEvent.calledOnce);
+        });
+
+        test('refreshIssuePage calls triggerJiraEvent with correct event name', function(){
+            jira.refreshIssuePage();
+            equal(xdmMockJira.triggerJiraEvent.args[0][0], 'refreshIssuePage');
         });
 
 

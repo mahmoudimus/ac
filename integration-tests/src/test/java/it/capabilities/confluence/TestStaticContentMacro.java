@@ -4,7 +4,6 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
@@ -19,6 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -101,7 +101,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testMacroIsRendered() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Simple Macro on Page_" + System.currentTimeMillis());
+        editorPage.setTitle(randomName("Simple Macro on Page"));
 
         selectMacro(editorPage, STORAGE_FORMAT_MACRO_NAME);
 
@@ -116,7 +116,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testMacroHttpMethod() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("HTTP GET Macro_" + System.currentTimeMillis());
+        editorPage.setTitle(randomName("HTTP GET Macro"));
 
         selectMacro(editorPage, GET_MACRO_NAME);
 
@@ -129,7 +129,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testBodyInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Short Body Macro_" + System.currentTimeMillis());
+        editorPage.setTitle(randomName("Short Body Macro"));
 
         selectMacro(editorPage, SHORT_BODY_MACRO_NAME);
 
@@ -146,7 +146,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testBodyHashInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Long Body Macro_" + System.currentTimeMillis());
+        editorPage.setTitle(randomName("Long Body Macro"));
 
         selectMacro(editorPage, LONG_BODY_MACRO_NAME);
 
@@ -164,7 +164,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testParameterInclusion() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Parameter Page_" + System.currentTimeMillis());
+        editorPage.setTitle(randomName("Parameter Page"));
 
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);

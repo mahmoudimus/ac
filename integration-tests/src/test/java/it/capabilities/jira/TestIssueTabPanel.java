@@ -3,6 +3,7 @@ package it.capabilities.jira;
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.RemotePluginUtils;
@@ -65,6 +66,7 @@ public class TestIssueTabPanel extends TestBase
                         .build())
                 .addRoute("/ipp", ConnectAppServlets.apRequestServlet())
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
+                .addScope(ScopeName.READ)
                 .start();
     }
 
@@ -96,7 +98,7 @@ public class TestIssueTabPanel extends TestBase
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, addonAndModuleKey(PLUGIN_KEY,"issue-tab-panel"), issue.getKey(), PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
+                JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issue.getKey(), PLUGIN_KEY, ConnectPluginInfo.getPluginKey() + ":");
         assertThat(page.getMessage(), is("Success"));
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();

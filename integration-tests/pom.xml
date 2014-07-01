@@ -193,6 +193,16 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jvnet.hudson</groupId>
             <artifactId>jira-api</artifactId>
             <version>1.0</version>

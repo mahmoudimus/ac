@@ -5,8 +5,11 @@ import com.google.common.base.Function;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.net.URI;
@@ -21,6 +24,9 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class RemotePageUtil
 {
+    private static final Logger log = LoggerFactory.getLogger(RemotePageUtil.class);
+    private static final String IFRAME = "iframe";
+
     public static <T> T runInFrame(AtlassianWebDriver driver, WebElement containerDiv, Callable<T> callable)
     {
         toIframe(driver, containerDiv);
@@ -76,7 +82,19 @@ public class RemotePageUtil
 
     public static void toIframe(AtlassianWebDriver driver, WebElement containerDiv)
     {
-        driver.getDriver().switchTo().frame(containerDiv.findElement(By.tagName("iframe")));
+        WebElement iFrame = null;
+
+        try
+        {
+            iFrame = containerDiv.findElement(By.tagName(IFRAME));
+        }
+        catch (NoSuchElementException e)
+        {
+            log.error("Failed to find a <{}> inside a <{} id=\"{}\">", new String[]{IFRAME, containerDiv.getTagName(), containerDiv.getAttribute("id")});
+            throw e;
+        }
+
+        driver.getDriver().switchTo().frame(iFrame);
     }
 
     public static void outIframe(AtlassianWebDriver driver)
