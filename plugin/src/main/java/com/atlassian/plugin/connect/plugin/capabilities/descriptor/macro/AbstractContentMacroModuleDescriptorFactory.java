@@ -64,8 +64,9 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     {
         Map<String, MacroParameter> parameterMap = Maps.uniqueIndex(macroParameters, new Function<MacroParameter, String>() {
             @Override
-            public String apply(@Nullable MacroParameter parameter)
+            public String apply(MacroParameter parameter)
             {
+                Preconditions.checkNotNull(parameter, "Implementation error: parameter must never be null");
                 return parameter.getName();
             }
         });
