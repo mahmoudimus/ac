@@ -179,6 +179,16 @@ public class MacroParameterBean extends BaseModuleBean
         return !Strings.isNullOrEmpty(defaultValue);
     }
 
+    public boolean hasName()
+    {
+        return name != null && !Strings.isNullOrEmpty(name.getValue());
+    }
+
+    public boolean hasDescription()
+    {
+        return description != null && !Strings.isNullOrEmpty(description.getValue());
+    }
+
     public List<String> getValues()
     {
         return values;

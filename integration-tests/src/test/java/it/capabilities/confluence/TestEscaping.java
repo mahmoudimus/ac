@@ -199,7 +199,6 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
         }
     }
 
-    @Ignore("Failing due to ACDEV-1286")
     @Test
     public void testMacroParameter() throws Exception
     {
