@@ -6,7 +6,7 @@ _AP.define("host/cookie", ["_dollar", "_rpc"], function ($, rpc) {
     rpc.extend(function () {
         function prefixCookie(addonKey, name){
             if (!(addonKey && addonKey.length > 0)){
-                throw new Error('addon and module keys must be defined on cookies');
+                throw new Error('addon key must be defined on cookies');
             }
             if(name.length < 1){
                 throw new Error('Name must be defined');
