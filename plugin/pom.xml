@@ -474,6 +474,29 @@
                         </testBundleExclude>
                     </testBundleExcludes>
                     <instructions>
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                        <Import-Package>
+                            com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
+                            com.github.fge.jsonschema.core*;version="1.2.4",
+                            com.github.fge.jsonschema.cfg*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.cfg.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.examples*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.examples.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.exceptions*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.exceptions.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.format*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.format.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.keyword*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.keyword.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.library*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.library.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.main*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.main.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.messages*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.messages.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.processors*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.processors.*;version="${json.schema.validator.version}"
+                        </Import-Package>
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
                             com.atlassian.plugin.connect.api.*;version="${project.version}",
