@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.Principal;
 
@@ -116,6 +117,8 @@ public class ThreeLeggedAuthFilter implements Filter
         }
         else
         {
+            // ACDEV-1304: Ensure that any add-on requests have no effect on a session that may already exist.
+            HttpSession session = request.getSession(false); // don't create a session if there is none
             try
             {
                 if (null != subject && shouldAllowImpersonation(request, response, addOnKey, subject))
@@ -130,6 +133,13 @@ public class ThreeLeggedAuthFilter implements Filter
             catch (InvalidSubjectException e)
             {
                 log.error("The subject '{}' is invalid (see above for details) and this request is being stopped by the {}.", e.getMessage(), ThreeLeggedAuthFilter.class.getSimpleName());
+            }
+            finally
+            {
+                if (session != null)
+                {
+                    session.invalidate();
+                }
             }
         }
     }

@@ -4,7 +4,11 @@ import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.it.maven.MavenDependencyHelper;
 import com.atlassian.confluence.it.maven.MavenUploadablePlugin;
-import com.atlassian.confluence.it.plugin.*;
+import com.atlassian.confluence.it.plugin.Plugin;
+import com.atlassian.confluence.it.plugin.PluginHelper;
+import com.atlassian.confluence.it.plugin.SimplePlugin;
+import com.atlassian.confluence.it.plugin.UploadablePlugin;
+import com.atlassian.confluence.it.plugin.WebTestPluginHelper;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.it.rpc.StartOfTestLogger;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
@@ -13,9 +17,11 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.util.concurrent.LazyReference;
 import it.ConnectWebDriverTestBase;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -72,6 +78,8 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
     {
         return (ConfluenceTestedProduct) product;
     }
+
+    protected ConfluenceOps confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
 
     @BeforeClass
     public static void confluenceTestSetup() throws Exception
@@ -146,4 +154,5 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         macroForm.waitUntilVisible();
         connectMacroBrowserDialog.clickSave();
     }
+
 }

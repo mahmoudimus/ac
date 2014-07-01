@@ -12,26 +12,45 @@ AP.define("confluence", ["_dollar", "_rpc"],
                 /**
                 * Save a macro with data that can be accessed when viewing the confluence page.
                 * @param {Object} data to be saved with the macro.
+                * @param {String} the macro body to be saved with the macro. If omitted, the existing body will remain untouched.
                 * @example
                 * AP.require('confluence', function(confluence){
                 *   confluence.saveMacro({foo: 'bar'});
                 * });
+                *
+                * AP.require('confluence', function(confluence){
+                *   confluence.saveMacro({foo: 'bar'}, "a new macro body");
+                * });
                 */
-                saveMacro: function (macroParameters) {
-                    remote.saveMacro(macroParameters);
+                saveMacro: function (macroParameters, macroBody) {
+                    remote.saveMacro(macroParameters, macroBody);
                 },
                 /**
                 * Get the data saved in the saveMacro method.
                 * @param {Function} callback to be passed the macro data.
                 * @example
                 * AP.require('confluence', function(confluence){
-                *   var macroData = confluence.getMacroData(function(data){
+                *   confluence.getMacroData(function(data){
                 *       alert(data);
                 *   });
                 * });
                 */
                 getMacroData: function (callback) {
                     remote.getMacroData(callback);
+                },
+
+                /**
+                 * Get the body saved in the saveMacro method.
+                 * @param {Function} callback to be passed the macro data.
+                 * @example
+                 * AP.require('confluence', function(confluence){
+                  *   confluence.getMacroBody(function(body){
+                  *       alert(body);
+                  *   });
+                  * });
+                 */
+                getMacroBody: function (callback) {
+                  remote.getMacroBody(callback);
                 },
 
                 /**

@@ -2,14 +2,17 @@ _AP.define("confluence/macro/editor/rpc", ["_dollar", "confluence/macro/editor",
     rpc.extend(function () {
         return {
             internals: {
-                saveMacro: function (updatedParams) {
-                    editor.saveMacro(updatedParams);
+                saveMacro: function (updatedParams, updatedMacroBody) {
+                    editor.saveMacro(updatedParams, updatedMacroBody);
                 },
                 closeMacroEditor: function () {
                     editor.close();
                 },
                 getMacroData: function (callback) {
                     editor.getMacroData(callback);
+                },
+                getMacroBody: function (callback) {
+                    editor.getMacroBody(callback);
                 }
             }
         };
