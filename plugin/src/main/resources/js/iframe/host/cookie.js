@@ -5,10 +5,11 @@ _AP.define("host/cookie", ["_dollar", "_rpc"], function ($, rpc) {
 
     rpc.extend(function () {
         function prefixCookie(addonKey, name){
-            if (!(addonKey && addonKey.length > 0)){
+            if (!addonKey || addonKey.length === 0) {
                 throw new Error('addon key must be defined on cookies');
             }
-            if(name.length < 1){
+
+            if (!name || name.length === 0) {
                 throw new Error('Name must be defined');
             }
             return addonKey + '$$' + name;
@@ -21,7 +22,7 @@ _AP.define("host/cookie", ["_dollar", "_rpc"], function ($, rpc) {
                 },
                 readCookie: function(name, callback){
                     var value = AJS.Cookie.read(prefixCookie(this.addonKey, name));
-                    if(typeof callback === "function"){
+                    if (typeof callback === "function") {
                         callback(value);
                     }
                 },
