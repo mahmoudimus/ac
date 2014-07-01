@@ -3,7 +3,6 @@ _AP.define("host/cookie", ["_dollar", "_rpc"], function ($, rpc) {
 
     var module;
 
-
     rpc.extend(function () {
         function prefixCookie(addonKey, name){
             if (!(addonKey && addonKey.length > 0)){

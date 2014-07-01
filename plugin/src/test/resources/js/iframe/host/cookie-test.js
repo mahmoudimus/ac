@@ -34,7 +34,6 @@
                 equal(window.AJS.Cookie.save.args[0][0], cookie.internals.addonKey + SEPARATOR + cookieName);
             });
 
-
             test("readCookie calls AJS.Cookie.read", function(){
                 cookie.internals.readCookie("something");
                 ok(window.AJS.Cookie.read.calledOnce);
@@ -45,7 +44,6 @@
                     cookieValue = "some value";
                     cookie.internals.readCookie(cookieName);
                 ok(window.AJS.Cookie.read.args[0][0], cookie.internals.addonKey + SEPARATOR + cookieName);
-
             });
 
             test("readCookie runs the callback function", function(){
@@ -70,11 +68,7 @@
                 equal(window.AJS.Cookie.erase.args[0], cookie.internals.addonKey + SEPARATOR + cookieName);
             });
 
-
-
         });
-
-
 
     });
 
