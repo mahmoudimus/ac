@@ -20,13 +20,11 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserPr
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import redstone.xmlrpc.XmlRpcFault;
@@ -211,7 +209,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
             MacroForm macroForm = macro.select();
             assertTrue(macroForm.getField("test").isVisible());
 
-            WebElement label = product.getTester().getDriver().findElement(ByJquery.$("label[for='macro-param-test']"));
+            WebElement label = connectPageOperations.findLabel("macro-param-test");
             assertIsEscaped(label.getText());
         }
         finally
