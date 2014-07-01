@@ -196,9 +196,9 @@
         var payload = JSON.parse(e.data),
             pid = payload.i, pchannel = payload.c, ptype = payload.t, pmessage = payload.m;
 
-        // if the iframe has potentially been reloaded. re-attach the source contentwindow object
-        if(e.source !== target && e.origin === remoteOrigin && pchannel === channel) {
-            target = e.source;
+        // if the iframe has potentially been reloaded. re-attach the source contentWindow object
+        if (e.source !== target && e.origin === remoteOrigin && pchannel === channel) {
+          target = e.source;
         }
 
         // If the payload doesn't match our expected event signature, assume its not part of the xdm-rpc protocol
