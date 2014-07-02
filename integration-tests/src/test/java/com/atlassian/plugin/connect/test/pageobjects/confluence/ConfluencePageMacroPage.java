@@ -26,11 +26,6 @@ public class ConfluencePageMacroPage extends RemotePluginEmbeddedTestPage implem
         this.title = title;
     }
 
-    public void ReorderTableOnPage()
-    {
-        driver.findElement(By.className("tablesorter-header-inner")).click();
-    }
-
     @Override
     public String getUrl()
     {

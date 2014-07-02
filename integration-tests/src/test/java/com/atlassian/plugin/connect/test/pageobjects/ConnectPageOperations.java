@@ -159,4 +159,9 @@ public class ConnectPageOperations
         driver.executeScript("tinymce.confluence.macrobrowser.editMacro("+ macroNodeSelector +")");
         return findDialog(macroKey);
     }
+
+    public void reorderConfluenceTableOnPage()
+    {
+        driver.findElement(By.className("tablesorter-header-inner")).click();
+    }
 }
