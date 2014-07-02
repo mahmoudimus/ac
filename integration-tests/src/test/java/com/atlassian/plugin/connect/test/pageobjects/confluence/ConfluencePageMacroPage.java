@@ -6,7 +6,6 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
-import org.openqa.selenium.By;
 
 /**
  *
