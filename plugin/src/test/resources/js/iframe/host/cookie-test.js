@@ -13,7 +13,6 @@
                         erase: sinon.spy()
                     };
                     cookie.internals.addonKey = "myAddon";
-                    cookie.internals.moduleKey = "myModule";
                 },
                 teardown: function() {
                     window.AJS.Cookie = this.default_AJSCookie;
@@ -53,6 +52,20 @@
 
                 cookie.internals.readCookie(cookieName, callback);
                 ok(callback.calledOnce);
+            });
+
+            test("readCookie callback contains cookie value", function(){
+                var cookieName = "myCookie",
+                    cookieValue = "some value",
+                    callback = sinon.spy();
+
+                // mock away AJS.Cookie as we assume AUI works.
+                window.AJS.Cookie.read = sinon.stub()
+                    .withArgs(cookie.internals.addonKey + SEPARATOR + cookieName)
+                    .returns(cookieValue);
+
+                cookie.internals.readCookie(cookieName, callback);
+                equal(callback.args[0][0], cookieValue);
             });
 
             test("eraseCookie calls JS.Cookie.erase", function(){
