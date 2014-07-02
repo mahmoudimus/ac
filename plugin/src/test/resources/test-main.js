@@ -23,6 +23,7 @@ requirejs.config({
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'iframe/host/content': '../src/main/resources/js/iframe/host/content',
     'iframe/host/_rpc': '../src/main/resources/js/iframe/host/_rpc',
+    'iframe/host/cookie': '../src/main/resources/js/iframe/host/cookie',
     'analytics/analytics': '../src/main/resources/js/analytics/analytics',
     'history/history': '../src/main/resources/js/history/history',
     'dialog/main': '../src/main/resources/js/dialog/main',
@@ -65,6 +66,12 @@ requirejs.config({
         'iframe/host/_dollar',
         'iframe/_amd'
       ]
+    },
+    'iframe/host/cookie': {
+        deps: [
+        'iframe/host/_dollar',
+        'iframe/host/_rpc'
+        ]
     },
     'iframe/host/content': {
         deps: [

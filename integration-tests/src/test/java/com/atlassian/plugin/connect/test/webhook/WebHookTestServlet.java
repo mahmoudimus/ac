@@ -22,7 +22,7 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
-import static com.atlassian.plugin.connect.test.RemotePluginUtils.randomWebItemBean;
+import static com.atlassian.plugin.connect.test.AddonTestUtils.randomWebItemBean;
 
 public final class WebHookTestServlet extends HttpServlet
 {

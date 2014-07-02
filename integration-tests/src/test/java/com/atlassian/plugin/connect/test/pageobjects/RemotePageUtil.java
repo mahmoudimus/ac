@@ -132,7 +132,6 @@ public class RemotePageUtil
     };
 
     private static class FindInContextFunction implements Function<List<NameValuePair>, String> {
-
         private final String key;
 
         private FindInContextFunction(final String key)
@@ -152,7 +151,6 @@ public class RemotePageUtil
             }
             return null;
         }
-
     }
 
 }
