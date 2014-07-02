@@ -18,6 +18,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditor
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.MacroList;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,11 +27,44 @@ import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
-import static org.hamcrest.CoreMatchers.*;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriverTest
 {
+    public class RichTextBodyMacro
+    {
+        private String macroKey;
+        private String body;
+
+        public RichTextBodyMacro(String macroKey, String body)
+        {
+            this.macroKey = macroKey;
+            this.body = body;
+        }
+
+        public String getBody()
+        {
+            return body;
+        }
+
+        public String getMacroKey()
+        {
+            return macroKey;
+        }
+
+        public String getStorageFormat()
+        {
+            return "<ac:structured-macro ac:name=\"" + macroKey + "\"><ac:rich-text-body>"
+                    + StringEscapeUtils.escapeXml(body)
+                    + "</ac:rich-text-body></ac:structured-macro>";
+        }
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(AbstractContentMacroTest.class);
 
     protected static final String DEFAULT_MACRO_URL = "/render-macro";
@@ -314,7 +348,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testImagePlaceholder() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
-        editorPage.setTitle("Image Placeholder Macro");
+        editorPage.setTitle(randomName("Image Placeholder Macro"));
 
         selectMacro(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
 
