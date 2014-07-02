@@ -32,9 +32,9 @@ public class AddonTestHostFilter extends AddonTestFilterBase
     private static final Logger log = LoggerFactory.getLogger(AddonTestHostFilter.class);
 
     public AddonTestHostFilter(AddonTestFilterResults testFilterResults, JwtReaderFactory jwtReaderFactory,
-                               UserManager userManager)
+                               UserManager userManager, AddonPrecannedResponseHelper addonPrecannedResponseHelper)
     {
-        super(testFilterResults, userManager);
+        super(testFilterResults, userManager, addonPrecannedResponseHelper);
         this.jwtReaderFactory = jwtReaderFactory;
     }
 

@@ -32,12 +32,14 @@ public abstract class AddonTestFilterBase implements Filter
 
     private final AddonTestFilterResults testFilterResults;
     private final UserManager userManager;
-    private final Queue<PrecannedResponse> precannedResponseQueue = new LinkedList<PrecannedResponse>();
+    private final AddonPrecannedResponseHelper addonPrecannedResponseHelper;
 
-    public AddonTestFilterBase(AddonTestFilterResults testFilterResults, UserManager userManager)
+    public AddonTestFilterBase(AddonTestFilterResults testFilterResults, UserManager userManager,
+                               AddonPrecannedResponseHelper addonPrecannedResponseHelper)
     {
         this.testFilterResults = testFilterResults;
         this.userManager = userManager;
+        this.addonPrecannedResponseHelper = addonPrecannedResponseHelper;
     }
 
     private FilterConfig config;
@@ -66,7 +68,7 @@ public abstract class AddonTestFilterBase implements Filter
 
                 testFilterResults.put(addOnKey + "/" + addonResource, new ServletRequestSnaphot(req, userManager));
 
-                Option<PrecannedResponse> precannedResponse = Option.option(precannedResponseQueue.poll());
+                Option<PrecannedResponse> precannedResponse = addonPrecannedResponseHelper.poll();
 
                 byte[] content = getContent(addonResource, parameter).getBytes("UTF-8");
                 int statusCode = getStatusCode(addonResource, parameter, precannedResponse);
@@ -139,8 +141,4 @@ public abstract class AddonTestFilterBase implements Filter
         //do nothing
     }
 
-    public void queuePrecannedResponse(String requiredPath, int statusCode)
-    {
-        precannedResponseQueue.add(new PrecannedResponse(requiredPath, statusCode));
-    }
 }
