@@ -7,6 +7,7 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
@@ -27,6 +28,7 @@ import org.junit.Test;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
+import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
@@ -44,6 +46,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     private static final String CLIENT_SIDE_BODY_MACRO_SCRIPT_NAME = "Client Side Body Editing Script Injection Attempt";
     private static final String CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY = "script-injection-attempt";
     private static final String EDITED_MACRO_BODY_SCRIPT = "<strong>must</strong> be removed:<script>alert('bad, bad, bad')</\"+\"script>";
+
+    private static final String TABLE_MACRO_NAME = "Table Macro";
+    private static final String TABLE_MACRO_KEY = "table-macro";
 
     private static ConnectRunner remotePlugin;
 
@@ -96,10 +101,18 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         .build())
                 .build();
 
+        DynamicContentMacroModuleBean macroInTableMacro = newDynamicContentMacroModuleBean()
+                .withUrl("/render-macro-in-table-macro")
+                .withKey(TABLE_MACRO_KEY)
+                .withName(new I18nProperty(TABLE_MACRO_NAME, ""))
+                .withOutputType(MacroOutputType.BLOCK)
+                .build();
+
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
 
                 .setAuthenticationToNone()
+                .addScope(ScopeName.ADMIN) // for using ap.request
                 .addModules("dynamicContentMacros",
                         simpleMacro,
                         allParameterTypesMacro,
@@ -113,7 +126,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         customTitleEditorMacro,
                         hiddenMacro,
                         clientSideBodyEditingMacro,
-                        clientSideBodyEditingMacroScriptInjection
+                        clientSideBodyEditingMacroScriptInjection,
+                        macroInTableMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())
@@ -123,6 +137,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .addRoute("/render-no-resize-macro", ConnectAppServlets.noResizeServlet())
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/images/macro-icon.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
+                .addRoute("/render-macro-in-table-macro", ConnectAppServlets.apRequestServlet())
                 .start();
     }
 
@@ -265,6 +280,20 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String content = renderedMacro.getIFrameElementText("footy");
 
         assertThat(content, is("footy: American Football"));
+    }
+
+    @Test
+    public void testMacroInOrderedTable() throws Exception
+    {
+        loginAsAdmin();
+        EditContentPage editPage = createAndEditPage(TABLE_MACRO_NAME, loadResourceAsString("confluence/test-page-table-macro.xhtml"));
+        savedPage = editPage.save();
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
+        assertThat(renderedMacro.getIFrameElementText("client-http-status"), is("200"));
+        connectPageOperations.reorderConfluenceTableOnPage();
+        RenderedMacro refreshedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
+        assertThat(refreshedMacro.getIFrameElementText("client-http-status"), is("200"));
+
     }
 
     @Test
