@@ -102,15 +102,10 @@ public abstract class AddonTestFilterBase implements Filter
                 }
                 return Integer.parseInt(parameter);
             }
-            else
-            {
-                if (precannedResponse.isDefined() /* && StringUtils.endsWith(path, precannedResponse.get().getRequiredPath() */ )
-                {
-                    return precannedResponse.get().getStatusCode();
-                }
-            }
         }
-        return HttpServletResponse.SC_OK;
+
+        return precannedResponse.isDefined()  /* && StringUtils.endsWith(path, precannedResponse.get().getRequiredPath() */
+                ? precannedResponse.get().getStatusCode() : HttpServletResponse.SC_OK;
     }
 
     private String getContent(String addonResource, String parameter)
