@@ -69,10 +69,11 @@ public class AddOnInstallTest
     @Test
     public void blah() throws IOException
     {
-        plugin = installPlugin();
-        final String originalSharedSecret = getSharedSecret();
+//        plugin = installPlugin();
+//        final String originalSharedSecret = getSharedSecret();
 
         addonTestFilter.queuePrecannedResponse("installed", 404);
+//        addonTestFilter.queuePrecannedResponse("uninstalled", 404);
         try
         {
             plugin = installPlugin();
@@ -85,12 +86,12 @@ public class AddOnInstallTest
 
 //        final String secondSharedSecret = getSharedSecret();
 
-        plugin = installPlugin();
-
-        final String finalSharedSecret = getSharedSecret();
-
-//        assertNotEquals(originalSharedSecret, newSharedSecret);
-        assertFalse(StringUtils.equals(originalSharedSecret, finalSharedSecret));
+//        plugin = installPlugin();
+//
+//        final String finalSharedSecret = getSharedSecret();
+//
+////        assertNotEquals(originalSharedSecret, newSharedSecret);
+//        assertFalse(StringUtils.equals(originalSharedSecret, finalSharedSecret));
     }
 
     private String getSharedSecret()
@@ -116,7 +117,10 @@ public class AddOnInstallTest
             .withKey(key)
             .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
             .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
-            .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+            .withLifecycle(LifecycleBean.newLifecycleBean()
+                    .withInstalled("/installed")
+                    .withUninstalled("/uninstalled")
+                    .build())
             .withModule("webItems",randomWebItemBean())
             .build();
 
