@@ -15,7 +15,7 @@ Here is how your add-on can leverage Connect's authentication feature:
  
 1. You declare that the add-on uses JWT as the authentication mechanism in the add-on descriptor.
 2. You implement an installation callback endpoint, and add a reference to it in the add-on descriptor. 
- * When an administrator installs the add-on on cloud instances, Connect initiates an "installation handshake": it invokes the endpoint, 
+ * When an administrator installs the add-on in Atlassian OnDemand, Connect initiates an "installation handshake": it invokes the endpoint, 
  passing a security context. You must then store this security context for future use.
  * The security contexts contains, among other things, a key identifying the add-on and a shared secret (used to create and validate JWT tokens).
 3. You then use the security context to validate incoming requests (e.g. Webhooks), and sign outgoing requests (e.g. REST API calls to JIRA).

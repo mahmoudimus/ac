@@ -132,7 +132,7 @@ current directory containing your `atlassian-connect.json` and `helloworld.html`
 
 You've created the essential components of a Connect add-on: an `atlassian-connect.json` descriptor file to communicate what your add-on does to JIRA, and a web application (`helloworld.html`) running on a local server. Now, you need to start JIRA to install your add-on. 
 
-You'll start JIRA in cloud mode. Connect is only present in cloud instances of Atlassian products, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
+You'll start JIRA in cloud mode. Connect is only present in Atlassian OnDemand products like JIRA Cloud, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
 
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
     You'll need at least SDK version 4.2.20. If you run the <tt>atlas-version</tt> command, you should see something similar to this:  
