@@ -1,6 +1,7 @@
 package it;
 
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -13,13 +14,9 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.Assert.*;
 
-@XmlDescriptor
+@ConvertToWiredTest
 public final class TestWebHooks extends AbstractBrowserlessTest
 {
     private static final String WEB_HOOK_PLUGIN_ENABLED = "plugin_enabled";
@@ -42,27 +39,9 @@ public final class TestWebHooks extends AbstractBrowserlessTest
     }
 
     @Test
-    public void testRemotePluginInstalledWebHookFired() throws Exception
-    {
-        testRemotePluginWebHookFired(PluginsWebHookProvider.REMOTE_PLUGIN_INSTALLED);
-    }
-
-    @Test
-    public void testRemotePluginInstalledSyncCallFired() throws Exception
-    {
-        testRemotePluginSyncCallFired("install-handler");
-    }
-
-    @Test
     public void testRemotePluginEnabledWebHookFired() throws Exception
     {
         testRemotePluginWebHookFired(PluginsWebHookProvider.REMOTE_PLUGIN_ENABLED);
-    }
-
-    @Test
-    public void testRemotePluginInstalledWebHookFiredOnlyForOwnPlugin() throws Exception
-    {
-        testRemotePluginWebHookFiredOnlyForOwnPlugin(PluginsWebHookProvider.REMOTE_PLUGIN_INSTALLED);
     }
 
     @Test
@@ -74,6 +53,7 @@ public final class TestWebHooks extends AbstractBrowserlessTest
     //TODO: see ignore comment
     @Ignore("ignoring until plug-core 3.0.5 and plugin disabled events are back in")
     @Test
+    @XmlDescriptor
     public void testRemotePluginDisabledHookFiredOnlyForOwnPlugin() throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
@@ -145,66 +125,6 @@ public final class TestWebHooks extends AbstractBrowserlessTest
             }
         });
     }
-
-    private void testRemotePluginSyncCallFired(final String eventId) throws Exception
-    {
-        final String pluginKey = AddonTestUtils.randomAddOnKey();
-        
-        WebHookTestServlet.runSyncInRunner(baseUrl, eventId, pluginKey, new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                final WebHookBody body = waiter.waitForHook();
-                assertWebHookBody(body, eventId, pluginKey);
-                assertUserInUrlParams(body);
-                assertUserInBody(body);
-            }
-        });
-    }
-
-    private void assertUserInBody(WebHookBody body) throws Exception
-    {
-        assertNotNull(body.find("user_id"));
-        assertNotNull(body.find("user_key"));
-        assertEquals("admin", body.find("user_id"));
-    }
-
-    private void assertUserInUrlParams(WebHookBody body) throws Exception
-    {
-        assertNotNull(body);
-        URI uri = body.getRequestURI();
-
-        Map<String,String> params = parseQueryParams(uri.getQuery());
-        
-        assertTrue(params.containsKey("user_id"));
-        assertTrue(params.containsKey("user_key"));
-        
-        assertEquals("admin",params.get("user_id"));
-        
-    }
-
-    private Map<String, String> parseQueryParams(String query)
-    {
-        Map<String,String> params = new HashMap<String, String>();
-        String[] nvps = query.split("&");
-        
-        for(String nvp : nvps)
-        {
-            String[] param = nvp.split("=");
-            String val = "";
-            if(param.length > 1)
-            {
-                val = param[1];
-            }
-            
-            params.put(param[0],val);
-        }
-        
-        return params;
-    }
-
-    
 
     private void assertWebHookBody(final WebHookBody body, final String webHookId, final String pluginKey) throws Exception
     {

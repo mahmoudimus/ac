@@ -1,5 +1,6 @@
 package it.capabilities;
 
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -15,6 +16,7 @@ import static com.atlassian.plugin.connect.test.AddonTestUtils.randomWebItemBean
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@ConvertToWiredTest
 public class TestLifecycle extends AbstractBrowserlessTest
 {
     private String pluginKey;
