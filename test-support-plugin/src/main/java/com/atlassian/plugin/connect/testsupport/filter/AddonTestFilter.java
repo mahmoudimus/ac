@@ -11,7 +11,7 @@ import java.io.IOException;
  * Record all requests to the fake add-on servlet, throwing errors on any that get this far and do not match.
  * Also see {@link com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterBase}.
  */
-public class AddonTestFilter extends AddonTestFilterBase
+public class AddonTestFilter extends AddonTestFilterBase implements AddonPrecannedResponseHelper
 {
     public AddonTestFilter(AddonTestFilterResults testFilterResults, UserManager userManager)
     {

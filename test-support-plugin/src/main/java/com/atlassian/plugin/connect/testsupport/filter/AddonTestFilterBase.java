@@ -10,10 +10,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.sal.api.user.UserManager;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A ServletFilter that can act as a remote addon inside of a wired test.
@@ -28,6 +32,7 @@ public abstract class AddonTestFilterBase implements Filter
 
     private final AddonTestFilterResults testFilterResults;
     private final UserManager userManager;
+    private final Queue<PrecannedResponse> precannedResponseQueue = new LinkedList<PrecannedResponse>();
 
     public AddonTestFilterBase(AddonTestFilterResults testFilterResults, UserManager userManager)
     {
@@ -61,8 +66,10 @@ public abstract class AddonTestFilterBase implements Filter
 
                 testFilterResults.put(addOnKey + "/" + addonResource, new ServletRequestSnaphot(req, userManager));
 
+                Option<PrecannedResponse> precannedResponse = Option.option(precannedResponseQueue.poll());
+
                 byte[] content = getContent(addonResource, parameter).getBytes("UTF-8");
-                int statusCode = getStatusCode(addonResource, parameter);
+                int statusCode = getStatusCode(addonResource, parameter, precannedResponse);
 
                 res.setStatus(statusCode);
                 res.setContentLength(content.length);
@@ -81,11 +88,25 @@ public abstract class AddonTestFilterBase implements Filter
     protected abstract boolean shouldProcess(HttpServletRequest request);
     protected abstract void processNonMatch(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException;
 
-    private int getStatusCode(String addonResource, String parameter)
+    private int getStatusCode(String addonResource, String parameter, Option<PrecannedResponse> precannedResponse)
     {
         if (RESOURCE_STATUS.equals(addonResource))
         {
-            return parameter == null ? HttpServletResponse.SC_OK : Integer.parseInt(parameter);
+            if (parameter != null)
+            {
+                if (precannedResponse.isDefined())
+                {
+                    throw new IllegalStateException("Cannot specify a status code when a precanned response is present");
+                }
+                return Integer.parseInt(parameter);
+            }
+            else
+            {
+                if (precannedResponse.isDefined() /* && StringUtils.endsWith(path, precannedResponse.get().getRequiredPath() */ )
+                {
+                    return precannedResponse.get().getStatusCode();
+                }
+            }
         }
         return HttpServletResponse.SC_OK;
     }
@@ -116,5 +137,10 @@ public abstract class AddonTestFilterBase implements Filter
     public void destroy()
     {
         //do nothing
+    }
+
+    public void queuePrecannedResponse(String requiredPath, int statusCode)
+    {
+        precannedResponseQueue.add(new PrecannedResponse(requiredPath, statusCode));
     }
 }

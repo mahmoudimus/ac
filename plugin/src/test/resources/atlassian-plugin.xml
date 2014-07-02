@@ -47,6 +47,7 @@
     <!-- CONNECT TEST SUPPORT -->
     <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller" />
     <component-import key="testFilterResults" interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults" />
+    <component-import key="addonTestFilter" interface="com.atlassian.plugin.connect.testsupport.filter.AddonPrecannedResponseHelper" />
 
     <!-- OUR OWN LOCAL COMPONENTS -->
     <component key="jiraTestAuthenticator"
