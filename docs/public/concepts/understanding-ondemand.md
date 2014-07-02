@@ -1,19 +1,20 @@
 # Understanding Atlassian OnDemand
 
 Atlassian OnDemand is Atlassian's hosted versions of JIRA, Confluence and other software. Many
-customers prefer to buy Atlassian tools as a service because Atlassian will handle the maintenance,
-hosting, upgrades and more.
+customers prefer to buy Atlassian tools as a service because Atlassian handles maintenance,
+hosting, upgrades and more. OnDemand instances of JIRA, Confluence, and Bamboo are referred 
+to as JIRA Cloud, Confluence Cloud, and Bamboo Cloud.
 
-Atlassian Connect is built to integrate with our OnDemand applications, so it's important that
-add-on developers have a basic understanding of how OnDemand works.
+Atlassian Connect is built to integrate with our OnDemand applications, so it's important 
+to have a basic understanding how OnDemand works.
 
 ## Architecture
-* Each JIRA and Confluence OnDemand account is a separate instance of that product. Although an OnDemand
+* Each JIRA and Confluence Cloud account is a separate instance of that product. Although an OnDemand
 instance offers a unified product feel, the actual JIRA and Confluence servers are individual applications
 running in separate isolated JVMs, that communicate with each other only over HTTP.
 * Although each application is isolated from a security perspective, the underlying hardware resources, such as
 hardware, network, CPU and memory may be shared between many customers.
-* Each instance of JIRA or Confluence can be identified by its tenant id. An instance URL is liable
+* Each instance of JIRA or Confluence can be identified by its tenant ID. An instance URL is liable
 to change without warning.
 * Each instance of JIRA or Confluence has a set of users.
 * Email addresses are unique within an instance, but may be used across multiple instances.

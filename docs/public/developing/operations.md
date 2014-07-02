@@ -1,4 +1,4 @@
-# Add-ons Operations Guide
+# Add-ons operations guide
 
 When you release an add-on publicly on the [Atlassian Marketplace](https://marketplace.atlassian.com), 
 administrators of an Atlassian OnDemand application can install it in their instance, meaning they rely on your service to 

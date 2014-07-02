@@ -1,4 +1,4 @@
-# Upgrading and Versioning your Add-on
+# Upgrading and versioning your add-on
 
 You can upgrade your add-on any time once it's listed in the [Marketplace](https://marketplace.atlassian.com/) as either
 an [approved public add-on](./selling-on-marketplace.html) or a [private listing](./installing-in-ondemand.html).

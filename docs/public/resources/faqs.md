@@ -28,14 +28,14 @@ documentation is always guaranteed to be in sync.
 - [Atlassian Connect on Atlassian Answers](https://answers.atlassian.com/tags/atlassian-connect)
 
 ### What products support Atlassian Connect?
-Atlassian Connect is available in JIRA and Confluence OnDemand for development and use.
+Atlassian Connect is available in JIRA and Confluence Cloud for development and use.
 
 Atlassian Connect currently supports:
 
-- JIRA OnDemand
-- Confluence OnDemand
+- JIRA Cloud
+- Confluence Cloud
 
-Other products, including JIRA and Confluence Download will be supported in the future.
+Other products, including JIRA and Confluence Server will be supported in the future.
 
 ### How can I request new features for Atlassian Connect?
 If there's a feature you'd like to see added to Atlassian Connect, such as a new module type or a
@@ -47,8 +47,8 @@ the Atlassian Connect JIRA project:
 ### Can an Atlassian OnDemand customer use Atlassian Connect for custom development?
 Yes. Every Atlassian OnDemand customer has access to the Atlassian Connect platform. This means
 that internal developers can create and deploy Atlassian Connect add-ons for their own use
-within their organization. For example, a developer might integrate JIRA OnDemand with an internal
-system, or to integrate Confluence OnDemand with another SaaS service's API.
+within their organization. For example, a developer might integrate JIRA Cloud with an internal
+system, or to integrate Confluence Cloud with another SaaS service's API.
 
 Note that add-ons in OnDemand must be installed through the Atlassian Marketplace. Thus, to
 install an add-on for internal use, you must create a listing for it on the Marketplace. The
