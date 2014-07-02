@@ -71,7 +71,7 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
     @Test
     public void testContentPermissionsUpdatedWebHookFired() throws Exception
     {
-        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        final String pluginKey = AddonTestUtils.randomAddOnKey();
 
         runInRunner(baseUrl, "content_permissions_updated", pluginKey, new WebHookTester()
         {
