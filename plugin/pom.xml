@@ -766,6 +766,7 @@
                                         <include>js/iframe-min/plugin/inline-dialog-min.js</include>
                                         <include>js/iframe-min/plugin/messages-min.js</include>
                                         <include>js/iframe-min/plugin/cookie-min.js</include>
+                                        <include>js/iframe-min/plugin/history-min.js</include>
                                         <include>js/iframe-min/plugin/_resize_listener-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>
