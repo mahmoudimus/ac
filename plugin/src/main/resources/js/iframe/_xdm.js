@@ -94,7 +94,7 @@
       localKey = param(config.remote, "oauth_consumer_key") || param(config.remote, "jwt");
       remoteKey = config.remoteKey;
       addonKey = remoteKey;
-      remoteOrigin = getBaseUrl(config.remote);
+      remoteOrigin = getBaseUrl(config.remote).toLowerCase();
       channel = config.channel;
       // Define the host-side mixin
       mixin = {
@@ -133,7 +133,7 @@
       }
 
       addonKey = localKey;
-      remoteOrigin = param(loc, "xdm_e");
+      remoteOrigin = param(loc, "xdm_e").toLowerCase();
       channel = param(loc, "xdm_c");
       // Define the add-on-side mixin
       mixin = {
@@ -196,7 +196,7 @@
         var payload = JSON.parse(e.data),
             pid = payload.i, pchannel = payload.c, ptype = payload.t, pmessage = payload.m;
         // If the payload doesn't match our expected event signature, assume its not part of the xdm-rpc protocol
-        if (e.source !== target || e.origin !== remoteOrigin || pchannel !== channel) return;
+        if (e.source !== target || e.origin.toLowerCase() !== remoteOrigin || pchannel !== channel) return;
         if (ptype === "request") {
           // If the payload type is request, this is an incoming method invocation
           var name = pmessage.n, args = pmessage.a,
