@@ -474,7 +474,6 @@
                         </testBundleExclude>
                     </testBundleExcludes>
                     <instructions>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                         <Import-Package>
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
                             com.github.fge.jsonschema.core*;version="1.2.4",
@@ -495,7 +494,10 @@
                             com.github.fge.jsonschema.messages*;version="${json.schema.validator.version}",
                             com.github.fge.jsonschema.messages.*;version="${json.schema.validator.version}",
                             com.github.fge.jsonschema.processors*;version="${json.schema.validator.version}",
-                            com.github.fge.jsonschema.processors.*;version="${json.schema.validator.version}"
+                            com.github.fge.jsonschema.processors.*;version="${json.schema.validator.version}",
+                            com.github.fge.msgsimple*;version="1.1.2-atlassian",
+                            com.github.fge.msgsimple.*;version="1.1.2-atlassian",
+                            *;resolution:=optional
                         </Import-Package>
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
