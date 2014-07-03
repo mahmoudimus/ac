@@ -11,7 +11,7 @@ Covered here:
 * [Purchasing & licensing](#purchasing) 
 * [Developing your add-on for the cloud](#development) 
 
-## <a name="overview"></a>Architecture overview
+## <a id="overview"></a>Architecture overview
 
 Even though cloud products can be packaged together for customers, each JIRA and Confluence Cloud account 
 is a separate instance. The actual JIRA and Confluence servers are individual applications
@@ -39,7 +39,7 @@ It's possible for a cloud instance to have your descriptor installed, but not to
 You won't receive any  communication from instances that don't have your add-on descriptor installed. As 
 expected, you're unable to communicate with instances that don't have your decriptor installed. 
 
-## <a name="restarts"></a>Software upgrades and system restarts
+## <a id="restarts"></a>Software upgrades and system restarts
 
 Cloud instances restart regularly during [maintenance windows](https://confluence.atlassian.com/x/aJALE). 
 Weekly releases may or may not contain updates to cloud applications or other components. Generally, 
@@ -50,7 +50,7 @@ Instances also ocassionally restart outside of these windows to recover from err
 support. After restarting, initial requests to these instances may have higher latency as caches 
 are repopulated. 
 
-## <a name="purchasing"></a>Purchasing & licensing  
+## <a id="purchasing"></a>Purchasing & licensing  
 
 When cloud product customers choose a new product or add-on, they automatically enter a free 
 trial period. This trial lasts 30 days, plus the time until their next bill. This means the 
@@ -67,7 +67,7 @@ Since add-on installation and licensing are handled separately, always check the
 [license status](../concepts/licensing.html) on each request and serve an appropriate
 response.
 
-## <a name="development"></a>Developing your add-on  
+## <a id="development"></a>Developing your add-on  
 
 Develop your add-on with the above concepts in mind. It's crucial to 
 
