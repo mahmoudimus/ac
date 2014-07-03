@@ -288,12 +288,15 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         loginAsAdmin();
         EditContentPage editPage = createAndEditPage(TABLE_MACRO_NAME, loadResourceAsString("confluence/test-page-table-macro.xhtml"));
         savedPage = editPage.save();
+
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
+        renderedMacro.waitUntilContentElementNotEmpty("client-http-status");
         assertThat(renderedMacro.getIFrameElementText("client-http-status"), is("200"));
+
         connectPageOperations.reorderConfluenceTableOnPage();
         RenderedMacro refreshedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
+        refreshedMacro.waitUntilContentElementNotEmpty("client-http-status");
         assertThat(refreshedMacro.getIFrameElementText("client-http-status"), is("200"));
-
     }
 
     @Test
