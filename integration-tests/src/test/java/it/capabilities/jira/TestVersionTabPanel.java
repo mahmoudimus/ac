@@ -7,7 +7,7 @@ import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestVersionTabPanel extends TestBase
 {
-    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
     private static final String MODULE_KEY = "version-tab-panel";
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
 

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -44,6 +45,6 @@ public class JiraViewIssuePageWithRemotePluginIssueTab extends ConnectAddOnEmbed
 
     private String getTabLinkId()
     {
-        return addOnKey + "__" + pageElementKey;
+        return ModuleKeyUtils.addonAndModuleKey(addOnKey, pageElementKey);
     }
 }

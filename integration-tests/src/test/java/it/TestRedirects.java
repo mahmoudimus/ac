@@ -1,7 +1,7 @@
 package it;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
@@ -30,7 +30,7 @@ public class TestRedirects extends AbstractBrowserlessTest
     @Test
     public void testPermanentRedirect() throws Exception
     {
-        ConnectRunner runner = new ConnectRunner(baseUrl, RemotePluginUtils.randomPluginKey())
+        ConnectRunner runner = new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
                 .addModule("generalPages", newPageBean()
                         .withKey("page")
                         .withName(new I18nProperty("Page", null))

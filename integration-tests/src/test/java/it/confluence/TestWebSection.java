@@ -3,10 +3,8 @@ package it.confluence;
 import com.atlassian.confluence.pageobjects.component.menu.ConfluenceMenuItem;
 import com.atlassian.confluence.pageobjects.component.menu.ToolsMenu;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import org.junit.AfterClass;
@@ -26,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestWebSection extends ConfluenceWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
 
     private static final String TOOLS_LOCATION = "system.content.action";
 

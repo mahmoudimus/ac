@@ -4,6 +4,7 @@ import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.util.VelocityKiller;
 
+import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -55,6 +56,16 @@ public class I18nProperty
     public String getRawI18n()
     {
         return i18n;
+    }
+
+    public boolean hasI18n()
+    {
+        return !Strings.isNullOrEmpty(i18n);
+    }
+
+    public boolean hasValue()
+    {
+        return !Strings.isNullOrEmpty(value);
     }
 
     public static I18nProperty empty()
