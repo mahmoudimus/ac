@@ -1,4 +1,4 @@
-# Understanding Atlassian OnDemand
+# Understanding Atlassian in the cloud
 
 Atlassian OnDemand is Atlassian's hosted versions of JIRA, Confluence and other software. Many
 customers prefer to buy Atlassian tools as a service because Atlassian handles maintenance,
