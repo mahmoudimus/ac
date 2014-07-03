@@ -1,7 +1,7 @@
 package it.capabilities;
 
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
@@ -11,7 +11,7 @@ import it.AbstractBrowserlessTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.test.RemotePluginUtils.randomWebItemBean;
+import static com.atlassian.plugin.connect.test.AddonTestUtils.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -22,7 +22,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
     @Before
     public void setup()
     {
-        this.pluginKey = RemotePluginUtils.randomPluginKey();    
+        this.pluginKey = AddonTestUtils.randomAddOnKey();
     }
     
     @Test

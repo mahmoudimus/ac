@@ -4,7 +4,7 @@ import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
@@ -50,7 +50,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModule(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
                         .withName(new I18nProperty(PROJECT_CONFIG_TAB_NAME, null))

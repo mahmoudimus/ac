@@ -1,7 +1,7 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
@@ -34,7 +34,7 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
     @Test
     public void testWebHookOnIssueCreated() throws Exception
     {
-        runInJsonRunner(baseUrl, RemotePluginUtils.randomPluginKey(), "jira:issue_created", new WebHookTester()
+        runInJsonRunner(baseUrl, AddonTestUtils.randomAddOnKey(), "jira:issue_created", new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
@@ -52,7 +52,7 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
     @Test
     public void testWebHookOnIssueUpdated() throws Exception
     {
-        runInJsonRunner(baseUrl, RemotePluginUtils.randomPluginKey(), "jira:issue_updated", new WebHookTester()
+        runInJsonRunner(baseUrl, AddonTestUtils.randomAddOnKey(), "jira:issue_updated", new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
@@ -71,7 +71,7 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
     @Test
     public void testWebHookOnIssueTransitioned() throws Exception
     {
-        runInJsonRunner(baseUrl, RemotePluginUtils.randomPluginKey(), "jira:issue_updated", new WebHookTester()
+        runInJsonRunner(baseUrl, AddonTestUtils.randomAddOnKey(), "jira:issue_updated", new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception

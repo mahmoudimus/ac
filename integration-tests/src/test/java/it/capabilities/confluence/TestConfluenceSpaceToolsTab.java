@@ -4,7 +4,7 @@ import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesP
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
@@ -33,7 +33,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("spaceToolsTabs", newSpaceToolsTabBean()
                         .withName(new I18nProperty("AC Space Tab", null))
@@ -64,7 +64,9 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
         SpaceTemplatesPage page = product.visit(SpaceTemplatesPage.class, "ds");
 
-        LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY) + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX, Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
+        String pageKey = AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
+        String webItemId = pageKey + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX;
+        LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(webItemId, Option.<String>none(), pageKey);
 
         RemotePluginEmbeddedTestPage addonContentsPage = addonPage.click();
 

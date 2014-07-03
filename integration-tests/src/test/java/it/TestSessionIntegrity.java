@@ -3,7 +3,7 @@ package it;
 import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -39,7 +39,7 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         installHandler = ConnectAppServlets.installHandlerServlet();
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addModule("generalPages", newPageBean()
                         .withKey("page")
                         .withName(new I18nProperty("Page", null))

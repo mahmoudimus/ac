@@ -16,7 +16,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyC
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -37,7 +37,7 @@ public class TestEntityProperty
 {
     private static final TestKitLocalEnvironmentData localEnvironmentData = new TestKitLocalEnvironmentData();
     private static final String ATTACHMENT_PROPERTY_KEY = "attachment";
-    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
     private static final String PROJECT_KEY = "EP";
 
     private static ConnectRunner remotePlugin;

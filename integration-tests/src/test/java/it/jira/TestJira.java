@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
@@ -39,7 +39,7 @@ public class TestJira extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("adminPages",
                         newPageBean()

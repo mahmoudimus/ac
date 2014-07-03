@@ -4,6 +4,7 @@ import com.atlassian.jira.pageobjects.pages.AbstractJiraPage;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.TimedCondition;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import org.openqa.selenium.By;
 
@@ -81,7 +82,7 @@ public class JiraAdministrationHomePage extends AbstractJiraPage
 
     private String constructAddOnAdminPageLinkId(String adminPageWebItemKey)
     {
-        return addOnKey + "__" + adminPageWebItemKey;
+        return ModuleKeyUtils.addonAndModuleKey(addOnKey, adminPageWebItemKey);
     }
 
     private PageElement findAdminPageLink(final String adminPageKey)

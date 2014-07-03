@@ -2,7 +2,7 @@ package it.capabilities.jira;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  */
 public class TestAdminPage extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
 
     private static final String PAGE_NAME = "My Admin Page";
     private static final String PAGE_KEY = "my-admin-page";
