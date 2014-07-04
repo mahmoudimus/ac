@@ -1,6 +1,6 @@
 # Selling on the Atlassian Marketplace
 
-[Installing in OnDemand](./installing-in-ondemand.html) outlines how to install and test your add-on
+[Installing in OnDemand](./cloud-installation.html) outlines how to install and test your add-on
 into your OnDemand instance  using a Private Listing on the Marketplace.
 
 To sell your Atlassian Connect add-on on the [Atlassian Marketplace](https://marketplace.atlassian.com/)

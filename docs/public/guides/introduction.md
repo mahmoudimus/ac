@@ -66,7 +66,7 @@ Atlassian Connect add-ons so powerful.
 ### Architecture
 Most Atlassian Connect add-ons are implemented as multi-tenanted services. This means that a
 single Atlassian Connect add-on will support multiple subscribing Atlassian applications. For more information,
-see [Understanding OnDemand](../concepts/understanding-ondemand.html).
+see [Understanding OnDemand](../concepts/cloud-development.html).
 
 ###Security
 Security is critical in a distributed component model such as Atlassian Connect. Atlassian Connect relies on

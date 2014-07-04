@@ -5,7 +5,7 @@ Atlassian product, testing with an OnDemand instance, and finally making the add
  (whether the customer is just you or you intend to distribute it to the public).
 
 This document explains how you would go about developing your add-on with a local copy of the Atlassian product.
-[Installing in OnDemand](./installing-in-ondemand.html) explains how to use private Marketplace listings to test in
+[Installing in OnDemand](./cloud-installation.html) explains how to use private Marketplace listings to test in
 OnDemand, and [Selling on  Marketplace](./selling-on-marketplace.html) explains how to release your add-on to the
 public.
 

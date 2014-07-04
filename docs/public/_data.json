@@ -15,8 +15,8 @@
       "title": "Developing locally"
     },
     {
-      "filename": "installing-in-ondemand.html",
-      "title": "Installing in OnDemand"
+      "filename": "cloud-installation.html",
+      "title": "Installing in the cloud"
     },
     {
       "filename": "selling-on-marketplace.html",
@@ -65,7 +65,7 @@
     },
     {
       "filename": "cloud-development.html",
-      "title": "Developing for the cloud"
+      "title": "Cloud development"
     }
   ],
   "scopes": [

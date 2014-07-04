@@ -9,14 +9,14 @@ Covered here:
 * [Architectural overview of Atlassian cloud products](#overview) 
 * [Cloud application updates & restarts](#restarts) 
 * [Purchasing & licensing](#purchasing) 
-* [Developing your add-on for the cloud](#development) 
+* [Development checklist](#development) 
 
 ## <a id="overview"></a>Architecture overview
 
 Even though cloud products can be packaged together for customers, each JIRA and Confluence Cloud account 
 is a separate instance. The actual JIRA and Confluence servers are individual applications
 running in separate, isolated JVMs, communicating only over HTTP. Our cloud products only serve content over 
-[HTTPS](../developing/installing-in-ondemand.html). 
+[HTTPS](../developing/cloud-installation.html). 
 
 Although each application is isolated from a security perspective, underlying resources like like hardware, 
 CPU and memory can be shared between many customers. Servers for our cloud applications are [located in the US](https://www.atlassian.com/hosted/security). 
@@ -67,9 +67,9 @@ Since add-on installation and licensing are handled separately, always check the
 [license status](../concepts/licensing.html) on each request and serve an appropriate
 response.
 
-## <a id="development"></a>Developing your add-on  
+## <a id="development"></a>Development checklist
 
-Develop your add-on with the above concepts in mind. It's crucial to 
+Develop your add-on with the above concepts in mind: 
 
 * Ensure your descriptor's base URL starts with HTTPS. 
 * Only serve content over HTTPS. 

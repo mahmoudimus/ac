@@ -1,7 +1,7 @@
 # Upgrading and versioning your add-on
 
 You can upgrade your add-on any time once it's listed in the [Marketplace](https://marketplace.atlassian.com/) as either
-an [approved public add-on](./selling-on-marketplace.html) or a [private listing](./installing-in-ondemand.html).
+an [approved public add-on](./selling-on-marketplace.html) or a [private listing](./cloud-installation.html).
 
 Almost all changes you make to your add-on will be to code inside your add-on's web app. For example, tweaking the look
 of a web panel, adding a configuration option or catching a previously unhandled exception can all be done by writing
