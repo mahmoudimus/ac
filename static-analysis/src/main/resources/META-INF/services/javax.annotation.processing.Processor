@@ -1,3 +1,2 @@
 com.atlassian.connect.xmldescriptor.XmlDescriptorAnnotationProcessor
 com.atlassian.connect.xmldescriptor.OAuthAnnotationProcessor
-it.com.atlassian.plugin.connect.ParameterizedWiredTestAnnotationProcessor
