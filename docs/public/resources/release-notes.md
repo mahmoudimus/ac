@@ -1,7 +1,7 @@
 
 # Release Notes
 
-## [1.1.0-beta.4](../release-notes/1-1-0.html)
+## [1.1.0-beta.5](../release-notes/1-1-0.html)
 * __If you read one thing, read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
 * XML descriptor servlet paths redirect to new JSON descriptor paths
 * Manage cookies through the [javascript cookie api](http://localhost:9000/javascript/module-cookie.html)
