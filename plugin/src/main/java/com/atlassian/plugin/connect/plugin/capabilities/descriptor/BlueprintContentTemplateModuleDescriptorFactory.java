@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.sal.api.net.RequestFactory;
 import com.google.common.base.Strings;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -32,11 +33,15 @@ public class BlueprintContentTemplateModuleDescriptorFactory
 
     private final ModuleFactory moduleFactory;
     private final I18NBeanFactory i18nBeanFactory;
+    private final RequestFactory<?> requestFactory;
 
     @Autowired
-    public BlueprintContentTemplateModuleDescriptorFactory(ModuleFactory moduleFactory, I18NBeanFactory i18nBeanFactory) {
+    public BlueprintContentTemplateModuleDescriptorFactory(ModuleFactory moduleFactory,
+                                                           I18NBeanFactory i18nBeanFactory,
+                                                           RequestFactory<?> requestFactory) {
         this.moduleFactory = moduleFactory;
         this.i18nBeanFactory = i18nBeanFactory;
+        this.requestFactory = requestFactory;
     }
 
     @Override
@@ -57,7 +62,10 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         if (log.isDebugEnabled())
             log.debug(Dom4jUtils.printNode(contentTemplateElement));
 
-        final ContentTemplateModuleDescriptor descriptor = new ContentTemplateModuleDescriptor(moduleFactory, i18nBeanFactory, new DefaultLocaleManager());
+        final ContentTemplateModuleDescriptor descriptor = new ContentTemplateModuleDescriptor(moduleFactory,
+                i18nBeanFactory,
+                new DefaultLocaleManager(),
+                requestFactory);
         descriptor.init(plugin, contentTemplateElement);
         return descriptor;
     }

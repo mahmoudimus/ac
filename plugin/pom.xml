@@ -1196,6 +1196,6 @@
         <mvnCommand>/usr/bin/mvn</mvnCommand>
         <debugSchemaGen>false</debugSchemaGen>
         <ao.version>0.25.2</ao.version>
-        <bp.version>4.0.17-SNAPSHOT</bp.version>
+        <bp.version>4.0.19</bp.version>
     </properties>
 </project>
