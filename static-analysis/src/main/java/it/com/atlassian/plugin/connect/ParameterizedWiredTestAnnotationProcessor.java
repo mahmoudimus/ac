@@ -6,9 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypesException;
@@ -73,15 +71,15 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
         }
     }
 
-    private void processClass(TypeElement element) throws IOException
+    private void processClass(TypeElement inputClassElement) throws IOException
     {
         Collection<Element> testMethods = new ArrayList<Element>();
         Element parametersField = null;
         ParameterizedWiredTest.Parameters parametersFieldAnnotation = null;
 
-        for (Element innerElement : element.getEnclosedElements())
+        for (Element innerElement : inputClassElement.getEnclosedElements())
         {
-            collectTestMethods(testMethods, element, innerElement);
+            collectTestMethods(testMethods, inputClassElement, innerElement);
 
             Annotation fieldDataAnnotation = innerElement.getAnnotation(ParameterizedWiredTest.Parameters.class);
 
@@ -90,7 +88,7 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
                 if (parametersFieldAnnotation != null)
                 {
                     throw new IllegalStateException(String.format("There can be only one %s-annotated field per %s-annotated class but %s has both %s and %s!",
-                            ParameterizedWiredTest.Parameters.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(), element.getSimpleName(), parametersField.getSimpleName(), innerElement.getSimpleName()));
+                            ParameterizedWiredTest.Parameters.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(), inputClassElement.getSimpleName(), parametersField.getSimpleName(), innerElement.getSimpleName()));
                 }
 
                 TypeMirror fieldType = innerElement.asType();
@@ -123,16 +121,16 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
         if (null == parametersFieldAnnotation)
         {
             throw new IllegalStateException(String.format("There must be a %s-annotated field per %s-annotated class but %s has none!",
-                    ParameterizedWiredTest.Parameters.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(), element.getSimpleName()));
+                    ParameterizedWiredTest.Parameters.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(), inputClassElement.getSimpleName()));
         }
 
         if (testMethods.isEmpty())
         {
             throw new IllegalStateException(String.format("There must be at least one %s-annotated method per %s-annotated class but %s has none!",
-                    ParameterizedWiredTest.Test.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(), element.getSimpleName()));
+                    ParameterizedWiredTest.Test.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(), inputClassElement.getSimpleName()));
         }
 
-        generateTestClassSource(element, parametersFieldAnnotation);
+        generateTestClassSource(inputClassElement, parametersFieldAnnotation);
     }
 
     private void collectTestMethods(Collection<Element> testMethods, TypeElement classElement, Element methodElement)
@@ -163,9 +161,9 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
         }
     }
 
-    private void generateTestClassSource(TypeElement classElement, ParameterizedWiredTest.Parameters parametersFieldAnnotation) throws IOException
+    private void generateTestClassSource(TypeElement inputClassElement, ParameterizedWiredTest.Parameters parametersFieldAnnotation) throws IOException
     {
-        ClassName generatedClassName = constructClassName(classElement, GENERATED_CLASS_PREFIX);
+        ClassName generatedClassName = constructClassName(inputClassElement, GENERATED_CLASS_PREFIX);
         JavaFileObject generatedSourceFile = processingEnvironment.getFiler().createSourceFile(generatedClassName.getQualifiedName());
         final Writer writer = generatedSourceFile.openWriter();
 
@@ -175,7 +173,7 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
 
             try
             {
-                generateTestClassSourceUnsafe(classElement, parametersFieldAnnotation, generatedClassName, bw);
+                generateTestClassSourceUnsafe(inputClassElement, parametersFieldAnnotation, generatedClassName, bw);
             }
             finally
             {
@@ -188,29 +186,90 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
         }
     }
 
-    private void generateTestClassSourceUnsafe(Element element, ParameterizedWiredTest.Parameters parametersFieldAnnotation, ClassName generatedClassName, BufferedWriter bw) throws IOException
+    private void generateTestClassSourceUnsafe(TypeElement inputClassElement, ParameterizedWiredTest.Parameters parametersFieldAnnotation, ClassName generatedClassName, BufferedWriter bw) throws IOException
     {
         final Collection<ClassName> parameterClasses = getParameterClasses(parametersFieldAnnotation);
-        writeClassHeader(bw, parameterClasses, generatedClassName.getPackageName());
-        writeClassBody(element, parametersFieldAnnotation, generatedClassName, bw, parameterClasses);
+        final Iterable<ClassName> constructorClassNames = getConstructorClassNames(inputClassElement);
+        writeClassHeader(bw, parameterClasses, generatedClassName.getPackageName(), constructorClassNames);
+        writeClassBody(inputClassElement, parametersFieldAnnotation, generatedClassName, bw, parameterClasses, constructorClassNames);
     }
 
-    private void writeClassBody(Element element, ParameterizedWiredTest.Parameters parametersFieldAnnotation, ClassName generatedClassName, BufferedWriter bw, Collection<ClassName> parameterClasses) throws IOException
+    private void writeClassBody(TypeElement inputClassElement, ParameterizedWiredTest.Parameters parametersFieldAnnotation, ClassName generatedClassName, BufferedWriter bw, Collection<ClassName> parameterClasses, Iterable<ClassName> constructorClassNames) throws IOException
     {
         bw.append("@RunWith(AtlassianPluginsTestRunner.class)").append(NEWLINE);
-        bw.append("public class ").append(generatedClassName.getSimpleName()).append(" extends ").append(element.getSimpleName()).append(NEWLINE);
+        bw.append("public class ").append(generatedClassName.getSimpleName()).append(" extends ").append(inputClassElement.getSimpleName()).append(NEWLINE);
         bw.append("{").append(NEWLINE);
-        bw.append("    public ").append(generatedClassName.getSimpleName()).append("(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,\n" +
-                "                         JwtWriterFactory jwtWriterFactory,\n" +
-                "                         ConnectAddonRegistry connectAddonRegistry,\n" +
-                "                         ApplicationProperties applicationProperties)").append(NEWLINE); // TODO: find these args from the input class' constructor
+        bw.append("    public ").append(generatedClassName.getSimpleName()).append("(").append(classNamesToArgList(constructorClassNames)).append(")").append(NEWLINE);
         bw.append("    {").append(NEWLINE);
-        bw.append("        super(testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);").append(NEWLINE);
+        bw.append("        super(").append(classNamesToVariableNames(constructorClassNames)).append(");").append(NEWLINE);
         bw.append("    }").append(NEWLINE);
 
         writeTests(parametersFieldAnnotation, bw, parameterClasses);
 
         bw.append("}").append(NEWLINE);
+    }
+
+    private static String classNamesToVariableNames(Iterable<ClassName> constructorClassNames)
+    {
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
+
+        for (ClassName className : constructorClassNames)
+        {
+            if (!isFirst)
+            {
+                sb.append(", ");
+            }
+
+            isFirst = false;
+            sb.append(classNameToVariableName(className));
+        }
+
+        return sb.toString();
+    }
+
+    private static String classNamesToArgList(Iterable<ClassName> constructorClassNames)
+    {
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
+
+        for (ClassName className : constructorClassNames)
+        {
+            if (!isFirst)
+            {
+                sb.append(", ");
+            }
+
+            isFirst = false;
+            sb.append(className.getSimpleName()).append(' ').append(classNameToVariableName(className));
+        }
+
+        return sb.toString();
+    }
+
+    private static String classNameToVariableName(ClassName className)
+    {
+        return className.getSimpleName().substring(0,1).toLowerCase() + className.getSimpleName().substring(1);
+    }
+
+    private static Iterable<ClassName> getConstructorClassNames(TypeElement inputClassElement)
+    {
+        Collection<ClassName> classNames = new ArrayList<ClassName>();
+
+        for (Element innerElement : inputClassElement.getEnclosedElements())
+        {
+            if (innerElement.getKind().equals(ElementKind.CONSTRUCTOR))
+            {
+                ExecutableElement constructor = (ExecutableElement) innerElement;
+
+                for (VariableElement param : constructor.getParameters())
+                {
+                    classNames.add(constructClassName((TypeElement) ((DeclaredType) param.asType()).asElement()));
+                }
+            }
+        }
+
+        return classNames;
     }
 
     private void writeTests(ParameterizedWiredTest.Parameters parametersFieldAnnotation, BufferedWriter bw, Collection<ClassName> parameterClasses) throws IOException
@@ -236,16 +295,17 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
         }
     }
 
-    private void writeClassHeader(BufferedWriter bw, Collection<ClassName> parameterClasses, CharSequence packageName) throws IOException
+    private void writeClassHeader(BufferedWriter bw, Collection<ClassName> parameterClasses, CharSequence packageName, Iterable<ClassName> constructorClassNames) throws IOException
     {
         bw.append("package ").append(packageName).append(";").append(NEWLINE);
         bw.newLine();
-        bw.append("import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;").append(NEWLINE); // TODO: get from the input class' constructor
-        bw.append("import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;").append(NEWLINE);
-        bw.append("import it.com.atlassian.plugin.connect.TestAuthenticator;").append(NEWLINE);
-        bw.append("import com.atlassian.jwt.writer.JwtWriterFactory;").append(NEWLINE);
-        bw.append("import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;").append(NEWLINE);
-        bw.append("import com.atlassian.sal.api.ApplicationProperties;").append(NEWLINE);
+
+        for (ClassName constructorArgClassName : constructorClassNames)
+        {
+            bw.append("import ").append(constructorArgClassName.getQualifiedName()).append(';').append(NEWLINE);
+        }
+
+        bw.append("import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;").append(NEWLINE);
         bw.append("import org.junit.Test;").append(NEWLINE);
         bw.append("import org.junit.runner.RunWith;").append(NEWLINE);
 
