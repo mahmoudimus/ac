@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.module;
+package com.atlassian.plugin.connect.spi.condition;
 
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
@@ -6,16 +6,21 @@ import com.atlassian.sal.api.user.UserManager;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Displays if the user is logged in
+ * Displays if the user is an admin as determined by SAL's isAdmin()
  */
-public final class UserIsLoggedInCondition implements Condition
+@Named
+public final class UserIsAdminCondition implements Condition
 {
     private final UserManager userManager;
 
-    public UserIsLoggedInCondition(UserManager userManager)
+    @Inject
+    public UserIsAdminCondition(UserManager userManager)
     {
         this.userManager = checkNotNull(userManager);
     }
@@ -28,6 +33,6 @@ public final class UserIsLoggedInCondition implements Condition
     @Override
     public boolean shouldDisplay(Map<String, Object> context)
     {
-        return userManager.getRemoteUser() != null;
+        return userManager.isAdmin(userManager.getRemoteUserKey());
     }
 }

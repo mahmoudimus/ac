@@ -6,7 +6,6 @@ import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
-import com.atlassian.plugin.connect.spi.module.UserIsLoggedInCondition;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 

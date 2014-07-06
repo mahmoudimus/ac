@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.plugin.connect.spi.condition.UserIsAdminCondition;
+import com.atlassian.plugin.connect.spi.condition.UserIsLoggedInCondition;
+import com.atlassian.plugin.connect.spi.condition.UserIsSysAdminCondition;
 import com.atlassian.plugin.web.Condition;
 
 import java.util.Map;
@@ -20,9 +23,9 @@ public class PageConditions extends ConditionsProvider
     {
         Map<String, Class<? extends Condition>> conditionMap = newTreeMap();
 
-        conditionMap.put(USER_IS_SYSADMIN, com.atlassian.plugin.connect.spi.module.UserIsSysAdminCondition.class);
-        conditionMap.put(USER_IS_LOGGED_IN, com.atlassian.plugin.connect.spi.module.UserIsLoggedInCondition.class);
-        conditionMap.put(USER_IS_ADMIN, com.atlassian.plugin.connect.spi.module.UserIsAdminCondition.class);
+        conditionMap.put(USER_IS_SYSADMIN, UserIsSysAdminCondition.class);
+        conditionMap.put(USER_IS_LOGGED_IN, UserIsLoggedInCondition.class);
+        conditionMap.put(USER_IS_ADMIN, UserIsAdminCondition.class);
         
         return conditionMap;
     }

@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.plugin.connect.spi.condition.UserIsAdminCondition;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.Condition;
 
@@ -62,46 +63,46 @@ public class ConfluenceConditions extends PageConditions
     {
         Map<String, Class<? extends Condition>> conditionMap = PageConditions.getConditionMap();
 
-        conditionMap.put(NOT_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.NotPersonalSpaceCondition.class);
-        conditionMap.put(USER_CAN_USE_CONFLUENCE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserCanUseConfluenceCondition.class);
-        conditionMap.put(USER_CAN_UPDATE_USER_STATUS, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserCanUpdateUserStatusCondition.class);
-        conditionMap.put(EMAIL_ADDRESS_PUBLIC, com.atlassian.confluence.plugin.descriptor.web.conditions.EmailAddressPublicCondition.class);
-        conditionMap.put(CONTENT_HAS_ANY_PERMISSIONS_SET, com.atlassian.confluence.plugin.descriptor.web.conditions.ContentHasAnyPermissionsSetCondition.class);
-        conditionMap.put(USER_WATCHING_SPACE_FOR_CONTENT_TYPE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingSpaceForContentTypeCondition.class);
-        conditionMap.put(SPACE_FUNCTION_PERMISSION, com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceFunctionPermissionCondition.class);
-        conditionMap.put(FOLLOWING_TARGET_USER, com.atlassian.confluence.plugin.descriptor.web.conditions.user.FollowingTargetUserCondition.class);
-        conditionMap.put(HAS_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.HasSpaceCondition.class);
-        conditionMap.put(TARGET_USER_CAN_SET_STATUS, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserCanSetStatusCondition.class);
-        conditionMap.put(USER_FAVOURITING_TARGET_USER_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserFavouritingTargetUserPersonalSpaceCondition.class);
-        conditionMap.put(FAVOURITE_PAGE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouritePageCondition.class);
-        conditionMap.put(THREADED_COMMENTS, com.atlassian.confluence.plugin.descriptor.web.conditions.ThreadedCommentsCondition.class);
-        conditionMap.put(USER_HAS_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserHasPersonalSpaceCondition.class);
-        conditionMap.put(CAN_SIGNUP, com.atlassian.confluence.plugin.descriptor.web.conditions.user.CanSignupCondition.class);
-        conditionMap.put(TARGET_USER_HAS_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserHasPersonalSpaceCondition.class);
-        conditionMap.put(VIEWING_CONTENT, com.atlassian.confluence.plugin.descriptor.web.conditions.ViewingContentCondition.class);
-        conditionMap.put(VIEWING_OWN_PROFILE, com.atlassian.confluence.plugin.descriptor.web.conditions.ViewingOwnProfileCondition.class);
         conditionMap.put(ACTIVE_THEME, com.atlassian.confluence.plugin.descriptor.web.conditions.ActiveThemeCondition.class);
-        conditionMap.put(PRINTABLE_VERSION, com.atlassian.confluence.plugin.descriptor.web.conditions.PrintableVersionCondition.class);
-        conditionMap.put(USER_CAN_CREATE_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserCanCreatePersonalSpaceCondition.class);
-        conditionMap.put(TINY_URL_SUPPORTED, com.atlassian.confluence.plugin.descriptor.web.conditions.TinyUrlSupportedCondition.class);
-        conditionMap.put(LATEST_VERSION, com.atlassian.confluence.plugin.descriptor.web.conditions.LatestVersionCondition.class);
-        conditionMap.put(HAS_PAGE, com.atlassian.confluence.plugin.descriptor.web.conditions.HasPageCondition.class);
-        conditionMap.put(CREATE_CONTENT, com.atlassian.confluence.plugin.descriptor.web.conditions.CreateContentCondition.class);
         conditionMap.put(CAN_EDIT_SPACE_STYLES, com.atlassian.confluence.plugin.descriptor.web.conditions.CanEditSpaceStylesCondition.class);
-        conditionMap.put(SHOWING_PAGE_ATTACHMENTS, com.atlassian.confluence.plugin.descriptor.web.conditions.ShowingPageAttachmentsCondition.class);
-        conditionMap.put(HAS_TEMPLATE, com.atlassian.confluence.plugin.descriptor.web.conditions.HasTemplateCondition.class);
-        conditionMap.put(USER_HAS_PERSONAL_BLOG, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserHasPersonalBlogCondition.class);
+        conditionMap.put(CAN_SIGNUP, com.atlassian.confluence.plugin.descriptor.web.conditions.user.CanSignupCondition.class);
+        conditionMap.put(CONTENT_HAS_ANY_PERMISSIONS_SET, com.atlassian.confluence.plugin.descriptor.web.conditions.ContentHasAnyPermissionsSetCondition.class);
+        conditionMap.put(CREATE_CONTENT, com.atlassian.confluence.plugin.descriptor.web.conditions.CreateContentCondition.class);
+        conditionMap.put(EMAIL_ADDRESS_PUBLIC, com.atlassian.confluence.plugin.descriptor.web.conditions.EmailAddressPublicCondition.class);
+        conditionMap.put(FAVOURITE_PAGE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouritePageCondition.class);
+        conditionMap.put(FAVOURITE_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouriteSpaceCondition.class);
+        conditionMap.put(FOLLOWING_TARGET_USER, com.atlassian.confluence.plugin.descriptor.web.conditions.user.FollowingTargetUserCondition.class);
         conditionMap.put(HAS_ATTACHMENT, com.atlassian.confluence.plugin.descriptor.web.conditions.HasAttachmentCondition.class);
-        conditionMap.put(TARGET_USER_HAS_PERSONAL_BLOG, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserHasPersonalBlogCondition.class);
-        conditionMap.put(USER_WATCHING_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingSpaceCondition.class);
         conditionMap.put(HAS_BLOG_POST, com.atlassian.confluence.plugin.descriptor.web.conditions.HasBlogPostCondition.class);
+        conditionMap.put(HAS_PAGE, com.atlassian.confluence.plugin.descriptor.web.conditions.HasPageCondition.class);
+        conditionMap.put(HAS_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.HasSpaceCondition.class);
+        conditionMap.put(HAS_TEMPLATE, com.atlassian.confluence.plugin.descriptor.web.conditions.HasTemplateCondition.class);
+        conditionMap.put(LATEST_VERSION, com.atlassian.confluence.plugin.descriptor.web.conditions.LatestVersionCondition.class);
+        conditionMap.put(NOT_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.NotPersonalSpaceCondition.class);
+        conditionMap.put(PRINTABLE_VERSION, com.atlassian.confluence.plugin.descriptor.web.conditions.PrintableVersionCondition.class);
+        conditionMap.put(SHOWING_PAGE_ATTACHMENTS, com.atlassian.confluence.plugin.descriptor.web.conditions.ShowingPageAttachmentsCondition.class);
+        conditionMap.put(SPACE_FUNCTION_PERMISSION, com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceFunctionPermissionCondition.class);
+        conditionMap.put(SPACE_SIDEBAR, com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition.class);
+        conditionMap.put(TARGET_USER_CAN_SET_STATUS, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserCanSetStatusCondition.class);
+        conditionMap.put(TARGET_USER_HAS_PERSONAL_BLOG, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserHasPersonalBlogCondition.class);
+        conditionMap.put(TARGET_USER_HAS_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserHasPersonalSpaceCondition.class);
+        conditionMap.put(THREADED_COMMENTS, com.atlassian.confluence.plugin.descriptor.web.conditions.ThreadedCommentsCondition.class);
+        conditionMap.put(TINY_URL_SUPPORTED, com.atlassian.confluence.plugin.descriptor.web.conditions.TinyUrlSupportedCondition.class);
+        conditionMap.put(USER_CAN_CREATE_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserCanCreatePersonalSpaceCondition.class);
+        conditionMap.put(USER_CAN_UPDATE_USER_STATUS, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserCanUpdateUserStatusCondition.class);
+        conditionMap.put(USER_CAN_USE_CONFLUENCE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserCanUseConfluenceCondition.class);
+        conditionMap.put(USER_FAVOURITING_TARGET_USER_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserFavouritingTargetUserPersonalSpaceCondition.class);
+        conditionMap.put(USER_HAS_PERSONAL_BLOG, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserHasPersonalBlogCondition.class);
+        conditionMap.put(USER_HAS_PERSONAL_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserHasPersonalSpaceCondition.class);
         conditionMap.put(USER_LOGGED_IN_EDITABLE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserLoggedInEditableCondition.class);
         conditionMap.put(USER_WATCHING_PAGE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingPageCondition.class);
-        conditionMap.put(FAVOURITE_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouriteSpaceCondition.class);
-        conditionMap.put(SPACE_SIDEBAR, com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition.class);
+        conditionMap.put(USER_WATCHING_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingSpaceCondition.class);
+        conditionMap.put(USER_WATCHING_SPACE_FOR_CONTENT_TYPE, com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingSpaceForContentTypeCondition.class);
+        conditionMap.put(VIEWING_CONTENT, com.atlassian.confluence.plugin.descriptor.web.conditions.ViewingContentCondition.class);
+        conditionMap.put(VIEWING_OWN_PROFILE, com.atlassian.confluence.plugin.descriptor.web.conditions.ViewingOwnProfileCondition.class);
         
         //just here for backwards compatibility.
-        conditionMap.put(USER_IS_CONFLUENCE_ADMIN, com.atlassian.plugin.connect.spi.module.UserIsAdminCondition.class);
+        conditionMap.put(USER_IS_CONFLUENCE_ADMIN, UserIsAdminCondition.class);
 
         return conditionMap;
     }

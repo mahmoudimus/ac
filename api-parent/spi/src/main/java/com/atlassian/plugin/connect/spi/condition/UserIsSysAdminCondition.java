@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.module;
+package com.atlassian.plugin.connect.spi.condition;
 
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
