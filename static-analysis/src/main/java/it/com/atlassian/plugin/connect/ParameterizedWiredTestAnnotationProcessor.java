@@ -7,10 +7,7 @@ import javax.annotation.Nullable;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
-import javax.lang.model.type.ArrayType;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.MirroredTypesException;
-import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.*;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.BufferedWriter;
@@ -34,6 +31,14 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
     private static final String GENERATED_CLASS_PREFIX = "Parameterized";
     private static final char NEWLINE = '\n';
     private static final String JAVA_LANG = "java.lang";
+    private static final Function<TypeMirror, ClassName> TYPE_MIRROR_TO_CLASS_NAME = new Function<TypeMirror, ClassName>()
+    {
+        @Override
+        public ClassName apply(@Nullable TypeMirror typeMirror)
+        {
+            return typeMirror instanceof DeclaredType ? constructClassName((TypeElement) (((DeclaredType) typeMirror).asElement())) : null;
+        }
+    };
 
     private ProcessingEnvironment processingEnvironment;
 
@@ -327,16 +332,13 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
             asList(parametersFieldAnnotation.classes()); // throws every time, because this API is wonderful
             throw new RuntimeException("I was expecting Parmeters.class() to throw a MirroredTypesException...");
         }
+        catch (MirroredTypeException e)
+        {
+            return asList(TYPE_MIRROR_TO_CLASS_NAME.apply(e.getTypeMirror()));
+        }
         catch (MirroredTypesException e)
         {
-            return transform(e.getTypeMirrors(), new Function<TypeMirror, ClassName>()
-            {
-                @Override
-                public ClassName apply(@Nullable TypeMirror typeMirror)
-                {
-                    return typeMirror instanceof DeclaredType ? constructClassName((TypeElement) (((DeclaredType) typeMirror).asElement())) : null;
-                }
-            });
+            return transform(e.getTypeMirrors(), TYPE_MIRROR_TO_CLASS_NAME);
         }
     }
 
