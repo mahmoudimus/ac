@@ -1,4 +1,4 @@
-package it.capabilities.confluence;
+package it.capabilities.confluence.condition;
 
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
