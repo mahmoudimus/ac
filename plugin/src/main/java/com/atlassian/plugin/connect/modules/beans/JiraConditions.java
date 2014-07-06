@@ -18,6 +18,7 @@ public class JiraConditions extends PageConditions
     public static final String CAN_ATTACH_FILE_TO_ISSUE = "can_attach_file_to_issue";
     public static final String CAN_ATTACH_SCREENSHOT_TO_ISSUE = "can_attach_screenshot_to_issue";
     public static final String CAN_MANAGE_ATTACHMENTS = "can_manage_attachments";
+    public static final String FEATURE_FLAG = "feature_flag";
     public static final String HAS_ISSUE_PERMISSION = "has_issue_permission";
     public static final String HAS_PROJECT_PERMISSION = "has_project_permission";
     public static final String HAS_SELECTED_PROJECT = "has_selected_project";
@@ -48,6 +49,7 @@ public class JiraConditions extends PageConditions
     {
         Map<String, Class<? extends Condition>> conditionMap = PageConditions.getConditionMap();
 
+        conditionMap.put(FEATURE_FLAG, com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class);
         conditionMap.put(HAS_SELECTED_PROJECT, com.atlassian.jira.plugin.webfragment.conditions.HasSelectedProjectCondition.class);
         conditionMap.put(IS_ADMIN_MODE, com.atlassian.jira.plugin.webfragment.conditions.IsAdminModeCondition.class);
         conditionMap.put(LINKING_ENABLED, com.atlassian.jira.plugin.webfragment.conditions.LinkingEnabledCondition.class);

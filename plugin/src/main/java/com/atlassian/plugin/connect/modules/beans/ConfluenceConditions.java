@@ -12,8 +12,8 @@ import java.util.Map;
 @ConfluenceComponent
 public class ConfluenceConditions extends PageConditions
 {
-    
     public static final String CONDITION_LIST = getConditionListAsMarkdown(getConditionMap());
+
     public static final String NOT_PERSONAL_SPACE = "not_personal_space";
     public static final String USER_CAN_USE_CONFLUENCE = "user_can_use_confluence";
     public static final String USER_CAN_UPDATE_USER_STATUS = "user_can_update_user_status";
@@ -22,6 +22,7 @@ public class ConfluenceConditions extends PageConditions
     public static final String USER_WATCHING_SPACE_FOR_CONTENT_TYPE = "user_watching_space_for_content_type";
     public static final String SPACE_FUNCTION_PERMISSION = "space_function_permission";
     public static final String FOLLOWING_TARGET_USER = "following_target_user";
+    public static final String FEATURE_FLAG = "feature_flag";
     public static final String HAS_SPACE = "has_space";
     public static final String TARGET_USER_CAN_SET_STATUS = "target_user_can_set_status";
     public static final String USER_FAVOURITING_TARGET_USER_PERSONAL_SPACE = "user_favouriting_target_user_personal_space";
@@ -71,6 +72,7 @@ public class ConfluenceConditions extends PageConditions
         conditionMap.put(EMAIL_ADDRESS_PUBLIC, com.atlassian.confluence.plugin.descriptor.web.conditions.EmailAddressPublicCondition.class);
         conditionMap.put(FAVOURITE_PAGE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouritePageCondition.class);
         conditionMap.put(FAVOURITE_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouriteSpaceCondition.class);
+        conditionMap.put(FEATURE_FLAG, com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class);
         conditionMap.put(FOLLOWING_TARGET_USER, com.atlassian.confluence.plugin.descriptor.web.conditions.user.FollowingTargetUserCondition.class);
         conditionMap.put(HAS_ATTACHMENT, com.atlassian.confluence.plugin.descriptor.web.conditions.HasAttachmentCondition.class);
         conditionMap.put(HAS_BLOG_POST, com.atlassian.confluence.plugin.descriptor.web.conditions.HasBlogPostCondition.class);
