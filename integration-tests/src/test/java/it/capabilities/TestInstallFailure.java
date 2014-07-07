@@ -1,50 +1,70 @@
 package it.capabilities;
 
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
+import com.atlassian.jwt.core.reader.JwtIssuerValidator;
+import com.atlassian.jwt.core.reader.NimbusJwtReaderFactory;
+import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
+import com.atlassian.jwt.exception.JwtParseException;
+import com.atlassian.jwt.exception.JwtUnknownIssuerException;
+import com.atlassian.jwt.exception.JwtVerificationException;
+import com.atlassian.jwt.reader.JwtClaimVerifier;
+import com.atlassian.jwt.reader.JwtReaderFactory;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
-import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.upm.pageobjects.PluginManager;
+import com.google.common.collect.ImmutableMap;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.servlet.InstallHandlerServlet;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
-import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+/**
+ * Tests that we clean up properly on plugin install failure, to avoid recurrence of AC-1187
+ */
 public class TestInstallFailure extends ConnectWebDriverTestBase
 {
 
     protected static final String MY_AWESOME_PAGE = "My Awesome Page";
     protected static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
     protected static final String URL = "/" + MY_AWESOME_PAGE_KEY;
+    private static final CustomInstallationHandlerServlet installUninstallHandler = new CustomInstallationHandlerServlet();
 
     protected static ConnectRunner remotePlugin;
+    private static InstallHandlerServlet installationServlet = ConnectAppServlets.installHandlerServlet();
+
+    private static String sharedSecret;
 
     protected String pluginKey;
     protected String awesomePageModuleKey;
 
+    @Inject
+    private JwtReaderFactory jwtReaderFactory;
 
-    @Rule
-    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     protected static void startConnectAddOn(String fieldName) throws Exception
     {
@@ -53,28 +73,36 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
 
     protected static void startConnectAddOn(String fieldName, String url) throws Exception
     {
-        startConnectAddOn(fieldName, url, newPageBean());
-    }
-
-    protected static void startConnectAddOn(String fieldName, String url, ConnectPageModuleBeanBuilder pageBeanBuilder) throws Exception
-    {
+        ConnectPageModuleBeanBuilder pageBeanBuilder = newPageBean();
         pageBeanBuilder.withName(new I18nProperty(MY_AWESOME_PAGE, null))
                 .withKey(MY_AWESOME_PAGE_KEY)
                 .withUrl(url)
-                .withConditions(toggleableConditionBean())
                 .withWeight(1234);
 
         int query = url.indexOf("?");
         String route = query > -1 ? url.substring(0, query) : url;
 
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        // initial install and uninstall will intentionally send 404's
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), MY_AWESOME_PAGE_KEY)
                 .addInstallLifecycle()
+                .addUninstallLifecycle()
                 .addModule(fieldName, pageBeanBuilder.build())
                 .addJWT()
-//                .setAuthenticationToNone()
-                .addRoute(route, ConnectAppServlets.apRequestServlet())
-                .addRoute(ConnectRunner.INSTALLED_PATH, ConnectAppServlets.apRequestServlet())
+                .addRoute(route, ConnectAppServlets.helloWorldServlet())
+                .addRoute(ConnectRunner.INSTALLED_PATH, installUninstallHandler)
+                .addRoute(ConnectRunner.UNINSTALLED_PATH, installUninstallHandler)
+                .addScope(ScopeName.ADMIN)
+                .disableInstallationStatusCheck()
                 .start();
+
+        // stop sending 404's so addon now behaves well
+        installUninstallHandler.setShouldSend404(false);
+
+        // install the addon again. Note this must happen with the same port as before as the port is used in the
+        // baseurl which is a lookup key for an existing applink
+        remotePlugin.reRegister();
+
+        sharedSecret = installUninstallHandler.getInstallPayload().getSharedSecret();
     }
 
     @AfterClass
@@ -93,30 +121,6 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         this.awesomePageModuleKey = addonAndModuleKey(pluginKey,MY_AWESOME_PAGE_KEY);
     }
 
-    protected <T extends Page> RemotePluginEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)
-            throws MalformedURLException, URISyntaxException
-    {
-
-        loginAsAdmin();
-
-        T page = product.visit(pageClass);
-        revealLinkIfNecessary(page);
-
-        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(LINK_TEXT, linkText.getOrElse(MY_AWESOME_PAGE),
-                Option.<String>none(), awesomePageModuleKey);
-
-        RemotePluginEmbeddedTestPage addonContentPage = addonPage.click();
-
-        assertThat(addonContentPage.isLoaded(), equalTo(true));
-        assertThat(addonContentPage.getMessage(), equalTo("Success"));
-
-        ConnectAsserts.verifyContainsStandardAddOnQueryParamters(addonContentPage.getIframeQueryParams(),
-                product.getProductInstance().getContextPath());
-
-        return addonContentPage;
-    }
-
-
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
@@ -124,9 +128,55 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
+    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
     {
-        runCanClickOnPageLinkAndSeeAddonContents(PluginManager.class, Option.some("Configure"));
+        loginAsAdmin();
+
+        PluginManager page = product.visit(PluginManager.class);
+        revealLinkIfNecessary(page);
+
+        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(LINK_TEXT,
+                "Configure",
+                Option.<String>none(), MY_AWESOME_PAGE_KEY);
+
+        RemotePluginEmbeddedTestPage addonContentPage = addonPage.click();
+
+        assertThat(addonContentPage.isLoaded(), equalTo(true));
+
+        ConnectAsserts.verifyContainsStandardAddOnQueryParamters(addonContentPage.getIframeQueryParams(),
+                product.getProductInstance().getContextPath());
+
+
+        final String jwt = addonContentPage.getIframeQueryParams().get("jwt");
+        assertNotNull(jwt);
+
+        final JwtIssuerSharedSecretService sharedSecretService = new JwtIssuerSharedSecretService()
+        {
+
+            @Override
+            public String getSharedSecret(String issuer) throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
+            {
+                return sharedSecret;
+            }
+        };
+
+        final JwtIssuerValidator jwtIssuerValidator = new JwtIssuerValidator()
+        {
+
+            @Override
+            public boolean isValid(String issuer)
+            {
+                return true;
+            }
+        };
+
+        final NimbusJwtReaderFactory readerFactory = new NimbusJwtReaderFactory(jwtIssuerValidator, sharedSecretService);
+
+        // this will fail with JwtSignatureMismatchException if we have a problem with cleaning up app links on
+        // addon install failure.
+        // Can't think of a meaningful assertion for this test as it is just the absence of an exception that indicates
+        // success
+        readerFactory.getReader(jwt).read(jwt, ImmutableMap.<String, JwtClaimVerifier>of());
     }
 
     protected <T extends Page> void revealLinkIfNecessary(T page)
@@ -135,19 +185,34 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         ((PluginManager) page).expandPluginRow(pluginKey);
     }
 
-    @Test
-    public void pageIsNotAccessibleWithFalseCondition()
+}
+
+
+class CustomInstallationHandlerServlet extends HttpServlet
+{
+    private boolean shouldSend404 = true;
+
+
+    InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
+
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
     {
-        remotePlugin.setToggleableConditionShouldDisplay(false);
+        installHandlerServlet.service(req, resp);
+        if (shouldSend404)
+        {
+            resp.sendError(404);
+        }
+    }
 
-        loginAsAdmin();
+    public void setShouldSend404(boolean shouldSend404)
+    {
+        this.shouldSend404 = shouldSend404;
+    }
 
-        // note we don't check that the configure link isn't displayed due to AC-973
-
-        // directly retrieving page should result in access denied
-        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class,
-                pluginKey, MY_AWESOME_PAGE_KEY);
-        assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
-        assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(MY_AWESOME_PAGE));
+    public InstallHandlerServlet.InstallPayload getInstallPayload()
+    {
+        return installHandlerServlet.getInstallPayload();
     }
 }
+
+

@@ -66,6 +66,7 @@ public class ConnectRunner
     private int port;
     private Server server;
     private final Map<String, HttpServlet> routes = newHashMap();
+    private boolean checkInstallationStatus = true;
 
     public ConnectRunner(String baseUrl, String pluginKey)
     {
@@ -80,9 +81,21 @@ public class ConnectRunner
         this.installer = new AtlassianConnectRestClient(baseUrl, "admin", "admin");
     }
 
+    /**
+     * Invoke the installation again after initial call to start which does the first installation.
+     * Useful for testing scenarios where the initial install should fail.
+     * Must be called after calling start and without calling stop.
+     *
+     * @throws Exception
+     */
+    public void reRegister() throws Exception
+    {
+        register();
+    }
+
     private void register() throws Exception
     {
-        installer.install("http://localhost:" + port + REGISTRATION_ROUTE);
+        installer.install("http://localhost:" + port + REGISTRATION_ROUTE, checkInstallationStatus);
     }
 
     public void uninstall() throws Exception
@@ -176,6 +189,12 @@ public class ConnectRunner
     public ConnectRunner setAuthenticationToNone()
     {
         addonBuilder.withAuthentication(AuthenticationBean.none());
+        return this;
+    }
+
+    public ConnectRunner disableInstallationStatusCheck()
+    {
+        checkInstallationStatus = false;
         return this;
     }
 

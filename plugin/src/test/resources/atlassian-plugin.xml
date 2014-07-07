@@ -48,6 +48,8 @@
     <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller" />
     <component-import key="testFilterResults" interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults" />
     <component-import key="addonTestFilter" interface="com.atlassian.plugin.connect.testsupport.filter.AddonPrecannedResponseHelper" />
+    <component-import key="jwtWriterFactory" interface="com.atlassian.jwt.writer.JwtWriterFactory" />
+    <component-import key="jwtReaderFactory" interface="com.atlassian.jwt.reader.JwtReaderFactory"/>
 
     <!-- OUR OWN LOCAL COMPONENTS -->
     <component key="jiraTestAuthenticator"
