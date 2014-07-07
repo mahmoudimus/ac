@@ -98,8 +98,7 @@ public class StaticResourcesFilter implements Filter
             final String moduleDir = "js/iframe/";
             // note: any changes here must also be made in plugin/pom.xml!
             final String[] modules = {
-                    "../core/all-debug.js",
-                    "hello-world.js"
+                    "../core/all-debug.js"
             };
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             for (String module : modules)

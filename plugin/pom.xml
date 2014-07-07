@@ -780,7 +780,7 @@
                                     <includes>
                                         <!-- note: any changes here must also be made in StaticResourcesFilter.java -->
                                         <include>js/core/all.js</include>
-                                        <include>js-min/iframe/hello-world-min.js</include>
+                                       <!-- <include>js-min/iframe/hello-world-min.js</include> -->
                                     </includes>
                                 </aggregation>
                             </aggregations>

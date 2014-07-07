@@ -104,7 +104,7 @@
 
     <web-resource key="iframe-host-js">
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
-        <resource type="download" name="hello-world.js" location="/js/iframe/hello-world.js" />
+<!--       <resource type="download" name="hello-world.js" location="/js/iframe/hello-world.js" /> -->
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
     </web-resource>
     <web-resource key="iframe-host-css">
