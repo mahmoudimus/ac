@@ -113,7 +113,7 @@
 
     <web-resource key="remote-condition">
         <resource type="download" name="remote.js" location="js/condition/remote.js" />
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
     </web-resource>
 
     <web-resource key="images">
