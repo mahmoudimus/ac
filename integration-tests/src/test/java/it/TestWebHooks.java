@@ -41,13 +41,13 @@ public final class TestWebHooks extends AbstractBrowserlessTest
     @Test
     public void testRemotePluginEnabledWebHookFired() throws Exception
     {
-        testRemotePluginWebHookFired(PluginsWebHookProvider.REMOTE_PLUGIN_ENABLED);
+        testRemotePluginWebHookFired(PluginsWebHookProvider.CONNECT_ADDON_ENABLED);
     }
 
     @Test
     public void testRemotePluginEnabledWebHookFiredOnlyForOwnPlugin() throws Exception
     {
-        testRemotePluginWebHookFiredOnlyForOwnPlugin(PluginsWebHookProvider.REMOTE_PLUGIN_ENABLED);
+        testRemotePluginWebHookFiredOnlyForOwnPlugin(PluginsWebHookProvider.CONNECT_ADDON_ENABLED);
     }
 
     //TODO: see ignore comment
