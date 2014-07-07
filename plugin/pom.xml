@@ -741,8 +741,8 @@
                             <gzip>false</gzip>
                             <jswarn>false</jswarn>
                             <excludeResources>true</excludeResources>
-                            <sourceDirectory>${project.build.outputDirectory}/js/iframe</sourceDirectory>
-                            <outputDirectory>${project.build.outputDirectory}/js/iframe-min</outputDirectory>
+                            <sourceDirectory>${project.build.outputDirectory}/js</sourceDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/js-min</outputDirectory>
                             <aggregations>
                                 <aggregation>
                                     <removeIncluded>false</removeIncluded>
@@ -750,28 +750,8 @@
                                     <output>${project.build.outputDirectory}/all.js</output>
                                     <includes>
                                         <!-- note: any changes here must also be made in StaticResourcesFilter.java -->
-                                        <include>js/iframe-min/_amd-min.js</include>
-                                        <include>js/iframe-min/plugin/_util-min.js</include>
-                                        <include>js/iframe-min/plugin/_dollar-min.js</include>
-                                        <include>js/iframe-min/_events-min.js</include>
-                                        <include>js/iframe-min/_base64-min.js</include>
-                                        <include>js/iframe-min/_uri-min.js</include>
-                                        <include>js/iframe-min/_ui-params-min.js</include>
-                                        <include>js/iframe-min/_xdm-min.js</include>
-                                        <include>js/iframe-min/plugin/_rpc-min.js</include>
-                                        <include>js/iframe-min/plugin/events-min.js</include>
-                                        <include>js/iframe-min/plugin/env-min.js</include>
-                                        <include>js/iframe-min/plugin/request-min.js</include>
-                                        <include>js/iframe-min/plugin/dialog-min.js</include>
-                                        <include>js/iframe-min/plugin/inline-dialog-min.js</include>
-                                        <include>js/iframe-min/plugin/messages-min.js</include>
-                                        <include>js/iframe-min/plugin/cookie-min.js</include>
-                                        <include>js/iframe-min/plugin/history-min.js</include>
-                                        <include>js/iframe-min/plugin/_resize_listener-min.js</include>
-                                        <!-- product-specific inclusions are temporary until made more dynamic -->
-                                        <include>js/iframe-min/plugin/jira-min.js</include>
-                                        <include>js/iframe-min/plugin/confluence-min.js</include>
-                                        <include>js/iframe-min/plugin/_init-min.js</include>
+                                        <include>js/core/all.js</include>
+                                        <include>js-min/iframe/hello-world-min.js</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
