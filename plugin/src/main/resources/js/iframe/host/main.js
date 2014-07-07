@@ -39,7 +39,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
 
     var ns = options.ns,
         $content = contentDiv(ns),
-        contentId = $content.attr("id"),
+        contentId = "embedded-" + ns,
         channelId = "channel-" + ns,
         initWidth = options.w || "100%",
         initHeight = options.h || "0",

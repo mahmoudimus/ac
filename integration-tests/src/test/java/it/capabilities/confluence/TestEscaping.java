@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminPage;
@@ -20,13 +20,11 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserPr
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import redstone.xmlrpc.XmlRpcFault;
@@ -62,7 +60,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModule("generalPages",
                         newPageBean()
@@ -199,7 +197,6 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
         }
     }
 
-    @Ignore("Failing due to ACDEV-1286")
     @Test
     public void testMacroParameter() throws Exception
     {
@@ -212,7 +209,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
             MacroForm macroForm = macro.select();
             assertTrue(macroForm.getField("test").isVisible());
 
-            WebElement label = product.getTester().getDriver().findElement(ByJquery.$("label[for='macro-param-test']"));
+            WebElement label = connectPageOperations.findLabel("macro-param-test");
             assertIsEscaped(label.getText());
         }
         finally

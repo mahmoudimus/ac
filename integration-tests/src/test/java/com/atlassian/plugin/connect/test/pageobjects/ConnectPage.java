@@ -4,6 +4,8 @@ import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.WebDriverElement;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Function;
@@ -49,7 +51,7 @@ public class ConnectPage
     public void waitForInit()
     {
         final String prefix = includedEmbeddedPrefix ? "embedded-" : "";
-        final String jquerySelector = "#" + prefix + addOnKey + "__" + pageElementKey;
+        final String jquerySelector = "#" + prefix + AddonTestUtils.escapedAddonAndModuleKey(addOnKey, pageElementKey);
         PageElement containerDivElement = elementFinder.find(ByJquery.$(jquerySelector));
 
         try

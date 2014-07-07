@@ -2,6 +2,7 @@ package it;
 
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import org.junit.Test;
 
@@ -10,7 +11,6 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static com.atlassian.plugin.connect.test.RemotePluginUtils.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 
 @OAuth
@@ -22,9 +22,9 @@ public class TestOAuth extends AbstractBrowserlessTest
         ConnectRunner runner = null;
         try
         {
-            runner = new ConnectRunner(baseUrl, "my-plugin")
+            runner = new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
                     .addOAuth()
-                    .addModule("webItems",randomWebItemBean())
+                    .addModule("webItems", AddonTestUtils.randomWebItemBean())
                     .start();
             assertCanRequestOAuthToken(runner.getSignedRequestHandler());
         }

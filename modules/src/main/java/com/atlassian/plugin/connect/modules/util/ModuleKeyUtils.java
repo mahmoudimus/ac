@@ -49,12 +49,12 @@ public class ModuleKeyUtils
 
     public static String moduleKeyOnly(String moduleKey)
     {
-        return StringUtils.substringAfterLast(moduleKey,ADDON_MODULE_SEPARATOR);
+        return StringUtils.substringAfterLast(moduleKey, ADDON_MODULE_SEPARATOR);
     }
 
     public static String addonKeyOnly(String moduleKey)
     {
-        return StringUtils.substringBeforeLast(moduleKey,ADDON_MODULE_SEPARATOR);
+        return StringUtils.substringBeforeLast(moduleKey, ADDON_MODULE_SEPARATOR);
     }
     
     public static String toCompleteKey(String moduleKey)
