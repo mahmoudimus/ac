@@ -81,19 +81,7 @@ public class ConnectRunner
         this.installer = new AtlassianConnectRestClient(baseUrl, "admin", "admin");
     }
 
-    /**
-     * Invoke the installation again after initial call to start which does the first installation.
-     * Useful for testing scenarios where the initial install should fail.
-     * Must be called after calling start and without calling stop.
-     *
-     * @throws Exception
-     */
-    public void reRegister() throws Exception
-    {
-        register();
-    }
-
-    private void register() throws Exception
+    public void register() throws Exception
     {
         installer.install("http://localhost:" + port + REGISTRATION_ROUTE, checkInstallationStatus);
     }

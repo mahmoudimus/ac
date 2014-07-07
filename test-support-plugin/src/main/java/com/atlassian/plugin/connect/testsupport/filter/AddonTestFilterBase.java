@@ -71,7 +71,7 @@ public abstract class AddonTestFilterBase implements Filter
                 Option<PrecannedResponse> precannedResponse = addonPrecannedResponseHelper.poll();
 
                 byte[] content = getContent(addonResource, parameter).getBytes("UTF-8");
-                int statusCode = getStatusCode(addonResource, parameter, precannedResponse);
+                int statusCode = getStatusCode(addonResource, parameter, precannedResponse, pathInfo);
 
                 res.setStatus(statusCode);
                 res.setContentLength(content.length);
@@ -90,7 +90,8 @@ public abstract class AddonTestFilterBase implements Filter
     protected abstract boolean shouldProcess(HttpServletRequest request);
     protected abstract void processNonMatch(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException;
 
-    private int getStatusCode(String addonResource, String parameter, Option<PrecannedResponse> precannedResponse)
+    private int getStatusCode(String addonResource, String parameter, Option<PrecannedResponse> precannedResponse,
+                              String path)
     {
         if (RESOURCE_STATUS.equals(addonResource))
         {
@@ -104,7 +105,7 @@ public abstract class AddonTestFilterBase implements Filter
             }
         }
 
-        return precannedResponse.isDefined()  /* && StringUtils.endsWith(path, precannedResponse.get().getRequiredPath() */
+        return precannedResponse.isDefined()  && StringUtils.endsWith(path, precannedResponse.get().getRequiredPath())
                 ? precannedResponse.get().getStatusCode() : HttpServletResponse.SC_OK;
     }
 

@@ -90,7 +90,7 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
 
         // install the addon again. Note this must happen with the same port as before as the port is used in the
         // baseurl which is a lookup key for an existing applink
-        remotePlugin.reRegister();
+        remotePlugin.register();
 
         sharedSecret = installUninstallHandler.getInstallPayload().getSharedSecret();
     }
@@ -169,33 +169,31 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         ((PluginManager) page).expandPluginRow(pluginKey);
     }
 
-}
-
-
-class CustomInstallationHandlerServlet extends HttpServlet
-{
-    private boolean shouldSend404 = true;
-
-
-    InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
-
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
+    private static class CustomInstallationHandlerServlet extends HttpServlet
     {
-        installHandlerServlet.service(req, resp);
-        if (shouldSend404)
+        private boolean shouldSend404 = true;
+
+
+        InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
+
+        protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
         {
-            resp.sendError(404);
+            installHandlerServlet.service(req, resp);
+            if (shouldSend404)
+            {
+                resp.sendError(404);
+            }
         }
-    }
 
-    public void setShouldSend404(boolean shouldSend404)
-    {
-        this.shouldSend404 = shouldSend404;
-    }
+        public void setShouldSend404(boolean shouldSend404)
+        {
+            this.shouldSend404 = shouldSend404;
+        }
 
-    public InstallHandlerServlet.InstallPayload getInstallPayload()
-    {
-        return installHandlerServlet.getInstallPayload();
+        public InstallHandlerServlet.InstallPayload getInstallPayload()
+        {
+            return installHandlerServlet.getInstallPayload();
+        }
     }
 }
 

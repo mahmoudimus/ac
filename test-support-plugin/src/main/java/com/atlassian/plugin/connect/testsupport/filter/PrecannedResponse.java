@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
+/**
+ * A simple representation of an http response that can be used for pre-canned responses
+ */
 public class PrecannedResponse
 {
     private final String requiredPath;
