@@ -94,8 +94,8 @@ Webhooks are available in the new JSON format by adding a `webhooks` json object
 
 To read more about webhooks:
 
- * [JIRA webhook module documentation](../modules/jira/webhooks.html)
- * [Confluence webhook module documentation](../modules/confluence/webhooks.html)
+ * [JIRA webhook module documentation](../modules/jira/webhook.html)
+ * [Confluence webhook module documentation](../modules/confluence/webhook.html)
 
 ## Conditions
 
