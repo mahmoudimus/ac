@@ -1,6 +1,5 @@
 package it.capabilities;
 
-import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +17,6 @@ import com.atlassian.jwt.exception.JwtParseException;
 import com.atlassian.jwt.exception.JwtUnknownIssuerException;
 import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.jwt.reader.JwtClaimVerifier;
-import com.atlassian.jwt.reader.JwtReaderFactory;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -50,44 +48,35 @@ import static org.junit.Assert.assertThat;
 public class TestInstallFailure extends ConnectWebDriverTestBase
 {
 
-    protected static final String MY_AWESOME_PAGE = "My Awesome Page";
-    protected static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
-    protected static final String URL = "/" + MY_AWESOME_PAGE_KEY;
+    private static final String MY_AWESOME_PAGE = "My Awesome Page";
+    private static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
+    private static final String URL = "/" + MY_AWESOME_PAGE_KEY;
     private static final CustomInstallationHandlerServlet installUninstallHandler = new CustomInstallationHandlerServlet();
 
-    protected static ConnectRunner remotePlugin;
-    private static InstallHandlerServlet installationServlet = ConnectAppServlets.installHandlerServlet();
+    private static ConnectRunner remotePlugin;
 
     private static String sharedSecret;
 
-    protected String pluginKey;
-    protected String awesomePageModuleKey;
+    private String pluginKey;
+    private String awesomePageModuleKey;
 
-    @Inject
-    private JwtReaderFactory jwtReaderFactory;
-
-
-    protected static void startConnectAddOn(String fieldName) throws Exception
-    {
-        startConnectAddOn(fieldName, URL);
-    }
-
-    protected static void startConnectAddOn(String fieldName, String url) throws Exception
+    @BeforeClass
+    public static void startConnectAddOn() throws Exception
     {
         ConnectPageModuleBeanBuilder pageBeanBuilder = newPageBean();
         pageBeanBuilder.withName(new I18nProperty(MY_AWESOME_PAGE, null))
                 .withKey(MY_AWESOME_PAGE_KEY)
-                .withUrl(url)
+                .withUrl(URL)
                 .withWeight(1234);
 
-        int query = url.indexOf("?");
-        String route = query > -1 ? url.substring(0, query) : url;
+        int query = URL.indexOf("?");
+        String route = query > -1 ? URL.substring(0, query) : URL;
 
         // initial install and uninstall will intentionally send 404's
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addInstallLifecycle()
                 .addUninstallLifecycle()
-                .addModule(fieldName, pageBeanBuilder.build())
+                .addModule("configurePage", pageBeanBuilder.build())
                 .addJWT()
                 .addRoute(route, ConnectAppServlets.helloWorldServlet())
                 .addRoute(ConnectRunner.INSTALLED_PATH, installUninstallHandler)
@@ -119,17 +108,11 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
     public void beforeEachTestBase()
     {
         this.pluginKey = remotePlugin.getAddon().getKey();
-        this.awesomePageModuleKey = addonAndModuleKey(pluginKey,MY_AWESOME_PAGE_KEY);
-    }
-
-    @BeforeClass
-    public static void startConnectAddOn() throws Exception
-    {
-        startConnectAddOn("configurePage");
+        this.awesomePageModuleKey = addonAndModuleKey(pluginKey, MY_AWESOME_PAGE_KEY);
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
+    public void pageLinkWorksAfterFirstAddonInstallFailed() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
     {
         loginAsAdmin();
 
@@ -180,7 +163,7 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         readerFactory.getReader(jwt).read(jwt, ImmutableMap.<String, JwtClaimVerifier>of());
     }
 
-    protected <T extends Page> void revealLinkIfNecessary(T page)
+    private <T extends Page> void revealLinkIfNecessary(T page)
     {
         // hmmm not pretty
         ((PluginManager) page).expandPluginRow(pluginKey);
