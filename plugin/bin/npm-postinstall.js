@@ -4,7 +4,7 @@ var atlassianConnectJsPath = 'node_modules/atlassian-connect-js';
 
 helper.chain([
     [   // build distribution of connect javascsript
-        'grunt',
+        helper.npmNormalize(atlassianConnectJsPath + '/node_modules/grunt-cli/bin/grunt'),
         ['--gruntfile', atlassianConnectJsPath + '/Gruntfile.js', 'build']
     ],
     [
