@@ -1,5 +1,6 @@
 package it.confluence;
 
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
@@ -15,6 +16,7 @@ import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runIn
 import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertNotNull;
 
+@ConvertToWiredTest
 public class TestConfluenceWebHooks extends AbstractBrowserlessTest
 {
     private ConfluenceOps confluenceOps;
