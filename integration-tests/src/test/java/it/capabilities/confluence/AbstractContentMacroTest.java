@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriverTest
 {
@@ -81,6 +83,8 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
     protected static final String PARAMETER_MACRO_NAME = "Single Param Macro";
     protected static final String PARAMETER_MACRO_KEY = "single-param-macro";
+    protected static final String SINGLE_PARAM_ID = "param1";
+    protected static final String SINGLE_PARAM_NAME = "Parameter 1";
 
     private static final String ALL_PARAMETER_TYPES_MACRO_NAME = "All Parameters Macro";
     private static final String ALL_PARAMETER_TYPES_MACRO_KEY = "all-parameters-macro";
@@ -164,8 +168,8 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 .withKey(PARAMETER_MACRO_KEY)
                 .withName(new I18nProperty(PARAMETER_MACRO_NAME, ""))
                 .withParameters(newMacroParameterBean()
-                                .withIdentifier("param1")
-                                .withName(new I18nProperty("Param 1", ""))
+                                .withIdentifier(SINGLE_PARAM_ID)
+                                .withName(new I18nProperty(SINGLE_PARAM_NAME, ""))
                                 .withType("string")
                                 .build()
                 )
@@ -334,6 +338,29 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         assertThat(macroForm.hasField("spacekey").byDefaultTimeout(), is(true));
         assertThat(macroForm.hasField("string").byDefaultTimeout(), is(true));
         assertThat(macroForm.hasField("username").byDefaultTimeout(), is(true));
+    }
+
+    @Test
+    public void testParameterLabel() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        editorPage.setTitle(randomName("Parameter Page"));
+
+        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+        try
+        {
+            MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);
+            MacroForm macroForm = macro.select();
+
+            assertTrue(macroForm.getField(SINGLE_PARAM_ID).isVisible());
+
+            WebElement label = connectPageOperations.findLabel("macro-param-" + SINGLE_PARAM_ID);
+            assertThat(label.getText(), is(SINGLE_PARAM_NAME));
+        }
+        finally
+        {
+            macroBrowser.clickCancel();
+        }
     }
 
     @Test
