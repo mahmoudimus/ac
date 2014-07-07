@@ -2,10 +2,9 @@ package it.capabilities.jira;
 
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 import com.google.common.collect.ImmutableMap;
@@ -13,19 +12,13 @@ import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteNamedObject;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.AbstractBrowserlessTest;
-import it.jira.JiraWebDriverTestBase;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.concurrent.Callable;
-
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
-import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInRunner;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
+@ConvertToWiredTest
 public class TestJiraWebHooks extends AbstractBrowserlessTest
 {
     public static final String JIRA_ISSUE_CREATED = "jira:issue_created";

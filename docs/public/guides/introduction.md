@@ -12,7 +12,7 @@ Fundamentally, Atlassian Connect add-ons have three major capabilities:
 
 1. Insert content in [certain defined places](../modules/jira/index.html) in the Atlassian application's UI.
 2. Make calls to the Atlassian application's [REST API](../rest-apis/product-api-browser.html).
-3. Listen and respond to [WebHooks](../modules/jira/webhooks.html) fired by the Atlassian application.
+3. Listen and respond to [WebHooks](../modules/jira/webhook.html) fired by the Atlassian application.
 
 
 ## What does an Atlassian Connect add-on do?
@@ -40,7 +40,7 @@ respect necessary permissions and make other decisions based on the user's ident
 data or push information to the Atlassian host application 
 (for example, to build reports and create issues). 
 - **Respond to the Atlassian application's webhooks.** Your add-on can receive notifications
-when certain events occur with [webhooks](../modules/jira/webhooks.html), 
+when certain events occur with [webhooks](../modules/jira/webhook.html),
 like when a JIRA issue changes status. 
 The webhook payload contains information about the
 event, allowing your add-on to respond appropriately.
