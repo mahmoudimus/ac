@@ -10,7 +10,6 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -55,8 +54,17 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
             {
                 try
                 {
-                    processingEnvironment.getMessager().printMessage(Diagnostic.Kind.NOTE, "Processing parameterized wired test class", element);
-                    processClass((TypeElement)element);
+                    System.out.println(String.format("%s: processing parameterized wired test class %s", getClass().getSimpleName(), element.getSimpleName()));
+
+                    if (element instanceof TypeElement)
+                    {
+                        processClass((TypeElement) element);
+                    }
+                    else
+                    {
+                        throw new IllegalStateException(String.format("The %s annotation must be applied to classes only but it appears on %s.%s, which is a %s.",
+                                ParameterizedWiredTest.class.getSimpleName(), element.getEnclosingElement().getSimpleName(), element.getSimpleName(), element.getKind().toString()));
+                    }
                 }
                 catch (IOException e)
                 {
@@ -92,10 +100,11 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
 
             if (null != fieldDataAnnotation)
             {
-                if (parametersFieldAnnotation != null)
+                if (parametersField != null)
                 {
                     throw new IllegalStateException(String.format("There can be only one %s-annotated field per %s-annotated class but %s has both %s and %s!",
-                            ParameterizedWiredTest.Parameters.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(), inputClassElement.getSimpleName(), parametersField.getSimpleName(), innerElement.getSimpleName()));
+                            ParameterizedWiredTest.Parameters.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(),
+                            inputClassElement.getSimpleName(), parametersField.getSimpleName(), innerElement.getSimpleName()));
                 }
 
                 TypeMirror fieldType = innerElement.asType();
@@ -188,7 +197,11 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
         }
     }
 
-    private void generateTestClassSourceUnsafe(TypeElement inputClassElement, ParameterizedWiredTest.Parameters parametersFieldAnnotation, ClassName generatedClassName, BufferedWriter bw, Collection<ExecutableElement> testMethods) throws IOException
+    private void generateTestClassSourceUnsafe(TypeElement inputClassElement,
+                                               ParameterizedWiredTest.Parameters parametersFieldAnnotation,
+                                               ClassName generatedClassName,
+                                               BufferedWriter bw,
+                                               Collection<ExecutableElement> testMethods) throws IOException
     {
         final Iterable<ClassName> constructorClassNames = getConstructorClassNames(inputClassElement);
         writeClassHeader(bw, testMethods, generatedClassName.getPackageName(), constructorClassNames);
