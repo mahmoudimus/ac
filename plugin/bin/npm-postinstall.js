@@ -1,5 +1,4 @@
-var helper = require('./bin-helper'),
-    wrench = require('wrench');
+var helper = require('./bin-helper');
 
 var atlassianConnectJsPath = 'node_modules/atlassian-connect-js';
 
