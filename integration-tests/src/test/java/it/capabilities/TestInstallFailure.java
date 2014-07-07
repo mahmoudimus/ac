@@ -23,7 +23,7 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -84,7 +84,7 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         String route = query > -1 ? url.substring(0, query) : url;
 
         // initial install and uninstall will intentionally send 404's
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addInstallLifecycle()
                 .addUninstallLifecycle()
                 .addModule(fieldName, pageBeanBuilder.build())
