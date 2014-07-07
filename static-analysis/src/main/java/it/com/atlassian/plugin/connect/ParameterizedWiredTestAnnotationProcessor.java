@@ -7,19 +7,16 @@ import javax.annotation.Nullable;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
-import javax.lang.model.type.*;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
-
-import static com.google.common.collect.Collections2.transform;
-import static java.util.Arrays.asList;
+import java.util.*;
 
 /**
  * Find {@link ParameterizedWiredTest}-annotated classes and translate them into test classes.
@@ -69,7 +66,7 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
 
             return true;
         }
-        catch (MirroredTypesException e)
+        catch (RuntimeException e)
         {
             e.printStackTrace(System.out);
             throw e;
@@ -78,14 +75,19 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
 
     private void processClass(TypeElement inputClassElement) throws IOException
     {
-        Collection<Element> testMethods = new ArrayList<Element>();
+        final Collection<ExecutableElement> testMethods = collectTestMethods(inputClassElement);
+
+        if (testMethods.isEmpty())
+        {
+            throw new IllegalStateException(String.format("There must be at least one %s-annotated method per %s-annotated class but %s has none!",
+                    ParameterizedWiredTest.Test.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(), inputClassElement.getSimpleName()));
+        }
+
         Element parametersField = null;
         ParameterizedWiredTest.Parameters parametersFieldAnnotation = null;
 
         for (Element innerElement : inputClassElement.getEnclosedElements())
         {
-            collectTestMethods(testMethods, inputClassElement, innerElement);
-
             Annotation fieldDataAnnotation = innerElement.getAnnotation(ParameterizedWiredTest.Parameters.class);
 
             if (null != fieldDataAnnotation)
@@ -129,44 +131,39 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
                     ParameterizedWiredTest.Parameters.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(), inputClassElement.getSimpleName()));
         }
 
-        if (testMethods.isEmpty())
-        {
-            throw new IllegalStateException(String.format("There must be at least one %s-annotated method per %s-annotated class but %s has none!",
-                    ParameterizedWiredTest.Test.class.getSimpleName(), ParameterizedWiredTest.class.getSimpleName(), inputClassElement.getSimpleName()));
-        }
-
-        generateTestClassSource(inputClassElement, parametersFieldAnnotation);
+        generateTestClassSource(inputClassElement, parametersFieldAnnotation, testMethods);
     }
 
-    private void collectTestMethods(Collection<Element> testMethods, TypeElement classElement, Element methodElement)
+    private static Collection<ExecutableElement> collectTestMethods(TypeElement classElement)
     {
-        if (methodElement.getAnnotation(ParameterizedWiredTest.Test.class) != null)
-        {
-            testMethods.add(methodElement);
-        }
+        Collection<ExecutableElement> testMethods = collectTestMethods(classElement.getEnclosedElements());
 
         final TypeMirror superclassTypeMirror = classElement.getSuperclass();
 
         if (superclassTypeMirror instanceof DeclaredType)
         {
-            collectTestMethods(testMethods, (TypeElement)((DeclaredType) superclassTypeMirror).asElement());
+            testMethods.addAll(collectTestMethods((TypeElement) ((DeclaredType) superclassTypeMirror).asElement()));
         }
+
+        return testMethods;
     }
 
-    private void collectTestMethods(Collection<Element> testMethods, TypeElement classElement)
+    private static Collection<ExecutableElement> collectTestMethods(Collection<? extends Element> classMembers)
     {
-        collectTestMethods(testMethods, classElement, classElement.getEnclosedElements());
-    }
+        Collection<ExecutableElement> testMethods = new ArrayList<ExecutableElement>();
 
-    private void collectTestMethods(Collection<Element> testMethods, TypeElement classElement, Collection<? extends Element> classMembers)
-    {
         for (Element classMember : classMembers)
         {
-            collectTestMethods(testMethods, classElement, classMember);
+            if (classMember instanceof ExecutableElement && classMember.getAnnotation(ParameterizedWiredTest.Test.class) != null)
+            {
+                testMethods.add((ExecutableElement)classMember);
+            }
         }
+
+        return testMethods;
     }
 
-    private void generateTestClassSource(TypeElement inputClassElement, ParameterizedWiredTest.Parameters parametersFieldAnnotation) throws IOException
+    private void generateTestClassSource(TypeElement inputClassElement, ParameterizedWiredTest.Parameters parametersFieldAnnotation, Collection<ExecutableElement> testMethods) throws IOException
     {
         ClassName generatedClassName = constructClassName(inputClassElement, GENERATED_CLASS_PREFIX);
         JavaFileObject generatedSourceFile = processingEnvironment.getFiler().createSourceFile(generatedClassName.getQualifiedName());
@@ -178,7 +175,7 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
 
             try
             {
-                generateTestClassSourceUnsafe(inputClassElement, parametersFieldAnnotation, generatedClassName, bw);
+                generateTestClassSourceUnsafe(inputClassElement, parametersFieldAnnotation, generatedClassName, bw, testMethods);
             }
             finally
             {
@@ -191,15 +188,19 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
         }
     }
 
-    private void generateTestClassSourceUnsafe(TypeElement inputClassElement, ParameterizedWiredTest.Parameters parametersFieldAnnotation, ClassName generatedClassName, BufferedWriter bw) throws IOException
+    private void generateTestClassSourceUnsafe(TypeElement inputClassElement, ParameterizedWiredTest.Parameters parametersFieldAnnotation, ClassName generatedClassName, BufferedWriter bw, Collection<ExecutableElement> testMethods) throws IOException
     {
-        final Collection<ClassName> parameterClasses = getParameterClasses(parametersFieldAnnotation);
         final Iterable<ClassName> constructorClassNames = getConstructorClassNames(inputClassElement);
-        writeClassHeader(bw, parameterClasses, generatedClassName.getPackageName(), constructorClassNames);
-        writeClassBody(inputClassElement, parametersFieldAnnotation, generatedClassName, bw, parameterClasses, constructorClassNames);
+        writeClassHeader(bw, testMethods, generatedClassName.getPackageName(), constructorClassNames);
+        writeClassBody(inputClassElement, parametersFieldAnnotation, generatedClassName, bw, constructorClassNames, testMethods);
     }
 
-    private void writeClassBody(TypeElement inputClassElement, ParameterizedWiredTest.Parameters parametersFieldAnnotation, ClassName generatedClassName, BufferedWriter bw, Collection<ClassName> parameterClasses, Iterable<ClassName> constructorClassNames) throws IOException
+    private void writeClassBody(TypeElement inputClassElement,
+                                ParameterizedWiredTest.Parameters parametersFieldAnnotation,
+                                ClassName generatedClassName,
+                                BufferedWriter bw,
+                                Iterable<ClassName> constructorClassNames,
+                                Collection<ExecutableElement> testMethods) throws IOException
     {
         bw.append("@RunWith(AtlassianPluginsTestRunner.class)").append(NEWLINE);
         bw.append("public class ").append(generatedClassName.getSimpleName()).append(" extends ").append(inputClassElement.getSimpleName()).append(NEWLINE);
@@ -209,7 +210,7 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
         bw.append("        super(").append(classNamesToVariableNames(constructorClassNames)).append(");").append(NEWLINE);
         bw.append("    }").append(NEWLINE);
 
-        writeTests(parametersFieldAnnotation, bw, parameterClasses);
+        writeTests(parametersFieldAnnotation, bw, testMethods);
 
         bw.append("}").append(NEWLINE);
     }
@@ -259,48 +260,94 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
 
     private static Iterable<ClassName> getConstructorClassNames(TypeElement inputClassElement)
     {
-        Collection<ClassName> classNames = new ArrayList<ClassName>();
+        Collection<ClassName> classNames = null;
+        boolean foundConstructor = false;
 
         for (Element innerElement : inputClassElement.getEnclosedElements())
         {
             if (innerElement.getKind().equals(ElementKind.CONSTRUCTOR))
             {
-                ExecutableElement constructor = (ExecutableElement) innerElement;
-
-                for (VariableElement param : constructor.getParameters())
+                if (foundConstructor)
                 {
-                    classNames.add(constructClassName((TypeElement) ((DeclaredType) param.asType()).asElement()));
+                    throw new IllegalStateException(String.format("%s-annotated classes must have a single constructor but %s has at least two!", ParameterizedWiredTest.class.getSimpleName(), innerElement.getSimpleName()));
                 }
+
+                foundConstructor = true;
+                ExecutableElement constructor = (ExecutableElement) innerElement;
+                classNames = getMethodParameterClassNames(constructor);
+            }
+        }
+
+        if (!foundConstructor)
+        {
+            classNames = Collections.emptyList();
+        }
+
+        return classNames;
+    }
+
+    private static Collection<ClassName> getMethodParameterClassNames(ExecutableElement method)
+    {
+        Collection<ClassName> classNames;
+        classNames = new ArrayList<ClassName>();
+
+        for (VariableElement param : method.getParameters())
+        {
+            if (param.asType().getKind().isPrimitive())
+            {
+                final String enumName = param.asType().getKind().toString(); // e.g. "BOOLEAN"
+                classNames.add(new ClassName(null, enumName.substring(0,1).toUpperCase() + enumName.substring(1).toLowerCase())); // e.g. "Boolean"
+            }
+            else
+            {
+                classNames.add(constructClassName((TypeElement) ((DeclaredType) param.asType()).asElement()));
             }
         }
 
         return classNames;
     }
 
-    private void writeTests(ParameterizedWiredTest.Parameters parametersFieldAnnotation, BufferedWriter bw, Collection<ClassName> parameterClasses) throws IOException
+    private static Iterable<? extends ClassName> getMethodParameterClassNames(Collection<ExecutableElement> testMethods)
     {
-        for (int i = 0; i < parametersFieldAnnotation.length(); ++i)
+        Set<ClassName> classNames = new HashSet<ClassName>(testMethods.size() * 2); // assume that every test method has at least one input and one expected output
+
+        for (ExecutableElement testMethod : testMethods)
         {
-            bw.newLine();
-            bw.append("    @Test").append(NEWLINE);
-            bw.append("    public void ").append(constructTestMethodName(parametersFieldAnnotation.name(), i, parametersFieldAnnotation.length())).append("() throws Exception").append(NEWLINE);
-            bw.append("    {").append(NEWLINE);
+            classNames.addAll(getMethodParameterClassNames(testMethod));
+        }
 
-            bw.append("        super.test(");
-            int paramIndex = 0;
+        return classNames;
+    }
 
-            for (ClassName className : parameterClasses)
+    private void writeTests(ParameterizedWiredTest.Parameters parametersFieldAnnotation, BufferedWriter bw, Collection<ExecutableElement> testMethods) throws IOException
+    {
+        for (ExecutableElement testMethod : testMethods)
+        {
+            final Collection<ClassName> methodFormalParams = getMethodParameterClassNames(testMethod);
+
+            for (int i = 0; i < parametersFieldAnnotation.length(); ++i)
             {
-                bw.append(String.format("(%s) super.data[%d][%d]%s", className.getSimpleName(), i, paramIndex, paramIndex < parameterClasses.size() - 1 ? ", " : ""));
-                ++paramIndex;
-            }
+                bw.newLine();
+                bw.append("    @Test").append(NEWLINE);
+                bw.append("    public void ").append(constructTestMethodName(parametersFieldAnnotation.name(), i, parametersFieldAnnotation.length())).append("() throws Exception").append(NEWLINE);
+                bw.append("    {").append(NEWLINE);
 
-            bw.append(");").append(NEWLINE);
-            bw.append("    }").append(NEWLINE);
+                bw.append("        super.").append(testMethod.getSimpleName()).append("(");
+                int paramIndex = 0;
+
+                for (ClassName className : methodFormalParams)
+                {
+                    bw.append(String.format("(%s) super.data[%d][%d]%s", className.getSimpleName(), i, paramIndex, paramIndex < methodFormalParams.size() - 1 ? ", " : ""));
+                    ++paramIndex;
+                }
+
+                bw.append(");").append(NEWLINE);
+                bw.append("    }").append(NEWLINE);
+            }
         }
     }
 
-    private void writeClassHeader(BufferedWriter bw, Collection<ClassName> parameterClasses, CharSequence packageName, Iterable<ClassName> constructorClassNames) throws IOException
+    private void writeClassHeader(BufferedWriter bw, Collection<ExecutableElement> testMethods, CharSequence packageName, Iterable<ClassName> constructorClassNames) throws IOException
     {
         bw.append("package ").append(packageName).append(";").append(NEWLINE);
         bw.newLine();
@@ -314,32 +361,15 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
         bw.append("import org.junit.Test;").append(NEWLINE);
         bw.append("import org.junit.runner.RunWith;").append(NEWLINE);
 
-        for (ClassName className : parameterClasses)
+        for (ClassName className : getMethodParameterClassNames(testMethods))
         {
-            if (!className.getPackageName().equals(JAVA_LANG))
+            if (null != className.getPackageName() && !className.getPackageName().equals(JAVA_LANG))
             {
                 bw.append("import ").append(className.getQualifiedName()).append(';').append(NEWLINE);
             }
         }
 
         bw.newLine();
-    }
-
-    private Collection<ClassName> getParameterClasses(ParameterizedWiredTest.Parameters parametersFieldAnnotation)
-    {
-        try
-        {
-            asList(parametersFieldAnnotation.classes()); // throws every time, because this API is wonderful
-            throw new RuntimeException("I was expecting Parmeters.class() to throw a MirroredTypesException...");
-        }
-        catch (MirroredTypeException e)
-        {
-            return asList(TYPE_MIRROR_TO_CLASS_NAME.apply(e.getTypeMirror()));
-        }
-        catch (MirroredTypesException e)
-        {
-            return transform(e.getTypeMirrors(), TYPE_MIRROR_TO_CLASS_NAME);
-        }
     }
 
     private CharSequence constructTestMethodName(String name, int i, int maxI)
@@ -349,18 +379,18 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
 
     private static class ClassName
     {
-        private final String packageName;
+        @Nullable private final String packageName;
         private final String className;
 
         public ClassName(CharSequence packageName, CharSequence className)
         {
-            this.packageName = packageName.toString();
+            this.packageName = null == packageName ? null : packageName.toString();
             this.className = className.toString();
         }
 
         public String getQualifiedName()
         {
-            return String.format("%s.%s", packageName, className);
+            return null == packageName ? className : String.format("%s.%s", packageName, className);
         }
 
         public String getPackageName()
@@ -371,6 +401,30 @@ public class ParameterizedWiredTestAnnotationProcessor extends AbstractProcessor
         public String getSimpleName()
         {
             return className;
+        }
+
+        @Override
+        public boolean equals(Object rhsObject)
+        {
+            if (this == rhsObject)
+            {
+                return true;
+            }
+
+            if (!(rhsObject instanceof ClassName))
+            {
+                return false;
+            }
+
+            ClassName rhs = (ClassName) rhsObject;
+            return className.equals(rhs.className) && (null == packageName ? null == rhs.packageName : packageName.equals(rhs.packageName));
+
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return 31 * (null == packageName ? 0 : packageName.hashCode()) + 3 * className.hashCode();
         }
     }
 

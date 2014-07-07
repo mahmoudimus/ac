@@ -24,7 +24,7 @@ public class ReadScopeTest extends ScopeTestBase
     /**
      * These tests are not exhaustive. They are samples across the cross-product endpoints.
      */
-    @ParameterizedWiredTest.Parameters(name="httpRequest", classes={HttpMethod.class, String.class, Boolean.class}, length=2)
+    @ParameterizedWiredTest.Parameters(name="httpRequest", length=2)
     protected Object[][] data = new Object[][]
     {
             // TODO: ACDEV- new Object[]{ HttpMethod.GET,  "/rest/atlassian-connect/1/license", true },

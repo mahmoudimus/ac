@@ -24,7 +24,6 @@ public @interface ParameterizedWiredTest
     public @interface Parameters
     {
         String name() default "";
-        Class[] classes() default {};
         int length() default -1; // because the length of the array appears not to be available to compile-time annotation processors
     }
 
