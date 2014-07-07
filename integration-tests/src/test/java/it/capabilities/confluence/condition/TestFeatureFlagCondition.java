@@ -1,5 +1,6 @@
 package it.capabilities.confluence.condition;
 
+import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -70,6 +71,7 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
             remotePlugin.stopAndUninstall();
         }
 
+        rpc.logIn(User.ADMIN);
         rpc.getDarkFeaturesHelper().disableSiteFeature(FEATURE_FLAG_KEY);
     }
 
@@ -86,6 +88,7 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
 
+        rpc.logIn(User.ADMIN);
         rpc.getDarkFeaturesHelper().enableSiteFeature(FEATURE_FLAG_KEY);
 
         assertFalse("Web item should be visible with feature flag enabled", connectPageOperations.existsWebItem(getModuleKey(FEATURE_FLAG)));
@@ -96,6 +99,7 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
 
+        rpc.logIn(User.ADMIN);
         rpc.getDarkFeaturesHelper().enableSiteFeature(FEATURE_FLAG_KEY);
         rpc.getDarkFeaturesHelper().disableSiteFeature(FEATURE_FLAG_KEY);
 
