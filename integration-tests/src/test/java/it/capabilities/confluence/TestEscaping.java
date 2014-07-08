@@ -131,7 +131,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     public void testGeneralPage() throws Exception
     {
         loginAsAdmin();
-        ConnectConfluenceAdminHomePage adminHomePage = product.getPageBinder().bind(ConnectConfluenceAdminHomePage.class);
+        ConnectConfluenceAdminHomePage adminHomePage = product.visit(ConnectConfluenceAdminHomePage.class);
         adminHomePage.openHelpMenu();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(GENERAL_PAGE_KEY), Optional.<String>absent());
         assertIsEscaped(webItem.getLinkText());
