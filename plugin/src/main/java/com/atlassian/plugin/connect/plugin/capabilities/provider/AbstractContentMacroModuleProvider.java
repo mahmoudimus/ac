@@ -196,7 +196,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("location", "js/confluence/macro/override.js");
 
         webResource.addElement("dependency")
-                .setText(ConnectPluginInfo.getPluginKey() + ":ap-amd");
+                .setText(ConnectPluginInfo.getPluginKey() + ":ap-core");
 
         webResource.addElement("context")
                 .setText("editor");
