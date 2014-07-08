@@ -13,9 +13,10 @@ import java.io.IOException;
  */
 public class AddonTestFilter extends AddonTestFilterBase
 {
-    public AddonTestFilter(AddonTestFilterResults testFilterResults, UserManager userManager)
+    public AddonTestFilter(AddonTestFilterResults testFilterResults, UserManager userManager,
+                           AddonPrecannedResponseHelper addonPrecannedResponseHelper)
     {
-        super(testFilterResults, userManager);
+        super(testFilterResults, userManager, addonPrecannedResponseHelper);
     }
 
     @Override

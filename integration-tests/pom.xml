@@ -294,7 +294,18 @@
             <version>1.11</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-api</artifactId>
+            <version>${atlassian.jwt.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-core</artifactId>
+            <version>${atlassian.jwt.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -594,6 +594,13 @@
                 <scope>runtime</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${apache-commons-version}</version>
+                <scope>compile</scope>
+            </dependency>
+
             <!-- Only exists for qunit -->
             <dependency>
                 <groupId>com.atlassian.aui</groupId>
@@ -696,6 +703,7 @@
         <plugin.testrunner.version>1.2.0</plugin.testrunner.version>
 
         <!-- BUILD STUFF -->
+        <apache-commons-version>3.1</apache-commons-version>
         <jgitflow.version>1.0-m3</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
