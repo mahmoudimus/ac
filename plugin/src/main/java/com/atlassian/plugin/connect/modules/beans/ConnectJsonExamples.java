@@ -424,7 +424,7 @@ public class ConnectJsonExamples
                                 .withType(CompositeConditionType.OR)
                                 .withConditions(
                                         newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_FILE_TO_ISSUE).build(),
-                                        newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_SCREENSHOT_TO_ISSUE).build()
+                                        newSingleConditionBean().withCondition(JiraConditions.IS_ISSUE_ASSIGNED_TO_CURRENT_USER).build()
                                 ).build()
                         , newSingleConditionBean().withCondition(JiraConditions.USER_IS_LOGGED_IN).build()
                 ).build();
