@@ -13,7 +13,7 @@ import java.util.Map;
 public class JiraConditions extends PageConditions
 {
     public static final String CONDITION_LIST = getConditionListAsMarkdown(getConditionMap());
-    
+
     public static final String HAS_SELECTED_PROJECT = "has_selected_project";
     public static final String SUB_TASKS_ENABLED = "sub_tasks_enabled";
     public static final String LINKING_ENABLED = "linking_enabled";
@@ -31,7 +31,6 @@ public class JiraConditions extends PageConditions
     public static final String IS_ISSUE_UNRESOLVED = "is_issue_unresolved";
     public static final String CAN_ATTACH_FILE_TO_ISSUE = "can_attach_file_to_issue";
     public static final String HAS_VOTED_FOR_ISSUE = "has_voted_for_issue";
-    public static final String CAN_ATTACH_SCREENSHOT_TO_ISSUE = "can_attach_screenshot_to_issue";
     public static final String IS_ISSUE_ASSIGNED_TO_CURRENT_USER = "is_issue_assigned_to_current_user";
     public static final String IS_WATCHING_ISSUE = "is_watching_issue";
     public static final String HAS_SUB_TASKS_AVAILABLE = "has_sub_tasks_available";
@@ -66,13 +65,12 @@ public class JiraConditions extends PageConditions
         conditionMap.put(IS_ISSUE_UNRESOLVED, com.atlassian.jira.plugin.webfragment.conditions.IsIssueUnresolvedCondition.class);
         conditionMap.put(CAN_ATTACH_FILE_TO_ISSUE, com.atlassian.jira.plugin.webfragment.conditions.CanAttachFileToIssueCondition.class);
         conditionMap.put(HAS_VOTED_FOR_ISSUE, com.atlassian.jira.plugin.webfragment.conditions.HasVotedForIssueCondition.class);
-        conditionMap.put(CAN_ATTACH_SCREENSHOT_TO_ISSUE, com.atlassian.jira.plugin.webfragment.conditions.CanAttachScreenshotToIssueCondition.class);
         conditionMap.put(IS_ISSUE_ASSIGNED_TO_CURRENT_USER, com.atlassian.jira.plugin.webfragment.conditions.IsIssueAssignedToCurrentUserCondition.class);
         conditionMap.put(IS_WATCHING_ISSUE, com.atlassian.jira.plugin.webfragment.conditions.IsWatchingIssueCondition.class);
         conditionMap.put(HAS_SUB_TASKS_AVAILABLE, com.atlassian.jira.plugin.webfragment.conditions.HasSubTasksAvailableCondition.class);
         conditionMap.put(HAS_ISSUE_PERMISSION, com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition.class);
         conditionMap.put(HAS_PROJECT_PERMISSION, com.atlassian.jira.plugin.webfragment.conditions.HasProjectPermissionCondition.class);
-        
+
         return conditionMap;
     }
 }
