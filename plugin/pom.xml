@@ -805,7 +805,9 @@
                                     <includes>
                                         <!-- note: any changes here must also be made in StaticResourcesFilter.java -->
                                         <include>js/core/all.js</include>
-                                       <!-- <include>js-min/iframe/hello-world-min.js</include> -->
+                                        <!-- product-specific inclusions are temporary until made more dynamic -->
+                                        <include>js-min/iframe/plugin/jira-min.js</include>
+                                        <include>js-min/iframe/plugin/confluence-min.js</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
