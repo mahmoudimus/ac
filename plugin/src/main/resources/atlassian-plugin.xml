@@ -124,7 +124,6 @@
 
     <web-resource key="dialog-page-resource">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog</dependency>
     </web-resource>
 
     <web-resource key="schema-xsl">
