@@ -6,17 +6,17 @@
     },
     {
       "filename": "getting-started.html",
-      "title": "Getting Started"
+      "title": "Getting started"
     }
   ],
   "developing": [
     {
       "filename": "developing-locally.html",
-      "title": "Developing Locally"
+      "title": "Developing locally"
     },
     {
-      "filename": "installing-in-ondemand.html",
-      "title": "Installing in OnDemand"
+      "filename": "cloud-installation.html",
+      "title": "Installing in the cloud"
     },
     {
       "filename": "selling-on-marketplace.html",
@@ -24,12 +24,12 @@
     },
     {
       "filename": "operations.html",
-      "title": "Operations Guide",
+      "title": "Operations guide",
       "new": true
     },
     {
       "filename": "upgrades.html",
-      "title": "Upgrading your Add-on",
+      "title": "Upgrading your add-on",
       "new": true
     }
   ],
@@ -53,19 +53,19 @@
     },
     {
       "filename": "context-parameters.html",
-      "title": "Context Parameters"
+      "title": "Context parameters"
     },
     {
       "filename": "styling-with-aui.html",
-      "title": "Styling Add-ons with AUI"
+      "title": "Styling add-ons with AUI"
     },
     {
       "filename": "licensing.html",
       "title": "Licensing"
     },
     {
-      "filename": "understanding-ondemand.html",
-      "title": "Understanding OnDemand"
+      "filename": "cloud-development.html",
+      "title": "Cloud development"
     }
   ],
   "scopes": [
@@ -97,30 +97,30 @@
   "resources": [
     {
       "url": "https://developer.atlassian.com/display/MARKET/Atlassian+Connect+Status",
-      "title": "Atlassian Connect Status",
+      "title": "Atlassian Connect status",
       "new": true
     },
     {
       "filename": "release-notes.html",
-      "title": "Release Notes",
+      "title": "Release notes",
       "new": true
     },
     {
       "filename": "deprecations.html",
-      "title": "Deprecation Notices",
+      "title": "Deprecation notices",
       "new": true
     },
     {
       "filename": "samples.html",
-      "title": "Sample Add-ons"
+      "title": "Sample add-ons"
     },
     {
       "filename": "faqs.html",
-      "title": "FAQs"
+      "title": "FAQ"
     },
     {
       "filename": "getting-help.html",
-      "title": "Getting Help"
+      "title": "Getting help"
     }
   ]
 }

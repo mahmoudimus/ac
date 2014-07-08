@@ -25,8 +25,8 @@ import static com.google.common.collect.Maps.newHashMap;
  * If you're familiar with Java add-on development with previous versions of the Atlassian Plugin Framework, you may already be
  * familiar with the `atlassian-plugin.xml` descriptors. The `atlassian-connect.json` serves the same function.
  * <p/>
- * The descriptor serves as the glue between the remote add-on and the Atlassian application. When an administrator for an
- * Atlassian OnDemand instance installs an add-on, what they are really doing is installing this descriptor file, which
+ * The descriptor serves as the glue between the remote add-on and the Atlassian application. When an administrator for a
+ * cloud instance installs an add-on, what they are really doing is installing this descriptor file, which
  * contains pointers to your service. You can see an example below.
  * <p/>
  * For details and application-specific reference information on the descriptor please refer to the "jira modules"
@@ -130,7 +130,7 @@ public class ConnectAddonBean extends BaseModuleBean
 
     /**
      * The base url of the remote add on.
-     * Only add-ons with a baseUrl starting with ``https://`` can be [installed in OnDemand](../developing/installing-in-ondemand.html)
+     * Only add-ons with a baseUrl starting with ``https://`` can be [installed in cloud instances](../developing/cloud-installation.html)
      * servers. ``http://`` may still be used for testing locally.
      */
     @Required

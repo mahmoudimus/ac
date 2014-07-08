@@ -1,4 +1,4 @@
-# Getting Help
+# Getting help
 
 Atlassian Connect is under active development and there's an active community of developers building Connect add-ons. There are lots of ways to get answers to your questions!
 

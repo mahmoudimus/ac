@@ -1,7 +1,7 @@
-# Upgrading and Versioning your Add-on
+# Upgrading and versioning your add-on
 
 You can upgrade your add-on any time once it's listed in the [Marketplace](https://marketplace.atlassian.com/) as either
-an [approved public add-on](./selling-on-marketplace.html) or a [private listing](./installing-in-ondemand.html).
+an [approved public add-on](./selling-on-marketplace.html) or a [private listing](./cloud-installation.html).
 
 Almost all changes you make to your add-on will be to code inside your add-on's web app. For example, tweaking the look
 of a web panel, adding a configuration option or catching a previously unhandled exception can all be done by writing
@@ -31,9 +31,9 @@ within a few minutes of you publishing changes to your [descriptor file](../modu
 * Each customer instance polls the Atlassian Marketplace periodically (currently every 6 hours) and automatically 
 updates to the latest version of your add-on. 
 * If you change your add-on during the 
-[Atlassian OnDemand maintenance windows](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+maintenance+windows), 
+[maintenance windows](https://confluence.atlassian.com/x/aJALE), 
 the upgrade of your add-on on customer instances could be further delayed by 4 hours. We use the 
-[Atlassian OnDemand blog](https://confluence.atlassian.com/pages/viewrecentblogposts.action?key=AOD) 
+[this blog](https://confluence.atlassian.com/pages/viewrecentblogposts.action?key=AOD) 
 to announce upcoming upgrades and their completion. 
 
 **Note**: Our polling service uses user-agent **`Marketplacebot`**. You can search for this user-agent in your access logs to

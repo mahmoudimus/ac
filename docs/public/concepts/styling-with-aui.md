@@ -1,4 +1,4 @@
-# Styling Add-ons with Atlassian UI
+# Styling add-ons with Atlassian UI
 
 The Atlassian User Interface Library (AUI) is the framework that Atlassian uses to build our
 products. AUI is a library of Javascript, CSS, templates and other resources you can include
