@@ -474,6 +474,31 @@
                         </testBundleExclude>
                     </testBundleExcludes>
                     <instructions>
+                        <Import-Package>
+                            com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
+                            com.github.fge.jsonschema.core*;version="1.2.4",
+                            com.github.fge.jsonschema.cfg*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.cfg.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.examples*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.examples.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.exceptions*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.exceptions.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.format*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.format.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.keyword*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.keyword.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.library*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.library.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.main*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.main.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.messages*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.messages.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.processors*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.processors.*;version="${json.schema.validator.version}",
+                            com.github.fge.msgsimple*;version="1.1.2-atlassian",
+                            com.github.fge.msgsimple.*;version="1.1.2-atlassian",
+                            *;resolution:=optional
+                        </Import-Package>
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
                             com.atlassian.plugin.connect.api.*;version="${project.version}",
@@ -957,6 +982,20 @@
                         <additionalSourceDirectory>../api-parent/spi/src/main/java/</additionalSourceDirectory>
                     </additionalSourceDirectories>
                 </configuration>
+            </plugin>
+            <!-- Run annotation processors on src/test/java sources -->
+            <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>process-test</id>
+                        <goals>
+                            <goal>process-test</goal>
+                        </goals>
+                        <phase>generate-test-sources</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
