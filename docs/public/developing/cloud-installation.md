@@ -1,6 +1,6 @@
 # Installing in the cloud
 
-The [Getting Started](../guides/getting-started.html) tutorial describes how to test an Atlassian
+The [Getting started](../guides/getting-started.html) tutorial describes how to test an Atlassian
 Connect add-on in a local environment. If you followed it, you ran the Atlassian application on a
 local machine and installed the add-on manually through a developer mode feature in the Atlassian
 application. The next phase in your testing should be to test the add-on in the context of a live

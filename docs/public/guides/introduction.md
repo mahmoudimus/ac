@@ -66,7 +66,7 @@ Atlassian Connect add-ons so powerful.
 ### Architecture
 Most Atlassian Connect add-ons are implemented as multi-tenanted services. This means that a
 single Atlassian Connect add-on will support multiple subscribing Atlassian applications. For more information,
-see [Understanding OnDemand](../concepts/cloud-development.html).
+see [Understanding Atlassian in the cloud](../concepts/cloud-development.html).
 
 ###Security
 Security is critical in a distributed component model such as Atlassian Connect. Atlassian Connect relies on
@@ -78,7 +78,7 @@ These permissions are granted by Atlassian application administrators
 when they install your add-on. Examples of permissions include
 reading content, creating pages, creating issues, and more. 
 These permissions help ensure the
-security and stability of the OnDemand instance.
+security and stability of cloud instances.
 
 Read our [security overview](../concepts/security.html) for more details.
 

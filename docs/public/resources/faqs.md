@@ -44,16 +44,16 @@ the Atlassian Connect JIRA project:
 
 [https://ecosystem.atlassian.net/browse/AC](https://ecosystem.atlassian.net/browse/AC)
 
-### Can an Atlassian OnDemand customer use Atlassian Connect for custom development?
-Yes. Every Atlassian OnDemand customer has access to the Atlassian Connect platform. This means
+### Can an Atlassian cloud customer use Atlassian Connect for custom development?
+Yes. Every cloud customer has access to the Atlassian Connect platform. This means
 that internal developers can create and deploy Atlassian Connect add-ons for their own use
 within their organization. For example, a developer might integrate JIRA Cloud with an internal
 system, or to integrate Confluence Cloud with another SaaS service's API.
 
-Note that add-ons in OnDemand must be installed through the Atlassian Marketplace. Thus, to
+Note that add-ons in cloud instances must be installed through the Atlassian Marketplace. Thus, to
 install an add-on for internal use, you must create a listing for it on the Marketplace. The
 Marketplace provides a new type of listing for such cases - private listings. A private listing is
-not publicly visible on the Marketplace, and can be installed on a maximum of fifty OnDemand
+not publicly visible on the Marketplace, and can be installed on a maximum of fifty cloud
 instances.
 
 ### How does Atlassian Connect work?
@@ -95,9 +95,9 @@ from the Marketplace if problems cannot be resolved.
 
 ### What are the service requirements for an add-on?
 There are currently no service-level agreements enforced for add-ons in the Atlassian Marketplace.
-However, in OnDemand, the service level is very important to customers. We intend to measure each
+However, in cloud products, the service level is very important to customers. We intend to measure each
 add-on's current status and uptime and make that information available to customers, similar to the
-way that [OnDemand does so](https://www.atlassian.com/software/ondemand/status). We encourage
+way that [cloud products do](https://www.atlassian.com/software/ondemand/status). We encourage
 add-on providers to strive for 99.9% uptime.
 
 ### What policies must add-ons observe about customer data?
@@ -110,11 +110,11 @@ are acting as a professional and trustworthy provider of hosted software.
 
 For reference, here are Atlassian's relevant policies:
 
-* [Atlassian OnDemand Security Statement](https://www.atlassian.com/hosted/security)
-* [Atlassian OnDemand Storage Policy](https://confluence.atlassian.com/display/AOD/OnDemand+Storage+Policy)
-* [Atlassian OnDemand Data Policy](https://confluence.atlassian.com/display/AOD/About+Your+Data)
+* [Atlassian Cloud Product Security Statement](https://www.atlassian.com/hosted/security)
+* [Storage Policy](https://confluence.atlassian.com/x/AAlxFw)
+* [Data Policy](hhttps://confluence.atlassian.com/x/OQIYDw)
 * [Atlassian's Privacy Policy](https://www.atlassian.com/company/privacy)
-* [Atlassian's Security Advisory Policy](https://confluence.atlassian.com/display/Support/Security+Advisory+Publishing+Policy)
+* [Atlassian's Security Advisory Policy](https://confluence.atlassian.com/x/F4spD)
 
 Your policy may cover the following areas:
 
@@ -123,10 +123,10 @@ and where (physically) the data will be stored. It is your responsibility to com
 laws.
 * **Backups:** Explain your backup and recovery policy for customer data. You should publish your
 [RTO](http://en.wikipedia.org/wiki/Recovery_time_objective) and [RPO](http://en.wikipedia.org/wiki/Recovery_point_objective)
-targets, and explain if and when data is moved offsite. For Atlassian OnDemand, backups are made daily, and stored
+targets, and explain if and when data is moved offsite. For cloud products, backups are made daily, and stored
 offsite on a weekly basis.
 * **Account removal and data retention:** Explain how a customer can close an account and completely
-remove their data from your service. For Atlassian OnDemand, customer data is retained for 15 days
+remove their data from your service. For Atlassian cloud applications, customer data is retained for 15 days
 after account removal and then unrecoverably deleted after that time.
 * **Data portability:** Explain if and how a customer can extract their data from your service. For
 example, is it possible to move from your hosted service to a downloaded version of your software?
@@ -158,14 +158,14 @@ integrating Atlassian tools with another service or remote application, this is 
 development.
 
 If a developer wants to create an add-on that's more deeply intertwined with the target application
-and does not intend to ever make it available to OnDemand customers, then [Plugins 2
+and does not intend to ever make it available to cloud customers, then [Plugins 2
 add-ons](https://developer.atlassian.com/display/DOCS/Getting+Started) will continue to be supported
 for development.
 
-### What happens when a customer moves from OnDemand to on-premises or vice versa?
+### What happens when a customer moves from a cloud to server product, or vice versa?
 One of the great strengths of the Atlassian platform is that customers can choose the deployment
-model that best suits their needs. We often see customers move from OnDemand to on-premises and vice
-versa, as their needs change. When a customer using one of your Atlassian Connect add-ons needs to
+model that best suits their needs. We often see customers move from cloud to server products (and vice
+versa) as their needs change. When a customer using one of your Atlassian Connect add-ons needs to
 move between deployment models, they will be able to continue to use your add-on.
 
 Atlassian sales will be able to transfer or issue new licenses as necessary. Developers will be

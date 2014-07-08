@@ -132,7 +132,7 @@ current directory containing your `atlassian-connect.json` and `helloworld.html`
 
 You've created the essential components of a Connect add-on: an `atlassian-connect.json` descriptor file to communicate what your add-on does to JIRA, and a web application (`helloworld.html`) running on a local server. Now, you need to start JIRA to install your add-on. 
 
-You'll start JIRA in cloud mode. Connect is only present in Atlassian OnDemand products like JIRA Cloud, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
+You'll start JIRA in cloud mode. Connect is only present in Atlassian-hosted products like JIRA Cloud, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
 
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
     You'll need at least SDK version 4.2.20. If you run the <tt>atlas-version</tt> command, you should see something similar to this:  
@@ -146,7 +146,7 @@ You'll start JIRA in cloud mode. Connect is only present in Atlassian OnDemand p
   
 2. From a new terminal window, start JIRA with cloud environment flags:
     <pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-07-013 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.16.5,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.5 --jvmargs -Datlassian.upm.on.demand=true</code></pre>  
-    
+
     __Note:__ If you're not using the command above, ensure all components in the `--bundled-plugins` argument are present in your JIRA instances. These component versions will change as Connect development continues.  
     
     You'll see a lot of output. When finished, your terminal notifies you that the build was successful:  

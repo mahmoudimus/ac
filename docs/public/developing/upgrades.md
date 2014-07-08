@@ -31,9 +31,9 @@ within a few minutes of you publishing changes to your [descriptor file](../modu
 * Each customer instance polls the Atlassian Marketplace periodically (currently every 6 hours) and automatically 
 updates to the latest version of your add-on. 
 * If you change your add-on during the 
-[Atlassian OnDemand maintenance windows](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+maintenance+windows), 
+[maintenance windows](https://confluence.atlassian.com/x/aJALE), 
 the upgrade of your add-on on customer instances could be further delayed by 4 hours. We use the 
-[Atlassian OnDemand blog](https://confluence.atlassian.com/pages/viewrecentblogposts.action?key=AOD) 
+[this blog](https://confluence.atlassian.com/pages/viewrecentblogposts.action?key=AOD) 
 to announce upcoming upgrades and their completion. 
 
 **Note**: Our polling service uses user-agent **`Marketplacebot`**. You can search for this user-agent in your access logs to
