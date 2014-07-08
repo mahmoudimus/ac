@@ -5,6 +5,7 @@ import com.atlassian.jira.testkit.client.restclient.Version;
 import com.atlassian.jira.testkit.client.restclient.VersionClient;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -79,7 +80,7 @@ public class TestVersionTabPage extends TestBase
     public void testVersionTabPanel() throws RemoteException
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, ConnectPluginInfo.getPluginKey(), remotePlugin.getAddon().getKey() + "__" + moduleKey);
+        JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, ConnectPluginInfo.getPluginKey(), ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), moduleKey));
 
         versionTabPage.clickTab();
 
