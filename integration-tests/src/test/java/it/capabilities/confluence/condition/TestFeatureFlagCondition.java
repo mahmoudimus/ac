@@ -13,6 +13,7 @@ import com.google.common.base.Optional;
 import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
@@ -31,6 +32,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+@Ignore
 public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
 {
     private static ConnectRunner remotePlugin;
