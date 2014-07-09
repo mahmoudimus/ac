@@ -13,6 +13,8 @@ public class RemotePluginDialog extends RemoteDialog
 
     private final ConnectAddOnTestPage embeddedConnectPage;
 
+    @Deprecated
+    @XmlDescriptor
     public RemotePluginDialog(RemotePluginTestPage embeddedPage)
     {
         this.embeddedPage = embeddedPage;

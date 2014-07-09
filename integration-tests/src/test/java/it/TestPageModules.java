@@ -1,14 +1,13 @@
 package it;
 
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
-import com.atlassian.plugin.connect.test.OAuthUtils;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.*;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.module.Condition;
-import com.atlassian.plugin.connect.test.server.module.ConfigurePageModule;
-import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
-import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
+import it.servlet.InstallHandlerServlet;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -24,56 +23,94 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.TimeZone;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BETTY_USERNAME;
 import static java.lang.String.valueOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-@XmlDescriptor
 public class TestPageModules extends ConnectWebDriverTestBase
 {
-    public static final String EXTRA_PREFIX = "servlet-";
-    private static AtlassianConnectAddOnRunner remotePlugin;
+    private static final String GLOBALLY_VISIBLE_LOCATION = "system.top.navigation.bar"; // TODO: may need to be different in Confluence
+    private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
-                .addOAuth()
-                .addPermission("resttest")
-                .add(GeneralPageModule.key("remotePluginGeneral")
-                        .name("Remotable Plugin app1 General")
-                        .path("/rpg")
-                        .linkName("Remotable Plugin app1 General Link")
-                        .iconUrl("/public/sandcastles.jpg")
-                        .height("600")
-                        .width("700")
-                        .resource(ConnectAppServlets.apRequestServlet()))
-                .add(GeneralPageModule.key("amdTest")
-                        .name("AMD Test app1 General")
-                        .path("/amdTest")
-                        .resource(ConnectAppServlets.amdTestServlet()))
-                .add(GeneralPageModule.key("onlyBetty")
-                        .name("Only Betty")
-                        .path("/ob")
-                        .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new OnlyBettyConditionServlet()))
-                        .resource(ConnectAppServlets.apRequestServlet()))
-                .add(GeneralPageModule.key("encodedSpaces")
-                        .name("Encoded Spaces")
-                        .path("/my?bologne=O%20S%20C%20A%20R")
-                        .resource(ConnectAppServlets.helloWorldServlet()))
-                .add(DialogPageModule.key("remotePluginDialog")
-                        .name("Remotable Plugin app1 Dialog")
-                        .path("/rpd")
-                        .resource(ConnectAppServlets.dialogServlet()))
-                .add(GeneralPageModule.key("sizeToParent")
-                        .name("Size to parent general page")
-                        .path("/fsg")
-                        .resource(ConnectAppServlets.sizeToParentServlet()))
-                .add(DialogPageModule.key("sizeToParentDialog")
-                        .name("Size to parent dialog page")
-                        .path("/fsg")
-                        .resource(ConnectAppServlets.sizeToParentServlet()))
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+                .addJWT()
+                .addInstallLifecycle()
+                .addRoute(ConnectRunner.INSTALLED_PATH, new InstallHandlerServlet())
+                .addModules("generalPages",
+                        newPageBean()
+                                .withKey("remotePluginGeneral")
+                                .withName(new I18nProperty("Remotable Plugin app1 General", null))
+                                .withUrl("/rpg")
+                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .withIcon(newIconBean()
+                                        .withUrl("/public/sandcastles.jpg")
+                                        .build())
+                                .build(),
+                        newPageBean()
+                                .withKey("amdTest")
+                                .withName(new I18nProperty("AMD Test app1 General", null))
+                                .withUrl("/amdTest")
+                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .build(),
+                        newPageBean()
+                                .withKey("onlyBetty")
+                                .withName(new I18nProperty("Only Betty", null))
+                                .withUrl("/ob")
+                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .withConditions(
+                                        newSingleConditionBean()
+                                                .withCondition("user_is_logged_in")
+                                                .build(),
+                                        newSingleConditionBean()
+                                                .withCondition("/onlyBettyCondition")
+                                                .build())
+                                .build(),
+                        newPageBean()
+                                .withKey("encodedSpaces")
+                                .withName(new I18nProperty("Encoded Spaces", null))
+                                .withUrl("/my?bologne=O%20S%20C%20A%20R")
+                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .build(),
+                        newPageBean()
+                                .withKey("sizeToParent")
+                                .withName(new I18nProperty("Size to parent general page", null))
+                                .withUrl("/fsg")
+                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .build(),
+                        newPageBean()
+                                .withKey("sizeToParentDialog")
+                                .withName(new I18nProperty("Size to parent dialog page", null))
+                                .withUrl("/fsd")
+                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .build())
+                .addModules("webItems",
+                        newWebItemBean()
+                                .withKey("remotePluginDialog")
+                                .withName(new I18nProperty("Remotable Plugin app1 Dialog", null))
+                                .withUrl("/rpd")
+                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .withTarget(newWebItemTargetBean()
+                                        .withType(WebItemTargetType.dialog)
+                                        .build())
+                                .build())
+                .addRoute("/rpg", ConnectAppServlets.apRequestServlet())
+                .addRoute("/amdTest", ConnectAppServlets.amdTestServlet())
+                .addRoute("/ob", ConnectAppServlets.apRequestServlet())
+                .addRoute("/onlyBettyCondition", new OnlyBettyConditionServlet())
+                .addRoute("/my", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/fsg", ConnectAppServlets.sizeToParentServlet())
+                .addRoute("/fsd", ConnectAppServlets.sizeToParentServlet())
+                .addRoute("/rpd", ConnectAppServlets.dialogServlet())
+                .addScope(ScopeName.READ)
                 .start();
     }
 
@@ -90,13 +127,11 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testMyGeneralLoaded()
     {
         loginAsBetty();
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral", "Remotable Plugin app1 General Link", EXTRA_PREFIX);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral", "Remotable Plugin app1 General", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.getTitle().contains("Remotable Plugin app1 General"));
-        assertFalse(remotePluginTest.getTitle().contains("Remotable Plugin app1 General Link"));
         assertEquals("Success", remotePluginTest.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), remotePluginTest.getConsumerKey());
         assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
         assertNotNull(remotePluginTest.getFullName());
         assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(BETTY_USERNAME));
@@ -118,11 +153,6 @@ public class TestPageModules extends ConnectWebDriverTestBase
         // media type tests of the RA.request API
         assertEquals("{\"name\": \"betty\"}", remotePluginTest.getClientHttpDataJson());
         assertEquals("<user><name>betty</name></user>", remotePluginTest.getClientHttpDataXml());
-
-        // test unauthorized scope access
-        // ACDEV-363: Temporarily disabling scope checking on the client until
-        // we figure out our long term strategy with permissions
-        // assertEquals("403", remotePluginTest.getClientHttpUnauthorizedCode());
     }
 
     @Test
@@ -130,9 +160,9 @@ public class TestPageModules extends ConnectWebDriverTestBase
     {
         loginAsBetty();
 
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
 
         assertNotNull(remotePluginTest.getFullName());
         assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(BETTY_USERNAME));
@@ -159,7 +189,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testRemoteConditionFails()
     {
         loginAsBarney();
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", EXTRA_PREFIX);
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", remotePlugin.getAddon().getKey());
         assertFalse(page.isRemotePluginLinkPresent());
     }
 
@@ -168,8 +198,8 @@ public class TestPageModules extends ConnectWebDriverTestBase
     {
         loginAsBetty();
 
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", EXTRA_PREFIX);
-        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", remotePlugin.getAddon().getKey());
+        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
 
         assertTrue(remotePluginTest.getTitle().contains("Only Betty"));
     }
@@ -177,24 +207,31 @@ public class TestPageModules extends ConnectWebDriverTestBase
     @Test
     public void testConfigurePage() throws Exception
     {
-        ConfigurePageModule configPage = ConfigurePageModule.key("page")
-                                                            .name("Page")
-                                                            .path("/page")
-                                                            .resource(ConnectAppServlets.helloWorldServlet());
+        ConnectRunner anotherPlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+                .addInstallLifecycle()
+                .addRoute(ConnectRunner.INSTALLED_PATH, new InstallHandlerServlet())
+                .addModule("configurePage", newPageBean()
+                        .withName(new I18nProperty("Page", null))
+                        .withKey("page")
+                        .withLocation("")
+                        .withUrl("/page")
+                        .build())
+                .addRoute("/page", ConnectAppServlets.helloWorldServlet())
+                .start();
 
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "configurePage");
+        try
+        {
+            // fixme: jira page objects don't redirect properly to next page
+            loginAsBetty();
+            final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
-        remotePlugin.add(configPage);
-        remotePlugin.start();
-
-        // fixme: jira page objects don't redirect properly to next page
-        loginAsBetty();
-        final PluginManagerPage upm = product.visit(PluginManagerPage.class);
-
-        final RemotePluginTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", RemotePluginTestPage.class, EXTRA_PREFIX);
-        assertTrue(remotePluginTestPage.isLoaded());
-
-        remotePlugin.stopAndUninstall();
+            final ConnectAddOnTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", ConnectAddOnTestPage.class, anotherPlugin.getAddon().getKey());
+            assertTrue(remotePluginTestPage.isLoaded());
+        }
+        finally
+        {
+            anotherPlugin.stopAndUninstall();
+        }
     }
 
     @Test
@@ -202,9 +239,9 @@ public class TestPageModules extends ConnectWebDriverTestBase
     {
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
         loginAsBetty();
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", "Encoded Spaces", EXTRA_PREFIX);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", "Encoded Spaces", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
 
         assertThat(remotePluginTest.getValueBySelector("#hello-world-message"), is("Hello world"));
     }
@@ -213,9 +250,9 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testAmd()
     {
         loginAsBetty();
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", "AMD Test app1 General", EXTRA_PREFIX);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", "AMD Test app1 General", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
 
         assertEquals("true", remotePluginTest.waitForValue("amd-env"));
         assertEquals("true", remotePluginTest.waitForValue("amd-request"));
@@ -226,9 +263,9 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testSizeToParent()
     {
         loginAsBetty();
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", "Size to parent general page", EXTRA_PREFIX);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", "Size to parent general page", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
 
         assertTrue(remotePluginTest.isFullSize());
     }
@@ -237,9 +274,9 @@ public class TestPageModules extends ConnectWebDriverTestBase
     public void testSizeToParentDoesNotWorkInDialog()
     {
         loginAsBetty();
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page");
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.isNotFullSize());
     }
 

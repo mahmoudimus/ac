@@ -4,10 +4,8 @@ import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.WebDriverElement;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
-import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -51,20 +49,9 @@ public class ConnectPage
     public void waitForInit()
     {
         final String prefix = includedEmbeddedPrefix ? "embedded-" : "";
-        final String jquerySelector = "#" + prefix + AddonTestUtils.escapedAddonAndModuleKey(addOnKey, pageElementKey);
-        PageElement containerDivElement = elementFinder.find(ByJquery.$(jquerySelector));
-
-        try
-        {
-            waitUntilTrue(containerDivElement.timed().isPresent());
-        }
-        catch (AssertionError e)
-        {
-            // log the failed selector so that you don't have to open the debugger to find it
-            log.error("Failed to find page element using jquery selector '{}'.", jquerySelector);
-            throw e;
-        }
-
+        final String id = prefix + AddonTestUtils.escapedAddonAndModuleKey(addOnKey, pageElementKey);
+        PageElement containerDivElement = elementFinder.find(By.id(id));
+        waitUntilTrue(containerDivElement.timed().hasClass("iframe-init"));
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
     }
 
@@ -129,7 +116,6 @@ public class ConnectPage
 
     private WebElement iframe()
     {
-        driver.waitUntilElementIsLocated(By.cssSelector("#embedded-" + addOnKey + pageElementKey + " iframe"));
         return containerDiv.findElement(By.tagName("iframe"));
     }
 }

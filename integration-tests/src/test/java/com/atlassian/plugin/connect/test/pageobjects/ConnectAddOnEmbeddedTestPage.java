@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
 import org.openqa.selenium.By;
 
 import java.util.concurrent.Callable;
@@ -41,6 +42,7 @@ public class ConnectAddOnEmbeddedTestPage extends ConnectPage
         return getValue("message");
     }
 
+    @OAuth
     public String getConsumerKey()
     {
         return getValue("consumerKey");
