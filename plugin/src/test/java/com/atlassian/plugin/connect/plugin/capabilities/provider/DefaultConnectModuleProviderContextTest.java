@@ -3,26 +3,26 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.ADDON_MODULE_SEPARATOR;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class DefaultConnectModuleProviderContextTest
 {
 
     private static final String ADDON_KEY = "DasAddonz";
-	private static final String TOOLS_MENU = "tools-menu";
+    private static final String TOOLS_MENU = "tools-menu";
+    private static final String WEB_SECTION_KEY = "first-section";
     private ModuleLocationQualifier locationQualifier;
 
     @Before
     public void init()
     {
         ConnectAddonBean addon = ConnectAddonBean.newConnectAddonBean()
-        		.withKey(ADDON_KEY)
+                .withKey(ADDON_KEY)
                 .withModules("webItems",
                         WebItemModuleBean.newWebItemBean()
                                 .withKey(TOOLS_MENU)
@@ -34,7 +34,7 @@ public class DefaultConnectModuleProviderContextTest
                 )
                 .withModules("webSections",
                         WebSectionModuleBean.newWebSectionBean()
-                                .withKey("first-section")
+                                .withKey(WEB_SECTION_KEY)
                                 .withLocation("tools-menu")
                                 .build()
                 )
@@ -53,7 +53,27 @@ public class DefaultConnectModuleProviderContextTest
     @Test
     public void returnsQualifiedKeyWhenMatchesWebItemKeyExactly()
     {
-        assertThat(locationQualifier.processLocation(TOOLS_MENU), is(ADDON_KEY + 
-        		ModuleKeyUtils.ADDON_MODULE_SEPARATOR + TOOLS_MENU));
+        assertThat(locationQualifier.processLocation(TOOLS_MENU), is(qualify(TOOLS_MENU)));
+    }
+
+    @Test
+    public void substitutesAllKeysInLocation()
+    {
+        assertThat(locationQualifier.processLocation(TOOLS_MENU + '/' + WEB_SECTION_KEY),
+                is(qualify(TOOLS_MENU) + '/' + qualify(WEB_SECTION_KEY)));
+    }
+
+    @Test
+    public void substitutesOnlyKeysInLocation()
+    {
+        final String segment = "should-not-be-qualified";
+
+        assertThat(locationQualifier.processLocation(TOOLS_MENU + '/' + segment),
+                is(qualify(TOOLS_MENU) + '/' + segment));
+    }
+
+    private String qualify(String str)
+    {
+        return ADDON_KEY + ADDON_MODULE_SEPARATOR + str;
     }
 }
