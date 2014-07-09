@@ -41,6 +41,8 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
     private class DefaultModuleLocationQualifier implements ModuleLocationQualifier
     {
 
+        // a map of unqualified key -> qualified key for all modules that can be referenced from the locations of other
+        // modules.
         private Supplier<Map<String, String>> keyMapSupplier = Suppliers.memoize(new Supplier<Map<String, String>>()
         {
             @Override
