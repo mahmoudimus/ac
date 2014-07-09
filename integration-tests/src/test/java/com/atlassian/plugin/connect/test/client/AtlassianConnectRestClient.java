@@ -39,6 +39,13 @@ public final class AtlassianConnectRestClient
 
     public void install(String registerUrl) throws Exception
     {
+        install(registerUrl, true);
+    }
+
+    // this variant is useful when testing install failure scenarios. i.e. where we expect the install to fail
+    // It will timeout much quicker and swallow the exception that would terminate the test otherwise
+    public void install(String registerUrl, boolean checkStatus) throws Exception
+    {
         //get a upm token
         String token = getUpmToken();
 
@@ -63,9 +70,25 @@ public final class AtlassianConnectRestClient
             {
                 URI uri = new URI(baseUrl);
                 final String statusUrl = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + json.get("links").get("self").getString();
-    
-                InstallStatusChecker statusChecker = new InstallStatusChecker(userRequestSender, statusUrl, 1, TimeUnit.MINUTES, 500, TimeUnit.MILLISECONDS);
-                statusChecker.run(defaultUsername, defaultPassword);
+
+                if (checkStatus)
+                {
+                    InstallStatusChecker statusChecker = new InstallStatusChecker(userRequestSender, statusUrl, 1, TimeUnit.MINUTES, 500, TimeUnit.MILLISECONDS);
+                    statusChecker.run(defaultUsername, defaultPassword);
+                }
+                else
+                {
+                    InstallStatusChecker statusChecker = new InstallStatusChecker(userRequestSender, statusUrl, 5, TimeUnit.SECONDS,
+                            500, TimeUnit.MILLISECONDS);
+                    try
+                    {
+                        statusChecker.run(defaultUsername, defaultPassword);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+
+                }
             }
         }
     }

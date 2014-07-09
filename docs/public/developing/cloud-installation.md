@@ -1,14 +1,14 @@
-# Installing in OnDemand
+# Installing in the cloud
 
-The [Getting Started](../guides/getting-started.html) tutorial describes how to test an Atlassian
+The [Getting started](../guides/getting-started.html) tutorial describes how to test an Atlassian
 Connect add-on in a local environment. If you followed it, you ran the Atlassian application on a
 local machine and installed the add-on manually through a developer mode feature in the Atlassian
 application. The next phase in your testing should be to test the add-on in the context of a live
-OnDemand instance.
+cloud instance.
 
-To do so, you need to create a Private Listing for your add-on on the Atlassian Marketplace. A
-Marketplace listing is necessary whether you intend to make the add-on publicly available or just
-use it internally. This is because OnDemand applications only accept add-ons that are installed
+To do so, create a private listing for your add-on in the [Atlassian Marketplace](https://marketplace.atlassian.com/). 
+A Marketplace listing is necessary whether you intend to make the add-on publicly available or just
+use it internally. This is because cloud applications only accept add-ons that are installed
 through the Marketplace.
 
 ## Before starting
@@ -18,7 +18,7 @@ through the Marketplace.
         <span class="aui-icon icon-warning"></span>
         <strong>Important</strong>
     </p>
-    In order to install an add-on into an OnDemand instance, it must be served over HTTPS. An add-on
+    In order to install an add-on into a cloud instance, it must be served over HTTPS. An add-on
     _must_ have a [`baseUrl`](../modules/#baseUrl) which starts with `https://`; a baseUrl of the form
     `http://my-server.com:443/` will not be accepted. Additionally, the HTTPS certificate cannot not be self-signed.
 </div>
@@ -32,7 +32,7 @@ Also, before starting, you will need to have your add-on descriptor file on hand
 listing, the Marketplace form asks you to upload the file from a directory location.
 
 Add-on vendors can create an environment for testing simply by [trialing](https://www.atlassian.com/try)
-a standard Atlassian OnDemand instance. Before your thirty-day trial expires, send an email to
+a standard cloud application. Before your thirty-day trial expires, send an email to
 [developer-relations@atlassian.com](mailto:developer-relations@atlassian.com) and we can change your
 instance to use a free developer license.
 
@@ -55,7 +55,7 @@ listing:
 	- **Payment Model**: You can only choose paid via Atlassian or free, because Atlassian Connect
 add-ons cannot be paid via vendor.
 	- **Provide this add-on to**: This field specifies the Atlassian application type targeted by
-this add-on. Atlassian Connect add-ons are available to OnDemand instance only, so this field is
+this add-on. Atlassian Connect add-ons are available to cloud-hosted instances only, so this field is
 pre-populated accordingly.
 	- **Add-on Details**: Many of the settings under the add-on details heading are optional and
 applicable only to public listings. In most cases, you can set these aside for later.
@@ -68,13 +68,13 @@ private, even if they were previously published as public versions.
 stage only. Select this option if you intend to list the add-on publicly, but it isn't ready yet.
 	- **Compatible application**: For an Atlassian Connect add-on, after you choose the product you
 are targeting and the minimum version, the **Compatible to** version is uneditable (that is, it defaults to **Any**). 
-Because Atlassian Connect add-ons use stable, forward-compatible web APIs and OnDemand versions are frequently updated, 
+Because Atlassian Connect add-ons use stable, forward-compatible web APIs and cloud versions are frequently updated, 
 the notion of a latest-compatible version is absent for Atlassian Connect add-ons. It is applicable, however, 
 to downloadable Java add-ons.
 8. Click Submit when done.
 
-You can now generate test license tokens for your add-on and install it in OnDemand instances,
-either through MyAtlassian for live OnDemand instances, or through the descriptor link of the
+You can now generate test license tokens for your add-on and install it in cloud instances,
+either through MyAtlassian for live instances, or through the descriptor link of the
 listing view for locally running instances. The next section provides more detail on how to do this.
 
 When you finish testing your add-on, developing the marketing material, or wrapping up any other
@@ -86,9 +86,9 @@ Marketplace](./selling-on-marketplace.html).
 Access tokens can be thought of as add-on licenses that you, the add-on developer, can generate and
 manage without going through the usual add-on licensing process.
 
-Access tokens let you install and test add-ons that are under development in live OnDemand
+Access tokens let you install and test add-ons that are under development in live cloud
 instances. They also let you install and use private add-ons (that is, add-ons intended for an
-organization's internal use) in OnDemand.
+organization's internal use).
 
 ### About access tokens
 To create access tokens for an add-on, you first need to create a private listing for it on the
@@ -101,11 +101,11 @@ real world, such as valid, expired, and unlicensed.
 
 While access tokens are like licenses, a few restrictions apply to access tokens that differentiate
 them from licenses. Notably, there can only be ten tokens per add-on. Also, a token is bound to a
-particular add-on and OnDemand instance. After a token is applied to an Atlassian application
+particular add-on and cloud instance. After a token is applied to an Atlassian application
 instance, it is permanently associated with that instance. You cannot use it on another instance.
 
 Deleting a token invalidates it (and allows you to create another license, if you have reached the
-maximum). If an add-on uses a deleted token in an OnDemand instance, the add-on is then treated as
+maximum). If an add-on uses a deleted token in an cloud instance, the add-on is then treated as
 unlicensed.
 
 You can create a token from the add-on's private listing on the Marketplace or, if you've already
@@ -121,11 +121,11 @@ the listing. To do so, follow these steps:
 3. Click on the name of the add-on.
 4. Click on the **Private Listings** tab.
 5. Scroll down to the listing information section of the page and click the **Create a token** button.
-Keep in mind that this button appears only in the manage page for OnDemand add-ons. If you do not
+Keep in mind that this button appears only in the manage page for cloud-hosted add-ons. If you do not
 see the button on the manage page for your add-on, make sure you have a properly configured listing.
 
 The new token should appear in the list of tokens. From there, you can either apply the token
-manually to an add-on (if it's already installed in OnDemand) or use the link for the token to
+manually to an add-on (if it's already installed) or use the link for the token to
 install the add-on and apply the token at one time (as described next).
 
 The link to the token in the Marketplace (shown in the following screenshot) includes the
@@ -142,7 +142,7 @@ After generating the token, you can use the token URL to install the add-on and 
 follows:
 
 1. In the Marketplace listing for the add-on, copy the link for the token you generated.
-2. Log into the OnDemand instance into which you want to install the add-on.
+2. Log into the cloud instance into which you want to install the add-on.
 3. Go to the Manage add-ons page in the administration console.
 4. Click the Settings link at the bottom of the page, and enable private listing by making sure the
 checkbox is enabled.
@@ -163,7 +163,7 @@ the user interface, since the token is the mechanism that serves this function f
 
 ###Applying a token from the administration console
 As an alternative to generating a token from the Marketplace listing, you can generate it directly
-from the administration pages of your OnDemand instance. This would be necessary if you've already
+from the administration pages of your cloud instance. This would be necessary if you've already
 installed the add-on, and want to apply a token for it directly from the Manage add-ons page.
 
 To do so:

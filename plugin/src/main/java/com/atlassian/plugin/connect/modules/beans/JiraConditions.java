@@ -16,7 +16,6 @@ public class JiraConditions extends PageConditions
     public static final String CONDITION_LIST = getConditionListAsMarkdown(getConditionMap());
 
     public static final String CAN_ATTACH_FILE_TO_ISSUE = "can_attach_file_to_issue";
-    public static final String CAN_ATTACH_SCREENSHOT_TO_ISSUE = "can_attach_screenshot_to_issue";
     public static final String CAN_MANAGE_ATTACHMENTS = "can_manage_attachments";
     public static final String FEATURE_FLAG = "feature_flag";
     public static final String HAS_ISSUE_PERMISSION = "has_issue_permission";
@@ -39,6 +38,7 @@ public class JiraConditions extends PageConditions
     public static final String USER_IS_THE_LOGGED_IN_USER = "user_is_the_logged_in_user";
     public static final String VOTING_ENABLED = "voting_enabled";
     public static final String WATCHING_ENABLED = "watching_enabled";
+
 
     public JiraConditions()
     {
@@ -63,7 +63,6 @@ public class JiraConditions extends PageConditions
 
         // issue conditions
         conditionMap.put(CAN_ATTACH_FILE_TO_ISSUE, com.atlassian.jira.plugin.webfragment.conditions.CanAttachFileToIssueCondition.class);
-        conditionMap.put(CAN_ATTACH_SCREENSHOT_TO_ISSUE, com.atlassian.jira.plugin.webfragment.conditions.CanAttachScreenshotToIssueCondition.class);
         conditionMap.put(CAN_MANAGE_ATTACHMENTS, com.atlassian.jira.plugin.webfragment.conditions.CanManageAttachmentsCondition.class);
         conditionMap.put(HAS_ISSUE_PERMISSION, com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition.class);
         conditionMap.put(HAS_PROJECT_PERMISSION, com.atlassian.jira.plugin.webfragment.conditions.HasProjectPermissionCondition.class);
@@ -75,7 +74,7 @@ public class JiraConditions extends PageConditions
         conditionMap.put(IS_ISSUE_UNRESOLVED, com.atlassian.jira.plugin.webfragment.conditions.IsIssueUnresolvedCondition.class);
         conditionMap.put(IS_SUB_TASK, com.atlassian.jira.plugin.webfragment.conditions.IsSubTaskCondition.class);
         conditionMap.put(IS_WATCHING_ISSUE, com.atlassian.jira.plugin.webfragment.conditions.IsWatchingIssueCondition.class);
-        
+
         return conditionMap;
     }
 }

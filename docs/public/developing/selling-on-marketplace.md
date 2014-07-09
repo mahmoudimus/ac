@@ -1,10 +1,10 @@
 # Selling on the Atlassian Marketplace
 
-[Installing in OnDemand](./installing-in-ondemand.html) outlines how to install and test your add-on
-into your OnDemand instance  using a Private Listing on the Marketplace.
+[Installing in the cloud](./cloud-installation.html) outlines how to install and test your add-on
+into your cloud instance  using a private listing on the Marketplace.
 
 To sell your Atlassian Connect add-on on the [Atlassian Marketplace](https://marketplace.atlassian.com/)
-you must make that listing public. A publicly listed add-on is available to any OnDemand customer,
+you must make that listing public. A publicly listed add-on is available to any cloud customer,
 whether the add-on is free or paid via Atlassian.
 
 With the listing already in place, to make the add-on public you usually only need to switch the
@@ -22,10 +22,10 @@ on the Marketplace.
 information on the Marketplace.
 
 ## How customers purchase Atlassian Connect add-ons
-The OnDemand try and buy flow for Atlassian Connect add-ons is similar to that of traditional
-downloadable add-ons, but with a few differences. These include:
+The cloud product try and buy flow for Atlassian Connect add-ons is similar to that of traditional
+server add-ons, but with a few differences. These include:
 
-- OnDemand customers can subscribe to your Connect add-on. After a 30-day trial period, the customer
+- Cloud customers can subscribe to your Connect add-on. After a 30-day trial period, the customer
 will begin paying the subscription fee that you set.
 - Atlassian Connect add-on trials automatically roll into a subscription, and then roll from one
 month into another unless cancelled.

@@ -1,6 +1,6 @@
 # Authentication
 
-## Getting Started
+## Getting started
 
 The purpose of this section is to describe how an add-on can authenticate with Connect when making API calls 
 to Atlassian products or exposing endpoints called by an Atlassian product. Atlassian Connect uses a technology called [JWT (JSON Web Token)](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token‎) to authenticate add-ons. Basically a security 
@@ -15,12 +15,12 @@ Here is how your add-on can leverage Connect's authentication feature:
  
 1. You declare that the add-on uses JWT as the authentication mechanism in the add-on descriptor.
 2. You implement an installation callback endpoint, and add a reference to it in the add-on descriptor. 
- * When an administrator installs the add-on on OnDemand, Connect initiates an "installation handshake": it invokes the endpoint, 
+ * When an administrator installs the add-on in an Atlassian cloud instance, Connect initiates an "installation handshake": it invokes the endpoint, 
  passing a security context. You must then store this security context for future use.
  * The security contexts contains, among other things, a key identifying the add-on and a shared secret (used to create and validate JWT tokens).
 3. You then use the security context to validate incoming requests (e.g. Webhooks), and sign outgoing requests (e.g. REST API calls to JIRA).
  
-### Installation Handshake
+### Installation handshake
 
 The installation handshake is a way for the Atlassian application and the add-on to exchange keys stored on both sides for future API calls.
 
@@ -38,7 +38,7 @@ Atlassian\nProduct->Browser: Confirmation\npage
 Browser->Administrator: Page\nrendered
 </div>
 
-### Making a Service Call
+### Making a service call
 
 When an add-on calls an API exposed by an Atlassian product, it must add a valid JWT token to the request, 
 created using the security context provided during the installation handshake.
@@ -54,7 +54,7 @@ Atlassian\nProduct->Atlassian\nProduct: Process Request
 Atlassian\nProduct->Add_on: Response
 </div>
 
-### Exposing a Service
+### Exposing a service
 
 When an Atlassian product calls an API exposed by the add-on, it is the add-on's responsibility to validate 
 the JWT token, using the security context provided during the installation handshake.
@@ -70,7 +70,7 @@ Add_on->Atlassian\nProduct: Response
 </div>
 
 
-## Authentication How To
+## Authentication how-to
 
 ### Creating the add-on descriptor
 
@@ -97,7 +97,7 @@ For example:
 
 
 <a name='installation'></a>
-### Installation Handshake
+### Installation handshake
 
 When the add-on is installed, the Atlassian application invokes a callback endpoint exposed by the add-on. 
 The request contains a payload with important tenant information that you will need to store in your add-on in 
@@ -170,7 +170,7 @@ order to sign and verify future requests. The payload contains the following att
 	<p>
 Please make sure you read the [Understanding JWT](understanding-jwt.html) section if you are unfamiliar with JWT.</p></div>
 
-### Making a Service Call
+### Making a service Call
 
 The JWT protocol describes the format and verification of individual JWT tokens. However it does not prescribe a method
 of transportation. Connect transports JWT tokens as query-string parameters and as authorization headers. 
@@ -191,7 +191,7 @@ Headers example:
 For more details on how to create a jwt token, see [Creating a JWT Token](understanding-jwt.html#create).
 
 <a name='exposing'></a>
-### Exposing a Service
+### Exposing a service
 
 All incoming requests (requests coming from an Atlassian product) should check for the presence of the `jwt` 
 query string parameter, which needs to be decoded and verified. In particular, the verification should:

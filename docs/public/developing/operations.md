@@ -1,7 +1,7 @@
-# Add-ons Operations Guide
+# Add-ons operations guide
 
 When you release an add-on publicly on the [Atlassian Marketplace](https://marketplace.atlassian.com), 
-administrators of an Atlassian OnDemand application can install it in their instance, meaning they rely on your service to 
+administrators of a cloud application can install it in their instance, meaning they rely on your service to 
 deliver content to their users. Therefore, ensuring consistent operation of your add-on is critical. 
 You can avoid many potential service disruptions by planning carefully.
 There are some important considerations to take into account:
@@ -126,7 +126,7 @@ The following table lists some examples of indicators you could track:
 </div>
 
 <a name="performance"></a>
-##2. Managing the Performance of your Add-ons
+##2. Managing your add-on performance
 <a name="scalability"></a>
 ### Scalability
 
@@ -201,7 +201,7 @@ You should run performance tests for your add-ons:
 - In isolation, using mock implementations of Atlassian products REST APIs. This helps identify any issues (memory leaks, etc.) 
 limited to your implementation.
 - Using a real-life deployment environment for end-to-end performance tests. For this we recommend you use a performance testing 
-environment that is as close as possible to the production environment. You should set up instances of Atlassian OnDemand products 
+environment that is as close as possible to the production environment. You should set up cloud instances of Atlassian products 
 for this purpose. 
 
 There are a number of tools to help you design and run performance tests for your add-ons. Examples of 
@@ -215,9 +215,9 @@ thresholds are met. At a minimum, you should monitor utilization of resources by
 When using a cloud provider, you can look at strategies to automatically scale the resources allocated to your add-ons based on load.
 
 <a name="maintenance"></a>
-## 3. Maintaining your Add-ons
+## 3. Maintaining your add-ons
 
-### Versioning and Upgrading
+### Versioning and upgrading
 
 We automatically detect updates to add-ons with a polling service. This way, you can easily release fixes and 
 new features without having to manually create new version entries in the Marketplace. For more information on how to upgrade 
@@ -232,15 +232,15 @@ your add-ons and manage versions, you should read the [Upgrading your Add-on](up
 			is not broken when releasing new versions.</p>
 </div>
 
-### Maintenance Windows
+### Maintenance windows
 Since your add-on and Atlassian products are decoupled, you can decide when to upgrade your add-ons independently from the 
-[Atlassian OnDemand Maintenance Windows](https://confluence.atlassian.com/display/AOD/Atlassian+OnDemand+maintenance+windows).
+[maintenance windows](https://confluence.atlassian.com/x/aJALE).
 Ideally, your solution should be architected in a way that ensures maintenance is transparent to end-users. If this is not possible, 
 make sure you publish your maintenance windows online, and provide a meaningful error message to users trying to access your add-ons 
 at this time.
 
 <a name="bcp"></a>
-## 4. Addressing Business Continuity Planning
+## 4. Addressing business continuity planning
 You should address the following aspects when looking at potential major outages:
 
 - Data backups: you should have a data backup strategy that ensures your RPO (Recovery Point Objective) is met. For example, 
@@ -254,7 +254,7 @@ Note that using an world-class cloud provider minimizes the risk of a major outa
 For example when using Heroku with Heroku Postgres, the platform automatically backs up deployed applications and data, and 
 automatically brings the application back online in case of a data center outage, with minimum data loss.
 <a name="support"></a>
-## 5. Providing Support
+## 5. Providing support
 
 First, check out the [Atlassian Support Offerings](https://confluence.atlassian.com/display/Support/Atlassian+Support+Offerings). 
 We are well known for our great support! Here is what we recommend you focus on: 
