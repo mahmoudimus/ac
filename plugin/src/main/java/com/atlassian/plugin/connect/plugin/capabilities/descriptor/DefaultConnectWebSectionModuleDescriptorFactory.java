@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.module.websection.ProductSpecificWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;
@@ -33,15 +34,16 @@ public class DefaultConnectWebSectionModuleDescriptorFactory implements ConnectW
     }
 
     @Override
-    public WebSectionModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebSectionModuleBean bean)
+    public WebSectionModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, WebSectionModuleBean bean)
     {
         Element webSectionElement = new DOMElement("web-section");
 
-        String webSectionKey = bean.getKey(addon);
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
+        String webSectionKey = bean.getKey(connectAddonBean);
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
 
         webSectionElement.addAttribute("key", webSectionKey);
-        webSectionElement.addAttribute("location", bean.getLocation());
+        webSectionElement.addAttribute("location", moduleProviderContext.getMenuHelper().processLocation(bean.getLocation()));
         webSectionElement.addAttribute("weight", Integer.toString(bean.getWeight()));
         webSectionElement.addAttribute("i18n-name-key", i18nKeyOrName);
         webSectionElement.addAttribute("name", bean.getDisplayName());
@@ -59,7 +61,7 @@ public class DefaultConnectWebSectionModuleDescriptorFactory implements ConnectW
 
         if (!bean.getConditions().isEmpty())
         {
-            webSectionElement.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
+            webSectionElement.add(conditionModuleFragmentFactory.createFragment(connectAddonBean.getKey(), bean.getConditions()));
         }
 
         if (log.isDebugEnabled())

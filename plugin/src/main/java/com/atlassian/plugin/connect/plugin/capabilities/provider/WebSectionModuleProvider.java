@@ -25,23 +25,25 @@ public class WebSectionModuleProvider implements ConnectModuleProvider<WebSectio
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<WebSectionModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext,
+                                                 Plugin theConnectPlugin, String jsonFieldName, List<WebSectionModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
         for (WebSectionModuleBean bean : beans)
         {
-            descriptors.addAll(beanToDescriptors(addon, theConnectPlugin, bean));
+            descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
 
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectAddonBean addon,Plugin theConnectPlugin, WebSectionModuleBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectModuleProviderContext moduleProviderContext,
+                                                                     Plugin theConnectPlugin, WebSectionModuleBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        descriptors.add(webSectionFactory.createModuleDescriptor(addon, theConnectPlugin, bean));
+        descriptors.add(webSectionFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
 
         return descriptors;
     }
