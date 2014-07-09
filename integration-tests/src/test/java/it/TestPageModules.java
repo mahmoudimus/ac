@@ -228,7 +228,9 @@ public class TestPageModules extends ConnectWebDriverTestBase
             loginAsBetty();
             final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
-            final ConnectAddOnTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", ConnectAddOnTestPage.class, anotherPlugin.getAddon().getKey());
+            upm.clickConfigurePluginButton(anotherPlugin.getAddon().getKey(), "page");
+            final ConnectAddOnTestPage remotePluginTestPage = product.getPageBinder().bind(ConnectAddOnTestPage.class, "page", anotherPlugin.getAddon().getKey(), true);
+
             assertTrue(remotePluginTestPage.isLoaded());
         }
         finally

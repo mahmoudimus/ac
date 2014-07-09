@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.ProductInstance;
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
+import com.atlassian.webdriver.utils.element.ElementConditions;
+import com.atlassian.webdriver.utils.element.WebDriverPoller;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import javax.inject.Inject;
 
 public class PluginManagerPage implements Page
 {
@@ -34,10 +35,8 @@ public class PluginManagerPage implements Page
         if (driver.elementExists(By.id("upm-manage-type")))
         {
             driver.navigate().to(productInstance.getBaseUrl() + "/plugins/servlet/upm/manage/user-installed#manage");
-            driver.waitUntilElementIsVisible(By.id("upm-manage-user-installed-plugins"));
-            
-            //added this to stop flakiness due to not waiting for the plugins list to be loaded
-            driver.waitUntilElementIsVisible(By.className("upm-plugin-list-container"));
+            WebDriverPoller poller = new WebDriverPoller(driver);
+            poller.waitUntil(ElementConditions.isVisible(By.id("upm-manage-user-installed-plugins")), 60);
         }
         else
         {
@@ -47,7 +46,7 @@ public class PluginManagerPage implements Page
         }
     }
 
-    public <P extends Object> P configurePlugin(String pluginKeyAndName, String pageKey, Class<P> nextPage, String extraPrefix)
+    public void clickConfigurePluginButton(String pluginKeyAndName, String pageKey)
     {
         for (WebElement element : driver.findElements(By.className("upm-plugin-name")))
         {
@@ -61,15 +60,10 @@ public class PluginManagerPage implements Page
                         pluginKeyAndName + "/" + pageKey))
                 {
                     configureLink.click();
-                    return pageBinder.bind(nextPage, pageKey, extraPrefix);
+                    return;
                 }
             }
         }
         throw new IllegalStateException("Didn't find plugin");
-    }
-    
-    public <P extends Object> P configurePlugin(String pluginKeyAndName, String pageKey, Class<P> nextPage)
-    {
-        return configurePlugin(pluginKeyAndName,pageKey,nextPage,"");
     }
 }

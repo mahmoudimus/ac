@@ -57,9 +57,10 @@ public class ConnectPage
 
     public boolean isLoaded()
     {
-        return driver.elementExists(By.cssSelector("#ap-" + addOnKey + pageElementKey + " .ap-loading.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-" + addOnKey + pageElementKey + " .ap-load-timeout.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-" + addOnKey + pageElementKey + " .ap-load-error.ap-status.hidden"));
+        final String idSuffix = AddonTestUtils.escapedAddonAndModuleKey(addOnKey, pageElementKey);
+        return driver.elementExists(By.cssSelector("#ap-" + idSuffix + " .ap-loading.ap-status.hidden")) &&
+                driver.elementExists(By.cssSelector("#ap-" + idSuffix + " .ap-load-timeout.ap-status.hidden")) &&
+                driver.elementExists(By.cssSelector("#ap-" + idSuffix + " .ap-load-error.ap-status.hidden"));
     }
 
     public Map<String, String> getIframeQueryParams()
