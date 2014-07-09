@@ -49,7 +49,7 @@ public class JiraConditions extends PageConditions
     {
         Map<String, Class<? extends Condition>> conditionMap = PageConditions.getConditionMap();
 
-        conditionMap.put(FEATURE_FLAG, com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class);
+//        conditionMap.put(FEATURE_FLAG, com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class);
         conditionMap.put(HAS_SELECTED_PROJECT, com.atlassian.jira.plugin.webfragment.conditions.HasSelectedProjectCondition.class);
         conditionMap.put(IS_ADMIN_MODE, com.atlassian.jira.plugin.webfragment.conditions.IsAdminModeCondition.class);
         conditionMap.put(LINKING_ENABLED, com.atlassian.jira.plugin.webfragment.conditions.LinkingEnabledCondition.class);

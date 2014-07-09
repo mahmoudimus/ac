@@ -73,7 +73,7 @@ public class ConfluenceConditions extends PageConditions
         conditionMap.put(EMAIL_ADDRESS_PUBLIC, com.atlassian.confluence.plugin.descriptor.web.conditions.EmailAddressPublicCondition.class);
         conditionMap.put(FAVOURITE_PAGE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouritePageCondition.class);
         conditionMap.put(FAVOURITE_SPACE, com.atlassian.confluence.plugin.descriptor.web.conditions.FavouriteSpaceCondition.class);
-        conditionMap.put(FEATURE_FLAG, com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class);
+//        conditionMap.put(FEATURE_FLAG, com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class);
         conditionMap.put(FOLLOWING_TARGET_USER, com.atlassian.confluence.plugin.descriptor.web.conditions.user.FollowingTargetUserCondition.class);
         conditionMap.put(HAS_ATTACHMENT, com.atlassian.confluence.plugin.descriptor.web.conditions.HasAttachmentCondition.class);
         conditionMap.put(HAS_BLOG_POST, com.atlassian.confluence.plugin.descriptor.web.conditions.HasBlogPostCondition.class);
