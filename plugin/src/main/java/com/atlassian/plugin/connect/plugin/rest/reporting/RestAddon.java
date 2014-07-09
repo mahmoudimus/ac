@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.rest.reporting;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class XmlAddon
+public class RestAddon
 {
     @JsonProperty
     private final String key;
@@ -13,9 +13,9 @@ public class XmlAddon
     @JsonProperty
     private final String version;
 
-    public XmlAddon(@JsonProperty("key") final String key,
-                    @JsonProperty("state") final String state,
-                    @JsonProperty("version") final String version)
+    public RestAddon(@JsonProperty("key") final String key,
+                     @JsonProperty("state") final String state,
+                     @JsonProperty("version") final String version)
     {
         this.key = key;
         this.state = state;
