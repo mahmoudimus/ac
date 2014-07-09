@@ -7,9 +7,12 @@ import java.util.Map;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 public class DefaultConnectModuleProviderContext implements ConnectModuleProviderContext
@@ -38,14 +41,18 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
     private class DefaultConnectMenuHelper implements ConnectMenuHelper
     {
 
-        private Supplier<Map<String, String>> webItemKeySupplier = Suppliers.memoize(new Supplier<Map<String, String>>()
+        private Supplier<Map<String, String>> keyMapSupplier = Suppliers.memoize(new Supplier<Map<String, String>>()
         {
             @Override
             public Map<String, String> get()
             {
-                return createKeyToQualifiedKeyMap(getConnectAddonBean().getModules().getWebItems());
+                return ImmutableMap.<String, String>builder()
+                        .putAll(createKeyToQualifiedKeyMap(getConnectAddonBean().getModules().getWebItems()))
+                        .putAll(createKeyToQualifiedKeyMap(getConnectAddonBean().getModules().getWebSections()))
+                        .build();
             }
         });
+
 
         private <T extends RequiredKeyBean> Map<String, String> createKeyToQualifiedKeyMap(List<T> beans)
         {
@@ -73,10 +80,30 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
         @Override
         public String processLocation(String location)
         {
-            // TODO: include web section keys in same map
-            final Map<String, String> map = webItemKeySupplier.get();
+            final Iterable<String> segments = Splitter.on('/').split(location);
 
-            // TODO: logic for splitting on '/'
+            return Iterables.isEmpty(segments) ? processSegment(location) :
+                processSegments(segments);
+        }
+
+        private String processSegments(Iterable<String> segments)
+        {
+            final Iterable<String> processedSegments = Iterables.transform(segments, new Function<String, String>()
+            {
+                @Override
+                public String apply(@Nullable String segment)
+                {
+                    return processSegment(segment);
+                }
+            });
+
+            return Joiner.on('/').join(processedSegments);
+        }
+
+        private String processSegment(String location)
+        {
+            final Map<String, String> map = keyMapSupplier.get();
+
             final String qualifiedLocation = map.get(location);
             return qualifiedLocation != null ? qualifiedLocation : location;
         }
