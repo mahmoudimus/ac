@@ -4,6 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.google.common.collect.Lists;
@@ -23,13 +24,15 @@ public class AddonReporter
     private final PluginAccessor pluginAccessor;
     private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
     private final ConnectAddonRegistry addonRegistry;
+    private final LicenseRetriever licenseRetriever;
 
     public AddonReporter(final PluginAccessor pluginAccessor, final LegacyAddOnIdentifierService legacyAddOnIdentifierService,
-                         ConnectAddonRegistry addonRegistry)
+                         ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever)
     {
         this.pluginAccessor = pluginAccessor;
         this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;
         this.addonRegistry = addonRegistry;
+        this.licenseRetriever = licenseRetriever;
     }
 
     @GET
@@ -70,8 +73,9 @@ public class AddonReporter
                     String key = plugin.getKey();
                     String version = plugin.getPluginInformation().getVersion();
                     String state = plugin.getPluginState().name();
+                    String license = licenseRetriever.getLicenseStatus(key).value();
 
-                    result.add(new RestAddon(key, state, version));
+                    result.add(new RestAddon(key, state, version, license));
                 }
             }
         }
@@ -83,8 +87,9 @@ public class AddonReporter
                 String key = addonBean.getKey();
                 String version = addonBean.getVersion();
                 String state = addonRegistry.getRestartState(key).name();
+                String license = licenseRetriever.getLicenseStatus(key).value();
 
-                result.add(new RestAddon(key, state, version));
+                result.add(new RestAddon(key, state, version, license));
             }
         }
 
