@@ -68,9 +68,9 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
             return Maps.transformValues(map, new Function<T, String>()
             {
                 @Override
-                public String apply(@Nullable T input)
+                public String apply(@Nullable T bean)
                 {
-                    return addonBean.getKey();
+                    return bean.getKey(addonBean);
                 }
             });
         }

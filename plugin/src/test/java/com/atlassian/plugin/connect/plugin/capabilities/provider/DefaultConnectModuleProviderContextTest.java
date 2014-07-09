@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,13 +14,15 @@ import static org.junit.Assert.*;
 public class DefaultConnectModuleProviderContextTest
 {
 
-    private static final String TOOLS_MENU = "tools-menu";
+    private static final String ADDON_KEY = "DasAddonz";
+	private static final String TOOLS_MENU = "tools-menu";
     private ModuleLocationQualifier locationQualifier;
 
     @Before
     public void init()
     {
         ConnectAddonBean addon = ConnectAddonBean.newConnectAddonBean()
+        		.withKey(ADDON_KEY)
                 .withModules("webItems",
                         WebItemModuleBean.newWebItemBean()
                                 .withKey(TOOLS_MENU)
@@ -49,6 +53,7 @@ public class DefaultConnectModuleProviderContextTest
     @Test
     public void returnsQualifiedKeyWhenMatchesWebItemKeyExactly()
     {
-        assertThat(locationQualifier.processLocation(TOOLS_MENU), is(TOOLS_MENU));
+        assertThat(locationQualifier.processLocation(TOOLS_MENU), is(ADDON_KEY + 
+        		ModuleKeyUtils.ADDON_MODULE_SEPARATOR + TOOLS_MENU));
     }
 }
