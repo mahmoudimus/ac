@@ -79,15 +79,8 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
         @Override
         public String processLocation(String location)
         {
-            final Iterable<String> segments = Splitter.on('/').split(location);
-
-            return Iterables.isEmpty(segments) ? processSegment(location) :
-                    processSegments(segments);
-        }
-
-        private String processSegments(Iterable<String> segments)
-        {
-            final Iterable<String> processedSegments = Iterables.transform(segments, new Function<String, String>()
+            final Iterable<String> processedSegments = Iterables.transform(Splitter.on('/').split(location),
+                    new Function<String, String>()
             {
                 @Override
                 public String apply(@Nullable String segment)
