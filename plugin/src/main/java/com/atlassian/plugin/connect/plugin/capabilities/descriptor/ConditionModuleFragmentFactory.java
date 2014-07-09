@@ -14,6 +14,7 @@ import com.atlassian.plugin.web.Condition;
 
 import com.google.common.base.Strings;
 
+import org.apache.log4j.Logger;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ import static com.google.common.collect.Maps.newHashMap;
 @Component
 public class ConditionModuleFragmentFactory
 {
+    private static final Logger log = Logger.getLogger(ConditionModuleFragmentFactory.class);
     private static final String TYPE_KEY = "type";
 
     private final ProductAccessor productAccessor;
@@ -130,6 +132,10 @@ public class ConditionModuleFragmentFactory
             element.addAttribute("invert", Boolean.toString(bean.isInvert()));
 
             paramsModuleFragmentFactory.addParamsToElement(element, params);
+        }
+        else
+        {
+            log.warn("Condition with name " + bean.getCondition() + " could not be found");
         }
 
         return element;

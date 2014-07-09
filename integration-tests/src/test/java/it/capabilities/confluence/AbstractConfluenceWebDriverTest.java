@@ -43,9 +43,6 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
     public static class TestUser
     {
         public static User ADMIN = User.ADMIN;
-        public static User BETTY = new User("betty", "betty", "Betty Admin", "betty@example.com");
-        public static User BARNEY = new User("barney", "barney", "Barney User", "barney@example.com");
-        public static User FRED = new User("fred", "fred", "Fred Sysadmin", "fred@example.com");
     }
 
     @Rule
