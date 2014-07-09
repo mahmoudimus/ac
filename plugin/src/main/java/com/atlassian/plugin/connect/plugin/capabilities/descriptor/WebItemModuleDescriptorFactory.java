@@ -77,7 +77,7 @@ public class WebItemModuleDescriptorFactory
         String i18nKey = bean.needsEscaping() ? StringEscapeUtils.escapeHtml(bean.getName().getI18n()) : bean.getName().getI18n();
 
         webItemElement.addAttribute("key", webItemKey);
-        webItemElement.addAttribute("section", moduleProviderContext.getMenuHelper().processLocation(bean.getLocation()));
+        webItemElement.addAttribute("section", moduleProviderContext.getLocationQualifier().processLocation(bean.getLocation()));
         webItemElement.addAttribute("weight", Integer.toString(bean.getWeight()));
 
         webItemElement.addElement("label")

@@ -18,12 +18,12 @@ import com.google.common.collect.Maps;
 public class DefaultConnectModuleProviderContext implements ConnectModuleProviderContext
 {
     private final ConnectAddonBean addonBean;
-    private final DefaultConnectMenuHelper menuHelper;
+    private final DefaultModuleLocationQualifier menuHelper;
 
     public DefaultConnectModuleProviderContext(ConnectAddonBean addonBean)
     {
         this.addonBean = addonBean;
-        this.menuHelper = new DefaultConnectMenuHelper();
+        this.menuHelper = new DefaultModuleLocationQualifier();
     }
 
     @Override
@@ -33,12 +33,12 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
     }
 
     @Override
-    public ConnectMenuHelper getMenuHelper()
+    public ModuleLocationQualifier getLocationQualifier()
     {
         return menuHelper;
     }
 
-    private class DefaultConnectMenuHelper implements ConnectMenuHelper
+    private class DefaultModuleLocationQualifier implements ModuleLocationQualifier
     {
 
         private Supplier<Map<String, String>> keyMapSupplier = Suppliers.memoize(new Supplier<Map<String, String>>()
@@ -56,15 +56,14 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
 
         private <T extends RequiredKeyBean> Map<String, String> createKeyToQualifiedKeyMap(List<T> beans)
         {
-            final ImmutableMap<String, T> map =
-                    Maps.uniqueIndex(beans, new Function<T, String>()
-                    {
-                        @Override
-                        public String apply(@Nullable T bean)
-                        {
-                            return bean.getRawKey();
-                        }
-                    });
+            final ImmutableMap<String, T> map = Maps.uniqueIndex(beans, new Function<T, String>()
+            {
+                @Override
+                public String apply(@Nullable T bean)
+                {
+                    return bean.getRawKey();
+                }
+            });
 
             return Maps.transformValues(map, new Function<T, String>()
             {
@@ -83,7 +82,7 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
             final Iterable<String> segments = Splitter.on('/').split(location);
 
             return Iterables.isEmpty(segments) ? processSegment(location) :
-                processSegments(segments);
+                    processSegments(segments);
         }
 
         private String processSegments(Iterable<String> segments)

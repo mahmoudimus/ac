@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-//TODO: rename to ModuleLocationQualifier or something
-public interface ConnectMenuHelper
+public interface ModuleLocationQualifier
 {
     String processLocation(String location);
 }

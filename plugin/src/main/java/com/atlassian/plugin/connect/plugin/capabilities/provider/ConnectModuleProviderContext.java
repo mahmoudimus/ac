@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 public interface ConnectModuleProviderContext
 {
     ConnectAddonBean getConnectAddonBean();
-    ConnectMenuHelper getMenuHelper();
+
+    ModuleLocationQualifier getLocationQualifier();
 }
 
