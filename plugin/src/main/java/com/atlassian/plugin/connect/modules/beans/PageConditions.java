@@ -27,7 +27,7 @@ public class PageConditions extends ConditionsProvider
     {
         Map<String, Class<? extends Condition>> conditionMap = newTreeMap();
 
-//        conditionMap.put(FEATURE_FLAG, DarkFeatureEnabledCondition.class);
+        conditionMap.put(FEATURE_FLAG, DarkFeatureEnabledCondition.class);
         conditionMap.put(USER_IS_SYSADMIN, UserIsSysAdminCondition.class);
         conditionMap.put(USER_IS_LOGGED_IN, UserIsLoggedInCondition.class);
         conditionMap.put(USER_IS_ADMIN, UserIsAdminCondition.class);
