@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.Filenames;
 import org.dom4j.Document;
+import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
