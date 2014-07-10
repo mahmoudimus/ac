@@ -95,15 +95,14 @@ public class StaticResourcesFilter implements Filter
         final String allDebugJsPath = "all-debug.js";
         if (allDebugJsPath.equals(localPath))
         {
-            final String moduleDir = "js";
+            final String moduleDir = "js/iframe/";
             // note: any changes here must also be made in plugin/pom.xml!
             final String[] modules = {
-                    "/core/all-debug.js",
-                    "/iframe/plugin/confluence.js",
-                    "/iframe/plugin/jira.js",
+                    "../core/all-debug.js",
+                    "plugin/jira.js",
+                    "plugin/confluence.js"
             };
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
             for (String module : modules)
             {
                 bout.write(("/* " + module + " */\n").getBytes());
