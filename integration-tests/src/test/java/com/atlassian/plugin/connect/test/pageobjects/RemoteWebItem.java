@@ -62,7 +62,7 @@ public class RemoteWebItem
 
     private PageElement findWebItem()
     {
-        By by = null;
+        By by;
         switch (mode) {
             case ID:
             default:
@@ -122,12 +122,8 @@ public class RemoteWebItem
 
     public boolean isVisible()
     {
-        if(null == webItem)
-        {
-            return false;
-        }
+        return webItem != null && webItem.isVisible();
 
-        return webItem.isVisible();
     }
 
     public String getFromQueryString(final String key)
