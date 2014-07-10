@@ -220,6 +220,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
                         .withUrl("/page")
                         .build())
                 .addRoute("/page", ConnectAppServlets.helloWorldServlet())
+                .addScope(ScopeName.READ)
                 .start();
 
         try
