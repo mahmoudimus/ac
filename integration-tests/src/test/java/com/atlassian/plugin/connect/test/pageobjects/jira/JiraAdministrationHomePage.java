@@ -16,7 +16,11 @@ public class JiraAdministrationHomePage extends AbstractJiraPage
     private static final String REMOTE_PLUGIN_ADMIN_KEY_SERVLET = "remote-plugin-admin";
     private static final String REMOTE_PLUGIN_ADMIN_KEY_WEBITEM = REMOTE_PLUGIN_ADMIN_KEY_SERVLET;
 
+    @SuppressWarnings("FieldCanBeLocal")
+    @XmlDescriptor
+    @Deprecated // "Remove with XML"
     private final String extraPrefix;
+
     private final String addOnKey;
 
     public JiraAdministrationHomePage()
