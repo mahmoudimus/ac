@@ -55,8 +55,8 @@ public class TestMessage extends ConnectWebDriverTestBase
     public void testCreateInfoMessage() throws Exception
     {
         loginAsAdmin();
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE), ADDON_GENERALPAGE_NAME);
-        remotePage.clickRemotePluginLink();
+        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
+        remotePage.clickAddOnLink();
         RemoteMessageGeneralPage remoteMessagePage = product.getPageBinder().bind(RemoteMessageGeneralPage.class, AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
         remoteMessagePage.openInfoMessage();
         assertEquals(remoteMessagePage.getMessageTitleText(), "plain text title");
