@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.registry;
 
-import java.util.List;
-import java.util.Set;
-
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -16,7 +13,6 @@ import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
  */
 public interface ConnectAddonRegistry
 {
-
     void removeAll(String pluginKey);
 
     void storeAddonSettings(String pluginKey, AddonSettings settings);
