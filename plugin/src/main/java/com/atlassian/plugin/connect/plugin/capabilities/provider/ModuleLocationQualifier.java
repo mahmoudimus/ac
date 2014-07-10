@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 /**
  * A utility that qualifies any locations (and location segments) that match keys in web items or web sections.
  *
- * The P2 system requires all module keys to be unique (at least within a page). To ensure this, connect qualifies
+ * Connect requires all module keys to be unique (at least within a page). To ensure this, connect qualifies
  * module keys with the addon key as a prefix.
  *
  * However, the keys of web items and web sections can be used within location fields of web items and sections.

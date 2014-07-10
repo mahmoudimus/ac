@@ -10,6 +10,7 @@ import com.atlassian.plugin.Plugin;
  */
 public interface ConnectModuleProvider<T>
 {
+    // TODO(ACDEV-1344): pull plugin and jsonFieldName into context
     List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin,
                                           String jsonFieldName, List<T> beans);
 }

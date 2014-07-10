@@ -3,10 +3,16 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 
 /**
- * A context for ConnectModuleProvider's
+ * A context for ConnectModuleProviders.
+ *
+ * Provides data and helpers that are shared across modules for a single
+ * addon bean
  */
 public interface ConnectModuleProviderContext
 {
+    /**
+     * The connect addon that owns the module being processed
+     */
     ConnectAddonBean getConnectAddonBean();
 
     /**

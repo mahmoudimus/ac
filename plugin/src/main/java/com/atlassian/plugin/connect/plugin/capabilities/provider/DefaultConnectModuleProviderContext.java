@@ -18,12 +18,12 @@ import com.google.common.collect.Maps;
 public class DefaultConnectModuleProviderContext implements ConnectModuleProviderContext
 {
     private final ConnectAddonBean addonBean;
-    private final DefaultModuleLocationQualifier menuHelper;
+    private final DefaultModuleLocationQualifier locationQualifier;
 
     public DefaultConnectModuleProviderContext(ConnectAddonBean addonBean)
     {
         this.addonBean = addonBean;
-        this.menuHelper = new DefaultModuleLocationQualifier();
+        this.locationQualifier = new DefaultModuleLocationQualifier();
     }
 
     @Override
@@ -35,12 +35,13 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
     @Override
     public ModuleLocationQualifier getLocationQualifier()
     {
-        return menuHelper;
+        return locationQualifier;
     }
 
     private class DefaultModuleLocationQualifier implements ModuleLocationQualifier
     {
-
+        private static final char LOCATION_SEGMENT_SEPARATOR = '/';
+        
         // a map of unqualified key -> qualified key for all modules that can be referenced from the locations of other
         // modules.
         private Supplier<Map<String, String>> keyMapSupplier = Suppliers.memoize(new Supplier<Map<String, String>>()
@@ -81,7 +82,7 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
         @Override
         public String processLocation(String location)
         {
-            final Iterable<String> processedSegments = Iterables.transform(Splitter.on('/').split(location),
+            final Iterable<String> processedSegments = Iterables.transform(Splitter.on(LOCATION_SEGMENT_SEPARATOR).split(location),
                     new Function<String, String>()
             {
                 @Override
@@ -91,7 +92,7 @@ public class DefaultConnectModuleProviderContext implements ConnectModuleProvide
                 }
             });
 
-            return Joiner.on('/').join(processedSegments);
+            return Joiner.on(LOCATION_SEGMENT_SEPARATOR).join(processedSegments);
         }
 
         private String processSegment(String location)

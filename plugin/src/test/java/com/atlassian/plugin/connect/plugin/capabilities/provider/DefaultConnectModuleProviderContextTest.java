@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.ADDON_MODULE_SEPARATOR;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -74,6 +74,6 @@ public class DefaultConnectModuleProviderContextTest
 
     private String qualify(String str)
     {
-        return ADDON_KEY + ADDON_MODULE_SEPARATOR + str;
+        return ModuleKeyUtils.addonAndModuleKey(ADDON_KEY, str);
     }
 }
