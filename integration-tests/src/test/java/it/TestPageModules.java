@@ -35,12 +35,18 @@ import static org.junit.Assert.*;
 
 public class TestPageModules extends ConnectWebDriverTestBase
 {
-    private static final String GLOBALLY_VISIBLE_LOCATION = "system.top.navigation.bar";
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        final String productContextPath = product.getProductInstance().getContextPath().toLowerCase();
+        String globallyVisibleLocation = productContextPath.contains("jira")
+            ? "system.top.navigation.bar"
+            : productContextPath.contains("wiki") || productContextPath.contains("confluence")
+                ? "system.help/pages"
+                : null;
+
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addJWT()
                 .addInstallLifecycle()
@@ -50,7 +56,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
                                 .withKey("remotePluginGeneral")
                                 .withName(new I18nProperty("Remotable Plugin app1 General", null))
                                 .withUrl("/rpg")
-                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .withLocation(globallyVisibleLocation)
                                 .withIcon(newIconBean()
                                         .withUrl("/public/sandcastles.jpg")
                                         .build())
@@ -59,13 +65,13 @@ public class TestPageModules extends ConnectWebDriverTestBase
                                 .withKey("amdTest")
                                 .withName(new I18nProperty("AMD Test app1 General", null))
                                 .withUrl("/amdTest")
-                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .withLocation(globallyVisibleLocation)
                                 .build(),
                         newPageBean()
                                 .withKey("onlyBetty")
                                 .withName(new I18nProperty("Only Betty", null))
                                 .withUrl("/ob")
-                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .withLocation(globallyVisibleLocation)
                                 .withConditions(
                                         newSingleConditionBean()
                                                 .withCondition("user_is_logged_in")
@@ -78,13 +84,13 @@ public class TestPageModules extends ConnectWebDriverTestBase
                                 .withKey("encodedSpaces")
                                 .withName(new I18nProperty("Encoded Spaces", null))
                                 .withUrl("/my?bologne=O%20S%20C%20A%20R")
-                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .withLocation(globallyVisibleLocation)
                                 .build(),
                         newPageBean()
                                 .withKey("sizeToParent")
                                 .withName(new I18nProperty("Size to parent general page", null))
                                 .withUrl("/fsg")
-                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .withLocation(globallyVisibleLocation)
                                 .build())
                 .addModules("webItems",
                         newWebItemBean()
@@ -94,7 +100,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
                                 .withTarget(newWebItemTargetBean()
                                         .withType(WebItemTargetType.dialog)
                                         .build())
-                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .withLocation(globallyVisibleLocation)
                                 .build(),
                         newWebItemBean()
                                 .withKey("sizeToParentDialog")
@@ -103,7 +109,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
                                 .withTarget(newWebItemTargetBean()
                                         .withType(WebItemTargetType.dialog)
                                         .build())
-                                .withLocation(GLOBALLY_VISIBLE_LOCATION)
+                                .withLocation(globallyVisibleLocation)
                                 .build())
                 .addRoute("/rpg", ConnectAppServlets.apRequestServlet())
                 .addRoute("/amdTest", ConnectAppServlets.amdTestServlet())
