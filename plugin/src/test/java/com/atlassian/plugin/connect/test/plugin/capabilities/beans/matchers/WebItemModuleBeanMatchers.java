@@ -7,24 +7,9 @@ import org.mockito.ArgumentMatcher;
  * Matchers that operate on properties of the WebItemModuleBean class
  */
 
-public class WebItemModuleBeanMatchers extends RequiredKeyBeanMatchers
+public class WebItemModuleBeanMatchers
 {
-    public static <T extends WebItemModuleBean> ArgumentMatcher<T> hasAddonKeyValue(String expectedValue)
-    {
-        return RequiredKeyBeanMatchers.hasKeyValue(expectedValue);
-    }
-
-    public static <T extends WebItemModuleBean> ArgumentMatcher<T> hasAddonNameValue(String expectedValue)
-    {
-        return RequiredKeyBeanMatchers.hasNameValue(expectedValue);
-    }
-
-    public static <T extends WebItemModuleBean> ArgumentMatcher<T> hasAddonNameI18KeyValue(String expectedValue)
-    {
-        return RequiredKeyBeanMatchers.hasNameI18KeyValue(expectedValue);
-    }
-
-    public static <T extends WebItemModuleBean> ArgumentMatcher<T> hasUrlValue(String expectedValue)
+        public static <T extends WebItemModuleBean> ArgumentMatcher<T> hasUrlValue(String expectedValue)
     {
         return new WebItemModuleBeanParamMatcher<T>("link", expectedValue)
         {
