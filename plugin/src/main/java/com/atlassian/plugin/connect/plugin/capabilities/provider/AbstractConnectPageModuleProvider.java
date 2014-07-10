@@ -42,17 +42,18 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName,
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName,
                                                  List<ConnectPageModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
         for (ConnectPageModuleBean bean : beans)
         {
             // register a render strategy for our iframe page
             IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(addon.getKey())
-                    .module(bean.getKey(addon))
+                    .addOn(connectAddonBean.getKey())
+                    .module(bean.getKey(connectAddonBean))
                     .pageTemplate()
                     .urlTemplate(bean.getUrl())
                     .decorator(getDecorator())
@@ -61,19 +62,19 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                     .title(bean.getDisplayName())
                     .resizeToParent(true)
                     .build();
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), pageRenderStrategy);
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), pageRenderStrategy);
 
             // and an additional strategy for raw content, in case the user wants to use it as a dialog target
             IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(addon.getKey())
-                    .module(bean.getKey(addon))
+                    .addOn(connectAddonBean.getKey())
+                    .module(bean.getKey(connectAddonBean))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())
                     .conditionClasses(getConditionClasses())
                     .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .build();
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
 
             if (hasWebItem())
             {
@@ -85,7 +86,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                         .withName(bean.getName())
                         .withKey(bean.getRawKey())
                         .withContext(page)
-                        .withUrl(ConnectIFrameServlet.iFrameServletPath(addon.getKey(), bean.getRawKey()))
+                        .withUrl(ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), bean.getRawKey()))
                         .withLocation(location)
                         .withWeight(weight)
                         .withIcon(bean.getIcon())
@@ -93,7 +94,8 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                         .setNeedsEscaping(needsEscaping())
                         .build();
 
-                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, webItemBean, getConditionClasses()));
+                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin,
+                        webItemBean, getConditionClasses()));
             }
         }
 

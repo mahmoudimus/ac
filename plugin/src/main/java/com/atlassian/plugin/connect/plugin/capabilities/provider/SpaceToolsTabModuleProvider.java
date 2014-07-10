@@ -65,27 +65,29 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
     {
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         List<ModuleDescriptor> modules = newArrayList();
         for (SpaceToolsTabModuleBean bean : beans)
         {
-            XWorkActionModuleBean actionBean = createActionBean(addon, bean);
-            modules.add(xWorkActionDescriptorFactory.create(addon, theConnectPlugin, actionBean));
+            XWorkActionModuleBean actionBean = createActionBean(connectAddonBean, bean);
+            modules.add(xWorkActionDescriptorFactory.create(connectAddonBean, theConnectPlugin, actionBean));
 
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(addon.getKey())
-                    .module(bean.getKey(addon))
+                    .addOn(connectAddonBean.getKey())
+                    .module(bean.getKey(connectAddonBean))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .build();
 
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
             for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
             {
-                modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, webItemModuleBean));
+                modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin,
+                        webItemModuleBean));
             }
         }
         return modules;

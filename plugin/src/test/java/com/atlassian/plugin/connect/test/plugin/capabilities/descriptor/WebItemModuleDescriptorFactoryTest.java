@@ -11,6 +11,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModu
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IconModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
@@ -63,6 +65,7 @@ public class WebItemModuleDescriptorFactoryTest
     private PluginForTests plugin;
     private WebItemModuleDescriptorFactory webItemFactory;
 
+    private ConnectModuleProviderContext moduleProviderContext;
     private ConnectAddonBean addon;
 
     @Before
@@ -70,6 +73,7 @@ public class WebItemModuleDescriptorFactoryTest
     {
         plugin = new PluginForTests("my-key", "My Plugin");
         this.addon = newConnectAddonBean().withKey("my-key").build();
+        this.moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
 
         ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(mock(ProductAccessor.class), new ParamsModuleFragmentFactory());
 
@@ -102,7 +106,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void completeKeyIsCorrect()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getCompleteKey(), is("my-key:" + addonAndModuleKey("my-key","my-web-item")));
@@ -112,7 +116,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void linkIdIsCorrect()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getLink().getId(), is(addonAndModuleKey("my-key-my-key","my-web-item")));
@@ -122,7 +126,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void sectionIsCorrect()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getSection(), is("atl.admin/menu"));
@@ -132,7 +136,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void urlPrefixIsCorrect()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), new HashMap<String, Object>()), startsWith("http://www.google.com"));
@@ -159,7 +163,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void weightIsCorrect()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getWeight(), is(123));
@@ -177,7 +181,7 @@ public class WebItemModuleDescriptorFactoryTest
                                 .build()
                 )
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         WebIcon icon = descriptor.getIcon();
@@ -191,7 +195,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void styleClassIsEmptyWhenNotDefined()
     {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         assertEquals("", descriptor.getStyleClass());
@@ -203,7 +207,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withStyleClasses("batman", "robin", "mr-freeze")
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getStyleClass(), allOf(containsString("batman"), containsString("robin"), containsString("mr-freeze")));
@@ -215,7 +219,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         assertEquals("", descriptor.getStyleClass());
@@ -227,7 +231,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         assertTrue(descriptor.getStyleClass().contains("ap-dialog"));
@@ -239,7 +243,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
         assertTrue(descriptor.getStyleClass().contains("ap-inline-dialog"));
     }
@@ -251,7 +255,7 @@ public class WebItemModuleDescriptorFactoryTest
                 .withStyleClasses("batman", "robin")
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
 
         assertThat(descriptor.getStyleClass(), allOf(containsString("batman"), containsString("robin")));
@@ -262,7 +266,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
         assertTrue(descriptor.getStyleClass().contains("ap-plugin-key-" + plugin.getKey()));
     }
@@ -272,7 +276,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
         assertTrue(descriptor.getStyleClass().contains("ap-module-key-" + descriptor.getKey()));
     }
@@ -282,7 +286,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
         assertTrue(descriptor.getStyleClass().contains("ap-plugin-key-" + plugin.getKey()));
     }
@@ -292,7 +296,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
-        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(addon, plugin, bean);
+        WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
         assertTrue(descriptor.getStyleClass().contains("ap-module-key-" + descriptor.getKey()));
     }
