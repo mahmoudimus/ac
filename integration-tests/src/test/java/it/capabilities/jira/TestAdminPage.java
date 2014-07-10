@@ -1,5 +1,6 @@
 package it.capabilities.jira;
 
+import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -21,7 +22,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static it.jira.TestJira.EXTRA_PREFIX;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -73,7 +73,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
-        product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
+        product.visit(JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY));
 
@@ -90,9 +90,9 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
-        product.visit(JiraAdministrationHomePage.class, EXTRA_PREFIX);
+        product.visit(JiraAdministrationHomePage.class);
 
-        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY));
+        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY, PAGE_KEY));
 
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
@@ -117,7 +117,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
         loginAsAdmin();
 
         // web item should not be displayed
-        product.visit(JiraAdministrationHomePage.class);
+        product.visit(JiraAdminHomePage.class);
         assertThat("Expected web-item for page to NOT be present", connectPageOperations.existsWebItem(PAGE_KEY), is(false));
 
         // directly retrieving page should result in access denied
