@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 
 public class TestPageModules extends ConnectWebDriverTestBase
 {
-    private static final String GLOBALLY_VISIBLE_LOCATION = "system.top.navigation.bar"; // TODO: may need to be different in Confluence
+    private static final String GLOBALLY_VISIBLE_LOCATION = "system.top.navigation.bar";
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
