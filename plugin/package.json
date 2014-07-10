@@ -7,9 +7,14 @@
     "karma-qunit": "0.1.1",
     "karma-junit-reporter": "0.1.0",
     "karma-coffee-preprocessor": "0.1",
-    "atlassian-connect-js": "git+https://bitbucket.org/cjwhittington/atlassian-connect-js.git"
+    "atlassian-connect-js": "git+https://bitbucket.org/cjwhittington/atlassian-connect-js.git",
+    "npm-watch": "0.0.0"
+  },
+  "watch": {
+    "postinstall": "node_modules/atlassian-connect-js/src/**/*.js"
   },
   "scripts": {
-    "postinstall": "node ./bin/npm-postinstall.js"
+    "postinstall": "node ./bin/npm-postinstall.js",
+    "watch": "npm-watch"
   }
 }

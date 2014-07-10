@@ -9,7 +9,7 @@ helper.chain([
     ],
     [
         'cp',
-        ['-R', helper.npmNormalize(atlassianConnectJsPath + '/dist/'), 'src/main/resources/js/core']
+        ['-a', helper.npmNormalize(atlassianConnectJsPath + '/dist/'), 'src/main/resources/js/core']
     ]
 
 ]);
