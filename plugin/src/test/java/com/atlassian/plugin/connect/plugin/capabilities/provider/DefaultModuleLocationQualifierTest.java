@@ -8,9 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
-public class DefaultConnectModuleProviderContextTest
+public class DefaultModuleLocationQualifierTest
 {
 
     private static final String ADDON_KEY = "DasAddonz";
@@ -40,7 +40,7 @@ public class DefaultConnectModuleProviderContextTest
                 )
                 .build();
 
-        locationQualifier = new DefaultConnectModuleProviderContext(addon).getLocationQualifier();
+        locationQualifier = new DefaultModuleLocationQualifier(addon);
     }
 
     @Test
