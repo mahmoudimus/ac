@@ -3,8 +3,8 @@ package it.capabilities.jira;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -102,14 +102,14 @@ public class TestGeneralPage extends JiraWebDriverTestBase
 
         product.visit(JiraViewProjectPage.class, project.getKey());
 
-        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, awesomePageModuleKey, PAGE_NAME);
+        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, PAGE_NAME, addonKey);
 
         assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));
 
-        RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
+        ConnectAddOnTestPage addonContentsPage = viewProjectPage.clickAddOnLink();
         assertThat(addonContentsPage.isFullSize(), is(true));
 
         // check iframe url params
