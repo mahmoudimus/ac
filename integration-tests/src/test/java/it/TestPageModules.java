@@ -225,7 +225,6 @@ public class TestPageModules extends ConnectWebDriverTestBase
 
         try
         {
-            // fixme: jira page objects don't redirect properly to next page
             loginAsBetty();
             final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
