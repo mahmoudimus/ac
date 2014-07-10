@@ -24,15 +24,6 @@ public interface ConnectApplinkManager
     void createAppLink(Plugin plugin, String baseUrl, AuthenticationType authType, String publicKey, String addonUserKey);
 
     /**
-     * Deletes an {@link ApplicationLink} for an Atlassian Connect add-on.
-     * @param plugin the plugin to delete the applink for
-     *               
-     * @deprecated use the addonBean version
-     */
-    @Deprecated //use the addonBean version
-    void deleteAppLink(Plugin plugin) throws NotConnectAddonException;
-
-    /**
      * Creates an {@link ApplicationLink} for a connect add-on.
      * @param addon The addon to create the applink for
      * @param baseUrl The baseurl of the connect addon

@@ -185,35 +185,6 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         });
     }
 
-    /**
-     * @deprecated use {@code deleteAppLink(final ConnectAddonBean addon)} instead
-     */
-    @Deprecated
-    @Override
-    public void deleteAppLink(final Plugin plugin) throws NotConnectAddonException
-    {
-        final String key = plugin.getKey();
-        final ApplicationLink link = getAppLink(key);
-
-        if (link != null)
-        {
-            transactionTemplate.execute(new TransactionCallback<Void>()
-            {
-                @Override
-                public Void doInTransaction()
-                {
-                    log.info("Removing application link for {}", key);
-                    applicationLinkService.deleteApplicationLink(link);
-                    return null;
-                }
-            });
-        }
-        else
-        {
-            log.debug("Could not remove application link for {}", key);
-        }
-    }
-
     @Override
     public void deleteAppLink(final ConnectAddonBean addon) throws NotConnectAddonException
     {
