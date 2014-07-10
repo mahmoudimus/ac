@@ -73,7 +73,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
-        product.visit(JiraAdminHomePage.class);
+        product.visit(JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY));
 
