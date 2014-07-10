@@ -19,7 +19,6 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -101,8 +100,8 @@ public class TestDialog extends ConnectWebDriverTestBase
     {
         loginAsAdmin();
         String escapedAddonAndModuleKey = AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE);
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, escapedAddonAndModuleKey, ADDON_GENERALPAGE_NAME);
-        remotePage.clickRemotePluginLink();
+        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
+        remotePage.clickAddOnLink();
 
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, escapedAddonAndModuleKey, remotePlugin.getAddon().getKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_DIALOG));
@@ -123,8 +122,8 @@ public class TestDialog extends ConnectWebDriverTestBase
     public void testWebItemDialogOpenByKey() throws Exception
     {
         loginAsAdmin();
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_GENERALPAGE_WEBITEM_DIALOG), ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG);
-        remotePage.clickRemotePluginLink();
+        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG, remotePlugin.getAddon().getKey());
+        remotePage.clickAddOnLink();
 
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_GENERALPAGE_WEBITEM_DIALOG), remotePlugin.getAddon().getKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_WEBITEM_DIALOG));
