@@ -4,11 +4,15 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.installer.GsonConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.base.Joiner;
+import com.google.gson.Gson;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -124,7 +128,10 @@ public class WebItemModuleDescriptorFactory
             styles.add("ap-module-key-" + webItemKey);
         }
 
-        Map<String, Object> dialogOptions = bean.getTarget().getOptionsAsMap();
+        final WebItemTargetOptions options = bean.getTarget().getOptions();
+        final Gson gson = ConnectModulesGsonFactory.getGson();
+        final Map<String, Object> dialogOptions = gson.fromJson(gson.toJsonTree(options), Map.class);
+//        Map<String, Object> dialogOptions = bean.getTarget().getOptionsAsMap();
         Map<String, String> beanParams = bean.getParams();
 
         if (null != dialogOptions && !dialogOptions.isEmpty())

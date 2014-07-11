@@ -161,12 +161,6 @@ public class WebItemTargetBean extends BaseModuleBean
         return options;
     }
 
-    @Deprecated
-    public Map<String, Object> getOptionsAsMap()
-    {
-        throw new RuntimeException("Not implemented yet. TODO: try to avoid");
-    }
-
     public static WebItemTargetBeanBuilder newWebItemTargetBean()
     {
         return new WebItemTargetBeanBuilder();

@@ -19,6 +19,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -395,9 +396,12 @@ public class ConnectJsonExamples
     {
         WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
                 .withType(WebItemTargetType.inlineDialog)
-                .withOption("offsetX", "30px")
-                .withOption("offsetY", "20px")
-                .withOption("onHover", true)
+                .withOptions(InlineDialogOptions.newInlineDialogOptions()
+                                .withOffsetX("30px")
+                                .withOffsetY("20px")
+                                .withOnHover(true)
+                                .build()
+                )
                 .build();
 
         return gson.toJson(createJsonObject("target", bean));
