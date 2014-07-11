@@ -68,7 +68,7 @@ public class AddonsResource
         try
         {
             RestAddonType addonType = StringUtils.isBlank(type) ? null : RestAddonType.valueOf(type.toUpperCase());
-            List<RestAddonStatus> restAddons = getAddonsByType(addonType);
+            List<RestAddon> restAddons = getAddonsByType(addonType);
             return Response.ok().entity(restAddons).build();
         }
         catch (IllegalArgumentException e)
@@ -83,7 +83,7 @@ public class AddonsResource
     @Path ("/{addonKey}")
     public Response getAddon(@PathParam ("addonKey") String addonKey)
     {
-        RestAddonStatus restAddon = getAddonByKey(addonKey);
+        RestAddon restAddon = getAddonByKey(addonKey);
         if (restAddon == null)
         {
             String message = "Add-on with key " + addonKey + " was not found";
@@ -101,7 +101,7 @@ public class AddonsResource
     @Produces ("application/json")
     public Response deleteXmlAddons()
     {
-        List<RestAddon> addons = Lists.newArrayList();
+        List<MinimalRestAddon> addons = Lists.newArrayList();
         List<PluginException> errors = Lists.newArrayList();
 
         Map result = Maps.newHashMap();
@@ -114,7 +114,7 @@ public class AddonsResource
             {
                 String key = plugin.getKey();
                 String version = plugin.getPluginInformation().getVersion();
-                RestAddon addon = new RestAddon(key, version, RestAddonType.XML);
+                MinimalRestAddon addon = new MinimalRestAddon(key, version, RestAddonType.XML);
                 pluginController.uninstall(plugin);
                 addons.add(addon);
             }
@@ -131,9 +131,9 @@ public class AddonsResource
         return Response.ok().entity(result).build();
     }
 
-    private List<RestAddonStatus> getAddonsByType(RestAddonType type)
+    private List<RestAddon> getAddonsByType(RestAddonType type)
     {
-        List<RestAddonStatus> result = Lists.newArrayList();
+        List<RestAddon> result = Lists.newArrayList();
 
         if (type == null || type == RestAddonType.XML)
         {
@@ -167,7 +167,7 @@ public class AddonsResource
         return xmlPlugins;
     }
 
-    private RestAddonStatus getAddonByKey(String addonKey)
+    private RestAddon getAddonByKey(String addonKey)
     {
         for (Plugin plugin : getXmlAddonPlugins())
         {
@@ -188,35 +188,35 @@ public class AddonsResource
         return null;
     }
 
-    private RestAddonStatus createXmlAddonRest(Plugin plugin)
+    private RestAddon createXmlAddonRest(Plugin plugin)
     {
         String key = plugin.getKey();
         String version = plugin.getPluginInformation().getVersion();
         String state = plugin.getPluginState().name();
         String license = licenseRetriever.getLicenseStatus(key).value();
-        RestAddonStatus.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
+        RestAddon.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
 
-        return new RestAddonStatus(key, version, RestAddonType.XML, state, license, appLinkResource);
+        return new RestAddon(key, version, RestAddonType.XML, state, license, appLinkResource);
     }
 
-    private RestAddonStatus createJsonAddonRest(ConnectAddonBean addonBean)
+    private RestAddon createJsonAddonRest(ConnectAddonBean addonBean)
     {
         String key = addonBean.getKey();
         String version = addonBean.getVersion();
         String state = addonRegistry.getRestartState(key).name();
         String license = licenseRetriever.getLicenseStatus(key).value();
-        RestAddonStatus.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
+        RestAddon.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
 
-        return new RestAddonStatus(key, version, RestAddonType.JSON, state, license, appLinkResource);
+        return new RestAddon(key, version, RestAddonType.JSON, state, license, appLinkResource);
     }
 
-    private RestAddonStatus.AddonApplink getApplinkResourceForAddon(String key)
+    private RestAddon.AddonApplink getApplinkResourceForAddon(String key)
     {
         ApplicationLink appLink = connectApplinkManager.getAppLink(key);
         String appLinkId = appLink.getId().get();
         URI selfUri = connectApplinkManager.getApplinkLinkSelfLink(appLink);
 
-        return new RestAddonStatus.AddonApplink(appLinkId, Link.self(selfUri));
+        return new RestAddon.AddonApplink(appLinkId, Link.self(selfUri));
     }
 
     private Response getErrorResponse(final String message, final Response.Status status)
