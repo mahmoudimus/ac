@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 
 import java.util.concurrent.Callable;
 
-public class ConnectAddOnEmbeddedTestPage extends ConnectPage
+public class ConnectAddOnEmbeddedTestPage extends ConnectAddOnPage
 {
     public ConnectAddOnEmbeddedTestPage(String pageKey, boolean includeEmbeddedPrefix)
     {

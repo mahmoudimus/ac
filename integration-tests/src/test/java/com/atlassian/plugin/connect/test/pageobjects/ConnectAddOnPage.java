@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
-public class ConnectPage
+public class ConnectAddOnPage
 {
     @Inject
     protected AtlassianWebDriver driver;
@@ -36,9 +36,9 @@ public class ConnectPage
 
     protected WebElement containerDiv;
 
-    private static final Logger log = LoggerFactory.getLogger(ConnectPage.class);
+    private static final Logger log = LoggerFactory.getLogger(ConnectAddOnPage.class);
 
-    public ConnectPage(String pageElementKey, String addOnKey, boolean includedEmbeddedPrefix)
+    public ConnectAddOnPage(String pageElementKey, String addOnKey, boolean includedEmbeddedPrefix)
     {
         this.pageElementKey = pageElementKey;
         this.addOnKey = addOnKey;
