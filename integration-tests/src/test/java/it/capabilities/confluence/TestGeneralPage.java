@@ -3,7 +3,7 @@ package it.capabilities.confluence;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
@@ -111,7 +111,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         URI url = new URI(generalPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));
 
-        ConnectAddOnTestPage addonContentsPage = generalPage.clickAddOnLink();
+        ConnectAddOnEmbeddedTestPage addonContentsPage = generalPage.clickAddOnLink();
 
         assertThat(addonContentsPage.isFullSize(), is(true));
 
@@ -154,7 +154,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         URI url = new URI(generalPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/" + KEY_MY_CONTEXT_PAGE));
 
-        ConnectAddOnTestPage addonContentsPage = generalPage.clickAddOnLink();
+        ConnectAddOnEmbeddedTestPage addonContentsPage = generalPage.clickAddOnLink();
 
         assertThat(addonContentsPage.isFullSize(), is(true));
 

@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -80,25 +80,25 @@ public final class JiraGeneralPage implements GeneralPage
     }
 
     @Override
-    public ConnectAddOnTestPage clickAddOnLink()
+    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         return link.get().fold(
-                new Supplier<ConnectAddOnTestPage>()
+                new Supplier<ConnectAddOnEmbeddedTestPage>()
                 {
                     @Override
-                    public ConnectAddOnTestPage get()
+                    public ConnectAddOnEmbeddedTestPage get()
                     {
                         throw new IllegalStateException(format("Could not find link '%s'", link()));
                     }
                 },
-                new Function<WebElement, ConnectAddOnTestPage>()
+                new Function<WebElement, ConnectAddOnEmbeddedTestPage>()
                 {
                     @Override
-                    public ConnectAddOnTestPage apply(WebElement l)
+                    public ConnectAddOnEmbeddedTestPage apply(WebElement l)
                     {
                         l.click();
                         logger.debug("Link '{}' was found and clicked.", l);
-                        return pageBinder.bind(ConnectAddOnTestPage.class, pageKey, addOnKey, true);
+                        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, pageKey, addOnKey, true);
                     }
                 }
         );

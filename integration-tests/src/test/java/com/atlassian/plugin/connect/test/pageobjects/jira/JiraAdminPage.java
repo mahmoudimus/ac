@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.AdminPage;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
@@ -66,7 +66,7 @@ public final class JiraAdminPage implements AdminPage
     }
 
     @Override
-    public ConnectAddOnTestPage clickAddOnLink()
+    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         throw new NotImplementedException("TODO as part of porting tests from xml descriptors to json descriptors");
     }

@@ -138,7 +138,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
         loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral", "Remotable Plugin app1 General", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.getTitle().contains("Remotable Plugin app1 General"));
         assertEquals("Success", remotePluginTest.getMessage());
         assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
@@ -171,7 +171,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertNotNull(remotePluginTest.getFullName());
         assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(BETTY_USERNAME));
@@ -208,7 +208,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
         loginAsBetty();
 
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", remotePlugin.getAddon().getKey());
-        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertTrue(remotePluginTest.getTitle().contains("Only Betty"));
     }
@@ -235,7 +235,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
             final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
             upm.clickConfigurePluginButton(anotherPlugin.getAddon().getKey(), "page");
-            product.getPageBinder().bind(ConnectAddOnTestPage.class, "page", anotherPlugin.getAddon().getKey(), true); // will throw if it fails to load
+            product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, "page", anotherPlugin.getAddon().getKey(), true); // will throw if it fails to load
         }
         finally
         {
@@ -250,7 +250,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
         loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", "Encoded Spaces", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertThat(remotePluginTest.getValueBySelector("#hello-world-message"), is("Hello world"));
     }
@@ -261,7 +261,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
         loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", "AMD Test app1 General", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertEquals("true", remotePluginTest.waitForValue("amd-env"));
         assertEquals("true", remotePluginTest.waitForValue("amd-request"));
@@ -274,7 +274,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
         loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", "Size to parent general page", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertTrue(remotePluginTest.isFullSize());
     }
@@ -285,7 +285,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
         loginAsBetty();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
-        ConnectAddOnTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.isNotFullSize());
     }
 

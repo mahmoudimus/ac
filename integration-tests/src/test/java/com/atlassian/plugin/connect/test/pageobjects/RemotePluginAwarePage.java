@@ -9,7 +9,7 @@ public interface RemotePluginAwarePage
     @XmlDescriptor
     RemotePluginTestPage clickRemotePluginLink();
 
-    ConnectAddOnTestPage clickAddOnLink();
+    ConnectAddOnEmbeddedTestPage clickAddOnLink();
 
     String getRemotePluginLinkHref();
 }

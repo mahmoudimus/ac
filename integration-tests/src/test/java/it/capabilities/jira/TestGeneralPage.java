@@ -3,7 +3,7 @@ package it.capabilities.jira;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
@@ -109,7 +109,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));
 
-        ConnectAddOnTestPage addonContentsPage = viewProjectPage.clickAddOnLink();
+        ConnectAddOnEmbeddedTestPage addonContentsPage = viewProjectPage.clickAddOnLink();
         assertThat(addonContentsPage.isFullSize(), is(true));
 
         // check iframe url params

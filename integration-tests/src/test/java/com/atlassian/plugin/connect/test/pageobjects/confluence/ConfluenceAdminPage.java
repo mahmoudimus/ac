@@ -5,7 +5,7 @@ import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.timeout.TimeoutType;
 import com.atlassian.plugin.connect.test.pageobjects.AdminPage;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.apache.commons.lang.NotImplementedException;
@@ -50,7 +50,7 @@ public class ConfluenceAdminPage implements AdminPage
     }
 
     @Override
-    public ConnectAddOnTestPage clickAddOnLink()
+    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         throw new NotImplementedException("TODO as part of porting tests from xml descriptors to json descriptors");
     }

@@ -5,7 +5,7 @@ import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.timeout.TimeoutType;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -93,10 +93,10 @@ public class ConfluenceGeneralPage implements GeneralPage
     }
 
     @Override
-    public ConnectAddOnTestPage clickAddOnLink()
+    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         findLinkElement().click();
-        return pageBinder.bind(ConnectAddOnTestPage.class, pageKey, extraPrefix, true);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, pageKey, extraPrefix, true);
     }
 
     @Override

@@ -108,4 +108,9 @@ public class ConnectAddOnEmbeddedTestPage extends ConnectPage
             }
         });
     }
+
+    public String getTitle()
+    {
+        return driver.getTitle();
+    }
 }
