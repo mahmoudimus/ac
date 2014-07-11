@@ -1,6 +1,5 @@
 package it;
 
-import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -24,8 +23,6 @@ import java.io.IOException;
 import java.util.TimeZone;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BETTY_USERNAME;
@@ -92,33 +89,12 @@ public class TestPageModules extends ConnectWebDriverTestBase
                                 .withUrl("/fsg")
                                 .withLocation(globallyVisibleLocation)
                                 .build())
-                .addModules("webItems",
-                        newWebItemBean()
-                                .withKey("remotePluginDialog")
-                                .withName(new I18nProperty("Remotable Plugin app1 Dialog", null))
-                                .withUrl("/rpd")
-                                .withTarget(newWebItemTargetBean()
-                                        .withType(WebItemTargetType.dialog)
-                                        .build())
-                                .withLocation(globallyVisibleLocation)
-                                .build(),
-                        newWebItemBean()
-                                .withKey("sizeToParentDialog")
-                                .withName(new I18nProperty("Size to parent dialog page", null))
-                                .withUrl("/fsd")
-                                .withTarget(newWebItemTargetBean()
-                                        .withType(WebItemTargetType.dialog)
-                                        .build())
-                                .withLocation(globallyVisibleLocation)
-                                .build())
                 .addRoute("/rpg", ConnectAppServlets.apRequestServlet())
                 .addRoute("/amdTest", ConnectAppServlets.amdTestServlet())
                 .addRoute("/ob", ConnectAppServlets.apRequestServlet())
                 .addRoute("/onlyBettyCondition", new OnlyBettyConditionServlet())
                 .addRoute("/my", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/fsg", ConnectAppServlets.sizeToParentServlet())
-                .addRoute("/fsd", ConnectAppServlets.sizeToParentServlet())
-                .addRoute("/rpd", ConnectAppServlets.dialogServlet())
                 .addScope(ScopeName.READ)
                 .start();
     }
@@ -162,27 +138,6 @@ public class TestPageModules extends ConnectWebDriverTestBase
         // media type tests of the RA.request API
         assertEquals("{\"name\": \"betty\"}", remotePluginTest.getClientHttpDataJson());
         assertEquals("<user><name>betty</name></user>", remotePluginTest.getClientHttpDataXml());
-    }
-
-    @Test
-    public void testLoadGeneralDialog()
-    {
-        loginAsBetty();
-
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", remotePlugin.getAddon().getKey());
-        assertTrue(page.isRemotePluginLinkPresent());
-        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
-
-        assertNotNull(remotePluginTest.getFullName());
-        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(BETTY_USERNAME));
-
-        // Exercise the dialog's submit button.
-        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
-        assertFalse(dialog.wasSubmitted());
-        assertEquals(false, dialog.submit());
-
-        assertTrue(dialog.wasSubmitted());
-        assertEquals(true, dialog.submit());
     }
 
     @Test
@@ -277,16 +232,6 @@ public class TestPageModules extends ConnectWebDriverTestBase
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertTrue(remotePluginTest.isFullSize());
-    }
-
-    @Test
-    public void testSizeToParentDoesNotWorkInDialog()
-    {
-        loginAsBetty();
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", remotePlugin.getAddon().getKey());
-        assertTrue(page.isRemotePluginLinkPresent());
-        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
-        assertTrue(remotePluginTest.isNotFullSize());
     }
 
     public static final class OnlyBettyConditionServlet extends HttpServlet
