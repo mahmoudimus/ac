@@ -1,5 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans.nested.dialog;
 
+import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOptionsBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.InlineDialogOptionsBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class InlineDialogOptions extends BaseDialogOptions
 {
     private Boolean onHover;
@@ -29,6 +34,11 @@ public class InlineDialogOptions extends BaseDialogOptions
 
     public InlineDialogOptions()
     {
+    }
+
+    public InlineDialogOptions(InlineDialogOptionsBuilder inlineDialogOptionsBuilder)
+    {
+        super(inlineDialogOptionsBuilder);
     }
 
     public Boolean getOnHover()
@@ -70,4 +80,54 @@ public class InlineDialogOptions extends BaseDialogOptions
     {
         return persistent;
     }
+
+    public static InlineDialogOptionsBuilder newInlineDialogOptions()
+    {
+        return new InlineDialogOptionsBuilder();
+    }
+
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof InlineDialogOptions /*&& super.equals(otherObj)*/))
+        {
+            return false;
+        }
+
+        InlineDialogOptions other = (InlineDialogOptions) otherObj;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(other))
+                .append(onHover, other.onHover)
+                .append(showDelay, other.showDelay)
+                .append(offsetX, other.offsetX)
+                .append(offsetY, other.offsetY)
+                .append(isRelativeToMouse, other.isRelativeToMouse)
+                .append(closeOthers, other.closeOthers)
+                .append(onTop, other.onTop)
+                .append(persistent, other.persistent)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(123, 99)
+                .appendSuper(super.hashCode())
+                .append(onHover)
+                .append(showDelay)
+                .append(offsetX)
+                .append(offsetY)
+                .append(isRelativeToMouse)
+                .append(closeOthers)
+                .append(onTop)
+                .append(persistent)
+                .build();
+    }
+
 }

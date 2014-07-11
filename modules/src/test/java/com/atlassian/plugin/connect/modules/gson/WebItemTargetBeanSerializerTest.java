@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.modules.gson;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -28,10 +29,32 @@ public class WebItemTargetBeanSerializerTest
                 .build();
 
         final String json = gson.toJson(bean);
-        System.out.println(json);
         final WebItemTargetBean roundTripItem = gson.fromJson(json, WebItemTargetBean.class);
-        System.out.println(roundTripItem);
-        System.out.println(gson.toJson(roundTripItem));
+
+        assertThat(roundTripItem, is(bean));
+    }
+
+    @Test
+    public void inlineDialogTargetRoundtripSerialisationMatches()
+    {
+        final WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
+                .withType(WebItemTargetType.inlineDialog)
+                .withOptions(InlineDialogOptions.newInlineDialogOptions()
+                                .withWidth("200%")
+                                .withCloseOthers(false)
+                                .withIsRelativeToMouse(true)
+                                .withOffsetX("100%")
+                                .withOffsetY("12px")
+                                .withOnHover(true)
+                                .withOnTop(false)
+                                .withPersistent(true)
+                                .withShowDelay(99)
+                                .build()
+                )
+                .build();
+
+        final String json = gson.toJson(bean);
+        final WebItemTargetBean roundTripItem = gson.fromJson(json, WebItemTargetBean.class);
 
         assertThat(roundTripItem, is(bean));
     }
