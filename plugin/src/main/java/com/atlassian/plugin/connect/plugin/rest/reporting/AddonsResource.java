@@ -78,44 +78,57 @@ public class AddonsResource
         }
     }
 
-    @GET
-    @Produces ("application/json")
-    @Path ("/{addonKey}")
-    public Response getAddon(@PathParam ("addonKey") String addonKey)
-    {
-        RestAddon restAddon = getAddonByKey(addonKey);
-        if (restAddon == null)
-        {
-            String message = "Add-on with key " + addonKey + " was not found";
-            return getErrorResponse(message, Response.Status.NOT_FOUND);
-        }
-        return Response.ok().entity(restAddon).build();
-    }
-
-    /**
-     * Deletes all XML based Atlassian Connect add-ons from the instance
-     */
     @SuppressWarnings ("unchecked")
     @DELETE
-    @Path ("/xml")
     @Produces ("application/json")
-    public Response deleteXmlAddons()
+    public Response uninstallAddons(@QueryParam ("type") String type)
     {
+        RestAddonType addonType = null;
+        if (StringUtils.isNotBlank(type))
+        {
+            try
+            {
+                addonType = RestAddonType.valueOf(type.toUpperCase());
+            }
+            catch (IllegalArgumentException e)
+            {
+                String message = "Type " + type + " is not valid. Valid options: " + Arrays.toString(RestAddonType.values());
+                return getErrorResponse(message, Response.Status.BAD_REQUEST);
+            }
+        }
+
+        // Later we may support otherwise
+        if (addonType != RestAddonType.XML)
+        {
+            String message = "Only bulk uninstall of XML add-ons are supported";
+            log.error(message);
+            return getErrorResponse(message, Response.Status.FORBIDDEN);
+        }
+
+        log.warn("Uninstalling all Connect add-ons of type " + addonType);
+
         List<MinimalRestAddon> addons = Lists.newArrayList();
         List<PluginException> errors = Lists.newArrayList();
 
         Map result = Maps.newHashMap();
+        List<Plugin> connectAddonPlugins;
 
-        List<Plugin> xmlPlugins = getXmlAddonPlugins();
+        switch (addonType)
+        {
+            case XML:
+                connectAddonPlugins = getXmlAddonPlugins();
+                break;
 
-        for (Plugin plugin : xmlPlugins)
+            case JSON:
+            default:
+                throw new UnsupportedOperationException("Not sure how to return a JSON add-on's plugin or uninstall it");
+        }
+
+        for (Plugin plugin : connectAddonPlugins)
         {
             try
             {
-                String key = plugin.getKey();
-                String version = plugin.getPluginInformation().getVersion();
-                MinimalRestAddon addon = new MinimalRestAddon(key, version, RestAddonType.XML);
-                pluginController.uninstall(plugin);
+                MinimalRestAddon addon = uninstallPlugin(plugin);
                 addons.add(addon);
             }
             catch (PluginException e)
@@ -129,6 +142,45 @@ public class AddonsResource
         result.put("errors", errors);
 
         return Response.ok().entity(result).build();
+    }
+
+    @GET
+    @Produces ("application/json")
+    @Path ("/{addonKey}")
+    public Response getAddon(@PathParam ("addonKey") String addonKey)
+    {
+        RestAddon restAddon = getRestAddonByKey(addonKey);
+        if (restAddon == null)
+        {
+            String message = "Add-on with key " + addonKey + " was not found";
+            return getErrorResponse(message, Response.Status.NOT_FOUND);
+        }
+        return Response.ok().entity(restAddon).build();
+    }
+
+    @DELETE
+    @Produces ("application/json")
+    @Path ("/{addonKey}")
+    public Response uninstallAddon(@PathParam ("addonKey") String addonKey)
+    {
+        Plugin plugin = getAddonPluginByKey(addonKey);
+        if (plugin == null)
+        {
+            String message = "Add-on with key " + addonKey + " was not found";
+            return getErrorResponse(message, Response.Status.NOT_FOUND);
+        }
+
+        try
+        {
+            MinimalRestAddon addon = uninstallPlugin(plugin);
+            return Response.ok().entity(addon).build();
+        }
+        catch (PluginException e)
+        {
+            String message = "Unable to uninstall plugin " + plugin.getKey();
+            log.error(message, e);
+            return getErrorResponse(message, Response.Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private List<RestAddon> getAddonsByType(RestAddonType type)
@@ -167,7 +219,7 @@ public class AddonsResource
         return xmlPlugins;
     }
 
-    private RestAddon getAddonByKey(String addonKey)
+    private RestAddon getRestAddonByKey(String addonKey)
     {
         for (Plugin plugin : getXmlAddonPlugins())
         {
@@ -182,6 +234,27 @@ public class AddonsResource
             if (addonKey.equals(addonBean.getKey()))
             {
                 return createJsonAddonRest(addonBean);
+            }
+        }
+
+        return null;
+    }
+
+    private Plugin getAddonPluginByKey(String addonKey)
+    {
+        for (Plugin plugin : getXmlAddonPlugins())
+        {
+            if (addonKey.equals(plugin.getKey()))
+            {
+                return plugin;
+            }
+        }
+
+        for (ConnectAddonBean addonBean : addonRegistry.getAllAddonBeans())
+        {
+            if (addonKey.equals(addonBean.getKey()))
+            {
+                throw new UnsupportedOperationException("Not sure how to return a JSON add-on's plugin or uninstall it");
             }
         }
 
@@ -217,6 +290,16 @@ public class AddonsResource
         URI selfUri = connectApplinkManager.getApplinkLinkSelfLink(appLink);
 
         return new RestAddon.AddonApplink(appLinkId, Link.self(selfUri));
+    }
+
+    private MinimalRestAddon uninstallPlugin(Plugin plugin) throws PluginException
+    {
+        String key = plugin.getKey();
+        String version = plugin.getPluginInformation().getVersion();
+        MinimalRestAddon addon = new MinimalRestAddon(key, version, RestAddonType.XML);
+        pluginController.uninstall(plugin);
+        log.warn("Uninstalled add-on " + plugin.getKey());
+        return addon;
     }
 
     private Response getErrorResponse(final String message, final Response.Status status)
