@@ -10,19 +10,21 @@ public class RestAddonStatus extends RestAddon
     @JsonProperty
     private final String license;
 
-    public RestAddonStatus(@JsonProperty("key") final String key,
-                           @JsonProperty("state") final String state,
-                           @JsonProperty("version") final String version)
+    public RestAddonStatus(@JsonProperty ("key") final String key,
+            @JsonProperty ("version") final String version,
+            @JsonProperty ("type") final RestAddonType type,
+            @JsonProperty ("state") final String state)
     {
-        this(key, state, version, null);
+        this(key, version, type, state, null);
     }
 
-    public RestAddonStatus(@JsonProperty("key") final String key,
-                           @JsonProperty("state") final String state,
-                           @JsonProperty("version") final String version,
-                           @JsonProperty("license") final String license)
+    public RestAddonStatus(@JsonProperty ("key") final String key,
+            @JsonProperty ("version") final String version,
+            @JsonProperty ("type") final RestAddonType type,
+            @JsonProperty ("state") final String state,
+            @JsonProperty ("license") final String license)
     {
-        super(key, version);
+        super(key, version, type);
         this.state = state;
         this.license = license;
     }
