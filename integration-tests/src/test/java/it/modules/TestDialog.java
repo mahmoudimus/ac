@@ -17,7 +17,6 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.TestConstants.BETTY_USERNAME;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -123,48 +122,71 @@ public class TestDialog extends ConnectWebDriverTestBase
      */
 
     @Test
-    public void testOpenCloseDialogKey() throws Exception
+    public void testOpenCloseDialogKeyWithPrependedAddOnKey() throws Exception
     {
-        loginAsAdmin();
-        String escapedAddonAndModuleKey = AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE);
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
-        remotePage.clickAddOnLink();
+        testOpenAndCloseWithPrependedAddOnKey(ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, ADDON_DIALOG);
+    }
 
-        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, escapedAddonAndModuleKey, remotePlugin.getAddon().getKey());
-        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_DIALOG));
+    @Test
+    public void testOpenCloseDialogKey()
+    {
+        testOpenAndClose(ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, ADDON_DIALOG);
+    }
 
-        // check the dimensions are the same as those in the js (mustache file)
-        assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
-        assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
-        assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
-        assertThat(closeDialogPage.getFromQueryString("user_id"), is("admin"));
-
-        closeDialogPage.close();
-        closeDialogPage.waitUntilClosed();
-        String response = dialogOpeningPage.waitForValue("dialog-close-data");
-        assertEquals("test dialog close data", response);
+    @Test
+    public void testWebItemDialogOpenByKeyWithPrependedAddOnKey() throws Exception
+    {
+        testOpenAndCloseWithPrependedAddOnKey(ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG, ADDON_WEBITEM_DIALOG);
     }
 
     @Test
     public void testWebItemDialogOpenByKey() throws Exception
     {
+        testOpenAndClose(ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG, ADDON_WEBITEM_DIALOG);
+    }
+
+    private void testOpenAndCloseWithPrependedAddOnKey(String pageKey, String pageName, String dialogKey)
+    {
+        testOpenAndClose(pageKey, pageName, AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), dialogKey));
+    }
+
+    private void testOpenAndClose(String pageKey, String pageName, String moduleKey)
+    {
         loginAsAdmin();
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG, remotePlugin.getAddon().getKey());
+        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, pageKey, pageName, remotePlugin.getAddon().getKey());
         remotePage.clickAddOnLink();
 
-        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, addonAndModuleKey(remotePlugin.getAddon().getKey(),ADDON_GENERALPAGE_WEBITEM_DIALOG), remotePlugin.getAddon().getKey());
-        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_WEBITEM_DIALOG));
+        RemoteDialogOpeningPage dialogOpeningPage = bindDialogOpeningPage(AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), pageKey));
+        RemoteCloseDialogPage closeDialogPage = bindCloseDialogPage(dialogOpeningPage, moduleKey);
 
+        assertThatTheDialogHasTheCorrectProperties(closeDialogPage);
+        assertEquals("test dialog close data", closeTheDialog(dialogOpeningPage, closeDialogPage));
+    }
+
+    private RemoteCloseDialogPage bindCloseDialogPage(RemoteDialogOpeningPage dialogOpeningPage, String moduleKey)
+    {
+        return dialogOpeningPage.openKey(moduleKey);
+    }
+
+    private RemoteDialogOpeningPage bindDialogOpeningPage(String moduleKey)
+    {
+        return product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, moduleKey, remotePlugin.getAddon().getKey());
+    }
+
+    private String closeTheDialog(RemoteDialogOpeningPage dialogOpeningPage, RemoteCloseDialogPage closeDialogPage)
+    {
+        closeDialogPage.close();
+        closeDialogPage.waitUntilClosed();
+        return dialogOpeningPage.waitForValue("dialog-close-data");
+    }
+
+    private void assertThatTheDialogHasTheCorrectProperties(RemoteCloseDialogPage closeDialogPage)
+    {
         // check the dimensions are the same as those in the js (mustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
         assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
         assertThat(closeDialogPage.getFromQueryString("user_id"), is("admin"));
-
-        closeDialogPage.close();
-        closeDialogPage.waitUntilClosed();
-        String response = dialogOpeningPage.waitForValue("dialog-close-data");
-        assertEquals("test dialog close data", response);
     }
 
     @Test
