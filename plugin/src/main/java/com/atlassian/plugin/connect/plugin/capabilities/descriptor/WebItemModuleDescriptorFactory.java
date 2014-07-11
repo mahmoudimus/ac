@@ -124,7 +124,7 @@ public class WebItemModuleDescriptorFactory
             styles.add("ap-module-key-" + webItemKey);
         }
 
-        Map<String, Object> dialogOptions = bean.getTarget().getOptions();
+        Map<String, Object> dialogOptions = bean.getTarget().getOptionsAsMap();
         Map<String, String> beanParams = bean.getParams();
 
         if (null != dialogOptions && !dialogOptions.isEmpty())

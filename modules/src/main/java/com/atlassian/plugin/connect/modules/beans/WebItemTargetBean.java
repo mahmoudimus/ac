@@ -6,6 +6,7 @@ import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemTargetBeanBuilder;
 
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -119,12 +120,11 @@ public class WebItemTargetBean extends BaseModuleBean
      * </a>
      * </div>
      */
-    private Map<String, Object> options;
+    private WebItemTargetOptions options;
 
     public WebItemTargetBean()
     {
         this.type = WebItemTargetType.page;
-        this.options = newHashMap();
     }
 
     public WebItemTargetBean(final BaseModuleBeanBuilder builder)
@@ -133,10 +133,6 @@ public class WebItemTargetBean extends BaseModuleBean
         if (null == type)
         {
             type = WebItemTargetType.page;
-        }
-        if(null == options)
-        {
-            this.options = newHashMap();
         }
     }
 
@@ -160,14 +156,15 @@ public class WebItemTargetBean extends BaseModuleBean
         return type;
     }
 
-    public Map<String, Object> getOptions()
+    public WebItemTargetOptions getOptions()
     {
-        if (null == options)
-        {
-            this.options = newHashMap();
-        }
-        
         return options;
+    }
+
+    @Deprecated
+    public Map<String, Object> getOptionsAsMap()
+    {
+        throw new RuntimeException("Not implemented yet. TODO: try to avoid");
     }
 
     public static WebItemTargetBeanBuilder newWebItemTargetBean()
@@ -188,7 +185,7 @@ public class WebItemTargetBean extends BaseModuleBean
             return true;
         }
 
-        if (!(otherObj instanceof WebItemTargetBean && super.equals(otherObj)))
+        if (!(otherObj instanceof WebItemTargetBean /* && super.equals(otherObj) */))
         {
             return false;
         }
