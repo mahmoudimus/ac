@@ -7,8 +7,8 @@
   </head>
   <body>
     <div>
-      <button class="aui-button" id="dialog-open-button-key">Open dialog via URL</button>
-      <button class="aui-button" id="dialog-open-button-url">Open dialog via Key</button>
+      <button class="aui-button" id="dialog-open-button-key">Open dialog via key</button>
+      <button class="aui-button" id="dialog-open-button-url">Open dialog via URL</button>
       <br>
       Dialog Close Data: <span id="dialog-close-data"></span>
     </div>
