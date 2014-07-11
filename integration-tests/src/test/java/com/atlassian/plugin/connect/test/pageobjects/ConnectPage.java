@@ -55,14 +55,6 @@ public class ConnectPage
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
     }
 
-    public boolean isLoaded()
-    {
-        final String idSuffix = AddonTestUtils.escapedAddonAndModuleKey(addOnKey, pageElementKey);
-        return driver.elementExists(By.cssSelector("#ap-" + idSuffix + " .ap-loading.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-" + idSuffix + " .ap-load-timeout.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-" + idSuffix + " .ap-load-error.ap-status.hidden"));
-    }
-
     public Map<String, String> getIframeQueryParams()
     {
         return RemotePageUtil.findAllInContext(iframe().getAttribute("src"));

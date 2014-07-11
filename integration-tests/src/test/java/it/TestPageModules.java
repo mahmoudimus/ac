@@ -235,9 +235,7 @@ public class TestPageModules extends ConnectWebDriverTestBase
             final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
             upm.clickConfigurePluginButton(anotherPlugin.getAddon().getKey(), "page");
-            final ConnectAddOnTestPage remotePluginTestPage = product.getPageBinder().bind(ConnectAddOnTestPage.class, "page", anotherPlugin.getAddon().getKey(), true);
-
-            assertTrue(remotePluginTestPage.isLoaded());
+            product.getPageBinder().bind(ConnectAddOnTestPage.class, "page", anotherPlugin.getAddon().getKey(), true); // will throw if it fails to load
         }
         finally
         {

@@ -8,7 +8,6 @@ import it.servlet.ConnectAppServlets;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static org.junit.Assert.assertTrue;
 
 public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
 {
@@ -28,9 +27,7 @@ public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
         try
         {
             product.visit(HomePage.class);
-            assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page", addOn.getAddon().getKey())
-                    .clickAddOnLink()
-                    .isLoaded());
+            product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page", addOn.getAddon().getKey()).clickAddOnLink(); // will throw if it fails to load
         }
         finally
         {
