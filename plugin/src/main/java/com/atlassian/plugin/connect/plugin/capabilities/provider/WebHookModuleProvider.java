@@ -25,22 +25,24 @@ public class WebHookModuleProvider implements ConnectModuleProvider<WebHookModul
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<WebHookModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext,
+                                                 Plugin theConnectPlugin, String jsonFieldName, List<WebHookModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
         for (WebHookModuleBean bean : beans)
         {
-            descriptors.addAll(beanToDescriptors(addon, theConnectPlugin, bean));
+            descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
 
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectAddonBean addon,Plugin theConnectPlugin, WebHookModuleBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectModuleProviderContext moduleProviderContext,
+                                                                     Plugin theConnectPlugin, WebHookModuleBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
-        descriptors.add(connectWebHookModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, bean));
+        descriptors.add(connectWebHookModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
 
         return descriptors;
     }

@@ -33,35 +33,37 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<WebPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<WebPanelModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         for (WebPanelModuleBean bean : beans)
         {
             // register an iframe rendering strategy
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(addon.getKey())
-                    .module(bean.getKey(addon))
+                    .addOn(connectAddonBean.getKey())
+                    .module(bean.getKey(connectAddonBean))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .title(bean.getDisplayName())
                     .dimensions(bean.getLayout().getWidth(), bean.getLayout().getHeight())
                     .build();
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
             // construct a module descriptor that will supply a web panel to the product
-            descriptors.addAll(beanToDescriptors(addon, theConnectPlugin, bean));
+            descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
 
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectAddonBean addon,Plugin theConnectPlugin, WebPanelModuleBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectModuleProviderContext moduleProviderContext,
+                                                                     Plugin theConnectPlugin, WebPanelModuleBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        descriptors.add(webPanelFactory.createModuleDescriptor(addon, theConnectPlugin, bean));
+        descriptors.add(webPanelFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
 
         return descriptors;
     }

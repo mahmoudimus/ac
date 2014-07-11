@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.test.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -64,7 +65,8 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
         this.descriptorHints = getDescriptorHints();
         this.bean = createBean();
 
-        this.descriptor = descriptorFactory.createModuleDescriptor(createAddonBean(),getConnectPlugin(), bean, descriptorHints);
+        this.descriptor = descriptorFactory.createModuleDescriptor(new DefaultConnectModuleProviderContext(createAddonBean()),
+                getConnectPlugin(), bean, descriptorHints);
     }
     
     @After

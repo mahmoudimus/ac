@@ -1,39 +1,41 @@
-package it.capabilities.jira;
+package it.capabilities.confluence.condition;
 
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
-import hudson.plugins.jira.soap.RemoteIssue;
-import it.jira.JiraWebDriverTestBase;
 import it.servlet.condition.CheckUsernameConditionServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-import org.junit.After;
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import redstone.xmlrpc.XmlRpcFault;
 
+import java.net.MalformedURLException;
 import java.util.Map;
 
+import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
-import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
-public class TestJiraConditions extends JiraWebDriverTestBase
+public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 {
     private static ConnectRunner remotePlugin;
 
@@ -44,6 +46,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
 
     private static final String ONLY_BETTY_CONDITION_URL = "/onlyBettyCondition";
     private static final String ONLY_BARNEY_CONDITION_URL = "/onlyBarneyCondition";
+    private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
@@ -56,55 +59,54 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                     newWebItemBean()
                         .withName(new I18nProperty("Only Betty", ONLY_BETTY_WEBITEM))
                         .withKey(ONLY_BETTY_WEBITEM)
-                        .withLocation("system.top.navigation.bar")
+                        .withLocation("system.browse")
                         .withWeight(1)
                         .withUrl("http://www.google.com")
                         .withConditions(
-                                newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                newSingleConditionBean().withCondition(ONLY_BETTY_CONDITION_URL).build()
+                            newSingleConditionBean().withCondition("user_is_logged_in").build(),
+                            newSingleConditionBean().withCondition(ONLY_BETTY_CONDITION_URL).build()
                         )
                         .build(),
                     newWebItemBean()
                         .withName(new I18nProperty("Betty And Barney", BETTY_AND_BARNEY_WEBITEM))
                         .withKey(BETTY_AND_BARNEY_WEBITEM)
-                        .withLocation("system.top.navigation.bar")
+                        .withLocation("system.browse")
                         .withWeight(1)
                         .withUrl("http://www.google.com")
                         .withConditions(
-                                newSingleConditionBean().withCondition("user_is_logged_in").build(),
+                            newSingleConditionBean().withCondition("user_is_logged_in").build(),
                                 newCompositeConditionBean()
                                     .withType(CompositeConditionType.OR)
                                     .withConditions(
                                             newSingleConditionBean().withCondition(ONLY_BETTY_CONDITION_URL).build(),
                                             newSingleConditionBean().withCondition(ONLY_BARNEY_CONDITION_URL).build()
                                     ).build()
-                        )
-                        .build(),
+                        ).build(),
                     newWebItemBean()
                         .withName(new I18nProperty("Admin Rights", ADMIN_RIGHTS_WEBITEM))
                         .withKey(ADMIN_RIGHTS_WEBITEM)
-                        .withLocation("system.top.navigation.bar")
+                        .withLocation("system.browse")
                         .withWeight(1)
                         .withUrl("http://www.google.com")
                         .withConditions(
-                            newSingleConditionBean().withCondition("user_is_admin").build()
+                            newSingleConditionBean().withCondition("user_is_confluence_administrator").build()
                         )
                         .build(),
                     newWebItemBean()
                         .withName(new I18nProperty("Context Parameterized", CONTEXT_PARAMETERIZED_WEBITEM))
                         .withKey(CONTEXT_PARAMETERIZED_WEBITEM)
+                        .withLocation("system.browse")
                         .withContext(AddOnUrlContext.addon)
-                        .withLocation("operations-operations") // issue operations
                         .withWeight(1)
                         .withUrl("/somewhere")
                         .withConditions(
-                            newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
-                                    "?issueId={issue.id}&projectKey={project.key}").build()
+                            newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
+                                    "?pageId={page.id}&spaceKey={space.key}").build()
                         )
                         .build())
                 .addRoute(ONLY_BARNEY_CONDITION_URL, new CheckUsernameConditionServlet(BARNEY_USERNAME))
                 .addRoute(ONLY_BETTY_CONDITION_URL, new CheckUsernameConditionServlet(BETTY_USERNAME))
-                .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
+                .addRoute(PARAMETER_CAPTURE_CONDITION_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
 
@@ -117,119 +119,111 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         }
     }
 
-    @After
-    public void tearDown()
-    {
-        PARAMETER_CAPTURING_SERVLET.clearParams();
-    }
-
     @Test
-    public void bettyCanSeeBettyWebItem()
+    public void bettyCanSeeBettyWebItem() throws Exception
     {
         loginAsBetty();
 
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ONLY_BETTY_WEBITEM), Optional.<String>absent());
+        ConfluenceEditPage editPage = visitEditPage();
+        RemoteWebItem webItem = editPage.findWebItem(getModuleKey(ONLY_BETTY_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
     @Test
-    public void barneyCannotSeeBettyWebItem()
+    public void barneyCannotSeeBettyWebItem() throws Exception
     {
         loginAsBarney();
 
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ONLY_BETTY_WEBITEM)));
+        ConfluenceEditPage editPage = visitEditPage();
+        assertFalse("Web item should NOT be found", editPage.existsWebItem(getModuleKey(ONLY_BETTY_WEBITEM)));
     }
-    
+
     @Test
-    public void adminCannotSeeBettyWebItem()
+    public void adminCannotSeeBettyWebItem() throws Exception
     {
         loginAsAdmin();
 
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ONLY_BETTY_WEBITEM)));
+        ConfluenceEditPage editPage = visitEditPage();
+        assertFalse("Web item should NOT be found", editPage.existsWebItem(getModuleKey(ONLY_BETTY_WEBITEM)));
     }
 
     @Test
-    public void bettyCanSeeBettyAndBarneyWebItem()
+    public void bettyCanSeeBettyAndBarneyWebItem() throws Exception
     {
         loginAsBetty();
 
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.<String>absent());
+        ConfluenceEditPage editPage = visitEditPage();
+        RemoteWebItem webItem = editPage.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
     @Test
-    public void barneyCanSeeBettyAndBarneyWebItem()
+    public void barneyCanSeeBettyAndBarneyWebItem() throws Exception
     {
         loginAsBarney();
 
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.<String>absent());
+        ConfluenceEditPage editPage = visitEditPage();
+        RemoteWebItem webItem = editPage.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
     @Test
-    public void adminCannotSeeBettyAndBarneyWebItem()
+    public void adminCannotSeeBettyAndBarneyWebItem() throws Exception
     {
         loginAsAdmin();
 
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(BETTY_AND_BARNEY_WEBITEM)));
+        ConfluenceEditPage editPage = visitEditPage();
+        assertFalse("Web item should NOT be found", editPage.existsWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM)));
     }
 
     @Test
-    public void bettyCanSeeAdminRightsWebItem()
+    public void bettyCanSeeAdminRightsWebItem() throws Exception
     {
         loginAsBetty();
 
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent());
+        ConfluenceEditPage editPage = visitEditPage();
+        RemoteWebItem webItem = editPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
     @Test
-    public void barneyCannotSeeAdminRightsWebItem()
+    public void barneyCannotSeeAdminRightsWebItem() throws Exception
     {
         loginAsBarney();
 
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ADMIN_RIGHTS_WEBITEM)));
+        ConfluenceEditPage editPage = visitEditPage();
+        assertFalse("Web item should NOT be found", editPage.existsWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM)));
     }
 
     @Test
-    public void adminCanSeeAdminRightsWebItem()
+    public void adminCanSeeAdminRightsWebItem() throws Exception
     {
         loginAsAdmin();
 
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent());
+        ConfluenceEditPage editPage = visitEditPage();
+        RemoteWebItem webItem = editPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
-    private RemoteIssue navigateToJiraIssuePageAndVerifyParameterCapturingWebItem() throws Exception
+    private ConfluenceEditPage navigateToEditPageAndVerifyParameterCapturingWebItem() throws Exception
     {
         loginAsAdmin();
 
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Nought but a test.");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
-        RemoteWebItem webItem = viewIssuePage.findWebItem(getModuleKey(CONTEXT_PARAMETERIZED_WEBITEM), Optional.<String>absent());
+        ConfluenceEditPage editPage = visitEditPage();
+        RemoteWebItem webItem = editPage.findWebItem(getModuleKey(CONTEXT_PARAMETERIZED_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
-
-        return issue;
+        return editPage;
     }
 
     @Test
     public void standardParametersArePassedToConditions() throws Exception
     {
-        navigateToJiraIssuePageAndVerifyParameterCapturingWebItem();
+        navigateToEditPageAndVerifyParameterCapturingWebItem();
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
 
         assertThat(conditionParams, hasEntry(equalTo("lic"), equalTo("none")));
-        assertThat(conditionParams, hasEntry(equalTo("cp"), equalTo("/jira")));
+        assertThat(conditionParams, hasEntry(equalTo("cp"), equalTo("/confluence")));
         assertThat(conditionParams, hasEntry(equalTo("tz"), isTimeZone()));
         assertThat(conditionParams, hasEntry(equalTo("loc"), isLocale()));
         assertThat(conditionParams, hasEntry(equalTo("user_id"), equalTo("admin")));
@@ -238,17 +232,28 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void contextParametersArePassedToConditions() throws Exception
     {
-        RemoteIssue issue = navigateToJiraIssuePageAndVerifyParameterCapturingWebItem();
+        ConfluenceEditPage editPage = navigateToEditPageAndVerifyParameterCapturingWebItem();
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
 
-        assertThat(conditionParams, hasEntry(equalTo("issueId"), equalTo(issue.getId())));
-        assertThat(conditionParams, hasEntry(equalTo("projectKey"), equalTo(project.getKey())));
+        assertThat(conditionParams, hasEntry(equalTo("pageId"), equalTo(editPage.getPageId())));
+        assertThat(conditionParams, hasEntry(equalTo("spaceKey"), equalTo("ds")));
     }
-    
+
+    private ConfluenceEditPage visitEditPage() throws Exception
+    {
+        final String pageId = createPage();
+        return product.visit(ConfluenceEditPage.class, pageId);
+    }
+
+    private String createPage() throws MalformedURLException, XmlRpcFault
+    {
+        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
+        return pageData.getId();
+    }
+
     private String getModuleKey(String module)
     {
-        return addonAndModuleKey(remotePlugin.getAddon().getKey(),module);
-    }    
-
+        return ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(),module);
+    }
 }

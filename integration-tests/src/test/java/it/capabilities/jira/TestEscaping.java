@@ -40,7 +40,6 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static it.jira.TestJira.EXTRA_PREFIX;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -216,7 +215,7 @@ public class TestEscaping extends TestBase
     @Test
     public void testAdminPage() throws Exception
     {
-        jira().quickLoginAsAdmin(JiraAdministrationHomePage.class, EXTRA_PREFIX);
+        jira().quickLoginAsAdmin(JiraAdministrationHomePage.class);
         JiraAdminPage adminPage = jira().getPageBinder().bind(JiraAdminPage.class, getModuleKey(ADMIN_PAGE_KEY));
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
