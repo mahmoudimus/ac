@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
@@ -105,8 +104,8 @@ public class TestJira extends JiraWebDriverTestBase
         // TODO: select the "Test Issue Action" text (a link with id="<add-on key>__jira-issue-action"),
         // which causes the iframe to be loaded inside a container div with id="embedded-<add-on key>__jira-issue-action",
         // and then look for iframe content by binding to the iframe and calling RemotePluginDialog.wasSubmitted() etc
-        ConnectAddOnTestPage page1 = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey(), false);
-        ConnectAddOnTestPage page2 = product.getPageBinder().bind(ConnectAddOnTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey(), true);
+        ConnectAddOnEmbeddedTestPage page1 = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnEmbeddedTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey(), false);
+        ConnectAddOnEmbeddedTestPage page2 = product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey(), true);
 
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page2);
 

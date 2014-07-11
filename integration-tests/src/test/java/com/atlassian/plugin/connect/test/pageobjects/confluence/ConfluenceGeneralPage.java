@@ -5,9 +5,11 @@ import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.timeout.TimeoutType;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import org.apache.commons.lang.NotImplementedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -81,10 +83,20 @@ public class ConfluenceGeneralPage implements GeneralPage
     }
 
     @Override
+    @Deprecated
+    /**
+     * @deprecated Please migrate to {@link #clickAddOnLink()}.
+     */
     public RemotePluginTestPage clickRemotePluginLink()
     {
+        throw new NotImplementedException("Please migrate away from this method to clickAddOnLink()");
+    }
+
+    @Override
+    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
+    {
         findLinkElement().click();
-        return pageBinder.bind(RemotePluginTestPage.class, pageKey, extraPrefix);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, pageKey, extraPrefix, true);
     }
 
     @Override
