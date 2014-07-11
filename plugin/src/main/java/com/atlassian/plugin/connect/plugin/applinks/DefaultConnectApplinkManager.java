@@ -230,6 +230,12 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         return null;
     }
 
+    @Override
+    public URI getApplinkLinkSelfLink(final ApplicationLink applink)
+    {
+        return applicationLinkService.createSelfLinkFor(applink.getId());
+    }
+
     private boolean compatibleAppLinkExists(String pluginKey, ApplicationId appId)
     {
         ApplicationLink link;

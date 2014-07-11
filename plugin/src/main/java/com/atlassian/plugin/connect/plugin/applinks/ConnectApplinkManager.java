@@ -5,6 +5,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 
+import java.net.URI;
+
 /**
  * A helper component for creating applinks for add ons.
  */
@@ -46,4 +48,10 @@ public interface ConnectApplinkManager
      * @throws com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException if the key belongs to a plugin which is not a Connect add-on
      */
     public ApplicationLink getAppLink(String key) throws NotConnectAddonException;
+
+    /**
+     * @param applink application link
+     * @return the self link for this application link
+     */
+    public URI getApplinkLinkSelfLink(ApplicationLink applink);
 }

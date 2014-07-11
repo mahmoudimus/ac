@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.rest.reporting;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import com.atlassian.plugins.rest.common.Link;
+
 
 public class RestAddonStatus extends RestAddon
 {
@@ -10,23 +12,20 @@ public class RestAddonStatus extends RestAddon
     @JsonProperty
     private final String license;
 
-    public RestAddonStatus(@JsonProperty ("key") final String key,
-            @JsonProperty ("version") final String version,
-            @JsonProperty ("type") final RestAddonType type,
-            @JsonProperty ("state") final String state)
-    {
-        this(key, version, type, state, null);
-    }
+    @JsonProperty
+    private final AddonApplink applink;
 
     public RestAddonStatus(@JsonProperty ("key") final String key,
             @JsonProperty ("version") final String version,
             @JsonProperty ("type") final RestAddonType type,
             @JsonProperty ("state") final String state,
-            @JsonProperty ("license") final String license)
+            @JsonProperty ("license") final String license,
+            @JsonProperty ("applink") final AddonApplink applink)
     {
         super(key, version, type);
         this.state = state;
         this.license = license;
+        this.applink = applink;
     }
 
     public String getState()
@@ -37,5 +36,36 @@ public class RestAddonStatus extends RestAddon
     public String getLicense()
     {
         return license;
+    }
+
+    public AddonApplink getApplink()
+    {
+        return applink;
+    }
+
+    public static class AddonApplink
+    {
+        @JsonProperty
+        private final String id;
+
+        @JsonProperty
+        private final Link self;
+
+        public AddonApplink(@JsonProperty("id") final String id,
+                @JsonProperty("self") final Link self)
+        {
+            this.id = id;
+            this.self = self;
+        }
+
+        public String getId()
+        {
+            return id;
+        }
+
+        public Link getSelf()
+        {
+            return self;
+        }
     }
 }

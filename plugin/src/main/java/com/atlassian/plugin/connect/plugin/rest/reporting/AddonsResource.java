@@ -1,18 +1,22 @@
 package com.atlassian.plugin.connect.plugin.rest.reporting;
 
+import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugins.rest.common.Link;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.DELETE;
@@ -34,16 +38,19 @@ public class AddonsResource
     private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
     private final ConnectAddonRegistry addonRegistry;
     private final LicenseRetriever licenseRetriever;
+    private final ConnectApplinkManager connectApplinkManager;
 
     public AddonsResource(PluginAccessor pluginAccessor, PluginController pluginController,
             LegacyAddOnIdentifierService legacyAddOnIdentifierService,
-            ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever)
+            ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
+            ConnectApplinkManager connectApplinkManager)
     {
         this.pluginAccessor = pluginAccessor;
         this.pluginController = pluginController;
         this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
+        this.connectApplinkManager = connectApplinkManager;
     }
 
     @GET
@@ -128,8 +135,9 @@ public class AddonsResource
                 String version = plugin.getPluginInformation().getVersion();
                 String state = plugin.getPluginState().name();
                 String license = licenseRetriever.getLicenseStatus(key).value();
+                RestAddonStatus.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
 
-                result.add(new RestAddonStatus(key, version, RestAddonType.XML, state, license));
+                result.add(new RestAddonStatus(key, version, RestAddonType.XML, state, license, appLinkResource));
             }
         }
 
@@ -141,8 +149,9 @@ public class AddonsResource
                 String version = addonBean.getVersion();
                 String state = addonRegistry.getRestartState(key).name();
                 String license = licenseRetriever.getLicenseStatus(key).value();
+                RestAddonStatus.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
 
-                result.add(new RestAddonStatus(key, version, RestAddonType.JSON, state, license));
+                result.add(new RestAddonStatus(key, version, RestAddonType.JSON, state, license, appLinkResource));
             }
         }
 
@@ -160,5 +169,14 @@ public class AddonsResource
             }
         }
         return xmlPlugins;
+    }
+
+    private RestAddonStatus.AddonApplink getApplinkResourceForAddon(String key)
+    {
+        ApplicationLink appLink = connectApplinkManager.getAppLink(key);
+        String appLinkId = appLink.getId().get();
+        URI selfUri = connectApplinkManager.getApplinkLinkSelfLink(appLink);
+
+        return new RestAddonStatus.AddonApplink(appLinkId, Link.self(selfUri));
     }
 }

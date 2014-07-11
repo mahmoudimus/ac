@@ -13,9 +13,9 @@ public class RestAddon
     @JsonProperty
     private final RestAddonType type;
 
-    public RestAddon(@JsonProperty("key") final String key,
-                     @JsonProperty("version") final String version,
-                     @JsonProperty("type") final RestAddonType type)
+    public RestAddon(@JsonProperty ("key") final String key,
+            @JsonProperty ("version") final String version,
+            @JsonProperty ("type") final RestAddonType type)
     {
         this.key = key;
         this.version = version;
@@ -36,4 +36,5 @@ public class RestAddon
     {
         return type;
     }
+
 }
