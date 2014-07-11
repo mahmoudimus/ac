@@ -104,8 +104,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         loginAsAdmin();
 
         ConfluenceViewPage createdPage = createAndVisitViewPage();
-        ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, awesomePageModuleKey,
-                "My Awesome Page", true);
+        ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, "My Awesome Page", true, addonKey);
 
         assertThat(generalPage.isRemotePluginLinkPresent(), is(true));
 
