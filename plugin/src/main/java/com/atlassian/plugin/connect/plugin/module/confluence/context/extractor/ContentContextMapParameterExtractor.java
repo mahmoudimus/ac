@@ -6,6 +6,9 @@ import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExt
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.base.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -13,6 +16,8 @@ import java.util.Map;
 @ConfluenceComponent
 public class ContentContextMapParameterExtractor implements ContextMapParameterExtractor<ContentEntityObject>
 {
+    private static final Logger LOG = LoggerFactory.getLogger(ContentContextMapParameterExtractor.class);
+
     public static final String CONTENT_CONTEXT_PARAMETER = "content";
 
     private final ContentSerializer contentSerializer;
@@ -32,6 +37,10 @@ public class ContentContextMapParameterExtractor implements ContextMapParameterE
             if (contentFromContext instanceof ContentEntityObject)
             {
                 return Optional.of((ContentEntityObject)contentFromContext);
+            }
+            else
+            {
+                LOG.debug("Encountered a 'content' context parameter that is a " + contentFromContext.getClass().getName() + " rather than a ContentEntityObject. Skipping.");
             }
         }
         return Optional.absent();
