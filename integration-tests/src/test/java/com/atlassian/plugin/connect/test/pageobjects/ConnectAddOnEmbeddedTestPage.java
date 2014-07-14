@@ -9,10 +9,10 @@ public class ConnectAddOnEmbeddedTestPage extends ConnectAddOnPage
 {
     public ConnectAddOnEmbeddedTestPage(String pageKey, boolean includeEmbeddedPrefix)
     {
-        this(pageKey, "", includeEmbeddedPrefix);
+        this("", pageKey, includeEmbeddedPrefix);
     }
 
-    public ConnectAddOnEmbeddedTestPage(String pageKey, String addOnKey, boolean includeEmbeddedPrefix)
+    public ConnectAddOnEmbeddedTestPage(String addOnKey, String pageKey, boolean includeEmbeddedPrefix)
     {
         super(addOnKey, pageKey, includeEmbeddedPrefix);
     }

@@ -98,7 +98,7 @@ public final class JiraGeneralPage implements GeneralPage
                     {
                         l.click();
                         logger.debug("Link '{}' was found and clicked.", l);
-                        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, pageKey, addOnKey, true);
+                        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, pageKey, true);
                     }
                 }
         );

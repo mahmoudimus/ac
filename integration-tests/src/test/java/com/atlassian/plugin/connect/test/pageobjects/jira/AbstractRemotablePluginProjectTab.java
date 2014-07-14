@@ -26,6 +26,6 @@ public abstract class AbstractRemotablePluginProjectTab extends AbstractProjectT
 
     public ConnectAddOnEmbeddedTestPage getEmbeddedPage()
     {
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, moduleKey, addOnKey, true);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
     }
 }

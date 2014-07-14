@@ -191,7 +191,7 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
             final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
             upm.clickConfigurePluginButton(anotherPlugin.getAddon().getKey(), "page");
-            product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, "page", anotherPlugin.getAddon().getKey(), true); // will throw if it fails to load
+            product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, anotherPlugin.getAddon().getKey(), "page", true); // will throw if it fails to load
         }
         finally
         {
