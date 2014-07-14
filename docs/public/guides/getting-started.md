@@ -1,12 +1,12 @@
-# Getting Started
+# Getting started
 
-This Hello World tutorial shows you a basic preview of the Connect framework. Connect add-ons are essentially web applications that integrate with your Atlassian product. In this tutorial, you'll turn a simple web application into an Atlassian Connect add-on. You'll install it in a locally-running copy of JIRA in OnDemand mode, and access your add-on from a link in the header. Your add-on displays as an iframe of your web application. 
+This Hello World tutorial shows you a basic preview of the Connect framework. Connect add-ons are essentially web applications that integrate with your Atlassian product. In this tutorial, you'll turn a simple web application into an Atlassian Connect add-on. You'll install it in a locally-running copy of JIRA Cloud, and access your add-on from a link in the header. Your add-on displays as an iframe of your web application. 
 
 Here's what you'll accomplish: 
 
 * [Create a basic `atlassian-connect.json` descriptor](#descriptor)  
 * [Build an add-on web application: A super simple HTML page](#webapp)  
-* [Start up a locally-running copy of JIRA in OnDemand mode](#runjira)  
+* [Start up a locally-running copy of JIRA Cloud](#runjira)  
 * [Install and test your add-on](#install)
 
 By the end, you'll see your web application displayed in an iframe inside of JIRA:  
@@ -18,7 +18,7 @@ __Note__: This is a beginner tutorial. You can build this add-on even if you've 
 
 ## <a name="descriptor"></a>Create the add-on descriptor (`atlassian-connect.json`)
 
-In this step you'll create a JSON descriptor file. This file describes your add-on to the Atlassian application, which in this case is JIRA OnDemand. Your descriptor specifies your add-on's key, name, permissions needed to operate, and the different modules it uses for integration. 
+In this step you'll create a JSON descriptor file. This file describes your add-on to the Atlassian application, which in this case is JIRA Cloud. Your descriptor specifies your add-on's key, name, permissions needed to operate, and the different modules it uses for integration. 
 
 Your `atlassian-connect.json` file will use a [`generalPages` module](../modules/jira/general-page.html), and add a link to JIRA's top navigation element titled "Greeting".
 
@@ -128,11 +128,11 @@ current directory containing your `atlassian-connect.json` and `helloworld.html`
     * <code data-lang="text"><a href="http://localhost:8000/atlassian-connect.json">http://localhost:8000/atlassian-connect.json</a></code>
     * <code data-lang="text"><a href="http://localhost:8000/helloworld.html">http://localhost:8000/helloworld.html</a></code>
 
-## <a name="runjira"></a>Start JIRA OnDemand using the Atlassian SDK
+## <a name="runjira"></a>Start JIRA Cloud using the Atlassian SDK
 
 You've created the essential components of a Connect add-on: an `atlassian-connect.json` descriptor file to communicate what your add-on does to JIRA, and a web application (`helloworld.html`) running on a local server. Now, you need to start JIRA to install your add-on. 
 
-You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud instances) of Atlassian products, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
+You'll start JIRA in cloud mode. Connect is only present in Atlassian-hosted products like JIRA Cloud, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable. 
 
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
     You'll need at least SDK version 4.2.20. If you run the <tt>atlas-version</tt> command, you should see something similar to this:  
@@ -144,8 +144,9 @@ You'll start JIRA in OnDemand mode. Connect is only present in OnDemand (cloud i
         ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
     </tt>
   
-2. From a new terminal window, start JIRA in OnDemand mode: 
-    <pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-03-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+2. From a new terminal window, start JIRA with cloud environment flags:
+    <pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-07-013 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.16.5,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.5 --jvmargs -Datlassian.upm.on.demand=true</code></pre>  
+
     __Note:__ If you're not using the command above, ensure all components in the `--bundled-plugins` argument are present in your JIRA instances. These component versions will change as Connect development continues.  
     
     You'll see a lot of output. When finished, your terminal notifies you that the build was successful:  

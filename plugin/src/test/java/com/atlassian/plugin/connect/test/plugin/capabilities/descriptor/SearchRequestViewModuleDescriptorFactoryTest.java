@@ -16,6 +16,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.ConnectConditionDescriptorFactory;
@@ -70,11 +72,13 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     private SearchRequestViewModuleDescriptorImpl descriptor;
 
     private ConnectAddonBean addon;
+    private ConnectModuleProviderContext moduleProviderContext;
 
     @Before
     public void beforeEachTest() throws Exception
     {
         this.addon = newConnectAddonBean().withKey("my-plugin").build();
+        this.moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.<UserLoggedInCondition>loadClass(eq("com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"), any(Class.class)))
                 .thenReturn(UserLoggedInCondition.class);
@@ -109,7 +113,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                         newSingleConditionBean().withCondition("user_is_logged_in").build())
                 .build();
 
-        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(addon, plugin, bean);
+        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         this.descriptor.enabled();
     }
 

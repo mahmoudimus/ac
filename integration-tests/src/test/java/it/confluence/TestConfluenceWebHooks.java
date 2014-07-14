@@ -1,6 +1,7 @@
 package it.confluence;
 
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
@@ -15,6 +16,7 @@ import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runIn
 import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertNotNull;
 
+@ConvertToWiredTest
 public class TestConfluenceWebHooks extends AbstractBrowserlessTest
 {
     private ConfluenceOps confluenceOps;
@@ -30,7 +32,7 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
     @Test
     public void testSearchPerformedWebHookFired() throws Exception
     {
-        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        final String pluginKey = AddonTestUtils.randomAddOnKey();
         
         runInRunner(baseUrl, "search_performed", pluginKey, new WebHookTester()
         {
@@ -51,7 +53,7 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
     @Test
     public void testPageCreatedWebHookFired() throws Exception
     {
-        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        final String pluginKey = AddonTestUtils.randomAddOnKey();
         
         runInRunner(baseUrl, "page_created", pluginKey, new WebHookTester()
         {
@@ -71,7 +73,7 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
     @Test
     public void testContentPermissionsUpdatedWebHookFired() throws Exception
     {
-        final String pluginKey = RemotePluginUtils.randomPluginKey();
+        final String pluginKey = AddonTestUtils.randomAddOnKey();
 
         runInRunner(baseUrl, "content_permissions_updated", pluginKey, new WebHookTester()
         {

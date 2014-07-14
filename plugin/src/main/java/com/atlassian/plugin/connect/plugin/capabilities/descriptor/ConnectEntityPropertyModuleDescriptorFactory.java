@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
@@ -27,11 +28,13 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
     }
 
     @Override
-    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, EntityPropertyModuleBean bean)
+    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, EntityPropertyModuleBean bean)
     {
         Element indexDocumentConfiguration = new DOMElement(DESCRIPTOR_NAME);
 
-        indexDocumentConfiguration.addAttribute("key", bean.getKey(addon));
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
+
+        indexDocumentConfiguration.addAttribute("key", bean.getKey(connectAddonBean));
         indexDocumentConfiguration.addAttribute("entity-key", bean.getEntityType().getValue());
         indexDocumentConfiguration.addAttribute("i18n-name-key", bean.getName().getI18n());
 

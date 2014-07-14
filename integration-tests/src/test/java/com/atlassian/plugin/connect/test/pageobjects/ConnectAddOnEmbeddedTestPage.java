@@ -1,10 +1,11 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
 import org.openqa.selenium.By;
 
 import java.util.concurrent.Callable;
 
-public class ConnectAddOnEmbeddedTestPage extends ConnectPage
+public class ConnectAddOnEmbeddedTestPage extends ConnectAddOnPage
 {
     public ConnectAddOnEmbeddedTestPage(String pageKey, boolean includeEmbeddedPrefix)
     {
@@ -41,6 +42,7 @@ public class ConnectAddOnEmbeddedTestPage extends ConnectPage
         return getValue("message");
     }
 
+    @OAuth
     public String getConsumerKey()
     {
         return getValue("consumerKey");
@@ -105,5 +107,10 @@ public class ConnectAddOnEmbeddedTestPage extends ConnectPage
                 return driver.findElement(By.id(id)).getText();
             }
         });
+    }
+
+    public String getTitle()
+    {
+        return driver.getTitle();
     }
 }

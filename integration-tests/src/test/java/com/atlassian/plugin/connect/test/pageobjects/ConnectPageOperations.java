@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrow
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.atlassian.webdriver.utils.by.ByJquery;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -117,12 +118,6 @@ public class ConnectPageOperations
         return findRemoteLinkedContent(mode, linkText, dropDownMenuId, pageKey);
     }
 
-    @Deprecated
-    public LinkedRemoteContent findConnectPageFromXml(ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)
-    {
-        return findRemoteLinkedContent(mode, linkText, dropDownMenuId, pageKey);
-    }
-
     public LinkedRemoteContent findTabPanel(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
@@ -138,16 +133,9 @@ public class ConnectPageOperations
         return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
     }
 
-
     public ConnectMacroBrowserDialog findConnectMacroBrowserDialog()
     {
         return pageBinder.bind(ConnectMacroBrowserDialog.class);
-    }
-
-    @Deprecated
-    public LinkedRemoteContent findRemoteLinkedContentFromXml(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
-    {
-        return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
     }
 
     private LinkedRemoteContent findRemoteLinkedContent(String webItemId, Option<String> dropDownMenuId, String pageKey)
@@ -161,8 +149,25 @@ public class ConnectPageOperations
         return pageBinder.bind(RemotePluginDialog.class, dialogContent);
     }
 
+    public WebElement findLabel(String key)
+    {
+        return driver.findElement(ByJquery.$("label[for='"+ key +"']"));
+    }
+
     public PageBinder getPageBinder()
     {
         return pageBinder;
+    }
+
+    public RemotePluginDialog editMacro(String macroKey)
+    {
+        String macroNodeSelector = "$(\"#wysiwygTextarea_ifr\").contents().find(\"table[data-macro-name='"+ macroKey +"']\")";
+        driver.executeScript("tinymce.confluence.macrobrowser.editMacro("+ macroNodeSelector +")");
+        return findDialog(macroKey);
+    }
+
+    public void reorderConfluenceTableOnPage()
+    {
+        driver.findElement(By.className("tablesorter-header-inner")).click();
     }
 }

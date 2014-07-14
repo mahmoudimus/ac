@@ -11,15 +11,17 @@ public class RemotePluginDialog extends RemoteDialog
     @XmlDescriptor(comment="migrate to the new embeddedConnectPage data member")
     private final RemotePluginTestPage embeddedPage;
 
-    private final ConnectAddOnTestPage embeddedConnectPage;
+    private final ConnectAddOnEmbeddedTestPage embeddedConnectPage;
 
+    @Deprecated
+    @XmlDescriptor
     public RemotePluginDialog(RemotePluginTestPage embeddedPage)
     {
         this.embeddedPage = embeddedPage;
         this.embeddedConnectPage = null;
     }
 
-    public RemotePluginDialog(ConnectAddOnTestPage embeddedConnectPage)
+    public RemotePluginDialog(ConnectAddOnEmbeddedTestPage embeddedConnectPage)
     {
         this.embeddedPage = null;
         this.embeddedConnectPage = embeddedConnectPage;

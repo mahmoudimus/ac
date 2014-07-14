@@ -38,8 +38,7 @@ public class LicenseResource
         String pluginKey = ApiScopingFilter.extractClientKey(request);
         if (pluginKey == null) {
             return Response.status(Response.Status.BAD_REQUEST)
-                           .entity("Requests to this resource must be authenticated with OAuth headers from an " +
-                                   "Atlassian Connect app.")
+                           .entity("Requests to this resource must be authenticated by an add-on.")
                            .build();
         }
 

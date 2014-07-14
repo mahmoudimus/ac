@@ -64,7 +64,7 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
     }
 
     function displayDialogContent($container, options){
-        $container.append('<div id="embedded-' + options.ns + '" class="ap-dialog-container" />');
+        $container.append('<div id="embedded-' + options.ns + '" class="ap-dialog-container ap-content" />');
     }
 
 
@@ -121,7 +121,7 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
             mergedOptions.w = parseDimension(mergedOptions.width, $global.width());
             mergedOptions.h = parseDimension(mergedOptions.height, $global.height());
 
-            $nexus = $("<div />").addClass("ap-servlet-placeholder").attr('id', 'ap-' + options.ns)
+            $nexus = $("<div />").addClass("ap-servlet-placeholder ap-container").attr('id', 'ap-' + options.ns)
             .bind("ra.dialog.close", closeDialog);
 
             if(options.chrome){

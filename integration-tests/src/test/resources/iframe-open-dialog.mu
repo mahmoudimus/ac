@@ -7,12 +7,13 @@
   </head>
   <body>
     <div>
-      <button class="aui-button" id="dialog-open-button-key">Open dialog via URL</button>
-      <button class="aui-button" id="dialog-open-button-url">Open dialog via Key</button>
+      <button class="aui-button" id="dialog-open-button-key">Open dialog via key</button>
+      <button class="aui-button" id="dialog-open-button-url">Open dialog via URL</button>
       <br>
       Dialog Close Data: <span id="dialog-close-data"></span>
     </div>
     <script>
+      // TODO: remove when XML descriptor support is gone (it tests opening a dialog by arbitrary URL)
       AP.require(["_dollar", "dialog"], function($, dialog) {
         $("#dialog-open-button-url").bind("click", function() {
           dialog.create({
@@ -24,6 +25,7 @@
           });
         });
       });
+      // test opening a dialog by module key
       AP.require(["_dollar", "dialog"], function($, dialog) {
         $("#dialog-open-button-key").bind("click", function() {
           dialog.create({
