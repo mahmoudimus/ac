@@ -32,12 +32,14 @@ public class ConfluenceImports
 {
     @Inject
     public ConfluenceImports(
-            // this one's a component from an external jar, not an OSGi service
+            // these two are components from an external jar, not an OSGi service
             @ConfluenceComponent ConfluenceWebFragmentHelper confluenceWebFragmentHelper,
+            @ConfluenceComponent ("permissionsAdministratorBuilder") PermissionsAdministratorBuilder permissionsAdministratorBuilder,
+
             @ConfluenceImport BandanaManager bandanaManager,
+            @ConfluenceImport @Qualifier("contentEntityManager") ContentEntityManager contentEntityManager,
             @ConfluenceImport I18NBeanFactory i18NBeanFactory,
             @ConfluenceImport MultiQueueTaskManager multiQueueTaskManager,
-            @ConfluenceImport @Qualifier("contentEntityManager") ContentEntityManager contentEntityManager,
             @ConfluenceImport PageManager pageManager,
             @ConfluenceImport ("confluencePermissionManager") PermissionManager permissionManager,
             @ConfluenceImport SettingsManager settingsManager,
@@ -45,10 +47,9 @@ public class ConfluenceImports
             @ConfluenceImport SpacePermissionManager spacePermissionManager,
             @ConfluenceImport StorageFormatCleaner storageFormatCleaner,
             @ConfluenceImport SystemInformationService systemInformationService,
-            @ConfluenceImport WebSudoManager webSudoManager,
             @ConfluenceImport UserAccessor userAccessor,
-            @ConfluenceImport XhtmlContent xhtmlContent,
-            @ConfluenceComponent ("permissionsAdministratorBuilder") PermissionsAdministratorBuilder permissionsAdministratorBuilder // not an OSGi service
+            @ConfluenceImport WebSudoManager webSudoManager,
+            @ConfluenceImport XhtmlContent xhtmlContent
     )
     {
     }
