@@ -14,7 +14,7 @@ public class ConnectAddOnEmbeddedTestPage extends ConnectAddOnPage
 
     public ConnectAddOnEmbeddedTestPage(String pageKey, String addOnKey, boolean includeEmbeddedPrefix)
     {
-        super(pageKey, addOnKey, includeEmbeddedPrefix);
+        super(addOnKey, pageKey, includeEmbeddedPrefix);
     }
 
     public String getFullName()

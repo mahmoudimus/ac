@@ -39,7 +39,7 @@ public class ConnectAddOnPage
 
     private static final Logger log = LoggerFactory.getLogger(ConnectAddOnPage.class);
 
-    public ConnectAddOnPage(String pageElementKey, String addOnKey, boolean includedEmbeddedPrefix)
+    public ConnectAddOnPage(String addOnKey, String pageElementKey, boolean includedEmbeddedPrefix)
     {
         this.pageElementKey = pageElementKey;
         this.addOnKey = addOnKey;

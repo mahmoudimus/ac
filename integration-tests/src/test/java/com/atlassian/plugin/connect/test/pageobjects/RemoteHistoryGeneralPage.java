@@ -34,7 +34,7 @@ public class RemoteHistoryGeneralPage extends ConnectAddOnPage implements Page
 
 
     public RemoteHistoryGeneralPage(String addOnKey, String moduleKey) {
-        super(moduleKey, addOnKey, true);
+        super(addOnKey, moduleKey, true);
         this.addonKey = addOnKey;
         this.moduleKey = moduleKey;
     }
