@@ -111,7 +111,6 @@ public class ConnectAddonManager
     private final I18nResolver i18nResolver;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final SharedSecretService sharedSecretService;
-    private final HttpClientFactory httpClientFactory;
     private final ConnectAddonI18nManager i18nManager;
 
     private final AtomicBoolean isTestHttpClient;
@@ -141,7 +140,6 @@ public class ConnectAddonManager
         this.i18nResolver = i18nResolver;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.sharedSecretService = sharedSecretService;
-        this.httpClientFactory = httpClientFactory;
         this.i18nManager = i18nManager;
 
         this.isTestHttpClient = new AtomicBoolean(false);

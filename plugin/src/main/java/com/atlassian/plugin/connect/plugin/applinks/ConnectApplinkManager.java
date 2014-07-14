@@ -5,6 +5,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 
+import java.net.URI;
+
 /**
  * A helper component for creating applinks for add ons.
  */
@@ -22,15 +24,6 @@ public interface ConnectApplinkManager
      */
     @Deprecated //use the addonBean version
     void createAppLink(Plugin plugin, String baseUrl, AuthenticationType authType, String publicKey, String addonUserKey);
-
-    /**
-     * Deletes an {@link ApplicationLink} for an Atlassian Connect add-on.
-     * @param plugin the plugin to delete the applink for
-     *               
-     * @deprecated use the addonBean version
-     */
-    @Deprecated //use the addonBean version
-    void deleteAppLink(Plugin plugin) throws NotConnectAddonException;
 
     /**
      * Creates an {@link ApplicationLink} for a connect add-on.
@@ -55,4 +48,10 @@ public interface ConnectApplinkManager
      * @throws com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException if the key belongs to a plugin which is not a Connect add-on
      */
     public ApplicationLink getAppLink(String key) throws NotConnectAddonException;
+
+    /**
+     * @param applink application link
+     * @return the self link for this application link
+     */
+    public URI getApplinkLinkSelfLink(ApplicationLink applink);
 }
