@@ -5,7 +5,7 @@ import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.projects.pageobjects.page.BrowseProjectPage;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.module.jira.projecttab.ProjectTabPageModuleDescriptor;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
@@ -105,7 +105,7 @@ public class TestProjectTabPage extends JiraWebDriverTestBase
             @Override
             public Object call() throws Exception
             {
-                RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
+                ConnectAddOnEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
                                                            .openTab(AppProjectTabPage.class)
                                                            .getEmbeddedPage();
 
