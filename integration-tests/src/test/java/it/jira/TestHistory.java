@@ -60,8 +60,6 @@ public class TestHistory extends JiraWebDriverTestBase
         product.visit(RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
         RemoteHistoryGeneralPage addonHistoryGeneralPage = product.getPageBinder().bind(RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
-        assertThat(addonHistoryGeneralPage.isLoaded(), is(true));
-
         URI url = new URI(addonHistoryGeneralPage.hostUrl());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + PLUGIN_KEY + "/" + GENERAL_PAGE_KEY));
         assertThat(url.getFragment(), isEmptyOrNullString());
@@ -77,8 +75,6 @@ public class TestHistory extends JiraWebDriverTestBase
         loginAsAdmin();
         product.visit(RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
         RemoteHistoryGeneralPage addonHistoryGeneralPage = product.getPageBinder().bind(RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
-
-        assertThat(addonHistoryGeneralPage.isLoaded(), is(true));
 
         URI url = new URI(addonHistoryGeneralPage.hostUrl());
 
@@ -98,8 +94,6 @@ public class TestHistory extends JiraWebDriverTestBase
         product.visit(RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
         RemoteHistoryGeneralPage addonHistoryGeneralPage = product.getPageBinder().bind(RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
-        assertThat(addonHistoryGeneralPage.isLoaded(), is(true));
-
         URI url = new URI(addonHistoryGeneralPage.hostUrl());
 
         addonHistoryGeneralPage.javascriptPushState();
@@ -114,8 +108,6 @@ public class TestHistory extends JiraWebDriverTestBase
         loginAsAdmin();
         product.visit(RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
         RemoteHistoryGeneralPage addonHistoryGeneralPage = product.getPageBinder().bind(RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
-
-        assertThat(addonHistoryGeneralPage.isLoaded(), is(true));
 
         addonHistoryGeneralPage.javascriptPushState();
         addonHistoryGeneralPage.javascriptPushState();

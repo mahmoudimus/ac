@@ -104,8 +104,8 @@ public class TestJira extends JiraWebDriverTestBase
         // TODO: select the "Test Issue Action" text (a link with id="<add-on key>__jira-issue-action"),
         // which causes the iframe to be loaded inside a container div with id="embedded-<add-on key>__jira-issue-action",
         // and then look for iframe content by binding to the iframe and calling RemotePluginDialog.wasSubmitted() etc
-        ConnectAddOnEmbeddedTestPage page1 = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnEmbeddedTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey(), false);
-        ConnectAddOnEmbeddedTestPage page2 = product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, "jira-issue-action", remotePlugin.getAddon().getKey(), true);
+        ConnectAddOnEmbeddedTestPage page1 = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnEmbeddedTestPage.class, remotePlugin.getAddon().getKey(), "jira-issue-action", false);
+        ConnectAddOnEmbeddedTestPage page2 = product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, remotePlugin.getAddon().getKey(), "jira-issue-action", true);
 
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page2);
 
@@ -172,7 +172,7 @@ public class TestJira extends JiraWebDriverTestBase
 
         adminPageLink.click();
 
-        ConnectAddOnEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, ADVANCED_ADMIN_KEY, addonKey, true);
+        ConnectAddOnEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, ADVANCED_ADMIN_KEY, true);
         assertEquals(ADMIN_FULL_NAME, nextPage.getFullName());
     }
 
@@ -186,7 +186,7 @@ public class TestJira extends JiraWebDriverTestBase
         RemoteWebItem adminPageLink = getAdminPageLink(addonKey, ADMIN_KEY);
         adminPageLink.click();
 
-        ConnectAddOnEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, ADMIN_KEY, addonKey, true);
+        ConnectAddOnEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, ADMIN_KEY, true);
         assertEquals(ADMIN_FULL_NAME, nextPage.getFullName());
     }
 

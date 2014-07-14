@@ -2,16 +2,18 @@ package it.modules.jira;
 
 import com.atlassian.jira.projects.pageobjects.page.BrowseProjectPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import java.util.Map;
@@ -19,7 +21,6 @@ import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.hasEntry;
@@ -81,7 +82,8 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
             @Override
             public Object call() throws Exception
             {
-                RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
+                AppProjectTabPage.defaultProjectKey = project.getKey();
+                ConnectAddOnEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
                                                            .openTab(AppProjectTabPage.class)
                                                            .getEmbeddedPage();
                 assertEquals("Success", page.getMessage());
@@ -98,6 +100,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws Exception
     {
+        AppProjectTabPage.defaultProjectKey = project.getKey();
         loginAsAdmin();
         BrowseProjectPage browseProjectPage = product.visit(BrowseProjectPage.class, project.getKey());
         assertThat("AddOn project tab should be present", browseProjectPage.hasTab(AppProjectTabPage.class), is(true));
@@ -108,26 +111,20 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
 
     public static final class AppProjectTabPage extends AbstractRemotablePluginProjectTab
     {
-        private static String projectKey;
+        /**
+         * this hack means AppProjectTabPage can have a no-arg constructor (which BrowseProjectPage.hasTab() seems to require)
+         */
+        private static String defaultProjectKey = null;
 
+        // TabSupport.hasTab() requires a default constructor
         public AppProjectTabPage()
         {
-            this(projectKey);
+            this(defaultProjectKey);
         }
 
         public AppProjectTabPage(final String projectKey)
         {
-            super(projectKey, ConnectPluginInfo.getPluginKey(), addonAndModuleKey(PLUGIN_KEY,MODULE_KEY)); // my-plugin:ac-play-project-tab-panel
+            super(projectKey, PLUGIN_KEY, MODULE_KEY);
         }
     }
-
-    /**
-     * this hack means AppProjectTabPage can have a no-arg constructor (which BrowseProjectPage.hasTab() seems to require)
-     */
-    @Before
-    public void setStaticProjectKey()
-    {
-        AppProjectTabPage.projectKey = project.getKey();
-    }
-
 }

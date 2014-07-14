@@ -69,14 +69,6 @@ public class RemoteDialogOpeningPage
         this.containerDiv = driver.findElement(By.id("embedded-" + ( (type == null) ? "" : (type + "-") ) + pageElementKey));
     }
 
-    @XmlDescriptor
-    public RemoteCloseDialogPage openUrl()
-    {
-        open("dialog-open-button-url");
-        final String suffix = isXmlDescriptor ? pluginKey + "-dialog" : pageElementKey;
-        return pageBinder.bind(RemoteCloseDialogPage.class, "ap-" + suffix);
-    }
-
     public RemoteCloseDialogPage openKey(String expectedNamespace)
     {
         open("dialog-open-button-key");

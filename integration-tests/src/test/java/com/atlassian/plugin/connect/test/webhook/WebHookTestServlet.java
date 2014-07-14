@@ -58,16 +58,21 @@ public final class WebHookTestServlet extends HttpServlet
                 .addRoute(ConnectRunner.INSTALLED_PATH, new WebHookTestServlet()) // different servlet for installed callback so that tests can inspect only the webhooks
                 .start();
 
-        tester.test(new WebHookWaiter()
+        try
         {
-            @Override
-            public WebHookBody waitForHook() throws Exception
+            tester.test(new WebHookWaiter()
             {
-                return servlet.waitForHook();
-            }
-        });
-
-        runner.stopAndUninstall();
+                @Override
+                public WebHookBody waitForHook() throws Exception
+                {
+                    return servlet.waitForHook();
+                }
+            });
+        }
+        finally
+        {
+            runner.stopAndUninstall();
+        }
     }
 
     public static void runInJsonRunner(String baseUrl, String webHookId, WebHookTester tester) throws Exception
@@ -84,16 +89,21 @@ public final class WebHookTestServlet extends HttpServlet
                 .addRoute(ConnectRunner.INSTALLED_PATH, servlet)
                 .start();
 
-        tester.test(new WebHookWaiter()
+        try
         {
-            @Override
-            public WebHookBody waitForHook() throws Exception
+            tester.test(new WebHookWaiter()
             {
-                return servlet.waitForHook();
-            }
-        });
-
-        runner.stopAndUninstall();
+                @Override
+                public WebHookBody waitForHook() throws Exception
+                {
+                    return servlet.waitForHook();
+                }
+            });
+        }
+        finally
+        {
+            runner.stopAndUninstall();
+        }
     }
 
     public static void runEnableInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
@@ -106,16 +116,21 @@ public final class WebHookTestServlet extends HttpServlet
                 .addRoute(ConnectRunner.ENABLED_PATH, servlet)
                 .start();
 
-        tester.test(new WebHookWaiter()
+        try
         {
-            @Override
-            public WebHookBody waitForHook() throws Exception
+            tester.test(new WebHookWaiter()
             {
-                return servlet.waitForHook();
-            }
-        });
-
-        runner.stopAndUninstall();
+                @Override
+                public WebHookBody waitForHook() throws Exception
+                {
+                    return servlet.waitForHook();
+                }
+            });
+        }
+        finally
+        {
+            runner.stopAndUninstall();
+        }
     }
 
     public static void runDisableInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
@@ -127,16 +142,21 @@ public final class WebHookTestServlet extends HttpServlet
                 .addRoute(ConnectRunner.DISABLED_PATH, servlet)
                 .start();
 
-        tester.test(new WebHookWaiter()
+        try
         {
-            @Override
-            public WebHookBody waitForHook() throws Exception
+            tester.test(new WebHookWaiter()
             {
-                return servlet.waitForHook();
-            }
-        });
-
-        runner.stopAndUninstall();
+                @Override
+                public WebHookBody waitForHook() throws Exception
+                {
+                    return servlet.waitForHook();
+                }
+            });
+        }
+        finally
+        {
+            runner.stopAndUninstall();
+        }
     }
 
     public static void runUninstalledInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
@@ -148,16 +168,21 @@ public final class WebHookTestServlet extends HttpServlet
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet)
                 .start();
 
-        tester.test(new WebHookWaiter()
+        try
         {
-            @Override
-            public WebHookBody waitForHook() throws Exception
+            tester.test(new WebHookWaiter()
             {
-                return servlet.waitForHook();
-            }
-        });
-
-        runner.stopAndUninstall();
+                @Override
+                public WebHookBody waitForHook() throws Exception
+                {
+                    return servlet.waitForHook();
+                }
+            });
+        }
+        finally
+        {
+            runner.stopAndUninstall();
+        }
     }
 
     public static void runInJsonRunner(String baseUrl, String addOnKey, String eventId, WebHookTester tester) throws Exception
@@ -172,16 +197,21 @@ public final class WebHookTestServlet extends HttpServlet
                 .addScope(ScopeName.READ) // for receiving web hooks
                 .start();
 
-        tester.test(new WebHookWaiter()
+        try
         {
-            @Override
-            public WebHookBody waitForHook() throws Exception
+            tester.test(new WebHookWaiter()
             {
-                return servlet.waitForHook();
-            }
-        });
-
-        runner.stopAndUninstall();
+                @Override
+                public WebHookBody waitForHook() throws Exception
+                {
+                    return servlet.waitForHook();
+                }
+            });
+        }
+        finally
+        {
+            runner.stopAndUninstall();
+        }
     }
 
     public static String getFullURL(HttpServletRequest request)

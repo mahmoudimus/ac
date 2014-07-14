@@ -96,7 +96,7 @@ public class ConfluenceGeneralPage implements GeneralPage
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         findLinkElement().click();
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, pageKey, extraPrefix, true);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, extraPrefix, pageKey, true);
     }
 
     @Override
