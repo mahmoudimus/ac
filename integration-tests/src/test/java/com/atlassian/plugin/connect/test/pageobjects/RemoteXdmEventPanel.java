@@ -4,6 +4,7 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
@@ -17,7 +18,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.concurrent.Callable;
 
-import static com.atlassian.pageobjects.elements.query.Poller.waitUntilFalse;
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runInFrame;
 
@@ -37,19 +37,21 @@ public class RemoteXdmEventPanel
     @Inject
     protected PageElementFinder elementFinder;
 
-    private final String panelId;
+    private final String addOnId;
+    private final String moduleId;
 
     protected WebElement containerDiv;
 
-    public RemoteXdmEventPanel(String panelId)
+    public RemoteXdmEventPanel(String addOnId, String moduleId)
     {
-        this.panelId = panelId;
+        this.addOnId = addOnId;
+        this.moduleId = moduleId;
     }
 
     @Init
     public void init()
     {
-        By selector = By.id("embedded-remote-web-panel-" + panelId);
+        By selector = By.id("embedded-" + ModuleKeyUtils.addonAndModuleKey(addOnId, moduleId));
         driver.waitUntilElementIsLocated(selector);
         this.containerDiv = driver.findElement(selector);
         driver.waitUntil(new Function<WebDriver, Boolean>()
@@ -77,7 +79,7 @@ public class RemoteXdmEventPanel
         });
     }
 
-    public String getPanelId()
+    public String getModuleId()
     {
         return waitForValue("panel-id");
     }
