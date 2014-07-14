@@ -1,12 +1,23 @@
 package com.atlassian.plugin.connect.modules.beans.nested.dialog;
 
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOptionsBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class DialogOptions extends BaseDialogOptions
+/**
+ * Dialog Options
+ *
+ * @schemaTitle Dialog Options
+ * @since 1.0
+ */
+@SchemaDefinition("dialogOptions")
+public class DialogOptions extends BaseDialogOptions implements WebItemTargetOptions
 {
+    /**
+     * Sets how high the dialog is in pixels
+     */
     private String height;
 
     public DialogOptions(String width, String height)

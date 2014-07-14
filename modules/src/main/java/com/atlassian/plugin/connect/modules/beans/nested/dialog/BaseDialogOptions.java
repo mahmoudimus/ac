@@ -5,8 +5,11 @@ import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public abstract class BaseDialogOptions extends BaseModuleBean implements WebItemTargetOptions
+public abstract class BaseDialogOptions extends BaseModuleBean // implements WebItemTargetOptions
 {
+    /**
+     *  Sets how wide the dialog is in pixels
+     */
     private String width;
 
     public BaseDialogOptions(String width)

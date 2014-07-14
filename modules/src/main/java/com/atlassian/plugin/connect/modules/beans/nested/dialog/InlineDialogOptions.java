@@ -1,19 +1,58 @@
 package com.atlassian.plugin.connect.modules.beans.nested.dialog;
 
+import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOptionsBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.InlineDialogOptionsBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class InlineDialogOptions extends BaseDialogOptions
+/**
+ * Inline Dialog Options
+ *
+ * @schemaTitle Inline Dialog Options
+ * @since 1.0
+ */
+@SchemaDefinition("inlineDialogOptions")
+public class InlineDialogOptions extends BaseDialogOptions implements WebItemTargetOptions
 {
+    /**
+     * Determines whether the inline-Dialog will show on a mouseOver or mouseClick of the trigger
+     */
     private Boolean onHover;
+
+    /**
+     * Determines how long in milliseconds after a show trigger is fired (such as a trigger click) until the dialog is shown
+     */
     private Integer showDelay;
+
+    /**
+     * Sets an offset distance of the inline-dialog from the trigger element along the x-axis in pixels
+     */
     private String offsetX;
+
+    /**
+     * Sets an offset distance of the inline-dialog from the trigger element along the y-axis in pixels
+     */
     private String offsetY;
+
+    /**
+     * Determines if the dialog should be shown relative to where the mouse is at the time of the event trigger (normally a click) if set to false the dialog will show aligned to the left of the trigger with the arrow showing at the center
+     */
     private Boolean isRelativeToMouse;
+
+    /**
+     * Determines if all other dialogs on the screen are closed when this one is opened
+     */
     private Boolean closeOthers;
+
+    /**
+     * Determines if the dialog should be shown above the trigger or not. If this option is true but there is insufficient room above the trigger the inline-dialog will be flipped to display below it
+     */
     private Boolean onTop;
+
+    /**
+     * This option, ignores the 'closeOthers' option
+     */
     private Boolean persistent;
 
     public InlineDialogOptions(Boolean onHover, Integer showDelay,
