@@ -19,7 +19,6 @@ import com.atlassian.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -248,20 +247,19 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterForbiddenContent()
+    public void testFilterForbiddenContentDoesNotContainId()
     {
-        ContentEntityObject content = mock(ContentEntityObject.class);
-        when(contentEntityManager.getById(anyLong())).thenReturn(content);
-        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(content))).thenReturn(false);
+        createMockContentEntity(false);
+        ModuleContextParameters filtered = filter.filter(createCustomContentParams());
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
-        params.put("content.id", "1234");
-        params.put("content.version", "1");
-        params.put("content.type", "custom");
-        params.put("content.plugin", "plugin:foo");
-
-        ModuleContextParameters filtered = filter.filter(params);
         assertFalse(filtered.containsKey("content.id"));
+    }
+
+    @Test
+    public void testFilterForbiddenContentAllowsNonSensitiveParams()
+    {
+        createMockContentEntity(false);
+        ModuleContextParameters filtered = filter.filter(createCustomContentParams());
 
         // version/type/plugin are not protected information
         assertTrue(filtered.containsKey("content.version"));
@@ -272,21 +270,31 @@ public class ConfluenceModuleContextFilterTest
     @Test
     public void testFilterAllowedContent()
     {
-        ContentEntityObject content = mock(ContentEntityObject.class);
-        when(contentEntityManager.getById(anyLong())).thenReturn(content);
-        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(content))).thenReturn(true);
+        createMockContentEntity(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
-        params.put("content.id", "1234");
-        params.put("content.version", "1");
-        params.put("content.type", "custom");
-        params.put("content.plugin", "plugin:foo");
-
-        ModuleContextParameters filtered = filter.filter(params);
+        ModuleContextParameters filtered = filter.filter(createCustomContentParams());
 
         assertEquals("1234", filtered.get("content.id"));
         assertEquals("1", filtered.get("content.version"));
         assertEquals("custom", filtered.get("content.type"));
         assertEquals("plugin:foo", filtered.get("content.plugin"));
+    }
+
+    private ModuleContextParameters createCustomContentParams()
+    {
+        ModuleContextParameters params = new HashMapModuleContextParameters();
+        params.put("content.id", "1234");
+        params.put("content.version", "1");
+        params.put("content.type", "custom");
+        params.put("content.plugin", "plugin:foo");
+        return params;
+    }
+
+    private ContentEntityObject createMockContentEntity(boolean allowed)
+    {
+        ContentEntityObject content = mock(ContentEntityObject.class);
+        when(contentEntityManager.getById(anyLong())).thenReturn(content);
+        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(content))).thenReturn(allowed);
+        return content;
     }
 }

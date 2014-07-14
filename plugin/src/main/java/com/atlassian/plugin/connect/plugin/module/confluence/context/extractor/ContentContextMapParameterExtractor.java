@@ -13,7 +13,7 @@ import java.util.Map;
 @ConfluenceComponent
 public class ContentContextMapParameterExtractor implements ContextMapParameterExtractor<ContentEntityObject>
 {
-    private static final String CONTENT_CONTEXT_PARAMETER = "content";
+    public static final String CONTENT_CONTEXT_PARAMETER = "content";
 
     private final ContentSerializer contentSerializer;
 

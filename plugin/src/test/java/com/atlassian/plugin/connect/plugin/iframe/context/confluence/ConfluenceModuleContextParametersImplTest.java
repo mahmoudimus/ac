@@ -21,33 +21,50 @@ public class ConfluenceModuleContextParametersImplTest
     }
 
     @Test
-    public void testPutContent()
+    public void testPutContentHasCorrectId()
     {
-        ContentEntityObject content = mock(ContentEntityObject.class);
-        when(content.getId()).thenReturn(123L);
-        when(content.getVersion()).thenReturn(3);
-        when(content.getType()).thenReturn("page");
+        moduleContextParameters.addContent(createEntity(ContentEntityObject.class));
 
-        moduleContextParameters.addContent(content);
         assertEquals("123", moduleContextParameters.get("content.id"));
+    }
+
+    @Test
+    public void testPutContentHasCorrectVersion()
+    {
+        moduleContextParameters.addContent(createEntity(ContentEntityObject.class));
         assertEquals("3", moduleContextParameters.get("content.version"));
+    }
+
+    @Test
+    public void testPutContentHasCorrectType()
+    {
+        moduleContextParameters.addContent(createEntity(ContentEntityObject.class));
         assertEquals("page", moduleContextParameters.get("content.type"));
+    }
+
+    @Test
+    public void testPutContentHasNoPluginKey()
+    {
+        moduleContextParameters.addContent(createEntity(ContentEntityObject.class));
         assertNull(moduleContextParameters.get("content.plugin"));
     }
 
     @Test
-    public void testPutCustomContent()
+    public void testPutCustomContentHasPluginKey()
     {
         CustomContentEntityObject content = mock(CustomContentEntityObject.class);
-        when(content.getId()).thenReturn(123L);
-        when(content.getVersion()).thenReturn(3);
-        when(content.getType()).thenReturn("page");
         when(content.getPluginModuleKey()).thenReturn("plugin:foo");
 
         moduleContextParameters.addContent(content);
-        assertEquals("123", moduleContextParameters.get("content.id"));
-        assertEquals("3", moduleContextParameters.get("content.version"));
-        assertEquals("page", moduleContextParameters.get("content.type"));
         assertEquals("plugin:foo", moduleContextParameters.get("content.plugin"));
+    }
+
+    private <T extends ContentEntityObject> T createEntity (Class<T> clazz)
+    {
+        T content = mock(clazz);
+        when(content.getId()).thenReturn(123L);
+        when(content.getVersion()).thenReturn(3);
+        when(content.getType()).thenReturn("page");
+        return content;
     }
 }

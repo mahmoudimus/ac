@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.confluence.context.serializer
 
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.ContentEntityObject;
+import com.atlassian.plugin.connect.plugin.module.confluence.context.extractor.ContentContextMapParameterExtractor;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.collect.ImmutableMap;
@@ -25,6 +26,6 @@ public class ContentSerializer implements ParameterSerializer<ContentEntityObjec
             contentMap.put("plugin", customContent.getPluginModuleKey());
         }
 
-        return ImmutableMap.<String, Object>of("content", contentMap.build());
+        return ImmutableMap.<String, Object>of(ContentContextMapParameterExtractor.CONTENT_CONTEXT_PARAMETER, contentMap.build());
     }
 }

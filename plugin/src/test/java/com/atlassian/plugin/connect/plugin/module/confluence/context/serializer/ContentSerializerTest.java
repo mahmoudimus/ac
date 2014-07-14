@@ -27,39 +27,63 @@ public class ContentSerializerTest
     }
 
     @Test
-    public void testSerializeRegularContent()
+    public void testSerializeContent()
     {
-        ContentEntityObject content = mock(ContentEntityObject.class);
-        when(content.getId()).thenReturn(123L);
-        when(content.getVersion()).thenReturn(3);
-        when(content.getType()).thenReturn("page");
-
-        Map<String, Object> serialized = contentSerializer.serialize(content);
-        Map<String, Object> contentSerialized = (Map<String, Object>)serialized.get("content");
+        Map<String, Object> contentSerialized = serializeAndGetResult(createEntity(ContentEntityObject.class));
         assertNotNull(contentSerialized);
+    }
 
+    @Test
+    public void testSerializeContentHasId()
+    {
+        Map<String, Object> contentSerialized = serializeAndGetResult(createEntity(ContentEntityObject.class));
         assertEquals(123L, contentSerialized.get("id"));
+    }
+
+    @Test
+    public void testSerializeContentHasVersion()
+    {
+        Map<String, Object> contentSerialized = serializeAndGetResult(createEntity(ContentEntityObject.class));
         assertEquals(3, contentSerialized.get("version"));
+    }
+
+    @Test
+    public void testSerializeContentHasType()
+    {
+        Map<String, Object> contentSerialized = serializeAndGetResult(createEntity(ContentEntityObject.class));
         assertEquals("page", contentSerialized.get("type"));
+    }
+
+    @Test
+    public void testSerializeContentDoesNotHavePlugin()
+    {
+        Map<String, Object> contentSerialized = serializeAndGetResult(createEntity(ContentEntityObject.class));
         assertNull(contentSerialized.get("plugin"));
     }
 
     @Test
-    public void testSerializeCustomContent()
+    public void testSerializeCustomContentHasPlugin()
     {
-        CustomContentEntityObject content = mock(CustomContentEntityObject.class);
+        CustomContentEntityObject ceo = createEntity(CustomContentEntityObject.class);
+        when(ceo.getPluginModuleKey()).thenReturn("plugin:foo");
+        Map<String, Object> contentSerialized = serializeAndGetResult(ceo);
+
+        assertEquals("plugin:foo", contentSerialized.get("plugin"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> serializeAndGetResult(ContentEntityObject ceo)
+    {
+        Map<String, Object> serialized = contentSerializer.serialize(ceo);
+        return (Map<String, Object>) serialized.get("content");
+    }
+
+    private <T extends ContentEntityObject> T createEntity(Class<T> clazz)
+    {
+        T content = mock(clazz);
         when(content.getId()).thenReturn(123L);
         when(content.getVersion()).thenReturn(3);
         when(content.getType()).thenReturn("page");
-        when(content.getPluginModuleKey()).thenReturn("plugin:foo");
-
-        Map<String, Object> serialized = contentSerializer.serialize(content);
-        Map<String, Object> contentSerialized = (Map<String, Object>)serialized.get("content");
-        assertNotNull(contentSerialized);
-
-        assertEquals(123L, contentSerialized.get("id"));
-        assertEquals(3, contentSerialized.get("version"));
-        assertEquals("page", contentSerialized.get("type"));
-        assertEquals("plugin:foo", contentSerialized.get("plugin"));
+        return content;
     }
 }
