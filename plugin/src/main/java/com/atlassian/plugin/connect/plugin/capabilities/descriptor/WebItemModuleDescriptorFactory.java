@@ -129,9 +129,10 @@ public class WebItemModuleDescriptorFactory
         }
 
         final WebItemTargetOptions options = bean.getTarget().getOptions();
+
+        // use gson to turn it into a map
         final Gson gson = ConnectModulesGsonFactory.getGson();
         final Map<String, Object> dialogOptions = gson.fromJson(gson.toJsonTree(options), Map.class);
-//        Map<String, Object> dialogOptions = bean.getTarget().getOptionsAsMap();
         Map<String, String> beanParams = bean.getParams();
 
         if (null != dialogOptions && !dialogOptions.isEmpty())
