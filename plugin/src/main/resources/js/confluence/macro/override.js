@@ -5,23 +5,23 @@
  * individual macro are injected into the variable names via a Web Resource Transformer module
  * (see MacroVariableInjectorTransformer).
  */
-_AP.require("confluence/macro/editor", function(macroEditor) {
-
-    AJS.bind("init.rte", function () {
-        console.log("binding macro editor: " + AJS.params.contextPath + "%%URL%%");
-        // These parameters are injected contextually by the MacroVariableInjectorTransformer
-        var macroName = "%%MACRONAME%%";
-        var editorOpts = {
-          width: "%%WIDTH%%",
-          height: "%%HEIGHT%%",
-          editTitle: "%%EDIT_TITLE%%",
-          insertTitle: "%%INSERT_TITLE%%",
-          url: AJS.params.contextPath + "%%URL%%"
-        };
-
+AJS.bind("init.rte", function () {
+    console.log("binding macro editor: " + AJS.params.contextPath + "%%URL%%");
+    // These parameters are injected contextually by the MacroVariableInjectorTransformer
+    var macroName = "%%MACRONAME%%";
+    var editorOpts = {
+      width: "%%WIDTH%%",
+      height: "%%HEIGHT%%",
+      editTitle: "%%EDIT_TITLE%%",
+      insertTitle: "%%INSERT_TITLE%%",
+      url: AJS.params.contextPath + "%%URL%%"
+    };
+    _AP.require(["confluence/macro/editor"], function(macroEditor) {
         AJS.MacroBrowser.setMacroJsOverride(macroName, {
             opener: function(macroData) {
-                macroData = $.extend({name: macroName}, macroData);
+                //AJS.MacroBrowser.dialog.activeMetadata.macroName
+                macroData = $.extend({name: macroName, macroName: macroName}, macroData);
+                //console.log("MACRO DATA IS", macroData);
                 macroEditor.openCustomEditor(macroData, editorOpts);
             }
         });

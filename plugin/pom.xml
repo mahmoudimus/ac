@@ -808,6 +808,7 @@
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js-min/iframe/plugin/jira-min.js</include>
                                         <include>js-min/iframe/plugin/confluence-min.js</include>
+                                        <include>js-min/iframe/plugin/_init-min.js</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>

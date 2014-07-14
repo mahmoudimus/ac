@@ -100,7 +100,8 @@ public class StaticResourcesFilter implements Filter
             final String[] modules = {
                     "core/all-debug.js",
                     "iframe/plugin/jira.js",
-                    "iframe/plugin/confluence.js"
+                    "iframe/plugin/confluence.js",
+                    "iframe/plugin/_init.js"
             };
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             for (String module : modules)
