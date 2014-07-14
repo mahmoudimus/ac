@@ -7,6 +7,7 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.RestError;
@@ -47,11 +48,12 @@ public class AddonsResource
     private final ConnectAddonRegistry addonRegistry;
     private final LicenseRetriever licenseRetriever;
     private final ConnectApplinkManager connectApplinkManager;
+    private final ConnectAddonManager connectAddonManager;
 
     public AddonsResource(PluginAccessor pluginAccessor, PluginController pluginController,
             LegacyAddOnIdentifierService legacyAddOnIdentifierService,
             ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
-            ConnectApplinkManager connectApplinkManager)
+            ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager)
     {
         this.pluginAccessor = pluginAccessor;
         this.pluginController = pluginController;
@@ -59,6 +61,7 @@ public class AddonsResource
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
         this.connectApplinkManager = connectApplinkManager;
+        this.connectAddonManager = connectAddonManager;
     }
 
     @GET
@@ -163,24 +166,34 @@ public class AddonsResource
     @Path ("/{addonKey}")
     public Response uninstallAddon(@PathParam ("addonKey") String addonKey)
     {
-        Plugin plugin = getAddonPluginByKey(addonKey);
-        if (plugin == null)
-        {
-            String message = "Add-on with key " + addonKey + " was not found";
-            return getErrorResponse(message, Response.Status.NOT_FOUND);
-        }
-
         try
         {
-            MinimalRestAddon addon = uninstallPlugin(plugin);
-            return Response.ok().entity(addon).build();
+            for (Plugin plugin : getXmlAddonPlugins())
+            {
+                if (addonKey.equals(plugin.getKey()))
+                {
+                    MinimalRestAddon addon = uninstallPlugin(plugin);
+                    return Response.ok().entity(addon).build();
+                }
+            }
+
+            ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
+            if (addonBean != null)
+            {
+                MinimalRestAddon addon = new MinimalRestAddon(addonKey, addonBean.getVersion(), RestAddonType.JSON);
+                connectAddonManager.uninstallConnectAddon(addonKey);
+                return Response.ok().entity(addon).build();
+            }
         }
-        catch (PluginException e)
+        catch (Exception e)
         {
-            String message = "Unable to uninstall plugin " + plugin.getKey();
+            String message = "Unable to uninstall add-on " + addonKey + ": " + e.getMessage();
             log.error(message, e);
             return getErrorResponse(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
+
+        String message = "Add-on with key " + addonKey + " was not found";
+        return getErrorResponse(message, Response.Status.NOT_FOUND);
     }
 
     private List<RestAddon> getAddonsByType(RestAddonType type)
@@ -234,27 +247,6 @@ public class AddonsResource
             if (addonKey.equals(addonBean.getKey()))
             {
                 return createJsonAddonRest(addonBean);
-            }
-        }
-
-        return null;
-    }
-
-    private Plugin getAddonPluginByKey(String addonKey)
-    {
-        for (Plugin plugin : getXmlAddonPlugins())
-        {
-            if (addonKey.equals(plugin.getKey()))
-            {
-                return plugin;
-            }
-        }
-
-        for (ConnectAddonBean addonBean : addonRegistry.getAllAddonBeans())
-        {
-            if (addonKey.equals(addonBean.getKey()))
-            {
-                throw new UnsupportedOperationException("Not sure how to return a JSON add-on's plugin or uninstall it");
             }
         }
 
