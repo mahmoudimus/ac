@@ -1,35 +1,31 @@
 package com.atlassian.plugin.connect.plugin.rest.reporting;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import com.atlassian.plugins.rest.common.Link;
 
-public class RestAddon
+
+public class RestAddon extends MinimalRestAddon
 {
-    @JsonProperty
-    private final String key;
-
     @JsonProperty
     private final String state;
 
     @JsonProperty
-    private final String version;
-
-    @JsonProperty
     private final String license;
 
-    public RestAddon(@JsonProperty("key") final String key,
-                     @JsonProperty("state") final String state,
-                     @JsonProperty("version") final String version,
-                     @JsonProperty("license") final String license)
-    {
-        this.key = key;
-        this.state = state;
-        this.version = version;
-        this.license = license;
-    }
+    @JsonProperty
+    private final AddonApplink applink;
 
-    public String getKey()
+    public RestAddon(@JsonProperty ("key") final String key,
+            @JsonProperty ("version") final String version,
+            @JsonProperty ("type") final RestAddonType type,
+            @JsonProperty ("state") final String state,
+            @JsonProperty ("license") final String license,
+            @JsonProperty ("applink") final AddonApplink applink)
     {
-        return key;
+        super(key, version, type);
+        this.state = state;
+        this.license = license;
+        this.applink = applink;
     }
 
     public String getState()
@@ -37,13 +33,39 @@ public class RestAddon
         return state;
     }
 
-    public String getVersion()
-    {
-        return version;
-    }
-
     public String getLicense()
     {
         return license;
+    }
+
+    public AddonApplink getApplink()
+    {
+        return applink;
+    }
+
+    public static class AddonApplink
+    {
+        @JsonProperty
+        private final String id;
+
+        @JsonProperty
+        private final Link self;
+
+        public AddonApplink(@JsonProperty("id") final String id,
+                @JsonProperty("self") final Link self)
+        {
+            this.id = id;
+            this.self = self;
+        }
+
+        public String getId()
+        {
+            return id;
+        }
+
+        public Link getSelf()
+        {
+            return self;
+        }
     }
 }

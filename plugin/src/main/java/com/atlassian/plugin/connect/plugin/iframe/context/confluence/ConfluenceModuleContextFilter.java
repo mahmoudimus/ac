@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.context.confluence;
 
+import com.atlassian.confluence.core.ContentEntityManager;
+import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.security.Permission;
@@ -15,6 +17,7 @@ import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  *
@@ -25,6 +28,10 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
     public static final String PAGE_ID          = "page.id";
     public static final String PAGE_VERSION     = "page.version";
     public static final String PAGE_TYPE        = "page.type";
+    public static final String CONTENT_ID       = "content.id";
+    public static final String CONTENT_VERSION  = "content.version";
+    public static final String CONTENT_TYPE     = "content.type";
+    public static final String CONTENT_PLUGIN   = "content.plugin";
     public static final String SPACE_ID         = "space.id";
     public static final String SPACE_KEY        = "space.key";
 
@@ -33,18 +40,21 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
     private final UserManager userManager;
     private final SpaceManager spaceManager;
     private final PageManager pageManager;
+    private final ContentEntityManager contentEntityManager;
 
     private final Iterable<PermissionCheck<ConfluenceUser>> permissionChecks;
 
     @Autowired
     public ConfluenceModuleContextFilter(PermissionManager permissionManager, UserAccessor userAccessor,
-            UserManager userManager, SpaceManager spaceManager, PageManager pageManager)
+            UserManager userManager, SpaceManager spaceManager, PageManager pageManager,
+            @Qualifier("contentEntityManager") ContentEntityManager contentEntityManager)
     {
         this.permissionManager = permissionManager;
         this.userAccessor = userAccessor;
         this.userManager = userManager;
         this.spaceManager = spaceManager;
         this.pageManager = pageManager;
+        this.contentEntityManager = contentEntityManager;
         permissionChecks = constructPermissionChecks();
     }
 
@@ -94,6 +104,24 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
                     return space != null && permissionManager.hasPermission(user, Permission.VIEW, space);
                 }
             },
+            new PermissionCheck.LongValue<ConfluenceUser>()
+            {
+                @Override
+                public String getParameterName()
+                {
+                    return CONTENT_ID;
+                }
+
+                @Override
+                public boolean hasPermission(final long contentId, final ConfluenceUser user)
+                {
+                    ContentEntityObject content = contentEntityManager.getById(contentId);
+                    return content != null && permissionManager.hasPermission(user, Permission.VIEW, content);
+                }
+            },
+            new PermissionCheck.AlwaysAllowed<ConfluenceUser>(CONTENT_TYPE),
+            new PermissionCheck.AlwaysAllowed<ConfluenceUser>(CONTENT_VERSION),
+            new PermissionCheck.AlwaysAllowed<ConfluenceUser>(CONTENT_PLUGIN),
             new PermissionCheck.LongValue<ConfluenceUser>()
             {
                 @Override
