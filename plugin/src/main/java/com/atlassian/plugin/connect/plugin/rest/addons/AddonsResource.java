@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.rest.reporting;
+package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.Plugin;
@@ -11,9 +11,16 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.RestError;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
+import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
+import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
+import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugins.rest.common.Link;
 import com.atlassian.plugins.rest.common.security.jersey.SysadminOnlyResourceFilter;
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.sun.jersey.spi.container.ResourceFilters;
@@ -37,9 +44,11 @@ import javax.ws.rs.core.Response;
  * REST endpoint which provides a view of Connect add-ons which are installed in the instance.
  */
 @ResourceFilters (SysadminOnlyResourceFilter.class)
-@Path ("addons")
+@Path (AddonsResource.REST_PATH)
 public class AddonsResource
 {
+    public final static String REST_PATH = "addons";
+
     private static final Logger log = LoggerFactory.getLogger(AddonsResource.class);
 
     private final PluginAccessor pluginAccessor;
@@ -49,11 +58,13 @@ public class AddonsResource
     private final LicenseRetriever licenseRetriever;
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddonManager connectAddonManager;
+    private final ApplicationProperties applicationProperties;
 
     public AddonsResource(PluginAccessor pluginAccessor, PluginController pluginController,
             LegacyAddOnIdentifierService legacyAddOnIdentifierService,
             ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
-            ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager)
+            ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
+            ApplicationProperties applicationProperties)
     {
         this.pluginAccessor = pluginAccessor;
         this.pluginController = pluginController;
@@ -62,6 +73,7 @@ public class AddonsResource
         this.licenseRetriever = licenseRetriever;
         this.connectApplinkManager = connectApplinkManager;
         this.connectAddonManager = connectAddonManager;
+        this.applicationProperties = applicationProperties;
     }
 
     @GET
@@ -110,7 +122,7 @@ public class AddonsResource
 
         log.warn("Uninstalling all Connect add-ons of type " + addonType);
 
-        List<MinimalRestAddon> addons = Lists.newArrayList();
+        List<RestMinimalAddon> addons = Lists.newArrayList();
         List<PluginException> errors = Lists.newArrayList();
 
         Map result = Maps.newHashMap();
@@ -131,7 +143,7 @@ public class AddonsResource
         {
             try
             {
-                MinimalRestAddon addon = uninstallPlugin(plugin);
+                RestMinimalAddon addon = uninstallPlugin(plugin);
                 addons.add(addon);
             }
             catch (PluginException e)
@@ -172,7 +184,7 @@ public class AddonsResource
             {
                 if (addonKey.equals(plugin.getKey()))
                 {
-                    MinimalRestAddon addon = uninstallPlugin(plugin);
+                    RestMinimalAddon addon = uninstallPlugin(plugin);
                     return Response.ok().entity(addon).build();
                 }
             }
@@ -180,7 +192,7 @@ public class AddonsResource
             ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
             if (addonBean != null)
             {
-                MinimalRestAddon addon = new MinimalRestAddon(addonKey, addonBean.getVersion(), RestAddonType.JSON);
+                RestMinimalAddon addon = new RestMinimalAddon(addonKey, addonBean.getVersion(), RestAddonType.JSON);
                 connectAddonManager.uninstallConnectAddon(addonKey);
                 return Response.ok().entity(addon).build();
             }
@@ -261,7 +273,7 @@ public class AddonsResource
         String license = licenseRetriever.getLicenseStatus(key).value();
         RestAddon.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
 
-        return new RestAddon(key, version, RestAddonType.XML, state, license, appLinkResource);
+        return new RestAddon(key, version, RestAddonType.XML, state, license, appLinkResource, getAddonLinks(key));
     }
 
     private RestAddon createJsonAddonRest(ConnectAddonBean addonBean)
@@ -272,7 +284,20 @@ public class AddonsResource
         String license = licenseRetriever.getLicenseStatus(key).value();
         RestAddon.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
 
-        return new RestAddon(key, version, RestAddonType.JSON, state, license, appLinkResource);
+        return new RestAddon(key, version, RestAddonType.JSON, state, license, appLinkResource, getAddonLinks(key));
+    }
+
+    private RestRelatedLinks getAddonLinks(String key)
+    {
+        String path = applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/" + REST_PATH + "/" + key;
+        RestNamedLink selfLink = new RestNamedLink(path);
+
+        RestNamedLink mpacLink = new RestNamedLink("https://marketplace.atlassian.com/plugins/" + key);
+
+        return new RestRelatedLinks.Builder()
+                .addRelatedLink(RestRelatedLinks.RELATIONSHIP_SELF, selfLink)
+                .addRelatedLink("marketplace", mpacLink)
+                .build();
     }
 
     private RestAddon.AddonApplink getApplinkResourceForAddon(String key)
@@ -284,11 +309,11 @@ public class AddonsResource
         return new RestAddon.AddonApplink(appLinkId, Link.self(selfUri));
     }
 
-    private MinimalRestAddon uninstallPlugin(Plugin plugin) throws PluginException
+    private RestMinimalAddon uninstallPlugin(Plugin plugin) throws PluginException
     {
         String key = plugin.getKey();
         String version = plugin.getPluginInformation().getVersion();
-        MinimalRestAddon addon = new MinimalRestAddon(key, version, RestAddonType.XML);
+        RestMinimalAddon addon = new RestMinimalAddon(key, version, RestAddonType.XML);
         pluginController.uninstall(plugin);
         log.warn("Uninstalled add-on " + plugin.getKey());
         return addon;

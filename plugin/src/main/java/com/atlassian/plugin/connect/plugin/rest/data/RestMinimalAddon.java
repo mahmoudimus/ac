@@ -1,8 +1,8 @@
-package com.atlassian.plugin.connect.plugin.rest.reporting;
+package com.atlassian.plugin.connect.plugin.rest.data;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class MinimalRestAddon
+public class RestMinimalAddon
 {
     @JsonProperty
     private final String key;
@@ -13,7 +13,7 @@ public class MinimalRestAddon
     @JsonProperty
     private final RestAddonType type;
 
-    public MinimalRestAddon(@JsonProperty ("key") final String key,
+    public RestMinimalAddon(@JsonProperty ("key") final String key,
             @JsonProperty ("version") final String version,
             @JsonProperty ("type") final RestAddonType type)
     {
