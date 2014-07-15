@@ -7,10 +7,14 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Inline Dialog Options
+ * Options for an inline dialog target
  *
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_INLINE_DIALOG_EXAMPLE}
  * @schemaTitle Inline Dialog Options
- * @since 1.0
+ *
+ * @since 1.1
  */
 @SchemaDefinition("inlineDialogOptions")
 public class InlineDialogOptions extends BaseDialogOptions implements WebItemTargetOptions

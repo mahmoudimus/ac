@@ -7,10 +7,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Dialog Options
+ * Options for a normal dialog target
  *
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_DIALOG_EXAMPLE}
  * @schemaTitle Dialog Options
- * @since 1.0
+ * @since 1.1
  */
 @SchemaDefinition("dialogOptions")
 public class DialogOptions extends BaseDialogOptions implements WebItemTargetOptions
