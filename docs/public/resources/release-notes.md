@@ -14,8 +14,8 @@
 ## [1.1.0-beta.5](../release-notes/1-1-0.html)
 * __If you read one thing, read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
 * XML descriptor servlet paths redirect to new JSON descriptor paths
-* Manage cookies through the [javascript cookie api](http://localhost:9000/javascript/module-cookie.html)
-* Manage browser history through the [javascript history api](http://localhost:9000/javascript/module-history.html)
+* Manage cookies through the [javascript cookie api](../javascript/module-cookie.html)
+* Manage browser history through the [javascript history api](../javascript/module-history.html)
 * Improve modal dialog, to introduce the chrome flag
 * Dialog height is now always the height of the iframe
 * Refresh a JIRA issue without reloading the page
@@ -110,7 +110,7 @@ build add-ons more quickly and easily.
 * atlassian-connect-express `v0.9.0`
 
 These new features replace the XML descriptor and OAuth, which are now deprecated. Please read the
-[deprecation notices](../concepts/deprecations.html).
+[deprecation notices](../resources/deprecations.html).
 
 Read the [1.0-m25 release notes](../release-notes/1-0-m25.html).
 
