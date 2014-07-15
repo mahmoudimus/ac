@@ -314,7 +314,6 @@ public class WebItemModuleProviderTest
                                                 .withHeight("300px")
                                                 .build()
                                 )
-//                                .withOption("onHover", true) // TODO: doesn't exist on dialog
                                 .build()
                 )
                 .build();

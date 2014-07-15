@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public abstract class BaseDialogOptions extends BaseModuleBean // implements WebItemTargetOptions
+public abstract class BaseDialogOptions extends BaseModuleBean
 {
     /**
      *  Sets how wide the dialog is in pixels
@@ -48,7 +48,6 @@ public abstract class BaseDialogOptions extends BaseModuleBean // implements Web
         BaseDialogOptions other = (BaseDialogOptions) otherObj;
 
         return new EqualsBuilder()
-//                .appendSuper(super.equals(other))
                 .append(width, other.width)
                 .isEquals();
     }
@@ -57,7 +56,6 @@ public abstract class BaseDialogOptions extends BaseModuleBean // implements Web
     public int hashCode()
     {
         return new HashCodeBuilder(173, 199)
-//                .appendSuper(super.hashCode())
                 .append(width)
                 .build();
     }

@@ -27,6 +27,7 @@ public class WebItemTargetBean extends BaseModuleBean
     @CommonSchemaAttributes (defaultValue = "page")
     private WebItemTargetType type;
 
+    // TODO: The table with descriptions is needed until we fix ACDEV-1381
     /**
      * An object containing options which vary based on the type of web item target you are implementing. 
      * <p/>
@@ -117,7 +118,6 @@ public class WebItemTargetBean extends BaseModuleBean
      * </a>
      * </div>
      */
-//    @CommonSchemaAttributes (oneOf = { DialogOptions.class, InlineDialogOptions.class })
     private WebItemTargetOptions options;
 
     public WebItemTargetBean()
@@ -177,7 +177,7 @@ public class WebItemTargetBean extends BaseModuleBean
             return true;
         }
 
-        if (!(otherObj instanceof WebItemTargetBean /* && super.equals(otherObj) */))
+        if (!(otherObj instanceof WebItemTargetBean))
         {
             return false;
         }

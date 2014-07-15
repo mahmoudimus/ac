@@ -26,10 +26,18 @@ public class WebItemTargetBeanSerializer implements JsonDeserializer<WebItemTarg
                 WebItemTargetType.class);
         builder.withType(type);
 
-        final Class<? extends WebItemTargetOptions> optionsType =
-                type == WebItemTargetType.inlineDialog ?
-                        InlineDialogOptions.class : type == WebItemTargetType.dialog ?
-                        DialogOptions.class : null;
+        Class<? extends WebItemTargetOptions> optionsType = null;
+
+        switch (type)
+        {
+            case inlineDialog:
+                optionsType = InlineDialogOptions.class;
+                break;
+
+            case dialog:
+                optionsType = DialogOptions.class;
+                break;
+        }
 
         if (optionsType != null)
         {

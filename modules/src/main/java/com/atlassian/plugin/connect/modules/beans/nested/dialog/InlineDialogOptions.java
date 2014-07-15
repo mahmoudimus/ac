@@ -133,7 +133,7 @@ public class InlineDialogOptions extends BaseDialogOptions implements WebItemTar
             return true;
         }
 
-        if (!(otherObj instanceof InlineDialogOptions /*&& super.equals(otherObj)*/))
+        if (!(otherObj instanceof InlineDialogOptions))
         {
             return false;
         }

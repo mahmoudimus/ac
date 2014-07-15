@@ -59,7 +59,7 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
             return true;
         }
 
-        if (!(otherObj instanceof DialogOptions /*&& super.equals(otherObj)*/))
+        if (!(otherObj instanceof DialogOptions))
         {
             return false;
         }
@@ -80,6 +80,4 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
                 .append(height)
                 .build();
     }
-
-
 }

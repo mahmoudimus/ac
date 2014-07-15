@@ -22,7 +22,4 @@ public abstract class BaseDialogOptionsBuilder<B extends BaseDialogOptionsBuilde
         this.width = width;
         return this;
     }
-
-
-
 }
