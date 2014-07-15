@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.iframe.webpanel;
+package com.atlassian.plugin.connect.test.plugin.iframe.webpanel;
 
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.BlogPost;
@@ -7,6 +7,7 @@ import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.ConfluenceWebFragmentModuleContextExtractor;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
