@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrow
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.atlassian.webdriver.utils.by.ByJquery;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -142,10 +143,15 @@ public class ConnectPageOperations
         return findRemoteLinkedContent(ID, webItemId, dropDownMenuId, pageKey);
     }
 
-    public RemotePluginDialog findDialog(String key)
+    public RemotePluginDialog findDialog(String moduleKey)
     {
-        RemotePluginTestPage dialogContent = pageBinder.bind(RemotePluginTestPage.class, key);
+        ConnectAddOnEmbeddedTestPage dialogContent = pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, null, moduleKey, true);
         return pageBinder.bind(RemotePluginDialog.class, dialogContent);
+    }
+
+    public WebElement findLabel(String key)
+    {
+        return driver.findElement(ByJquery.$("label[for='"+ key +"']"));
     }
 
     public PageBinder getPageBinder()
@@ -158,5 +164,10 @@ public class ConnectPageOperations
         String macroNodeSelector = "$(\"#wysiwygTextarea_ifr\").contents().find(\"table[data-macro-name='"+ macroKey +"']\")";
         driver.executeScript("tinymce.confluence.macrobrowser.editMacro("+ macroNodeSelector +")");
         return findDialog(macroKey);
+    }
+
+    public void reorderConfluenceTableOnPage()
+    {
+        driver.findElement(By.className("tablesorter-header-inner")).click();
     }
 }

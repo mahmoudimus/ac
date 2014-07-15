@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.cleanKey;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -65,17 +64,17 @@ public class RequiredKeyBean extends NamedBean
 
     public String getKey(ConnectAddonBean addon)
     {
-        checkState(!Strings.isNullOrEmpty(key),"Modules cannot contain empty or null keys.");
+        checkState(!Strings.isNullOrEmpty(key), "Modules cannot contain empty or null keys.");
         if (Strings.isNullOrEmpty(calculatedKey))
         {
-            this.calculatedKey = addonAndModuleKey(addon.getKey(),key);
+            this.calculatedKey = addonAndModuleKey(addon.getKey(), key);
         }
         return calculatedKey;
     }
 
     public String getRawKey()
     {
-        return cleanKey(key);
+        return key;
     }
 
     @Override

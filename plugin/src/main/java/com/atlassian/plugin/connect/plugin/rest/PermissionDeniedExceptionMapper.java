@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory;
 @Provider
 public class PermissionDeniedExceptionMapper implements ExceptionMapper<PermissionDeniedException>
 {
-    private static final Logger log = LoggerFactory.getLogger(
-            PermissionDeniedExceptionMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(PermissionDeniedExceptionMapper.class);
 
     public Response toResponse(PermissionDeniedException exception)
     {

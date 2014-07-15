@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -31,6 +32,7 @@ public class ConnectVersionTabPanelModuleBeanTest
         links.put("self", "http://www.example.com/capabilities");
         links.put("homepage", "http://www.example.com");
 
+        @OAuth
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName("My Plugin")
                 .withKey("my-plugin")

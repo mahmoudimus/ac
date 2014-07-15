@@ -64,11 +64,11 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
             }
         }
         
-        //TODO: remove this call after the initila deploy of file-less addons
+        //TODO: remove this call after the initial deploy of file-less addons
         convertOldAddons();
     }
 
-    //TODO: remove this method after the initila deploy of file-less addons
+    //TODO: remove this method after the initial deploy of file-less addons
     private void convertOldAddons()
     {
         for(Plugin plugin : pluginAccessor.getPlugins())

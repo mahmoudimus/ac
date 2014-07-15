@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import org.apache.commons.lang3.StringUtils;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -57,7 +58,7 @@ public class RemotePageUtil
                     public Boolean apply(WebDriver webDriver)
                     {
                         WebElement element = webDriver.findElement(By.id(key));
-                        return element.getText() != null;
+                        return StringUtils.isNotBlank(element.getText());
                     }
                 });
                 return null;

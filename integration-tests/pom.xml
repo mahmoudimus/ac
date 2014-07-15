@@ -294,7 +294,6 @@
             <version>1.11</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -461,8 +460,8 @@
                                 </testedProductClass>
                             </systemProperties>
                             <excludes>
-                                <exclude>it/jira/*.java</exclude>
-                                <exclude>it/*/jira/*.java</exclude>
+                                <exclude>it/jira/**/*.java</exclude>
+                                <exclude>it/*/jira/**/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -476,8 +475,8 @@
                                 </testedProductClass>
                             </systemProperties>
                             <excludes>
-                                <exclude>it/confluence/*.java</exclude>
-                                <exclude>it/*/confluence/*.java</exclude>
+                                <exclude>it/confluence/**/*.java</exclude>
+                                <exclude>it/*/confluence/**/*.java</exclude>
                             </excludes>
                         </testGroup>
                     </testGroups>

@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
@@ -210,7 +211,8 @@ public class BeanToModuleRegistrar
             {
                 ConnectModuleProvider provider = providers.iterator().next();
 
-                List<ModuleDescriptor> descriptors = provider.provideModules(addon, ctx.getTheConnectPlugin(), jsonFieldName, beans);
+                List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon),
+                        ctx.getTheConnectPlugin(), jsonFieldName, beans);
                 
                 return Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
                 {

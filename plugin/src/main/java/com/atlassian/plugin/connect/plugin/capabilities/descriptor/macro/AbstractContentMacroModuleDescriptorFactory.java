@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro;
 
 import com.atlassian.confluence.macro.Macro;
+import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
@@ -12,15 +13,21 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocume
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceholderMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.Uri;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
 
@@ -37,16 +44,46 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     protected abstract ModuleFactory createModuleFactory(ConnectAddonBean addon, DOMElement element, B bean);
 
     @Override
-    public XhtmlMacroModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, B bean)
+    public XhtmlMacroModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, B bean)
     {
-        DOMElement element = createDOMElement(addon, bean);
-        ModuleFactory moduleFactory = createModuleFactory(addon, element, bean);
-        MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(addon, bean);
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
+        DOMElement element = createDOMElement(connectAddonBean, bean);
+        ModuleFactory moduleFactory = createModuleFactory(connectAddonBean, element, bean);
+        MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(connectAddonBean, bean);
 
         FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
         descriptor.init(theConnectPlugin, element);
 
+        // TODO: Remove once we have proper i18n support
+        updateDefaultParameterLabels(descriptor.getMacroMetadata().getFormDetails().getParameters(), bean.getParameters());
+
         return descriptor;
+    }
+
+    private void updateDefaultParameterLabels(List<MacroParameter> macroParameters, List<MacroParameterBean> macroParameterBeans)
+    {
+        Map<String, MacroParameter> parameterMap = Maps.uniqueIndex(macroParameters, new Function<MacroParameter, String>() {
+            @Override
+            public String apply(MacroParameter parameter)
+            {
+                Preconditions.checkNotNull(parameter, "Implementation error: parameter must never be null");
+                return parameter.getName();
+            }
+        });
+        for (MacroParameterBean parameterBean : macroParameterBeans)
+        {
+            MacroParameter macroParameter = parameterMap.get(parameterBean.getIdentifier());
+            Preconditions.checkNotNull(macroParameter, "Implementation error: Mismatch between parameters in the " +
+                    "Confluence module descriptor and declared parameters in the descriptor.");
+            if (parameterBean.hasName())
+            {
+                macroParameter.setDisplayName(parameterBean.getName().getValue());
+            }
+            if (parameterBean.hasDescription())
+            {
+                macroParameter.setDescription(parameterBean.getDescription().getValue());
+            }
+        }
     }
 
     protected DOMElement createDOMElement(ConnectAddonBean addon, B bean)

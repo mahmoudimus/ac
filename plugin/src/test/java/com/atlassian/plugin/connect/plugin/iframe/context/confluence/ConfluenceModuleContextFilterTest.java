@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.context.confluence;
 
+import com.atlassian.confluence.core.ContentEntityManager;
+import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.BlogPost;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.PageManager;
@@ -17,7 +19,6 @@ import com.atlassian.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -43,12 +44,14 @@ public class ConfluenceModuleContextFilterTest
     @Mock private UserManager userManager;
     @Mock private SpaceManager spaceManager;
     @Mock private PageManager pageManager;
+    @Mock private ContentEntityManager contentEntityManager;
 
-    @InjectMocks private ConfluenceModuleContextFilter filter;
+    private ConfluenceModuleContextFilter filter;
 
     @Before
     public void setup()
     {
+        this.filter = new ConfluenceModuleContextFilter(permissionManager, userAccessor, userManager, spaceManager, pageManager, contentEntityManager);
         when(userAccessor.getExistingUserByKey(any(UserKey.class))).thenReturn(mock(ConfluenceUser.class));
     }
 
@@ -241,5 +244,57 @@ public class ConfluenceModuleContextFilterTest
         assertThat(filtered, not(hasEntry(is("profileUser.key"), is("defaced"))));
 
         assertTrue("Filtered context should be empty", filtered.isEmpty());
+    }
+
+    @Test
+    public void testFilterForbiddenContentDoesNotContainId()
+    {
+        createMockContentEntity(false);
+        ModuleContextParameters filtered = filter.filter(createCustomContentParams());
+
+        assertFalse(filtered.containsKey("content.id"));
+    }
+
+    @Test
+    public void testFilterForbiddenContentAllowsNonSensitiveParams()
+    {
+        createMockContentEntity(false);
+        ModuleContextParameters filtered = filter.filter(createCustomContentParams());
+
+        // version/type/plugin are not protected information
+        assertTrue(filtered.containsKey("content.version"));
+        assertTrue(filtered.containsKey("content.type"));
+        assertTrue(filtered.containsKey("content.plugin"));
+    }
+
+    @Test
+    public void testFilterAllowedContent()
+    {
+        createMockContentEntity(true);
+
+        ModuleContextParameters filtered = filter.filter(createCustomContentParams());
+
+        assertEquals("1234", filtered.get("content.id"));
+        assertEquals("1", filtered.get("content.version"));
+        assertEquals("custom", filtered.get("content.type"));
+        assertEquals("plugin:foo", filtered.get("content.plugin"));
+    }
+
+    private ModuleContextParameters createCustomContentParams()
+    {
+        ModuleContextParameters params = new HashMapModuleContextParameters();
+        params.put("content.id", "1234");
+        params.put("content.version", "1");
+        params.put("content.type", "custom");
+        params.put("content.plugin", "plugin:foo");
+        return params;
+    }
+
+    private ContentEntityObject createMockContentEntity(boolean allowed)
+    {
+        ContentEntityObject content = mock(ContentEntityObject.class);
+        when(contentEntityManager.getById(anyLong())).thenReturn(content);
+        when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(content))).thenReturn(allowed);
+        return content;
     }
 }

@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectEntityPropertyModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
@@ -67,7 +68,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
         when(autowireUtil.createBean(eq(EntityPropertyIndexDocumentModuleDescriptorImpl.class)))
                 .thenReturn(new EntityPropertyIndexDocumentModuleDescriptorImpl(authContext, moduleFactory));
         EntityPropertyModuleBean bean = createBean();
-        this.moduleDescriptor = factory.createModuleDescriptor(addon, plugin, bean);
+        this.moduleDescriptor = factory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addon), plugin, bean);
     }
 
     @Test

@@ -45,7 +45,13 @@
                interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults"
                public="true"
             />
-    
+
+    <component key="precannedResponseHelper"
+               class="com.atlassian.plugin.connect.testsupport.filter.DefaultAddonPrecannedResponseHelper"
+               interface="com.atlassian.plugin.connect.testsupport.filter.AddonPrecannedResponseHelper"
+               public="true"
+            />
+
     <component key="jiraLicenseUpdater" class="com.atlassian.plugin.connect.testsupport.LicenseUpdater"/>
     
     <servlet-filter key="connect-test-addon-from-host" class="com.atlassian.plugin.connect.testsupport.filter.AddonTestHostFilter"
