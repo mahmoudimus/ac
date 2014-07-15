@@ -26,10 +26,13 @@ Confluence supports these context variables:
 
  * `page.id`, `page.version`, `page.type`
  * `space.id`, `space.key`
+ * `content.id`, `content.version`, `content.type`, `content.plugin`
 
 A particular variable is available only where it makes sense given the application context. For example, a JIRA issue
 page only exposes issue and project data. Similarly, version and component information is available only in project
 administration pages.
+
+In Confluence, the `content.*` variables are currently only available in certain contexts where custom content entities reside, the primary example being Confluence Questions. It is intended that the `content` variables will be populated and identical to their `page.*` counterparts in the next release however. `content.plugin` is a special case that is populated only if the content in context is a custom Confluence content item, such as a Confluence Question. In this case `content.type` will be set to "custom".
 
 URL variables are available to any of the page modules, including web panels, web items, general pages and dialog pages,
 except for Confluence macros. To add a variable to a URL, enclose the variable name in curly brackets, as follows: `{variable.name}`
