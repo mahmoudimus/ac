@@ -1,6 +1,16 @@
 
 # Release Notes
 
+## [1.1.0-rc.1](../release-notes/1-1-0.html)
+* __If you read one thing, read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
+* JavaScript API: removed deprecated function `AP.fireEvent()`
+* New feature: condition for checking dark features
+* Fixed: web-sections which rely on add-on-provided web-items fail to register
+* Valid module keys are no longer modified
+* Whitelisted Confluence Questions [context params](../concepts/context-parameters.html) for webitems and webpanels
+* Docs: Fix broken links to webhooks module page
+* Docs: web panels are not to be used for dialog content
+
 ## [1.1.0-beta.5](../release-notes/1-1-0.html)
 * __If you read one thing, read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
 * XML descriptor servlet paths redirect to new JSON descriptor paths
