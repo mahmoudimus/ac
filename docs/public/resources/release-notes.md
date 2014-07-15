@@ -7,7 +7,7 @@
 * New feature: condition for checking dark features
 * Fixed: web-sections which rely on add-on-provided web-items fail to register
 * Valid module keys are no longer modified
-* Whitelisted Confluence Questions [context params](../concepts/context-parameters.html) for webitems and webpanels
+* Introduced Confluence Questions `content.id` / `content.version` / `content.type` / `content.plugin` [context parameters](../concepts/context-parameters.html) for webitems and webpanels
 * Docs: Fix broken links to webhooks module page
 * Docs: web panels are not to be used for dialog content
 
@@ -26,7 +26,6 @@
 * Fixed numerous workflow post function bugs
 * Improved documentation for workflow post functions
 * Remote web panels fixed in JIRA Agile
-* Introduced `content.id` / `content.version` / `content.type` / `content.plugin` context parameters.
 
 ## [1.0.2](../release-notes/1-0-2.html)
 * Fixed workflow post functions
