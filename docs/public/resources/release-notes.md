@@ -16,7 +16,7 @@
 * Fixed numerous workflow post function bugs
 * Improved documentation for workflow post functions
 * Remote web panels fixed in JIRA Agile
-* JavaScript API: removed deprecated function AP.fireEvent()
+* JavaScript API: removed deprecated function `AP.fireEvent()`
 * New feature: condition for checking dark features
 * Fixed: web-sections which rely on add-on-provided web-items fail to register
 * Valid module keys are no longer modified
