@@ -5,10 +5,12 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class WebItemTargetBeanSerializerTest
 {
@@ -58,4 +60,23 @@ public class WebItemTargetBeanSerializerTest
 
         assertThat(roundTripItem, is(bean));
     }
+
+    @Test(expected = JsonSyntaxException.class)
+    public void rejectsInvalidJson()
+    {
+        gson.fromJson("bad json", WebItemTargetBean.class);
+    }
+
+    @Test
+    public void acceptsBooleansAsStrings()
+    {
+        final WebItemTargetBean webItemTargetBean = gson.fromJson("{\"type\":\"inlinedialog\",\"options\":{\"onHover\":\"true\"}}",
+                WebItemTargetBean.class);
+
+        assertTrue(webItemTargetBean.getOptions() instanceof InlineDialogOptions);
+        final InlineDialogOptions options = (InlineDialogOptions) webItemTargetBean.getOptions();
+
+        assertThat(options.getOnHover(), is(true));
+    }
+
 }
