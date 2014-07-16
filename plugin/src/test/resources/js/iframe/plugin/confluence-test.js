@@ -1,15 +1,7 @@
 (function(){
     var context = require.config({
         context: Math.floor(Math.random() * 1000000),
-        baseUrl: 'base/src/main/resources/js/iframe/plugin',
-        map: {
-            '*': {
-                '_xdm': '_xdmMockConfluenceTest'
-            }
-        },
-        paths: {
-            '_xdmMockConfluenceTest': '/base/src/test/resources/js/iframe/plugin/_xdmMockConfluenceTest'
-        }
+        baseUrl: 'base/src/main/resources/js/iframe/plugin'
     });
 
     window.xdmMock = {
