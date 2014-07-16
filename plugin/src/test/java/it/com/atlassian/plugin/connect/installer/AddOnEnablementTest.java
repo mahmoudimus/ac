@@ -74,6 +74,7 @@ public class AddOnEnablementTest
         String key = "ac-test-" + System.currentTimeMillis();
         ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()
             .withKey(key)
+            .withDescription(AddOnEnablementTest.class.getCanonicalName())
             .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
             .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
             .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())

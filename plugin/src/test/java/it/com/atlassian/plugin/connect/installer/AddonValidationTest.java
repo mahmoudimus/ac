@@ -78,15 +78,16 @@ public class AddonValidationTest
         }
     }
 
-    private static ConnectAddonBeanBuilder testBeanBuilderWithNoAuthSpecified()
+    private ConnectAddonBeanBuilder testBeanBuilderWithNoAuthSpecified()
     {
         return new ConnectAddonBeanBuilder()
                 .withKey("ac-test-" + System.currentTimeMillis())
+                .withDescription(getClass().getCanonicalName())
                 .withModule("webItems", randomWebItemBean())
                 .withBaseurl("https://example.com/");
     }
 
-    private static ConnectAddonBeanBuilder testBeanBuilderWithAuth(AuthenticationType authenticationType)
+    private ConnectAddonBeanBuilder testBeanBuilderWithAuth(AuthenticationType authenticationType)
     {
         return testBeanBuilderWithNoAuthSpecified().withAuthentication(AuthenticationBean.newAuthenticationBean()
                 .withType(authenticationType).build());
@@ -327,7 +328,7 @@ public class AddonValidationTest
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build());
     }
 
-    private static ConnectAddonBeanBuilder testBeanBuilderWithJwt()
+    private ConnectAddonBeanBuilder testBeanBuilderWithJwt()
     {
         return testBeanBuilderWithAuth(AuthenticationType.JWT);
     }

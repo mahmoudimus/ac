@@ -61,7 +61,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
 
         checkNotNull(handler);
 
-        return handler.installPlugin(descriptor, Option.<String>some("application/json")).getPlugin();
+        return handler.installPlugin(descriptor, Option.some("application/json")).getPlugin();
     }
 
     @Deprecated // @XmlDescriptor: I didn't feel like adding a dependency on the api module just to add a single annotation, so I used Deprecated instead of XmlDescriptor.

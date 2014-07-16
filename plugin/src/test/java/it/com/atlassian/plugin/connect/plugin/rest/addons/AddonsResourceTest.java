@@ -141,7 +141,7 @@ public class AddonsResourceTest
     }
 
     @Test
-    public void oneXmlAddonsReturned() throws IOException
+    public void oneXmlAddonReturned() throws IOException
     {
         RequestUtil.Request request = requestUtil.requestBuilder()
                 .setMethod(HttpMethod.GET)
@@ -365,6 +365,7 @@ public class AddonsResourceTest
         ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
+                .withDescription(getClass().getCanonicalName())
                 .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
                 .withModule("webItems", randomWebItemBean())

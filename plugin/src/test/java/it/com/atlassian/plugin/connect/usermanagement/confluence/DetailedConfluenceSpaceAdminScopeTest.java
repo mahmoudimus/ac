@@ -7,7 +7,11 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
-import com.atlassian.crowd.exception.*;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.JwtConstants;
@@ -17,6 +21,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -37,9 +42,17 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static com.atlassian.confluence.security.SpacePermission.*;
+import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.CREATEEDIT_PAGE_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.CREATE_ATTACHMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.EDITBLOG_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_ATTACHMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_BLOG_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_COMMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_PAGE_PERMISSION;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -60,16 +73,17 @@ public class DetailedConfluenceSpaceAdminScopeTest
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private Space jediSpace;
-    private Plugin plugin;
+
+    private List<Plugin> installedAddonPlugins;
 
     public DetailedConfluenceSpaceAdminScopeTest(SpaceManager spaceManager,
-                                                 SpacePermissionManager spacePermissionManager,
-                                                 TestPluginInstaller testPluginInstaller,
-                                                 TestAuthenticator testAuthenticator,
-                                                 JwtApplinkFinder jwtApplinkFinder,
-                                                 ApplicationService applicationService,
-                                                 ApplicationManager applicationManager,
-                                                 ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService)
+            SpacePermissionManager spacePermissionManager,
+            TestPluginInstaller testPluginInstaller,
+            TestAuthenticator testAuthenticator,
+            JwtApplinkFinder jwtApplinkFinder,
+            ApplicationService applicationService,
+            ApplicationManager applicationManager,
+            ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService)
     {
         this.spaceManager = spaceManager;
         this.spacePermissionManager = spacePermissionManager;
@@ -84,8 +98,8 @@ public class DetailedConfluenceSpaceAdminScopeTest
     @Before
     public void setUp() throws IOException
     {
+        installedAddonPlugins = Lists.newArrayList();
         testAuthenticator.authenticateUser("admin");
-        plugin = installPlugin(ScopeName.SPACE_ADMIN);
     }
 
     @After
@@ -100,44 +114,113 @@ public class DetailedConfluenceSpaceAdminScopeTest
             }
             catch (Exception e)
             {
-                //couldn't delete the space for some reason, just ignore
+                log.error("Could not delete space", e);
             }
         }
 
-        if (null != plugin)
+        for (Plugin plugin : installedAddonPlugins)
         {
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            if (plugin != null)
+            {
+                try
+                {
+                    testPluginInstaller.uninstallJsonAddon(plugin);
+                }
+                catch (Exception e)
+                {
+                    log.error("Could not uninstall add-on", e);
+                }
+            }
         }
     }
 
     @Test
     public void addonIsMadeAdminOfExistingSpace() throws Exception
     {
-        assertIsSpaceAdminOnAllSpaces(getAddonUser());
+        ConnectAddonBean addonBean = createAddonBean(ScopeName.SPACE_ADMIN).build();
+        installConnectAddon(addonBean);
+        assertIsSpaceAdminOnAllSpaces(addonBean.getKey());
     }
 
     @Test
     public void addonIsMadeAdminOfExistingSpaceAfterUpgradeToTopAdmin() throws Exception
     {
-        plugin = installPlugin(ScopeName.ADMIN);
-        assertIsSpaceAdminOnAllSpaces(getAddonUser());
+        ConnectAddonBean addonBean = createAddonBean(ScopeName.ADMIN).build();
+        installConnectAddon(addonBean);
+        assertIsSpaceAdminOnAllSpaces(addonBean.getKey());
     }
 
     @Test
     public void addonIsMadeAdminOfExistingSpaceAfterDowngradeFromTopAdmin() throws Exception
     {
-        plugin = installPlugin(ScopeName.ADMIN);
-        plugin = installPlugin(ScopeName.SPACE_ADMIN);
-        assertIsSpaceAdminOnAllSpaces(getAddonUser());
+        ConnectAddonBeanBuilder addonBeanBuilder = createAddonBean(ScopeName.ADMIN);
+        String key = addonBeanBuilder.getKey();
+
+        installAddonThenChangeScope(addonBeanBuilder, ScopeName.SPACE_ADMIN);
+        assertIsSpaceAdminOnAllSpaces(key);
     }
 
-    private void assertIsSpaceAdminOnAllSpaces(ConfluenceUser addonUser)
+    @Test
+    public void addonIsMadeAdminOfNewSpaceAfterDowngradeFromTopAdmin() throws Exception
     {
+        ConnectAddonBeanBuilder addonBeanBuilder = createAddonBean(ScopeName.ADMIN);
+        String key = addonBeanBuilder.getKey();
+
+        installAddonThenChangeScope(addonBeanBuilder, ScopeName.SPACE_ADMIN);
+
+        assertIsSpaceAdminOfNewSpace(key);
+    }
+
+    @Test
+    public void addonWithSpaceAdminIsMadeAdminOfNewSpace() throws Exception
+    {
+        ConnectAddonBeanBuilder addonBeanBuilder = createAddonBean(ScopeName.SPACE_ADMIN);
+        String key = addonBeanBuilder.getKey();
+
+        installConnectAddon(addonBeanBuilder.build());
+        assertIsSpaceAdminOfNewSpace(key);
+    }
+
+    @Test
+    public void isNotSpaceAdminAfterDowngradeFromSpaceAdmin() throws Exception
+    {
+        ConnectAddonBeanBuilder addonBeanBuilder = createAddonBean(ScopeName.SPACE_ADMIN);
+        String key = addonBeanBuilder.getKey();
+
+        installAddonThenChangeScope(addonBeanBuilder, ScopeName.READ);
+
+        assertNonReadPermissionsRemoved(key);
+    }
+
+    @Test
+    public void isNotSpaceAdminAfterDowngradeFromAdmin() throws Exception
+    {
+        ConnectAddonBeanBuilder addonBeanBuilder = createAddonBean(ScopeName.ADMIN);
+        String key = addonBeanBuilder.getKey();
+
+        installAddonThenChangeScope(addonBeanBuilder, ScopeName.READ);
+
+        assertNonReadPermissionsRemoved(key);
+    }
+
+    private void installAddonThenChangeScope(ConnectAddonBeanBuilder addonBeanBuilder, ScopeName upgradedScope)
+            throws Exception
+    {
+        installConnectAddon(addonBeanBuilder.build());
+
+        addonBeanBuilder.withScopes(ImmutableSet.of(upgradedScope));
+        // install add-on with new scopes
+        installConnectAddon(addonBeanBuilder.build());
+    }
+
+    private void assertIsSpaceAdminOnAllSpaces(String addonKey)
+    {
+        ConfluenceUser addonUser = getAddonUser(addonKey);
         List<String> permissionErrors = checkIsSpaceAdminOnAllSpaces(addonUser, true);
         assertTrue(StringUtils.join(permissionErrors, '\n'), permissionErrors.isEmpty());
     }
 
-    private  List<String> checkIsSpaceAdminOnAllSpaces(ConfluenceUser addonUser, boolean shouldHavePermission)
+    private List<String> checkIsSpaceAdminOnAllSpaces(ConfluenceUser addonUser, boolean shouldHavePermission)
     {
         List<Space> allSpaces = spaceManager.getAllSpaces();
 
@@ -167,7 +250,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     private void checkHasPermissionOnSpace(List<String> permissionErrors, String permission, Space space,
-                                           ConfluenceUser addonUser, boolean shouldHavePermission)
+            ConfluenceUser addonUser, boolean shouldHavePermission)
     {
         String permissionError = checkHasPermissionOnSpace(permission, space, addonUser, shouldHavePermission);
         if (permissionError != null)
@@ -178,84 +261,56 @@ public class DetailedConfluenceSpaceAdminScopeTest
 
     private String checkHasPermissionOnSpace(String permission, Space space, ConfluenceUser addonUser, boolean shouldHavePermission)
     {
-            /*
-             * Confluence caches some security stuff on thread local and due to a bug we need to blast it away before checking permission
-             */
-            ThreadLocalCache.flush();
+        /*
+         * Confluence caches some security stuff on thread local and due to a bug we need to blast it away before checking permission
+         */
+        ThreadLocalCache.flush();
 
         boolean hasPermission = spacePermissionManager.hasPermission(permission, space, addonUser);
         if (hasPermission != shouldHavePermission)
-            {
-            return "Add-on user " + addonUser.getName() + " should "  + (shouldHavePermission ? "" : "NOT ") + "have "
+        {
+            return "Add-on user " + addonUser.getName() + " should " + (shouldHavePermission ? "" : "NOT ") + "have "
                     + permission + " permission for space " + space.getKey();
-            }
-        return null;
         }
-
-
-    @Test
-    public void addonIsMadeAdminOfNewSpace() throws Exception
-    {
-        assertIsSpaceAdminOfNewSpace();
+        return null;
     }
 
-    @Test
-    public void addonIsMadeAdminOfNewSpaceAfterDowngradeFromTopAdmin() throws Exception
-    {
-        plugin = installPlugin(ScopeName.ADMIN);
-        plugin = installPlugin(ScopeName.SPACE_ADMIN);
-        assertIsSpaceAdminOfNewSpace();
-    }
 
-    private void assertIsSpaceAdminOfNewSpace()
+    private void assertIsSpaceAdminOfNewSpace(String addonKey)
     {
         ConfluenceUser admin = FindUserHelper.getUserByUsername("admin");
 
         jediSpace = spaceManager.createSpace(JEDI_SPACE_KEY, "Knights of the Old Republic", "It's a trap!", admin);
 
-        final ConfluenceUser addonUser = getAddonUser();
+        final ConfluenceUser addonUser = getAddonUser(addonKey);
 
         final List<String> permissionErrors = checkIsSpaceAdminOnSpace(jediSpace, addonUser, true);
 
         assertTrue(StringUtils.join(permissionErrors, '\n'), permissionErrors.isEmpty());
     }
 
-    @Test
-    public void isNotSpaceAdminAfterDowngrade() throws Exception
+    private void assertNonReadPermissionsRemoved(String addonKey)
+            throws UserNotFoundException, ApplicationPermissionException, OperationFailedException, GroupNotFoundException, ApplicationNotFoundException
     {
-        plugin = installPlugin(ScopeName.READ);
-        assertNonReadPermissionsRemoved();
-    }
-
-    @Test
-    public void isNotSpaceAdminAfterDowngradeFromAdmin() throws Exception
-    {
-        plugin = installPlugin(ScopeName.ADMIN);
-        plugin = installPlugin(ScopeName.READ);
-        assertNonReadPermissionsRemoved();
-    }
-
-    private void assertNonReadPermissionsRemoved() throws UserNotFoundException, ApplicationPermissionException, OperationFailedException, GroupNotFoundException, ApplicationNotFoundException
-    {
-        final List<String> permissionErrors = checkIsSpaceAdminOnAllSpaces(getAddonUserRemovedFromGroups(), false);
+        final List<String> permissionErrors = checkIsSpaceAdminOnAllSpaces(getAddonUserRemovedFromGroups(addonKey), false);
         assertEquals(StringUtils.join(permissionErrors, '\n'), true, permissionErrors.isEmpty());
     }
 
-    private ConfluenceUser getAddonUserRemovedFromGroups()
-        {
-        final ConfluenceUser addonUser = getAddonUser();
+    private ConfluenceUser getAddonUserRemovedFromGroups(String addonKey)
+    {
+        final ConfluenceUser addonUser = getAddonUser(addonKey);
         final Set<String> groups = connectAddOnUserProvisioningService.getDefaultProductGroups();
         for (String group : groups)
-            {
+        {
             removeUserFromGroup(addonUser.getName(), group);
-            }
+        }
 
         return addonUser;
     }
 
-    private ConfluenceUser getAddonUser()
+    private ConfluenceUser getAddonUser(String addonKey)
     {
-        return getUser(getAddonUsername(plugin));
+        return getUser(getAddonUsername(addonKey));
     }
 
     private ConfluenceUser getUser(String username)
@@ -263,29 +318,32 @@ public class DetailedConfluenceSpaceAdminScopeTest
         return FindUserHelper.getUserByUsername(username);
     }
 
-    private String getAddonUsername(Plugin plugin)
+    private String getAddonUsername(String addonKey)
     {
-        checkArgument(null != plugin, "'plugin' must not be null!");
-        ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
+        checkNotNull(addonKey, "addonKey must not be null");
+        ApplicationLink appLink = jwtApplinkFinder.find(addonKey);
         return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
     }
 
-    private Plugin installPlugin(ScopeName scope) throws IOException
+    private ConnectAddonBeanBuilder createAddonBean(ScopeName scope)
     {
         String key = "ac-test-" + System.currentTimeMillis();
-        ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()
+        return ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
+                .withDescription(getClass().getCanonicalName())
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
                 .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
-                .withModule("webItems",randomWebItemBean())
-                .withScopes(ImmutableSet.of(scope))
-                .build();
+                .withModule("webItems", randomWebItemBean())
+                .withScopes(ImmutableSet.of(scope));
+    }
 
-        log.warn("Installing test plugin '{}'", addonBean.getKey());
+    private void installConnectAddon(ConnectAddonBean addonBean) throws IOException
+    {
+        log.warn("Installing test addon '{}'", addonBean.getKey());
         Plugin installedPlugin = testPluginInstaller.installAddon(addonBean);
-        checkArgument(null != installedPlugin, "'installedPlugin' should not be null after installation: check the logs for installation messages");
-        return installedPlugin;
+        checkNotNull(installedPlugin, "'installedPlugin' should not be null after installation: check the logs for installation messages");
+        installedAddonPlugins.add(installedPlugin);
     }
 
     // Richard Atkins says that the Application is immutable and therefore the instance replaced every time changes occur,
