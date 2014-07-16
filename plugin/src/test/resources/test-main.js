@@ -43,8 +43,12 @@ requirejs.config({
   // ask Require.js to load these files (all our tests)
   deps: tests,
 
-  // start test run, once Require.js is done
-  callback: window.__karma__.start
+    // start test run, once Require.js is done
+    callback: function(x){ 
+        setTimeout(function(){
+             window.__karma__.start(x);
+        }, 1000);
+    }
 });
 
 //tests will timeout after 5 seconds
