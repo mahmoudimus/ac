@@ -1,6 +1,5 @@
 package it.confluence;
 
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
@@ -21,7 +20,6 @@ import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -29,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test of remote web items in Confluence.
  */
-@XmlDescriptor
 public class TestWebItem extends ConfluenceWebDriverTestBase
 {
     private static final String GENERAL_WEBITEM = "system-web-item";
