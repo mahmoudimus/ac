@@ -1,36 +1,30 @@
-##Tutorial: Build a Geiger counter for JIRA
+##Tutorial: Display your projects in JIRA 
 
 <div class="aui-message">
 	    <p class="title">
 	        <span class="aui-icon icon-info"></span>
 	        <strong>Who this tutorial is for</strong>
 	    </p>
-	    You can complete this tutorial even if you've never built an Atlassian add-on before. You 
-	    will need at least version 4.2.20 of the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads)
-		, and [Node.js](http://www.nodejs.org/). 
+	    <p>
+	    You can complete this tutorial even if you've never built an Atlassian add-on before. You'll 
+	    need at least version 4.2.20 of the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads), 
+	    and [Node.js](http://www.nodejs.org/). 
+	    </p>
 </div>
 
-In this tutorial, you'll build a static Connect add-on that displays your
-JIRA projects in a chart. We've affectionately dubbed this add-on 'Geiger,' 
-since it acts like a [Geiger counter](http://en.wikipedia.org/wiki/Geiger_counter). 
-Geiger measures the 'radiation' in your JIRA instance – the flux of activity 
-for bugs.   d
+In this tutorial, you'll build a static Connect add-on to show your
+JIRA projects in a table, accessible via a _Stats_ link in the header. 
 
-You'll use the [Node.js](http://nodejs.org/) framework 
-and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
-to interface with JIRA. 
+Your static page uses the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
+to retrieve information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/) 
+framework and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
+to interface with JIRA. Finally, you'll create your table using [D3.js](http://d3js.org/). 
 
-You'll add a _Stats_ link in the JIRA header to access your add-on, which 
-appears as a static page in JIRA. Your page uses the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
-to retrieve information about projects in your JIRA instance. You'll style 
-your page using [D3.js](http://d3js.org/) to build a table, which you'll later 
-leverage to build a data-driven, dynamically updating chart in a later tutorial. 
-
-At completion, your add-on will look a lot like this: 
+At completion, your add-on will look like this: 
 
 <img src="../assets/images/geiger-1-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
 
-Here's you'll learn about in this tutorial:
+You'll learn about:
 
 * [Prerequisites & configuring your development environment](#environment)  
 * [Adding a _Stats_ link in the navigation header](#stats-header)  
@@ -40,8 +34,8 @@ Here's you'll learn about in this tutorial:
 ## <a name="environment"></a> Tutorial prerequisites & configuring your development environment  
 
 In this step, you'll confirm you have node.js installed, and install the 
-[Atlassian Connect Express](https://bitbucket.org/atlassian/atlassian-connect-express/) framework, otherwise known as ACE. The ACE framework is a 
-toolkit for creating Connect add-ons using node.js. ACE handles registration in JIRA for you. 
+[Atlassian Connect Express](https://bitbucket.org/atlassian/atlassian-connect-express/) framework, known as 
+ACE. ACE is a toolkit for creating Connect add-ons using node.js. ACE handles registration in JIRA for you. 
 It also detects changes made to your [`atlassian-connect.json` descriptor](../modules/) 
 file, so you don't need to continually restart your add-on as you develop. Perhaps most 
 importantly, ACE handles [JWT authentication](../concepts/understanding-jwt.html), 
@@ -55,10 +49,10 @@ For these steps, you might need to enter sudo mode in your terminal. Let's get s
 	Otherwise, you can [download and install node directly](http://nodejs.org/download/).  
 1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
 	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
-1. Create a new ACE project called `geiger`.
-	<pre><code data-lang="text">$ atlas-connect new geiger</code></pre>
-1. Change to your new `geiger` directory.
-	<pre><code data-lang="text">$ cd geiger/</code></pre>
+1. Create a new ACE project called `project-table`.
+	<pre><code data-lang="text">$ atlas-connect new project-table</code></pre>
+1. Change to your new `project-table` directory.
+	<pre><code data-lang="text">$ cd project-table/</code></pre>
 1. Install node.js dependencies for your project.  
 	<pre><code data-lang="text">$ npm install</code></pre>
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
@@ -84,7 +78,7 @@ For these steps, you might need to enter sudo mode in your terminal. Let's get s
 
 ## <a name="stats-header"></a> Install your add-on and add a _Stats_ link
 
-You now have the basic architecture for your plugin. If you open your new `geiger` project, 
+You now have the basic architecture for your plugin. If you open your new `project-table` project, 
 you'll see essentials like the [`atlassian-connect.json` descriptor](../modules/) in the 
 project root. You'll also see an `app.js` file. 
 
@@ -161,7 +155,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	}
 	````
  
-1. From your `geiger` project root, run the `app.js` file:
+1. From your `project-table` project root, run the `app.js` file:
 	<pre><code data-lang="text">$ node app.js</code></pre> 
 	Your add-on is automatically registered in JIRA for you. 
 1. Refresh JIRA.  
