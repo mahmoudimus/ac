@@ -1083,7 +1083,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <browsers>Chrome</browsers>
+                            <browsers>PhantomJS</browsers>
                             <karmaExecutable>node_modules/karma/bin/karma</karmaExecutable>
                         </configuration>
                     </plugin>
