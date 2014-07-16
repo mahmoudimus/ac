@@ -12,7 +12,7 @@ The add-on should:
    license, the add-on may choose to disable its features, enter a read-only state, or function
    in some other restricted manner that makes sense
 
-## Development Considerations
+## Development considerations
 
 In a nutshell, to implement licensing for Atlassian Connect, you need to:
 
@@ -47,7 +47,7 @@ using a plugin strictly for internal use or you plan to distribute it freely on 
 this should be set to false.
 
 <a name="license-status"></a>
-## Handling Requests with the License Status
+## Handling requests with the license status
 
 Each incoming request from the Atlassian application instance includes a query parameter named lic.
 For example:

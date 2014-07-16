@@ -4,10 +4,15 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.installer.GsonConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.base.Joiner;
+import com.google.gson.Gson;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -50,19 +55,25 @@ public class WebItemModuleDescriptorFactory
     }
 
     @Override
-    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebItemModuleBean bean)
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
+                                                          Plugin theConnectPlugin, WebItemModuleBean bean)
     {
-        return createModuleDescriptor(addon, theConnectPlugin, bean, Collections.<Class<? extends Condition>>emptyList());
+        return createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean, Collections.<Class<? extends Condition>>emptyList());
     }
 
-    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebItemModuleBean bean, Class<? extends Condition> additionalCondition)
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin,
+                                                          WebItemModuleBean bean, Class<? extends Condition> additionalCondition)
     {
-        return createModuleDescriptor(addon, theConnectPlugin, bean, Collections.<Class<? extends Condition>>singletonList(additionalCondition));
+        return createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean,
+                Collections.<Class<? extends Condition>>singletonList(additionalCondition));
     }
 
-    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebItemModuleBean bean, Iterable<Class<? extends Condition>> additionalConditions)
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin,
+                                                          WebItemModuleBean bean, Iterable<Class<? extends Condition>> additionalConditions)
     {
         Element webItemElement = new DOMElement("web-item");
+
+        final ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
 
         String webItemKey = bean.getKey(addon);
 
@@ -70,7 +81,7 @@ public class WebItemModuleDescriptorFactory
         String i18nKey = bean.needsEscaping() ? StringEscapeUtils.escapeHtml(bean.getName().getI18n()) : bean.getName().getI18n();
 
         webItemElement.addAttribute("key", webItemKey);
-        webItemElement.addAttribute("section", bean.getLocation());
+        webItemElement.addAttribute("section", moduleProviderContext.getLocationQualifier().processLocation(bean.getLocation()));
         webItemElement.addAttribute("weight", Integer.toString(bean.getWeight()));
 
         webItemElement.addElement("label")
@@ -117,7 +128,11 @@ public class WebItemModuleDescriptorFactory
             styles.add("ap-module-key-" + webItemKey);
         }
 
-        Map<String, Object> dialogOptions = bean.getTarget().getOptions();
+        final WebItemTargetOptions options = bean.getTarget().getOptions();
+
+        // use gson to turn it into a map
+        final Gson gson = ConnectModulesGsonFactory.getGson();
+        final Map<String, Object> dialogOptions = gson.fromJson(gson.toJsonTree(options), Map.class);
         Map<String, String> beanParams = bean.getParams();
 
         if (null != dialogOptions && !dialogOptions.isEmpty())

@@ -1,9 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
@@ -11,12 +10,11 @@ import static com.google.common.collect.Maps.newHashMap;
 public class WebItemTargetBeanBuilder extends BaseModuleBeanBuilder<WebItemTargetBeanBuilder, WebItemTargetBean>
 {
     private WebItemTargetType type;
-    private Map<String, Object> options;
+    private WebItemTargetOptions options;
 
     public WebItemTargetBeanBuilder()
     {
         this.type = WebItemTargetType.page;
-        this.options = newHashMap();
     }
 
     public WebItemTargetBeanBuilder(final WebItemTargetBean defaultBean)
@@ -31,19 +29,9 @@ public class WebItemTargetBeanBuilder extends BaseModuleBeanBuilder<WebItemTarge
         return this;
     }
 
-    public WebItemTargetBeanBuilder withOption(String name, Object value)
+    public WebItemTargetBeanBuilder withOptions(WebItemTargetOptions newOptions)
     {
-        checkNotNull(options);
-
-        options.put(name, value);
-        return this;
-    }
-
-    public WebItemTargetBeanBuilder withOption(Map<String, Object> newOptions)
-    {
-        checkNotNull(options);
-
-        options.putAll(newOptions);
+        this.options = newOptions;
         return this;
     }
 

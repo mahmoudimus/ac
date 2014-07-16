@@ -66,6 +66,7 @@ public class ConnectRunner
     private int port;
     private Server server;
     private final Map<String, HttpServlet> routes = newHashMap();
+    private boolean checkInstallationStatus = true;
 
     public ConnectRunner(String baseUrl, String pluginKey)
     {
@@ -80,9 +81,9 @@ public class ConnectRunner
         this.installer = new AtlassianConnectRestClient(baseUrl, "admin", "admin");
     }
 
-    private void register() throws Exception
+    public void register() throws Exception
     {
-        installer.install("http://localhost:" + port + REGISTRATION_ROUTE);
+        installer.install("http://localhost:" + port + REGISTRATION_ROUTE, checkInstallationStatus);
     }
 
     public void uninstall() throws Exception
@@ -176,6 +177,12 @@ public class ConnectRunner
     public ConnectRunner setAuthenticationToNone()
     {
         addonBuilder.withAuthentication(AuthenticationBean.none());
+        return this;
+    }
+
+    public ConnectRunner disableInstallationStatusCheck()
+    {
+        checkInstallationStatus = false;
         return this;
     }
 

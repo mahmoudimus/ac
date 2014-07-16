@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -8,6 +9,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DefaultConnectWebSectionModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.descriptor.WebSectionModuleDescriptorFactoryForTests;
@@ -75,7 +77,8 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
                 .withConditions(new SingleConditionBeanBuilder().withCondition("unconditional").build())
                 .build();
 
-        descriptor = webSectionFactory.createModuleDescriptor(newConnectAddonBean().withKey("my-awesome-plugin").build(), plugin, bean);
+        final ConnectAddonBean addonBean = newConnectAddonBean().withKey("my-awesome-plugin").build();
+        descriptor = webSectionFactory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addonBean), plugin, bean);
         descriptor.enabled();
     }
 

@@ -104,8 +104,8 @@ public class XmlOAuthToJsonJwtUpdateTest
     @AfterClass
     public void afterAllTests()
     {
-        uninstall(oAuthPlugin);
-        uninstall(jwtPlugin);
+        uninstallPlugin(oAuthPlugin);
+        uninstallAddon(jwtPlugin);
     }
 
     @Test
@@ -237,7 +237,7 @@ public class XmlOAuthToJsonJwtUpdateTest
         return testPluginInstaller.getInternalAddonBaseUrl(OLD_PLUGIN_KEY) + OAUTH_VERSION_SLASHED;
     }
 
-    private void uninstall(Plugin plugin)
+    private void uninstallPlugin(Plugin plugin)
     {
         if (null != plugin)
         {
@@ -248,6 +248,21 @@ public class XmlOAuthToJsonJwtUpdateTest
             catch (IOException e)
             {
                 LOG.error("Failed to uninstall test plugin " + plugin.getKey() + " during teardown.", e);
+            }
+        }
+    }
+
+    private void uninstallAddon(Plugin plugin)
+    {
+        if (null != plugin)
+        {
+            try
+            {
+                testPluginInstaller.uninstallAddon(plugin);
+            }
+            catch (IOException e)
+            {
+                LOG.error("Failed to uninstall test add-on " + plugin.getKey() + " during teardown.", e);
             }
         }
     }

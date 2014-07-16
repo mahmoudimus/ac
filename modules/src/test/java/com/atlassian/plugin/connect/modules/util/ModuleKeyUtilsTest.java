@@ -10,102 +10,75 @@ import org.junit.Test;
 public class ModuleKeyUtilsTest
 {
     @Test
-    public void cleanKey() throws Exception
+    public void addonAndModuleKey() throws Exception
     {
-        String expected = "web-item-some-feature";
-        String test = "webItem some Feature";
+        String addonKey = "plugin";
+        String moduleKey = "module";
 
-        Assert.assertEquals(expected, ModuleKeyUtils.cleanKey(test));
+        Assert.assertEquals("Namespaced key is generated correctly", "plugin__module", ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
     }
 
     @Test
-    public void generatedKey() throws Exception
+    public void addonKeyWithDotsAndModuleKey() throws Exception
     {
-        String expected = "web-item-";
-        String prefix = "web Item";
+        String addonKey = "com.test.plugin";
+        String moduleKey = "module";
 
-        String key = ModuleKeyUtils.generateKey(prefix);
-        Assert.assertTrue(key.startsWith(expected));
-        Assert.assertTrue(StringUtils.isNumeric(StringUtils.substringAfter(key, expected)));
+        Assert.assertEquals("Namespaced key is generated correctly with dots", "com.test.plugin__module", ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
     }
 
     @Test
-    public void lowerCamel() throws Exception
+    public void addonAndModuleKeyWithAllTheThings() throws Exception
     {
-        String expected = "some-feature";
-        String test = "someFeature";
+        String addonKey = "com.test.my_plugin";
+        String moduleKey = "module_thing1";
 
-        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
-
+        Assert.assertEquals("Module key is extracted from key correctly", "com.test.my_plugin__module_thing1", ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
     }
 
     @Test
-    public void upperCamel() throws Exception
+    public void extractAddonKeyWithAllTheThings() throws Exception
     {
-        String expected = "some-feature";
-        String test = "SomeFeature";
+        String addonKey = "com.test.my_plugin";
+        String moduleKey = "module_thing1";
 
-        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
+        String key = ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey);
 
+        Assert.assertEquals("Addon key is extracted from key correctly", addonKey, ModuleKeyUtils.addonKeyOnly(key));
     }
 
     @Test
-    public void upperSpaced() throws Exception
+    public void extractAddonKeyWithTwoUnderscores() throws Exception
     {
-        String expected = "some-feature";
-        String test = "Some Feature";
+        String addonKey = "com.test__plugin.my__plugin";
+        String moduleKey = "module_thing1";
 
-        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
+        String key = ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey);
 
+        Assert.assertEquals("Addon key with underscores is extracted from key correctly", addonKey, ModuleKeyUtils.addonKeyOnly(key));
     }
 
     @Test
-    public void lowerSpaced() throws Exception
+    public void extractModuleKeyWithAllTheThings() throws Exception
     {
-        String expected = "some-feature";
-        String test = "some Feature";
+        String addonKey = "com.test.my_plugin";
+        String moduleKey = "module_thing1";
 
-        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
+        String key = ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey);
 
+        Assert.assertEquals("Module key is extracted from key correctly", moduleKey, ModuleKeyUtils.moduleKeyOnly(key));
     }
 
     @Test
-    public void acronymCamel() throws Exception
+    public void toCompleteKeyWithAllTheThings() throws Exception
     {
-        String expected = "some-feature";
-        String test = "SOMEFeature";
+        String addonKey = "com.test.my_plugin";
+        String moduleKey = "module_thing1";
 
-        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
+        String key = ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey);
 
-    }
+        String completeKey = addonKey + ":" + moduleKey;
 
-    @Test
-    public void issueCamel() throws Exception
-    {
-        String expected = "acdev-1286-some-feature";
-        String test = "ACDEV-1286-some-feature";
-
-        Assert.assertEquals(expected, ModuleKeyUtils.camelCaseOrSpaceToDashed(test));
-
-    }
-
-    @Test
-    public void alreadyLower() throws Exception
-    {
-        String expected = "google-link";
-        String test = "google link";
-
-        Assert.assertEquals(expected, ModuleKeyUtils.cleanKey(test));
-    }
-
-    @Test
-    public void specialCharacters() throws Exception
-    {
-        String expected = "hayao-miyazaki------";
-        String test = "Hayao Miyazaki (宮崎駿)";
-
-        Assert.assertEquals(expected, ModuleKeyUtils.cleanKey(test));
-
-        Assert.assertEquals(expected, ModuleKeyUtils.cleanKey(test));
+        Assert.assertEquals("complete key is generated from key correctly", completeKey, ModuleKeyUtils.toCompleteKey(key));
     }
 }

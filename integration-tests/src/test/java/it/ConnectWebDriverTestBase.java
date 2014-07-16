@@ -26,7 +26,6 @@ public abstract class ConnectWebDriverTestBase
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
-//    @Inject
     protected ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
 

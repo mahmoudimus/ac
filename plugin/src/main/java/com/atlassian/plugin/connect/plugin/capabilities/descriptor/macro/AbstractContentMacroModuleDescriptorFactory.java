@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocume
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceholderMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -21,11 +22,9 @@ import com.atlassian.uri.Uri;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 
-import javax.annotation.Nullable;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
@@ -45,11 +44,12 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     protected abstract ModuleFactory createModuleFactory(ConnectAddonBean addon, DOMElement element, B bean);
 
     @Override
-    public XhtmlMacroModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, B bean)
+    public XhtmlMacroModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, B bean)
     {
-        DOMElement element = createDOMElement(addon, bean);
-        ModuleFactory moduleFactory = createModuleFactory(addon, element, bean);
-        MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(addon, bean);
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
+        DOMElement element = createDOMElement(connectAddonBean, bean);
+        ModuleFactory moduleFactory = createModuleFactory(connectAddonBean, element, bean);
+        MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(connectAddonBean, bean);
 
         FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
         descriptor.init(theConnectPlugin, element);

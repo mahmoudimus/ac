@@ -1,53 +1,65 @@
 package it.jira;
 
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.module.RemoteWebPanelModule;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import hudson.plugins.jira.soap.RemoteIssue;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@XmlDescriptor
 public class TestXdmEvents extends JiraWebDriverTestBase
 {
-    private static AtlassianConnectAddOnRunner remotePluginA;
-    private static AtlassianConnectAddOnRunner remotePluginB;
+    private static ConnectRunner remotePluginA;
+    private static ConnectRunner remotePluginB;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePluginA = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
-            .add(RemoteWebPanelModule.key("xdm-events-a1")
-                .name("XDM Events Panel A1")
-                .location("atl.jira.view.issue.right.context")
-                .path("/xdmEventsPanelA1")
-                .resource(newServlet(new XdmEventsPanelServlet("A1"))))
-            .add(RemoteWebPanelModule.key("xdm-events-a2")
-                .name("XDM Events Panel A2")
-                .location("atl.jira.view.issue.right.context")
-                .path("/xdmEventsPanelA2")
-                .resource(newServlet(new XdmEventsPanelServlet("A2"))))
-            .add(RemoteWebPanelModule.key("xdm-events-a3")
-                .name("XDM Events Panel A3")
-                .location("atl.jira.view.issue.right.context")
-                .path("/xdmEventsPanelA3")
-                .resource(newServlet(new XdmEventsPanelServlet("A3"))))
-            .start();
+        remotePluginA = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+                .setAuthenticationToNone()
+                .addModules("webPanels",
+                        newWebPanelBean()
+                                .withKey("xdm-events-a1")
+                                .withName(new I18nProperty("XDM Events Panel A1", null))
+                                .withLocation("atl.jira.view.issue.right.context")
+                                .withUrl("/xdmEventsPanelA1")
+                                .build(),
+                        newWebPanelBean()
+                                .withKey("xdm-events-a2")
+                                .withName(new I18nProperty("XDM Events Panel A2", null))
+                                .withLocation("atl.jira.view.issue.right.context")
+                                .withUrl("/xdmEventsPanelA2")
+                                .build(),
+                        newWebPanelBean()
+                                .withKey("xdm-events-a3")
+                                .withName(new I18nProperty("XDM Events Panel A3", null))
+                                .withLocation("atl.jira.view.issue.right.context")
+                                .withUrl("/xdmEventsPanelA3")
+                                .build())
+                .addRoute("/xdmEventsPanelA1", newServlet(new XdmEventsPanelServlet("A1")))
+                .addRoute("/xdmEventsPanelA2", newServlet(new XdmEventsPanelServlet("A2")))
+                .addRoute("/xdmEventsPanelA3", newServlet(new XdmEventsPanelServlet("A3")))
+                .start();
 
-        remotePluginB = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
-            .add(RemoteWebPanelModule.key("xdm-events-b1")
-                .name("XDM Events Panel B1")
-                .location("atl.jira.view.issue.right.context")
-                .path("/xdmEventsPanelB1")
-                .resource(newServlet(new XdmEventsPanelServlet("B1"))))
-            .start();
+        remotePluginB = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+                .setAuthenticationToNone()
+                .addModules("webPanels",
+                        newWebPanelBean()
+                                .withKey("xdm-events-b1")
+                                .withName(new I18nProperty("XDM Events Panel B1", null))
+                                .withLocation("atl.jira.view.issue.right.context")
+                                .withUrl("/xdmEventsPanelB1")
+                                .build())
+                .addRoute("/xdmEventsPanelB1", newServlet(new XdmEventsPanelServlet("B1")))
+                .start();
     }
 
     @Test
@@ -58,15 +70,15 @@ public class TestXdmEvents extends JiraWebDriverTestBase
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
 
-        RemoteXdmEventPanel panelA1 = viewIssuePage.findXdmEventPanel("xdm-events-a1");
-        RemoteXdmEventPanel panelA2 = viewIssuePage.findXdmEventPanel("xdm-events-a2");
-        RemoteXdmEventPanel panelA3 = viewIssuePage.findXdmEventPanel("xdm-events-a3");
-        RemoteXdmEventPanel panelB1 = viewIssuePage.findXdmEventPanel("xdm-events-b1");
+        RemoteXdmEventPanel panelA1 = viewIssuePage.findXdmEventPanel(remotePluginA.getAddon().getKey(), "xdm-events-a1");
+        RemoteXdmEventPanel panelA2 = viewIssuePage.findXdmEventPanel(remotePluginA.getAddon().getKey(), "xdm-events-a2");
+        RemoteXdmEventPanel panelA3 = viewIssuePage.findXdmEventPanel(remotePluginA.getAddon().getKey(), "xdm-events-a3");
+        RemoteXdmEventPanel panelB1 = viewIssuePage.findXdmEventPanel(remotePluginB.getAddon().getKey(), "xdm-events-b1");
 
-        assertEquals(panelA1.getPanelId(), "A1");
-        assertEquals(panelA2.getPanelId(), "A2");
-        assertEquals(panelA3.getPanelId(), "A3");
-        assertEquals(panelB1.getPanelId(), "B1");
+        assertEquals(panelA1.getModuleId(), "A1");
+        assertEquals(panelA2.getModuleId(), "A2");
+        assertEquals(panelA3.getModuleId(), "A3");
+        assertEquals(panelB1.getModuleId(), "B1");
 
         panelA1.emit();
         assertTrue(panelA1.hasLoggedEvent("panel-A1", "event-1"));

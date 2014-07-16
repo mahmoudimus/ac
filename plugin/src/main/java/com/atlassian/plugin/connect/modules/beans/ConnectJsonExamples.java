@@ -19,6 +19,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -31,7 +33,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -81,7 +82,8 @@ public class ConnectJsonExamples
     public static final String VENDOR_EXAMPLE = createVendorExample();
     public static final String WEBHOOK_EXAMPLE = createWebhookExample();
     public static final String WEBITEM_EXAMPLE = createWebItemExample();
-    public static final String WEBITEM_TARGET_EXAMPLE = createWebitemTargetExample();
+    public static final String WEBITEM_TARGET_INLINE_DIALOG_EXAMPLE = createWebitemTargetInlineDialogOptionsExample();
+    public static final String WEBITEM_TARGET_DIALOG_EXAMPLE = createWebitemTargetDialogOptionsExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
 
@@ -391,18 +393,34 @@ public class ConnectJsonExamples
         return gson.toJson(createJsonObject("icon", bean));
     }
 
-    private static String createWebitemTargetExample()
+    private static String createWebitemTargetInlineDialogOptionsExample()
     {
         WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
                 .withType(WebItemTargetType.inlineDialog)
-                .withOption("offsetX", "30px")
-                .withOption("offsetY", "20px")
-                .withOption("onHover", true)
+                .withOptions(InlineDialogOptions.newInlineDialogOptions()
+                                .withOffsetX("30px")
+                                .withOffsetY("20px")
+                                .withOnHover(true)
+                                .build()
+                )
                 .build();
 
         return gson.toJson(createJsonObject("target", bean));
     }
 
+    private static String createWebitemTargetDialogOptionsExample()
+    {
+        WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
+                .withType(WebItemTargetType.dialog)
+                .withOptions(DialogOptions.newDialogOptions()
+                                .withHeight("100px")
+                                .withWidth("200px")
+                                .build()
+                )
+                .build();
+
+        return gson.toJson(createJsonObject("target", bean));
+    }
     private static String createLinkExample()
     {
         LinkBean bean = newLinkBean().withUrl("/go-somewhere").withAltText("somewhere").withTitle("Go Somewhere").build();
@@ -424,7 +442,7 @@ public class ConnectJsonExamples
                                 .withType(CompositeConditionType.OR)
                                 .withConditions(
                                         newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_FILE_TO_ISSUE).build(),
-                                        newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_SCREENSHOT_TO_ISSUE).build()
+                                        newSingleConditionBean().withCondition(JiraConditions.IS_ISSUE_ASSIGNED_TO_CURRENT_USER).build()
                                 ).build()
                         , newSingleConditionBean().withCondition(JiraConditions.USER_IS_LOGGED_IN).build()
                 ).build();

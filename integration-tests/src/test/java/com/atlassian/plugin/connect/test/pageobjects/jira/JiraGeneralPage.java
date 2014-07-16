@@ -2,11 +2,13 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import org.apache.commons.lang.NotImplementedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -31,7 +33,7 @@ public final class JiraGeneralPage implements GeneralPage
     private PageBinder pageBinder;
     private final String pageKey;
     private final String linkText;
-    private final String extraPrefix;
+    private final String addOnKey;
 
     private final Supplier<Option<WebElement>> link = new Supplier<Option<WebElement>>()
     {
@@ -45,16 +47,20 @@ public final class JiraGeneralPage implements GeneralPage
         }
     };
 
+    @Deprecated
+    /**
+     * @deprecated You must specify an addOnKey! Please migrate to {@link #JiraGeneralPage(String, String, String)}.
+     */
     public JiraGeneralPage(String pageKey, String linkText)
     {
         this(pageKey, linkText, "");
     }
 
-    public JiraGeneralPage(String pageKey, String linkText, String extraPrefix)
+    public JiraGeneralPage(String pageKey, String linkText, String addOnKey)
     {
         this.pageKey = pageKey;
         this.linkText = linkText;
-        this.extraPrefix = extraPrefix;
+        this.addOnKey = addOnKey;
     }
 
     @Override
@@ -64,25 +70,35 @@ public final class JiraGeneralPage implements GeneralPage
     }
 
     @Override
+    @Deprecated
+    /**
+     * @deprecated Please migrate to {@link #clickAddOnLink()}.
+     */
     public RemotePluginTestPage clickRemotePluginLink()
     {
+        throw new NotImplementedException("Please migrate away from this method to clickAddOnLink()");
+    }
+
+    @Override
+    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
+    {
         return link.get().fold(
-                new Supplier<RemotePluginTestPage>()
+                new Supplier<ConnectAddOnEmbeddedTestPage>()
                 {
                     @Override
-                    public RemotePluginTestPage get()
+                    public ConnectAddOnEmbeddedTestPage get()
                     {
                         throw new IllegalStateException(format("Could not find link '%s'", link()));
                     }
                 },
-                new Function<WebElement, RemotePluginTestPage>()
+                new Function<WebElement, ConnectAddOnEmbeddedTestPage>()
                 {
                     @Override
-                    public RemotePluginTestPage apply(WebElement l)
+                    public ConnectAddOnEmbeddedTestPage apply(WebElement l)
                     {
                         l.click();
                         logger.debug("Link '{}' was found and clicked.", l);
-                        return pageBinder.bind(RemotePluginTestPage.class, pageKey, extraPrefix);
+                        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, pageKey, true);
                     }
                 }
         );
