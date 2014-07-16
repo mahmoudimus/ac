@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import hudson.plugins.jira.soap.RemoteIssue;
-import it.servlet.InstallHandlerServlet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,37 +24,33 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePluginA = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-            .addJWT()
-            .addInstallLifecycle()
-            .addRoute(ConnectRunner.INSTALLED_PATH, new InstallHandlerServlet())
-            .addModules("webPanels",
-                    newWebPanelBean()
-                            .withKey("xdm-events-a1")
-                            .withName(new I18nProperty("XDM Events Panel A1", null))
-                            .withLocation("atl.jira.view.issue.right.context")
-                            .withUrl("/xdmEventsPanelA1")
-                            .build(),
-                    newWebPanelBean()
-                            .withKey("xdm-events-a2")
-                            .withName(new I18nProperty("XDM Events Panel A2", null))
-                            .withLocation("atl.jira.view.issue.right.context")
-                            .withUrl("/xdmEventsPanelA2")
-                            .build(),
-                    newWebPanelBean()
-                            .withKey("xdm-events-a3")
-                            .withName(new I18nProperty("XDM Events Panel A3", null))
-                            .withLocation("atl.jira.view.issue.right.context")
-                            .withUrl("/xdmEventsPanelA3")
-                            .build())
-                    .addRoute("/xdmEventsPanelA1", newServlet(new XdmEventsPanelServlet("A1")))
-                    .addRoute("/xdmEventsPanelA2", newServlet(new XdmEventsPanelServlet("A2")))
-                    .addRoute("/xdmEventsPanelA3", newServlet(new XdmEventsPanelServlet("A3")))
-                    .start();
+                .setAuthenticationToNone()
+                .addModules("webPanels",
+                        newWebPanelBean()
+                                .withKey("xdm-events-a1")
+                                .withName(new I18nProperty("XDM Events Panel A1", null))
+                                .withLocation("atl.jira.view.issue.right.context")
+                                .withUrl("/xdmEventsPanelA1")
+                                .build(),
+                        newWebPanelBean()
+                                .withKey("xdm-events-a2")
+                                .withName(new I18nProperty("XDM Events Panel A2", null))
+                                .withLocation("atl.jira.view.issue.right.context")
+                                .withUrl("/xdmEventsPanelA2")
+                                .build(),
+                        newWebPanelBean()
+                                .withKey("xdm-events-a3")
+                                .withName(new I18nProperty("XDM Events Panel A3", null))
+                                .withLocation("atl.jira.view.issue.right.context")
+                                .withUrl("/xdmEventsPanelA3")
+                                .build())
+                .addRoute("/xdmEventsPanelA1", newServlet(new XdmEventsPanelServlet("A1")))
+                .addRoute("/xdmEventsPanelA2", newServlet(new XdmEventsPanelServlet("A2")))
+                .addRoute("/xdmEventsPanelA3", newServlet(new XdmEventsPanelServlet("A3")))
+                .start();
 
         remotePluginB = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-                .addJWT()
-                .addInstallLifecycle()
-                .addRoute(ConnectRunner.INSTALLED_PATH, new InstallHandlerServlet())
+                .setAuthenticationToNone()
                 .addModules("webPanels",
                         newWebPanelBean()
                                 .withKey("xdm-events-b1")
@@ -64,7 +59,7 @@ public class TestXdmEvents extends JiraWebDriverTestBase
                                 .withUrl("/xdmEventsPanelB1")
                                 .build())
                 .addRoute("/xdmEventsPanelB1", newServlet(new XdmEventsPanelServlet("B1")))
-            .start();
+                .start();
     }
 
     @Test

@@ -5,6 +5,8 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteInlineDialog;
@@ -110,9 +112,13 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withUrl("http://www.wikipedia.org")
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
-                                                .withOption("onHover", "true")
-                                                .withOption("height", "200px")
-                                                .withOption("width", "301px")
+                                                .withOptions(InlineDialogOptions.newInlineDialogOptions()
+                                                                .withOnHover(true)
+                                                                        // TODO: old example had height but height not on our doco
+//                                                                .withHeight("200px")
+                                                                .withWidth("301px")
+                                                                .build()
+                                                )
                                                 .build()
                                 )
                                 .build(),
@@ -125,9 +131,13 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withUrl("/my-webitem-inlinedialog")
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
-                                                .withOption("onHover", "true")
-                                                .withOption("width", "321px")
-                                                .withOption("height", "201px")
+                                                .withOptions(InlineDialogOptions.newInlineDialogOptions()
+                                                                .withOnHover(true)
+                                                                        // TODO: old example had height but height not on our doco
+//                                                                .withHeight("201px")
+                                                                .withWidth("321px")
+                                                                .build()
+                                                )
                                                 .build()
                                 )
                                 .build(),
@@ -140,8 +150,11 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withUrl("/my-webitem-dialog")
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.dialog)
-                                                .withOption("width", "300px")
-                                                .withOption("height", "200px")
+                                                .withOptions(DialogOptions.newDialogOptions()
+                                                                .withWidth("300px")
+                                                                .withHeight("200px")
+                                                                .build()
+                                                )
                                                 .build()
                                 )
                                 .build()

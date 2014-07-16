@@ -1,22 +1,20 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.Map;
-
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemTargetBeanBuilder;
-
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Defines the way a web item link is opened in the browser, such as in a modal or inline dialog.
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_EXAMPLE}
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_INLINE_DIALOG_EXAMPLE}
  * @schemaTitle Web Item Target
  * @since 1.0
  */
@@ -29,6 +27,7 @@ public class WebItemTargetBean extends BaseModuleBean
     @CommonSchemaAttributes (defaultValue = "page")
     private WebItemTargetType type;
 
+    // TODO: The table with descriptions is needed until we fix ACDEV-1381
     /**
      * An object containing options which vary based on the type of web item target you are implementing. 
      * <p/>
@@ -119,12 +118,11 @@ public class WebItemTargetBean extends BaseModuleBean
      * </a>
      * </div>
      */
-    private Map<String, Object> options;
+    private WebItemTargetOptions options;
 
     public WebItemTargetBean()
     {
         this.type = WebItemTargetType.page;
-        this.options = newHashMap();
     }
 
     public WebItemTargetBean(final BaseModuleBeanBuilder builder)
@@ -133,10 +131,6 @@ public class WebItemTargetBean extends BaseModuleBean
         if (null == type)
         {
             type = WebItemTargetType.page;
-        }
-        if(null == options)
-        {
-            this.options = newHashMap();
         }
     }
 
@@ -160,13 +154,8 @@ public class WebItemTargetBean extends BaseModuleBean
         return type;
     }
 
-    public Map<String, Object> getOptions()
+    public WebItemTargetOptions getOptions()
     {
-        if (null == options)
-        {
-            this.options = newHashMap();
-        }
-        
         return options;
     }
 
@@ -188,7 +177,7 @@ public class WebItemTargetBean extends BaseModuleBean
             return true;
         }
 
-        if (!(otherObj instanceof WebItemTargetBean && super.equals(otherObj)))
+        if (!(otherObj instanceof WebItemTargetBean))
         {
             return false;
         }

@@ -1,4 +1,4 @@
-<% var auiVersion = "5.6.12" %>
+<% var auiVersion = "5.6.15" %>
 
 <%
    // calculate the relative path to the document root from the page depth
@@ -21,12 +21,16 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.css" media="all">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/theme/neat.min.css" media="all">
     <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/css/aui.css" media="all">
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/css/aui-experimental.css" media="all">
     <!--[if IE 9]><link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/css/aui-ie9.css" media="all"><![endif]-->
     <link rel="stylesheet" href="<%= relDocRoot %>assets/css/styles.css" media="all">
     <script src="//code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.3.0/lodash.min.js"></script>
-    <script src="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/js/aui.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/js/aui.min.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/js/aui-soy.min.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/js/aui-experimental.min.js"></script>
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/javascript/javascript.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/clike/clike.js"></script>

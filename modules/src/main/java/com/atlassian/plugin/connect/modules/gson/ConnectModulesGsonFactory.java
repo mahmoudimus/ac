@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.modules.gson;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.XmlDescriptorCodeInvokedEventBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.google.gson.Gson;
@@ -32,6 +33,7 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(XmlDescriptorCodeInvokedEventBean.class, new XmlDescriptorCodeInvokedEventBeanSerializer())
+                .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
                 .disableHtmlEscaping()
                 ;
     }
