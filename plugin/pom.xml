@@ -720,8 +720,8 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <workingDirectory>../plugin</workingDirectory>
-                            <nodeVersion>v0.10.18</nodeVersion>
-                            <npmVersion>1.3.8</npmVersion>
+                            <nodeVersion>v0.10.26</nodeVersion>
+                            <npmVersion>1.4.3</npmVersion>
                         </configuration>
                     </execution>
                     <execution>
@@ -1163,8 +1163,8 @@
                                 </goals>
                                 <phase>prepare-package</phase>
                                 <configuration>
-                                    <nodeVersion>v0.10.18</nodeVersion>
-                                    <npmVersion>1.3.8</npmVersion>
+                                    <nodeVersion>v0.10.26</nodeVersion>
+                                    <npmVersion>1.4.3</npmVersion>
                                 </configuration>
                             </execution>
                             <execution>
