@@ -69,7 +69,6 @@ public abstract class AbstractJiraPermissionScopeTest
     @Before
     public void setUp()
     {
-        
         ConnectAddonBean baseBean = newConnectAddonBean()
                 .withKey(ADDON_KEY)
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(ADDON_KEY))
@@ -84,7 +83,6 @@ public abstract class AbstractJiraPermissionScopeTest
                 .build();
 
         this.adminAddOn = newConnectAddonBean(baseBean)
-                
                 .withScopes(Sets.newHashSet(ScopeName.ADMIN))
                 .build();
 

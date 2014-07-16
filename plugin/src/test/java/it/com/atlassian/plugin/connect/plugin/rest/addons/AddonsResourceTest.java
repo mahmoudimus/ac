@@ -62,6 +62,16 @@ public class AddonsResourceTest
     @BeforeClass
     public void setUp() throws IOException
     {
+        Iterable<String> installedAddonKeys = testPluginInstaller.getInstalledAddonKeys();
+        if (installedAddonKeys.iterator().hasNext())
+        {
+            System.out.println("*** INSTALLED ADD-ONS: ");
+            for (String key : installedAddonKeys)
+            {
+                System.out.println("*** " + key);
+            }
+        }
+
         testAuthenticator.authenticateUser("admin");
         jsonAddon = installJsonAddon();
         xmlAddon = installXmlAddon();
@@ -90,6 +100,16 @@ public class AddonsResourceTest
             catch (IOException e)
             {
                 LOG.error("Could not uninstall xml addon", e);
+            }
+        }
+
+        Iterable<String> installedAddonKeys = testPluginInstaller.getInstalledAddonKeys();
+        if (installedAddonKeys.iterator().hasNext())
+        {
+            System.out.println("*** REMAINING ADD-ONS: ");
+            for (String key : installedAddonKeys)
+            {
+                System.out.println("*** " + key);
             }
         }
     }

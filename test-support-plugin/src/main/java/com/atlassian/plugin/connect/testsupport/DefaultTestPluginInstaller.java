@@ -141,7 +141,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
 
         checkNotNull(handler);
 
-        return Iterables.transform(handler.getPlugins(),new Function<Plugin, String>() {
+        return Iterables.transform(handler.getPlugins(), new Function<Plugin, String>() {
             @Override
             public String apply(@Nullable Plugin input)
             {
