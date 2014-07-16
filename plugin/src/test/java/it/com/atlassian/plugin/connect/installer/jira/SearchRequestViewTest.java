@@ -1,5 +1,6 @@
 package it.com.atlassian.plugin.connect.installer.jira;
 
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
@@ -37,7 +38,7 @@ public class SearchRequestViewTest
     {
         final String key = getClass().getSimpleName() + '-' + System.currentTimeMillis();
         final String url = "/page\"";
-        testPluginInstaller.installAddon(newConnectAddonBean()
+        Plugin addon = testPluginInstaller.installAddon(newConnectAddonBean()
                         .withKey(key)
                         .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
                         .withAuthentication(newAuthenticationBean()
@@ -52,11 +53,18 @@ public class SearchRequestViewTest
                         .build()
         );
 
-        assertEquals(url, new com.google.gson.JsonParser().parse(connectAddonRegistry.getDescriptor(key)).getAsJsonObject()
-                .get("modules").getAsJsonObject()
-                .get("jiraSearchRequestViews").getAsJsonArray()
-                .get(0).getAsJsonObject()
-                .get("url").getAsString());
+        try
+        {
+            assertEquals(url, new com.google.gson.JsonParser().parse(connectAddonRegistry.getDescriptor(key)).getAsJsonObject()
+                    .get("modules").getAsJsonObject()
+                    .get("jiraSearchRequestViews").getAsJsonArray()
+                    .get(0).getAsJsonObject()
+                    .get("url").getAsString());
+        }
+        finally
+        {
+            testPluginInstaller.uninstallAddon(addon);
+        }
     }
 
     @BeforeClass

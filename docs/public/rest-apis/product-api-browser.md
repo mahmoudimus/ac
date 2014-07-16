@@ -11,8 +11,7 @@ If you are developing a Connect add-on and have [launched your host product](../
 
 
 ### Browsable online
-Atlassian also hosts the REST API Browser on two of our public services, so you can explore the API even if you are not running your own copy of the products. If you have a user account on these public Atlassian sites and want to view JIRA and Confluence REST APIs, check out the REST API Browser on these Atlassian production instances:
+You can explore our APIs even if you're not running a local copy of our products. We host the REST API Browser on a public service for each JIRA and Confluence:
 
-* JIRA: [https://jira.atlassian.com/plugins/servlet/restbrowser#/](https://jira.atlassian.com/plugins/servlet/restbrowser#/)
-* Confluence: [https://confluence.atlassian.com/plugins/servlet/restbrowser#/](https://confluence.atlassian.com/plugins/servlet/restbrowser#/)
-
+* __JIRA__: [https://bunjil.jira-dev.com/plugins/servlet/restbrowser#/](https://bunjil.jira-dev.com/plugins/servlet/restbrowser#/)
+* __Confluence__: [https://bunjil.jira-dev.com/wiki/plugins/servlet/restbrowser#/](https://bunjil.jira-dev.com/wiki/plugins/servlet/restbrowser#/)

@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
@@ -308,9 +309,11 @@ public class WebItemModuleProviderTest
                 .withTarget(
                         newWebItemTargetBean()
                                 .withType(WebItemTargetType.dialog)
-                                .withOption("width", "100")
-                                .withOption("height", "300px")
-                                .withOption("onHover", true)
+                                .withOptions(DialogOptions.newDialogOptions()
+                                                .withWidth("100")
+                                                .withHeight("300px")
+                                                .build()
+                                )
                                 .build()
                 )
                 .build();
