@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.google.common.collect.ImmutableSet;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import it.com.atlassian.plugin.connect.installer.AddOnEnablementTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,7 +85,7 @@ public abstract class AdminScopeTestBase
     public void isNoLongerTopLevelAdminAfterReinstallWithDowngradedScope() throws IOException
     {
         plugin = installPlugin(getScope());
-        testPluginInstaller.uninstallAddon(plugin);
+        testPluginInstaller.uninstallJsonAddon(plugin);
         plugin = installPlugin(getScopeOneDown());
         assertEquals(false, isUserTopLevelAdmin(getAddonUsername(plugin)));
     }
@@ -108,6 +109,7 @@ public abstract class AdminScopeTestBase
         addonBaseBean = ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
+                .withDescription(getClass().getCanonicalName())
                 .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
                 .withModule("webItems", randomWebItemBean())
@@ -119,7 +121,7 @@ public abstract class AdminScopeTestBase
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallAddon(plugin);
+            testPluginInstaller.uninstallJsonAddon(plugin);
         }
         testAuthenticator.unauthenticate();
     }
