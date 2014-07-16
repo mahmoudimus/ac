@@ -210,6 +210,14 @@ So far, you've learned the basic architecture of a Connect add-on. The next step
 
 You can add functionality using the [Atlassian REST APIs](https://developer.atlassian.com/x/K4BpAQ). [Authentication](../concepts/authentication.html) manages the handshake between your app and the Atlassian host application. You can also read about our [security concepts](../concepts/security.html) for more information.
 
+You can also [try the next tutorial](../geiger-1.html), where you can add a table of your projects to JIRA via the REST API and D3.js. 
+
+<div class="index-button">
+<a href="../geiger-1.html"><button class="primary-cta aui-button aui-button-primary">Try the next tutorial</button></a>
+</div>
+
+## More resources
+
 ### Example add-ons
 
 We have a few [sample applications](../resources/samples.html) you can reference. These example add-ons demonstrate
