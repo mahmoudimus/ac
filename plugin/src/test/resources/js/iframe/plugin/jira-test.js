@@ -1,37 +1,29 @@
-var xdmMockJira;
 (function(){
     var context = require.config({
         context: Math.floor(Math.random() * 1000000),
-        baseUrl: 'base/src/main/resources/js/iframe/plugin',
-        map: {
-            '*': {
-                '_xdm': '_xdmMockJiraTest'
-            }
-        },
-        paths: {
-            '_xdmMockJiraTest': '/base/src/test/resources/js/iframe/plugin/_xdmMockJiraTest'
-        }
+        baseUrl: 'base/src/main/resources/js/iframe/plugin'
     });
 
-    xdmMockJira = {
+    window.xdmMock = {
         init: function() {},
         getWorkflowConfiguration: sinon.spy(),
         triggerJiraEvent: sinon.spy()
     };
 
-    context(["_rpc", "jira"], function(_rpc, jira) {
-        _rpc.init();
+
+    context(["jira"], function() {
+        AP.require(['jira'],function(jira){
 
         module("Jira plugin", {
             setup: function(){
-                xdmMockJira.getWorkflowConfiguration.reset();
-                xdmMockJira.triggerJiraEvent.reset();
+                xdmMock.getWorkflowConfiguration.reset();
+                xdmMock.triggerJiraEvent.reset();
             }
         });
 
         test('getWorkflowConfiguration calls remote getWorkflowConfiguration', function(){
             jira.getWorkflowConfiguration();
-            ok(xdmMockJira.getWorkflowConfiguration.calledOnce);
+            ok(xdmMock.getWorkflowConfiguration.calledOnce);
         });
 
         test('getWorkflowConfiguration passes callback to remote getWorkflowConfiguration', function(){
@@ -39,7 +31,7 @@ var xdmMockJira;
 
             jira.getWorkflowConfiguration(callback);
 
-            deepEqual(xdmMockJira.getWorkflowConfiguration.args[0][0], callback);
+            deepEqual(xdmMock.getWorkflowConfiguration.args[0][0], callback);
         });
 
         test('onSave callback is triggered when event is triggered', function(){
@@ -75,15 +67,15 @@ var xdmMockJira;
 
         test('refreshIssuePage calls remote triggerJiraEvent', function(){
             jira.refreshIssuePage();
-            ok(xdmMockJira.triggerJiraEvent.calledOnce);
+            ok(xdmMock.triggerJiraEvent.calledOnce);
         });
 
         test('refreshIssuePage calls triggerJiraEvent with correct event name', function(){
             jira.refreshIssuePage();
-            equal(xdmMockJira.triggerJiraEvent.args[0][0], 'refreshIssuePage');
+            equal(xdmMock.triggerJiraEvent.args[0][0], 'refreshIssuePage');
         });
 
-
+    });
     });
 
 })();

@@ -14,34 +14,12 @@ requirejs.config({
   paths: {
     // dependencies
     'jquery': '../target/qunit/dependencies/js/external/jquery/jquery',
-    'aui-atlassian': '../target/qunit/dependencies/js/atlassian/atlassian',
+    'core-host': '../src/main/resources/js/core/host-debug',
     'aui-soy': '//aui-cdn.atlassian.com/aui-adg/5.4.3/js/aui-soy',
     // host side
-    'iframe/host/_util': '../src/main/resources/js/iframe/host/_util',
-    'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
-    'iframe/host/_status_helper': '../src/main/resources/js/iframe/host/_status_helper',
-    'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
-    'iframe/host/content': '../src/main/resources/js/iframe/host/content',
-    'iframe/host/_rpc': '../src/main/resources/js/iframe/host/_rpc',
-    'iframe/host/cookie': '../src/main/resources/js/iframe/host/cookie',
-    'analytics/analytics': '../src/main/resources/js/analytics/analytics',
-    'history/history': '../src/main/resources/js/history/history',
-    'dialog/main': '../src/main/resources/js/dialog/main',
-    'dialog/button': '../src/main/resources/js/dialog/button',
-    'dialog/dialog-factory': '../src/main/resources/js/dialog/dialog-factory',
-    'inline-dialog/main': '../src/main/resources/js/inline-dialog/main',
-    'inline-dialog/simple': '../src/main/resources/js/inline-dialog/simple',
     'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
     'jira/events': '../src/main/resources/js/jira/events',
     'jira/workflow-post-function': '../src/main/resources/js/jira/workflow-post-function/workflow-post-function',
-    'messages/main': '../src/main/resources/js/messages/main',
-    // shared
-    'iframe/_amd': '../src/main/resources/js/iframe/_amd',
-    'iframe/_events': '../src/main/resources/js/iframe/_events',
-    'iframe/_xdm': '../src/main/resources/js/iframe/_xdm',
-    'iframe/_uri': '../src/main/resources/js/iframe/_uri',
-    'iframe/_base64': '../src/main/resources/js/iframe/_base64',
-    'iframe/_ui-params': '../src/main/resources/js/iframe/_ui-params',
     'iframe/host/main': '../src/main/resources/js/iframe/host/main'
   },
 
@@ -49,173 +27,14 @@ requirejs.config({
     /////////////////
     //  HOST SIDE  //
     /////////////////
-    'aui-atlassian': {
-      deps: [
-        'jquery'
-      ]
-    },
-    'iframe/host/_dollar': {
-      deps: [
-        'jquery',
-        'aui-atlassian',
-        'iframe/_amd'
-      ]
-    },
-    'iframe/host/_util': {
-      deps: [
-        'iframe/host/_dollar',
-        'iframe/_amd'
-      ]
-    },
-    'iframe/host/cookie': {
-        deps: [
-        'iframe/host/_dollar',
-        'iframe/host/_rpc'
-        ]
-    },
-    'iframe/host/content': {
-        deps: [
-        'jquery',
-        'aui-atlassian',
-        'iframe/_amd',
-        'iframe/_ui-params'
-        ]
-    },
-    'history/history': {
-        deps: [
-        'iframe/host/_dollar',
-        'iframe/_uri'
-        ]
-    },
-    'iframe/_base64': {
-      deps: [
-        'iframe/host/_dollar',
-        'iframe/_amd',
-      ]
-    },
-    'inline-dialog/simple': {
-      deps: [
-        'iframe/host/_dollar',
-        'iframe/host/content',
-        'iframe/host/_status_helper',
-        'iframe/_ui-params'
-      ]
-    },
-    'iframe/host/_status_helper': {
-      deps: [
-          'iframe/host/_dollar'
-      ]
-    },
-    'inline-dialog/main': {
-      deps: [
-        'iframe/host/_dollar',
-        'iframe/host/content',
-        'iframe/host/_status_helper'
-      ]
-    },
-    'dialog/main': {
-      deps: [
-        'iframe/host/_dollar',
-        'iframe/_ui-params',
-        'iframe/host/_status_helper',
-        'dialog/button',
-        'aui-soy'
-      ]
-    },
-    'dialog/button': {
-      deps: [
-      'iframe/host/_dollar'
-      ]
-    },
-    'dialog/dialog-factory': {
-      deps: [
-      'iframe/host/_dollar',
-      'dialog/main'
-      ]
-    },
     'confluence/macro/editor': {
-        deps: [
-        'iframe/host/_dollar',
-        'dialog/main'
-        ]
-    },
-    'iframe/host/_rpc': {
-      deps: [
-        'iframe/host/_dollar',
-        'iframe/_xdm'
-      ]
-    },
-    'jira/events': {
-        deps: [
-        'iframe/host/_dollar',
-        'iframe/host/_rpc'
-        ]
-    },
-    'jira/workflow-post-function': {
-        deps: [
-        'iframe/host/_dollar'
-        ]
-    },
-    'messages/main': {
-        deps: [
-        'iframe/host/_dollar'
-        ]
-    },
-    'analytics/analytics': {
-        deps: [
-        'iframe/host/_dollar'
-        ]
+      deps: ['core-host']
     },
     ///////////////////
     //  SHARED SIDE  //
     ///////////////////
-    'iframe/_amd': {
-      deps: [
-        'iframe/host/_ap'
-      ]
-    },
-    'iframe/_events': {
-      deps: [
-        'iframe/_amd'
-      ]
-    },
-    'iframe/_uri': {
-      deps: [
-      'iframe/_amd'
-      ]
-    },
-    'iframe/_ui-params': {
-      deps: [
-        'iframe/host/_dollar',
-        'iframe/_uri',
-        'iframe/_base64'
-      ]
-    },
-    'iframe/_xdm': {
-      deps: [
-        'iframe/_uri',
-        'iframe/_events',
-        'iframe/host/_util'
-      ]
-    },
-    'iframe/host/analytics':{
-        deps: [
-        'iframe/host/_ap',
-        'iframe/host/_dollar',
-        'iframe/_amd'
-        ]
-    },
-    'iframe/host/main':{
-        deps: [
-        'iframe/host/_ap',
-        'iframe/host/_dollar',
-        'iframe/_amd'
-        ]
-    },
     'iframe-plugin-confluence': {
         deps:[
-        'iframe/_amd',
-        'iframe/host/_dollar',
         'iframe/host/main'
         ]
     }

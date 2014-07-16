@@ -1,51 +1,57 @@
-require.config({
-  map: {
-    '*': {
-      '_xdm': '_xdmMock'
-    }
-  }
-});
+(function(){
+    var context = require.config({
+        context: Math.floor(Math.random() * 1000000),
+        baseUrl: 'base/src/main/resources/js/iframe/plugin',
+        map: {
+            '*': {
+                '_xdm': '_xdmMockConfluenceTest'
+            }
+        },
+        paths: {
+            '_xdmMockConfluenceTest': '/base/src/test/resources/js/iframe/plugin/_xdmMockConfluenceTest'
+        }
+    });
 
-var xdmMock = {
-  init: function() {}
-};
+    window.xdmMock = {
+        init: function() {},
+        saveMacro: sinon.spy(),
+        getMacroData: sinon.spy(),
+        getMacroBody: sinon.spy(),
+        closeMacroEditor: sinon.spy()
+    };
 
-define('_xdmMock', function () {
-  return function() {
-    return xdmMock;
-  };
-});
+    context(["confluence"], function() {
+        AP.require(['confluence'],function(confluence){
+            xdmMock.saveMacro = sinon.spy();
+            xdmMock.closeMacroEditor = sinon.spy();
+            xdmMock.getMacroData = sinon.spy();
 
-define(["confluence", "_rpc"], function(confluence, _rpc) {
+            module("Confluence Plugin", {
+                setup: function() {
+                    xdmMock.saveMacro.reset();
+                    xdmMock.closeMacroEditor.reset();
+                    xdmMock.getMacroData.reset();
+                }
+            });
 
-  xdmMock.saveMacro = sinon.spy();
-  xdmMock.closeMacroEditor = sinon.spy();
-  xdmMock.getMacroData = sinon.spy();
-  _rpc.init();
+            test("saveMacro", function() {
+                confluence.saveMacro("1");
+                ok(xdmMock.saveMacro.calledOnce);
+            });
 
-  module("Confluence Plugin", {
-    setup: function() {
-      xdmMock.saveMacro.reset();
-      xdmMock.closeMacroEditor.reset();
-      xdmMock.getMacroData.reset();
-    }
-  });
+            test("closeMacro", function(){
+                confluence.closeMacroEditor();
+                ok(xdmMock.closeMacroEditor.calledOnce);
+            });
 
-  test("saveMacro", function() {
-    confluence.saveMacro("1");
-    ok(xdmMock.saveMacro.calledOnce);
-  });
+            test("getMacroData", function() {
+                var callback = sinon.spy();
+                confluence.getMacroData(callback);
+                ok(xdmMock.getMacroData.calledOnce);
+            });
 
-  test("closeMacro", function(){
-    confluence.closeMacroEditor();
-    ok(xdmMock.closeMacroEditor.calledOnce);
-  });
+        });
 
-  test("getMacroData", function() {
-    var callback = sinon.spy();
-    confluence.getMacroData(callback);
-    ok(xdmMock.getMacroData.calledOnce);
-  });
+    });
 
-
-});
+})();

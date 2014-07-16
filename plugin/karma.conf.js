@@ -15,6 +15,11 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       {pattern: 'node_modules/karma-sinon/node_modules/sinon/lib/sinon/util/timers_ie.js', included: true},
+      {pattern: 'node_modules/atlassian-connect-js/bower_components/jquery/jquery.js', included: true},
+      {pattern: 'node_modules/atlassian-connect-js/bower_components/aui-dist/aui/js/aui.js', included: true},
+      'http://aui-cdn.atlassian.com/aui-adg/5.4.3/js/aui-soy.js',
+      {pattern: 'node_modules/atlassian-connect-js/bower_components/aui/src/js/atlassian.js', included: true},
+      'src/main/resources/js/core/host-debug.js',
       'src/test/resources/test-main.js',
       {pattern: 'src/test/resources/**/*-test.js', included: false},
       {pattern: 'src/test/resources/fixtures/**', included: false},

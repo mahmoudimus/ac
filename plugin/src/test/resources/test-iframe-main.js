@@ -7,16 +7,22 @@ for (var file in window.__karma__.files) {
   }
 }
 
+window.xdmMock; //setup a global to be filled with xdmMocks.
+AP.define("_rpc", function(){
+    return {
+        extend: function(func){
+            var x = func(window.xdmMock);
+            return x.apis;
+        }
+    };
+});
+
+
 requirejs.config({
     // Karma serves files from '/base'
     baseUrl: 'base/src/main/resources/js/iframe/plugin',
 
     paths: {
-        'iframe/host/analytics': '../host/analytics',
-        'iframe/_events': '../_events',
-        'iframe/_uri': '../_uri',
-        '_events': '../_events',
-        'iframe/_ui-params': '../_ui-params',
     },
     // ask Require.js to load these files (all our tests)
     deps: tests,
