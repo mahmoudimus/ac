@@ -76,7 +76,7 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
         {
             try
             {
-                testPluginInstaller.uninstallAddon(installedPlugin);
+                testPluginInstaller.uninstallJsonAddon(installedPlugin);
                 installedPlugin = null;
             }
             catch (IOException e)

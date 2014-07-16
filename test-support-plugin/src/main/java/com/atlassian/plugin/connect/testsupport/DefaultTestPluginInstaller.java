@@ -74,7 +74,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     }
 
     @Override
-    public void uninstallAddon(Plugin plugin) throws IOException
+    public void uninstallJsonAddon(Plugin plugin) throws IOException
     {
         PluginControlHandler handler = getControlHandler();
 
@@ -84,7 +84,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     }
 
     @Override
-    public void uninstallPlugin(Plugin plugin) throws IOException
+    public void uninstallXmlAddon(Plugin plugin) throws IOException
     {
         pluginController.uninstall(plugin);
     }

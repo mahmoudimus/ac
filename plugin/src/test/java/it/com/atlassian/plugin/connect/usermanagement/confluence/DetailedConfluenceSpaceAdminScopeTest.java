@@ -106,7 +106,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
 
         if (null != plugin)
         {
-            testPluginInstaller.uninstallAddon(plugin);
+            testPluginInstaller.uninstallJsonAddon(plugin);
         }
     }
 

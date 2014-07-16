@@ -328,7 +328,7 @@ public abstract class AbstractJiraPermissionScopeTest
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallAddon(plugin);
+            testPluginInstaller.uninstallJsonAddon(plugin);
         }
     }
 

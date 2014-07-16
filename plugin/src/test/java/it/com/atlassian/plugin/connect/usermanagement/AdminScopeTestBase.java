@@ -84,7 +84,7 @@ public abstract class AdminScopeTestBase
     public void isNoLongerTopLevelAdminAfterReinstallWithDowngradedScope() throws IOException
     {
         plugin = installPlugin(getScope());
-        testPluginInstaller.uninstallAddon(plugin);
+        testPluginInstaller.uninstallJsonAddon(plugin);
         plugin = installPlugin(getScopeOneDown());
         assertEquals(false, isUserTopLevelAdmin(getAddonUsername(plugin)));
     }
@@ -119,7 +119,7 @@ public abstract class AdminScopeTestBase
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallAddon(plugin);
+            testPluginInstaller.uninstallJsonAddon(plugin);
         }
         testAuthenticator.unauthenticate();
     }

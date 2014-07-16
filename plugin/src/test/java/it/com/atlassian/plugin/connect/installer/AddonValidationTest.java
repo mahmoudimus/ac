@@ -69,7 +69,7 @@ public class AddonValidationTest
         {
             try
             {
-                testPluginInstaller.uninstallAddon(installed);
+                testPluginInstaller.uninstallJsonAddon(installed);
             }
             catch (Exception e)
             {
