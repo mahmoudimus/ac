@@ -56,13 +56,13 @@ Your `atlassian-connect.json` file will use a [`generalPages` module](../modules
 ```
 4. Save and close the descriptor file.  
 
-Note: you can validate your descriptor using this [handy tool](https://atlassian-connect-validator.herokuapp.com/validate).
+__Note:__ You can validate your descriptor using this [handy tool](https://atlassian-connect-validator.herokuapp.com/validate).
 
 ## <a name="webapp"></a>Create a simple web application to stand in as an add-on
 
 Now, you're ready to create the web app. You'll use a simple, old-fashioned HTML page as an "app" to demonstrate how Connect integrates with your application. While a static HTML page doesn't represent a typical add-on, it's not that far off either. Just a few components turn any web application into an Atlassian Connect add-on.
 
-You'll add two key pieces to an HTML file: a `script` tag, and an `ac-content` wrapper class.
+Your simple content will use [AUI (Atlassian User Interface) styling](../concepts/styling-with-aui.html). You'll add two key pieces to an HTML file: a `script` tag, and an `ac-content` wrapper class. 
 
 <table class="aui">
     <thead>
@@ -116,6 +116,7 @@ From the same project directory:
 ```  
 
 
+
 ## <a name="start-addon-host" id="start-addon-host"></a> Start your add-on
 
 That's it as far as coding goes. The next step is to make your files available on a web
@@ -134,9 +135,9 @@ current directory containing your `atlassian-connect.json` and `helloworld.html`
 
 ## <a name="runjira"></a>Start JIRA Cloud using the Atlassian SDK
 
-You've created the essential components of a Connect add-on: an `atlassian-connect.json` descriptor file to communicate what your add-on does to JIRA, and a web application (`helloworld.html`) running on a local server. Now, you need to start JIRA to install your add-on.
+You've created the essential components of a Connect add-on: an `atlassian-connect.json` descriptor file to communicate what your add-on does to JIRA, and a web application (`helloworld.html`) running on a local server. Now, you need to start JIRA in cloud mode to install your add-on.
 
-You'll start JIRA in cloud mode. Connect is only present in Atlassian-hosted products like JIRA Cloud, and not yet included with downloaded or locally-hosted instances. For this reason, certain components like the Connect framework itself, are included in startup commands. Without these components Connect add-ons aren't installable.
+Connect support is currently only for Atlassian-hosted products like JIRA Cloud, and not yet included with downloaded or locally-hosted instances. To simulate cloud products, components like the Connect framework are included in startup commands. Without these components Connect add-ons aren't installable.
 
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
     You'll need at least SDK version 4.2.20. If you run the <tt>atlas-version</tt> command, you should see something similar to this:  
@@ -168,19 +169,7 @@ You'll start JIRA in cloud mode. Connect is only present in Atlassian-hosted pro
 
 Now you're ready to install your add-on in your local instance of JIRA. In this step, you'll navigate to the [Universal Plugin Manager (UPM)](https://confluence.atlassian.com/x/8AJTE) and add a link to your descriptor file.
 
-When you install your add-on, JIRA retrieves and registers your `atlassian-connect.json` descriptor. The interaction between JIRA and your web app (your add-on) looks like this:
-
-<div class="diagram">
-participant User
-participant Browser
-participant Add_on_server
-participant JIRA
-User->JIRA: Click 'Greeting'
-JIRA->Browser:JIRA sends back your \nadd-on in an iframe
-Browser->Add_on_server:GET /helloworld.html?signed_request=*
-Add_on_server->Browser:Responds with contents of\n helloworld.html page
-Browser->User:Requested page\nrendered
-</div>
+When you install your add-on, JIRA retrieves and registers your `atlassian-connect.json` descriptor. 
 
 1. From JIRA, choose __Cog Menu > Add-ons__ from the top navigation menu.
 
