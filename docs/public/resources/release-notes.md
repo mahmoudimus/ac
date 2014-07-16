@@ -7,7 +7,7 @@
 * New feature: condition for checking dark features
 * Fixed: web-sections which rely on add-on-provided web-items fail to register
 * Valid module keys are no longer modified
-* Whitelisted Confluence Questions [context params](../concepts/context-parameters.html) for webitems and webpanels
+* Introduced Confluence Questions `content.id` / `content.version` / `content.type` / `content.plugin` [context parameters](../concepts/context-parameters.html) for webitems and webpanels
 * Docs: Fix broken links to webhooks module page
 * Docs: web panels are not to be used for dialog content
 
