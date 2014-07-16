@@ -33,8 +33,8 @@ page only exposes issue and project data. Similarly, version and component infor
 administration pages.
 
 In Confluence, the `content.*` variables are currently only available in certain contexts where custom content entities
-reside, the primary example being Confluence Questions. It is intended that the `content` variables will be populated
-and identical to their `page.*` counterparts in the next release however. `content.plugin` is a special case that is
+reside, the primary example being Confluence Questions. We intend that the `content` variables will be populated
+and identical to their `page.*` counterparts in an upcoming Connect release. `content.plugin` is a special case that is
 populated only if the content in context is a custom Confluence content item, such as a Confluence Question. In this
 case `content.type` will be set to "custom".
 
