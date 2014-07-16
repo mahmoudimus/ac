@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.pageobjects;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Optional;
@@ -78,14 +79,21 @@ public class RemoteWebItem
         return elementFinder.find(by);
     }
 
+    @XmlDescriptor
     public boolean isPointingToOldXmlInternalUrl()
     {
         return !webItem.getAttribute("href").contains("/plugins/servlet/atlassian-connect/");
     }
 
+    @XmlDescriptor
     public boolean isPointingToACInternalUrl()
     {
         return !webItem.getAttribute("href").contains("/plugins/servlet/ac/");
+    }
+
+    public String getHref()
+    {
+        return webItem.getAttribute("href");
     }
 
     public String getLinkText()
@@ -123,7 +131,6 @@ public class RemoteWebItem
     public boolean isVisible()
     {
         return webItem != null && webItem.isVisible();
-
     }
 
     public String getFromQueryString(final String key)

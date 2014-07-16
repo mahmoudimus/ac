@@ -3,6 +3,7 @@ package it;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.LicenseStatusBannerHelper;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
@@ -75,5 +76,10 @@ public abstract class ConnectWebDriverTestBase
     {
         logout();
         return product.visit(LoginPage.class).login(username, password, HomePage.class);
+    }
+
+    protected String getModuleKey(String addonKey, String module)
+    {
+        return ModuleKeyUtils.addonAndModuleKey(addonKey, module);
     }
 }

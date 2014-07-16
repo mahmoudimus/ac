@@ -1,11 +1,12 @@
 package it.confluence;
 
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.module.RemoteWebItemModule;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
@@ -17,8 +18,13 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 
 import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test of remote web items in Confluence.
@@ -29,33 +35,40 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
     private static final String GENERAL_WEBITEM = "system-web-item";
     private static final String ABSOLUTE_WEB_ITEM = "absolute-web-item";
 
-    private static AtlassianConnectAddOnRunner remotePlugin;
+    private static ConnectRunner runner;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
-                .addOAuth()
-                .add(RemoteWebItemModule.key(GENERAL_WEBITEM)
-                        .name("AC General Web Item")
-                        .section("system.browse")
-                        .weight(100)
-                        .link(RemoteWebItemModule.Link.link("/irwi?space_id=${space.key}&page_id=${page.id}", false))
-                        .resource(ConnectAppServlets.helloWorldServlet()))
-                .add(RemoteWebItemModule.key(ABSOLUTE_WEB_ITEM)
-                        .name("Quick project link")
-                        .section("system.browse")
-                        .weight(100)
-                        .link(RemoteWebItemModule.Link.link(product.getProductInstance().getBaseUrl() + "/display/${space.key}", false)))
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+                .setAuthenticationToNone()
+                .addModules(
+                        "webItems",
+                        newWebItemBean()
+                                .withName(new I18nProperty("General Web Item", null))
+                                .withKey(GENERAL_WEBITEM)
+                                .withUrl("/web-item?space_id=${space.key}&page_id=${page.id}")
+                                .withLocation("system.browse")
+                                .withWeight(100)
+                                .build(),
+                        newWebItemBean()
+                                .withName(new I18nProperty("Absolute Web Item", null))
+                                .withKey(ABSOLUTE_WEB_ITEM)
+                                .withUrl(product.getProductInstance().getBaseUrl() + "/display/${space.key}")
+                                .withLocation("system.browse")
+                                .withWeight(100)
+                                .build()
+                )
+                .addRoute("/web-item", ConnectAppServlets.helloWorldServlet())
                 .start();
     }
 
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
-        if (remotePlugin != null)
+        if (runner != null)
         {
-            remotePlugin.stopAndUninstall();
+            runner.stopAndUninstall();
         }
     }
 
@@ -65,11 +78,12 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
         loginAsBetty();
-        ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
 
-        RemoteWebItem webItem = editPage.findWebItem(GENERAL_WEBITEM, Optional.of("help-menu-link"));
-        assertNotNull("Web item should be found", webItem);
-        assertFalse("Web item link shouldn't be absolute", webItem.isPointingToOldXmlInternalUrl());
+        product.visit(ConfluenceEditPage.class, pageId);
+
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(runner.getAddon().getKey(), GENERAL_WEBITEM), Optional.of("help-menu-link"));
+        assertNotNull("Web item should be visible", webItem);
+        assertTrue("Web item link should point to add-on base", webItem.getHref().startsWith(runner.getAddon().getBaseUrl()));
 
         webItem.click();
 
@@ -83,11 +97,11 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
         loginAsBetty();
-        ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
+        product.visit(ConfluenceEditPage.class, pageId);
 
-        RemoteWebItem webItem = editPage.findWebItem(ABSOLUTE_WEB_ITEM, Optional.of("help-menu-link"));
-        assertNotNull("Web item should be found", webItem);
-        assertTrue("Web item link should be absolute", webItem.isPointingToOldXmlInternalUrl());
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(runner.getAddon().getKey(), ABSOLUTE_WEB_ITEM), Optional.of("help-menu-link"));
+        assertNotNull("Web item should be visible", webItem);
+        assertTrue("Web item link should point to product base", webItem.getHref().startsWith(product.getProductInstance().getBaseUrl()));
 
         webItem.click();
 
