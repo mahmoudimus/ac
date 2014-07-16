@@ -12,24 +12,24 @@
 	    </p>
 </div>
 
-In this tutorial, you'll build a static Connect add-on to show your
-JIRA projects in a table, accessible via a _Stats_ link in the header. 
+In this tutorial, you'll learn about:
 
-Your static page uses the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
+* [Configuring your development environment](#environment)  
+* [Adding a _Stats_ link in the navigation header](#stats-header)  
+* [Creating the D3.js table to display your projects](#architect-stats-page)
+* [Adding data and verifying your add-on works](#check)
+
+To display your JIRA projects in a table, you'll build a static Connect add-on 
+accessible via a _Stats_ link in the header. 
+
+Your static page will use the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
 to retrieve information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/) 
 framework and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
 to interface with JIRA. Finally, you'll create your table using [D3.js](http://d3js.org/). 
 
-At completion, your add-on will look like this: 
+Here's an example what your add-on might look like: 
 
 <img src="../assets/images/geiger-1-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
-
-You'll learn about:
-
-* [Prerequisites & configuring your development environment](#environment)  
-* [Adding a _Stats_ link in the navigation header](#stats-header)  
-* [Creating the D3.js table to display your projects](#architect-stats-page)
-* [Adding data and verifying your add-on works](#check)
 
 ## <a name="environment"></a> Tutorial prerequisites & configuring your development environment  
 
@@ -57,14 +57,15 @@ For these steps, you might need to enter sudo mode in your terminal. Let's get s
 	<pre><code data-lang="text">$ npm install</code></pre>
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
     You'll need SDK version 4.2.20 or higher.  
-    If you run the <tt>atlas-version</tt> command, you should see 4.2.20 or higher:  
+    <pre><code data-lang="text">$ atlas-version</code></pre>
+    You should see 4.2.20 or higher:  
     <tt>
         ATLAS Version:    4.2.20  
         ATLAS Home:       /usr/share/atlassian-plugin-sdk-4.2.20  
         ATLAS Scripts:    /usr/share/atlassian-plugin-sdk-4.2.20/bin  
         ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
     </tt>
-1. Start JIRA in OnDemand mode:
+1. Start JIRA in cloud mode:
 	<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-07-010 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0  --jvmargs -Datlassian.upm.on.demand=true</code></pre>
     
     You'll see a lot of output. When finished, your terminal notifies you that the build 
@@ -74,6 +75,8 @@ For these steps, you might need to enter sudo mode in your terminal. Let's get s
         [INFO] Type Ctrl-D to shutdown gracefully  
         [INFO] Type Ctrl-C to exit
     </tt>  
+1. In a browser window, navigate to your JIRA instance.  
+	This should be [http://localhost:2990/jira](http://localhost:2990/jira).  
 1. Log in with `admin/admin`. 
 
 ## <a name="stats-header"></a> Install your add-on and add a _Stats_ link
@@ -84,7 +87,7 @@ project root. You'll also see an `app.js` file.
 
 In this step, you'll prune some of the stub code, and install your add-on in JIRA using ACE. 
 
-1. Open the [`atlassian-connect.json` descriptor](../modules/) file.
+1. Open the [`atlassian-connect.json` descriptor](../modules/) file in your favorite editor or IDE.
 1. Replace the [`generalPages` module](../modules/jira/general-page.html) with the following:  
 	````
      "generalPages": [
@@ -155,10 +158,11 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	}
 	````
  
+1. Open a new terminal window.  
 1. From your `project-table` project root, run the `app.js` file:
 	<pre><code data-lang="text">$ node app.js</code></pre> 
 	Your add-on is automatically registered in JIRA for you. 
-1. Refresh JIRA.  
+1. Refresh JIRA in your browser.  
 	You'll see the _Stats_ label in the header: 
 	<img src="../assets/images/geiger-1-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
 1. Open `routes/index.js`.
