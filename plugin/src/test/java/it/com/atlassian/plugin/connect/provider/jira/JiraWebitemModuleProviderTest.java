@@ -120,7 +120,7 @@ public class JiraWebitemModuleProviderTest
         {
             if(null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }

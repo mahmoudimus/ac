@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import it.com.atlassian.plugin.connect.util.RequestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -48,7 +49,8 @@ public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTe
     @Test
     public void specifyingSubjectIsAllowed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
-        assertEquals(200, issueRequest(createRequestUri(SUBJECT_USERNAME)));
+        RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERNAME));
+        assertEquals(200, response.getStatusCode());
     }
 
     @Test
@@ -69,7 +71,8 @@ public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTe
     @Test
     public void noSubjectIsOk() throws IOException, NoSuchAlgorithmException
     {
-        assertEquals(200, issueRequest(createRequestUri(null)));
+        RequestUtil.Response response = issueRequest(createRequestUri(null));
+        assertEquals(200, response.getStatusCode());
     }
 
     // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
@@ -100,7 +103,8 @@ public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTe
     @Test
     public void nonJwtRequestsAreOk() throws IOException
     {
-        assertEquals(200, issueRequest(createRequestUriWithoutJwt()));
+        RequestUtil.Response response = issueRequest(createRequestUriWithoutJwt());
+        assertEquals(200, response.getStatusCode());
     }
 
     // if this is not a request from a JWT add-on then the request proceeds through the filter chain
@@ -131,13 +135,15 @@ public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTe
     @Test
     public void aNonExistentAddOnIsRejected() throws IOException, NoSuchAlgorithmException
     {
-        assertEquals(401, issueRequest(createRequestUri(SUBJECT_USERNAME, "non-existent add-on key")));
+        RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERNAME, "non-existent add-on key"));
+        assertEquals(401, response.getStatusCode());
     }
 
     @Test
     public void emptySubjectResultsInError() throws IOException, NoSuchAlgorithmException
     {
-        assertEquals(400, issueRequest(createRequestUri("")));
+        RequestUtil.Response response = issueRequest(createRequestUri(""));
+        assertEquals(400, response.getStatusCode());
     }
 
 }

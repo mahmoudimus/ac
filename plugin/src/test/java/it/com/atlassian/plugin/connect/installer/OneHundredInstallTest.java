@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -132,7 +130,7 @@ public class OneHundredInstallTest
         for(Plugin deleteAddon : addons)
         {
             long addonDeleteStart = System.currentTimeMillis();
-            testPluginInstaller.uninstallAddon(deleteAddon);
+            testPluginInstaller.uninstallJsonAddon(deleteAddon);
             long addonDeleteEnd = System.currentTimeMillis();
 
             uninstallTimes.add((addonDeleteEnd - addonDeleteStart));
@@ -222,7 +220,7 @@ public class OneHundredInstallTest
         for(Plugin deleteAddon : addons)
         {
             long addonDeleteStart = System.currentTimeMillis();
-            testPluginInstaller.uninstallPlugin(deleteAddon);
+            testPluginInstaller.uninstallXmlAddon(deleteAddon);
             long addonDeleteEnd = System.currentTimeMillis();
 
             uninstallTimes.add((addonDeleteEnd - addonDeleteStart));

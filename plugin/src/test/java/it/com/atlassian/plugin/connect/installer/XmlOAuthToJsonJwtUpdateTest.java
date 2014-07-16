@@ -79,7 +79,7 @@ public class XmlOAuthToJsonJwtUpdateTest
     }
 
     @BeforeClass
-    public void beforeAllTests() throws IOException, URISyntaxException
+    public void setUp() throws IOException, URISyntaxException
     {
         testAuthenticator.authenticateUser("admin");
         oAuthPlugin = testPluginInstaller.installPlugin(createXmlDescriptorFile());
@@ -102,10 +102,30 @@ public class XmlOAuthToJsonJwtUpdateTest
     }
 
     @AfterClass
-    public void afterAllTests()
+    public void tearDown()
     {
-        uninstallPlugin(oAuthPlugin);
-        uninstallAddon(jwtPlugin);
+        if (oAuthPlugin != null)
+        {
+            try
+            {
+                testPluginInstaller.uninstallXmlAddon(oAuthPlugin);
+            }
+            catch (IOException e)
+            {
+                LOG.error("Failed to uninstall test plugin " + oAuthPlugin.getKey() + " during teardown.", e);
+            }
+        }
+        if (jwtPlugin != null)
+        {
+            try
+            {
+                testPluginInstaller.uninstallJsonAddon(jwtPlugin);
+            }
+            catch (IOException e)
+            {
+                LOG.error("Failed to uninstall test plugin " + jwtPlugin.getKey() + " during teardown.", e);
+            }
+        }
     }
 
     @Test
@@ -235,36 +255,6 @@ public class XmlOAuthToJsonJwtUpdateTest
     private String getOldBaseUrl()
     {
         return testPluginInstaller.getInternalAddonBaseUrl(OLD_PLUGIN_KEY) + OAUTH_VERSION_SLASHED;
-    }
-
-    private void uninstallPlugin(Plugin plugin)
-    {
-        if (null != plugin)
-        {
-            try
-            {
-                testPluginInstaller.uninstallPlugin(plugin);
-            }
-            catch (IOException e)
-            {
-                LOG.error("Failed to uninstall test plugin " + plugin.getKey() + " during teardown.", e);
-            }
-        }
-    }
-
-    private void uninstallAddon(Plugin plugin)
-    {
-        if (null != plugin)
-        {
-            try
-            {
-                testPluginInstaller.uninstallAddon(plugin);
-            }
-            catch (IOException e)
-            {
-                LOG.error("Failed to uninstall test add-on " + plugin.getKey() + " during teardown.", e);
-            }
-        }
     }
 
     private ConnectAddonBean createJwtAddOn(Plugin oldPlugin)
