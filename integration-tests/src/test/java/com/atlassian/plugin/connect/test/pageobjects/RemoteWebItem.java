@@ -80,20 +80,17 @@ public class RemoteWebItem
     }
 
     @XmlDescriptor
+    @Deprecated
     public boolean isPointingToOldXmlInternalUrl()
     {
         return !webItem.getAttribute("href").contains("/plugins/servlet/atlassian-connect/");
     }
 
     @XmlDescriptor
+    @Deprecated
     public boolean isPointingToACInternalUrl()
     {
         return !webItem.getAttribute("href").contains("/plugins/servlet/ac/");
-    }
-
-    public String getHref()
-    {
-        return webItem.getAttribute("href");
     }
 
     public String getLinkText()

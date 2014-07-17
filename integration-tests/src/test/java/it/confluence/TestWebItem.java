@@ -30,7 +30,8 @@ import static org.junit.Assert.assertTrue;
 public class TestWebItem extends ConfluenceWebDriverTestBase
 {
     private static final String GENERAL_WEBITEM = "system-web-item";
-    private static final String ABSOLUTE_WEB_ITEM = "absolute-web-item";
+    private static final String ABSOLUTE_WEBITEM = "absolute-web-item";
+    private static final String SPACE_KEY = "ds";
 
     private static ConnectRunner runner;
 
@@ -50,7 +51,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("Absolute Web Item", null))
-                                .withKey(ABSOLUTE_WEB_ITEM)
+                                .withKey(ABSOLUTE_WEBITEM)
                                 .withUrl(product.getProductInstance().getBaseUrl() + "/display/${space.key}")
                                 .withLocation("system.browse")
                                 .withWeight(100)
@@ -72,7 +73,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testWebItemWithSpaceInContext() throws RemoteException, MalformedURLException, XmlRpcFault
     {
-        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
+        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConfluenceOps.ConfluenceUser.ADMIN), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
         loginAsBetty();
 
@@ -80,7 +81,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
 
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(runner.getAddon().getKey(), GENERAL_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be visible", webItem);
-        assertTrue("Web item link should point to add-on base", webItem.getHref().startsWith(runner.getAddon().getBaseUrl()));
+        assertTrue("Web item link should point to add-on base", webItem.getPath().startsWith(runner.getAddon().getBaseUrl()));
 
         webItem.click();
 
@@ -91,17 +92,17 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testAbsoluteWebItemWithContext() throws RemoteException, MalformedURLException, XmlRpcFault
     {
-        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
+        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConfluenceOps.ConfluenceUser.ADMIN), SPACE_KEY, "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
         loginAsBetty();
         product.visit(ConfluenceEditPage.class, pageId);
 
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(runner.getAddon().getKey(), ABSOLUTE_WEB_ITEM), Optional.of("help-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(runner.getAddon().getKey(), ABSOLUTE_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be visible", webItem);
-        assertTrue("Web item link should point to product base", webItem.getHref().startsWith(product.getProductInstance().getBaseUrl()));
+        assertTrue("Web item link should point to product base", webItem.getPath().startsWith(product.getProductInstance().getBaseUrl()));
 
         webItem.click();
 
-        assertThat(webItem.getPath(), containsString("display/ds"));
+        assertThat(webItem.getPath(), containsString("display/" + SPACE_KEY));
     }
 }
