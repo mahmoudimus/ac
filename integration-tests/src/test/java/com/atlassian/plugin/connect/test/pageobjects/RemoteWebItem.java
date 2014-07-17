@@ -82,7 +82,7 @@ public class RemoteWebItem
     private boolean isPageBackedWebItem()
     {
         String href = webItem.getAttribute("href");
-        return href.contains("/plugins/servlet/atlassian-connect/") || href.contains("/plugins/servlet/ac/");
+        return !href.contains("/plugins/servlet/atlassian-connect/") && !href.contains("/plugins/servlet/ac/");
     }
 
     public String getLinkText()
