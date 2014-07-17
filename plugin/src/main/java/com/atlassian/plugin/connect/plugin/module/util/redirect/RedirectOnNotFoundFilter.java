@@ -65,11 +65,18 @@ public class RedirectOnNotFoundFilter implements Filter
         {
             HttpServletRequest request = (HttpServletRequest) servletRequest;
 
+            final String queryString = request.getQueryString();
             final StringBuffer requestURL = request.getRequestURL();
+            if (queryString != null)
+            {
+                // Despite the Javadoc implying the opposite, query params are not included in the requestURL
+                requestURL.append('?').append(queryString);
+            }
+
             int index = requestURL.indexOf(fromPattern);
 
             final String newUrl = requestURL.replace(index, index + fromPattern.length(), toPattern).toString();
-            log.debug("Redirecting from {} to {}", new Object[]{request.getRequestURI(), newUrl});
+            log.debug("Redirecting from {} to {}", new Object[]{requestURL, newUrl});
             response.setStatus(HttpStatus.SC_MOVED_PERMANENTLY);
             response.addHeader(HttpHeaders.LOCATION, newUrl);
             response.getWriter().close();

@@ -22,6 +22,7 @@ public class TestLegacyRedirect extends ConnectWebDriverTestBase
     private static final String ADDON_GENERALPAGE_NAME = "AC General Page";
 
     private static ConnectRunner remotePlugin;
+    private static final String SOME_QUERY_PARAMS = "foo=bar&bar=foo";
 
     @BeforeClass
     public static void setupUrlHandlers()
@@ -60,14 +61,18 @@ public class TestLegacyRedirect extends ConnectWebDriverTestBase
     public void testLegacyPathRedirect() throws Exception
     {
         URL url = new URL(product.getProductInstance().getBaseUrl() + "/plugins/servlet/atlassian-connect/" +
-                remotePlugin.getAddon().getKey() + "/" + ADDON_GENERALPAGE);
+                remotePlugin.getAddon().getKey() + "/" + ADDON_GENERALPAGE + "?" + SOME_QUERY_PARAMS);
+        
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
         assertEquals(HttpStatus.SC_MOVED_PERMANENTLY, yc.getResponseCode());
 
         // follow redirect
-        String redirectUrl = yc.getHeaderField("Location");
-        HttpURLConnection conn = (HttpURLConnection) new URL(redirectUrl).openConnection();
+        String redirectUrlStr = yc.getHeaderField("Location");
+        HttpURLConnection conn = (HttpURLConnection) new URL(redirectUrlStr).openConnection();
         assertEquals(HttpStatus.SC_OK, conn.getResponseCode());
+        
+        URL redirectUrl = new URL(redirectUrlStr);
+        assertEquals(redirectUrl.getQuery(), SOME_QUERY_PARAMS);
     }
 
     @Test
