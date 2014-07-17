@@ -200,7 +200,7 @@ public class ConnectAddonManager
         String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
         String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
-        String userKey = provisionAddOnUserAndScopes(addOn, previousDescriptor);
+        String userKey = addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
 
         AddonSettings settings = new AddonSettings()
                 .setAuth(authType.name())
@@ -248,7 +248,11 @@ public class ConnectAddonManager
             {
                 beanToModuleRegistrar.registerDescriptorsForBeans(addon);
                 addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
-                enableAddOnUser(addon);
+
+                if (addOnNeedsAUser(addon))
+                {
+                    enableAddOnUser(addon);
+                }
 
                 eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase())));
 
@@ -638,5 +642,10 @@ public class ConnectAddonManager
         {
             throw new PluginInstallException(e.getMessage(), Option.some("connect.install.error.user.provisioning"), e, true);
         }
+    }
+
+    private static boolean addOnNeedsAUser(ConnectAddonBean addOn)
+    {
+        return null != addOn.getAuthentication() && !AuthenticationType.NONE.equals(addOn.getAuthentication().getType());
     }
 }
