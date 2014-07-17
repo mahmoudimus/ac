@@ -31,7 +31,7 @@ Here's an example what your add-on might look like:
 
 <img src="../assets/images/geiger-1-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
 
-## <a name="environment"></a> Tutorial prerequisites & configuring your development environment  
+## <a name="environment"></a> Configuring your development environment  
 
 In this step, you'll confirm you have node.js installed, and install the 
 [Atlassian Connect Express](https://bitbucket.org/atlassian/atlassian-connect-express/) framework, known as 
