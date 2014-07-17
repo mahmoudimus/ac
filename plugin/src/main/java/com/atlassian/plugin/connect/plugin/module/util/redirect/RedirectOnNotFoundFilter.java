@@ -82,24 +82,25 @@ public class RedirectOnNotFoundFilter implements Filter
     }
 
     @VisibleForTesting
-    public static String createRedirectUrl(StringBuffer requestURL, String queryString,
+    public static String createRedirectUrl(StringBuffer requestURLStr, String queryString,
                                            String fromPattern, String toPattern) throws MalformedURLException
     {
         if (StringUtils.isEmpty(fromPattern))
         {
-            return requestURL.toString();
+            return requestURLStr.toString();
         }
 
-        int index = requestURL.indexOf(fromPattern);
-        if (index >= 0)
+        final URL requestUrl = new URL(requestURLStr.toString());
+
+        final String requestPath = requestUrl.getPath();
+
+
+        String redirectPath = requestPath.replaceFirst(fromPattern, toPattern).replaceAll("//", "/");
+        if (redirectPath.endsWith("/"))
         {
-            int endIndex = index + fromPattern.length();
-            if (toPattern.length() == 0 && requestURL.length() >= endIndex + 1 && requestURL.charAt(endIndex) == '/')
-            {
-                endIndex++;
-            }
-        	requestURL.replace(index, endIndex, toPattern);
+            redirectPath = redirectPath.substring(0, redirectPath.length() - 1);
         }
+
 
         /*
          * Note: fragments are not sent to the server so can ignore them
@@ -107,12 +108,11 @@ public class RedirectOnNotFoundFilter implements Filter
 
         if (StringUtils.isNotEmpty(queryString))
         {
-            // Despite the Javadoc implying the opposite, query params are not included in the requestURL
-            requestURL.append('?').append(queryString);
+            // Despite the Javadoc implying the opposite, query params are not included in the requestURLStr
+            redirectPath = redirectPath + "?" + queryString;
         }
 
-        return new URL(requestURL.toString()).toExternalForm();
-//        return requestURL.toString();
+        return new URL(requestUrl.getProtocol(), requestUrl.getHost(), requestUrl.getPort(), redirectPath).toExternalForm();
     }
 
 

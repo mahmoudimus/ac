@@ -68,7 +68,7 @@ public class RedirectOnNotFoundFilterTest
     }
 
     @Test
-    public void extraPathSeparatorRemovedIfToPatternEmptyX() throws MalformedURLException
+    public void trailingPathSeparatorRemoved() throws MalformedURLException
     {
         assertThat(createRedirectUrl(new StringBuffer(REQUEST_URL), null, "godzilla", ""), is("http://localhost:8080/foo"));
     }
