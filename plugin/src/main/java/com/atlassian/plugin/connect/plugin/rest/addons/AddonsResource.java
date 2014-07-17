@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.RestError;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
@@ -83,7 +84,7 @@ public class AddonsResource
         try
         {
             RestAddonType addonType = StringUtils.isBlank(type) ? null : RestAddonType.valueOf(type.toUpperCase());
-            List<RestAddon> restAddons = getAddonsByType(addonType);
+            RestAddons restAddons = getAddonsByType(addonType);
             return Response.ok().entity(restAddons).build();
         }
         catch (IllegalArgumentException e)
@@ -208,7 +209,7 @@ public class AddonsResource
         return getErrorResponse(message, Response.Status.NOT_FOUND);
     }
 
-    private List<RestAddon> getAddonsByType(RestAddonType type)
+    private RestAddons getAddonsByType(RestAddonType type)
     {
         List<RestAddon> result = Lists.newArrayList();
 
@@ -228,7 +229,7 @@ public class AddonsResource
             }
         }
 
-        return result;
+        return new RestAddons<RestAddon>(result);
     }
 
     private List<Plugin> getXmlAddonPlugins()

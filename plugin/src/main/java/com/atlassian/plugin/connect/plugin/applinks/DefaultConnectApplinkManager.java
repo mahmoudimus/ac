@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
@@ -129,7 +128,6 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     @Override
     public void createAppLink(final ConnectAddonBean addon, final String baseUrl, final AuthenticationType authType, final String publicKey, final String addonUserKey)
     {
-        checkNotNull(addonUserKey);
         transactionTemplate.execute(new TransactionCallback<Void>()
         {
             @Override

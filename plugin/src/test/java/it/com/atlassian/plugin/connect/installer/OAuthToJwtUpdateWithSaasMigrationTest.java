@@ -73,7 +73,7 @@ public class OAuthToJwtUpdateWithSaasMigrationTest
         {
             try
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
             catch (IOException e)
             {

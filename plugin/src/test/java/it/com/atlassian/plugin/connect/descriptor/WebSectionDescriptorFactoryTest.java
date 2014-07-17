@@ -85,7 +85,7 @@ public class WebSectionDescriptorFactoryTest
         {
             try
             {
-                testPluginInstaller.uninstallAddon(installedPlugin);
+                testPluginInstaller.uninstallJsonAddon(installedPlugin);
                 installedPlugin = null;
             }
             catch (IOException e)

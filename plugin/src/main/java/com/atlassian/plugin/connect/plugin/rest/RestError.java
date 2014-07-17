@@ -4,22 +4,22 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 public class RestError
 {
-    @JsonProperty
-    private final int errorCode;
+    @JsonProperty("status-code")
+    private final int statusCode;
 
-    @JsonProperty
+    @JsonProperty("message")
     private final String message;
 
-    public RestError(@JsonProperty("errorCode") final int errorCode,
+    public RestError(@JsonProperty("status-code") final int statusCode,
             @JsonProperty("message") final String message)
     {
-        this.errorCode = errorCode;
+        this.statusCode = statusCode;
         this.message = message;
     }
 
-    public int getErrorCode()
+    public int getStatusCode()
     {
-        return errorCode;
+        return statusCode;
     }
 
     public String getMessage()
