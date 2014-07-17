@@ -4,21 +4,24 @@ import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.CharArrayWriter;
+
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
+import com.google.common.annotations.VisibleForTesting;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -50,6 +53,7 @@ public class RedirectOnNotFoundFilter implements Filter
     public void init(FilterConfig filterConfig)
     {
         fromPattern = checkNotNull(filterConfig.getInitParameter(FROM_PATTERN));
+        checkArgument(StringUtils.isNotEmpty(fromPattern));
         toPattern = checkNotNull(filterConfig.getInitParameter(TO_TEXT));
     }
 
@@ -67,20 +71,48 @@ public class RedirectOnNotFoundFilter implements Filter
 
             final String queryString = request.getQueryString();
             final StringBuffer requestURL = request.getRequestURL();
-            if (queryString != null)
-            {
-                // Despite the Javadoc implying the opposite, query params are not included in the requestURL
-                requestURL.append('?').append(queryString);
-            }
 
-            int index = requestURL.indexOf(fromPattern);
+            final String newUrl = createRedirectUrl(requestURL, queryString, fromPattern, toPattern);
 
-            final String newUrl = requestURL.replace(index, index + fromPattern.length(), toPattern).toString();
             log.debug("Redirecting from {} to {}", new Object[]{requestURL, newUrl});
             response.setStatus(HttpStatus.SC_MOVED_PERMANENTLY);
             response.addHeader(HttpHeaders.LOCATION, newUrl);
             response.getWriter().close();
         }
+    }
+
+    @VisibleForTesting
+    public static String createRedirectUrl(StringBuffer requestURL, String queryString,
+                                           String fromPattern, String toPattern) throws MalformedURLException
+    {
+        if (StringUtils.isEmpty(fromPattern))
+        {
+            return requestURL.toString();
+        }
+
+        int index = requestURL.indexOf(fromPattern);
+        if (index >= 0)
+        {
+            int endIndex = index + fromPattern.length();
+            if (toPattern.length() == 0 && requestURL.length() >= endIndex + 1 && requestURL.charAt(endIndex) == '/')
+            {
+                endIndex++;
+            }
+        	requestURL.replace(index, endIndex, toPattern);
+        }
+
+        /*
+         * Note: fragments are not sent to the server so can ignore them
+         */
+
+        if (StringUtils.isNotEmpty(queryString))
+        {
+            // Despite the Javadoc implying the opposite, query params are not included in the requestURL
+            requestURL.append('?').append(queryString);
+        }
+
+        return new URL(requestURL.toString()).toExternalForm();
+//        return requestURL.toString();
     }
 
 
