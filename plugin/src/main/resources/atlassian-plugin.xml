@@ -102,11 +102,18 @@
         <resource type="download" name="core-host.js" location="/js/core/host-debug.js" />
     </web-resource>
 
+    <web-resource key="ap-user">
+        <resource type="download" name="user.js" location="/js/iframe/host/user.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
+    </web-resource>
+
     <web-resource key="iframe-host-js">
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-user</dependency>
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
     </web-resource>
+
     <web-resource key="iframe-host-css">
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
         <resource type="download" name="messages-main.css" location="css/messages/main.css" />
