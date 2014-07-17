@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElementFinder;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
@@ -31,6 +32,7 @@ public class JiraViewIssuePage implements Page
         this(issueKey, "");
     }
 
+    @XmlDescriptor
     @Deprecated // takes an extra ID prefix for modules provided by XML modules
     public JiraViewIssuePage(String issueKey, String extraPrefix)
     {
@@ -42,17 +44,6 @@ public class JiraViewIssuePage implements Page
     public String getUrl()
     {
         return "/browse/" + issueKey;
-    }
-
-    public void addLabelViaInlineEdit(String label)
-    {
-        driver.waitUntilElementIsVisible(By.cssSelector(".editable-field .labels"));
-        driver.findElement(By.className("labels")).click();
-        driver.waitUntilElementIsVisible(By.id("labels-textarea"));
-        driver.findElement(By.id("labels-textarea")).sendKeys(label + "\t");
-        driver.waitUntilElementIsVisible(By.cssSelector("#labels-form .submit"));
-        driver.findElement(By.cssSelector("#labels-form .submit")).click();
-        driver.waitUntilElementIsVisible(By.className("labels"));
     }
 
     public RemoteWebPanel findWebPanel(String panelId)

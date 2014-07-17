@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.LicenseStatusBannerHelper;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import org.apache.http.auth.AuthenticationException;
@@ -76,6 +77,11 @@ public abstract class ConnectWebDriverTestBase
     {
         logout();
         return product.visit(LoginPage.class).login(username, password, HomePage.class);
+    }
+
+    protected String getModuleKey(ConnectRunner runner, String module)
+    {
+        return ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 
     protected String getModuleKey(String addonKey, String module)

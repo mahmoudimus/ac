@@ -34,7 +34,7 @@ public class TestWebItem extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product)
                 .setAuthenticationToNone()
                 .addModules(
                         "webItems",
