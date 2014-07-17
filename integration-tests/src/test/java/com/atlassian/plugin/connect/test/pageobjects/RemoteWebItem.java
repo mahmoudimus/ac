@@ -50,7 +50,7 @@ public class RemoteWebItem
         webItem = findWebItem();
         waitUntilTrue(webItem.timed().isPresent());
 
-        if (!isPointingToOldXmlInternalUrl() && !isPointingToACInternalUrl())
+        if (isPageBackedWebItem())
         {
             String iframeId = IframeUtils.iframeId("servlet-" + matchValue);
             path = elementFinder.find(By.id(iframeId)).getAttribute("src");
@@ -79,18 +79,10 @@ public class RemoteWebItem
         return elementFinder.find(by);
     }
 
-    @XmlDescriptor
-    @Deprecated
-    public boolean isPointingToOldXmlInternalUrl()
+    private boolean isPageBackedWebItem()
     {
-        return !webItem.getAttribute("href").contains("/plugins/servlet/atlassian-connect/");
-    }
-
-    @XmlDescriptor
-    @Deprecated
-    public boolean isPointingToACInternalUrl()
-    {
-        return !webItem.getAttribute("href").contains("/plugins/servlet/ac/");
+        String href = webItem.getAttribute("href");
+        return href.contains("/plugins/servlet/atlassian-connect/") || href.contains("/plugins/servlet/ac/");
     }
 
     public String getLinkText()
