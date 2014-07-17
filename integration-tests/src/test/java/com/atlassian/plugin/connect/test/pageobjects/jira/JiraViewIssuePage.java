@@ -18,7 +18,6 @@ import javax.inject.Inject;
 public class JiraViewIssuePage implements Page
 {
     private String issueKey;
-    private String extraPrefix;
 
     @Inject
     private com.atlassian.webdriver.AtlassianWebDriver driver;
@@ -29,15 +28,7 @@ public class JiraViewIssuePage implements Page
 
     public JiraViewIssuePage(String issueKey)
     {
-        this(issueKey, "");
-    }
-
-    @XmlDescriptor
-    @Deprecated // takes an extra ID prefix for modules provided by XML modules
-    public JiraViewIssuePage(String issueKey, String extraPrefix)
-    {
         this.issueKey = issueKey;
-        this.extraPrefix = extraPrefix;
     }
 
     @Override
@@ -48,7 +39,7 @@ public class JiraViewIssuePage implements Page
 
     public RemoteWebPanel findWebPanel(String panelId)
     {
-        return pageBinder.bind(RemoteWebPanel.class, panelId, extraPrefix);
+        return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
 
     public RemoteXdmEventPanel findXdmEventPanel(String addOnId, String moduleId)
