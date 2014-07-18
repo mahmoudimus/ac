@@ -34,21 +34,6 @@ public class Utils
         return IOUtils.toString(caller.getResourceAsStream(path));
     }
 
-    public static String getJson(String url) throws IOException
-    {
-        InputStream in = new URL(url).openStream();
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(in, writer);
-        in.close();
-        return writer.toString();
-    }
-
-    public static Document getXml(String url) throws IOException, DocumentException
-    {
-        InputStream inputStream = new URL(url).openStream();
-        return createSecureSaxReader().read(inputStream);
-    }
-
     public static RunnerSignedRequestHandler createSignedRequestHandler(String appKey) throws NoSuchAlgorithmException, IOException
     {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
@@ -68,12 +53,6 @@ public class Utils
         env.setEnv("OAUTH_LOCAL_PRIVATE_KEY", privateKeyWriter.toString());
         env.setEnv("OAUTH_LOCAL_KEY", appKey);
         return new RunnerSignedRequestHandler(appKey, env);
-    }
-
-    public static void emptyGet(String url) throws IOException
-    {
-        InputStream in = new URL(url).openStream();
-        in.close();
     }
 
     public static int pickFreePort()

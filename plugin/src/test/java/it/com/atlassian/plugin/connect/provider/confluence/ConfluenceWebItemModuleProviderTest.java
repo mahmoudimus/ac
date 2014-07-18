@@ -127,7 +127,7 @@ public class ConfluenceWebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }

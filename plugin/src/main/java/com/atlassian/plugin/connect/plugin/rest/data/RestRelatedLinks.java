@@ -28,33 +28,30 @@ public class RestRelatedLinks extends RestMapEntity
 
         public Builder addRelatedLinks(String relationship, Collection<RestNamedLink> links)
         {
-            Collection<RestNamedLink> existing = relatedLinks.get(relationship);
-            if (existing == null)
-            {
-                existing = Sets.newHashSet();
-                relatedLinks.put(relationship, existing);
-            }
-            existing.addAll(links);
-
+            getExisting(relationship).addAll(links);
             return this;
         }
 
         public Builder addRelatedLink(String relationship, RestNamedLink link)
         {
-            Collection<RestNamedLink> existing = relatedLinks.get(relationship);
-            if (existing == null)
-            {
-                existing = Sets.newHashSet();
-                relatedLinks.put(relationship, existing);
-            }
-            existing.add(link);
-
+            getExisting(relationship).add(link);
             return this;
         }
 
         public RestRelatedLinks build()
         {
             return new RestRelatedLinks(relatedLinks);
+        }
+
+        private Collection<RestNamedLink> getExisting(String relationship)
+        {
+            Collection<RestNamedLink> existing = relatedLinks.get(relationship);
+            if (existing == null)
+            {
+                existing = Sets.newHashSet();
+                relatedLinks.put(relationship, existing);
+            }
+            return existing;
         }
     }
 }

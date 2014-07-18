@@ -61,7 +61,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
 
         checkNotNull(handler);
 
-        return handler.installPlugin(descriptor, Option.<String>some("application/json")).getPlugin();
+        return handler.installPlugin(descriptor, Option.some("application/json")).getPlugin();
     }
 
     @Deprecated // @XmlDescriptor: I didn't feel like adding a dependency on the api module just to add a single annotation, so I used Deprecated instead of XmlDescriptor.
@@ -74,7 +74,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     }
 
     @Override
-    public void uninstallAddon(Plugin plugin) throws IOException
+    public void uninstallJsonAddon(Plugin plugin) throws IOException
     {
         PluginControlHandler handler = getControlHandler();
 
@@ -84,7 +84,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     }
 
     @Override
-    public void uninstallPlugin(Plugin plugin) throws IOException
+    public void uninstallXmlAddon(Plugin plugin) throws IOException
     {
         pluginController.uninstall(plugin);
     }
@@ -141,7 +141,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
 
         checkNotNull(handler);
 
-        return Iterables.transform(handler.getPlugins(),new Function<Plugin, String>() {
+        return Iterables.transform(handler.getPlugins(), new Function<Plugin, String>() {
             @Override
             public String apply(@Nullable Plugin input)
             {

@@ -8,6 +8,7 @@ import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.core.http.auth.SimplePrincipal;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
+import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
@@ -43,6 +44,7 @@ public class ThreeLeggedAuthFilter implements Filter
     private final JwtApplinkFinder jwtApplinkFinder;
     private final CrowdService crowdService;
     private final String badCredentialsMessage; // protect against phishing by not saying whether the add-on, user or secret was wrong
+    private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilter.class);
     private static final String MSG_FORMAT_NOT_ALLOWING_IMPERSONATION = "NOT allowing add-on '%s' to impersonate user '%s'";
@@ -54,7 +56,8 @@ public class ThreeLeggedAuthFilter implements Filter
                                  AuthenticationListener authenticationListener,
                                  JwtApplinkFinder jwtApplinkFinder,
                                  CrowdService crowdService,
-                                 I18nResolver i18nResolver)
+                                 I18nResolver i18nResolver,
+                                 LegacyAddOnIdentifierService legacyAddOnIdentifierService)
     {
         this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService);
         this.connectAddonManager = checkNotNull(connectAddonManager);
@@ -63,6 +66,7 @@ public class ThreeLeggedAuthFilter implements Filter
         this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder);
         this.crowdService = checkNotNull(crowdService);
         this.badCredentialsMessage = i18nResolver.getText("connect.3la.bad_credentials");
+        this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;
     }
 
     @Override
@@ -95,7 +99,7 @@ public class ThreeLeggedAuthFilter implements Filter
         }
 
         // potentially reject only if the request comes from an add-on
-        if (StringUtils.isEmpty(addOnKey))
+        if (StringUtils.isEmpty(addOnKey) || legacyAddOnIdentifierService.isConnectAddOn(addOnKey))
         {
             filterChain.doFilter(request, response);
         }

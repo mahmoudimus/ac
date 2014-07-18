@@ -20,6 +20,7 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import it.com.atlassian.plugin.connect.ParameterizedWiredTest;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import it.com.atlassian.plugin.connect.util.RequestUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -53,6 +54,7 @@ public abstract class ScopeTestBase
     private final JwtWriterFactory jwtWriterFactory;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final ApplicationProperties applicationProperties;
+    private final RequestUtil requestUtil;
 
     private ConnectAddonBean addOnBean;
     private Plugin addOn;
@@ -72,20 +74,21 @@ public abstract class ScopeTestBase
         this.jwtWriterFactory = jwtWriterFactory;
         this.connectAddonRegistry = connectAddonRegistry;
         this.applicationProperties = applicationProperties;
+        this.requestUtil = new RequestUtil(applicationProperties);
     }
 
     @ParameterizedWiredTest.Test
     protected void test(HttpMethod httpMethod, String uriSuffix, boolean shouldBeOk) throws IOException, NoSuchAlgorithmException
     {
-        final int expectedResponseCode = shouldBeOk ? 200 : 403;
-        final URI uri = constructUri(httpMethod, uriSuffix);
-        final int actualResponseCode = issueRequest(httpMethod, uri);
-        final String message = String.format("Expecting HTTP response code %d from %s %s but was %d.", expectedResponseCode, httpMethod, uri, actualResponseCode);
-        assertEquals(message, expectedResponseCode, actualResponseCode);
+        int expectedResponseCode = shouldBeOk ? 200 : 403;
+        URI uri = constructUri(httpMethod, uriSuffix);
+        RequestUtil.Response response = issueRequest(httpMethod, uri);
+        String message = String.format("Expecting HTTP response code %d from %s %s but was %d.", expectedResponseCode, httpMethod, uri, response.getStatusCode());
+        assertEquals(message, expectedResponseCode, response.getStatusCode());
     }
 
     @BeforeClass
-    public void classSetup() throws IOException
+    public void setup() throws IOException
     {
         final String key = getClass().getSimpleName() + '-' + System.currentTimeMillis();
         ConnectAddonBeanBuilder connectAddonBeanBuilder = newConnectAddonBean()
@@ -118,13 +121,13 @@ public abstract class ScopeTestBase
     }
 
     @AfterClass
-    public void classTearDown()
+    public void tearDown()
     {
         if (null != addOn)
         {
             try
             {
-                testPluginInstaller.uninstallAddon(addOn);
+                testPluginInstaller.uninstallJsonAddon(addOn);
             }
             catch (IOException e)
             {
@@ -154,20 +157,13 @@ public abstract class ScopeTestBase
         return uri;
     }
 
-    private int issueRequest(HttpMethod httpMethod, URI uri) throws IOException
+    private RequestUtil.Response issueRequest(HttpMethod httpMethod, URI uri) throws IOException
     {
-        URL url = uri.toURL();
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod(httpMethod.toString());
-        connection.connect();
+        RequestUtil.Request request = requestUtil.requestBuilder()
+                .setMethod(httpMethod)
+                .setUri(uri)
+                .build();
 
-        try
-        {
-            return connection.getResponseCode();
-        }
-        finally
-        {
-            connection.disconnect();
-        }
+        return requestUtil.makeRequest(request);
     }
 }
