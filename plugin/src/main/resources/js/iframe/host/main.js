@@ -34,7 +34,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
   * @param {Options} options These values come from the velocity template and can be overridden using uiParams
   */
   function create(options) {
-
     $.extend(options, uiParams.fromUrl(options.src));
 
     var ns = options.ns,

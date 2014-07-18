@@ -185,7 +185,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
-        assertTrue("Web item link should be absolute", webItem.isPointingToACInternalUrl());
         assertThat(webItem.getPath(), startsWith("http://www.google.com/?"));
         assertThat(webItem.getFromQueryString("myProjectKey"), equalTo(project.getKey()));
     }
