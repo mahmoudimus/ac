@@ -282,7 +282,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
 
     private String getModuleKey(String module)
     {
-        return ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), module);
+        return getModuleKey(runner.getAddon().getKey(), module);
     }
 
     private String getServletPath(String module)

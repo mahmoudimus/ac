@@ -31,14 +31,14 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
     protected static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
     protected static final String URL = "/" + MY_AWESOME_PAGE_KEY;
 
-    protected static ConnectRunner remotePlugin;
+    protected static ConnectRunner runner;
     
     protected String pluginKey;
     protected String awesomePageModuleKey;
     
 
     @Rule
-    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
+    public TestRule resetToggleableCondition = runner.resetToggleableConditionRule();
 
     protected static void startConnectAddOn(String fieldName) throws Exception
     {
@@ -61,7 +61,7 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
         int query = url.indexOf("?");
         String route = query > -1 ? url.substring(0, query) : url;
 
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addModule(fieldName, pageBeanBuilder.build())
                 .setAuthenticationToNone()
                 .addRoute(route, ConnectAppServlets.apRequestServlet())
@@ -71,16 +71,16 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
-        if (remotePlugin != null)
+        if (runner != null)
         {
-            remotePlugin.stopAndUninstall();
+            runner.stopAndUninstall();
         }
     }
     
     @Before
     public void beforeEachTestBase()
     {
-        this.pluginKey = remotePlugin.getAddon().getKey();
+        this.pluginKey = runner.getAddon().getKey();
         this.awesomePageModuleKey = addonAndModuleKey(pluginKey,MY_AWESOME_PAGE_KEY);
     }
 

@@ -34,7 +34,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
   * @param {Options} options These values come from the velocity template and can be overridden using uiParams
   */
   function create(options) {
-
     $.extend(options, uiParams.fromUrl(options.src));
 
     var ns = options.ns,
@@ -111,7 +110,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
     }
     if(typeof ConfluenceMobile !== "undefined"){
       doCreate();
-    } else if ($.isReady) {
+    } else if (AJS.$.isReady) {
       // if the dom is ready then this is being run during an ajax update;
       // in that case, defer creation until the next event loop tick to ensure
       // that updates to the desired container node's parents have completed

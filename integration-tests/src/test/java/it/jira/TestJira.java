@@ -38,12 +38,12 @@ public class TestJira extends JiraWebDriverTestBase
     private static final String ADMIN_KEY = "addon-admin";
     private static final String ADVANCED_ADMIN_KEY = "advanced-addon-admin";
 
-    private static ConnectRunner remotePlugin;
+    private static ConnectRunner runner;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("adminPages",
                         newPageBean()
@@ -82,9 +82,9 @@ public class TestJira extends JiraWebDriverTestBase
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
-        if (remotePlugin != null)
+        if (runner != null)
         {
-            remotePlugin.stopAndUninstall();
+            runner.stopAndUninstall();
         }
     }
 
@@ -104,8 +104,8 @@ public class TestJira extends JiraWebDriverTestBase
         // TODO: select the "Test Issue Action" text (a link with id="<add-on key>__jira-issue-action"),
         // which causes the iframe to be loaded inside a container div with id="embedded-<add-on key>__jira-issue-action",
         // and then look for iframe content by binding to the iframe and calling RemotePluginDialog.wasSubmitted() etc
-        ConnectAddOnEmbeddedTestPage page1 = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnEmbeddedTestPage.class, remotePlugin.getAddon().getKey(), "jira-issue-action", false);
-        ConnectAddOnEmbeddedTestPage page2 = product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, remotePlugin.getAddon().getKey(), "jira-issue-action", true);
+        ConnectAddOnEmbeddedTestPage page1 = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnEmbeddedTestPage.class, runner.getAddon().getKey(), "jira-issue-action", false);
+        ConnectAddOnEmbeddedTestPage page2 = product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, runner.getAddon().getKey(), "jira-issue-action", true);
 
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page2);
 
@@ -126,7 +126,7 @@ public class TestJira extends JiraWebDriverTestBase
             public Object call() throws Exception
             {
                 RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
-                String addOnKey = remotePlugin.getAddon().getKey();
+                String addOnKey = runner.getAddon().getKey();
                 // TODO: click the link with id="<add-on key>__jira-remote-plugin-issue-tab-page",
                 // which loads the iframe contained in the div with id="embedded-<add-on key>__jira-remote-plugin-issue-tab-page",
                 // and then look for iframe content with JiraViewIssuePageWithRemotePluginIssueTab.getMessage()
@@ -165,7 +165,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testAdminPageInJiraSpecificLocation() throws Exception
     {
         loginAsAdmin();
-        String addonKey = remotePlugin.getAddon().getKey();
+        String addonKey = runner.getAddon().getKey();
         product.visit(JiraAdminHomePage.class);
 
         RemoteWebItem adminPageLink = getAdminPageLink(addonKey, ADVANCED_ADMIN_KEY);
@@ -180,7 +180,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testGeneralAdminPage() throws Exception
     {
         loginAsAdmin();
-        String addonKey = remotePlugin.getAddon().getKey();
+        String addonKey = runner.getAddon().getKey();
         product.visit(JiraAdminHomePage.class);
 
         RemoteWebItem adminPageLink = getAdminPageLink(addonKey, ADMIN_KEY);
@@ -192,13 +192,7 @@ public class TestJira extends JiraWebDriverTestBase
 
     private RemoteWebItem getAdminPageLink(String addonKey, String adminPageWebItemKey)
     {
-        String webitemId = constructAddOnAdminPageLinkId(addonKey, adminPageWebItemKey);
+        String webitemId = ModuleKeyUtils.addonAndModuleKey(addonKey, adminPageWebItemKey);
         return connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.ID, webitemId, Optional.<String>absent());
     }
-
-    private String constructAddOnAdminPageLinkId(String addonKey, String adminPageWebItemKey)
-    {
-        return ModuleKeyUtils.addonAndModuleKey(addonKey, adminPageWebItemKey);
-    }
-
 }

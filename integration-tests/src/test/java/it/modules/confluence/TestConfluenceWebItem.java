@@ -123,7 +123,6 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
         assertNotNull("Web item should be found", webItem);
 
-        assertTrue("Web item link should be absolute", webItem.isPointingToACInternalUrl());
         assertThat(webItem.getPath(), startsWith("http://www.google.com/?"));
         assertThat(webItem.getFromQueryString("myPageId"), isInteger());
         assertThat(webItem.getFromQueryString("mySpaceKey"), equalTo("ds"));
