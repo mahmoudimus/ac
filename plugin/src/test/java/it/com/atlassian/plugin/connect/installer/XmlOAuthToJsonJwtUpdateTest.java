@@ -149,58 +149,6 @@ public class XmlOAuthToJsonJwtUpdateTest
         oAuthPlugin = null; // we get to this line of code only if installing the update works
     }
 
-    private RequestUtil.Request constructOAuthRequestFromAddOn() throws IOException, OAuthException, URISyntaxException
-    {
-        final HttpMethod httpMethod = HttpMethod.GET;
-        URI uri = URI.create(requestUtil.getApplicationRestUrl("/applinks/1.0/manifest"));
-        uri = signOAuthUri(httpMethod, uri);
-
-        return requestUtil.requestBuilder()
-                .setMethod(httpMethod)
-                .setUri(uri)
-                .build();
-    }
-
-    private URI signOAuthUri(HttpMethod httpMethod, URI uri) throws IOException, OAuthException, URISyntaxException
-    {
-        final Map<String, String> oAuthParams = new HashMap<String, String>();
-        {
-            oAuthParams.put(OAuth.OAUTH_SIGNATURE_METHOD, OAuth.RSA_SHA1);
-            oAuthParams.put(OAuth.OAUTH_VERSION, "1.0");
-            oAuthParams.put(OAuth.OAUTH_CONSUMER_KEY, oAuthPlugin.getKey());
-            oAuthParams.put(OAuth.OAUTH_NONCE, String.valueOf(System.nanoTime()));
-            oAuthParams.put(OAuth.OAUTH_TIMESTAMP, String.valueOf(System.currentTimeMillis() / 1000));
-        }
-        final OAuthMessage oAuthMessage = new OAuthMessage(httpMethod.toString(), uri.toString(), oAuthParams.entrySet());
-        final OAuthConsumer oAuthConsumer = new OAuthConsumer(null, oAuthPlugin.getKey(), OLD_PRIVATE_KEY, new OAuthServiceProvider(null, null, null));
-        oAuthConsumer.setProperty(RSA_SHA1.PRIVATE_KEY, OLD_PRIVATE_KEY);
-        final OAuthSignatureMethod oAuthSignatureMethod = OAuthSignatureMethod.newSigner(oAuthMessage, new OAuthAccessor(oAuthConsumer));
-        oAuthSignatureMethod.sign(oAuthMessage);
-        return addOAuthParamsToRequest(uri, oAuthMessage);
-    }
-
-    private static URI addOAuthParamsToRequest(URI uri, OAuthMessage oAuthMessage) throws IOException
-    {
-        StringBuilder sb = new StringBuilder("?");
-        {
-            boolean isFirst = true;
-
-            for (Map.Entry<String, String> entry : oAuthMessage.getParameters())
-            {
-                if (!isFirst)
-                {
-                    sb.append('&');
-                }
-
-                isFirst = false;
-                sb.append(entry.getKey()).append('=').append(JwtUtil.percentEncode(entry.getValue())); // for JWT use the same encoding as OAuth 1
-            }
-
-            uri = URI.create(uri + sb.toString());
-        }
-        return uri;
-    }
-
     @AfterClass
     public void tearDown()
     {
@@ -374,5 +322,57 @@ public class XmlOAuthToJsonJwtUpdateTest
                     .withName(new I18nProperty("Greeting", "greeting"))
                     .build())
                 .build();
+    }
+
+    private RequestUtil.Request constructOAuthRequestFromAddOn() throws IOException, OAuthException, URISyntaxException
+    {
+        final HttpMethod httpMethod = HttpMethod.GET;
+        URI uri = URI.create(requestUtil.getApplicationRestUrl("/applinks/1.0/manifest"));
+        uri = signOAuthUri(httpMethod, uri);
+
+        return requestUtil.requestBuilder()
+                .setMethod(httpMethod)
+                .setUri(uri)
+                .build();
+    }
+
+    private URI signOAuthUri(HttpMethod httpMethod, URI uri) throws IOException, OAuthException, URISyntaxException
+    {
+        final Map<String, String> oAuthParams = new HashMap<String, String>();
+        {
+            oAuthParams.put(OAuth.OAUTH_SIGNATURE_METHOD, OAuth.RSA_SHA1);
+            oAuthParams.put(OAuth.OAUTH_VERSION, "1.0");
+            oAuthParams.put(OAuth.OAUTH_CONSUMER_KEY, oAuthPlugin.getKey());
+            oAuthParams.put(OAuth.OAUTH_NONCE, String.valueOf(System.nanoTime()));
+            oAuthParams.put(OAuth.OAUTH_TIMESTAMP, String.valueOf(System.currentTimeMillis() / 1000));
+        }
+        final OAuthMessage oAuthMessage = new OAuthMessage(httpMethod.toString(), uri.toString(), oAuthParams.entrySet());
+        final OAuthConsumer oAuthConsumer = new OAuthConsumer(null, oAuthPlugin.getKey(), OLD_PRIVATE_KEY, new OAuthServiceProvider(null, null, null));
+        oAuthConsumer.setProperty(RSA_SHA1.PRIVATE_KEY, OLD_PRIVATE_KEY);
+        final OAuthSignatureMethod oAuthSignatureMethod = OAuthSignatureMethod.newSigner(oAuthMessage, new OAuthAccessor(oAuthConsumer));
+        oAuthSignatureMethod.sign(oAuthMessage);
+        return addOAuthParamsToRequest(uri, oAuthMessage);
+    }
+
+    private static URI addOAuthParamsToRequest(URI uri, OAuthMessage oAuthMessage) throws IOException
+    {
+        StringBuilder sb = new StringBuilder("?");
+        {
+            boolean isFirst = true;
+
+            for (Map.Entry<String, String> entry : oAuthMessage.getParameters())
+            {
+                if (!isFirst)
+                {
+                    sb.append('&');
+                }
+
+                isFirst = false;
+                sb.append(entry.getKey()).append('=').append(JwtUtil.percentEncode(entry.getValue())); // for JWT use the same encoding as OAuth 1
+            }
+
+            uri = URI.create(uri + sb.toString());
+        }
+        return uri;
     }
 }
