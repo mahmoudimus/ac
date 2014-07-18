@@ -1,6 +1,7 @@
 
 package it.jira;
 
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
@@ -12,13 +13,13 @@ import hudson.plugins.jira.soap.RemoteIssue;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
+import static it.TestConstants.ADMIN;
 import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -117,8 +118,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testViewProjectAdminPanel() throws Exception
     {
-        loginAsAdmin();
-        JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
+        JiraProjectAdministrationPage projectAdministrationPage = loginAndVisit(ADMIN, JiraProjectAdministrationPage.class, project.getKey());
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_PANEL_KEY)).waitUntilContentLoaded();
 
         assertEquals(project.getId(), panel.getProjectId());
@@ -135,7 +135,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testLeftWebPanelOnIssuePage() throws RemoteException
     {
-        loginAsAdmin();
+        login(ADMIN);
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for left remotable-web-panel panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.getKey());
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT_KEY)).waitUntilContentLoaded();
@@ -151,7 +151,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testRightWebPanelOnIssuePage() throws RemoteException
     {
-        loginAsAdmin();
+        login(ADMIN);
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Another test issue for right remotable-web-panel panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.getKey());
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_RIGHT_KEY)).waitUntilContentLoaded();
@@ -167,8 +167,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testWebPanelInProjectHeader()
     {
-        loginAsAdmin();
-        JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
+        JiraProjectAdministrationPage projectAdministrationPage = loginAndVisit(ADMIN, JiraProjectAdministrationPage.class, project.getKey());
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_HEADER_KEY)).waitUntilContentLoaded();
 
         assertEquals(project.getId(), panel.getProjectId());
@@ -183,8 +182,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     {
         final String userProfileName = "barney";
 
-        loginAsAdmin();
-        JiraViewProfilePage jiraViewProfilePage = product.visit(JiraViewProfilePage.class, userProfileName);
+        JiraViewProfilePage jiraViewProfilePage = loginAndVisit(ADMIN, JiraViewProfilePage.class, userProfileName);
         RemoteWebPanel panel = jiraViewProfilePage.findWebPanel(getModuleKey(runner, USER_PROFILE_KEY)).waitUntilContentLoaded();
 
         assertEquals(userProfileName, panel.getFromQueryString("profile_user_key"));

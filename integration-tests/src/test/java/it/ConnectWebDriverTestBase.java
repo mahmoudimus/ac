@@ -52,6 +52,7 @@ public abstract class ConnectWebDriverTestBase
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
+    @Deprecated
     protected void loginAsAdmin()
     {
         if(!ADMIN_USERNAME.equals(currentUsername))
@@ -61,6 +62,7 @@ public abstract class ConnectWebDriverTestBase
         }
     }
 
+    @Deprecated
     protected void loginAsBetty()
     {
         if(!BETTY_USERNAME.equals(currentUsername))
@@ -70,6 +72,7 @@ public abstract class ConnectWebDriverTestBase
         }
     }
 
+    @Deprecated
     protected void loginAsBarney()
     {
         if(!BARNEY_USERNAME.equals(currentUsername))
@@ -79,27 +82,45 @@ public abstract class ConnectWebDriverTestBase
         }
     }
 
+    @Deprecated
     protected void loginAs(String username, String password)
     {
-        loginAsAndVisit(username, password, HomePage.class);
+        loginAndVisit(username, password, HomePage.class);
     }
 
-    protected <P extends Page> void loginAsAndVisit(String username, String password, final Class<P> page, final Object... args)
+    protected void login(TestConstants.TestUser user)
     {
         if (product instanceof JiraTestedProduct)
         {
             JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
-            jiraTestedProduct.quickLogin(username, password, page, args);
+            jiraTestedProduct.quickLogin(user.getUsername(), user.getPassword());
+        }
+        else
+        {
+            product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
+        }
+    }
+
+    protected <P extends Page> P loginAndVisit(TestConstants.TestUser user, final Class<P> page, final Object... args)
+    {
+        return loginAndVisit(user.getUsername(), user.getPassword(), page, args);
+    }
+
+    protected <P extends Page> P loginAndVisit(String username, String password, final Class<P> page, final Object... args)
+    {
+        if (product instanceof JiraTestedProduct)
+        {
+            JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
+            return jiraTestedProduct.quickLogin(username, password, page, args);
         }
         else if (product instanceof ConfluenceTestedProduct)
         {
             ConfluenceTestedProduct confluenceTestedProduct = (ConfluenceTestedProduct) product;
-            confluenceTestedProduct.login(new User(username, password, "Dis. Guided.", "snoop@pi.com"), page, args);
+            return confluenceTestedProduct.login(new User(username, password, "Dis. Guided.", "snoop@pi.com"), page, args);
         }
         else
         {
-            logout();
-            product.visit(LoginPage.class).login(username, password, HomePage.class);
+            throw new UnsupportedOperationException("Sorry, I don't know how to log into " + product.getClass().getCanonicalName());
         }
     }
 
