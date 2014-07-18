@@ -7,6 +7,10 @@
     {
       "filename": "getting-started.html",
       "title": "Getting started"
+    },
+    {
+      "filename": "project-activity-tutorial.html",
+      "title": "Tutorial: JIRA project activity"
     }
   ],
   "developing": [
