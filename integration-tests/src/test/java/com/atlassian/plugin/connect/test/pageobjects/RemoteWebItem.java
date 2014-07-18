@@ -50,15 +50,15 @@ public class RemoteWebItem
         webItem = findWebItem();
         waitUntilTrue(webItem.timed().isPresent());
 
-        if (isPageBackedWebItem())
-        {
-            String iframeId = IframeUtils.iframeId("servlet-" + matchValue);
-            path = elementFinder.find(By.id(iframeId)).getAttribute("src");
-        }
-        else
-        {
-            path = webItem.getAttribute("href");
-        }
+//        if (isPageBackedWebItem())
+//        {
+//            String iframeId = IframeUtils.iframeId("servlet-" + matchValue);
+//            path = elementFinder.find(By.id(iframeId)).getAttribute("src");
+//        }
+//        else
+//        {
+        path = webItem.getAttribute("href");
+//        }
     }
 
     private PageElement findWebItem()
@@ -82,7 +82,7 @@ public class RemoteWebItem
     private boolean isPageBackedWebItem()
     {
         String href = webItem.getAttribute("href");
-        return !href.contains("/plugins/servlet/atlassian-connect/") && !href.contains("/plugins/servlet/ac/");
+        return href.contains("/plugins/servlet/atlassian-connect/") || href.contains("/plugins/servlet/ac/");
     }
 
     public String getLinkText()

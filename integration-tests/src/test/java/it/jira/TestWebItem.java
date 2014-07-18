@@ -73,7 +73,7 @@ public class TestWebItem extends JiraWebDriverTestBase
 
         product.visit(JiraViewProjectPage.class, project.getKey());
 
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(runner.getAddon().getKey(), GENERAL_WEBITEM), Optional.<String>absent());
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(runner, GENERAL_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be visible", webItem);
         assertTrue("Web item link should point to add-on base", webItem.getPath().startsWith(runner.getAddon().getBaseUrl()));
 
