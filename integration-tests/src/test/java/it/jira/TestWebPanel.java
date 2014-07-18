@@ -83,7 +83,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
                                 .withUrl("/up?profile_user_key=${profileUser.key}&profile_user_name=${profileUser.name}")
                                 .build()
                 )
-                .addRoute("/pcp", ConnectAppServlets.apRequestServlet())
+                .addRoute("/pcp", ConnectAppServlets.customMessageServlet("pcp-OK"))
                 .addRoute("/ilwp", ConnectAppServlets.customMessageServlet("ilwp-OK"))
                 .addRoute("/ilwp2", ConnectAppServlets.customMessageServlet("ilwp2-OK"))
                 .addRoute("/irwp", ConnectAppServlets.customMessageServlet("irwp-OK"))
@@ -125,8 +125,11 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         assertEquals(ADMIN_USERNAME, panel.getUserId());
         assertNotNull(panel.getUserKey());
 
-        assertEquals("Success", panel.getApRequestMessage());
-        assertEquals("200", panel.getApRequestStatusCode());
+        assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(ADMIN_USERNAME, panel.getUserId());
+        assertNotNull(panel.getUserKey());
+
+        assertEquals("pcp-OK", panel.getCustomMessage());
     }
 
     @Test
