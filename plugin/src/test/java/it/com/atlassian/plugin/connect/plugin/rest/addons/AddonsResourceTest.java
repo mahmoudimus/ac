@@ -33,9 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith (AtlassianPluginsTestRunner.class)
 public class AddonsResourceTest
@@ -426,10 +424,13 @@ public class AddonsResourceTest
                 .replace("{{currentTimeMillis}}", String.valueOf(System.currentTimeMillis()));
 
         String publicKey = "-----BEGIN PUBLIC KEY-----\n" +
-        "                MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuNwJVGkY9XWtuNe7p8PMOEr8O\n" +
-        "                WetSAqMxWldFfmNYTbRsI/8ZX/S/5gm4UKZyFUDOICtVddYv1tWW/P31OA5khyQT\n" +
-        "                XLp8sYpyNDBuwg00kfmBGleBgcKvePxMAr2y4La1OBz4aE+xK1HJojl2ToAubVY+\n" +
-        "                qikVwxXolycVkz8AzQIDAQAB\n" +
+        "                MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtWghUS3KRC01kJkeU83P\n" +
+        "                S2CSH6Vma2twv7p7JVHUIWl69tNPvn46mYt3gbFQgmBv74pAJJkb1FvBNxhy0B19\n" +
+        "                9fXgZUVS+6R7597t0hVG610Zbl4Ar7xvs/h3ACwUhSib3ad496nghLvOnarrJIgw\n" +
+        "                sNQeCaBz+FczCYQAt7Mk8vGjE1XSha6FEBNKIYijgoZhqLGcTxxyBIDmMwyNU2Oz\n" +
+        "                lknyFZ1ZhYIPKuw069njJjbuL0Nv9PXKO+pNZMQvwo7WrepJ0B0VG5KYjDzetFzx\n" +
+        "                FOtr7x6M5Z7XZsPhNIjDjE+oBHu+Hzc1/bGyWpZrzc04nqCNTsmOvID1H50Jt778\n" +
+        "                mQIDAQAB\n" +
         "                -----END PUBLIC KEY-----";
 
         // preconditions
