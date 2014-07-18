@@ -87,7 +87,6 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
     protected <T extends Page> RemotePluginEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)
             throws MalformedURLException, URISyntaxException
     {
-        
         loginAsAdmin();
 
         T page = product.visit(pageClass);

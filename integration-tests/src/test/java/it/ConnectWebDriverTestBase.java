@@ -1,5 +1,9 @@
 package it;
 
+import com.atlassian.confluence.it.User;
+import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -11,7 +15,9 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import org.apache.http.auth.AuthenticationException;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Rule;
 
 import java.io.IOException;
 
@@ -73,10 +79,28 @@ public abstract class ConnectWebDriverTestBase
         }
     }
 
-    protected HomePage loginAs(String username, String password)
+    protected void loginAs(String username, String password)
     {
-        logout();
-        return product.visit(LoginPage.class).login(username, password, HomePage.class);
+        loginAsAndVisit(username, password, HomePage.class);
+    }
+
+    protected <P extends Page> void loginAsAndVisit(String username, String password, final Class<P> page, final Object... args)
+    {
+        if (product instanceof JiraTestedProduct)
+        {
+            JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
+            jiraTestedProduct.quickLogin(username, password, page, args);
+        }
+        else if (product instanceof ConfluenceTestedProduct)
+        {
+            ConfluenceTestedProduct confluenceTestedProduct = (ConfluenceTestedProduct) product;
+            confluenceTestedProduct.login(new User(username, password, "Dis. Guided.", "snoop@pi.com"), page, args);
+        }
+        else
+        {
+            logout();
+            product.visit(LoginPage.class).login(username, password, HomePage.class);
+        }
     }
 
     protected String getModuleKey(ConnectRunner runner, String module)
