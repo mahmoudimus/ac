@@ -22,8 +22,8 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.size;
 
 /**
- * The set of standard operations for testing connect addons. The intention is to have one place for all such ops
- * that is separate from the page objects. This allows us to avoid copy pasting these and more importantly hopefully avoids
+ * The set of standard operations for testing connect addons. The intention is to have one place for all such ops that
+ * is separate from the page objects. This allows us to avoid copy pasting these and more importantly hopefully avoids
  * us needing connect specific page objects. i.e. use the standard product ones unless there is a good reason not to.
  */
 public class ConnectPageOperations
@@ -45,8 +45,7 @@ public class ConnectPageOperations
     }
 
     /**
-     * For XML descriptor tests.
-     * TODO remove when we ditch support for XML descriptors.
+     * For XML descriptor tests. TODO remove when we ditch support for XML descriptors.
      */
     @Deprecated
     public RemoteWebPanel findWebPanelFromXMLAddOn(String id)
@@ -76,7 +75,8 @@ public class ConnectPageOperations
 
     public void waitUntilNConnectIFramesPresent(final int n)
     {
-        new WebDriverPoller(driver).waitUntil(new Function<WebDriver, Boolean>() {
+        new WebDriverPoller(driver).waitUntil(new Function<WebDriver, Boolean>()
+        {
             @Override
             public Boolean apply(final WebDriver input)
             {
@@ -151,7 +151,7 @@ public class ConnectPageOperations
 
     public WebElement findLabel(String key)
     {
-        return driver.findElement(ByJquery.$("label[for='"+ key +"']"));
+        return driver.findElement(ByJquery.$("label[for='" + key + "']"));
     }
 
     public PageBinder getPageBinder()
@@ -161,8 +161,8 @@ public class ConnectPageOperations
 
     public RemotePluginDialog editMacro(String macroKey)
     {
-        String macroNodeSelector = "$(\"#wysiwygTextarea_ifr\").contents().find(\"table[data-macro-name='"+ macroKey +"']\")";
-        driver.executeScript("tinymce.confluence.macrobrowser.editMacro("+ macroNodeSelector +")");
+        String macroNodeSelector = "$(\"#wysiwygTextarea_ifr\").contents().find(\"table[data-macro-name='" + macroKey + "']\")";
+        driver.executeScript("tinymce.confluence.macrobrowser.editMacro(" + macroNodeSelector + ")");
         return findDialog(macroKey);
     }
 
