@@ -16,6 +16,7 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.collect.Lists;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import it.com.atlassian.plugin.connect.TestConstants;
 import it.com.atlassian.plugin.connect.installer.XmlOAuthToJsonJwtUpdateTest;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -418,27 +419,17 @@ public class AddonsResourceTest
     private String getXmlDescriptorContent(String key) throws IOException
     {
         String baseUrl = testPluginInstaller.getInternalAddonBaseUrl(key);
-        String xml = IOUtils.toString(XmlOAuthToJsonJwtUpdateTest.class.getResourceAsStream("/com/atlassian/connect/xml_oauth_descriptor.xml"))
+        String xml = IOUtils.toString(XmlOAuthToJsonJwtUpdateTest.class.getResourceAsStream(TestConstants.XML_ADDON_RESOURCE_PATH))
                 .replace("{{localBaseUrl}}", baseUrl)
                 .replace("{{user}}", "admin")
                 .replace("{{currentTimeMillis}}", String.valueOf(System.currentTimeMillis()));
-
-        String publicKey = "-----BEGIN PUBLIC KEY-----\n" +
-        "                MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtWghUS3KRC01kJkeU83P\n" +
-        "                S2CSH6Vma2twv7p7JVHUIWl69tNPvn46mYt3gbFQgmBv74pAJJkb1FvBNxhy0B19\n" +
-        "                9fXgZUVS+6R7597t0hVG610Zbl4Ar7xvs/h3ACwUhSib3ad496nghLvOnarrJIgw\n" +
-        "                sNQeCaBz+FczCYQAt7Mk8vGjE1XSha6FEBNKIYijgoZhqLGcTxxyBIDmMwyNU2Oz\n" +
-        "                lknyFZ1ZhYIPKuw069njJjbuL0Nv9PXKO+pNZMQvwo7WrepJ0B0VG5KYjDzetFzx\n" +
-        "                FOtr7x6M5Z7XZsPhNIjDjE+oBHu+Hzc1/bGyWpZrzc04nqCNTsmOvID1H50Jt778\n" +
-        "                mQIDAQAB\n" +
-        "                -----END PUBLIC KEY-----";
 
         // preconditions
         {
             String displayUrlText = String.format("display-url=\"%s\"", baseUrl);
             assertTrue(String.format("%s should contain %s", xml, displayUrlText), xml.indexOf(displayUrlText) > 0);
 
-            String publicKeyText = String.format("<public-key>%s</public-key>", publicKey);
+            String publicKeyText = String.format("<public-key>%s</public-key>", TestConstants.XML_ADDON_PUBLIC_KEY);
             assertTrue(String.format("%s should contain %s", xml, publicKeyText), xml.indexOf(publicKeyText) > 0);
 
             String pluginKeyText = String.format("key=\"%s\"", key);
