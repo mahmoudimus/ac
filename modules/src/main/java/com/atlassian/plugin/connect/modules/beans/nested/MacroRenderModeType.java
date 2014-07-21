@@ -1,7 +1,22 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
+/**
+ * Target format for macro render
+ *
+ * @schemaTitle Macro Render Mode Type
+ */
 public enum MacroRenderModeType {
-    mobile, desktop;
+    /**
+     * Indicates your macro should output for mobile rendering.
+     *
+     * Note: Currently disabled, see AC-1210
+     */
+    mobile,
+
+    /**
+     * Indicates your macro should out for desktop rendering
+     */
+    desktop;
 
     @Override
     public String toString()
